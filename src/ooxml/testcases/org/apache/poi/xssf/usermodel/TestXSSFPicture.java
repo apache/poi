@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -39,19 +41,9 @@ public final class TestXSSFPicture extends BaseTestPicture {
         super(XSSFITestDataProvider.instance);
     }
 
-
-    @Test
-    public void resize() throws Exception {
-        try (XSSFWorkbook wb = XSSFITestDataProvider.instance.openSampleWorkbook("resize_compare.xlsx")) {
-            XSSFDrawing dp = wb.getSheetAt(0).createDrawingPatriarch();
-            List<XSSFShape> pics = dp.getShapes();
-            XSSFPicture inpPic = (XSSFPicture) pics.get(0);
-            XSSFPicture cmpPic = (XSSFPicture) pics.get(0);
-
-            baseTestResize(inpPic, cmpPic, 2.0, 2.0);
-        }
+    protected Picture getPictureShape(Drawing<?> pat, int picIdx) {
+        return (Picture)((XSSFDrawing)pat).getShapes().get(picIdx);
     }
-
 
     @Test
     public void create() throws IOException {

@@ -144,7 +144,9 @@ public abstract class BaseTestRow {
         wb2.close();
     }
 
-    protected void baseTestRowBounds(int maxRowNum) throws IOException {
+    @Test
+    public void testRowBounds() throws IOException {
+        int maxRowNum = _testDataProvider.getSpreadsheetVersion().getLastRowIndex();
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             //Test low row bound
@@ -161,7 +163,9 @@ public abstract class BaseTestRow {
         }
     }
 
-    protected void baseTestCellBounds(int maxCellNum) throws IOException {
+    @Test
+    protected void testCellBounds() throws IOException {
+        int maxCellNum = _testDataProvider.getSpreadsheetVersion().getLastColumnIndex();
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 

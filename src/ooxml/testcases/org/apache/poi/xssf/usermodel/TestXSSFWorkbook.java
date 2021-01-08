@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -511,11 +510,6 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
             wb.setForceFormulaRecalculation(true);
             assertTrue(wb.getForceFormulaRecalculation());
         }
-    }
-
-    @Test
-    public void changeSheetNameWithSharedFormulas() throws IOException {
-        changeSheetNameWithSharedFormulas("shared_formulas.xlsx");
     }
 
     @Test

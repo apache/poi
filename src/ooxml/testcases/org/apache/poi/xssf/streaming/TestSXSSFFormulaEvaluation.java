@@ -22,7 +22,6 @@ package org.apache.poi.xssf.streaming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -47,6 +46,10 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
 
     public TestSXSSFFormulaEvaluation() {
         super(SXSSFITestDataProvider.instance);
+    }
+
+    public void testSharedFormulas() throws IOException {
+        /* not implemented */
     }
 
     /**

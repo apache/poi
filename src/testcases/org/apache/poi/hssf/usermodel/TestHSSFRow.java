@@ -29,7 +29,6 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.junit.jupiter.api.Test;
 
@@ -42,16 +41,6 @@ public final class TestHSSFRow extends BaseTestRow {
 
     public TestHSSFRow() {
         super(HSSFITestDataProvider.instance);
-    }
-
-    @Test
-    public void testRowBounds() throws IOException {
-        baseTestRowBounds(SpreadsheetVersion.EXCEL97.getLastRowIndex());
-    }
-
-    @Test
-    public void testCellBounds() throws IOException {
-        baseTestCellBounds(SpreadsheetVersion.EXCEL97.getLastColumnIndex());
     }
 
     @Test

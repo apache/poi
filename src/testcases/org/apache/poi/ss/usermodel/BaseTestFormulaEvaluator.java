@@ -116,31 +116,32 @@ public abstract class BaseTestFormulaEvaluator {
         wb.close();
     }
 
-	public void baseTestSharedFormulas(String sampleFile) throws IOException {
-        Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile);
+    @Test
+	public void testSharedFormulas() throws IOException {
+        String fileName = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
+        try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
 
-        Sheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(0);
 
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        Cell cell;
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Cell cell;
 
-        cell = sheet.getRow(1).getCell(0);
-        assertEquals("B2", cell.getCellFormula());
-        assertEquals("ProductionOrderConfirmation", evaluator.evaluate(cell).getStringValue());
+            cell = sheet.getRow(1).getCell(0);
+            assertEquals("B2", cell.getCellFormula());
+            assertEquals("ProductionOrderConfirmation", evaluator.evaluate(cell).getStringValue());
 
-        cell = sheet.getRow(2).getCell(0);
-        assertEquals("B3", cell.getCellFormula());
-        assertEquals("RequiredAcceptanceDate", evaluator.evaluate(cell).getStringValue());
+            cell = sheet.getRow(2).getCell(0);
+            assertEquals("B3", cell.getCellFormula());
+            assertEquals("RequiredAcceptanceDate", evaluator.evaluate(cell).getStringValue());
 
-        cell = sheet.getRow(3).getCell(0);
-        assertEquals("B4", cell.getCellFormula());
-        assertEquals("Header", evaluator.evaluate(cell).getStringValue());
+            cell = sheet.getRow(3).getCell(0);
+            assertEquals("B4", cell.getCellFormula());
+            assertEquals("Header", evaluator.evaluate(cell).getStringValue());
 
-        cell = sheet.getRow(4).getCell(0);
-        assertEquals("B5", cell.getCellFormula());
-        assertEquals("UniqueDocumentNumberID", evaluator.evaluate(cell).getStringValue());
-
-        wb.close();
+            cell = sheet.getRow(4).getCell(0);
+            assertEquals("B5", cell.getCellFormula());
+            assertEquals("UniqueDocumentNumberID", evaluator.evaluate(cell).getStringValue());
+        }
     }
 
     /**

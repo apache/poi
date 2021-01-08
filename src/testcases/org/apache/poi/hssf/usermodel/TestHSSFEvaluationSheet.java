@@ -17,13 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
@@ -35,13 +37,12 @@ public class TestHSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     }
 
     @Test
-    public void testMissingExternalName() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("external_name.xls");
-        for (Name name : wb.getAllNames()) {
+    public void testMissingExternalName() throws IOException {
+        try (HSSFWorkbook wb = openSampleWorkbook("external_name.xls")) {
             // this sometimes causes exceptions
-            if(!name.isFunctionName()) {
-                name.getRefersToFormula();
-            }
+            wb.getAllNames().stream().filter(n -> !n.isFunctionName()).forEach(
+                n -> assertDoesNotThrow(n::getRefersToFormula)
+            );
         }
     }
 }

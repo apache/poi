@@ -53,32 +53,53 @@ public abstract class BaseTestPicture {
         _testDataProvider = testDataProvider;
     }
 
-    public void baseTestResize(Picture input, Picture compare, double scaleX, double scaleY) {
-        input.resize(scaleX, scaleY);
 
-        ClientAnchor inpCA = input.getClientAnchor();
-        ClientAnchor cmpCA = compare.getClientAnchor();
+    protected abstract Picture getPictureShape(Drawing<?> pat, int picIdx);
 
-        Dimension inpDim = ImageUtils.getDimensionFromAnchor(input);
-        Dimension cmpDim = ImageUtils.getDimensionFromAnchor(compare);
+    @Test
+    public void resize() throws IOException {
+        String fileName = "resize_compare.xls" + (getClass().getName().contains("xssf") ? "x" : "");
+        double scaleX = 2;
+        double scaleY = 2;
 
-        double emuPX = Units.EMU_PER_PIXEL;
+        try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
+            Sheet sh = wb.getSheetAt(0);
+            Drawing<?> pat = sh.createDrawingPatriarch();
 
-        assertEquals(inpDim.getHeight(), cmpDim.getHeight(), emuPX*6, "the image height differs");
-        assertEquals(inpDim.getWidth(),  cmpDim.getWidth(),  emuPX*6, "the image width differs");
-        assertEquals(inpCA.getCol1(), cmpCA.getCol1(), "the starting column differs");
-        assertEquals(inpCA.getDx1(), cmpCA.getDx1(), 1, "the column x-offset differs");
-        assertEquals(inpCA.getDy1(), cmpCA.getDy1(), 1, "the column y-offset differs");
-        assertEquals(inpCA.getCol2(), cmpCA.getCol2(), "the ending columns differs");
-        // can't compare row heights because of variable test heights
+            Picture input = getPictureShape(pat, 0);
+            Picture compare = getPictureShape(pat, 1);
 
-        input.resize();
-        inpDim = ImageUtils.getDimensionFromAnchor(input);
+            input.resize(scaleX, scaleY);
 
-        Dimension imgDim = input.getImageDimension();
+            ClientAnchor inpCA = input.getClientAnchor();
+            ClientAnchor cmpCA = compare.getClientAnchor();
 
-        assertEquals(imgDim.getHeight(), inpDim.getHeight()/emuPX, 1, "the image height differs");
-        assertEquals(imgDim.getWidth(), inpDim.getWidth()/emuPX,  1, "the image width differs");
+            double origDy1 = inpCA.getDy1();
+            double origDx1 = inpCA.getDx1();
+
+            Dimension inpDim = ImageUtils.getDimensionFromAnchor(input);
+            Dimension cmpDim = ImageUtils.getDimensionFromAnchor(compare);
+
+            double emuPX = Units.EMU_PER_PIXEL;
+
+            assertEquals(inpDim.getHeight(), cmpDim.getHeight(), emuPX * 6, "the image height differs");
+            assertEquals(inpDim.getWidth(), cmpDim.getWidth(), emuPX * 6, "the image width differs");
+            assertEquals(inpCA.getCol1(), cmpCA.getCol1(), "the starting column differs");
+            assertEquals(inpCA.getDx1(), cmpCA.getDx1(), 1, "the column x-offset differs");
+            assertEquals(inpCA.getDy1(), origDy1, 1, "the column y-offset differs - image has moved");
+            assertEquals(inpCA.getDx1(), origDx1, 1, "the column x-offset differs - image has moved");
+            assertEquals(inpCA.getDy1(), cmpCA.getDy1(), 1, "the column y-offset differs");
+            assertEquals(inpCA.getCol2(), cmpCA.getCol2(), "the ending columns differs");
+            // can't compare row heights because of variable test heights
+
+            input.resize();
+            inpDim = ImageUtils.getDimensionFromAnchor(input);
+
+            Dimension imgDim = input.getImageDimension();
+
+            assertEquals(imgDim.getHeight(), inpDim.getHeight() / emuPX, 1, "the image height differs");
+            assertEquals(imgDim.getWidth(), inpDim.getWidth() / emuPX, 1, "the image width differs");
+        }
     }
 
 

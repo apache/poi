@@ -17,15 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
@@ -40,6 +41,8 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
@@ -48,15 +51,10 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testSharedFormulas() throws IOException {
-        baseTestSharedFormulas("shared_formulas.xlsx");
-    }
-
-    @Test
     public void testSharedFormulas_evaluateInCell() throws IOException {
-        try (XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("49872.xlsx")) {
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("49872.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-            XSSFSheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(0);
 
             double result = 3.0;
 
@@ -67,14 +65,14 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             // C3 and D3: <f t="shared" si="0"/>
 
             // get B3 and evaluate it in the cell
-            XSSFCell b3 = sheet.getRow(2).getCell(1);
+            Cell b3 = sheet.getRow(2).getCell(1);
             assertEquals(result, evaluator.evaluateInCell(b3).getNumericCellValue(), 0);
 
             //at this point the master formula is gone, but we are still able to evaluate dependent cells
-            XSSFCell c3 = sheet.getRow(2).getCell(2);
+            Cell c3 = sheet.getRow(2).getCell(2);
             assertEquals(result, evaluator.evaluateInCell(c3).getNumericCellValue(), 0);
 
-            XSSFCell d3 = sheet.getRow(2).getCell(3);
+            Cell d3 = sheet.getRow(2).getCell(3);
             assertEquals(result, evaluator.evaluateInCell(d3).getNumericCellValue(), 0);
         }
     }
@@ -84,16 +82,16 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     @Test
     public void testEvaluateColumnGreaterThan255() throws IOException {
-        try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("50096.xlsx")) {
-            XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("50096.xlsx")) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
             /*
              *  The first row simply contains the numbers 1 - 300.
              *  The second row simply refers to the cell value above in the first row by a simple formula.
              */
             for (int i = 245; i < 265; i++) {
-                XSSFCell cell_noformula = wb.getSheetAt(0).getRow(0).getCell(i);
-                XSSFCell cell_formula = wb.getSheetAt(0).getRow(1).getCell(i);
+                Cell cell_noformula = wb.getSheetAt(0).getRow(0).getCell(i);
+                Cell cell_formula = wb.getSheetAt(0).getRow(1).getCell(i);
 
                 CellReference ref_noformula = new CellReference(cell_noformula.getRowIndex(), cell_noformula.getColumnIndex());
                 CellReference ref_formula = new CellReference(cell_noformula.getRowIndex(), cell_noformula.getColumnIndex());
@@ -118,9 +116,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     @Test
     public void testReferencesToOtherWorkbooks() throws Exception {
-        try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("ref2-56737.xlsx")) {
-            XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-            XSSFSheet s = wb.getSheetAt(0);
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("ref2-56737.xlsx")) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Sheet s = wb.getSheetAt(0);
 
             // References to a .xlsx file
             Row rXSLX = s.getRow(2);
@@ -226,16 +224,16 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
 
-    /**
+    /*
      * If a formula references cells or named ranges in another workbook,
      *  but that isn't available at evaluation time, the cached values
      *  should be used instead
      * TODO Add the support then add a unit test
      * See bug #56752
      */
-    @Disabled
-    public void testCachedReferencesToOtherWorkbooks() {
-    }
+//    @Disabled
+//    public void testCachedReferencesToOtherWorkbooks() {
+//    }
 
     /**
      * A handful of functions (such as SUM, COUNTA, MIN) support
@@ -244,12 +242,13 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can correctly evaluate these
      */
-    @Test
-    public void testMultiSheetReferencesHSSFandXSSF() throws Exception {
-        Workbook wb1 = HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls");
-        Workbook wb2 = XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx");
+    @ParameterizedTest
+    @ValueSource(strings = {"55906-MultiSheetRefs.xls","55906-MultiSheetRefs.xlsx"})
+    public void testMultiSheetReferencesHSSFandXSSF(String sampleFileName) throws Exception {
+        Function<String, Workbook> fun = sampleFileName.endsWith("x")
+            ? XSSFTestDataSamples::openSampleWorkbook : HSSFTestDataSamples::openSampleWorkbook;
 
-        for (Workbook wb : new Workbook[] {wb1,wb2}) {
+        try (Workbook wb = fun.apply(sampleFileName)) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet s1 = wb.getSheetAt(0);
 
@@ -299,9 +298,6 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("COUNTA(Sheet1:Sheet3!E1)", countA_3F.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countA_3F).formatAsString());
         }
-
-        wb2.close();
-        wb1.close();
     }
 
     /**
@@ -311,12 +307,13 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can correctly evaluate these
      */
-    @Test
-    public void testMultiSheetAreasHSSFandXSSF() throws IOException {
-        Workbook wb1 = HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls");
-        Workbook wb2 = XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx");
+    @ParameterizedTest
+    @ValueSource(strings = {"55906-MultiSheetRefs.xls","55906-MultiSheetRefs.xlsx"})
+    public void testMultiSheetAreasHSSFandXSSF(String sampleFileName) throws Exception {
+        Function<String, Workbook> fun = sampleFileName.endsWith("x")
+            ? XSSFTestDataSamples::openSampleWorkbook : HSSFTestDataSamples::openSampleWorkbook;
 
-        for (Workbook wb : new Workbook[]{wb1,wb2}) {
+        try (Workbook wb = fun.apply(sampleFileName)) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet s1 = wb.getSheetAt(0);
 
@@ -349,28 +346,20 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("COUNT(Sheet1:Sheet3!$A$1:$B$2)", countFA.getCellFormula());
             assertEquals("4.0", evaluator.evaluate(countFA).formatAsString());
         }
-
-        wb2.close();
-        wb1.close();
     }
 
-    // bug 57721
-    @Test
-    public void structuredReferences() throws IOException {
-        verifyAllFormulasInWorkbookCanBeEvaluated("evaluate_formula_with_structured_table_references.xlsx");
-    }
+    @ParameterizedTest
+    @ValueSource(strings = {
+        // bug 57721
+        "evaluate_formula_with_structured_table_references.xlsx"
 
-    // bug 57840
-    @Disabled("Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.")
-    @Test
-    public void testLotsOfFormulasWithStructuredReferencesToCalculatedTableColumns() throws IOException {
-        verifyAllFormulasInWorkbookCanBeEvaluated("StructuredRefs-lots-with-lookups.xlsx");
-    }
-
-    // FIXME: use junit4 parametrization
-    private static void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
+        // bug 57840:
+        // Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.
+        // , "StructuredRefs-lots-with-lookups.xlsx"
+    })
+    public void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(sampleWorkbook)) {
-            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            assertDoesNotThrow(() -> XSSFFormulaEvaluator.evaluateAllFormulaCells(wb));
         }
     }
 
@@ -415,19 +404,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    @Disabled // this is from an open bug/discussion over handling localization for number formats
+    @Disabled("this is from an open bug/discussion over handling localization for number formats")
     public void testBug61495() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61495-test.xlsm")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Cell cell = wb.getSheetAt(0).getRow(0).getCell(1);
-//        assertEquals("D 67.10", cell.getStringCellValue());
+            // assertEquals("D 67.10", cell.getStringCellValue());
 
-            CellValue value = evaluator.evaluate(cell);
-            assertEquals("D 67.10",
-                    value.getStringValue());
+            String act = evaluator.evaluate(cell).getStringValue();
+            assertEquals("D 67.10", act);
 
-            assertEquals("D 0,068",
-                    evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)).getStringValue());
+            cell = wb.getSheetAt(0).getRow(1).getCell(1);
+            act = evaluator.evaluate(cell).getStringValue();
+            assertEquals("D 0,068", act);
         }
     }
 
@@ -444,7 +433,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             Cell value = evaluator.evaluateInCell(a2);
             assertEquals("a value", value.getStringCellValue(), "wrong value A2");
 
-//            evaluator.clearAllCachedResultValues();
+            // evaluator.clearAllCachedResultValues();
 
             Cell a3 = wb.getSheetAt(0).getRow(2).getCell(0);
             value = evaluator.evaluateInCell(a3);

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,7 +72,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -787,11 +787,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.close();
     }
 
-    @Test
-    public void changeSheetNameWithSharedFormulas() throws IOException {
-        changeSheetNameWithSharedFormulas("shared_formulas.xls");
-    }
-
     // Should throw exception about invalid POIFSFileSystem
     @Test
     public void emptyDirectoryNode() throws IOException {
@@ -863,12 +858,11 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void testMethods() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
-        wb.insertChartRecord();
-        //wb.dumpDrawingGroupRecords(true);
-        //wb.dumpDrawingGroupRecords(false);
-
-        wb.close();
+        try (HSSFWorkbook wb=new HSSFWorkbook()) {
+            assertDoesNotThrow(wb::insertChartRecord);
+            //wb.dumpDrawingGroupRecords(true);
+            //wb.dumpDrawingGroupRecords(false);
+        }
     }
 
     @Test
@@ -1114,14 +1108,12 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void setSheetOrderToEnd() throws Exception {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        workbook.createSheet("A");
-        try {
-            for (int i = 0; i < 2 * workbook.getInternalWorkbook().getRecords().size(); i++) {
-                workbook.setSheetOrder("A", 0);
-            }
-        } catch (Exception e) {
-            throw new Exception("Moving a sheet to the end should not throw an exception, but threw ", e);
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            workbook.createSheet("A");
+            workbook.createSheet("B");
+            assertEquals("A", workbook.getSheetName(0));
+            workbook.setSheetOrder("A", 1);
+            assertEquals("A", workbook.getSheetName(1));
         }
     }
 
@@ -1176,26 +1168,22 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void testWriteToNewFile() throws Exception {
-        // Open from a Stream
-        HSSFWorkbook wb = new HSSFWorkbook(
-                samples.openResourceAsStream("SampleSS.xls"));
-
         // Save to a new temp file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
-        wb.write(file);
-        wb.close();
+
+        // Open from a Stream
+        try (HSSFWorkbook wb = new HSSFWorkbook(
+                samples.openResourceAsStream("SampleSS.xls"))) {
+            wb.write(file);
+        }
 
         // Read and check
-        wb = new HSSFWorkbook(new POIFSFileSystem(file));
-        assertEquals(3, wb.getNumberOfSheets());
-        wb.close();
+        try (HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(file))) {
+            assertEquals(3, wb.getNumberOfSheets());
+        }
     }
 
-    @Disabled
-    @Test
-    @Override
     public void createDrawing() throws Exception {
-        super.createDrawing();
         // the dimensions for this image are different than for XSSF and SXSSF
     }
 }

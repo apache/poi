@@ -306,4 +306,8 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             });
         }
     }
+
+    public void changeSheetNameWithSharedFormulas() {
+        /* not implemented */
+    }
 }

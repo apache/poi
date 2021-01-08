@@ -723,7 +723,10 @@ public abstract class BaseTestWorkbook {
         }
     }
 
-    protected void changeSheetNameWithSharedFormulas(String sampleFile) throws IOException {
+    @Test
+    public void changeSheetNameWithSharedFormulas() throws IOException {
+        String sampleFile = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
+
         try (Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile)) {
 
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();

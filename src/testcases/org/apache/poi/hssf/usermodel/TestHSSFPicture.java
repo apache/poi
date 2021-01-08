@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,6 +33,8 @@ import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
@@ -42,16 +45,8 @@ public final class TestHSSFPicture extends BaseTestPicture {
         super(HSSFITestDataProvider.instance);
     }
 
-    @Test
-    public void resize() throws Exception {
-        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("resize_compare.xls")) {
-            HSSFPatriarch dp = wb.getSheetAt(0).createDrawingPatriarch();
-            List<HSSFShape> pics = dp.getChildren();
-            HSSFPicture inpPic = (HSSFPicture) pics.get(0);
-            HSSFPicture cmpPic = (HSSFPicture) pics.get(1);
-
-            baseTestResize(inpPic, cmpPic, 2.0, 2.0);
-        }
+    protected Picture getPictureShape(Drawing<?> pat, int picIdx) {
+        return (Picture)((HSSFPatriarch)pat).getChildren().get(picIdx);
     }
 
     /**
@@ -199,7 +194,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
     @Test
     public void readExistingImage() throws IOException {
-        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+        try (HSSFWorkbook wb = openSampleWorkbook("drawings.xls")) {
             HSSFSheet sheet = wb.getSheet("picture");
             HSSFPatriarch drawing = sheet.getDrawingPatriarch();
             assertEquals(1, drawing.getChildren().size());

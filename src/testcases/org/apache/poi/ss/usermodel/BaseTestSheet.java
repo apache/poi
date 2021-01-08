@@ -755,7 +755,12 @@ public abstract class BaseTestSheet {
         }
     }
 
-    public void baseTestGetSetMargin(double[] defaultMargins) throws IOException {
+    @Test
+    public void testGetSetMargin() throws IOException {
+        double[] defaultMargins = (getClass().getName().contains("xssf"))
+            ? new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3}
+            : new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3};
+
         double marginLeft = defaultMargins[0];
         double marginRight = defaultMargins[1];
         double marginTop = defaultMargins[2];

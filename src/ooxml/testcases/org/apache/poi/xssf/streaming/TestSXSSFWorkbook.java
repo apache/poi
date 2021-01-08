@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -533,5 +532,9 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wbBack.close();
 
         wb.close();
+    }
+
+    public void changeSheetNameWithSharedFormulas() {
+        /* not implemented */
     }
 }

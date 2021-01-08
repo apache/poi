@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -36,9 +37,6 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
 public final class TestOLE2Embeding {
 
     @Test
@@ -46,7 +44,7 @@ public final class TestOLE2Embeding {
         // This used to break, until bug #43116 was fixed
         try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
             // Check we can get at the Escher layer still
-            workbook.getAllPictures();
+            assertDoesNotThrow(workbook::getAllPictures);
         }
     }
 
@@ -105,12 +103,6 @@ public final class TestOLE2Embeding {
         HSSFSimpleShape circle = patriarch.createSimpleShape(anchor);
         circle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
         circle.setNoFill(true);
-
-//        if (false) {
-//	        FileOutputStream fos = new FileOutputStream("embed.xls");
-//	        wb.write(fos);
-//	        fos.close();
-//        }
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();

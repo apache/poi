@@ -102,11 +102,6 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void getSetMargin() throws IOException {
-        baseTestGetSetMargin(new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3});
-    }
-
-    @Test
     public void existingHeaderFooter() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx");
         XSSFOddHeader hdr;
@@ -543,16 +538,15 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             // Save and re-load
             try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
                 sheet1 = wb2.getSheetAt(0);
-                // FIXME: forgot to reassign!
-                //cols = sheet1.getCTWorksheet().getColsArray(0);
+                cols = sheet1.getCTWorksheet().getColsArray(0);
 
                 assertEquals(6, cols.sizeOfColArray());
-                checkColumnGroup(cols.getColArray(0), 4, 7); // false, true
-                checkColumnGroup(cols.getColArray(1), 8, 8, false, false);
-                checkColumnGroup(cols.getColArray(2), 9, 9); // false, true
-                checkColumnGroup(cols.getColArray(3), 10, 11); // false, true
-                checkColumnGroup(cols.getColArray(4), 12, 12, false, false);
-                checkColumnGroup(cols.getColArray(5), 13, 13, false, false);
+                checkColumnGroup(cols.getColArray(0), 4, 7, false, true);
+                checkColumnGroup(cols.getColArray(1), 8, 8, false, true);
+                checkColumnGroup(cols.getColArray(2), 9, 9, false, true);
+                checkColumnGroup(cols.getColArray(3), 10, 11, false, true);
+                checkColumnGroup(cols.getColArray(4), 12, 12, false, true);
+                checkColumnGroup(cols.getColArray(5), 13, 13, false, true);
             }
         }
     }

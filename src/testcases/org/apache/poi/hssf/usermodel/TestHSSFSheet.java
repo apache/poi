@@ -78,11 +78,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         }
     }
 
-    @Test
-    public void getSetMargin() throws IOException {
-        baseTestGetSetMargin(new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3});
-    }
-
     /**
      * Test the gridset field gets set as expected.
      */
@@ -555,22 +550,29 @@ public final class TestHSSFSheet extends BaseTestSheet {
     @Test
     public void addEmptyRow() throws IOException {
         //try to add 5 empty rows to a new sheet
-        try (HSSFWorkbook wb = new HSSFWorkbook()) {
-            HSSFSheet sheet = wb.createSheet();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
             for (int i = 0; i < 5; i++) {
                 sheet.createRow(i);
             }
 
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertNotNull(sheet2.getRow(4));
+            }
         }
 
             //try adding empty rows in an existing worksheet
-        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("Simple.xls")) {
+        try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls")) {
+            HSSFSheet sheet = wb1.getSheetAt(0);
+            for (int i = 3; i < 10; i++) {
+                sheet.createRow(i);
+            }
 
-            HSSFSheet sheet = wb.getSheetAt(0);
-            for (int i = 3; i < 10; i++) sheet.createRow(i);
-
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertNotNull(sheet2.getRow(4));
+            }
         }
     }
 

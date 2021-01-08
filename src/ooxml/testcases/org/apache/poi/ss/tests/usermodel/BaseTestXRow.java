@@ -17,13 +17,10 @@
 
 package org.apache.poi.ss.tests.usermodel;
 
-import java.io.IOException;
-
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.junit.jupiter.api.Test;
 
 /**
  * Class for combined testing of XML-specific functionality of
@@ -35,15 +32,5 @@ import org.junit.jupiter.api.Test;
 public abstract class BaseTestXRow extends BaseTestRow {
     protected BaseTestXRow(ITestDataProvider testDataProvider) {
         super(testDataProvider);
-    }
-
-    @Test
-    public void testRowBounds() throws IOException {
-        baseTestRowBounds(_testDataProvider.getSpreadsheetVersion().getLastRowIndex());
-    }
-
-    @Test
-    public void testCellBounds() throws IOException {
-        baseTestCellBounds(_testDataProvider.getSpreadsheetVersion().getLastColumnIndex());
     }
 }

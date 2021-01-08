@@ -286,9 +286,4 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 			}
 		}
     }
-
-    @Test
-    public void testSharedFormulas() throws IOException {
-        baseTestSharedFormulas("shared_formulas.xls");
-    }
 }

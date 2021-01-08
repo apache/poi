@@ -110,4 +110,5 @@ module org.apache.poi.poi {
     opens org.apache.poi.hpsf.basic to org.junit.platform.commons;
     opens org.apache.poi.hssf.record.pivot to org.junit.platform.commons;
     opens org.apache.poi.hssf.dev to org.junit.platform.commons;
+    opens org.apache.poi.ss.usermodel to org.junit.platform.commons;
 }
