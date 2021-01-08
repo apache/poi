@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestFunctionMetadataRegistry {
 	@Test
-	public void testWellKnownFunctions() {
+	void testWellKnownFunctions() {
 		confirmFunction(0, "COUNT");
 		confirmFunction(1, "IF");
 

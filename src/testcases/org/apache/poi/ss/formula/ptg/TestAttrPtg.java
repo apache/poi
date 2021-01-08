@@ -33,7 +33,7 @@ public final class TestAttrPtg extends BaseTestPtg {
 	 * Fix for bug visible around svn r706772.
 	 */
 	@Test
-	public void testReserializeAttrChoose() {
+	void testReserializeAttrChoose() {
 		byte[] data = HexRead.readFromString("19, 04, 03, 00, 08, 00, 11, 00, 1A, 00, 23, 00");
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(data);
 		Ptg[] ptgs = Ptg.readTokens(data.length, in);

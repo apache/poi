@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestRank {
 
     @Test
-    public void testFromFile() {
+    void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("rank.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

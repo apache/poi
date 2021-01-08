@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherBoolProperty {
     @Test
-    public void testToString() {
+    void testToString() {
         EscherBoolProperty p = new EscherBoolProperty(EscherPropertyTypes.GEOMETRY__FILLOK, 1);
         String expected =
             "{   /* GEOMETRY__FILLOK */\n" +

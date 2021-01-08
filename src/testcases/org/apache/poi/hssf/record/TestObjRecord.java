@@ -60,7 +60,7 @@ public final class TestObjRecord {
     );
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         assertEquals(26, record.getRecordSize() - 4);
@@ -73,7 +73,7 @@ public final class TestObjRecord {
     }
 
     @Test
-    public void testStore() {
+    void testStore() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         byte [] recordBytes = record.serialize();
@@ -83,7 +83,7 @@ public final class TestObjRecord {
     }
 
     @Test
-    public void testConstruct() {
+    void testConstruct() {
         ObjRecord record = new ObjRecord();
         CommonObjectDataSubRecord ftCmo = new CommonObjectDataSubRecord();
         ftCmo.setObjectType( CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT);
@@ -109,7 +109,7 @@ public final class TestObjRecord {
     }
 
     @Test
-    public void testReadWriteWithPadding_bug45133() {
+    void testReadWriteWithPadding_bug45133() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(recdataNeedingPadding));
         assertNotEquals(34, record.getRecordSize(), "Identified bug 45133");
         assertEquals(36, record.getRecordSize());
@@ -127,7 +127,7 @@ public final class TestObjRecord {
      */
     @SuppressWarnings("squid:S2699")
     @Test
-    public void test4BytePadding() {
+    void test4BytePadding() {
         // actual data from file saved by Excel 2007
         byte[] data = HexRead.readFromString(""
                 + "15 00 12 00  1E 00 01 00  11 60 B4 6D  3C 01 C4 06 "

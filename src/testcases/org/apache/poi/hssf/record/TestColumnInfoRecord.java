@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestColumnInfoRecord {
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		byte[] data = HexRead.readFromString("7D 00 0C 00 14 00 9B 00 C7 19 0F 00 01 13 00 00");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
@@ -53,7 +53,7 @@ public final class TestColumnInfoRecord {
 	 * Excel reads that file OK and assumes zero for the value of the reserved field.
 	 */
 	@Test
-	public void testZeroResevedBytes_bug48332() {
+	void testZeroResevedBytes_bug48332() {
 		// Taken from bugzilla attachment 24661 (offset 0x1E73)
 		byte[] inpData = HexRead.readFromString("7D 00 0A 00 00 00 00 00 D5 19 0F 00 02 00");
 		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 D5 19 0F 00 02 00 00 00");
@@ -71,7 +71,7 @@ public final class TestColumnInfoRecord {
 	 * but this seems to cause no problem to Excel
 	 */
 	@Test
-	public void testOneReservedByte() {
+	void testOneReservedByte() {
 		byte[] inpData = HexRead.readFromString("7D 00 0B 00 00 00 00 00 24 02 0F 00 00 00 01");
 		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 24 02 0F 00 00 00 01 00");
 		RecordInputStream in = TestcaseRecordInputStream.create(inpData);

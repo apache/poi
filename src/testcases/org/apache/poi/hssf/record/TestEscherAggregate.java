@@ -37,7 +37,7 @@ public final class TestEscherAggregate {
      * Tests that the create aggregate method correctly rejoins escher records together.
      */
     @Test
-    public void testCreateAggregate() {
+    void testCreateAggregate() {
         String msoDrawingRecord1 =
                 "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
                 "03 00 00 00 02 04 00 00 0F 00 03 F0 08 01 00 00 \n" +
@@ -85,7 +85,7 @@ public final class TestEscherAggregate {
     }
 
     @Test
-    public void testSerialize() {
+    void testSerialize() {
 
         EscherContainerRecord container1 = new EscherContainerRecord();
         EscherContainerRecord spContainer1 = new EscherContainerRecord();

@@ -41,7 +41,7 @@ public final class TestMinusZeroResult {
 	private static final double MINUS_ZERO = -0.0;
 
 	@Test
-	public void testSimpleOperators() {
+	void testSimpleOperators() {
 
 		// unary plus is a no-op
 		checkEval(MINUS_ZERO, UnaryPlusEval.instance, MINUS_ZERO);
@@ -63,14 +63,14 @@ public final class TestMinusZeroResult {
 	 * gets to the comparison operator)
 	 */
 	@Test
-	public void testComparisonOperators() {
+	void testComparisonOperators() {
 		checkEval(false, EvalInstances.Equal, 0.0, MINUS_ZERO);
 		checkEval(true, EvalInstances.GreaterThan, 0.0, MINUS_ZERO);
 		checkEval(true, EvalInstances.LessThan, MINUS_ZERO, 0.0);
 	}
 
 	@Test
-	public void testTextRendering() {
+	void testTextRendering() {
 		confirmTextRendering(MINUS_ZERO);
 		// sub-normal negative numbers also display as '-0'
 		confirmTextRendering(Double.longBitsToDouble(0x8000100020003000L));
@@ -107,7 +107,7 @@ public final class TestMinusZeroResult {
 	 * Not really a POI test - just shows similar behaviour of '-0.0' in Java.
 	 */
 	@Test
-	public void testJava() {
+	void testJava() {
 		assertEquals(0x8000000000000000L, Double.doubleToLongBits(MINUS_ZERO));
 
 		// The simple operators consider all zeros to be the same

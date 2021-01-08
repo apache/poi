@@ -928,7 +928,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test56574OverwriteExistingRow() throws IOException {
+    void test56574OverwriteExistingRow() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1035,7 +1035,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57973() throws IOException {
+    void test57973() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             CreationHelper factory = wb.getCreationHelper();
@@ -1144,7 +1144,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test58113() throws IOException {
+    void test58113() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Test");
 
@@ -1310,7 +1310,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test50319() throws IOException {
+    void test50319() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Test");
             sheet.createRow(0);
@@ -1325,7 +1325,7 @@ public abstract class BaseTestBugzillaIssues {
     // Bug 58648: FormulaParser throws exception in parseSimpleFactor() when getCellFormula()
     // is called on a cell and the formula contains spaces between closing parentheses ") )"
     @Test
-    public void test58648() throws IOException {
+    void test58648() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = wb.createSheet().createRow(0).createCell(0);
             cell.setCellFormula("((1 + 1) )");
@@ -1337,7 +1337,7 @@ public abstract class BaseTestBugzillaIssues {
      *  it as an empty cell, and avoid a NPE on auto-sizing
      */
     @Test
-    public void test57034() throws Exception {
+    void test57034() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Cell cell = s.createRow(0).createCell(0);
@@ -1355,7 +1355,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test52684() throws IOException {
+    void test52684() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             Sheet sheet = wb.createSheet("test");
@@ -1380,7 +1380,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test58896() throws IOException {
+    void test58896() throws IOException {
         final int nrows = 160;
         final int ncols = 139;
 
@@ -1524,7 +1524,7 @@ public abstract class BaseTestBugzillaIssues {
 
     @Disabled
     @Test
-    public void test57929() throws IOException {
+    void test57929() throws IOException {
         // Create a workbook with print areas on 2 sheets
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
@@ -1555,7 +1555,7 @@ public abstract class BaseTestBugzillaIssues {
 
 
     @Test
-    public void test55384() throws Exception {
+    void test55384() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             for (int rownum = 0; rownum < 10; rownum++) {
@@ -1709,7 +1709,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test59200() throws IOException {
+    void test59200() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet();
 
@@ -1763,7 +1763,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test60370() throws IOException {
+    void test60370() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet();
 

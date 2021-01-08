@@ -756,7 +756,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void testGetSetMargin() throws IOException {
+    void testGetSetMargin() throws IOException {
         double[] defaultMargins = (getClass().getName().contains("xssf"))
             ? new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3}
             : new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3};
@@ -1277,7 +1277,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void testRightToLeft() throws IOException {
+    void testRightToLeft() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1290,7 +1290,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void testNoMergedRegionsIsEmptyList() throws IOException {
+    void testNoMergedRegionsIsEmptyList() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             assertTrue(sheet.getMergedRegions().isEmpty());

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRowBlocksReader {
     @Test
-	public void testAbnormalPivotTableRecords_bug46280() {
+	void testAbnormalPivotTableRecords_bug46280() {
 		int SXVIEW_SID = ViewDefinitionRecord.sid;
 		Record[] inRecs = {
 			new RowRecord(0),

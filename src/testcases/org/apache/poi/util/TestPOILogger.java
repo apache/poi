@@ -35,7 +35,7 @@ public final class TestPOILogger implements POILogger {
      * Test different types of log output.
      */
     @Test
-    public void testVariousLogTypes() throws Exception {
+    void testVariousLogTypes() throws Exception {
         String oldLCN = POILogFactory._loggerClassName;
         try {
             POILogFactory._loggerClassName = TestPOILogger.class.getName();

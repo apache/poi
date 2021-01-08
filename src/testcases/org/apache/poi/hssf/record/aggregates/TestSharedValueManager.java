@@ -63,7 +63,7 @@ public final class TestSharedValueManager {
 	 * would sometimes associate formulas in the overlapping region with the wrong shared formula
 	 */
 	@Test
-	public void testPartiallyOverlappingRanges() {
+	void testPartiallyOverlappingRanges() {
 
 
 		for (int attempt=1; attempt < MAX_ATTEMPTS; attempt++) {
@@ -87,7 +87,7 @@ public final class TestSharedValueManager {
 	 * but the symptoms are much uglier - serialization fails with {@link NullPointerException}.<br>
 	 */
 	@Test
-	public void testCompletelyOverlappedRanges() {
+	void testCompletelyOverlappedRanges() {
 		for (int attempt=1; attempt < MAX_ATTEMPTS; attempt++) {
 			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
 
@@ -112,7 +112,7 @@ public final class TestSharedValueManager {
 	 * These were not explored fully, but seem to be fixed now.
 	 */
 	@Test
-	public void testRecalculateFormulas47747() {
+	void testRecalculateFormulas47747() {
 
 		/*
 		 * ex47747-sharedFormula.xls is a heavily cut-down version of the spreadsheet from
@@ -141,7 +141,7 @@ public final class TestSharedValueManager {
 	}
 
 	@Test
-    public void testBug52527() {
+    void testBug52527() {
         HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("52527.xls");
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 

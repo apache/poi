@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public final class TestAreaEval {
 
 	@Test
-	public void testGetValue_bug44950() {
+	void testGetValue_bug44950() {
 		// TODO - this test probably isn't testing much anymore
 		AreaPtg ptg = new AreaPtg(new AreaReference("B2:D3", SpreadsheetVersion.EXCEL97));
 		NumberEval one = new NumberEval(1);

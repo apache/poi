@@ -37,22 +37,22 @@ public final class TestRoundFuncs {
 	// https://github.com/apache/poi/pull/43
     @Disabled("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
 	@Test
-	public void testRoundUp() {
+	void testRoundUp() {
 		assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);
 	}
 
 	@Test
-	public void testRoundDown() {
+	void testRoundDown() {
 		assertRoundDownEquals(797.40, 3987*0.2, 2, 1e-10);
 	}
 
 	@Test
-	public void testRound() {
+	void testRound() {
 		assertRoundEquals(797.40, 3987*0.2, 2, 1e-10);
 	}
 
 	@Test
-	public void testRoundDownWithStringArg() {
+	void testRoundDownWithStringArg() {
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
 		ValueEval result = NumericFunction.ROUNDDOWN.evaluate(args, -1, (short)-1);
@@ -60,7 +60,7 @@ public final class TestRoundFuncs {
 	}
 
 	@Test
-	public void testRoundUpWithStringArg() {
+	void testRoundUpWithStringArg() {
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
 		ValueEval result = NumericFunction.ROUNDUP.evaluate(args, -1, (short)-1);

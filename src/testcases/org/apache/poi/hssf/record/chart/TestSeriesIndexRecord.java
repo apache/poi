@@ -35,7 +35,7 @@ public final class TestSeriesIndexRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         SeriesIndexRecord record = new SeriesIndexRecord(TestcaseRecordInputStream.create(0x1065, data));
 
         assertEquals( (short)3, record.getIndex());
@@ -44,7 +44,7 @@ public final class TestSeriesIndexRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SeriesIndexRecord record = new SeriesIndexRecord();
         record.setIndex( (short)3 );
 

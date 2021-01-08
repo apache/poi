@@ -67,7 +67,7 @@ public final class TestPOIFSStream {
      * Read a single block stream
      */
     @Test
-    public void testReadTinyStream() throws Exception {
+    void testReadTinyStream() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
 
         // 98 is actually the last block in a two block stream...
@@ -94,7 +94,7 @@ public final class TestPOIFSStream {
      * Read a stream with only two blocks in it
      */
     @Test
-    public void testReadShortStream() throws Exception {
+    void testReadShortStream() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
 
         // 97 -> 98 -> end
@@ -133,7 +133,7 @@ public final class TestPOIFSStream {
      * Read a stream with many blocks
      */
     @Test
-    public void testReadLongerStream() throws Exception {
+    void testReadLongerStream() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
 
         ByteBuffer b0 = null;
@@ -193,7 +193,7 @@ public final class TestPOIFSStream {
      * Read a stream with several blocks in a 4096 byte block file
      */
     @Test
-    public void testReadStream4096() throws Exception {
+    void testReadStream4096() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
 
         // 0 -> 1 -> 2 -> end
@@ -244,7 +244,7 @@ public final class TestPOIFSStream {
      * Craft a nasty file with a loop, and ensure we don't get stuck
      */
     @Test
-    public void testReadFailsOnLoop() throws Exception {
+    void testReadFailsOnLoop() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
 
         // Hack the FAT so that it goes 0->1->2->0
@@ -281,7 +281,7 @@ public final class TestPOIFSStream {
      * stored in the mini stream.
      */
     @Test
-    public void testReadMiniStreams() throws Exception {
+    void testReadMiniStreams() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         POIFSMiniStore ministore = fs.getMiniStore();
 
@@ -333,7 +333,7 @@ public final class TestPOIFSStream {
      * Writing the same amount of data as before
      */
     @Test
-    public void testReplaceStream() throws Exception {
+    void testReplaceStream() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
 
         byte[] data = new byte[512];
@@ -367,7 +367,7 @@ public final class TestPOIFSStream {
      * to be freed
      */
     @Test
-    public void testReplaceStreamWithLess() throws Exception {
+    void testReplaceStreamWithLess() throws Exception {
         try (InputStream is = _inst.openResourceAsStream("BlockSize512.zvi");
              POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
@@ -408,7 +408,7 @@ public final class TestPOIFSStream {
      * Writes more data than before, new blocks will be needed
      */
     @Test
-    public void testReplaceStreamWithMore() throws Exception {
+    void testReplaceStreamWithMore() throws Exception {
         try (InputStream is = _inst.openResourceAsStream("BlockSize512.zvi");
              POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
@@ -455,7 +455,7 @@ public final class TestPOIFSStream {
      * Writes to a new stream in the file
      */
     @Test
-    public void testWriteNewStream() throws Exception {
+    void testWriteNewStream() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
 
         // 100 is our first free one
@@ -550,7 +550,7 @@ public final class TestPOIFSStream {
      * to support this
      */
     @Test
-    public void testWriteNewStreamExtraFATs() throws Exception {
+    void testWriteNewStreamExtraFATs() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
 
         // Allocate almost all the blocks
@@ -592,7 +592,7 @@ public final class TestPOIFSStream {
      * more data than before, in a 4096 byte block file
      */
     @Test
-    public void testWriteStream4096() throws Exception {
+    void testWriteStream4096() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
 
         // 0 -> 1 -> 2 -> end
@@ -647,7 +647,7 @@ public final class TestPOIFSStream {
      * Tests that we can write into the mini stream
      */
     @Test
-    public void testWriteMiniStreams() throws Exception {
+    void testWriteMiniStreams() throws Exception {
         try (InputStream is = _inst.openResourceAsStream("BlockSize512.zvi");
              POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
@@ -838,7 +838,7 @@ public final class TestPOIFSStream {
      * Craft a nasty file with a loop, and ensure we don't get stuck
      */
     @Test
-    public void testWriteFailsOnLoop() throws Exception {
+    void testWriteFailsOnLoop() throws Exception {
         try (POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"))) {
 
             // Hack the FAT so that it goes 0->1->2->0
@@ -867,7 +867,7 @@ public final class TestPOIFSStream {
      * Tests adding a new stream, writing and reading it.
      */
     @Test
-    public void testReadWriteNewStream() throws Exception {
+    void testReadWriteNewStream() throws Exception {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             POIFSStream stream = new POIFSStream(fs);
 
@@ -933,7 +933,7 @@ public final class TestPOIFSStream {
      * Writes a stream, then replaces it
      */
     @Test
-    public void testWriteThenReplace() throws Exception {
+    void testWriteThenReplace() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem();
 
         // Starts empty, other that Properties and BAT

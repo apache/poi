@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestNameCommentRecord {
 	@Test
-	public void testReserialize() {
+	void testReserialize() {
 		final byte[] data = HexRead
 				.readFromString(""
 						+ "94 08 00 00 00 00 00 00 00 00 00 00 04 00 07 00 00 6E 61 6D 65 00 63 6F 6D 6D 65 6E 74]");

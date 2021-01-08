@@ -61,7 +61,7 @@ public class BaseTestForkedEvaluator {
 	 * Shows a basic use-case for {@link ForkedEvaluator}
 	 */
 	@Test
-	public void testBasic() throws IOException {
+	void testBasic() throws IOException {
 		try (Workbook wb = createWorkbook()) {
 
 			// The stability classifier is useful to reduce memory consumption of caching logic
@@ -102,7 +102,7 @@ public class BaseTestForkedEvaluator {
 	 * <i>read-only</i> with respect to the ForkedEvaluator.
 	 */
 	@Test
-	public void testMissingInputCellH() throws IOException {
+	void testMissingInputCellH() throws IOException {
 
 		try (Workbook wb = createWorkbook()) {
 			ForkedEvaluator fe = ForkedEvaluator.create(wb, null, null);

@@ -35,7 +35,7 @@ public final class TestFontIndexRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         FontIndexRecord record = new FontIndexRecord(TestcaseRecordInputStream.create(0x1026, data));
         assertEquals( 5, record.getFontIndex());
@@ -45,7 +45,7 @@ public final class TestFontIndexRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         FontIndexRecord record = new FontIndexRecord();
         record.setFontIndex( (short)5 );
 

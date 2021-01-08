@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public final class TestAreas {
 
     @Test
-    public void testAreas() {
+    void testAreas() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

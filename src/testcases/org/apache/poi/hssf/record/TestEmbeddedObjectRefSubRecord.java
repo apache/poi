@@ -33,7 +33,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 	private static final short EORSR_SID = EmbeddedObjectRefSubRecord.sid;
 
 	@Test
-	public void testStore() {
+	void testStore() {
 		String data1
 				= "20 00 05 00 FC 10 76 01 02 24 14 DF 00 03 10 00 "
 				+ "00 46 6F 72 6D 73 2E 43 68 65 63 6B 42 6F 78 2E "
@@ -58,7 +58,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 	}
 
 	@Test
-	public void testCreate() {
+	void testCreate() {
 		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord();
 
 		byte[] ser = record1.serialize();
@@ -74,7 +74,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testCameraTool_bug45912() {
+	void testCameraTool_bug45912() {
 		/*
 		 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
 		 */
@@ -98,7 +98,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 	 */
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testVarious() {
+	void testVarious() {
 		String[] rawData = {
 			"12 00 0B 00 70 95 0B 05 3B 01 00 36 00 40 00 18 00 19 00 18",
 			"12 00 0B 00 B0 4D 3E 03 3B 00 00 00 00 01 00 00 80 01 C0 00",
@@ -132,7 +132,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testVisioDrawing_bug46199() {
+	void testVisioDrawing_bug46199() {
 		/*
 		 * taken from ftPictFmla sub-record in attachment 22860 (stream offset 0x768F).<br>
 		 * Note that the since the string length is zero, there is no unicode flag byte

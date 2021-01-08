@@ -64,7 +64,7 @@ public class TestEFBiffViewer extends BaseTestIteratingXLS {
 	}
 
 	//@Test
-	public void testFile() throws IOException {
+	void testFile() throws IOException {
 		EFBiffViewer viewer = new EFBiffViewer();
 		viewer.setFile(new File("test-data/spreadsheet/59074.xls").getAbsolutePath());
 		viewer.run();

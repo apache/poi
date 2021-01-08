@@ -48,7 +48,7 @@ public final class TestAverage {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 
 		ValueEval[] values = {
 				new NumberEval(1),
@@ -76,7 +76,7 @@ public final class TestAverage {
 	 * Valid cases where values are not pure numbers
 	 */
 	@Test
-	public void testUnusualArgs() {
+	void testUnusualArgs() {
 		ValueEval[] values = {
 				new NumberEval(1),
 				new NumberEval(2),
@@ -89,7 +89,7 @@ public final class TestAverage {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		ValueEval[] values = {
 				new NumberEval(1),
 				ErrorEval.NAME_INVALID,

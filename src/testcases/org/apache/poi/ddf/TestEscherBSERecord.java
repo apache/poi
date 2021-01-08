@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherBSERecord {
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String data = "01 00 00 00 24 00 00 00 05 05 01 02 03 04 " +
                 " 05 06 07 08 09 0A 0B 0C 0D 0E 0F 00 01 00 00 00 " +
                 " 00 00 02 00 00 00 03 00 00 00 04 05 06 07";
@@ -52,7 +52,7 @@ public final class TestEscherBSERecord {
     }
 
     @Test
-    public void testSerialize() throws IOException {
+    void testSerialize() throws IOException {
         EscherBSERecord r = createRecord();
         String exp64 = "H4sIAAAAAAAAAGNkYP+gwsDAwMrKyMTMwsrGzsHJxc3Dy8fPwMgAAkxAzAzEICkAgs9OoSwAAAA=";
         byte[] expected = RawDataUtil.decompress(exp64);
@@ -82,7 +82,7 @@ public final class TestEscherBSERecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         EscherBSERecord record = createRecord();
         String expected =
             "{   /* BSE */\n" +

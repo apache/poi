@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class TestMathX extends BaseTestNumeric {
 
     @Test
-    public void testAcosh() {
+    void testAcosh() {
         double d;
 
         d = MathX.acosh(0);
@@ -57,7 +57,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testAsinh() {
+    void testAsinh() {
         double d;
 
         d = MathX.asinh(0);
@@ -84,7 +84,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testAtanh() {
+    void testAtanh() {
         double d;
         d = MathX.atanh(0);
         assertDouble("atanh 0", d, 0);
@@ -116,7 +116,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testCosh() {
+    void testCosh() {
         double d;
         d = MathX.cosh(0);
         assertDouble("cosh 0", 1, d);
@@ -148,7 +148,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testTanh() {
+    void testTanh() {
         double d;
         d = MathX.tanh(0);
         assertDouble("tanh 0", 0, d);
@@ -180,7 +180,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testMax() {
+    void testMax() {
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1;
         d[4] = 5.1;     d[5] = 6.1;     d[6] = 7.1;     d[7] = 8.1;
@@ -215,7 +215,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testMin() {
+    void testMin() {
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1;
         d[4] = 5.1;     d[5] = 6.1;     d[6] = 7.1;     d[7] = 8.1;
@@ -259,7 +259,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testProduct() {
+    void testProduct() {
         assertDouble("Product ", 0, MathX.product(null));
         assertDouble("Product ", 0, MathX.product(new double[] {}));
         assertDouble("Product ", 0, MathX.product(new double[] {1, 0}));
@@ -305,7 +305,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testMod() {
+    void testMod() {
 
         //example from Excel help
         assertDouble(1.0, MathX.mod(3, 2));
@@ -327,7 +327,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testNChooseK() {
+    void testNChooseK() {
         int n=100;
         int k=50;
         double d = MathX.nChooseK(n, k);
@@ -376,7 +376,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSign() {
+    void testSign() {
         final short minus = -1;
         final short zero = 0;
         final short plus = 1;
@@ -429,7 +429,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSinh() {
+    void testSinh() {
         double d;
         d = MathX.sinh(0);
         assertDouble("sinh 0", 0, d);
@@ -461,7 +461,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSum() {
+    void testSum() {
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1;
         d[4] = 5.1;     d[5] = 6.1;     d[6] = 7.1;     d[7] = 8.1;
@@ -495,7 +495,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSumsq() {
+    void testSumsq() {
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1;
         d[4] = 5.1;     d[5] = 6.1;     d[6] = 7.1;     d[7] = 8.1;
@@ -528,7 +528,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testFactorial() {
+    void testFactorial() {
         int n;
         double s;
 
@@ -558,7 +558,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSumx2my2() {
+    void testSumx2my2() {
         double[] xarr;
         double[] yarr;
 
@@ -584,7 +584,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSumx2py2() {
+    void testSumx2py2() {
         double[] xarr;
         double[] yarr;
 
@@ -610,7 +610,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testSumxmy2() {
+    void testSumxmy2() {
         double[] xarr;
         double[] yarr;
 
@@ -655,7 +655,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testRound() {
+    void testRound() {
         double d;
         int p;
 
@@ -727,7 +727,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testRoundDown() {
+    void testRoundDown() {
         double d;
         int p;
 
@@ -799,7 +799,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testRoundUp() {
+    void testRoundUp() {
         double d;
         int p;
 
@@ -876,7 +876,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testCeiling() {
+    void testCeiling() {
         double d;
         double s;
 
@@ -962,7 +962,7 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
-    public void testFloor() {
+    void testFloor() {
         double d;
         double s;
 

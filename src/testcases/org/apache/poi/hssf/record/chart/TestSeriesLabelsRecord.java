@@ -37,7 +37,7 @@ public final class TestSeriesLabelsRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         SeriesLabelsRecord record = new SeriesLabelsRecord(TestcaseRecordInputStream.create(0x100c, data));
         assertEquals( 3, record.getFormatFlags());
         assertTrue(record.isShowActual());
@@ -52,7 +52,7 @@ public final class TestSeriesLabelsRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SeriesLabelsRecord record = new SeriesLabelsRecord();
         record.setShowActual( true );
         record.setShowPercent( true );

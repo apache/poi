@@ -83,7 +83,7 @@ public final class TestSSTRecord {
      * SST is often split over several {@link ContinueRecord}s
      */
     @Test
-    public void testContinuedRecord() throws IOException {
+    void testContinuedRecord() throws IOException {
         byte[] origData;
         SSTRecord record;
         byte[] ser_output;
@@ -125,7 +125,7 @@ public final class TestSSTRecord {
      * Test capability of handling mondo big strings
      */
     @Test
-    public void testHugeStrings() {
+    void testHugeStrings() {
         SSTRecord record = new SSTRecord();
         byte[][] bstrings =
                 {
@@ -208,7 +208,7 @@ public final class TestSSTRecord {
      * test SSTRecord boundary conditions
      */
     @Test
-    public void testSSTRecordBug() {
+    void testSSTRecordBug() {
         // create an SSTRecord and write a certain pattern of strings
         // to it ... then serialize it and verify the content
         SSTRecord record = new SSTRecord();
@@ -244,7 +244,7 @@ public final class TestSSTRecord {
      * test simple addString
      */
     @Test
-    public void testSimpleAddString() {
+    void testSimpleAddString() {
         SSTRecord record = new SSTRecord();
         UnicodeString s1 = new UnicodeString("Hello world");
 
@@ -290,7 +290,7 @@ public final class TestSSTRecord {
      * test simple constructor
      */
     @Test
-    public void testSimpleConstructor() {
+    void testSimpleConstructor() {
         SSTRecord record = new SSTRecord();
 
         assertEquals( 0, record.getNumStrings() );
@@ -310,7 +310,7 @@ public final class TestSSTRecord {
      * Tests that workbooks with rich text that duplicates a non rich text cell can be read and written.
      */
     @Test
-    public void testReadWriteDuplicatedRichText1() throws Exception {
+    void testReadWriteDuplicatedRichText1() throws Exception {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("duprich1.xls")) {
             HSSFSheet sheet = wb.getSheetAt(1);
             assertEquals("01/05 (Wed)", sheet.getRow(0).getCell(8).getStringCellValue());
@@ -351,7 +351,7 @@ public final class TestSSTRecord {
     }
 
     @Test
-    public void test50779_1() throws IOException {
+    void test50779_1() throws IOException {
         byte[] bytes = RawDataUtil.decompress("H4sIAAAAAAAAAL3aO2gVQRQG4HO5XkEZ8AESi4DBKoXFP+8IVioSvahcLxKC" +
           "iRIRc9FEUZExCL4IYnyQqIi9SEATFUHRTkSQaBFsrEQLG8EiFgGrCM6uIGiff5c5e3ZY9l8W9mt2FqSjoyEixTBSW5kPm7EV29CNHa" +
           "hjJ3ajgSb2oge92Id+HMAADuEwWjiCoxjCMI7hOE7iNM7gLM7hPC7gIi5hFJdxBWO4imu4jhsYxy3cBqTYtVRESU28/NnqMFJZ/Fgj" +
@@ -378,7 +378,7 @@ public final class TestSSTRecord {
     }
 
     @Test
-    public void test50779_2() throws IOException {
+    void test50779_2() throws IOException {
         byte[] bytes = RawDataUtil.decompress("H4sIAAAAAAAAAL3Uu2sVQRjG4e9wOKKw4gUkKSyCVQqLd2d2ZhOwiiLqQSUe" +
           "JIgRUcQc1ERUZBXBG0GMFxIiaC8S8I6FWIoIop2NlWBhI1hoIVhFcM6Cgn+Avx3m2+HbXd5hYJ9FGxgYNbPedNYY0SZt1hZtU1vbtV" +
           "Oj6mi3xrRHe7VP+3VAh3RYXR3RUR3TpKZ0XCd1Wmd0Tud1QRd1SZc1rSu6qhld03Xd0E3Nal63JOuNnIlxTIxnYgomJjAxkYkpmZgh" +
@@ -404,7 +404,7 @@ public final class TestSSTRecord {
     }
 
     @Test
-    public void test57456() {
+    void test57456() {
         byte[] bytes = HexRead.readFromString("FC, 00, 08, 00, 00, 00, 00, 00, E1, 06, 00, 00");
         RecordInputStream in = TestcaseRecordInputStream.create(bytes);
         assertEquals(SSTRecord.sid, in.getSid());

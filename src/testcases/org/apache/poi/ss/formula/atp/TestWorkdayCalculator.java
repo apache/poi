@@ -30,28 +30,28 @@ import org.junit.jupiter.api.Test;
 public class TestWorkdayCalculator {
 
     @Test
-    public void testCalculateWorkdaysShouldReturnJustWeekdaysWhenNoWeekend() {
+    void testCalculateWorkdaysShouldReturnJustWeekdaysWhenNoWeekend() {
         final double A_MONDAY = DateUtil.getExcelDate(d(2011, 12, 12));
         final double A_FRIDAY = DateUtil.getExcelDate(d(2011, 12, 16));
         assertEquals(5, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_FRIDAY, new double[0]));
     }
 
     @Test
-    public void testCalculateWorkdaysShouldReturnAllDaysButNoSaturdays() {
+    void testCalculateWorkdaysShouldReturnAllDaysButNoSaturdays() {
         final double A_WEDNESDAY = DateUtil.getExcelDate(d(2011, 12, 14));
         final double A_SATURDAY = DateUtil.getExcelDate(d(2011, 12, 18));
         assertEquals(3, WorkdayCalculator.instance.calculateWorkdays(A_WEDNESDAY, A_SATURDAY, new double[0]));
     }
 
     @Test
-    public void testCalculateWorkdaysShouldReturnAllDaysButNoSundays() {
+    void testCalculateWorkdaysShouldReturnAllDaysButNoSundays() {
         final double A_SUNDAY = DateUtil.getExcelDate(d(2011, 12, 11));
         final double A_THURSDAY = DateUtil.getExcelDate(d(2011, 12, 15));
         assertEquals(4, WorkdayCalculator.instance.calculateWorkdays(A_SUNDAY, A_THURSDAY, new double[0]));
     }
 
     @Test
-    public void testCalculateWorkdaysShouldReturnAllDaysButNoHolidays() {
+    void testCalculateWorkdaysShouldReturnAllDaysButNoHolidays() {
         final double A_MONDAY = DateUtil.getExcelDate(d(2011, 12, 12));
         final double A_FRIDAY = DateUtil.getExcelDate(d(2011, 12, 16));
         final double A_WEDNESDAY = DateUtil.getExcelDate(d(2011, 12, 14));
@@ -59,7 +59,7 @@ public class TestWorkdayCalculator {
     }
 
     @Test
-    public void testCalculateWorkdaysShouldIgnoreWeekendHolidays() {
+    void testCalculateWorkdaysShouldIgnoreWeekendHolidays() {
         final double A_FRIDAY = DateUtil.getExcelDate(d(2011, 12, 16));
         final double A_SATURDAY = DateUtil.getExcelDate(d(2011, 12, 17));
         final double A_SUNDAY = DateUtil.getExcelDate(d(2011, 12, 18));
@@ -68,60 +68,60 @@ public class TestWorkdayCalculator {
     }
 
 	@Test
-	public void testCalculateWorkdaysOnSameDayShouldReturn1ForWeekdays() {
+	void testCalculateWorkdaysOnSameDayShouldReturn1ForWeekdays() {
 		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
 		assertEquals(1, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[0]));
 	}
 
 	@Test
-	public void testCalculateWorkdaysOnSameDayShouldReturn0ForHolidays() {
+	void testCalculateWorkdaysOnSameDayShouldReturn0ForHolidays() {
 		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
 		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[]{ A_MONDAY }));
 	}
 
 	@Test
-	public void testCalculateWorkdaysOnSameDayShouldReturn0ForWeekends() {
+	void testCalculateWorkdaysOnSameDayShouldReturn0ForWeekends() {
 		final double A_SUNDAY = DateUtil.getExcelDate(d(2017, 1, 1));
 		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_SUNDAY, A_SUNDAY, new double[0]));
 	}
 
     @Test
-    public void testCalculateWorkdaysNumberOfDays() {
+    void testCalculateWorkdaysNumberOfDays() {
     	double start = 41553.0;
     	int days = 1;
         assertEquals(d(2013, 10, 7), WorkdayCalculator.instance.calculateWorkdays(start, days, new double[0]));
     }
 
     @Test
-    public void testPastDaysOfWeekShouldReturn0Past0Saturdays() {
+    void testPastDaysOfWeekShouldReturn0Past0Saturdays() {
         final double A_WEDNESDAY = DateUtil.getExcelDate(d(2011, 12, 7));
         final double A_FRIDAY = DateUtil.getExcelDate(d(2011, 12, 9));
         assertEquals(0, WorkdayCalculator.instance.pastDaysOfWeek(A_WEDNESDAY, A_FRIDAY, SATURDAY));
     }
 
     @Test
-    public void testPastDaysOfWeekShouldReturn1Past1Saturdays() {
+    void testPastDaysOfWeekShouldReturn1Past1Saturdays() {
         final double A_WEDNESDAY = DateUtil.getExcelDate(d(2011, 12, 7));
         final double A_SUNDAY = DateUtil.getExcelDate(d(2011, 12, 11));
         assertEquals(1, WorkdayCalculator.instance.pastDaysOfWeek(A_WEDNESDAY, A_SUNDAY, SATURDAY));
     }
 
     @Test
-    public void testPastDaysOfWeekShouldReturn2Past2Saturdays() {
+    void testPastDaysOfWeekShouldReturn2Past2Saturdays() {
         final double A_THURSDAY = DateUtil.getExcelDate(d(2011, 12, 8));
         final double A_MONDAY = DateUtil.getExcelDate(d(2011, 12, 19));
         assertEquals(2, WorkdayCalculator.instance.pastDaysOfWeek(A_THURSDAY, A_MONDAY, SATURDAY));
     }
 
     @Test
-    public void testPastDaysOfWeekShouldReturn1BeginningFromASaturday() {
+    void testPastDaysOfWeekShouldReturn1BeginningFromASaturday() {
         final double A_SATURDAY = DateUtil.getExcelDate(d(2011, 12, 10));
         final double A_SUNDAY = DateUtil.getExcelDate(d(2011, 12, 11));
         assertEquals(1, WorkdayCalculator.instance.pastDaysOfWeek(A_SATURDAY, A_SUNDAY, SATURDAY));
     }
 
     @Test
-    public void testPastDaysOfWeekShouldReturn1EndingAtASaturday() {
+    void testPastDaysOfWeekShouldReturn1EndingAtASaturday() {
         final double A_THURSDAY = DateUtil.getExcelDate(d(2011, 12, 8));
         final double A_SATURDAY = DateUtil.getExcelDate(d(2011, 12, 10));
         assertEquals(1, WorkdayCalculator.instance.pastDaysOfWeek(A_THURSDAY, A_SATURDAY, SATURDAY));
@@ -133,7 +133,7 @@ public class TestWorkdayCalculator {
     }
 
     @Test
-    public void testCalculateNonWeekendHolidays() {
+    void testCalculateNonWeekendHolidays() {
         final double start = DateUtil.getExcelDate(d(2016, 12, 24));
         final double end = DateUtil.getExcelDate(d(2016, 12, 31));
         final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));
@@ -143,7 +143,7 @@ public class TestWorkdayCalculator {
     }
 
     @Test
-    public void testCalculateNonWeekendHolidaysOneDay() {
+    void testCalculateNonWeekendHolidaysOneDay() {
         final double start = DateUtil.getExcelDate(d(2016, 12, 26));
         final double end = DateUtil.getExcelDate(d(2016, 12, 26));
         final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));

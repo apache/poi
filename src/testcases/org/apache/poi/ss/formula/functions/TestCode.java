@@ -47,7 +47,7 @@ public class TestCode {
     }
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         confirmValue("Displays the numeric code for A (65)", "A", "65");
         confirmValue("Displays the numeric code for the first character in text ABCDEFGHI (65)", "ABCDEFGHI", "65");
 
@@ -55,7 +55,7 @@ public class TestCode {
     }
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("Empty text", "", ErrorEval.VALUE_INVALID);
     }
 }

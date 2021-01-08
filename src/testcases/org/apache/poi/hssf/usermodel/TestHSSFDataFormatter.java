@@ -229,7 +229,7 @@ public final class TestHSSFDataFormatter {
      * Test getting formatted values from numeric and date cells.
      */
     @Test
-    public void testGetFormattedCellValueHSSFCell() {
+    void testGetFormattedCellValueHSSFCell() {
         // Valid date formats -- cell values should be date formatted & not "555.555"
         HSSFRow row = wb.getSheetAt(0).getRow(0);
         Iterator<Cell> it = row.cellIterator();
@@ -332,7 +332,7 @@ public final class TestHSSFDataFormatter {
     }
 
     @Test
-    public void testGetFormattedCellValueHSSFCellHSSFFormulaEvaluator() {
+    void testGetFormattedCellValueHSSFCellHSSFFormulaEvaluator() {
         // test formula format
         HSSFRow row = wb.getSheetAt(0).getRow(7);
         HSSFCell cell = row.getCell(0);
@@ -355,7 +355,7 @@ public final class TestHSSFDataFormatter {
      * format pattern cannot be parsed by DecimalFormat.
      */
     @Test
-    public void testSetDefaultNumberFormat() {
+    void testSetDefaultNumberFormat() {
         HSSFRow row = wb.getSheetAt(0).getRow(3);
         Iterator<Cell> it = row.cellIterator();
         DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
@@ -378,7 +378,7 @@ public final class TestHSSFDataFormatter {
      * A format of "@" means use the general format
      */
     @Test
-    public void testGeneralAtFormat() {
+    void testGeneralAtFormat() {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("47154.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
@@ -397,7 +397,7 @@ public final class TestHSSFDataFormatter {
      * Tests various formattings of dates and numbers
      */
     @Test
-    public void testFromFile() {
+    void testFromFile() {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("Formatting.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
 

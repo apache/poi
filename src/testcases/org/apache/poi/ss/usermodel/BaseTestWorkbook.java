@@ -295,7 +295,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void testSetActiveCell() throws IOException {
+    void testSetActiveCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("new sheet");
             final CellAddress initialActiveCell = sheet.getActiveCell();
@@ -764,7 +764,7 @@ public abstract class BaseTestWorkbook {
 	}
 
     @Test
-    public void test58499() throws IOException {
+    void test58499() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook();
              OutputStream os = new NullOutputStream()) {
             Sheet sheet = workbook.createSheet();

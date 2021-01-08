@@ -35,7 +35,7 @@ public final class TestWriteAccessRecord {
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20";
 
 	@Test
-	public void testMissingStringHeader_bug47001a() {
+	void testMissingStringHeader_bug47001a() {
 		/*
 		 * Data taken from offset 0x0224 in
 		 * attachment 23468 from bugzilla 47001
@@ -66,7 +66,7 @@ public final class TestWriteAccessRecord {
 	}
 
 	@Test
-	public void testShortRecordWrittenByMSAccess() {
+	void testShortRecordWrittenByMSAccess() {
 		/*
 		 * Data taken from two example files
 		 * ex42564-21435.xls

@@ -40,7 +40,7 @@ public class TestArrayUtil {
 	 * Test to ensure that arrayMoveWithin works as expected
 	 */
 	@Test
-	public void testArrayMoveWithin() {
+	void testArrayMoveWithin() {
 		// moveFrom, moveTo, numToMove, values...
 		Integer[][] data = {
 			// Moving to a later point in the array

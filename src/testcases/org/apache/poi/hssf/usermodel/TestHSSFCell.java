@@ -63,7 +63,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  but there's a separate unit test for that.
 	 */
 	@Test
-	public void testDateWindowingRead() throws IOException {
+	void testDateWindowingRead() throws IOException {
 	    Calendar cal = LocaleUtil.getLocaleCalendar(2000, 0, 1, 0, 0, 0);// Jan. 1, 2000
 		Date date = cal.getTime();
 
@@ -95,7 +95,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * results of this test are meaningless.
 	 */
 	@Test
-	public void testDateWindowingWrite() throws IOException {
+	void testDateWindowingWrite() throws IOException {
 	    Calendar cal = LocaleUtil.getLocaleCalendar(2000,0,1,0,0,0); // Jan. 1, 2000
 		Date date = cal.getTime();
 
@@ -144,7 +144,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Tests that the active cell can be correctly read and set
 	 */
 	@Test
-	public void testActiveCell() throws IOException {
+	void testActiveCell() throws IOException {
 		//read in sample
 		try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls")) {
 
@@ -173,7 +173,7 @@ public final class TestHSSFCell extends BaseTestCell {
 
 
 	@Test
-	public void testActiveCellBug56114() throws IOException {
+	void testActiveCellBug56114() throws IOException {
 	    try (Workbook wb = new HSSFWorkbook()) {
 			Sheet sh = wb.createSheet();
 
@@ -215,7 +215,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Test reading hyperlinks
 	 */
 	@Test
-	public void testWithHyperlink() throws IOException {
+	void testWithHyperlink() throws IOException {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithHyperlink.xls")) {
 
 			HSSFSheet sheet = wb.getSheetAt(0);
@@ -234,7 +234,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Test reading hyperlinks
 	 */
 	@Test
-	public void testWithTwoHyperlinks() throws IOException {
+	void testWithTwoHyperlinks() throws IOException {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoHyperLinks.xls")) {
 
 			HSSFSheet sheet = wb.getSheetAt(0);
@@ -262,7 +262,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  to our workbook, and not those from other workbooks.
 	 */
 	@Test
-	public void testCellStyleWorkbookMatch() throws IOException {
+	void testCellStyleWorkbookMatch() throws IOException {
 		try (HSSFWorkbook wbA = new HSSFWorkbook();
 			HSSFWorkbook wbB = new HSSFWorkbook()) {
 
@@ -291,7 +291,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * versions (prior to bug 46213 / r717883) crash instead.
 	 */
 	@Test
-	public void testCachedTypeChange() throws IOException {
+	void testCachedTypeChange() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet("Sheet1");
 			Cell cell = sheet.createRow(0).createCell(0);
@@ -336,14 +336,14 @@ public final class TestHSSFCell extends BaseTestCell {
      * HSSF prior to version 3.7 had a bug: it could write a NaN but could not read such a file back.
      */
 	@Test
-	public void testReadNaN() throws IOException {
+	void testReadNaN() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49761.xls")) {
 			assertNotNull(wb);
 		}
     }
 
 	@Test
-	public void testHSSFCell() throws IOException {
+	void testHSSFCell() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet();
 			HSSFRow row = sheet.createRow(0);
@@ -354,7 +354,7 @@ public final class TestHSSFCell extends BaseTestCell {
     }
 
     @Test
-    public void testDeprecatedMethods() throws IOException {
+    void testDeprecatedMethods() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet();
 			HSSFRow row = sheet.createRow(0);
@@ -371,7 +371,7 @@ public final class TestHSSFCell extends BaseTestCell {
     }
 
     @Test
-    public void testCellType() throws IOException {
+    void testCellType() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			Row row = sheet.createRow(0);

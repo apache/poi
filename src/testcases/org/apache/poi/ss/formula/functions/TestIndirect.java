@@ -97,7 +97,7 @@ public final class TestIndirect {
     }
 
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
 
         HSSFWorkbook wbA = createWBA();
         HSSFCell c = wbA.getSheetAt(0).createRow(5).createCell(2);
@@ -155,7 +155,7 @@ public final class TestIndirect {
     }
 
     @Test
-    public void testMultipleWorkbooks() throws Exception {
+    void testMultipleWorkbooks() throws Exception {
         HSSFWorkbook wbA = createWBA();
         HSSFCell cellA = wbA.getSheetAt(0).createRow(10).createCell(0);
         HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
@@ -197,7 +197,7 @@ public final class TestIndirect {
     }
 
     @Test
-    public void testInvalidInput() {
+    void testInvalidInput() {
         assertEquals(ErrorEval.VALUE_INVALID, Indirect.instance.evaluate(new ValueEval[] {}, null));
     }
 }

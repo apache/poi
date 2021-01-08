@@ -36,7 +36,7 @@ public final class TestNumberToTextConverter {
 	 * up to contain the rendering as produced by Excel.
 	 */
 	@Test
-	public void testAll() {
+	void testAll() {
 		ExampleConversion[] examples = NumberToTextConversionExamples.getExampleConversions();
 
 		for (ExampleConversion example : examples) {
@@ -84,7 +84,7 @@ public final class TestNumberToTextConverter {
 	}
 
 	@Test
-	public void testSimpleRendering_bug56156() {
+	void testSimpleRendering_bug56156() {
 		double dResult = 0.05+0.01; // values chosen to produce rounding anomaly
 		String actualText = NumberToTextConverter.toText(dResult);
 		String jdkText = Double.toString(dResult);

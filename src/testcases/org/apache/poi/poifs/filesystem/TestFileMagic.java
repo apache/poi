@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestFileMagic {
     @Test
-    public void testFileMagic() {
+    void testFileMagic() {
         assertEquals(FileMagic.XML, FileMagic.valueOf("XML"));
         assertEquals(FileMagic.XML, FileMagic.valueOf("<?xml".getBytes(StandardCharsets.UTF_8)));
 
@@ -66,13 +66,13 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testFileMagicFile() throws IOException {
+    void testFileMagicFile() throws IOException {
         assertEquals(FileMagic.OLE2, FileMagic.valueOf(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls")));
         assertEquals(FileMagic.OOXML, FileMagic.valueOf(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx")));
     }
 
     @Test
-    public void testFileMagicStream() throws IOException {
+    void testFileMagicStream() throws IOException {
         try (InputStream stream = new BufferedInputStream(new FileInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls")))) {
             assertEquals(FileMagic.OLE2, FileMagic.valueOf(stream));
         }
@@ -82,7 +82,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testPrepare() throws IOException {
+    void testPrepare() throws IOException {
         try (InputStream stream = new BufferedInputStream(new FileInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx")))) {
             assertSame(stream, FileMagic.prepareToCheckMagic(stream));
         }
@@ -98,7 +98,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testMatchingButTooLessData() {
+    void testMatchingButTooLessData() {
         // this matches JPG, but is not long enough, previously this caused an Exception
         byte[] data = new byte[] { -1, -40, -1, -32, 0, 16, 74, 70 };
 
@@ -106,7 +106,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testShortFile() throws IOException {
+    void testShortFile() throws IOException {
         // having a file shorter than 8 bytes previously caused an exception
         fetchMagicFromData(new byte[] { -1, -40, -1, -32, 0 });
         fetchMagicFromData(new byte[] { -1, -40, -1, -32 });
@@ -130,7 +130,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testMarkRequired() throws IOException {
+    void testMarkRequired() throws IOException {
         byte[] data = new byte[] { -1, -40, -1, -32, 0 };
 
         File file = TempFile.createTempFile("TestFileMagic", ".bin");
@@ -151,7 +151,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testPatterns() {
+    void testPatterns() {
         // just try to trash the functionality with some byte-patterns
         for(int i = 0; i < 256;i++) {
             final byte[] data = new byte[12];
@@ -164,7 +164,7 @@ public class TestFileMagic {
     }
 
     @Test
-    public void testRandomPatterns() {
+    void testRandomPatterns() {
         Random random = new Random();
 
         // just try to trash the functionality with some byte-patterns

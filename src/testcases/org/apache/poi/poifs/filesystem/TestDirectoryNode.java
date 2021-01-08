@@ -42,7 +42,7 @@ public final class TestDirectoryNode {
      * test trivial constructor (a DirectoryNode with no children)
      */
     @Test
-    public void testEmptyConstructor() throws IOException {
+    void testEmptyConstructor() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             DirectoryProperty property1 = new DirectoryProperty("parent");
             DirectoryProperty property2 = new DirectoryProperty("child");
@@ -90,7 +90,7 @@ public final class TestDirectoryNode {
      * test non-trivial constructor (a DirectoryNode with children)
      */
     @Test
-    public void testNonEmptyConstructor() throws IOException {
+    void testNonEmptyConstructor() throws IOException {
         DirectoryProperty property1 = new DirectoryProperty("parent");
         DirectoryProperty property2 = new DirectoryProperty("child1");
 
@@ -142,7 +142,7 @@ public final class TestDirectoryNode {
      * test deletion methods
      */
     @Test
-    public void testDeletion() throws IOException {
+    void testDeletion() throws IOException {
         try (POIFSFileSystem fs   = new POIFSFileSystem()) {
             DirectoryEntry root = fs.getRoot();
 
@@ -186,7 +186,7 @@ public final class TestDirectoryNode {
      * test change name methods
      */
     @Test
-    public void testRename() throws IOException {
+    void testRename() throws IOException {
         try (POIFSFileSystem fs   = new POIFSFileSystem()) {
             DirectoryEntry root = fs.getRoot();
 

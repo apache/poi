@@ -61,7 +61,7 @@ public final class TestHSSFEventFactory {
     }
 
     @Test
-    public void testWithMissingRecords() throws Exception {
+    void testWithMissingRecords() throws Exception {
 
         openSample("SimpleWithSkip.xls");
 
@@ -78,7 +78,7 @@ public final class TestHSSFEventFactory {
     }
 
     @Test
-    public void testWithCrazyContinueRecords() throws Exception {
+    void testWithCrazyContinueRecords() throws Exception {
         // Some files have crazy ordering of their continue records
         // Check that we don't break on them (bug #42844)
 
@@ -105,26 +105,26 @@ public final class TestHSSFEventFactory {
      */
     @Test
     @SuppressWarnings("java:S2699")
-    public void testUnknownContinueRecords() throws Exception {
+    void testUnknownContinueRecords() throws Exception {
         openSample("42844.xls");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
-    public void testWithDifferentWorkbookName() throws Exception {
+    void testWithDifferentWorkbookName() throws Exception {
         openSample("BOOK_in_capitals.xls");
         openSample("WORKBOOK_in_capitals.xls");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
-    public void testWithPasswordProtectedWorkbooksNoPass() {
+    void testWithPasswordProtectedWorkbooksNoPass() {
         // Without a password, can't be read
         assertThrows(EncryptedDocumentException.class, () -> openSample("xor-encryption-abc.xls"));
     }
 
     @Test
-    public void testWithPasswordProtectedWorkbooks() throws Exception {
+    void testWithPasswordProtectedWorkbooks() throws Exception {
         // With the password, is properly processed
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try {

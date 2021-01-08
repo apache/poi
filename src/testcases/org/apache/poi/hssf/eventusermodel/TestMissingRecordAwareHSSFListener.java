@@ -64,7 +64,7 @@ public final class TestMissingRecordAwareHSSFListener {
 	}
 
 	@Test
-	public void testMissingRowRecords() throws IOException {
+	void testMissingRowRecords() throws IOException {
 		readRecords("MissingBits.xls");
 
 		// We have rows 0, 1, 2, 20 and 21
@@ -96,7 +96,7 @@ public final class TestMissingRecordAwareHSSFListener {
 
 	// Make sure we don't put in any extra new lines that aren't already there
 	@Test
-	public void testNoExtraNewLines() throws IOException {
+	void testNoExtraNewLines() throws IOException {
 		// Load a different file
 		// This file has has something in lines 1-33
 		readRecords("MRExtraLines.xls");
@@ -117,7 +117,7 @@ public final class TestMissingRecordAwareHSSFListener {
 	 * Make sure that the presence of shared formulas does not cause extra end-of-row records.
 	 */
 	@Test
-	public void testEndOfRow_bug45672() throws IOException {
+	void testEndOfRow_bug45672() throws IOException {
 		readRecords("ex45672.xls");
 		assertEquals(1, matches(r -> r instanceof SharedFormulaRecord));
 		assertEquals(1, matches(r -> r instanceof LastCellOfRowDummyRecord));
@@ -128,7 +128,7 @@ public final class TestMissingRecordAwareHSSFListener {
 	 * Check that we don't have any MulBlankRecords, but do have lots of BlankRecords
 	 */
 	@Test
-	public void testMulBlankHandling() throws IOException {
+	void testMulBlankHandling() throws IOException {
 		readRecords("45672.xls");
 		assertEquals(20, matches(r -> r instanceof BlankRecord));
 		assertEquals(2, matches(r -> r instanceof LastCellOfRowDummyRecord));
@@ -136,14 +136,14 @@ public final class TestMissingRecordAwareHSSFListener {
 	}
 
 	@Test
-	public void testStringRecordHandling() throws IOException {
+	void testStringRecordHandling() throws IOException {
 		readRecords("53588.xls");
 		assertEquals(1, matches(r -> r instanceof MissingCellDummyRecord));
 		assertEquals(1, matches(r -> r instanceof LastCellOfRowDummyRecord));
 	}
 
 	@Test
-	public void testFormulasWithStringResultsHandling() throws IOException {
+	void testFormulasWithStringResultsHandling() throws IOException {
 		readRecords("53433.xls");
 
 		String exp =

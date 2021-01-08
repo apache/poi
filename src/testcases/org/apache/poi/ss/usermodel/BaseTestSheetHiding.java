@@ -99,7 +99,7 @@ public abstract class BaseTestSheetHiding {
      *  the hidden flags are
      */
 	@Test
-    public void testTextSheets() {
+    void testTextSheets() {
         // Both should have two sheets
         assertEquals(2, wbH.getNumberOfSheets());
         assertEquals(2, wbU.getNumberOfSheets());
@@ -128,7 +128,7 @@ public abstract class BaseTestSheetHiding {
      *  as expected
      */
 	@Test
-    public void testHideUnHideFlags() {
+    void testHideUnHideFlags() {
         assertTrue(wbH.isSheetHidden(0));
         assertFalse(wbH.isSheetHidden(1));
         assertFalse(wbU.isSheetHidden(0));
@@ -140,7 +140,7 @@ public abstract class BaseTestSheetHiding {
      *  one hidden
      */
 	@Test
-    public void testHide() throws IOException {
+    void testHide() throws IOException {
         wbU.setSheetHidden(0, true);
         assertTrue(wbU.isSheetHidden(0));
         assertFalse(wbU.isSheetHidden(1));
@@ -155,7 +155,7 @@ public abstract class BaseTestSheetHiding {
      *  none hidden
      */
 	@Test
-    public void testUnHide() throws IOException {
+    void testUnHide() throws IOException {
         wbH.setSheetHidden(0, false);
         assertFalse(wbH.isSheetHidden(0));
         assertFalse(wbH.isSheetHidden(1));

@@ -57,7 +57,7 @@ public final class TestXYNumericFunction {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		ValueEval[] xValues = {
 			new NumberEval(1),
 			new NumberEval(2),
@@ -81,7 +81,7 @@ public final class TestXYNumericFunction {
 	 * number of items in array is not limited to 30
 	 */
 	@Test
-	public void testLargeArrays() {
+	void testLargeArrays() {
 		ValueEval[] xValues = createMockNumberArray(100, 3);
 		ValueEval[] yValues = createMockNumberArray(100, 2);
 
@@ -105,7 +105,7 @@ public final class TestXYNumericFunction {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,
 				new NumberEval(2),

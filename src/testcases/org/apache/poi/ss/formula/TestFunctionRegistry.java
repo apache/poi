@@ -68,14 +68,14 @@ public class TestFunctionRegistry {
     }
 
     @Test
-	public void testRegisterInRuntimeA() {
+	void testRegisterInRuntimeA() {
         HSSFCell cellA = row.createCell(0);
         cellA.setCellFormula("FISHER(A5)");
         assertThrows(NotImplementedException.class, () -> fe.evaluate(cellA));
     }
 
     @Test
-    public void testRegisterInRuntimeB() {
+    void testRegisterInRuntimeB() {
         HSSFCell cellA = row.createCell(0);
         cellA.setCellFormula("FISHER(A5)");
         FunctionEval.registerFunction("FISHER", (args, srcRowIndex, srcColumnIndex) -> ErrorEval.NA);
@@ -84,14 +84,14 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testRegisterInRuntimeC() {
+    void testRegisterInRuntimeC() {
         HSSFCell cellB = row.createCell(1);
         cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
         assertThrows(NotImplementedException.class, () -> fe.evaluate(cellB));
     }
 
     @Test
-    public void testRegisterInRuntimeD() {
+    void testRegisterInRuntimeD() {
         HSSFCell cellB = row.createCell(1);
         cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
 
@@ -106,7 +106,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsA() {
+    void testExceptionsA() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> FunctionEval.registerFunction("SUM", TestFunctionRegistry::na)
@@ -115,7 +115,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsB() {
+    void testExceptionsB() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> FunctionEval.registerFunction("SUMXXX", TestFunctionRegistry::na)
@@ -124,7 +124,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsC() {
+    void testExceptionsC() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> FunctionEval.registerFunction("ISODD", TestFunctionRegistry::na)
@@ -139,7 +139,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsD() {
+    void testExceptionsD() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> AnalysisToolPak.registerFunction("ISODD", TestFunctionRegistry::atpFunc)
@@ -148,7 +148,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsE() {
+    void testExceptionsE() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> AnalysisToolPak.registerFunction("ISODDXXX", TestFunctionRegistry::atpFunc)
@@ -157,7 +157,7 @@ public class TestFunctionRegistry {
     }
 
     @Test
-    public void testExceptionsF() {
+    void testExceptionsF() {
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
             () -> AnalysisToolPak.registerFunction("SUM", TestFunctionRegistry::atpFunc)

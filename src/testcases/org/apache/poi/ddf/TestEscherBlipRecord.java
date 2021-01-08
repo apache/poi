@@ -34,7 +34,7 @@ public final class TestEscherBlipRecord {
 
     //test reading/serializing of a PNG blip
     @Test
-    public void testReadPNG() {
+    void testReadPNG() {
         //provided in bug-44886
         byte[] data = _samples.readFile("Container.dat");
 
@@ -80,7 +80,7 @@ public final class TestEscherBlipRecord {
 
     //test reading/serializing of a PICT metafile
     @Test
-    public void testReadPICT() {
+    void testReadPICT() {
         //provided in bug-44886
         byte[] data = _samples.readFile("Container.dat");
 
@@ -133,7 +133,7 @@ public final class TestEscherBlipRecord {
 
     //integral test: check that the read-write-read round trip is consistent
     @Test
-    public void testContainer() {
+    void testContainer() {
         byte[] data = _samples.readFile("Container.dat");
 
         EscherContainerRecord record = new EscherContainerRecord();
@@ -147,7 +147,7 @@ public final class TestEscherBlipRecord {
      * The test data was created from pl031405.xls attached to Bugzilla #47143
      */
     @Test
-    public void test47143() {
+    void test47143() {
         byte[] data = _samples.readFile("47143.dat");
         EscherBSERecord bse = new EscherBSERecord();
         bse.fillFields(data, 0, new DefaultEscherRecordFactory());

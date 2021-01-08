@@ -39,7 +39,7 @@ public final class TestClassID {
      * Various tests of overridden .equals()
      */
     @Test
-    public void testEquals() {
+    void testEquals() {
         ClassID clsidTest1 = new ClassID(BUF16, 0);
         ClassID clsidTest2 = new ClassID(BUF16, 0);
         byte[] buf2 = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17};
@@ -55,24 +55,24 @@ public final class TestClassID {
      *   throw an Exception
      */
     @Test
-    public void testWriteArrayStoreException1() {
+    void testWriteArrayStoreException1() {
         assertThrows(ArrayStoreException.class, () -> new ClassID(BUF16, 0).write(new byte[15], 0));
     }
 
     @Test
-    public void testWriteArrayStoreException2() {
+    void testWriteArrayStoreException2() {
         assertThrows(ArrayIndexOutOfBoundsException.class, () ->  new ClassID(BUF16, 0).write(new byte[16], 1));
     }
 
     @Test
-    public void testWriteArrayStoreException3() {
+    void testWriteArrayStoreException3() {
         ClassID clsidTest = new ClassID(BUF16, 0);
         assertDoesNotThrow(() -> clsidTest.write(new byte[16], 0));
         assertDoesNotThrow(() -> clsidTest.write(new byte[17], 1));
     }
 
     @Test
-    public void testClassID() {
+    void testClassID() {
         ClassID clsidTest = new ClassID(BUF16, 0);
         assertEquals("{04030201-0605-0807-090A-0B0C0D0E0F10}", clsidTest.toString());
     }

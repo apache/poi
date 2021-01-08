@@ -86,7 +86,7 @@ public class TestDataFormatter {
      *   how to format normal numbers
      */
     @Test
-    public void testLocale() {
+    void testLocale() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
         DataFormatter dfFR = new DataFormatter(Locale.FRENCH);
 
@@ -103,7 +103,7 @@ public class TestDataFormatter {
      *  the locale (eg '[$-1010409]') isn't there
      */
     @Test
-    public void testLocaleBasedFormats() {
+    void testLocaleBasedFormats() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         // Standard formats
@@ -122,7 +122,7 @@ public class TestDataFormatter {
      *   how to format normal numbers
      */
     @Test
-    public void testGrouping() {
+    void testGrouping() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
         DataFormatter dfDE = new DataFormatter(Locale.GERMAN);
 
@@ -140,7 +140,7 @@ public class TestDataFormatter {
      *  zapped from within the format strings
      */
     @Test
-    public void testColours() {
+    void testColours() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         String[] formats = {
@@ -168,7 +168,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testColoursAndBrackets() {
+    void testColoursAndBrackets() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         // Without currency symbols
@@ -203,7 +203,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testConditionalRanges() {
+    void testConditionalRanges() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         String format = "[>=10]#,##0;[<10]0.0";
@@ -218,7 +218,7 @@ public class TestDataFormatter {
      *  yet in place for all of these
      */
     @Test
-    public void testNegativeZero() {
+    void testNegativeZero() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         String all2dp = "00.00";
@@ -263,7 +263,7 @@ public class TestDataFormatter {
      *  format string, eg # #/#
      */
     @Test
-    public void testFractions() {
+    void testFractions() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         // Excel often prefers "# #/#"
@@ -335,7 +335,7 @@ public class TestDataFormatter {
      *  correctly ignored by us.
      */
     @Test
-    public void testPaddingSpaces() {
+    void testPaddingSpaces() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
         assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
         assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_1"));
@@ -352,7 +352,7 @@ public class TestDataFormatter {
      * DataFormatter is the CSV mode preserves spaces
      */
     @Test
-    public void testPaddingSpacesCSV() {
+    void testPaddingSpacesCSV() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
         assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
         assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_ "));
@@ -386,7 +386,7 @@ public class TestDataFormatter {
      *  gets turned into the first letter of the month
      */
     @Test
-    public void testMMMMM() {
+    void testMMMMM() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         Calendar c = LocaleUtil.getLocaleCalendar(2010, 5, 1, 2, 0, 0);
@@ -400,7 +400,7 @@ public class TestDataFormatter {
      * Tests that we do AM/PM handling properly
      */
     @Test
-    public void testAMPM() {
+    void testAMPM() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         assertEquals("06:00", dfUS.formatRawCellContents(0.25, -1, "hh:mm"));
@@ -418,7 +418,7 @@ public class TestDataFormatter {
      *  eg formatting 1 day 4 hours as 28 hours
      */
     @Test
-    public void testElapsedTime() {
+    void testElapsedTime() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         double hour = 1.0/24.0;
@@ -516,7 +516,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testDateWindowing() {
+    void testDateWindowing() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss"));
@@ -525,7 +525,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testScientificNotation() {
+    void testScientificNotation() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         assertEquals("1.23E+01", dfUS.formatRawCellContents(12.343, -1, "0.00E+00"));
@@ -534,7 +534,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testInvalidDate() {
+    void testInvalidDate() {
         DataFormatter df1 = new DataFormatter(Locale.US);
         assertEquals("-1.0", df1.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
 
@@ -544,7 +544,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testEscapes() {
+    void testEscapes() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy-mm-dd"));
@@ -558,7 +558,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testFormatsWithPadding() {
+    void testFormatsWithPadding() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
         // These request space-padding, based on the cell width
@@ -583,7 +583,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testErrors() throws IOException {
+    void testErrors() throws IOException {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
         // Create a spreadsheet with some formula errors in it
@@ -601,7 +601,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testBoolean() throws IOException {
+    void testBoolean() throws IOException {
         DataFormatter formatter = new DataFormatter();
 
         // Create a spreadsheet with some TRUE/FALSE boolean values in it
@@ -624,7 +624,7 @@ public class TestDataFormatter {
      *  should at least handle it as it if wasn't there
      */
     @Test
-    public void testDatesWithLocales() {
+    void testDatesWithLocales() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
         String dateFormatEnglish = "[$-409]mmmm dd yyyy  h:mm AM/PM";
@@ -650,7 +650,7 @@ public class TestDataFormatter {
      */
     @Test
     @Disabled
-    public void testCustomFormats() {
+    void testCustomFormats() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
         String fmt;
 
@@ -668,7 +668,7 @@ public class TestDataFormatter {
      * ExcelStyleDateFormatter should work for Milliseconds too
      */
     @Test
-    public void testExcelStyleDateFormatterStringOnMillis() {
+    void testExcelStyleDateFormatterStringOnMillis() {
         // Test directly with the .000 style
         DateFormat formatter1 = new ExcelStyleDateFormatter("ss.000");
 
@@ -698,7 +698,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testBug54786() {
+    void testBug54786() {
         DataFormatter formatter = new DataFormatter();
         String format = "[h]\"\"h\"\" m\"\"m\"\"";
         assertTrue(DateUtil.isADateFormat(-1,format));
@@ -721,7 +721,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testIsADateFormat() {
+    void testIsADateFormat() {
         // first check some cases that should not be a date, also call multiple times to ensure the cache is used
         assertFalse(DateUtil.isADateFormat(-1, null));
         assertFalse(DateUtil.isADateFormat(-1, null));
@@ -744,7 +744,7 @@ public class TestDataFormatter {
 
 
     @Test
-    public void testLargeNumbersAndENotation() throws IOException{
+    void testLargeNumbersAndENotation() throws IOException{
         assertFormatsTo("1E+86", 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999d);
         assertFormatsTo("1E-84", 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
         // Smallest double
@@ -794,7 +794,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testFormulaEvaluation() throws IOException {
+    void testFormulaEvaluation() throws IOException {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("FormulaEvalTestData.xls");
 
         CellReference ref = new CellReference("D47");
@@ -811,7 +811,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testFormatWithTrailingDotsUS() {
+    void testFormatWithTrailingDotsUS() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
         assertEquals("1,000,000", dfUS.formatRawCellContents(1000000, -1, "#,##0"));
         assertEquals("1,000", dfUS.formatRawCellContents(1000000, -1, "#,##0,"));
@@ -826,7 +826,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testFormatWithTrailingDotsOtherLocale() {
+    void testFormatWithTrailingDotsOtherLocale() {
         DataFormatter dfIT = new DataFormatter(Locale.ITALY);
         assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));
         assertEquals("1.000", dfIT.formatRawCellContents(1000000, -1, "#,##0,"));
@@ -844,7 +844,7 @@ public class TestDataFormatter {
      * bug 60031: DataFormatter parses months incorrectly when put at the end of date segment
      */
     @Test
-    public void testBug60031() {
+    void testBug60031() {
         // 23-08-2016 08:51:01 which is 42605.368761574071 as double was parsed
         // with format "yyyy-dd-MM HH:mm:ss" into "2016-23-51 08:51:01".
         DataFormatter dfUS = new DataFormatter(Locale.US);
@@ -866,7 +866,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testDateFormattingWithLocales() {
+    void testDateFormattingWithLocales() {
         // 2017-12-01 09:54:33 which is 42747.412892397523 as double
         DataFormatter dfDE = new DataFormatter(Locale.GERMANY);
         DataFormatter dfZH = new DataFormatter(Locale.PRC);
@@ -882,7 +882,7 @@ public class TestDataFormatter {
      * bug 60422 : simple number formats seem ok
      */
     @Test
-    public void testSimpleNumericFormatsInGermanyLocale() {
+    void testSimpleNumericFormatsInGermanyLocale() {
         Locale[] locales = new Locale[] {Locale.GERMANY, Locale.US, Locale.ROOT};
         for (Locale locale : locales) {
             //show that LocaleUtil has no effect on these tests
@@ -905,7 +905,7 @@ public class TestDataFormatter {
      * bug 60422 : DataFormatter has issues with a specific NumberFormat in Germany default locale
 ≈    */
     @Test
-    public void testBug60422() {
+    void testBug60422() {
         char euro = '\u20AC';
         DataFormatter df = new DataFormatter(Locale.GERMANY);
         String formatString = String.format(Locale.ROOT,
@@ -916,7 +916,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testBug62839() {
+    void testBug62839() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -932,7 +932,7 @@ public class TestDataFormatter {
      * Bug #63292
      */
     @Test
-    public void test1904With4PartFormat() {
+    void test1904With4PartFormat() {
         Date date = new Date();
         int formatIndex = 105;
         String formatString1 = "[$-F400]m/d/yy h:mm:ss\\ AM/PM";
@@ -960,7 +960,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testConcurrentCellFormat() throws Exception {
+    void testConcurrentCellFormat() throws Exception {
         DataFormatter formatter1 = new DataFormatter();
         DataFormatter formatter2 = new DataFormatter();
         doFormatTestSequential(formatter1);
@@ -975,7 +975,7 @@ public class TestDataFormatter {
      * A numeric format string like 0E+0 should be E+
      */
     @Test
-    public void testWithEinFormat() throws Exception {
+    void testWithEinFormat() throws Exception {
         DataFormatter formatter = new DataFormatter();
 
         // Format string literals with an E in them shouldn't be

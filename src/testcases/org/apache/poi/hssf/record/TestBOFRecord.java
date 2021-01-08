@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestBOFRecord {
     @Test
-    public void testBOFRecord() throws IOException {
+    void testBOFRecord() throws IOException {
         // This used to throw an error before - #42794
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("bug_42794.xls")) {
             Sheet sh = wb.getSheetAt(0);

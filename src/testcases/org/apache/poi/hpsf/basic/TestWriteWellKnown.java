@@ -170,7 +170,7 @@ public class TestWriteWellKnown {
      * @throws IOException if some I/O error occurred.
      */
     @Test
-    public void testWriteWellKnown() throws Exception {
+    void testWriteWellKnown() throws Exception {
         POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
         final File doc1 = TempFile.createTempFile("POI_HPSF_Test1.", ".tmp");
@@ -509,7 +509,7 @@ public class TestWriteWellKnown {
      * Tests basic custom property features.
      */
     @Test
-    public void testCustomerProperties()
+    void testCustomerProperties()
     {
         final String KEY = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
@@ -548,7 +548,7 @@ public class TestWriteWellKnown {
      * custom properties which are not pure.
      */
     @Test
-    public void testGetCustomerProperties()
+    void testGetCustomerProperties()
     {
         final int ID_1 = 2;
         final int ID_2 = 3;

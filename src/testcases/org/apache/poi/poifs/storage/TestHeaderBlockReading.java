@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public final class TestHeaderBlockReading {
 
 	@Test
-	public void testConstructors() throws IOException {
+	void testConstructors() throws IOException {
 		String[] hexData = {
 			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
 			"06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",

@@ -86,7 +86,7 @@ public class TestTempFile {
     }
 
     @Test
-    public void testCreateTempFile() throws IOException
+    void testCreateTempFile() throws IOException
     {
         File tempFile = TempFile.createTempFile("test", ".txt");
         FileOutputStream fos = new FileOutputStream(tempFile);
@@ -110,7 +110,7 @@ public class TestTempFile {
     }
 
     @Test
-    public void testCreateTempDirectory() throws IOException
+    void testCreateTempDirectory() throws IOException
     {
         File tempDir = TempFile.createTempDirectory("testDir");
         assertTrue(tempDir.exists());
@@ -124,7 +124,7 @@ public class TestTempFile {
     }
 
     @Test
-    public void testSetTempFileCreationStrategy() throws IOException {
+    void testSetTempFileCreationStrategy() throws IOException {
         TempFile.setTempFileCreationStrategy(new DefaultTempFileCreationStrategy());
 
         // Should be able to create two tempfiles with same prefix and suffix

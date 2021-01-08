@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestDVALRecord {
     @Test
-    public void testRead() {
+    void testRead() {
         byte[] data = new byte[22];
         LittleEndian.putShort(data, 0, DVALRecord.sid);
         LittleEndian.putShort(data, 2, (short)18);

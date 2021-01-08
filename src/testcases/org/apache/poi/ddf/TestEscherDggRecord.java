@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherDggRecord {
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         EscherDggRecord r = createRecord();
 
         byte[] data = new byte[32];
@@ -43,7 +43,7 @@ public final class TestEscherDggRecord {
     }
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String hexData = "00 00 " +
                 "06 F0 " +
                 "18 00 00 00 " +
@@ -67,7 +67,7 @@ public final class TestEscherDggRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String expected =
             "{   /* DGG */\n" +
             "\t  \"recordId\": -4090 /* 0xf006 */\n" +
@@ -104,7 +104,7 @@ public final class TestEscherDggRecord {
     }
 
     @Test
-    public void testGetRecordSize() {
+    void testGetRecordSize() {
         EscherDggRecord r = new EscherDggRecord();
         r.setFileIdClusters(new EscherDggRecord.FileIdCluster[] { new EscherDggRecord.FileIdCluster(0,0) } );
         assertEquals(32,r.getRecordSize());

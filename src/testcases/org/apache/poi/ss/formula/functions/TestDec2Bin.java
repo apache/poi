@@ -62,7 +62,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("Converts binary '00101' from binary (5)", "5", "101");
 		confirmValue("Converts binary '1111111111' from binary (-1)", "-1",    "1111111111");
 		confirmValue("Converts binary '1111111110' from binary (-2)", "-2",    "1111111110");
@@ -71,7 +71,7 @@ public final class TestDec2Bin {
 	}
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("fails for >= 512 or < -512","512", ErrorEval.NUM_ERROR);
         confirmValueError("fails for >= 512 or < -512","-513", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid decimal number","GGGGGGG", ErrorEval.VALUE_INVALID);
@@ -79,7 +79,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testEvalOperationEvaluationContext() {
+    void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
@@ -90,7 +90,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testEvalOperationEvaluationContextFails() {
+    void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ErrorEval.VALUE_INVALID };
@@ -119,7 +119,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testRefs() {
+    void testRefs() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
@@ -130,7 +130,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithPlacesIntInt() {
+    void testWithPlacesIntInt() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
@@ -142,7 +142,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithPlaces() {
+    void testWithPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
@@ -154,7 +154,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithToShortPlaces() {
+    void testWithToShortPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 3) };
@@ -165,7 +165,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithTooManyParamsIntInt() {
+    void testWithTooManyParamsIntInt() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
@@ -176,7 +176,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithTooManyParams() {
+    void testWithTooManyParams() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
@@ -187,7 +187,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithErrorPlaces() {
+    void testWithErrorPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ErrorEval.NULL_INTERSECTION };
@@ -198,7 +198,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithNegativePlaces() {
+    void testWithNegativePlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 2) };
@@ -209,7 +209,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithZeroPlaces() {
+    void testWithZeroPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), new NumberEval(0.0) };
@@ -220,7 +220,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testWithEmptyPlaces() {
+    void testWithEmptyPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(1, 0) };
@@ -231,7 +231,7 @@ public final class TestDec2Bin {
     }
 
     @Test
-    public void testBackAndForth() {
+    void testBackAndForth() {
         for (int i = -512; i < 512; i++) {
             ValueEval result = invokeValue(Integer.toString(i));
             assertEquals(StringEval.class, result.getClass(), "Had: " + result);

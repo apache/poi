@@ -47,7 +47,7 @@ public class TestComplex {
     }
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         confirmValue("Complex number with 3 and 4 as the real and imaginary coefficients (3 + 4i)", "3","4", "", "3+4i");
         confirmValue("Complex number with 3 and 4 as the real and imaginary coefficients, and j as the suffix (3 + 4j)", "3","4", "j", "3+4j");
 
@@ -61,7 +61,7 @@ public class TestComplex {
     }
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("argument is nonnumeric", "ABCD", "","", ErrorEval.VALUE_INVALID);
         confirmValueError("argument is nonnumeric", "1", "ABCD","", ErrorEval.VALUE_INVALID);
         confirmValueError("f suffix is neither \"i\" nor \"j\"", "1", "1","k", ErrorEval.VALUE_INVALID);

@@ -75,7 +75,7 @@ public final class TestSubtotal {
 	}
 
 	@Test
-	public void testBasics() {
+	void testBasics() {
 		confirmSubtotal(FUNCTION_SUM, 55.0);
 		confirmSubtotal(FUNCTION_AVERAGE, 5.5);
 		confirmSubtotal(FUNCTION_COUNT, 10.0);
@@ -86,7 +86,7 @@ public final class TestSubtotal {
 	}
 
     @Test
-     public void testAvg() throws IOException {
+     void testAvg() throws IOException {
         Workbook wb = new HSSFWorkbook();
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -120,7 +120,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testSum() throws IOException {
+    void testSum() throws IOException {
         Workbook wb = new HSSFWorkbook();
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -153,7 +153,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testCount() throws IOException {
+    void testCount() throws IOException {
 
         Workbook wb = new HSSFWorkbook();
 
@@ -187,7 +187,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testCounta() throws IOException {
+    void testCounta() throws IOException {
 
         Workbook wb = new HSSFWorkbook();
 
@@ -221,7 +221,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testMax() throws IOException {
+    void testMax() throws IOException {
 
         Workbook wb = new HSSFWorkbook();
 
@@ -255,7 +255,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testMin() throws IOException {
+    void testMin() throws IOException {
 
         Workbook wb = new HSSFWorkbook();
 
@@ -289,7 +289,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testStdev() throws IOException {
+    void testStdev() throws IOException {
 
         Workbook wb = new HSSFWorkbook();
 
@@ -323,7 +323,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void test50209() throws IOException {
+    void test50209() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sh = wb.createSheet();
         Cell a1 = sh.createRow(1).createCell(1);
@@ -349,7 +349,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testFunctionsFromTestSpreadsheet() throws IOException {
+    void testFunctionsFromTestSpreadsheet() throws IOException {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SubtotalsNested.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
@@ -389,7 +389,7 @@ public final class TestSubtotal {
     }
 
     @Test
-    public void testUnimplemented() throws IOException {
+    void testUnimplemented() throws IOException {
         Workbook wb = new HSSFWorkbook();
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();

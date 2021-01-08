@@ -60,7 +60,7 @@ public final class TestWorkbook {
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
     @Test
-    public void testWriteSheetSimple() throws IOException {
+    void testWriteSheetSimple() throws IOException {
         try (HSSFWorkbook wb1  = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();
 
@@ -89,7 +89,7 @@ public final class TestWorkbook {
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
     @Test
-    public void testWriteModifySheetSimple() throws IOException {
+    void testWriteModifySheetSimple() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet s = wb1.createSheet();
 
@@ -127,7 +127,7 @@ public final class TestWorkbook {
      *             in the sheet in their known positions.<P>
      */
     @Test
-    public void testReadSimple() throws IOException {
+    void testReadSimple() throws IOException {
         HSSFWorkbook wb = openSample("Simple.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
 
@@ -144,7 +144,7 @@ public final class TestWorkbook {
      *             in the sheet in their known positions.<P>
      */
     @Test
-    public void testReadSimpleWithDataFormat() throws IOException {
+    void testReadSimpleWithDataFormat() throws IOException {
         HSSFWorkbook wb = openSample("SimpleWithDataFormat.xls");
         HSSFSheet       sheet    = wb.getSheetAt(0);
         HSSFDataFormat  format   = wb.createDataFormat();
@@ -165,7 +165,7 @@ public final class TestWorkbook {
      *             in the sheet in their known positions.<P>
      */
     @Test
-    public void testWriteDataFormat() throws IOException {
+    void testWriteDataFormat() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet s1 = wb1.createSheet();
         HSSFDataFormat format = wb1.createDataFormat();
@@ -204,7 +204,7 @@ public final class TestWorkbook {
      *
      */
     @Test
-    public void testReadEmployeeSimple() throws IOException {
+    void testReadEmployeeSimple() throws IOException {
         HSSFWorkbook wb = openSample("Employee.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
 
@@ -228,7 +228,7 @@ public final class TestWorkbook {
      *             is incorrect or has not been replaced. <P>
      */
     @Test
-    public void testModifySimple() throws IOException {
+    void testModifySimple() throws IOException {
         HSSFWorkbook wb1 = openSample("Simple.xls");
         HSSFSheet sheet = wb1.getSheetAt(0);
         HSSFCell cell = sheet.getRow(0).getCell(0);
@@ -257,7 +257,7 @@ public final class TestWorkbook {
      *             or is incorrect. <P>
      */
     @Test
-    public void testModifySimpleWithSkip() throws IOException {
+    void testModifySimpleWithSkip() throws IOException {
         HSSFWorkbook wb1 = openSample("SimpleWithSkip.xls");
         HSSFSheet sheet = wb1.getSheetAt(0);
         HSSFCell cell = sheet.getRow(0).getCell(1);
@@ -295,7 +295,7 @@ public final class TestWorkbook {
      *             is incorrect or has not been replaced. <P>
      */
     @Test
-    public void testModifySimpleWithStyling() throws IOException {
+    void testModifySimpleWithStyling() throws IOException {
         HSSFWorkbook wb1 = openSample("SimpleWithStyling.xls");
         HSSFSheet  sheet = wb1.getSheetAt(0);
 
@@ -328,7 +328,7 @@ public final class TestWorkbook {
      *             is incorrect or has not been replaced. <P>
      */
     @Test
-    public void testModifyEmployee() throws IOException {
+    void testModifyEmployee() throws IOException {
         HSSFWorkbook wb1 = openSample("Employee.xls");
         HSSFSheet  sheet = wb1.getSheetAt(0);
         HSSFCell    cell = sheet.getRow(3).getCell(2);
@@ -358,7 +358,7 @@ public final class TestWorkbook {
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly identifies the cell<P>
      */
     @Test
-    public void testReadSheetWithRK() throws IOException {
+    void testReadSheetWithRK() throws IOException {
         HSSFWorkbook wb = openSample("rk.xls");
         HSSFSheet    s  = wb.getSheetAt(0);
         HSSFCell     c  = s.getRow(0).getCell(0);
@@ -378,7 +378,7 @@ public final class TestWorkbook {
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
     @Test
-    public void testWriteModifySheetMerged() throws IOException {
+    void testWriteModifySheetMerged() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet    s   = wb1.createSheet();
 
@@ -426,7 +426,7 @@ public final class TestWorkbook {
      * Test the backup field gets set as expected.
      */
     @Test
-    public void testBackupRecord() throws IOException {
+    void testBackupRecord() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet();
 		InternalWorkbook workbook = wb.getWorkbook();
@@ -467,7 +467,7 @@ public final class TestWorkbook {
      * We need to make sure only one LabelSSTRecord is produced.
      */
     @Test
-    public void testRepeatingBug() throws IOException {
+    void testRepeatingBug() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet    sheet    = workbook.createSheet("Design Variants");
         HSSFRow      row      = sheet.createRow(2);
@@ -490,7 +490,7 @@ public final class TestWorkbook {
      * This bug was first fixed in svn r352609.
      */
     @Test
-    public void testRowIndexesBeyond32768() throws IOException {
+    void testRowIndexesBeyond32768() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFRow row;
@@ -520,7 +520,7 @@ public final class TestWorkbook {
      * Generate a file to verify repeating rows and cols made it
      */
     @Test
-    public void testRepeatingColsRows() throws IOException {
+    void testRepeatingColsRows() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet("Test Print Titles");
 
@@ -546,7 +546,7 @@ public final class TestWorkbook {
      * Test setRepeatingRowsAndColumns when startRow and startColumn are -1.
      */
     @Test
-    public void testRepeatingColsRowsMinusOne() throws IOException
+    void testRepeatingColsRowsMinusOne() throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Test Print Titles");
@@ -568,7 +568,7 @@ public final class TestWorkbook {
     }
 
     @Test
-    public void testBug58085RemoveSheetWithNames() throws Exception {
+    void testBug58085RemoveSheetWithNames() throws Exception {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         Sheet sheet1 = wb1.createSheet("sheet1");
         Sheet sheet2 = wb1.createSheet("sheet2");

@@ -55,7 +55,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testSimpleIf() {
+	void testSimpleIf() {
 
 		Class<?>[] expClss = {
 				RefPtg.class,
@@ -75,7 +75,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testSimpleIfNoFalseParam() {
+	void testSimpleIfNoFalseParam() {
 
 		Class<?>[] expClss = {
 				RefPtg.class,
@@ -92,7 +92,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testIfWithLargeParams() {
+	void testIfWithLargeParams() {
 
 		Class<?>[] expClss = {
 				RefPtg.class,
@@ -123,7 +123,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testNestedIf() {
+	void testNestedIf() {
 
 		Class<?>[] expClss = {
 				RefPtg.class,
@@ -160,7 +160,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testEmbeddedIf() {
+	void testEmbeddedIf() {
 		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals(17, ptgs.length);
 
@@ -170,14 +170,14 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testSimpleLogical() {
+	void testSimpleLogical() {
 	 Ptg[] ptgs = parseFormula("IF(A1<A2,B1,B2)");
 	 assertEquals(9, ptgs.length);
 	 assertEquals(LessThanPtg.class, ptgs[2].getClass(), "3rd Ptg is less than");
 	}
 
 	@Test
-	public void testParenIf() {
+	void testParenIf() {
 		Ptg[] ptgs = parseFormula("IF((A1+A2)<=3,\"yes\",\"no\")");
 		assertEquals(12, ptgs.length);
 		assertEquals(LessEqualPtg.class, ptgs[5].getClass(), "6th Ptg is less than equal");
@@ -185,7 +185,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testYN() {
+	void testYN() {
 		Ptg[] ptgs = parseFormula("IF(TRUE,\"Y\",\"N\")");
 		assertEquals(7, ptgs.length);
 
@@ -207,7 +207,7 @@ public final class TestFormulaParserIf {
 	 * Make sure the ptgs are generated properly with two functions embedded
 	 */
 	@Test
-	public void testNestedFunctionIf() {
+	void testNestedFunctionIf() {
 		Ptg[] ptgs = parseFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
 		assertEquals(11, ptgs.length);
 
@@ -219,7 +219,7 @@ public final class TestFormulaParserIf {
 	}
 
 	@Test
-	public void testIfSingleCondition(){
+	void testIfSingleCondition(){
 		Ptg[] ptgs = parseFormula("IF(1=1,10)");
 		assertEquals(7, ptgs.length);
 

@@ -34,7 +34,7 @@ public class TestExternalReferenceChange {
 	private static final String SOURCE_WORKBOOK_FILENAME = "52575_source.xls";
 
 	@Test
-	public void testDummyToSource() throws IOException {
+	void testDummyToSource() throws IOException {
 		try (HSSFWorkbook mainWorkbook = HSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
 			 HSSFWorkbook sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME)) {
 

@@ -34,7 +34,7 @@ public final class TestFtCblsSubRecord {
     };
 
     @Test
-    public void testRead() {
+    void testRead() {
         FtCblsSubRecord record = new FtCblsSubRecord(TestcaseRecordInputStream.create(FtCblsSubRecord.sid, data), data.length);
 
         assertEquals(FtCblsSubRecord.sid, record.getSid());
@@ -42,7 +42,7 @@ public final class TestFtCblsSubRecord {
     }
 
     @Test
-    public void testWrite() {
+    void testWrite() {
         FtCblsSubRecord record = new FtCblsSubRecord();
         assertEquals(FtCblsSubRecord.sid, record.getSid());
         assertEquals(data.length, record.getDataSize());
@@ -52,7 +52,7 @@ public final class TestFtCblsSubRecord {
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         FtCblsSubRecord record = new FtCblsSubRecord();
         byte[] src = record.serialize();
 

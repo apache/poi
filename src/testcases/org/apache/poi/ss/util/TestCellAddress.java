@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCellAddress {
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         CellAddress cellAddress;
         final CellReference cellRef = new CellReference("Sheet1", 0, 0, true, true);
         final String address = "A1";
@@ -49,19 +49,19 @@ public final class TestCellAddress {
     }
 
     @Test
-    public void testFormatAsString() {
+    void testFormatAsString() {
         assertEquals("A1", CellAddress.A1.formatAsString());
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertEquals(new CellReference(6, 4), new CellReference(6, 4));
         assertNotEquals(new CellReference(4, 6), new CellReference(6, 4));
     }
 
     @SuppressWarnings("EqualsWithItself")
     @Test
-    public void testCompareTo() {
+    void testCompareTo() {
         final CellAddress A1 = new CellAddress(0, 0);
         final CellAddress A2 = new CellAddress(1, 0);
         final CellAddress B1 = new CellAddress(0, 1);
@@ -95,13 +95,13 @@ public final class TestCellAddress {
     }
 
     @Test
-    public void testGetRow() {
+    void testGetRow() {
         final CellAddress addr = new CellAddress(6, 4);
         assertEquals(6, addr.getRow());
     }
 
     @Test
-    public void testGetColumn() {
+    void testGetColumn() {
         final CellAddress addr = new CellAddress(6, 4);
         assertEquals(4, addr.getColumn());
     }

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public final class TestLabelRecord  {
 
 	@Test
-	public void testEmptyString() throws IOException {
+	void testEmptyString() throws IOException {
 		try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls");
 			 HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
 			HSSFSheet s1 = wb1.getSheetAt(0);

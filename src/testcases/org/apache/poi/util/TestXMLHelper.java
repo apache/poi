@@ -43,7 +43,7 @@ import org.xml.sax.XMLReader;
 
 public class TestXMLHelper {
     @Test
-    public void testDocumentBuilder() throws Exception {
+    void testDocumentBuilder() throws Exception {
         DocumentBuilder documentBuilder = XMLHelper.newDocumentBuilder();
         assertNotSame(documentBuilder, XMLHelper.newDocumentBuilder());
         assertTrue(documentBuilder.isNamespaceAware());
@@ -52,7 +52,7 @@ public class TestXMLHelper {
     }
 
     @Test
-    public void testCreatingManyDocumentBuilders() throws Exception {
+    void testCreatingManyDocumentBuilders() throws Exception {
         int limit = 1000;
         ArrayList<CompletableFuture<DocumentBuilder>> futures = new ArrayList<>();
         for (int i = 0; i < limit; i++) {
@@ -68,7 +68,7 @@ public class TestXMLHelper {
     }
 
     @Test
-    public void testDocumentBuilderFactory() throws Exception {
+    void testDocumentBuilderFactory() throws Exception {
         try {
             DocumentBuilderFactory dbf = XMLHelper.getDocumentBuilderFactory();
             assertTrue(dbf.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
@@ -81,7 +81,7 @@ public class TestXMLHelper {
     }
 
     @Test
-    public void testXMLReader() throws Exception {
+    void testXMLReader() throws Exception {
         XMLReader reader = XMLHelper.newXMLReader();
         assertNotSame(reader, XMLHelper.newXMLReader());
         try {
@@ -100,7 +100,7 @@ public class TestXMLHelper {
     }
 
     @Test
-    public void testCreatingManyXMLReaders() throws Exception {
+    void testCreatingManyXMLReaders() throws Exception {
         int limit = 1000;
         ArrayList<CompletableFuture<XMLReader>> futures = new ArrayList<>();
         for (int i = 0; i < limit; i++) {
@@ -134,7 +134,7 @@ public class TestXMLHelper {
      * test that newXMLInputFactory returns a factory with sensible defaults
      */
     @Test
-    public void testNewXMLInputFactory() {
+    void testNewXMLInputFactory() {
         XMLInputFactory factory = XMLHelper.newXMLInputFactory();
         assertTrue((boolean)factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE));
         assertFalse((boolean)factory.getProperty(XMLInputFactory.IS_VALIDATING));
@@ -146,7 +146,7 @@ public class TestXMLHelper {
      * test that newXMLOutputFactory returns a factory with sensible defaults
      */
     @Test
-    public void testNewXMLOutputFactory() {
+    void testNewXMLOutputFactory() {
         XMLOutputFactory factory = XMLHelper.newXMLOutputFactory();
         assertTrue((boolean)factory.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES));
     }
@@ -155,7 +155,7 @@ public class TestXMLHelper {
      * test that newXMLEventFactory returns a factory
      */
     @Test
-    public void testNewXMLEventFactory() {
+    void testNewXMLEventFactory() {
         assertNotNull(XMLHelper.newXMLEventFactory());
     }
 }

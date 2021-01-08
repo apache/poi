@@ -37,7 +37,7 @@ public final class TestAreaRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         AreaRecord record = new AreaRecord(TestcaseRecordInputStream.create(0x101A, data));
         assertEquals( 2, record.getFormatFlags());
@@ -50,7 +50,7 @@ public final class TestAreaRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AreaRecord record = new AreaRecord();
         record.setStacked( false );
         record.setDisplayAsPercentage( true );

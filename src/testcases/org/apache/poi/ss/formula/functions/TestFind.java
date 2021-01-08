@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFind {
 
     @Test
-	public void testFind() throws IOException {
+	void testFind() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
 

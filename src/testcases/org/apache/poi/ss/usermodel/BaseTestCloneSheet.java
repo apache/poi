@@ -40,7 +40,7 @@ public abstract class BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetBasic() throws IOException{
+    void testCloneSheetBasic() throws IOException{
         Workbook b = _testDataProvider.createWorkbook();
         Sheet s = b.createSheet("Test");
         assertEquals(0, s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1)));
@@ -55,7 +55,7 @@ public abstract class BaseTestCloneSheet {
      * Ensures that pagebreak cloning works properly
      */
     @Test
-    public void testPageBreakClones() throws IOException {
+    void testPageBreakClones() throws IOException {
         Workbook b = _testDataProvider.createWorkbook();
         Sheet s = b.createSheet("Test");
         s.setRowBreak(3);
@@ -73,7 +73,7 @@ public abstract class BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetIntValid() {
+    void testCloneSheetIntValid() {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet01");
         wb.cloneSheet(0);
@@ -82,7 +82,7 @@ public abstract class BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetIntInvalid() {
+    void testCloneSheetIntInvalid() {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet01");
         assertThrows(IllegalArgumentException.class, () -> wb.cloneSheet(1));

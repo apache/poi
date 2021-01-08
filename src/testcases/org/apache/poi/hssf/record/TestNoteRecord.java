@@ -41,7 +41,7 @@ public final class TestNoteRecord {
             );
 
     @Test
-    public void testRead() {
+    void testRead() {
 
         NoteRecord record = new NoteRecord(TestcaseRecordInputStream.create(NoteRecord.sid, testData));
 
@@ -54,7 +54,7 @@ public final class TestNoteRecord {
     }
 
     @Test
-    public void testWrite() {
+    void testWrite() {
         NoteRecord record = new NoteRecord();
         assertEquals(NoteRecord.sid, record.getSid());
 
@@ -69,7 +69,7 @@ public final class TestNoteRecord {
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         NoteRecord record = new NoteRecord();
 
         record.setRow((short)1);
@@ -92,7 +92,7 @@ public final class TestNoteRecord {
     }
 
     @Test
-    public void testUnicodeAuthor() {
+    void testUnicodeAuthor() {
         // This sample data was created by setting the 'user name' field in the 'Personalize'
         // section of Excel's options to \u30A2\u30D1\u30C3\u30C1\u65CF, and then
         // creating a cell comment.

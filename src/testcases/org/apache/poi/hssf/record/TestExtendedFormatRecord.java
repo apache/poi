@@ -41,7 +41,7 @@ public final class TestExtendedFormatRecord {
 	}
 
 	@Test
-	public void testLoad() {
+	void testLoad() {
 		ExtendedFormatRecord record = createEFR();
 		assertEquals(0, record.getFontIndex());
 		assertEquals(0, record.getFormatIndex());
@@ -59,7 +59,7 @@ public final class TestExtendedFormatRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testStore() {
+	void testStore() {
 //    .fontindex       = 0
 //    .formatindex     = 0
 //    .celloptions     = fffffff5
@@ -125,7 +125,7 @@ public final class TestExtendedFormatRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testCloneOnto() {
+	void testCloneOnto() {
 		ExtendedFormatRecord base = createEFR();
 
 		ExtendedFormatRecord other = new ExtendedFormatRecord();
@@ -136,7 +136,7 @@ public final class TestExtendedFormatRecord {
 	}
 
 	@Test
-	public void testRotation() {
+	void testRotation() {
         ExtendedFormatRecord record = createEFR();
         assertEquals(0, record.getRotation());
 

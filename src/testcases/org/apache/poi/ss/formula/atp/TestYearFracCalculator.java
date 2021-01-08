@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public final class TestYearFracCalculator {
 
     @Test
-	public void testBasis1() {
+	void testBasis1() {
 		confirm(md(1999, 1, 1), md(1999, 4, 5), 1, 0.257534247);
 		confirm(md(1999, 4, 1), md(1999, 4, 5), 1, 0.010958904);
 		confirm(md(1999, 4, 1), md(1999, 4, 4), 1, 0.008219178);

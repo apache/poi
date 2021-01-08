@@ -60,13 +60,13 @@ public final class TestTime {
 	}
 
 	@Test
-	public void testSomeArgumentsMissing() {
+	void testSomeArgumentsMissing() {
 		confirm("00:00:00", "TIME(, 0, 0)");
 		confirm("12:00:00", "TIME(12, , )");
 	}
 
 	@Test
-	public void testValid() {
+	void testValid() {
 		confirm("00:00:01", 0, 0, 1);
 		confirm("00:01:00", 0, 1, 0);
 

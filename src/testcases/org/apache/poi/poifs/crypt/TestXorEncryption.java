@@ -41,7 +41,7 @@ public class TestXorEncryption {
     private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
 
     @Test
-    public void testXorEncryption() {
+    void testXorEncryption() {
         // Xor-Password: abc
         // 2.5.343 XORObfuscation
         // key = 20810
@@ -58,7 +58,7 @@ public class TestXorEncryption {
 
     @SuppressWarnings("static-access")
     @Test
-    public void testUserFile() throws IOException {
+    void testUserFile() throws IOException {
         File f = samples.getSampleFile("xor-encryption-abc.xls");
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try (POIFSFileSystem fs = new POIFSFileSystem(f, true);

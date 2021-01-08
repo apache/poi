@@ -236,7 +236,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
      * Test that we can set pre-calculated formula result for array formulas
      */
     @Test
-    public void testModifyArrayCells_setFormulaResult() throws IOException {
+    void testModifyArrayCells_setFormulaResult() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -263,7 +263,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_setCellType() throws IOException {
+    void testModifyArrayCells_setCellType() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -298,7 +298,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_setCellFormula() throws IOException {
+    void testModifyArrayCells_setCellFormula() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -338,7 +338,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_removeCell() throws IOException {
+    void testModifyArrayCells_removeCell() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -380,7 +380,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_removeRow() throws IOException {
+    void testModifyArrayCells_removeRow() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -422,7 +422,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_mergeCellsSingle() throws IOException {
+    void testModifyArrayCells_mergeCellsSingle() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             assertEquals(0, sheet.getNumMergedRegions());
@@ -440,7 +440,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_mergeCellsMulti() throws IOException {
+    void testModifyArrayCells_mergeCellsMulti() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             int expectedNumMergedRegions = 0;
@@ -480,7 +480,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_shiftRows() throws IOException {
+    void testModifyArrayCells_shiftRows() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 

@@ -95,7 +95,7 @@ public abstract class BaseTestExternalFunctions {
     }
 
     @Test
-    public void testExternalFunctions() throws IOException {
+    void testExternalFunctions() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 

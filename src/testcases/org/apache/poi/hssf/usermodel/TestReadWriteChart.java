@@ -42,7 +42,7 @@ public final class TestReadWriteChart {
      * In the presence of a chart we need to make sure BOF/EOF records still exist.
      */
     @Test
-    public void testBOFandEOFRecords() throws Exception {
+    void testBOFandEOFRecords() throws Exception {
         HSSFWorkbook workbook  = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
         HSSFSheet       sheet     = workbook.getSheetAt(0);
         HSSFRow         firstRow  = sheet.getRow(0);

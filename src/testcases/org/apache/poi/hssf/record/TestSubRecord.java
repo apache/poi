@@ -75,7 +75,7 @@ public final class TestSubRecord {
 	 * read overruns, so the bug was mostly silent.
 	 */
 	@Test
-	public void testReadAll_bug45778() {
+	void testReadAll_bug45778() {
 		RecordInputStream in = TestcaseRecordInputStream.create(dataAutoFilter);
 		ObjRecord or = new ObjRecord(in);
 		byte[] data2 = or.serialize();
@@ -85,7 +85,7 @@ public final class TestSubRecord {
 	}
 
 	@Test
-	public void testReadManualComboWithFormula() {
+	void testReadManualComboWithFormula() {
 		byte[] data = HexRead.readFromString(""
 			+ "5D 00 66 00 "
 			+ "15 00 12 00 14 00 02 00 11 20 00 00 00 00 "
@@ -119,7 +119,7 @@ public final class TestSubRecord {
 	 * ObjRecord back to the proper size.  POI should do the same.
 	 */
 	@Test
-	public void testWayTooMuchPadding_bug46545() {
+	void testWayTooMuchPadding_bug46545() {
 		byte[] data = HexRead.readFromString(""
 			+ "15 00 12 00 14 00 13 00 01 21 00 00 00"
 			+ "00 98 0B 5B 09 00 00 00 00 0C 00 14 00 00 00 00 00 00 00 00"

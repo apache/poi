@@ -63,7 +63,7 @@ public abstract class BaseTestIteratingXLS {
 
     @ParameterizedTest
     @MethodSource("files")
-	public void testMain(File file) throws Exception {
+	void testMain(File file) throws Exception {
 	    String fileName = file.getName();
 
 	    Class<? extends Throwable> t = EXCLUDED.get(fileName);

@@ -34,7 +34,7 @@ public final class TestEqualEval {
 	 * The value from a 1x1 area should be taken immediately, regardless of srcRow and srcCol
 	 */
 	@Test
-	public void test1x1AreaOperand() {
+	void test1x1AreaOperand() {
 
 		ValueEval[] values = { BoolEval.FALSE, };
 		ValueEval[] args = {
@@ -51,7 +51,7 @@ public final class TestEqualEval {
 	 * Empty string is equal to blank
 	 */
 	@Test
-	public void testBlankEqualToEmptyString() {
+	void testBlankEqualToEmptyString() {
 
 		ValueEval[] args = {
 			new StringEval(""),
@@ -67,7 +67,7 @@ public final class TestEqualEval {
 	 * Test for bug 46613 (observable at svn r737248)
 	 */
 	@Test
-	public void testStringInsensitive_bug46613() {
+	void testStringInsensitive_bug46613() {
 		assertTrue(evalStringCmp("abc", "aBc", EvalInstances.Equal));
 		assertTrue(evalStringCmp("ABC", "azz", EvalInstances.LessThan));
 		assertTrue(evalStringCmp("abc", "AZZ", EvalInstances.LessThan));
@@ -87,7 +87,7 @@ public final class TestEqualEval {
 	}
 
 	@Test
-	public void testBooleanCompares() {
+	void testBooleanCompares() {
 		confirmCompares(BoolEval.TRUE, new StringEval("TRUE"), +1);
 		confirmCompares(BoolEval.TRUE, new NumberEval(1.0), +1);
 		confirmCompares(BoolEval.TRUE, BoolEval.TRUE, 0);
@@ -130,7 +130,7 @@ public final class TestEqualEval {
 	 * See {@link TestMinusZeroResult} for more specific tests regarding -0.0.
 	 */
 	@Test
-	public void testZeroEquality_bug47198() {
+	void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
 		NumberEval mZero = (NumberEval) evaluate(UnaryMinusEval.instance, new ValueEval[] { zero, }, 0, 0);
 		assertNotEquals(0x8000000000000000L, Double.doubleToLongBits(mZero.getNumberValue()),
@@ -141,7 +141,7 @@ public final class TestEqualEval {
 	}
 
 	@Test
-	public void testRounding_bug47598() {
+	void testRounding_bug47598() {
 		double x = 1+1.0028-0.9973; // should be 1.0055, but has IEEE rounding
 		assertNotEquals(1.0055, x, 0.0);
 

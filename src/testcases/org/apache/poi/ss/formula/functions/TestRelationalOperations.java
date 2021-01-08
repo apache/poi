@@ -38,7 +38,7 @@ public class TestRelationalOperations {
      *
      */
     @Test
-    public void testEqMatrixByScalar_Numbers() {
+    void testEqMatrixByScalar_Numbers() {
         ValueEval[] values = new ValueEval[4];
         for (int i = 0; i < values.length; i++) {
             values[i] = new NumberEval(1);
@@ -62,7 +62,7 @@ public class TestRelationalOperations {
     }
 
     @Test
-    public void testEqMatrixByScalar_String() {
+    void testEqMatrixByScalar_String() {
         ValueEval[] values = new ValueEval[4];
         for (int i = 0; i < values.length; i++) {
             values[i] = new StringEval("ABC");
@@ -85,7 +85,7 @@ public class TestRelationalOperations {
     }
 
     @Test
-    public void testEqMatrixBy_Row() {
+    void testEqMatrixBy_Row() {
         ValueEval[] matrix = {
                 new NumberEval(-1), new NumberEval(1),
                 new NumberEval(-1), new NumberEval(1)
@@ -119,7 +119,7 @@ public class TestRelationalOperations {
     }
 
     @Test
-    public void testEqMatrixBy_Column() {
+    void testEqMatrixBy_Column() {
         ValueEval[] matrix = {
                 new NumberEval(-1), new NumberEval(1),
                 new NumberEval(-1), new NumberEval(1)
@@ -156,7 +156,7 @@ public class TestRelationalOperations {
     }
 
     @Test
-    public void testEqMatrixBy_Matrix() {
+    void testEqMatrixBy_Matrix() {
         // A1:B2
         ValueEval[] matrix1 = {
                 new NumberEval(-1), new NumberEval(1),

@@ -34,7 +34,7 @@ public final class TestUnaryPlusEval {
 	 * The code for handling column operands had been copy-pasted from the row handling code.
 	 */
 	@Test
-	public void testColumnOperand() {
+	void testColumnOperand() {
 
 		short firstRow = (short)8;
 		short lastRow = (short)12;

@@ -50,7 +50,7 @@ public final class TestHSSFPalette {
      * Verifies that a custom palette can be created, saved, and reloaded
      */
     @Test
-    public void testCustomPalette() {
+    void testCustomPalette() {
         //reading sample xls
         HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
@@ -86,7 +86,7 @@ public final class TestHSSFPalette {
      */
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void testPaletteFromCellColours() {
+    void testPaletteFromCellColours() {
         HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("SimpleWithColours.xls");
 
         HSSFPalette p = book.getCustomPalette();
@@ -146,7 +146,7 @@ public final class TestHSSFPalette {
 
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void testFindSimilar() throws IOException {
+    void testFindSimilar() throws IOException {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFPalette p = book.getCustomPalette();
 
@@ -237,7 +237,7 @@ public final class TestHSSFPalette {
      * hardcoded values in the HSSFColor default color palette
      */
     @Test
-    public void testGnumericStrings() {
+    void testGnumericStrings() {
         compareToDefaults((expected, palette) -> assertEquals(expected.getHexString(), palette.getHexString()));
     }
 
@@ -245,7 +245,7 @@ public final class TestHSSFPalette {
      * Verifies that the palette handles invalid palette indexes
      */
     @Test
-    public void testBadIndexes() {
+    void testBadIndexes() {
         //too small
         _hssfPalette.setColorAtIndex((short) 2, (byte) 255, (byte) 255, (byte) 255);
         //too large
@@ -271,7 +271,7 @@ public final class TestHSSFPalette {
     }
 
     @Test
-    public void testAddColor() {
+    void testAddColor() {
         assertThrows(RuntimeException.class, () -> _hssfPalette.addColor((byte)10,(byte)10,(byte)10),
             "Failing because by default there are no colours left in the palette.");
     }
@@ -281,7 +281,7 @@ public final class TestHSSFPalette {
     }
 
     @Test
-    public void test48403() throws Exception {
+    void test48403() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         Color color = Color.decode("#006B6B");

@@ -37,7 +37,7 @@ public final class TestLongField {
     };
 
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> new LongField(-1));
 
         LongField field1 = new LongField(2);
@@ -73,7 +73,7 @@ public final class TestLongField {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         LongField field = new LongField(0);
         byte[]    array = new byte[ 8 ];
 
@@ -95,7 +95,7 @@ public final class TestLongField {
     }
 
     @Test
-    public void testReadFromBytes() {
+    void testReadFromBytes() {
         LongField field = new LongField(1);
         byte[]    array = new byte[ 8 ];
 
@@ -121,7 +121,7 @@ public final class TestLongField {
     }
 
     @Test
-    public void testReadFromStream() throws IOException {
+    void testReadFromStream() throws IOException {
         LongField field  = new LongField(0);
         byte[]    buffer = new byte[ _test_array.length * 8 ];
 
@@ -144,7 +144,7 @@ public final class TestLongField {
     }
 
     @Test
-    public void testWriteToBytes() {
+    void testWriteToBytes() {
         LongField field = new LongField(0);
         byte[]    array = new byte[ 8 ];
 

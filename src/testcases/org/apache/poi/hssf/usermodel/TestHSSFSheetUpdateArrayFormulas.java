@@ -53,7 +53,7 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
     // Test methods common with XSSF are in superclass
     // Local methods here test HSSF-specific details of updating array formulas
     @Test
-    public void testHSSFSetArrayFormula_singleCell() throws IOException {
+    void testHSSFSetArrayFormula_singleCell() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet("Sheet1");
 
@@ -80,7 +80,7 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
      * Makes sure the internal state of HSSFSheet is consistent after removing array formulas
      */
     @Test
-    public void testAddRemoveArrayFormulas_recordUpdates() throws IOException {
+    void testAddRemoveArrayFormulas_recordUpdates() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet("Sheet1");
 

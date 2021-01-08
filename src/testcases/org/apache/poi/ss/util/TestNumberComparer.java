@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public final class TestNumberComparer {
 
     @Test
-	public void testAllComparisonExamples() {
+	void testAllComparisonExamples() {
 		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
 		boolean success = true;
 
@@ -47,7 +47,7 @@ public final class TestNumberComparer {
 	}
 
     @Test
-	public void testRoundTripOnComparisonExamples() {
+	void testRoundTripOnComparisonExamples() {
 		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
 		for(int i=0;i<examples.length; i++) {
 			ComparisonExample ce = examples[i];
@@ -66,7 +66,7 @@ public final class TestNumberComparer {
 	 * The actual example from bug 47598
 	 */
 	@Test
-	public void testSpecificExampleA() {
+	void testSpecificExampleA() {
 		double a = 0.06-0.01;
 		double b = 0.05;
         assertNotEquals(a, b, 0.0);
@@ -77,7 +77,7 @@ public final class TestNumberComparer {
 	 * The example from the nabble posting
 	 */
 	@Test
-	public void testSpecificExampleB() {
+	void testSpecificExampleB() {
 		double a = 1+1.0028-0.9973;
 		double b = 1.0055;
         assertNotEquals(a, b, 0.0);

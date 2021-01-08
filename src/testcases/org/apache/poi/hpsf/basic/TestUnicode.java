@@ -72,7 +72,7 @@ public class TestUnicode {
      * @exception HPSFException if an HPSF exception occurs
      */
     @Test
-    public void testPropertySetMethods() throws IOException, HPSFException {
+    void testPropertySetMethods() throws IOException, HPSFException {
         POIFile poiFile = Util.readPOIFiles(data, POI_FILES).get(0);
         byte[] b = poiFile.getBytes();
         PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));

@@ -102,7 +102,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void testBug56380InsertComments() throws Exception {
+    void testBug56380InsertComments() throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet();
         Drawing<?> drawing = sheet.createDrawingPatriarch();
@@ -138,7 +138,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void testBug56380InsertTooManyComments() throws Exception {
+    void testBug56380InsertTooManyComments() throws Exception {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet();
             Drawing<?> drawing = sheet.createDrawingPatriarch();

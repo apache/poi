@@ -48,7 +48,7 @@ public final class TestSumproduct {
 	}
 
 	@Test
-	public void testScalarSimple() {
+	void testScalarSimple() {
 
 		RefEval refEval = EvalFactory.createRefEval("A1", new NumberEval(3));
 		ValueEval[] args = {
@@ -60,7 +60,7 @@ public final class TestSumproduct {
 	}
 
 	@Test
-	public void testAreaSimple() {
+	void testAreaSimple() {
 		ValueEval[] aValues = {
 			new NumberEval(2),
 			new NumberEval(4),
@@ -83,7 +83,7 @@ public final class TestSumproduct {
 	 * For scalar products, the terms may be 1x1 area refs
 	 */
 	@Test
-	public void testOneByOneArea() {
+	void testOneByOneArea() {
 
 		AreaEval ae = EvalFactory.createAreaEval("A1:A1", new ValueEval[] { new NumberEval(7), });
 
@@ -96,7 +96,7 @@ public final class TestSumproduct {
 	}
 
 	@Test
-	public void testMismatchAreaDimensions() {
+	void testMismatchAreaDimensions() {
 
 		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", new ValueEval[3]);
 		AreaEval aeB = EvalFactory.createAreaEval("B1:D1", new ValueEval[3]);
@@ -110,7 +110,7 @@ public final class TestSumproduct {
 	}
 
 	@Test
-	public void testAreaWithErrorCell() {
+	void testAreaWithErrorCell() {
 		ValueEval[] aValues = {
 			ErrorEval.REF_INVALID,
 			null,

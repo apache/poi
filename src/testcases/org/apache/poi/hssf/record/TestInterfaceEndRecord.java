@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestInterfaceEndRecord {
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         InterfaceEndRecord record = InterfaceEndRecord.instance;
         assertEquals(0, record.getDataSize());
     }
@@ -46,7 +46,7 @@ public final class TestInterfaceEndRecord {
      * data to an {@link InterfaceHdrRecord}.
      */
     @Test
-    public void testUnexpectedBytes_bug47251(){
+    void testUnexpectedBytes_bug47251(){
         String hex = "" +
                 "09 08 10 00 00 06 05 00 EC 15 CD 07 C1 C0 00 00 06 03 00 00 " +   //BOF
                 "E2 00 02 00 B0 04 " + //INTERFACEEND with extra two bytes

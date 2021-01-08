@@ -48,7 +48,7 @@ public class TestQuotient {
     }
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         confirmValue("Integer portion of 5/2 (2)", "5", "2", "2");
         confirmValue("Integer portion of 4.5/3.1 (1)", "4.5", "3.1", "1");
 
@@ -59,7 +59,7 @@ public class TestQuotient {
     }
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);
 

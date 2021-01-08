@@ -75,7 +75,7 @@ public final class TestFormulaEvaluatorBugs {
      *  open up excel
      */
     @Test
-    public void test44636() throws Exception {
+    void test44636() throws Exception {
         // Open the existing file, tweak one value and
         // re-calculate
 
@@ -130,7 +130,7 @@ public final class TestFormulaEvaluatorBugs {
      * if a formula has values in the interval [Short.MAX_VALUE, (Short.MAX_VALUE+1)*2]
      */
     @Test
-    public void test44297() throws Exception {
+    void test44297() throws Exception {
 
         HSSFWorkbook wb = openSampleWorkbook("44297.xls");
 
@@ -194,7 +194,7 @@ public final class TestFormulaEvaluatorBugs {
      *  of all the rows in Column C
      */
     @Test
-    public void test44410() throws Exception {
+    void test44410() throws Exception {
         HSSFWorkbook wb = openSampleWorkbook("SingleLetterRanges.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
@@ -254,7 +254,7 @@ public final class TestFormulaEvaluatorBugs {
      * Tests that we can evaluate boolean cells properly
      */
     @Test
-    public void testEvaluateBooleanInCell_bug44508() throws Exception {
+    void testEvaluateBooleanInCell_bug44508() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
@@ -275,7 +275,7 @@ public final class TestFormulaEvaluatorBugs {
     }
 
     @Test
-    public void testClassCast_bug44861() throws Exception {
+    void testClassCast_bug44861() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("44861.xls")) {
             // Check direct
             HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
@@ -296,7 +296,7 @@ public final class TestFormulaEvaluatorBugs {
     }
 
     @Test
-    public void testEvaluateInCellWithErrorCode_bug44950() throws Exception {
+    void testEvaluateInCellWithErrorCode_bug44950() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("Sheet1");
             HSSFRow row = sheet.createRow(1);
@@ -313,7 +313,7 @@ public final class TestFormulaEvaluatorBugs {
     }
 
     @Test
-    public void testDateWithNegativeParts_bug48528() throws Exception {
+    void testDateWithNegativeParts_bug48528() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(1);
@@ -386,7 +386,7 @@ public final class TestFormulaEvaluatorBugs {
      * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
      */
     @Test
-    public void testSlowEvaluate45376() throws Exception {
+    void testSlowEvaluate45376() throws Exception {
         /*
          * Note - to observe behaviour without caching, disable the call to
          * updateValue() from FormulaCellCacheEntry.updateFormulaResult().
@@ -440,7 +440,7 @@ public final class TestFormulaEvaluatorBugs {
 
     @SuppressWarnings("resource")
     @Test
-    public void test55747_55324() throws Exception {
+    void test55747_55324() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFFormulaEvaluator ev = wb.getCreationHelper().createFormulaEvaluator();
         HSSFSheet ws = wb.createSheet();

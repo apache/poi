@@ -111,7 +111,7 @@ public final class TestPOIFSFileSystem {
 	 * POIFSFileSystem was not closing the input stream.
 	 */
 	@Test
-	public void testAlwaysClose() throws IOException {
+	void testAlwaysClose() throws IOException {
 		// Normal case - read until EOF and close
 		try (TestIS testIS = new TestIS(openSampleStream("13224.xls"), -1);
 			POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
@@ -138,7 +138,7 @@ public final class TestPOIFSFileSystem {
 	 *  POIFS, since it seems to be slight wrong
 	 */
 	@Test
-	public void testShortLastBlock() throws Exception {
+	void testShortLastBlock() throws Exception {
 		String[] files = new String[] {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"
 		};
@@ -163,7 +163,7 @@ public final class TestPOIFSFileSystem {
 	 *  sectors that exist in the file.
 	 */
 	@Test
-	public void testFATandDIFATsectors() throws Exception {
+	void testFATandDIFATsectors() throws Exception {
 		try (InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")) {
 			IndexOutOfBoundsException ex = assertThrows(
 				IndexOutOfBoundsException.class,
@@ -181,7 +181,7 @@ public final class TestPOIFSFileSystem {
 	 *  to have an XBAT in it, we don't have a test one. So, generate it.
 	 */
 	@Test
-	public void testBATandXBAT() throws Exception {
+	void testBATandXBAT() throws Exception {
 	   byte[] hugeStream = new byte[8*1024*1024];
 	   POIFSFileSystem fs = new POIFSFileSystem();
 	   fs.getRoot().createDocument(
@@ -230,7 +230,7 @@ public final class TestPOIFSFileSystem {
 	 *  use 4k blocks. Check that we can open these.
 	 */
 	@Test
-	public void test4KBlocks() throws Exception {
+	void test4KBlocks() throws Exception {
         POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 		try (InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi")) {
 			// First up, check that we can process the header properly
@@ -291,7 +291,7 @@ public final class TestPOIFSFileSystem {
 	}
 
 	@Test
-	public void test64322() throws NoPropertySetStreamException, IOException {
+	void test64322() throws NoPropertySetStreamException, IOException {
 		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.getFile("64322.ole2"))) {
 			int count = recurseDir(poiFS.getRoot());
 
@@ -300,7 +300,7 @@ public final class TestPOIFSFileSystem {
 	}
 
 	@Test
-	public void test64322a() throws NoPropertySetStreamException, IOException {
+	void test64322a() throws NoPropertySetStreamException, IOException {
 		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.openResourceAsStream("64322.ole2"))) {
 			int count = recurseDir(poiFS.getRoot());
 

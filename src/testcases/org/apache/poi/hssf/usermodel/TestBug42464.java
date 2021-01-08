@@ -37,14 +37,14 @@ import org.junit.jupiter.api.Test;
 public final class TestBug42464 {
 
     @Test
-	public void testOKFile() throws Exception {
+	void testOKFile() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
 		process(wb);
 		wb.close();
 	}
 
     @Test
-	public void testExpSharedBadFile() throws Exception {
+	void testExpSharedBadFile() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
 		process(wb);
 		wb.close();

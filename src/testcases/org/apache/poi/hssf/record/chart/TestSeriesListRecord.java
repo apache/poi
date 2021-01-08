@@ -35,7 +35,7 @@ public final class TestSeriesListRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         SeriesListRecord record = new SeriesListRecord(TestcaseRecordInputStream.create(0x1016, data));
         assertEquals( (short)0x2001, record.getSeriesNumbers()[0]);
@@ -47,7 +47,7 @@ public final class TestSeriesListRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SeriesListRecord record = new SeriesListRecord(new short[] { (short)0x2001, (short)0xf0ff } );
 
         byte [] recordBytes = record.serialize();

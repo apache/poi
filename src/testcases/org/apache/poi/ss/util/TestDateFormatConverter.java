@@ -125,7 +125,7 @@ public final class TestDateFormatConverter {
     }
 
     @Test
-    public void testJavaDateFormatsInExcel() throws Exception {
+    void testJavaDateFormatsInExcel() throws Exception {
         Date date = new Date();
 
         outputLocaleDataFormats(date, true, false, DateFormat.DEFAULT, "Default" );
@@ -148,19 +148,19 @@ public final class TestDateFormatConverter {
     }
 
     @Test
-    public void testJDK8EmptyLocale() {
+    void testJDK8EmptyLocale() {
         // JDK 8 seems to add an empty locale-string to the list returned via DateFormat.getAvailableLocales()
         // therefore we now cater for this special locale as well
         DateFormatConverter.getPrefixForLocale(new Locale(""));
     }
 
     @Test
-    public void testJDK11MyLocale() {
+    void testJDK11MyLocale() {
         DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
     }
 
     @Test
-    public void testAllKnownLocales() {
+    void testAllKnownLocales() {
         Pattern p = Pattern.compile("\\[\\$-(\\p{XDigit}+)]");
 
         Set<String> excludeList = Stream.of(

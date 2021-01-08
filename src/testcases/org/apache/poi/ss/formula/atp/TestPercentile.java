@@ -53,7 +53,7 @@ public class TestPercentile {
     }
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         ValueEval[] values = { new NumberEval(210.128), new NumberEval(65.2182), new NumberEval(32.231),
                 new NumberEval(12.123), new NumberEval(45.32) };
         ValueEval percentile = new NumberEval(0.95);
@@ -61,7 +61,7 @@ public class TestPercentile {
     }
 
     @Test
-    public void testBlanks() {
+    void testBlanks() {
         ValueEval[] values = { new NumberEval(210.128), new NumberEval(65.2182), new NumberEval(32.231),
                 BlankEval.instance, new NumberEval(45.32) };
         ValueEval percentile = new NumberEval(0.95);
@@ -69,7 +69,7 @@ public class TestPercentile {
     }
 
     @Test
-    public void testUnusualArgs() {
+    void testUnusualArgs() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), BoolEval.TRUE, BoolEval.FALSE };
         ValueEval percentile = new NumberEval(0.95);
         confirmPercentile(percentile, values, 1.95);
@@ -77,7 +77,7 @@ public class TestPercentile {
 
     //percentile has to be between 0 and 1 - here we test less than zero
     @Test
-    public void testUnusualArgs2() {
+    void testUnusualArgs2() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), };
         ValueEval percentile = new NumberEval(-0.1);
         confirmPercentile(percentile, values, ErrorEval.NUM_ERROR);
@@ -85,7 +85,7 @@ public class TestPercentile {
 
     //percentile has to be between 0 and 1 - here we test more than 1
     @Test
-    public void testUnusualArgs3() {
+    void testUnusualArgs3() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2) };
         ValueEval percentile = new NumberEval(1.1);
         confirmPercentile(percentile, values, ErrorEval.NUM_ERROR);
@@ -93,7 +93,7 @@ public class TestPercentile {
 
     //here we test where there are errors as part of inputs
     @Test
-    public void testErrors() {
+    void testErrors() {
         ValueEval[] values = { new NumberEval(1), ErrorEval.NAME_INVALID, new NumberEval(3), ErrorEval.DIV_ZERO, };
         ValueEval percentile = new NumberEval(0.95);
         confirmPercentile(percentile, values, ErrorEval.NAME_INVALID);
@@ -101,7 +101,7 @@ public class TestPercentile {
 
     //here we test where there are errors as part of inputs
     @Test
-    public void testErrors2() {
+    void testErrors2() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), new NumberEval(3), ErrorEval.DIV_ZERO, };
         ValueEval percentile = new NumberEval(0.95);
         confirmPercentile(percentile, values, ErrorEval.DIV_ZERO);

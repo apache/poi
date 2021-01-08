@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public final class TestIsBlank {
 
     @Test
-    public void test3DArea() {
+    void test3DArea() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet();
         wb.setSheetName(0, "Sheet1");

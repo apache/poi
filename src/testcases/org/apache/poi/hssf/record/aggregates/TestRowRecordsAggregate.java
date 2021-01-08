@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 public final class TestRowRecordsAggregate {
 
     @Test
-	public void testRowGet() {
+	void testRowGet() {
 		RowRecordsAggregate rra = new RowRecordsAggregate();
 		RowRecord rr = new RowRecord(4);
 		rra.insertRow(rr);
@@ -70,7 +70,7 @@ public final class TestRowRecordsAggregate {
 	 * {@link FormulaRecord}s that they apply to (and only once).<br>
 	 */
     @Test
-	public void testArraysAndTables() throws Exception {
+	void testArraysAndTables() throws Exception {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testArraysAndTables.xls")) {
 			final List<org.apache.poi.hssf.record.Record> sheetRecs = new ArrayList<>();
 			wb.getSheetAt(0).getSheet().visitContainedRecords(sheetRecs::add, 0);
@@ -134,7 +134,7 @@ public final class TestRowRecordsAggregate {
 	 * UnknownRecord} has the potential of being 'continued'.
 	 */
 	@Test
-	public void testUnknownContinue_bug46280() {
+	void testUnknownContinue_bug46280() {
 		org.apache.poi.hssf.record.Record[] inRecs = {
 			new RowRecord(0),
 			new NumberRecord(),

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public final class TestSpreadsheetVersion {
 
     @Test
-    public void testExcel97(){
+    void testExcel97(){
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL97;
         assertEquals(1 << 8, v.getMaxColumns());
         assertEquals(v.getMaxColumns() - 1, v.getLastColumnIndex());
@@ -39,7 +39,7 @@ public final class TestSpreadsheetVersion {
     }
 
     @Test
-    public void testExcel2007(){
+    void testExcel2007(){
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
         assertEquals(1 << 14, v.getMaxColumns());
         assertEquals(v.getMaxColumns() - 1, v.getLastColumnIndex());

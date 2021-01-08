@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFormulaRecord {
 
 	@Test
-	public void testCreateFormulaRecord () {
+	void testCreateFormulaRecord () {
 		FormulaRecord record = new FormulaRecord();
 		record.setColumn((short)0);
 		record.setRow(1);
@@ -52,7 +52,7 @@ public final class TestFormulaRecord {
 	 * This formula record is a representation of =1/0 at row 0, column 0
 	 */
 	@Test
-	public void testCheckNanPreserve() {
+	void testCheckNanPreserve() {
 		byte[] formulaByte = {
 			0, 0, 0, 0,
 			0x0F, 0x00,
@@ -102,7 +102,7 @@ public final class TestFormulaRecord {
 	 * Tests to see if the shared formula cells properly reserialize the expPtg
 	 */
 	@Test
-	public void testExpFormula() {
+	void testExpFormula() {
 		byte[] formulaByte = new byte[27];
 
 		formulaByte[4] =(byte)0x0F;
@@ -121,7 +121,7 @@ public final class TestFormulaRecord {
 	}
 
 	@Test
-	public void testWithConcat() {
+	void testWithConcat() {
 		// =CHOOSE(2,A2,A3,A4)
 		byte[] data = {
 				1, 0, 1, 0, 15, 0, 0, 0, 0, 0, 0, 0, 57,
@@ -159,7 +159,7 @@ public final class TestFormulaRecord {
 	}
 
 	@Test
-	public void testReserialize() {
+	void testReserialize() {
 		FormulaRecord formulaRecord = new FormulaRecord();
 		formulaRecord.setRow(1);
 		formulaRecord.setColumn((short) 1);
@@ -182,7 +182,7 @@ public final class TestFormulaRecord {
 	 * inside {@link FormulaRecord}
 	 */
 	@Test
-	public void testCachedValue_bug46479() {
+	void testCachedValue_bug46479() {
 		FormulaRecord fr0 = new FormulaRecord();
 		FormulaRecord fr1 = new FormulaRecord();
 		// test some other cached value types

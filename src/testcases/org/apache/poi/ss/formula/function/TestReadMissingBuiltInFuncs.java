@@ -71,7 +71,7 @@ public final class TestReadMissingBuiltInFuncs {
 	}
 
 	@Test
-	public void testDatedif() {
+	void testDatedif() {
 		String formula;
 		try {
 			formula = getCellFormula(0);
@@ -91,28 +91,28 @@ public final class TestReadMissingBuiltInFuncs {
 	}
 
 	@Test
-	public void testDdb() {
+	void testDdb() {
 		String formula = getCellFormula(1);
 		assertNotEquals("externalflag(1,1,1,1,1)", formula, "DDB() not registered");
 		assertEquals("DDB(1,1,1,1,1)", formula);
 	}
 
 	@Test
-	public void testAtan() {
+	void testAtan() {
 		String formula = getCellFormula(2);
 		assertNotEquals("ARCTAN(1)", formula, "func ix 18 registered as ARCTAN() instead of ATAN()");
 		assertEquals("ATAN(1)", formula);
 	}
 
 	@Test
-	public void testUsdollar() {
+	void testUsdollar() {
 		String formula = getCellFormula(3);
 		assertNotEquals("YEN(1)", formula, "func ix 204 registered as YEN() instead of USDOLLAR()");
 		assertEquals("USDOLLAR(1)", formula);
 	}
 
 	@Test
-	public void testDBCS() {
+	void testDBCS() {
 		String formula = "";
 		try {
 			formula = getCellFormula(4);
@@ -128,7 +128,7 @@ public final class TestReadMissingBuiltInFuncs {
 	}
 
 	@Test
-	public void testIsnontext() {
+	void testIsnontext() {
 		String formula;
 		try {
 			formula = getCellFormula(5);
@@ -141,7 +141,7 @@ public final class TestReadMissingBuiltInFuncs {
 	}
 
 	@Test
-	public void testDproduct() {
+	void testDproduct() {
 		String formula = getCellFormula(6);
 		assertEquals("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", formula);
 	}

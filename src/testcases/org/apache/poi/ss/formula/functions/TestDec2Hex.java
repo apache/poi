@@ -73,7 +73,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("Converts decimal 100 to hexadecimal with 0 characters (64)", "100","0", "64");
 		confirmValue("Converts decimal 100 to hexadecimal with 4 characters (0064)", "100","4", "0064");
 		confirmValue("Converts decimal 100 to hexadecimal with 5 characters (0064)", "100","5", "00064");
@@ -107,7 +107,7 @@ public final class TestDec2Hex {
 	}
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("Out of range min number","-549755813889","0", ErrorEval.NUM_ERROR);
         confirmValueError("Out of range max number","549755813888","0", ErrorEval.NUM_ERROR);
 
@@ -116,7 +116,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testEvalOperationEvaluationContextFails() {
+    void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ErrorEval.VALUE_INVALID };
@@ -143,7 +143,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testRefs() {
+    void testRefs() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
@@ -154,7 +154,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithPlacesIntInt() {
+    void testWithPlacesIntInt() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
@@ -165,7 +165,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithPlaces() {
+    void testWithPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
@@ -176,7 +176,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithTooManyParamsIntInt() {
+    void testWithTooManyParamsIntInt() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
@@ -187,7 +187,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithTooManyParams() {
+    void testWithTooManyParams() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
@@ -198,7 +198,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithErrorPlaces() {
+    void testWithErrorPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ErrorEval.NULL_INTERSECTION };
@@ -209,7 +209,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithNegativePlaces() {
+    void testWithNegativePlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 2) };
@@ -220,7 +220,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testWithEmptyPlaces() {
+    void testWithEmptyPlaces() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(1, 0) };
@@ -231,7 +231,7 @@ public final class TestDec2Hex {
     }
 
     @Test
-    public void testBackAndForth() {
+    void testBackAndForth() {
         for (int i = -512; i < 512; i++) {
             ValueEval result = invokeValue(Integer.toString(i));
             assertEquals(StringEval.class, result.getClass(), "Had: " + result);

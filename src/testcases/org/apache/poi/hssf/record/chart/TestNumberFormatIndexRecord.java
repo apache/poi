@@ -35,7 +35,7 @@ public final class TestNumberFormatIndexRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         NumberFormatIndexRecord record = new NumberFormatIndexRecord(TestcaseRecordInputStream.create(0x104e, data));
         assertEquals( 5, record.getFormatIndex());
 
@@ -44,7 +44,7 @@ public final class TestNumberFormatIndexRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         NumberFormatIndexRecord record = new NumberFormatIndexRecord();
         record.setFormatIndex( (short)5 );
 

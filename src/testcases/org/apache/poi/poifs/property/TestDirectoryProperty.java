@@ -44,7 +44,7 @@ public final class TestDirectoryProperty {
      * Test constructing DirectoryProperty
      */
     @Test
-    public void testConstructor() throws IOException {
+    void testConstructor() throws IOException {
         createBasicDirectoryProperty();
         verifyProperty();
     }
@@ -53,7 +53,7 @@ public final class TestDirectoryProperty {
      * Test pre-write functionality
      */
     @Test
-    public void testPreWrite() throws IOException {
+    void testPreWrite() throws IOException {
         createBasicDirectoryProperty();
         _property.preWrite();
 
@@ -200,7 +200,7 @@ public final class TestDirectoryProperty {
     }
 
     @Test
-    public void testAddChild() throws IOException {
+    void testAddChild() throws IOException {
         createBasicDirectoryProperty();
         _property.addChild(new LocalProperty(1));
         _property.addChild(new LocalProperty(2));
@@ -210,7 +210,7 @@ public final class TestDirectoryProperty {
     }
 
     @Test
-    public void testDeleteChild() throws IOException {
+    void testDeleteChild() throws IOException {
         createBasicDirectoryProperty();
         Property p1 = new LocalProperty(1);
 
@@ -222,7 +222,7 @@ public final class TestDirectoryProperty {
     }
 
     @Test
-    public void testChangeName() throws IOException {
+    void testChangeName() throws IOException {
         createBasicDirectoryProperty();
         Property p1           = new LocalProperty(1);
         String   originalName = p1.getName();
@@ -241,7 +241,7 @@ public final class TestDirectoryProperty {
     }
 
     @Test
-    public void testReadingConstructor() {
+    void testReadingConstructor() {
         String[] input = {
             "42 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
             "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",

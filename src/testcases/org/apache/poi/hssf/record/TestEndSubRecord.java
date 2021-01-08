@@ -30,13 +30,13 @@ public final class TestEndSubRecord {
     private static final byte[] data =  { };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         EndSubRecord record = new EndSubRecord(TestcaseRecordInputStream.create(0x00, data), 0);
         assertEquals(0, record.getDataSize());
     }
 
     @Test
-    public void testStore() {
+    void testStore() {
         EndSubRecord record = new EndSubRecord();
         byte [] recordBytes = record.serialize();
         assertEquals(0, recordBytes.length - 4);

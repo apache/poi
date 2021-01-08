@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class TestCellFormatResult {
 
     @Test
-    public void testNullTextRaisesException() {
+    void testNullTextRaisesException() {
         final boolean applies = true;
         final String text = null;
         final Color textColor = Color.BLACK;

@@ -61,7 +61,7 @@ public final class TestIndex {
 	 * For the case when the first argument to INDEX() is an area reference
 	 */
 	@Test
-	public void testEvaluateAreaReference() {
+	void testEvaluateAreaReference() {
 
 		double[] values = TEST_VALUES0;
 		confirmAreaEval("C1:D6", values, 4, 1, 7);
@@ -110,7 +110,7 @@ public final class TestIndex {
 	 * This problem was found while fixing bug 47048 and is observable up to svn r773441.
 	 */
 	@Test
-	public void testMissingArg() {
+	void testMissingArg() {
 		ValueEval[] values = {
 				new NumberEval(25.0),
 				new NumberEval(26.0),
@@ -133,7 +133,7 @@ public final class TestIndex {
 	 * This works because the INDEX() function returns a reference to A2 (not the value of A2)
 	 */
 	@Test
-	public void testReferenceResult() {
+	void testReferenceResult() {
 		ValueEval[] values = new ValueEval[4];
 		Arrays.fill(values, NumberEval.ZERO);
 		AreaEval arg0 = EvalFactory.createAreaEval("A1:B2", values);
@@ -158,7 +158,7 @@ public final class TestIndex {
 	}
 
 	@Test
-	public void test61859(){
+	void test61859(){
 		Workbook wb = HSSFTestDataSamples.openSampleWorkbook("maxindextest.xls");
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -180,7 +180,7 @@ public final class TestIndex {
 	}
 
 	@Test
-	public void test61116(){
+	void test61116(){
 		Workbook workbook = HSSFTestDataSamples.openSampleWorkbook("61116.xls");
 		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 		Sheet sheet = workbook.getSheet("sample2");
@@ -199,7 +199,7 @@ public final class TestIndex {
 	 * INDEX returns the value in the cell at the intersection of Row_num and Column_num
 	 */
 	@Test
-	public void testReference2DArea(){
+	void testReference2DArea(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		/*
@@ -229,7 +229,7 @@ public final class TestIndex {
 	 * If Column_num is 0 (zero), INDEX returns the array of values for the entire row.
 	 */
 	@Test
-	public void testArrayArgument_RowLookup(){
+	void testArrayArgument_RowLookup(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		/*
@@ -261,7 +261,7 @@ public final class TestIndex {
 	 * If Row_num is 0 (zero), INDEX returns the array of values for the entire column.
 	 */
 	@Test
-	public void testArrayArgument_ColumnLookup(){
+	void testArrayArgument_ColumnLookup(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		/*
@@ -295,7 +295,7 @@ public final class TestIndex {
 	 * 	 which is the sum of B1:B2.
 	 */
 	@Test
-	public void testDynamicReference(){
+	void testDynamicReference(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		/*

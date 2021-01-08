@@ -34,7 +34,7 @@ public final class TestSCLRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         SCLRecord record = new SCLRecord(TestcaseRecordInputStream.create(0xa0, data));
         assertEquals( 3, record.getNumerator());
         assertEquals( 4, record.getDenominator());
@@ -44,7 +44,7 @@ public final class TestSCLRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SCLRecord record = new SCLRecord();
         record.setNumerator( (short)3 );
         record.setDenominator( (short)4 );

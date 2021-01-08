@@ -74,7 +74,7 @@ public class TestWorkbookEvaluator {
      * the whole formula which converts tAttrSum to tFuncVar("SUM") )
      */
     @Test
-    public void testAttrSum() {
+    void testAttrSum() {
 
         Ptg[] ptgs = {
             new IntPtg(42),
@@ -91,7 +91,7 @@ public class TestWorkbookEvaluator {
      * to the error constant #REF! )
      */
     @Test
-    public void testRefErr() {
+    void testRefErr() {
 
         confirmRefErr(new RefErrorPtg());
         confirmRefErr(new AreaErrPtg());
@@ -112,7 +112,7 @@ public class TestWorkbookEvaluator {
      * the whole formula which converts tAttrSum to tFuncVar("SUM") )
      */
     @Test
-    public void testMemFunc() {
+    void testMemFunc() {
         Ptg[] ptgs = {
             new IntPtg(42),
             AttrPtg.SUM,
@@ -123,7 +123,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testEvaluateMultipleWorkbooks() {
+    void testEvaluateMultipleWorkbooks() {
         HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
         HSSFWorkbook wbB = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaB.xls");
 
@@ -189,7 +189,7 @@ public class TestWorkbookEvaluator {
      * the result of a function gets translated to {@link BlankEval}.
      */
     @Test
-    public void testMissingArg() {
+    void testMissingArg() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(0);
@@ -225,7 +225,7 @@ public class TestWorkbookEvaluator {
      * should be dereferenced by the evaluator
      */
     @Test
-    public void testResultOutsideRange() throws IOException {
+    void testResultOutsideRange() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
             cell.setCellFormula("D2:D5"); // IF(TRUE,D2:D5,D2) or  OFFSET(D2:D5,0,0) would work too
@@ -256,7 +256,7 @@ public class TestWorkbookEvaluator {
      * formulas with defined names.
      */
     @Test
-    public void testNamesInFormulas() throws IOException {
+    void testNamesInFormulas() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
@@ -311,7 +311,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIgnoreMissingWorkbooks() {
+    void testIgnoreMissingWorkbooks() {
         // TODO: update this test for meaningful functional behavior
         WorkbookEvaluator evaluator = new WorkbookEvaluator(null, null, null);
         assertFalse(evaluator.isIgnoreMissingWorkbooks());
@@ -324,7 +324,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testDebugEvaluationOutputForNextEval() {
+    void testDebugEvaluationOutputForNextEval() {
         // TODO: update this test for meaningful functional behavior
         WorkbookEvaluator evaluator = new WorkbookEvaluator(null, null, null);
         assertFalse(evaluator.isDebugEvaluationOutputForNextEval());
@@ -413,7 +413,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_NumericLiteral() {
+    void testIFEqualsFormulaEvaluation_NumericLiteral() {
         final String formula = "IF(A1=1, 2, 3)";
         final CellType cellType = CellType.NUMERIC;
         final String expectedFormula = "IF(A1=1,2,3)";
@@ -422,7 +422,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_Numeric() {
+    void testIFEqualsFormulaEvaluation_Numeric() {
         final String formula = "IF(A1=1, B1, C1)";
         final CellType cellType = CellType.NUMERIC;
         final String expectedFormula = "IF(A1=1,B1,C1)";
@@ -431,7 +431,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_NumericCoerceToString() {
+    void testIFEqualsFormulaEvaluation_NumericCoerceToString() {
         final String formula = "IF(A1&\"\"=\"1\", B1, C1)";
         final CellType cellType = CellType.NUMERIC;
         final String expectedFormula = "IF(A1&\"\"=\"1\",B1,C1)";
@@ -440,7 +440,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_String() {
+    void testIFEqualsFormulaEvaluation_String() {
         final String formula = "IF(A1=1, B1, C1)";
         final CellType cellType = CellType.STRING;
         final String expectedFormula = "IF(A1=1,B1,C1)";
@@ -449,7 +449,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_StringCompareToString() {
+    void testIFEqualsFormulaEvaluation_StringCompareToString() {
         final String formula = "IF(A1=\"1\", B1, C1)";
         final CellType cellType = CellType.STRING;
         final String expectedFormula = "IF(A1=\"1\",B1,C1)";
@@ -458,7 +458,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_StringCoerceToNumeric() {
+    void testIFEqualsFormulaEvaluation_StringCoerceToNumeric() {
         final String formula = "IF(A1+0=1, B1, C1)";
         final CellType cellType = CellType.STRING;
         final String expectedFormula = "IF(A1+0=1,B1,C1)";
@@ -468,7 +468,7 @@ public class TestWorkbookEvaluator {
 
     @Disabled("Bug 58591: this test currently fails")
     @Test
-    public void testIFEqualsFormulaEvaluation_Boolean() {
+    void testIFEqualsFormulaEvaluation_Boolean() {
         final String formula = "IF(A1=1, B1, C1)";
         final CellType cellType = CellType.BOOLEAN;
         final String expectedFormula = "IF(A1=1,B1,C1)";
@@ -478,7 +478,7 @@ public class TestWorkbookEvaluator {
 
     @Disabled("Bug 58591: this test currently fails")
     @Test
-    public void testIFEqualsFormulaEvaluation_BooleanSimple() {
+    void testIFEqualsFormulaEvaluation_BooleanSimple() {
         final String formula = "3-(A1=1)";
         final CellType cellType = CellType.BOOLEAN;
         final String expectedFormula = "3-(A1=1)";
@@ -487,7 +487,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_Formula() {
+    void testIFEqualsFormulaEvaluation_Formula() {
         final String formula = "IF(A1=1, B1, C1)";
         final CellType cellType = CellType.FORMULA;
         final String expectedFormula = "IF(A1=1,B1,C1)";
@@ -496,7 +496,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_Blank() {
+    void testIFEqualsFormulaEvaluation_Blank() {
         final String formula = "IF(A1=1, B1, C1)";
         final CellType cellType = CellType.BLANK;
         final String expectedFormula = "IF(A1=1,B1,C1)";
@@ -505,7 +505,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testIFEqualsFormulaEvaluation_BlankCompareToZero() {
+    void testIFEqualsFormulaEvaluation_BlankCompareToZero() {
         final String formula = "IF(A1=0, B1, C1)";
         final CellType cellType = CellType.BLANK;
         final String expectedFormula = "IF(A1=0,B1,C1)";
@@ -515,7 +515,7 @@ public class TestWorkbookEvaluator {
 
     @Disabled("Bug 58591: this test currently fails")
     @Test
-    public void testIFEqualsFormulaEvaluation_BlankInverted() {
+    void testIFEqualsFormulaEvaluation_BlankInverted() {
         final String formula = "IF(NOT(A1)=1, B1, C1)";
         final CellType cellType = CellType.BLANK;
         final String expectedFormula = "IF(NOT(A1)=1,B1,C1)";
@@ -525,7 +525,7 @@ public class TestWorkbookEvaluator {
 
     @Disabled("Bug 58591: this test currently fails")
     @Test
-    public void testIFEqualsFormulaEvaluation_BlankInvertedSimple() {
+    void testIFEqualsFormulaEvaluation_BlankInvertedSimple() {
         final String formula = "3-(NOT(A1)=1)";
         final CellType cellType = CellType.BLANK;
         final String expectedFormula = "3-(NOT(A1)=1)";
@@ -607,7 +607,7 @@ public class TestWorkbookEvaluator {
     }
 
     @Test
-    public void testRefToBlankCellInArrayFormula() {
+    void testRefToBlankCellInArrayFormula() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);

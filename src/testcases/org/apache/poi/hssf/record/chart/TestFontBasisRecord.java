@@ -39,7 +39,7 @@ public final class TestFontBasisRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         FontBasisRecord record = new FontBasisRecord(TestcaseRecordInputStream.create(0x1060, data));
         assertEquals( 0x1a28, record.getXBasis());
         assertEquals( 0x0f9c, record.getYBasis());
@@ -52,7 +52,7 @@ public final class TestFontBasisRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         FontBasisRecord record = new FontBasisRecord();
         record.setXBasis( (short)0x1a28 );
         record.setYBasis( (short)0x0f9c );

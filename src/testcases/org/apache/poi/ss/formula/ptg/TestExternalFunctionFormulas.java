@@ -37,7 +37,7 @@ public final class TestExternalFunctionFormulas {
 	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that
 	 */
     @Test
-	public void testReadFormulaContainingExternalFunction() throws Exception {
+	void testReadFormulaContainingExternalFunction() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 
 		String expectedFormula = "YEARFRAC(B1,C1)";
@@ -49,7 +49,7 @@ public final class TestExternalFunctionFormulas {
 	}
 
     @Test
-    public void testParse() throws Exception {
+    void testParse() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 		Ptg[] ptgs = HSSFFormulaParser.parse("YEARFRAC(B1,C1)", wb);
 		assertEquals(4, ptgs.length);
@@ -72,7 +72,7 @@ public final class TestExternalFunctionFormulas {
 	}
 
     @Test
-	public void testEvaluate() throws Exception {
+	void testEvaluate() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

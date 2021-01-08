@@ -136,7 +136,7 @@ public class TestPOIFSDump {
     }
 
     @Test
-    public void testMain() throws Exception {
+    void testMain() throws Exception {
         POIFSDump.main(new String[] {
                 TEST_FILE
         });
@@ -149,7 +149,7 @@ public class TestPOIFSDump {
         }
     }
     @Test
-    public void testInvalidFile() {
+    void testInvalidFile() {
         assertThrows(NotOLE2FileException.class, () -> POIFSDump.main(new String[]{INVALID_FILE}));
         assertThrows(OfficeXmlFileException.class, () -> POIFSDump.main(new String[]{INVALID_XLSX_FILE}));
 
@@ -161,12 +161,12 @@ public class TestPOIFSDump {
 
     @Disabled("Calls System.exit()")
     @Test
-    public void testMainNoArgs() throws Exception {
+    void testMainNoArgs() throws Exception {
         POIFSDump.main(new String[] {});
     }
 
     @Test
-    public void testFailToWrite() throws IOException {
+    void testFailToWrite() throws IOException {
         File dir = TempFile.createTempFile("TestPOIFSDump", ".tst");
         assertTrue(dir.exists(), "Had: " + dir);
         assertTrue(dir.delete(), "Had: " + dir);

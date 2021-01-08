@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestColumnInfoRecordsAggregate {
 
 	@Test
-    public void testGetRecordSize() {
+    void testGetRecordSize() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.insertColumn(createColInfo(1, 3));
 		agg.insertColumn(createColInfo(4, 7));
@@ -60,7 +60,7 @@ public final class TestColumnInfoRecordsAggregate {
 	}
 
 	@Test
-	public void testGroupColumns_bug45639() {
+	void testGroupColumns_bug45639() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.groupColumnRange( 7, 9, true);
 		agg.groupColumnRange( 4, 12, true);
@@ -83,7 +83,7 @@ public final class TestColumnInfoRecordsAggregate {
 	 * Check that an inner group remains hidden
 	 */
 	@Test
-	public void testHiddenAfterExpanding() {
+	void testHiddenAfterExpanding() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.groupColumnRange(1, 15, true);
 		agg.groupColumnRange(4, 12, true);

@@ -56,7 +56,7 @@ public final class TestExternalFunction {
 	 * Checks that an external function can get invoked from the formula evaluator.
 	 */
 	@Test
-	public void testInvoke() throws IOException {
+	void testInvoke() throws IOException {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls")) {
 			HSSFSheet sheet = wb.getSheetAt(0);
 

@@ -798,7 +798,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Disabled("For now, blows up with an exception from ExtPtg")
     @Test
-    public void test43623() throws Exception {
+    void test43623() throws Exception {
         try (HSSFWorkbook wb1 = openSampleWorkbook("43623.xls")) {
             assertEquals(1, wb1.getNumberOfSheets());
 
@@ -1855,7 +1855,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * eg =SUM($Sheet2.A1:$Sheet3.A1)
      */
     @Test
-    public void test48703() throws Exception {
+    void test48703() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("48703.xls")) {
             assertEquals(3, wb.getNumberOfSheets());
 
@@ -2266,7 +2266,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57163() throws IOException {
+    void test57163() throws IOException {
         simpleTest("57163.xls", wb -> {
             while (wb.getNumberOfSheets() > 1) {
                 wb.removeSheetAt(1);
@@ -2275,7 +2275,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test48043() throws IOException {
+    void test48043() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("56325a.xls")) {
 
             wb.removeSheetAt(2);
@@ -2301,7 +2301,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57925() throws IOException {
+    void test57925() throws IOException {
         try (Workbook wb = openSampleWorkbook("57925.xls")) {
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
             DataFormatter df = new DataFormatter();
@@ -2316,7 +2316,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test46515() throws IOException {
+    void test46515() throws IOException {
         try (Workbook wb = openSampleWorkbook("46515.xls")) {
 
             // Get structure from webservice
@@ -2349,7 +2349,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test55668() throws IOException {
+    void test55668() throws IOException {
         try (Workbook wb = openSampleWorkbook("55668.xls")) {
 
             Sheet sheet = wb.getSheetAt(0);
@@ -2369,7 +2369,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test55982() throws IOException {
+    void test55982() throws IOException {
         simpleTest("55982.xls", wb -> assertNotNull(wb.cloneSheet(1)));
     }
 
@@ -2377,7 +2377,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Test generator of ids for the CommonObjectDataSubRecord record.
      */
     @Test
-    public void test51332() {
+    void test51332() {
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         HSSFSimpleShape shape;
         CommonObjectDataSubRecord cmo;
@@ -2401,7 +2401,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     // As of POI 3.15 beta 2, LibreOffice does not display the diagonal border while it does display the bottom border
     // I have not checked Excel to know if this is a LibreOffice or a POI problem.
     @Test
-    public void test53564() throws IOException {
+    void test53564() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("Page 1");
             final short BLUE = 30;
@@ -2438,7 +2438,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61287() throws IOException {
+    void test61287() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("61287.xls");
             ExcelExtractor ex = new ExcelExtractor(wb)) {
             String text = ex.getText();
@@ -2447,7 +2447,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61300() throws Exception {
+    void test61300() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"))) {
 
             DocumentEntry entry =
@@ -2462,7 +2462,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test51262() throws IOException {
+    void test51262() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("51262.xls")) {
             Sheet sheet = wb.getSheetAt(0);
             Row row = sheet.getRow(2);
@@ -2490,7 +2490,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test60460() throws IOException {
+    void test60460() throws IOException {
         try (final Workbook wb = openSampleWorkbook("60460.xls")) {
             assertEquals(2, wb.getAllNames().size());
 
@@ -2507,7 +2507,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test63819() throws IOException {
+    void test63819() throws IOException {
         LocaleUtil.setUserLocale(Locale.UK);
         try {
             simpleTest("63819.xls", null);
@@ -2520,7 +2520,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Test that VALUE behaves properly as array function and its result is handled by aggregate function
      */
     @Test
-    public void testValueAsArrayFunction() throws IOException {
+    void testValueAsArrayFunction() throws IOException {
         try (final Workbook wb = openSampleWorkbook("TestValueAsArrayFunction.xls")) {
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
             Sheet sheet = wb.getSheetAt(0);

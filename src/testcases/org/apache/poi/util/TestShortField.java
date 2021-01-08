@@ -34,7 +34,7 @@ public final class TestShortField {
     private static final short[] _test_array = {Short.MIN_VALUE, -1, 0, 1, Short.MAX_VALUE};
 
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> new ShortField(-1));
         ShortField field = new ShortField(2);
 
@@ -61,7 +61,7 @@ public final class TestShortField {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 
@@ -77,7 +77,7 @@ public final class TestShortField {
     }
 
     @Test
-    public void testReadFromBytes() {
+    void testReadFromBytes() {
         ShortField field1 = new ShortField(1);
         byte[]     array = new byte[ 2 ];
 
@@ -94,7 +94,7 @@ public final class TestShortField {
     }
 
     @Test
-    public void testReadFromStream() throws IOException {
+    void testReadFromStream() throws IOException {
         ShortField field  = new ShortField(0);
         byte[]     buffer = new byte[ _test_array.length * 2 ];
 
@@ -113,7 +113,7 @@ public final class TestShortField {
     }
 
     @Test
-    public void testWriteToBytes() {
+    void testWriteToBytes() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 

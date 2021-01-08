@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestWorkbook {
     @Test
-    public void testFontStuff() throws IOException {
+    void testFontStuff() throws IOException {
         HSSFWorkbook hwb = new HSSFWorkbook();
 		InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
 
@@ -102,7 +102,7 @@ public final class TestWorkbook {
 	}
 
     @Test
-    public void testAddNameX() throws IOException {
+    void testAddNameX() throws IOException {
         HSSFWorkbook hwb = new HSSFWorkbook();
         InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
         assertNotNull(wb.getNameXPtg("ISODD", AggregatingUDFFinder.DEFAULT));
@@ -128,7 +128,7 @@ public final class TestWorkbook {
     }
 
     @Test
-    public void testRecalcId() throws IOException {
+    void testRecalcId() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertFalse(wb.getForceFormulaRecalculation());
 
@@ -156,7 +156,7 @@ public final class TestWorkbook {
     }
 
     @Test
-    public void testWriteAccess() {
+    void testWriteAccess() {
         HSSFWorkbook wb = new HSSFWorkbook();
         InternalWorkbook iwb = TestHSSFWorkbook.getInternalWorkbook(wb);
 

@@ -52,7 +52,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testBasicDeserializeReserialize() {
+	void testBasicDeserializeReserialize() {
 
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
 		assertEquals("FDS", enr.getText());
@@ -62,7 +62,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testBasicSize() {
+	void testBasicSize() {
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
 		assertNotEquals(13, enr.getRecordSize(), "Identified bug 44695");
 		assertEquals(17, enr.getRecordSize());
@@ -71,7 +71,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testAutoStdDocName() {
+	void testAutoStdDocName() {
 
 		ExternalNameRecord enr = createSimpleENR(dataAutoDocName);
 		assertEquals("'191219AW4 Corp,[WORKOUT_PX]'", enr.getText());
@@ -86,7 +86,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testPlainName() {
+	void testPlainName() {
 
 		ExternalNameRecord enr = createSimpleENR(dataPlainName);
 		assertEquals("Rate_Date", enr.getText());
@@ -101,7 +101,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testDDELink_bug47229() {
+	void testDDELink_bug47229() {
 		/*
 		 * Hex dump read directly from text of bugzilla 47229
 		 */
@@ -126,7 +126,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-	public void testUnicodeName_bug47384() {
+	void testUnicodeName_bug47384() {
 		// data taken from bugzilla 47384 att 23830 at offset 0x13A0
 		byte[] dataUN = HexRead.readFromString(
 				"23 00 22 00" +
@@ -143,7 +143,7 @@ public final class TestExternalNameRecord {
 	}
 
 	@Test
-    public void test48339() {
+    void test48339() {
         // data taken from bugzilla 48339
         byte[] data = HexRead.readFromString(
                 "23 00 09 00" +
@@ -156,7 +156,7 @@ public final class TestExternalNameRecord {
     }
 
 	@Test
-    public void testNPEWithFileFrom49219() {
+    void testNPEWithFileFrom49219() {
         // the file at test-data/spreadsheet/49219.xls has ExternalNameRecords without actual data,
     	// we did handle this during reading, but failed during serializing this out, ensure it works now
         byte[] data = new byte[] {

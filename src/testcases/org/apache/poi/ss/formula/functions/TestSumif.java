@@ -50,7 +50,7 @@ public final class TestSumif {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		ValueEval[] arg0values = new ValueEval[] { _30, _30, _40, _40, _50, _50  };
 		ValueEval[] arg2values = new ValueEval[] { _30, _40, _50, _60, _60, _60 };
 
@@ -82,7 +82,7 @@ public final class TestSumif {
 	 * test for bug observed near svn r882931
 	 */
 	@Test
-	public void testCriteriaArgRange() {
+	void testCriteriaArgRange() {
 		ValueEval[] arg0values = new ValueEval[] { _50, _60, _50, _50, _50, _30,  };
 		ValueEval[] arg1values = new ValueEval[] { _30, _40, _50, _60,  };
 
@@ -110,7 +110,7 @@ public final class TestSumif {
 	}
 
 	@Test
-	public void testEvaluateException() {
+	void testEvaluateException() {
 	    assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0)));
         assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0), new NumberEval(30.0)));
         assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, new NumberEval(30.0), BlankEval.instance, new NumberEval(30.0)));

@@ -49,7 +49,7 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
      * Bug 51378: getDataFormatString method call crashes when reading the test file
      */
     @Test
-    public void test51378() throws IOException {
+    void test51378() throws IOException {
         List<String> expNull = Arrays.asList( "0-3-0","0-43-11" );
         try (HSSFWorkbook wb = openSampleWorkbook("12561-1.xls")) {
             for (Sheet sheet : wb) {

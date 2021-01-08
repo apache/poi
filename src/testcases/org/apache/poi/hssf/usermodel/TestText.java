@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class TestText {
 
     @Test
-    public void testResultEqualsToNonExistingAbstractShape() throws IOException {
+    void testResultEqualsToNonExistingAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -88,7 +88,7 @@ public class TestText {
     }
 
     @Test
-    public void testAddTextToExistingFile() throws Exception {
+    void testAddTextToExistingFile() throws Exception {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -123,7 +123,7 @@ public class TestText {
     }
 
     @Test
-    public void testSetGetProperties() throws Exception {
+    void testSetGetProperties() throws Exception {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -196,7 +196,7 @@ public class TestText {
     }
 
     @Test
-    public void testExistingFileWithText() throws Exception {
+    void testExistingFileWithText() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("text");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();

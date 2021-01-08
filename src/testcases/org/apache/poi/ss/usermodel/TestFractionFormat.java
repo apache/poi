@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestFractionFormat {
     @Test
-    public void testSingle() {
+    void testSingle() {
         FractionFormat f = new FractionFormat("", "##");
         double val = 321.321;
         String ret = f.format(val);
@@ -45,7 +45,7 @@ public final class TestFractionFormat {
     }
 
     @Test
-    public void testInvalid() {
+    void testInvalid() {
         assertThrows(IllegalStateException.class, () -> new FractionFormat("", "9999999999999999999999999999"));
     }
 
@@ -61,7 +61,7 @@ public final class TestFractionFormat {
     }
 
     @Test
-    public void testWithBigWholePart() {
+    void testWithBigWholePart() {
         FractionFormat f = new FractionFormat("#", "???/???");
 
         assertEquals("10100136259702", f.format(10100136259702d));
@@ -77,7 +77,7 @@ public final class TestFractionFormat {
     }
 
     @Test
-    public void testTruthFile() throws Exception {
+    void testTruthFile() throws Exception {
         File truthFile = HSSFTestDataSamples.getSampleFile("54686_fraction_formats.txt");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(truthFile), LocaleUtil.CHARSET_1252))) {
             Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");

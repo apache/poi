@@ -90,7 +90,7 @@ public final class TestPropertyTable {
 	 * extracted from a file known to be acceptable to Excel.
 	 */
 	@Test
-	public void testWriterPropertyTable() throws IOException {
+	void testWriterPropertyTable() throws IOException {
 
 		// create the PropertyTable
 	   HeaderBlock   headerBlock = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
@@ -147,7 +147,7 @@ public final class TestPropertyTable {
 	}
 
 	@Test
-	public void testReadingConstructor() throws IOException {
+	void testReadingConstructor() throws IOException {
 
 		// first, we need the raw data blocks
 		String raw_data_array =

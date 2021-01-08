@@ -76,7 +76,7 @@ public final class TestSharedFormulaRecord {
      * incorrect encoding.  The formula here is one such example (Excel displays #VALUE!).
      */
     @Test
-    public void testConvertSharedFormulasOperandClasses_bug45123() {
+    void testConvertSharedFormulasOperandClasses_bug45123() {
 
         LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
         int encodedLen = in.readUShort();
@@ -98,7 +98,7 @@ public final class TestSharedFormulaRecord {
     }
 
     @Test
-    public void testConvertSharedFormulas() {
+    void testConvertSharedFormulas() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFEvaluationWorkbook fpb = HSSFEvaluationWorkbook.create(wb);
         Ptg[] sharedFormula, convertedFormula;
@@ -139,7 +139,7 @@ public final class TestSharedFormulaRecord {
      * Make sure that POI preserves {@link SharedFormulaRecord}s
      */
     @Test
-    public void testPreserveOnReserialize() {
+    void testPreserveOnReserialize() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
         HSSFCell cellB32769;
@@ -172,7 +172,7 @@ public final class TestSharedFormulaRecord {
     }
 
     @Test
-    public void testUnshareFormulaDueToChangeFormula() {
+    void testUnshareFormulaDueToChangeFormula() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
         HSSFCell cellB32769;
@@ -194,7 +194,7 @@ public final class TestSharedFormulaRecord {
     }
 
     @Test
-    public void testUnshareFormulaDueToDelete() {
+    void testUnshareFormulaDueToDelete() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
         HSSFCell cell;

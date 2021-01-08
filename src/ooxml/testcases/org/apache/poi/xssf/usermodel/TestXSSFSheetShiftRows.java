@@ -36,8 +36,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Override
-    @Test
-    public void testShiftRowBreaks() {
+    protected void testShiftRowBreaks() {
         // disabled test from superclass
         // TODO - support shifting of page breaks
     }

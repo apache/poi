@@ -34,14 +34,14 @@ public final class TestPlotAreaRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         PlotAreaRecord record = new PlotAreaRecord(TestcaseRecordInputStream.create(0x1035, data));
 
         assertEquals( 4, record.getRecordSize() );
     }
 
     @Test
-    public void testStore() {
+    void testStore() {
         PlotAreaRecord record = new PlotAreaRecord();
 
         byte [] recordBytes = record.serialize();

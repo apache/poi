@@ -605,7 +605,7 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public void testBug56930() throws IOException {
+    void testBug56930() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         // x1 on sheet1 defines "x=1"
@@ -638,7 +638,7 @@ public abstract class BaseTestNamedRange {
     // bug 56781: name validation only checks for first character's validity and presence of spaces
     // bug 60246: validate name does not allow DOT in named ranges
     @Test
-    public void testValid() throws IOException {
+    void testValid() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Name name = wb.createName();
@@ -658,7 +658,7 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public void testInvalid() {
+    void testInvalid() {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Name name = wb.createName();

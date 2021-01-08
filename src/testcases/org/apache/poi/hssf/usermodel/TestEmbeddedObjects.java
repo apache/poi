@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestEmbeddedObjects {
     @Test
-    public void testReadExistingObject() throws IOException {
+    void testReadExistingObject() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
             assertEquals(list.size(), 1);
@@ -47,7 +47,7 @@ public class TestEmbeddedObjects {
      * See https://github.com/apache/poi/pull/2
      */
     @Test
-    public void testReadNestedObject() throws IOException {
+    void testReadNestedObject() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithCheckBoxes.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
             assertEquals(list.size(), 1);
@@ -62,7 +62,7 @@ public class TestEmbeddedObjects {
      * See https://github.com/apache/poi/pull/2
      */
     @Test
-    public void testReadManyNestedObjects() throws IOException {
+    void testReadManyNestedObjects() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45538_form_Header.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
             assertEquals(list.size(), 40);

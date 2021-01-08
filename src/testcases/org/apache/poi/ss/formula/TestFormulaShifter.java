@@ -42,7 +42,7 @@ public final class TestFormulaShifter {
      * moved
      */
     @Test
-    public void testShiftAreasSourceRows() {
+    void testShiftAreasSourceRows() {
 
         // all these operations are on an area ref spanning rows 10 to 20
         AreaPtg aptg  = createAreaPtgRow(10, 20);
@@ -82,7 +82,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testShiftAreasSourceColumns() {
+    void testShiftAreasSourceColumns() {
 
         // all these operations are on an area ref spanning columns 10 to 20
         AreaPtg aptg  = createAreaPtgColumn(10, 20);
@@ -122,7 +122,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceRowsRelRel() {
+    void testCopyAreasSourceRowsRelRel() {
 
         // all these operations are on an area ref spanning rows 10 to 20
         final AreaPtg aptg  = createAreaPtgRow(10, 20, true, true);
@@ -132,7 +132,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceRowsRelAbs() {
+    void testCopyAreasSourceRowsRelAbs() {
 
         // all these operations are on an area ref spanning rows 10 to 20
         final AreaPtg aptg  = createAreaPtgRow(10, 20, true, false);
@@ -143,7 +143,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceRowsAbsRel() {
+    void testCopyAreasSourceRowsAbsRel() {
         // aptg is part of a formula in a cell that was just copied to another row
         // aptg row references should be updated by the difference in rows that the cell was copied
         // No other references besides the cells that were involved in the copy need to be updated
@@ -159,7 +159,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceRowsAbsAbs() {
+    void testCopyAreasSourceRowsAbsAbs() {
         // aptg is part of a formula in a cell that was just copied to another row
         // aptg row references should be updated by the difference in rows that the cell was copied
         // No other references besides the cells that were involved in the copy need to be updated
@@ -175,7 +175,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceColumnsRelRel() {
+    void testCopyAreasSourceColumnsRelRel() {
 
         // all these operations are on an area ref spanning columns 10 to 20
         final AreaPtg aptg  = createAreaPtgColumn(10, 20, true, true);
@@ -185,7 +185,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceColumnsRelAbs() {
+    void testCopyAreasSourceColumnsRelAbs() {
 
         // all these operations are on an area ref spanning columns 10 to 20
         final AreaPtg aptg  = createAreaPtgColumn(10, 20, true, false);
@@ -196,7 +196,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceColumnsAbsRel() {
+    void testCopyAreasSourceColumnsAbsRel() {
         // aptg is part of a formula in a cell that was just copied to another column
         // aptg column references should be updated by the difference in columns that the cell was copied
         // No other references besides the cells that were involved in the copy need to be updated
@@ -212,7 +212,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testCopyAreasSourceColumnsAbsAbs() {
+    void testCopyAreasSourceColumnsAbsAbs() {
         // aptg is part of a formula in a cell that was just copied to another column
         // aptg column references should be updated by the difference in columns that the cell was copied
         // No other references besides the cells that were involved in the copy need to be updated
@@ -234,7 +234,7 @@ public final class TestFormulaShifter {
      * that area ref
      */
     @Test
-    public void testShiftAreasDestRows() {
+    void testShiftAreasDestRows() {
         // all these operations are on an area ref spanning rows 20 to 25
         AreaPtg aptg  = createAreaPtgRow(20, 25);
 
@@ -254,7 +254,7 @@ public final class TestFormulaShifter {
      * that area ref
      */
     @Test
-    public void testShiftAreasDestColumns() {
+    void testShiftAreasDestColumns() {
         // all these operations are on an area ref spanning columns 20 to 25
         AreaPtg aptg  = createAreaPtgColumn(20, 25);
 
@@ -382,7 +382,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testShiftSheet() {
+    void testShiftSheet() {
         // 4 sheets, move a sheet from pos 2 to pos 0, i.e. current 0 becomes 1, current 1 becomes pos 2
         FormulaShifter shifter = FormulaShifter.createForSheetShift(2, 0);
 
@@ -406,7 +406,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testShiftSheet2() {
+    void testShiftSheet2() {
         // 4 sheets, move a sheet from pos 1 to pos 2, i.e. current 2 becomes 1, current 1 becomes pos 2
         FormulaShifter shifter = FormulaShifter.createForSheetShift(1, 2);
 
@@ -430,7 +430,7 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testInvalidArgument() {
+    void testInvalidArgument() {
         assertThrows(IllegalArgumentException.class, () ->
             FormulaShifter.createForRowShift(1, "name", 1, 2, 0, SpreadsheetVersion.EXCEL97));
         assertThrows(IllegalArgumentException.class, () ->
@@ -438,12 +438,12 @@ public final class TestFormulaShifter {
     }
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         assertNotNull(FormulaShifter.createForRowShift(1, "name", 1, 2, 2, SpreadsheetVersion.EXCEL97));
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         FormulaShifter shifter = FormulaShifter.createForRowShift(0, "sheet", 123, 456, 789,
                 SpreadsheetVersion.EXCEL2007);
         assertNotNull(shifter);

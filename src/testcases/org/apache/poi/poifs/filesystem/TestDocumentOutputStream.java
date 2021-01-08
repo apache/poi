@@ -38,7 +38,7 @@ public final class TestDocumentOutputStream {
      * test write(int) behavior
      */
     @Test
-    public void testWrite1() throws IOException {
+    void testWrite1() throws IOException {
         final byte[] expected = data(25);
 
         POIFSWriterListener l = (event) -> {
@@ -62,7 +62,7 @@ public final class TestDocumentOutputStream {
      * test write(byte[]) behavior
      */
     @Test
-    public void testWrite2() throws IOException {
+    void testWrite2() throws IOException {
         final byte[] expected = data(24);
 
         POIFSWriterListener l = (event) -> {
@@ -84,7 +84,7 @@ public final class TestDocumentOutputStream {
      * test write(byte[], int, int) behavior
      */
     @Test
-    public void testWrite3() throws IOException {
+    void testWrite3() throws IOException {
         byte[] input = data(50);
         byte[] expected = Arrays.copyOfRange(input, 1, 1+25);
 

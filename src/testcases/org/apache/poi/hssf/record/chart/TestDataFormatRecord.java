@@ -39,7 +39,7 @@ public final class TestDataFormatRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         DataFormatRecord record = new DataFormatRecord(TestcaseRecordInputStream.create(0x1006, data));
         assertEquals( (short)0xFFFF, record.getPointNumber());
         assertEquals( 0, record.getSeriesIndex());
@@ -52,7 +52,7 @@ public final class TestDataFormatRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         DataFormatRecord record = new DataFormatRecord();
         record.setPointNumber( (short)0xFFFF );
         record.setSeriesIndex( (short)0 );

@@ -76,7 +76,7 @@ public abstract class BaseTestCircularReferences {
      * "INDEX() formula cannot contain its own location in the data array range"
      */
     @Test
-    public void testIndexFormula() throws IOException {
+    void testIndexFormula() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");
 
@@ -105,7 +105,7 @@ public abstract class BaseTestCircularReferences {
      * Cell A1 has formula "=A1"
      */
     @Test
-    public void testSimpleCircularReference() throws IOException {
+    void testSimpleCircularReference() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");
 
@@ -124,7 +124,7 @@ public abstract class BaseTestCircularReferences {
      * A1=B1, B1=C1, C1=D1, D1=A1
      */
     @Test
-    public void testMultiLevelCircularReference() throws IOException {
+    void testMultiLevelCircularReference() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");
 
@@ -142,7 +142,7 @@ public abstract class BaseTestCircularReferences {
     }
 
     @Test
-    public void testIntermediateCircularReferenceResults_bug46898() throws IOException {
+    void testIntermediateCircularReferenceResults_bug46898() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");
 

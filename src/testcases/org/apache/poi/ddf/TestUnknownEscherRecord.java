@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestUnknownEscherRecord {
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String testData =
                 "0F 02 " + // options
                 "11 F1 " + // record id
@@ -123,7 +123,7 @@ public final class TestUnknownEscherRecord {
     }
 
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
         r.setRecordId( (short) 0xF112 );
@@ -144,7 +144,7 @@ public final class TestUnknownEscherRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
         r.setRecordId( (short) 0xF112 );

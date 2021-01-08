@@ -53,7 +53,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testSimpleExcel3() throws IOException {
+    void testSimpleExcel3() throws IOException {
         try (OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls")) {
 
             // Check we can call getText without error
@@ -79,14 +79,14 @@ public final class TestOldExcelExtractor {
 
 
     @Test
-    public void testSimpleExcel3NoReading() throws IOException {
+    void testSimpleExcel3NoReading() throws IOException {
         try (OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls")) {
             assertNotNull(extractor);
         }
     }
 
     @Test
-    public void testSimpleExcel4() throws IOException {
+    void testSimpleExcel4() throws IOException {
         try (OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls")) {
 
             // Check we can call getText without error
@@ -108,7 +108,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testSimpleExcel5() throws IOException {
+    void testSimpleExcel5() throws IOException {
         for (String ver : new String[] {"5", "95"}) {
             try (OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls")) {
 
@@ -135,7 +135,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testStrings() throws IOException {
+    void testStrings() throws IOException {
         try (OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls")) {
             String text = extractor.getText();
 
@@ -155,7 +155,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testFormattedNumbersExcel4() throws IOException {
+    void testFormattedNumbersExcel4() throws IOException {
         try (OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls")) {
             String text = extractor.getText();
 
@@ -175,7 +175,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testFormattedNumbersExcel5() throws IOException {
+    void testFormattedNumbersExcel5() throws IOException {
         for (String ver : new String[] {"5", "95"}) {
             try (OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls")) {
                 String text = extractor.getText();
@@ -201,7 +201,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testFromFile() throws IOException {
+    void testFromFile() throws IOException {
         for (String ver : new String[] {"4", "5", "95"}) {
             String filename = "testEXCEL_"+ver+".xls";
             File f = HSSFTestDataSamples.getSampleFile(filename);
@@ -215,7 +215,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testFromInputStream() throws IOException {
+    void testFromInputStream() throws IOException {
         for (String ver : new String[] {"4", "5", "95"}) {
             String filename = "testEXCEL_"+ver+".xls";
             File f = HSSFTestDataSamples.getSampleFile(filename);
@@ -230,7 +230,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testOpenInvalidFile1() throws IOException {
+    void testOpenInvalidFile1() throws IOException {
         // a file that exists, but is a different format
         assertThrows(OfficeXmlFileException.class, () -> createExtractor("WithVariousData.xlsx").close());
 
@@ -244,13 +244,13 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testOpenNonExistingFile() {
+    void testOpenNonExistingFile() {
         // a file that exists, but is a different format
         assertThrows(EmptyFileException.class, () -> new OldExcelExtractor(new File("notexistingfile.xls")).close());
     }
 
     @Test
-    public void testInputStream() throws IOException {
+    void testInputStream() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         try (InputStream stream = new FileInputStream(file);
              OldExcelExtractor extractor = new OldExcelExtractor(stream)) {
@@ -260,7 +260,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testInputStreamNPOIHeader() throws IOException {
+    void testInputStreamNPOIHeader() throws IOException {
         //TODO: the worksheet names are currently mangled.  They're treated
         //as if UTF-16, but they're just ascii.  Need to fix this.
         //Is it possible that the leading 0 byte in the worksheet name is a signal
@@ -274,7 +274,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testPOIFSFileSystem() throws IOException {
+    void testPOIFSFileSystem() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
         try (POIFSFileSystem fs = new POIFSFileSystem(file);
             OldExcelExtractor extractor = new OldExcelExtractor(fs)){
@@ -284,7 +284,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testDirectoryNode() throws IOException {
+    void testDirectoryNode() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
         try (POIFSFileSystem fs = new POIFSFileSystem(file);
              OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot())) {
@@ -294,7 +294,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testDirectoryNodeInvalidFile() throws IOException {
+    void testDirectoryNodeInvalidFile() throws IOException {
         File file = POIDataSamples.getDocumentInstance().getFile("test.doc");
         try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
              assertThrows(FileNotFoundException.class, () -> new OldExcelExtractor(fs.getRoot()));
@@ -302,7 +302,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testMainUsage() {
+    void testMainUsage() {
         PrintStream save = System.err;
         SecurityManager sm = System.getSecurityManager();
         System.setSecurityManager(new NoExitSecurityManager());
@@ -317,7 +317,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         PrintStream save = System.out;
         try {
@@ -333,7 +333,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testEncryptionException() throws IOException {
+    void testEncryptionException() throws IOException {
         //test file derives from Common Crawl
         File file = HSSFTestDataSamples.getSampleFile("60284.xls");
 
@@ -345,7 +345,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testSheetWithNoName() throws IOException {
+    void testSheetWithNoName() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("64130.xls");
 
         try (OldExcelExtractor ex = new OldExcelExtractor(file)) {

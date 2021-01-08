@@ -54,20 +54,20 @@ public final class TestHex2Dec {
     }
 
     @Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("Converts hex 'A5' to decimal (165)", "A5", "165");
 		confirmValue("Converts hex FFFFFFFF5B to decimal (-165)", "FFFFFFFF5B", "-165");
 		confirmValue("Converts hex 3DA408B9 to decimal (-165)", "3DA408B9", "1034160313");
 	}
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("not a valid hex number","GGGGGGG", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid hex number","3.14159", ErrorEval.NUM_ERROR);
     }
 
     @Test
-    public void testEvalOperationEvaluationContext() {
+    void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
@@ -78,7 +78,7 @@ public final class TestHex2Dec {
     }
 
     @Test
-    public void testEvalOperationEvaluationContextFails() {
+    void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
@@ -97,7 +97,7 @@ public final class TestHex2Dec {
     }
 
     @Test
-    public void testRefs() {
+    void testRefs() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };

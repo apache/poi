@@ -177,7 +177,7 @@ public class TestDConRefRecord {
      * various flavours. This uses the RecordInputStream constructor.
      */
     @Test
-    public void testReadWriteSBExtRef() throws IOException {
+    void testReadWriteSBExtRef() throws IOException {
         testReadWrite(data1, "read-write single-byte external reference, volume type path");
         testReadWrite(volumeString,
                 "read-write properly formed single-byte external reference, volume type path");
@@ -202,7 +202,7 @@ public class TestDConRefRecord {
      * string
      */
     @Test
-    public void testReadWriteDBExtRefUncVol() throws IOException {
+    void testReadWriteDBExtRefUncVol() throws IOException {
         testReadWrite(data4, "read-write double-byte external reference, UNC volume type path");
     }
 
@@ -221,7 +221,7 @@ public class TestDConRefRecord {
      * test read-constructor-then-serialize for a double-byte self-reference style string
      */
     @Test
-    public void testReadWriteDBSelfRef() throws IOException {
+    void testReadWriteDBSelfRef() throws IOException {
         testReadWrite(data2, "read-write double-byte self reference");
     }
 
@@ -229,7 +229,7 @@ public class TestDConRefRecord {
      * test read-constructor-then-serialize for a single-byte self-reference style string
      */
     @Test
-    public void testReadWriteSBSelfRef() throws IOException {
+    void testReadWriteSBSelfRef() throws IOException {
         testReadWrite(data3, "read-write single byte self reference");
     }
 
@@ -237,7 +237,7 @@ public class TestDConRefRecord {
      * Test of getDataSize method, of class DConRefRecord.
      */
     @Test
-    public void testGetDataSize() {
+    void testGetDataSize() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         int expResult = data1.length;
         int result = instance.getDataSize();
@@ -255,7 +255,7 @@ public class TestDConRefRecord {
      * Test of getSid method, of class DConRefRecord.
      */
     @Test
-    public void testGetSid() {
+    void testGetSid() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         short expResult = 81;
         short result = instance.getSid();
@@ -266,7 +266,7 @@ public class TestDConRefRecord {
      * Test of getPath method, of class DConRefRecord.
      */
     @Test
-    public void testGetPath() {
+    void testGetPath() {
         // TODO: different types of paths.
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         byte[] expResult = Arrays.copyOfRange(data1, 9, data1.length);
@@ -278,7 +278,7 @@ public class TestDConRefRecord {
      * Test of isExternalRef method, of class DConRefRecord.
      */
     @Test
-    public void testIsExternalRef() {
+    void testIsExternalRef() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         assertTrue(instance.isExternalRef(), "external reference");
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data2));

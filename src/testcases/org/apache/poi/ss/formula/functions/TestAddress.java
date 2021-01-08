@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public final class TestAddress {
 
     @Test
-    public void testAddress() {
+    void testAddress() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

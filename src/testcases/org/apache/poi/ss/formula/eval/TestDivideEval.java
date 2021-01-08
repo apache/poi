@@ -39,7 +39,7 @@ public final class TestDivideEval {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirm(new NumberEval(5), new NumberEval(2), 2.5);
 		confirm(new NumberEval(3), new NumberEval(16), 0.1875);
 		confirm(new NumberEval(-150), new NumberEval(-15), 10.0);
@@ -48,14 +48,14 @@ public final class TestDivideEval {
 	}
 
 	@Test
-	public void test1x1Area() {
+	void test1x1Area() {
 		AreaEval ae0 = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
 		AreaEval ae1 = EvalFactory.createAreaEval("C2:C2", new ValueEval[] { new NumberEval(10), });
 		confirm(ae0, ae1, 5);
 	}
 
 	@Test
-	public void testDivZero() {
+	void testDivZero() {
 		ValueEval[] args = {
 			new NumberEval(5), NumberEval.ZERO,
 		};

@@ -65,7 +65,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testSetValues() throws Exception {
+    void testSetValues() throws Exception {
         try (Workbook book = _testDataProvider.createWorkbook()) {
             Sheet sheet = book.createSheet("test");
             Row row = sheet.createRow(0);
@@ -189,7 +189,7 @@ public abstract class BaseTestCell {
      * test that Boolean (BoolErrRecord) are supported properly.
      */
     @Test
-    public void testBool() throws IOException {
+    void testBool() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet s = wb1.createSheet("testSheet1");
             Row r;
@@ -235,7 +235,7 @@ public abstract class BaseTestCell {
      * @see #testBool
      */
     @Test
-    public void testErr() throws IOException {
+    void testErr() throws IOException {
 
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet s = wb1.createSheet("testSheet1");
@@ -282,7 +282,7 @@ public abstract class BaseTestCell {
      * test that Cell Styles being applied to formulas remain intact
      */
     @Test
-    public void testFormulaStyle() throws Exception {
+    void testFormulaStyle() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet s = wb1.createSheet("testSheet1");
             Row r;
@@ -325,7 +325,7 @@ public abstract class BaseTestCell {
 
     /**tests the toString() method of HSSFCell*/
     @Test
-    public void testToString() throws Exception {
+    void testToString() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Row r = wb1.createSheet("Sheet1").createRow(0);
             CreationHelper factory = wb1.getCreationHelper();
@@ -380,7 +380,7 @@ public abstract class BaseTestCell {
      *  Test that setting cached formula result keeps the cell type
      */
     @Test
-    public void testSetFormulaValue() throws Exception {
+    void testSetFormulaValue() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -420,7 +420,7 @@ public abstract class BaseTestCell {
      * Make sure that formulas with unknown/unregistered UDFs can be written to and read back from a file.
      */
     @Test
-    public void testFormulaWithUnknownUDF() throws IOException {
+    void testFormulaWithUnknownUDF() throws IOException {
         try (final Workbook wb1 = _testDataProvider.createWorkbook()) {
             final FormulaEvaluator evaluator1 = wb1.getCreationHelper().createFormulaEvaluator();
             final Cell cell1 = wb1.createSheet().createRow(0).createCell(0);
@@ -442,7 +442,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testChangeTypeStringToBool() throws IOException {
+    void testChangeTypeStringToBool() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = createACell(wb);
 
@@ -467,7 +467,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testChangeTypeBoolToString() throws IOException {
+    void testChangeTypeBoolToString() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = createACell(wb);
 
@@ -479,7 +479,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testChangeTypeErrorToNumber() throws IOException {
+    void testChangeTypeErrorToNumber() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = createACell(wb);
             cell.setCellErrorValue(FormulaError.NAME.getCode());
@@ -490,7 +490,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testChangeTypeErrorToBoolean() throws IOException {
+    void testChangeTypeErrorToBoolean() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Cell cell = createACell(wb);
@@ -508,7 +508,7 @@ public abstract class BaseTestCell {
      * string result type.
      */
     @Test
-    public void testConvertStringFormulaCell() throws IOException {
+    void testConvertStringFormulaCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cellA1 = createACell(wb);
             cellA1.setCellFormula("\"abc\"");
@@ -532,7 +532,7 @@ public abstract class BaseTestCell {
      * lower level that {#link {@link Cell#setCellType(CellType)} works properly
      */
     @Test
-    public void testSetTypeStringOnFormulaCell() throws IOException {
+    void testSetTypeStringOnFormulaCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cellA1 = createACell(wb);
             FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
@@ -578,7 +578,7 @@ public abstract class BaseTestCell {
      * Test for bug in convertCellValueToBoolean to make sure that formula results get converted
      */
     @Test
-    public void testChangeTypeFormulaToBoolean() throws IOException {
+    void testChangeTypeFormulaToBoolean() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = createACell(wb);
             cell.setCellFormula("1=1");
@@ -594,7 +594,7 @@ public abstract class BaseTestCell {
      *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
      */
     @Test
-    public void test40296() throws Exception {
+    void test40296() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet workSheet = wb1.createSheet("Sheet1");
             Cell cell;
@@ -634,7 +634,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testSetStringInFormulaCell_bug44606() throws Exception {
+    void testSetStringInFormulaCell_bug44606() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
             cell.setCellFormula("B1&C1");
@@ -648,7 +648,7 @@ public abstract class BaseTestCell {
      *  Make sure that cell.setBlank() preserves the cell style
      */
     @Test
-    public void testSetBlank_bug47028() throws Exception {
+    void testSetBlank_bug47028() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellStyle style = wb.createCellStyle();
             Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
@@ -680,7 +680,7 @@ public abstract class BaseTestCell {
      * </ul>
      */
     @Test
-    public void testNanAndInfinity() throws Exception {
+    void testNanAndInfinity() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet workSheet = wb1.createSheet("Sheet1");
             Row row = workSheet.createRow(0);
@@ -719,7 +719,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testDefaultStyleProperties() throws Exception {
+    void testDefaultStyleProperties() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
 
             Cell cell = wb1.createSheet("Sheet1").createRow(0).createCell(0);
@@ -758,7 +758,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testBug55658SetNumericValue() throws Exception {
+    void testBug55658SetNumericValue() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sh = wb1.createSheet();
             Row row = sh.createRow(0);
@@ -780,7 +780,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testRemoveHyperlink() throws Exception {
+    void testRemoveHyperlink() throws Exception {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sh = wb1.createSheet("test");
             Row row = sh.createRow(0);
@@ -824,7 +824,7 @@ public abstract class BaseTestCell {
      * an problem that cell could not return error value form formula cell).
      */
     @Test
-    public void testGetErrorCellValueFromFormulaCell() throws IOException {
+    void testGetErrorCellValueFromFormulaCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -836,7 +836,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testSetRemoveStyle() throws Exception {
+    void testSetRemoveStyle() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -875,7 +875,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void test57008() throws IOException {
+    void test57008() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -903,7 +903,7 @@ public abstract class BaseTestCell {
      */
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void testSetCellValueNullRichTextString() throws IOException {
+    void testSetCellValueNullRichTextString() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Cell cell = sheet.createRow(0).createCell(0);
@@ -942,7 +942,7 @@ public abstract class BaseTestCell {
      *  The maximum length of cell contents (text) is 32,767 characters.
      */
     @Test
-    public void testMaxTextLength() throws IOException{
+    void testMaxTextLength() throws IOException{
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Cell cell = sheet.createRow(0).createCell(0);
@@ -1016,7 +1016,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testSetErrorValue() throws Exception {
+    void testSetErrorValue() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -1039,7 +1039,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void test62216() throws IOException {
+    void test62216() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell instance = wb.createSheet().createRow(0).createCell(0);
             String formula = "2";
@@ -1051,7 +1051,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testSetNullValues() throws IOException {
+    void testSetNullValues() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = wb.createSheet("test").createRow(0).createCell(0);
 
@@ -1081,7 +1081,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testFormulaSetValueDoesNotChangeType() throws IOException {
+    void testFormulaSetValueDoesNotChangeType() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -1111,7 +1111,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testGetNumericCellValueOnABlankCellReturnsZero() throws IOException {
+    void testGetNumericCellValueOnABlankCellReturnsZero() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
             assertEquals(CellType.BLANK, cell.getCellType());

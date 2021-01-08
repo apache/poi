@@ -31,14 +31,14 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestOperandResolver {
 	@Test
-	public void testParseDouble_bug48472() {
+	void testParseDouble_bug48472() {
 		// bug 48472 - StringIndexOutOfBoundsException
 		Double resolvedValue = OperandResolver.parseDouble("-");
 		assertNull(resolvedValue);
 	}
 
 	@Test
-	public void testParseDouble_bug49723() {
+	void testParseDouble_bug49723() {
 		String value = ".1";
 		Double resolvedValue = OperandResolver.parseDouble(value);
 
@@ -49,7 +49,7 @@ public final class TestOperandResolver {
 	 * Tests that a list of valid strings all return a non null value from {@link OperandResolver#parseDouble(String)}
 	 */
 	@Test
-	public void testParseDoubleValidStrings() {
+	void testParseDoubleValidStrings() {
 		String[] values = new String[]{".19", "0.19", "1.9", "1E4", "-.19", "-0.19",
 				"8.5","-1E4", ".5E6","+1.5","+1E5", "  +1E5  ", " 123 ", "1E4", "-123" };
 
@@ -64,7 +64,7 @@ public final class TestOperandResolver {
 	 * Tests that a list of invalid strings all return null from {@link OperandResolver#parseDouble(String)}
 	 */
 	@Test
-	public void testParseDoubleInvalidStrings() {
+	void testParseDoubleInvalidStrings() {
 		String[] values = new String[]{"-", "ABC", "-X", "1E5a", "Infinity", "NaN", ".5F", "1,000"};
 
 		for (String value : values) {
@@ -73,7 +73,7 @@ public final class TestOperandResolver {
 	}
 
 	@Test
-	public void testCoerceDateStringToNumber() throws EvaluationException {
+	void testCoerceDateStringToNumber() throws EvaluationException {
 		Map<String, Double> values = new LinkedHashMap<>();
 		values.put("2019/1/18", 43483.);
 		values.put("01/18/2019", 43483.);
@@ -86,7 +86,7 @@ public final class TestOperandResolver {
 	}
 
 	@Test
-	public void testCoerceTimeStringToNumber() throws EvaluationException {
+	void testCoerceTimeStringToNumber() throws EvaluationException {
 		Map<String, Double> values = new LinkedHashMap<>();
 		values.put("00:00", 0.0);
 		values.put("12:00", 0.5);

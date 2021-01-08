@@ -103,7 +103,7 @@ public abstract class BaseTestHyperlink {
 
     // copy a hyperlink via the copy constructor
     @Test
-    public void testCopyHyperlink() throws IOException {
+    void testCopyHyperlink() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         final CreationHelper createHelper = wb.getCreationHelper();
 

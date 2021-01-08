@@ -58,13 +58,13 @@ public final class TestPmt {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirm(-1037.0321, (0.08/12), 10, 10000, 0, false);
 		confirm(-1030.1643, (0.08/12), 10, 10000, 0, true);
 	}
 
 	@Test
-	public void test3args() {
+	void test3args() {
 
 		ValueEval[] args = {
 				new NumberEval(0.005),

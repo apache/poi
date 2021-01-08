@@ -36,7 +36,7 @@ public class TestCellWalk {
     };
 
     @Test
-    public void testNotTraverseEmptyCells() {
+    void testNotTraverseEmptyCells() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, testData).build();
         CellRangeAddress range = CellRangeAddress.valueOf("A1:C3");

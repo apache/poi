@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class TestShapeGroup {
 
     @Test
-    public void testSetGetCoordinates() throws IOException {
+    void testSetGetCoordinates() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -64,7 +64,7 @@ public class TestShapeGroup {
     }
 
     @Test
-    public void testAddToExistingFile() throws IOException {
+    void testAddToExistingFile() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -94,7 +94,7 @@ public class TestShapeGroup {
     }
 
     @Test
-    public void testModify() throws IOException {
+    void testModify() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
 
         // create a sheet with a text box
@@ -172,7 +172,7 @@ public class TestShapeGroup {
     }
 
     @Test
-    public void testAddShapesToGroup() throws IOException {
+    void testAddShapesToGroup() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
 
         // create a sheet with a text box
@@ -234,7 +234,7 @@ public class TestShapeGroup {
     }
 
     @Test
-    public void testSpgrRecord() throws IOException {
+    void testSpgrRecord() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // create a sheet with a text box
@@ -251,7 +251,7 @@ public class TestShapeGroup {
     }
 
     @Test
-    public void testClearShapes() throws IOException {
+    void testClearShapes() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

@@ -38,7 +38,7 @@ public final class TestPOIFSDocumentPath {
      * Test default constructor
      */
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         POIFSDocumentPath path = new POIFSDocumentPath();
 
         assertEquals(0, path.length());
@@ -48,7 +48,7 @@ public final class TestPOIFSDocumentPath {
      * Test full path constructor
      */
     @Test
-    public void testFullPathConstructor() {
+    void testFullPathConstructor() {
         String[] components = {"foo", "bar", "foobar", "fubar"};
 
         for (int j = 0; j < components.length; j++) {
@@ -82,7 +82,7 @@ public final class TestPOIFSDocumentPath {
      * Test relative path constructor
      */
     @Test
-    public void testRelativePathConstructor() {
+    void testRelativePathConstructor() {
         String[] initialComponents = {"a", "b", "c"};
 
         for (int n = 0; n < initialComponents.length; n++) {
@@ -135,7 +135,7 @@ public final class TestPOIFSDocumentPath {
      * test equality
      */
     @Test
-    public void testEquality() {
+    void testEquality() {
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
         POIFSDocumentPath   a2    = new POIFSDocumentPath(null);
         POIFSDocumentPath   a3    = new POIFSDocumentPath(new String[ 0 ]);

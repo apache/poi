@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherSpgrRecord {
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         EscherSpgrRecord r = createRecord();
 
         byte[] data = new byte[24];
@@ -42,7 +42,7 @@ public final class TestEscherSpgrRecord {
     }
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String hexData = "10 00 " +
                 "09 F0 " +
                 "10 00 00 00 " +
@@ -62,7 +62,7 @@ public final class TestEscherSpgrRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String expected =
             "{   /* SPGR */\n" +
             "\t  \"recordId\": -4087 /* 0xf009 */\n" +

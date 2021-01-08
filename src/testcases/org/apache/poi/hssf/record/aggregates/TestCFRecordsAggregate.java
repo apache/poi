@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("resource")
 public final class TestCFRecordsAggregate {
     @Test
-    public void testCFRecordsAggregate() {
+    void testCFRecordsAggregate() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
@@ -121,7 +121,7 @@ public final class TestCFRecordsAggregate {
      * Make sure that the CF Header record is properly updated with the number of rules
      */
     @Test
-    public void testNRules() {
+    void testNRules() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CellRangeAddress[] cellRanges = {
@@ -142,7 +142,7 @@ public final class TestCFRecordsAggregate {
     }
 
     @Test
-    public void testCantMixTypes() {
+    void testCantMixTypes() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CellRangeAddress[] cellRanges = {

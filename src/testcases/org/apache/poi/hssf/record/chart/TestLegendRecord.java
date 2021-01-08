@@ -36,7 +36,7 @@ public final class TestLegendRecord {
 			(byte) 0x01, (byte) 0x1F, (byte) 0x00 };
 
 	@Test
-	public void testLoad() {
+	void testLoad() {
 		LegendRecord record = new LegendRecord(TestcaseRecordInputStream.create(0x1015, data));
 
 		assertEquals(0xe76, record.getXAxisUpperLeft());
@@ -64,7 +64,7 @@ public final class TestLegendRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testStore() {
+	void testStore() {
 		LegendRecord record = new LegendRecord();
 
 		record.setXAxisUpperLeft(0xe76);

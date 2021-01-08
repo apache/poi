@@ -54,7 +54,7 @@ public final class TestHSSFPictureData {
     }
 
     @Test
-	public void testPictures() throws IOException {
+	void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
         // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
@@ -91,7 +91,7 @@ public final class TestHSSFPictureData {
     }
 
     @Test
-	public void testMacPicture() throws IOException {
+	void testMacPicture() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
 
         try{
@@ -116,7 +116,7 @@ public final class TestHSSFPictureData {
     }
 
     @Test
-    public void testNotNullPictures() {
+    void testNotNullPictures() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
 

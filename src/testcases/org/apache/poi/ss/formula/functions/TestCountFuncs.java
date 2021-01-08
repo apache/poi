@@ -51,7 +51,7 @@ public final class TestCountFuncs {
 	private static final String NULL = null;
 
 	@Test
-	public void testCountBlank() {
+	void testCountBlank() {
 		AreaEval range;
 		ValueEval[] values;
 
@@ -79,7 +79,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCountA() {
+	void testCountA() {
 		ValueEval[] args;
 
 		args = new ValueEval[] {
@@ -109,7 +109,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCountIf() {
+	void testCountIf() {
 		AreaEval range;
 		ValueEval[] values;
 
@@ -146,7 +146,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCriteriaPredicateNe_Bug46647() {
+	void testCriteriaPredicateNe_Bug46647() {
 		I_MatchPredicate mp = Countif.createCriteriaPredicate(new StringEval("<>aa"), 0, 0);
 		assertNotNull(mp);
 		StringEval seA = new StringEval("aa"); // this should not match the criteria '<>aa'
@@ -201,7 +201,7 @@ public final class TestCountFuncs {
      * for example, the string "apples" and the string "APPLES" will match the same cells.
      */
 	@Test
-    public void testCaseInsensitiveStringComparison() {
+    void testCaseInsensitiveStringComparison() {
         AreaEval range;
         ValueEval[] values;
 
@@ -222,7 +222,7 @@ public final class TestCountFuncs {
 	 * special case where the criteria argument is a cell reference
 	 */
 	@Test
-	public void testCountIfWithCriteriaReference() {
+	void testCountIfWithCriteriaReference() {
 
 		ValueEval[] values = {
 				new NumberEval(22),
@@ -266,7 +266,7 @@ public final class TestCountFuncs {
 	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(org.apache.poi.ss.formula.eval.ValueEval, int, int)}}
 	 */
 	@Test
-	public void testCountifAreaCriteria() {
+	void testCountifAreaCriteria() {
 		int srcColIx = 2; // anything but column A
 
 		ValueEval v0 = new NumberEval(2.0);
@@ -306,7 +306,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCountifEmptyStringCriteria() {
+	void testCountifEmptyStringCriteria() {
 		I_MatchPredicate mp;
 
 		// pred '=' matches blank cell but not empty string
@@ -326,7 +326,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCountifComparisons() {
+	void testCountifComparisons() {
 		I_MatchPredicate mp;
 
 		mp = createCriteriaPredicate(new StringEval(">5"));
@@ -368,7 +368,7 @@ public final class TestCountFuncs {
 	 * propagate to the COUNTIF result).
 	 */
 	@Test
-	public void testCountifErrorCriteria() {
+	void testCountifErrorCriteria() {
 		I_MatchPredicate mp;
 
 		mp = createCriteriaPredicate(new StringEval("#REF!"));
@@ -397,7 +397,7 @@ public final class TestCountFuncs {
     *  and NEQ cases
     */
    @Test
-	public void testCountifBug51498() {
+	void testCountifBug51498() {
 		final int REF_COL = 4;
 		final int EVAL_COL = 3;
 
@@ -438,7 +438,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testWildCards() {
+	void testWildCards() {
 		I_MatchPredicate mp;
 
 		mp = createCriteriaPredicate(new StringEval("a*b"));
@@ -471,7 +471,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testNotQuiteWildCards() {
+	void testNotQuiteWildCards() {
 		I_MatchPredicate mp;
 
 		// make sure special reg-ex chars are treated like normal chars
@@ -505,7 +505,7 @@ public final class TestCountFuncs {
 	}
 
 	@Test
-	public void testCountifFromSpreadsheet() {
+	void testCountifFromSpreadsheet() {
 		testCountFunctionFromSpreadsheet("countifExamples.xls", 1, 2, 3, "countif");
 	}
 
@@ -514,7 +514,7 @@ public final class TestCountFuncs {
      * http://office.microsoft.com/en-us/excel-help/countif-function-HP010069840.aspx?CTT=5&origin=HA010277524
      */
 	@Test
-    public void testCountifExamples() {
+    void testCountifExamples() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("countifExamples.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 
@@ -552,7 +552,7 @@ public final class TestCountFuncs {
     }
 
 	@Test
-	public void testCountBlankFromSpreadsheet() {
+	void testCountBlankFromSpreadsheet() {
 		testCountFunctionFromSpreadsheet("countblankExamples.xls", 1, 3, 4, "countblank");
 	}
 

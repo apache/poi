@@ -41,7 +41,7 @@ public final class TestMergeCellsRecord {
 	 * Make sure when a clone is called, we actually clone it.
 	 */
 	@Test
-	public void testCloneReferences() {
+	void testCloneReferences() {
 		CellRangeAddress[] cras = { new CellRangeAddress(0, 1, 0, 2), };
 		MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
 		MergeCellsRecord clone = merge.copy();
@@ -60,7 +60,7 @@ public final class TestMergeCellsRecord {
 	}
 
 	@Test
-	public void testMCTable_bug46009() {
+	void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
 		CellRangeAddress[] cras = { new CellRangeAddress(0, 0, 0, 3) };
 		MergeCellsRecord mcr1 = new MergeCellsRecord(cras, 0, 1);

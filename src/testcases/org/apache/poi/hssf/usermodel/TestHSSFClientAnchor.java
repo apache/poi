@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestHSSFClientAnchor {
     @Test
-    public void testGetAnchorHeightInPoints() throws IOException {
+    void testGetAnchorHeightInPoints() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("test");
             HSSFClientAnchor a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 0, (short) 0, 0);
@@ -68,7 +68,7 @@ public final class TestHSSFClientAnchor {
      * (Bug 42999 reported that dx1 and dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
      */
     @Test
-    public void testConvertAnchor() {
+    void testConvertAnchor() {
         HSSFClientAnchor[] anchors = {
             new HSSFClientAnchor( 0 , 0 , 0 , 0 ,(short)0, 1,(short)1,3),
             new HSSFClientAnchor( 100 , 0 , 900 , 255 ,(short)0, 1,(short)1,3),
@@ -88,7 +88,7 @@ public final class TestHSSFClientAnchor {
     }
 
     @Test
-    public void testAnchorHeightInPoints() throws IOException {
+    void testAnchorHeightInPoints() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
 
@@ -110,7 +110,7 @@ public final class TestHSSFClientAnchor {
      * Check {@link HSSFClientAnchor} constructor does not treat 32768 as -32768.
      */
     @Test
-    public void testCanHaveRowGreaterThan32767() {
+    void testCanHaveRowGreaterThan32767() {
         // Maximum permitted row number should be 65535.
         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 32768, (short) 0, 32768);
 
@@ -122,7 +122,7 @@ public final class TestHSSFClientAnchor {
      * Check the maximum is not set at 255*256 instead of 256*256 - 1.
      */
     @Test
-    public void testCanHaveRowUpTo65535() {
+    void testCanHaveRowUpTo65535() {
         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65535, (short) 0, 65535);
 
         assertEquals(65535, anchor.getRow1());
@@ -130,7 +130,7 @@ public final class TestHSSFClientAnchor {
     }
 
     @Test
-    public void testCannotHaveRowGreaterThan65535() {
+    void testCannotHaveRowGreaterThan65535() {
         assertThrows(IllegalArgumentException.class, () ->
             new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536));
     }
@@ -139,7 +139,7 @@ public final class TestHSSFClientAnchor {
      * Check the same maximum value enforced when using {@link HSSFClientAnchor#setRow1}.
      */
     @Test
-    public void testCanSetRowUpTo65535() {
+    void testCanSetRowUpTo65535() {
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         anchor.setRow1(65535);
         anchor.setRow2(65535);
@@ -149,13 +149,13 @@ public final class TestHSSFClientAnchor {
     }
 
     @Test
-    public void testCannotSetRow1GreaterThan65535() {
+    void testCannotSetRow1GreaterThan65535() {
         assertThrows(IllegalArgumentException.class, () ->
             new HSSFClientAnchor().setRow1(65536));
     }
 
     @Test
-    public void testCannotSetRow2GreaterThan65535() {
+    void testCannotSetRow2GreaterThan65535() {
         assertThrows(IllegalArgumentException.class, () ->
             new HSSFClientAnchor().setRow2(65536));
     }

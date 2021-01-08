@@ -98,7 +98,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void testShiftOneColumnRight() {
+    void testShiftOneColumnRight() {
         sheet1.shiftColumns(1, 2, 1);
         double c1Value = sheet1.getRow(0).getCell(2).getNumericCellValue();
         assertEquals(1d, c1Value, 0.01);
@@ -127,7 +127,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void testShiftTwoColumnsRight() {
+    void testShiftTwoColumnsRight() {
         sheet1.shiftColumns(1, 2, 2);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
         assertEquals("A2*D3", formulaA4);
@@ -145,7 +145,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void testShiftOneColumnLeft() {
+    void testShiftOneColumnLeft() {
         sheet1.shiftColumns(1, 2, -1);
 
         String formulaA5 = sheet1.getRow(4).getCell(0).getCellFormula();
@@ -159,12 +159,12 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void testShiftTwoColumnsLeft() {
+    void testShiftTwoColumnsLeft() {
         assertThrows(IllegalStateException.class, () -> sheet1.shiftColumns(1, 2, -2));
     }
 
     @Test
-    public void testShiftHyperlinks() throws IOException {
+    protected void testShiftHyperlinks() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(0);
@@ -312,7 +312,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void testShiftWithMergedRegions() throws IOException {
+    protected void testShiftWithMergedRegions() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -337,7 +337,7 @@ public abstract class BaseTestSheetShiftColumns {
     protected static final String AMDOCS_TEST = "Amdocs:\ntest\n";
 
     @Test
-    public void testCommentsShifting() throws IOException {
+    protected void testCommentsShifting() throws IOException {
         Workbook inputWb = openWorkbook("56017.xlsx");
 
         Sheet sheet = inputWb.getSheetAt(0);
@@ -378,7 +378,7 @@ public abstract class BaseTestSheetShiftColumns {
 
     // transposed version of TestXSSFSheetShiftRows.testBug54524()
     @Test
-    public void testBug54524() throws IOException {
+    protected void testBug54524() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row firstRow = sheet.createRow(0);

@@ -84,7 +84,7 @@ public class TestDrawingShapes {
      * ----shape
      */
     @Test
-    public void testDrawingGroups() throws IOException {
+    void testDrawingGroups() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("groups");
         HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
@@ -99,7 +99,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testHSSFShapeCompatibility() {
+    void testHSSFShapeCompatibility() {
         HSSFSimpleShape shape = new HSSFSimpleShape(null, new HSSFClientAnchor());
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
         assertEquals(0x08000040, shape.getLineStyleColor());
@@ -118,7 +118,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testDefaultPictureSettings() {
+    void testDefaultPictureSettings() {
         HSSFPicture picture = new HSSFPicture(null, new HSSFClientAnchor());
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getFillColor(), HSSFShape.FILL__FILLCOLOR_DEFAULT);
@@ -132,7 +132,7 @@ public class TestDrawingShapes {
      * No NullPointerException should appear
      */
     @Test
-    public void testDefaultSettingsWithEmptyContainer() {
+    void testDefaultSettingsWithEmptyContainer() {
         EscherContainerRecord container = new EscherContainerRecord();
         EscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherOptRecord.RECORD_ID);
@@ -155,7 +155,7 @@ public class TestDrawingShapes {
      * create a rectangle, save the workbook, read back and verify that all shape properties are there
      */
     @Test
-    public void testReadWriteRectangle() throws IOException {
+    void testReadWriteRectangle() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
 
@@ -252,7 +252,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testReadExistingImage() throws IOException {
+    void testReadExistingImage() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("pictures");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -274,7 +274,7 @@ public class TestDrawingShapes {
 
     /* assert shape properties when reading shapes from a existing workbook */
     @Test
-    public void testReadExistingRectangle() throws IOException {
+    void testReadExistingRectangle() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("rectangles");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -292,7 +292,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testShapeIds() throws IOException {
+    void testShapeIds() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet1 = wb1.createSheet();
         HSSFPatriarch patriarch1 = sheet1.createDrawingPatriarch();
@@ -339,7 +339,7 @@ public class TestDrawingShapes {
      * File already have for 1 shape on each sheet, because document must contain EscherDgRecord for each sheet
      */
     @Test
-    public void testAllocateNewIds() throws IOException {
+    void testAllocateNewIds() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("empty.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
@@ -370,7 +370,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testOpt() throws IOException {
+    void testOpt() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // create a sheet with a text box
@@ -385,7 +385,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testCorrectOrderInOptRecord() throws IOException{
+    void testCorrectOrderInOptRecord() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFSheet sheet = wb.createSheet();
@@ -411,7 +411,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testDgRecordNumShapes() throws IOException {
+    void testDgRecordNumShapes() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -423,7 +423,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testTextForSimpleShape() throws IOException {
+    void testTextForSimpleShape() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -468,7 +468,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testRemoveShapes() throws IOException {
+    void testRemoveShapes() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -618,7 +618,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testShapeFlip() throws IOException {
+    void testShapeFlip() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -662,7 +662,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testRotation() throws IOException {
+    void testRotation() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -691,7 +691,7 @@ public class TestDrawingShapes {
 
     @SuppressWarnings("unused")
     @Test
-    public void testShapeContainerImplementsIterable() throws IOException {
+    void testShapeContainerImplementsIterable() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFSheet sheet = wb.createSheet();
@@ -710,7 +710,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testClearShapesForPatriarch() throws IOException {
+    void testClearShapesForPatriarch() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
@@ -743,7 +743,7 @@ public class TestDrawingShapes {
     }
 
     @Test
-    public void testBug45312() throws Exception {
+    void testBug45312() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

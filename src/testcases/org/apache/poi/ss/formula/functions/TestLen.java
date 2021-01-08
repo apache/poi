@@ -52,7 +52,7 @@ public final class TestLen {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirmLen(new StringEval("galactic"), 8);
 	}
 
@@ -60,7 +60,7 @@ public final class TestLen {
 	 * Valid cases where text arg is not exactly a string
 	 */
 	@Test
-	public void testUnusualArgs() {
+	void testUnusualArgs() {
 
 		// text (first) arg type is number, other args are strings with fractional digits
 		confirmLen(new NumberEval(123456), 6);
@@ -70,7 +70,7 @@ public final class TestLen {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		confirmLen(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
 	}
 }

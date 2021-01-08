@@ -36,7 +36,7 @@ public final class TestDrawingManager2 {
     }
 
     @Test
-    public void testCreateDgRecord() {
+    void testCreateDgRecord() {
         EscherDgRecord dgRecord1 = drawingManager2.createDgRecord();
         assertEquals( 1, dgRecord1.getDrawingGroupId() );
         assertEquals( -1, dgRecord1.getLastMSOSPID() );
@@ -52,7 +52,7 @@ public final class TestDrawingManager2 {
     }
 
     @Test
-    public void testCreateDgRecordOld() {
+    void testCreateDgRecordOld() {
         // converted from TestDrawingManager(1)
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 0 );
@@ -69,7 +69,7 @@ public final class TestDrawingManager2 {
     }
 
     @Test
-    public void testAllocateShapeId() {
+    void testAllocateShapeId() {
         EscherDgRecord dgRecord1 = drawingManager2.createDgRecord();
         assertEquals( 1, dgg.getDrawingsSaved() );
         EscherDgRecord dgRecord2 = drawingManager2.createDgRecord();
@@ -105,7 +105,7 @@ public final class TestDrawingManager2 {
     }
 
     @Test
-    public void testFindNewDrawingGroupId() {
+    void testFindNewDrawingGroupId() {
         // converted from TestDrawingManager(1)
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 1 );

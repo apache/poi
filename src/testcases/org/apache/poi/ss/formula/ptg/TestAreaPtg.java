@@ -45,7 +45,7 @@ public final class TestAreaPtg {
 	}
 
 	@Test
-	public void testSortTopLeftToBottomRight() {
+	void testSortTopLeftToBottomRight() {
 	    AreaPtg ptg = new AreaPtg(new AreaReference("A$1:$B5", SpreadsheetVersion.EXCEL2007));
 	    assertEquals("A$1:$B5", ptg.toFormulaString());
 	    ptg.setFirstColumn(3);
@@ -57,13 +57,13 @@ public final class TestAreaPtg {
 	}
 
 	@Test
-	public void testSetColumnsAbsolute() {
+	void testSetColumnsAbsolute() {
 		resetColumns(absolute);
 		validateReference(true, absolute);
 	}
 
 	@Test
-	public void testSetColumnsRelative() {
+	void testSetColumnsRelative() {
 		resetColumns(relative);
 		validateReference(false, relative);
 	}
@@ -87,7 +87,7 @@ public final class TestAreaPtg {
 	}
 
 	@Test
-    public void testAbsoluteRelativeRefs() {
+    void testAbsoluteRelativeRefs() {
         AreaPtg sca1 = new AreaPtg(4, 5, 6, 7, true, false, true, false);
         AreaPtg sca2 = new AreaPtg(4, 5, 6, 7, false, true, false, true);
         AreaPtg sca3 = new AreaPtg(5, 5, 7, 7, true, false, true, false);
@@ -117,7 +117,7 @@ public final class TestAreaPtg {
     }
 
 	@Test
-	public void testFormulaParser() {
+	void testFormulaParser() {
 		String formula1="SUM($E$5:$E$6)";
 		String expectedFormula1="SUM($F$5:$F$6)";
 		String newFormula1 = shiftAllColumnsBy1(formula1);

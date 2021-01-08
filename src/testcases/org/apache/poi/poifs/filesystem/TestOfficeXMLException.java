@@ -42,7 +42,7 @@ public class TestOfficeXMLException {
     }
 
     @Test
-    public void testOOXMLException() throws IOException {
+    void testOOXMLException() throws IOException {
         try (InputStream in = openSampleStream("sample.xlsx")) {
             OfficeXmlFileException ex = assertThrows(OfficeXmlFileException.class, () -> new POIFSFileSystem(in));
             assertTrue(ex.getMessage().contains("You are calling the part of POI that deals with OLE2 Office Documents"));
@@ -50,7 +50,7 @@ public class TestOfficeXMLException {
     }
 
     @Test
-    public void test2003XMLException() throws IOException {
+    void test2003XMLException() throws IOException {
         try (InputStream in = openSampleStream("SampleSS.xml")) {
             NotOLE2FileException ex = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
             assertTrue(ex.getMessage().contains("The supplied data appears to be a raw XML file"));
@@ -58,7 +58,7 @@ public class TestOfficeXMLException {
     }
 
     @Test
-    public void testDetectAsPOIFS() throws IOException {
+    void testDetectAsPOIFS() throws IOException {
         // ooxml file isn't
         confirmIsPOIFS("SampleSS.xlsx", FileMagic.OOXML);
 
@@ -86,7 +86,7 @@ public class TestOfficeXMLException {
     }
 
     @Test
-    public void testFileCorruption() throws Exception {
+    void testFileCorruption() throws Exception {
 
         // create test InputStream
         byte[] testData = {1, 2, 3};
@@ -106,7 +106,7 @@ public class TestOfficeXMLException {
 
 
     @Test
-    public void testFileCorruptionOPOIFS() throws Exception {
+    void testFileCorruptionOPOIFS() throws Exception {
 
         // create test InputStream
         byte[] testData = {(byte) 1, (byte) 2, (byte) 3};

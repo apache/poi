@@ -35,7 +35,7 @@ public final class TestUnitsRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         UnitsRecord record = new UnitsRecord(TestcaseRecordInputStream.create(0x1001, data));
         assertEquals( 0, record.getUnits());
@@ -45,7 +45,7 @@ public final class TestUnitsRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         UnitsRecord record = new UnitsRecord();
         record.setUnits( (short)0 );
 

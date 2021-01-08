@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public final class TestMissingArgEval {
 
 	@Test
-	public void testEvaluateMissingArgs() throws IOException {
+	void testEvaluateMissingArgs() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 			HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -57,7 +57,7 @@ public final class TestMissingArgEval {
 	}
 
 	@Test
-	public void testCompareMissingArgs() throws IOException {
+	void testCompareMissingArgs() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 			HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -117,7 +117,7 @@ public final class TestMissingArgEval {
 	}
 
 	@Test
-	public void testCountFuncs() throws IOException {
+	void testCountFuncs() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 			HSSFSheet sheet = wb.createSheet("Sheet1");

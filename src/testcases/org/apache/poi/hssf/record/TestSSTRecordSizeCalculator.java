@@ -54,7 +54,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		strings.add(makeUnicodeString(SMALL_STRING));
 		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
@@ -62,7 +62,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testBigStringAcrossUnicode() {
+	void testBigStringAcrossUnicode() {
 		int bigString = MAX_DATA_SPACE + 100;
 		strings.add(makeUnicodeString(bigString));
 		confirmSize(SST_RECORD_OVERHEAD
@@ -74,7 +74,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testPerfectFit() {
+	void testPerfectFit() {
 		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
 		confirmSize(SST_RECORD_OVERHEAD
@@ -83,7 +83,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testJustOversized() {
+	void testJustOversized() {
 		int tooBig = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD + 1;
 		strings.add(makeUnicodeString(tooBig));
 		confirmSize(SST_RECORD_OVERHEAD
@@ -96,7 +96,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testSecondStringStartsOnNewContinuation() {
+	void testSecondStringStartsOnNewContinuation() {
 		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
 		strings.add(makeUnicodeString(SMALL_STRING));
@@ -109,7 +109,7 @@ public final class TestSSTRecordSizeCalculator {
 	}
 
 	@Test
-	public void testHeaderCrossesNormalContinuePoint() {
+	void testHeaderCrossesNormalContinuePoint() {
 		int almostPerfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD - 2;
 		strings.add(makeUnicodeString(almostPerfectFit));
 		String oneCharString = new String(new char[1]);

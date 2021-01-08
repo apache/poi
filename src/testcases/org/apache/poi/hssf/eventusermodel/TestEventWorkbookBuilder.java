@@ -67,20 +67,20 @@ public final class TestEventWorkbookBuilder {
     }
 
     @Test
-    public void testBasics() {
+    void testBasics() {
         assertNotNull(listener.getSSTRecord());
         assertNotNull(listener.getBoundSheetRecords());
         assertNotNull(listener.getExternSheetRecords());
     }
 
     @Test
-    public void testGetStubWorkbooks() {
+    void testGetStubWorkbooks() {
         assertNotNull(listener.getStubWorkbook());
         assertNotNull(listener.getStubHSSFWorkbook());
     }
 
     @Test
-    public void testContents() {
+    void testContents() {
         assertEquals(2, listener.getSSTRecord().getNumStrings());
         assertEquals(3, listener.getBoundSheetRecords().length);
         assertEquals(1, listener.getExternSheetRecords().length);
@@ -94,7 +94,7 @@ public final class TestEventWorkbookBuilder {
     }
 
     @Test
-    public void testFormulas() {
+    void testFormulas() {
 
         // Check our formula records
         assertEquals(6, fRecs.size());

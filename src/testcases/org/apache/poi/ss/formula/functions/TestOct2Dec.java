@@ -50,7 +50,7 @@ public final class TestOct2Dec {
     }
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("Converts octal '' to decimal (0)", "", "0");
 		confirmValue("Converts octal 54 to decimal (44)", "54", "44");
 		confirmValue("Converts octal 7777777533 to decimal (-165)", "7777777533", "-165");
@@ -59,7 +59,7 @@ public final class TestOct2Dec {
 	}
 
 	@Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("not a valid octal number","ABCDEFGH", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid octal number","99999999", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid octal number","3.14159", ErrorEval.NUM_ERROR);

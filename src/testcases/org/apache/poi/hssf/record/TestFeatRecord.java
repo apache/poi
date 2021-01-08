@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestFeatRecord {
 	@Test
-	public void testWithoutFeatRecord() throws Exception {
+	void testWithoutFeatRecord() throws Exception {
 		HSSFWorkbook hssf =
 			HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls");
 		InternalWorkbook wb = HSSFTestHelper.getWorkbookForTest(hssf);
@@ -91,7 +91,7 @@ public final class TestFeatRecord {
 	}
 
 	@Test
-	public void testReadFeatRecord() {
+	void testReadFeatRecord() {
 		HSSFWorkbook hssf =
 			HSSFTestDataSamples.openSampleWorkbook("46136-NoWarnings.xls");
 		InternalWorkbook wb = HSSFTestHelper.getWorkbookForTest(hssf);
@@ -183,7 +183,7 @@ public final class TestFeatRecord {
      *  cloning sheets with feat records
      */
 	@Test
-    public void testCloneSheetWithFeatRecord() throws IOException {
+    void testCloneSheetWithFeatRecord() throws IOException {
         try (HSSFWorkbook wb =
             HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls")) {
 			HSSFSheet src = wb.getSheetAt(0);

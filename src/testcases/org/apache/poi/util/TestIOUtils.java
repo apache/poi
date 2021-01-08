@@ -72,61 +72,61 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testPeekFirst8Bytes() throws Exception {
+    void testPeekFirst8Bytes() throws Exception {
         assertArrayEquals("01234567".getBytes(StandardCharsets.UTF_8),
                 IOUtils.peekFirst8Bytes(new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8))));
     }
 
     @Test
-    public void testPeekFirst8BytesWithPushbackInputStream() throws Exception {
+    void testPeekFirst8BytesWithPushbackInputStream() throws Exception {
         assertArrayEquals("01234567".getBytes(StandardCharsets.UTF_8),
                 IOUtils.peekFirst8Bytes(new PushbackInputStream(new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8)), 8)));
     }
 
     @Test
-    public void testPeekFirst8BytesTooLessAvailable() throws Exception {
+    void testPeekFirst8BytesTooLessAvailable() throws Exception {
         assertArrayEquals(new byte[] { 1, 2, 3, 0, 0, 0, 0, 0}, IOUtils.peekFirst8Bytes(data123()));
     }
 
     @Test
-    public void testPeekFirst8BytesEmpty() {
+    void testPeekFirst8BytesEmpty() {
         assertThrows(EmptyFileException.class, () ->
             IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[0])));
     }
 
     @Test
-    public void testToByteArray() throws Exception {
+    void testToByteArray() throws Exception {
         assertArrayEquals(new byte[] { 1, 2, 3}, IOUtils.toByteArray(data123()));
     }
 
     @Test
-    public void testToByteArrayToSmall() {
+    void testToByteArrayToSmall() {
         assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10));
     }
 
     @Test
-    public void testToByteArrayMaxLengthToSmall() {
+    void testToByteArrayMaxLengthToSmall() {
         assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10, 10));
     }
 
     @Test
-    public void testToByteArrayNegativeLength() {
+    void testToByteArrayNegativeLength() {
         assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(data123(), -1));
     }
 
     @Test
-    public void testToByteArrayNegativeMaxLength() {
+    void testToByteArrayNegativeMaxLength() {
         assertThrows(RecordFormatException.class,  () -> IOUtils.toByteArray(data123(), 10, -1));
     }
 
     @Test
-    public void testToByteArrayByteBuffer() {
+    void testToByteArrayByteBuffer() {
         assertArrayEquals(new byte[] { 1, 2, 3},
                 IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3}), 10));
     }
 
     @Test
-    public void testToByteArrayByteBufferNonArray() {
+    void testToByteArrayByteBufferNonArray() {
         ByteBuffer buffer = ByteBuffer.allocate(3);
         buffer.put(new byte[] { 1, 2, 3});
         buffer.position(0);
@@ -138,13 +138,13 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testToByteArrayByteBufferToSmall() {
+    void testToByteArrayByteBufferToSmall() {
         assertArrayEquals(new byte[] { 1, 2, 3, 4, 5, 6, 7},
                 IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7}), 3));
     }
 
     @Test
-    public void testSkipFully() throws IOException {
+    void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);
             assertEquals(LENGTH, skipped);
@@ -152,7 +152,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSkipFullyGtIntMax() throws IOException {
+    void testSkipFullyGtIntMax() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
             assertEquals(LENGTH, skipped);
@@ -160,7 +160,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSkipFullyByteArray() throws IOException {
+    void testSkipFullyByteArray() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
             IOUtils.copy(is, bos);
@@ -170,7 +170,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSkipFullyByteArrayGtIntMax() throws IOException {
+    void testSkipFullyByteArrayGtIntMax() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
             IOUtils.copy(is, bos);
@@ -180,18 +180,18 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSkipFullyBug61294() throws IOException {
+    void testSkipFullyBug61294() throws IOException {
         IOUtils.skipFully(new ByteArrayInputStream(new byte[0]), 1);
     }
 
     @Test
-    public void testZeroByte() throws IOException {
+    void testZeroByte() throws IOException {
         long skipped = IOUtils.skipFully((new ByteArrayInputStream(new byte[0])), 100);
         assertEquals(-1L, skipped);
     }
 
     @Test
-    public void testSkipZero() throws IOException {
+    void testSkipZero() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 0);
             assertEquals(0, skipped);
@@ -199,21 +199,21 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSkipNegative() throws IOException {
+    void testSkipNegative() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             assertThrows(IllegalArgumentException.class, () -> IOUtils.skipFully(is, -1));
         }
     }
 
     @Test
-    public void testMaxLengthTooLong() throws IOException {
+    void testMaxLengthTooLong() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
             assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, Integer.MAX_VALUE, 100));
         }
     }
 
     @Test
-    public void testMaxLengthIgnored() throws IOException {
+    void testMaxLengthIgnored() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
             IOUtils.toByteArray(is, 90, Integer.MAX_VALUE);
             IOUtils.toByteArray(is, 90, 100);
@@ -222,20 +222,20 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testMaxLengthInvalid() throws IOException {
+    void testMaxLengthInvalid() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
             assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, 90, 80));
         }
     }
 
     @Test
-    public void testWonkyInputStream() throws IOException {
+    void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);
         assertEquals(10000, skipped);
     }
 
     @Test
-    public void testSetMaxOverride() throws IOException {
+    void testSetMaxOverride() throws IOException {
         ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
         byte[] bytes = IOUtils.toByteArray(stream);
         assertNotNull(bytes);
@@ -243,7 +243,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideLimit() throws IOException {
+    void testSetMaxOverrideLimit() throws IOException {
         IOUtils.setByteArrayMaxOverride(30 * 1024 * 1024);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
@@ -256,7 +256,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideOverLimit() {
+    void testSetMaxOverrideOverLimit() {
         IOUtils.setByteArrayMaxOverride(2);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
@@ -267,7 +267,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideWithLength() throws IOException {
+    void testSetMaxOverrideWithLength() throws IOException {
         ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
         byte[] bytes = IOUtils.toByteArray(stream, 3, 100);
         assertNotNull(bytes);
@@ -275,7 +275,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideLimitWithLength() throws IOException {
+    void testSetMaxOverrideLimitWithLength() throws IOException {
         IOUtils.setByteArrayMaxOverride(30 * 1024 * 1024);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
@@ -288,7 +288,7 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideOverLimitWithLength() throws IOException {
+    void testSetMaxOverrideOverLimitWithLength() throws IOException {
         IOUtils.setByteArrayMaxOverride(2);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
@@ -299,14 +299,14 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSafelyAllocate() {
+    void testSafelyAllocate() {
         byte[] bytes = IOUtils.safelyAllocate(30, 200);
         assertNotNull(bytes);
         assertEquals(30, bytes.length);
     }
 
     @Test
-    public void testSafelyAllocateLimit() {
+    void testSafelyAllocateLimit() {
         IOUtils.setByteArrayMaxOverride(40);
         try {
             byte[] bytes = IOUtils.safelyAllocate(30, 200);
@@ -318,28 +318,28 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testReadFully() throws IOException {
+    void testReadFully() throws IOException {
         byte[] bytes = new byte[2];
         IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 2);
         assertArrayEquals(new byte[] {1,2}, bytes);
     }
 
     @Test
-    public void testReadFullySimple() throws IOException {
+    void testReadFullySimple() throws IOException {
         byte[] bytes = new byte[2];
         IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes);
         assertArrayEquals(new byte[] {1,2}, bytes);
     }
 
     @Test
-    public void testReadFullyOffset() throws IOException {
+    void testReadFullyOffset() throws IOException {
         byte[] bytes = new byte[3];
         IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 1, 2);
         assertArrayEquals(new byte[] {0, 1,2}, bytes);
     }
 
     @Test
-    public void testReadFullyAtLength() throws IOException {
+    void testReadFullyAtLength() throws IOException {
         byte[] bytes = new byte[3];
         IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 3);
         assertArrayEquals(new byte[] {1,2, 3}, bytes);

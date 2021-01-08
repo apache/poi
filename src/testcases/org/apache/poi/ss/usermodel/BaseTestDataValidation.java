@@ -465,7 +465,7 @@ public abstract class BaseTestDataValidation {
 	}
 
 	@Test
-	public void testDataValidation() throws Exception {
+	void testDataValidation() throws Exception {
 		log("\nTest no. 2 - Test Excel's Data validation mechanism");
 		Workbook wb = _testDataProvider.createWorkbook();
 		WorkbookFormatter wf = new WorkbookFormatter(wb);

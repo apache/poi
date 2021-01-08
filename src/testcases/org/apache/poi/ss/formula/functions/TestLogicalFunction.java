@@ -80,7 +80,7 @@ public class TestLogicalFunction {
     }
 
     @Test
-    public void testIsErr() {
+    void testIsErr() {
         cell1 = row3.createCell(0);
         cell1.setCellFormula("ISERR(B1)"); // produces #DIV/0!
         cell2 = row3.createCell(1);
@@ -94,7 +94,7 @@ public class TestLogicalFunction {
     }
 
     @Test
-    public void testIsError() {
+    void testIsError() {
         cell1 = row3.createCell(0);
         cell1.setCellFormula("ISERROR(B1)"); // produces #DIV/0!
         cell2 = row3.createCell(1);

@@ -39,7 +39,7 @@ public final class TestIPMT {
      *  from http://office.microsoft.com/en-001/excel-help/ipmt-HP005209145.aspx
      */
     @Test
-    public void testFromFile() {
+    void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("finance.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

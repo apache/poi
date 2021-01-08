@@ -35,25 +35,25 @@ import org.junit.jupiter.api.Test;
 public final class TestBoundSheetRecord {
 
 	@Test
-	public void testRecordLength() {
+	void testRecordLength() {
 		BoundSheetRecord record = new BoundSheetRecord("Sheet1");
 		assertEquals(18, record.getRecordSize());
 	}
 
 	@Test
-	public void testWideRecordLength() {
+	void testWideRecordLength() {
 		BoundSheetRecord record = new BoundSheetRecord("Sheet\u20ac");
 		assertEquals(24, record.getRecordSize());
 	}
 
 	@Test
-	public void testName() {
+	void testName() {
 		BoundSheetRecord record = new BoundSheetRecord("1234567890223456789032345678904");
 		assertThrows(IllegalArgumentException.class, () -> record.setSheetname("s//*s"));
 	}
 
 	@Test
-	public void testDeserializeUnicode() {
+	void testDeserializeUnicode() {
 
 		byte[] data = HexRead.readFromString(""
 			+ "85 00 1A 00" // sid, length
@@ -76,7 +76,7 @@ public final class TestBoundSheetRecord {
 	}
 
 	@Test
-	public void testOrdering() {
+	void testOrdering() {
 		BoundSheetRecord bs1 = new BoundSheetRecord("SheetB");
 		BoundSheetRecord bs2 = new BoundSheetRecord("SheetC");
 		BoundSheetRecord bs3 = new BoundSheetRecord("SheetA");
@@ -97,7 +97,7 @@ public final class TestBoundSheetRecord {
 	}
 
 	@Test
-	public void testValidNames() {
+	void testValidNames() {
 		assertTrue(isValid("Sheet1"));
 		assertTrue(isValid("O'Brien's sales"));
 		assertTrue(isValid(" data # "));

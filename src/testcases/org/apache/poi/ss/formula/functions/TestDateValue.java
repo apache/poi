@@ -53,7 +53,7 @@ public final class TestDateValue {
     }
 
     @Test
-    public void testDateValue() {
+    void testDateValue() {
         LocaleUtil.setUserLocale(Locale.ENGLISH);
         try {
             int days1900 = (int)ChronoUnit.DAYS.between(

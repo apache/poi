@@ -31,7 +31,7 @@ public final class TestDocumentDescriptor {
      * test equality
      */
     @Test
-    public void testEquality() {
+    void testEquality() {
         String[] names = { "c1", "c2", "c3", "c4", "c5" };
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
         POIFSDocumentPath   a2    = new POIFSDocumentPath(null);

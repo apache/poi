@@ -48,7 +48,7 @@ public final class TestValue {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 
 		confirmValue("100", 100);
 		confirmValue("-2.3", -2.3);
@@ -76,7 +76,7 @@ public final class TestValue {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		confirmValueError("1+1");
 		confirmValueError("1 1");
 		confirmValueError("1,00.0");

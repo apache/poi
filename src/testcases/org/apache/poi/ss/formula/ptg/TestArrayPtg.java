@@ -57,7 +57,7 @@ public final class TestArrayPtg {
 	 * Lots of problems with ArrayPtg's decoding and encoding of the element value data
 	 */
 	@Test
-	public void testReadWriteTokenValueBytes() {
+	void testReadWriteTokenValueBytes() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
@@ -83,7 +83,7 @@ public final class TestArrayPtg {
 	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
 	@Test
-	public void testElementOrdering() {
+	void testElementOrdering() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
@@ -101,7 +101,7 @@ public final class TestArrayPtg {
 	 * A spreadsheet was added to make the ordering clearer.
 	 */
 	@Test
-	public void testElementOrderingInSpreadsheet() {
+	void testElementOrderingInSpreadsheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
 
 		// The formula has an array with 3 rows and 5 columns
@@ -112,7 +112,7 @@ public final class TestArrayPtg {
 	}
 
 	@Test
-	public void testToFormulaString() {
+	void testToFormulaString() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		// bug 45380 - Unexpected constant class (java.lang.Boolean)
 		String actualFormula = ptg.toFormulaString();
@@ -123,7 +123,7 @@ public final class TestArrayPtg {
 	 * worth checking since AttrPtg.sid=0x20 and Ptg.CLASS_* = (0x00, 0x20, and 0x40)
 	 */
 	@Test
-	public void testOperandClassDecoding() {
+	void testOperandClassDecoding() {
 		confirmOperandClassDecoding(Ptg.CLASS_REF);
 		confirmOperandClassDecoding(Ptg.CLASS_VALUE);
 		confirmOperandClassDecoding(Ptg.CLASS_ARRAY);

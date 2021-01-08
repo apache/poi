@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public final class TestMirr {
 
     @Test
-    public void testMirr() throws EvaluationException {
+    void testMirr() throws EvaluationException {
         Mirr mirr = new Mirr();
         double mirrValue;
 
@@ -77,7 +77,7 @@ public final class TestMirr {
     }
 
     @Test
-    public void testMirrErrors_expectDIV0() {
+    void testMirrErrors_expectDIV0() {
         Mirr mirr = new Mirr();
 
         double reinvestRate = 0.05;
@@ -89,7 +89,7 @@ public final class TestMirr {
     }
 
     @Test
-    public void testEvaluateInSheet() {
+    void testEvaluateInSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(0);
@@ -114,7 +114,7 @@ public final class TestMirr {
     }
 
     @Test
-    public void testMirrFromSpreadsheet() {
+    void testMirrFromSpreadsheet() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("mirrTest.xls");
         HSSFSheet sheet = wb.getSheet("Mirr");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

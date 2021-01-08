@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class TestSheetUtil {
     @Test
-    public void testCellWithMerges() throws Exception {
+    void testCellWithMerges() throws Exception {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet s = wb.createSheet();
 
@@ -90,7 +90,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testCanComputeWidthHSSF() throws IOException {
+    void testCanComputeWidthHSSF() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             // cannot check on result because on some machines we get back false here!
             SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
@@ -98,7 +98,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testGetCellWidthEmpty() throws IOException {
+    void testGetCellWidthEmpty() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("sheet");
             Row row = sheet.createRow(0);
@@ -110,7 +110,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testGetCellWidthString() throws IOException {
+    void testGetCellWidthString() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("sheet");
             Row row = sheet.createRow(0);
@@ -123,7 +123,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testGetCellWidthNumber() throws IOException {
+    void testGetCellWidthNumber() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("sheet");
             Row row = sheet.createRow(0);
@@ -136,7 +136,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testGetCellWidthBoolean() throws IOException {
+    void testGetCellWidthBoolean() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("sheet");
             Row row = sheet.createRow(0);
@@ -149,7 +149,7 @@ public final class TestSheetUtil {
     }
 
     @Test
-    public void testGetColumnWidthString() throws IOException {
+    void testGetColumnWidthString() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("sheet");
             Row row = sheet.createRow(0);

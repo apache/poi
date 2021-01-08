@@ -87,7 +87,7 @@ public final class TestBasic {
      * are expected to be in a certain order.</p>
      */
     @Test
-    public void testReadFiles() {
+    void testReadFiles() {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++) {
             assertEquals(poiFiles.get(i).getName(), expected[i]);
@@ -109,7 +109,7 @@ public final class TestBasic {
      * supported.
      */
     @Test
-    public void testCreatePropertySets()
+    void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException {
         Class<?>[] expected = {
             SummaryInformation.class,
@@ -140,7 +140,7 @@ public final class TestBasic {
      * @exception HPSFException if any HPSF exception occurs
      */
     @Test
-    public void testPropertySetMethods() throws IOException, HPSFException {
+    void testPropertySetMethods() throws IOException, HPSFException {
         /* Loop over the two property sets. */
         for (int i = 0; i < 2; i++) {
             byte[] b = poiFiles.get(i).getBytes();
@@ -164,7 +164,7 @@ public final class TestBasic {
      * @exception HPSFException if any HPSF exception occurs
      */
     @Test
-    public void testSectionMethods() throws IOException, HPSFException {
+    void testSectionMethods() throws IOException, HPSFException {
         InputStream is = new ByteArrayInputStream(poiFiles.get(0).getBytes());
         final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is);
         final List<Section> sections = si.getSections();

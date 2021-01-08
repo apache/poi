@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRangeEval {
 	@Test
-	public void testPermutations() {
+	void testPermutations() {
 
 		confirm("B3", "D7", "B3:D7");
 		confirm("B1", "B1", "B1:B1");
@@ -136,7 +136,7 @@ public final class TestRangeEval {
 	}
 
 	@Test
-	public void testRangeUsingOffsetFunc_bug46948() {
+	void testRangeUsingOffsetFunc_bug46948() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFRow row = wb.createSheet("Sheet1").createRow(0);
 		HSSFCell cellA1 = row.createCell(0);

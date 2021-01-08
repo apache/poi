@@ -46,7 +46,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testLastAndFirstColumns() throws IOException {
+    void testLastAndFirstColumns() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row row = sheet.createRow(0);
@@ -76,7 +76,7 @@ public abstract class BaseTestRow {
      * This test was added in response to bug report 44987.
      */
     @Test
-    public void testBoundsInMultipleRows() throws IOException {
+    void testBoundsInMultipleRows() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row rowA = sheet.createRow(0);
@@ -102,7 +102,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testRemoveCell() throws IOException {
+    void testRemoveCell() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         {
             Sheet sheet = wb1.createSheet();
@@ -145,7 +145,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testRowBounds() throws IOException {
+    void testRowBounds() throws IOException {
         int maxRowNum = _testDataProvider.getSpreadsheetVersion().getLastRowIndex();
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
@@ -201,7 +201,7 @@ public abstract class BaseTestRow {
      * number on the row
      */
     @Test
-    public void testLastCellNumIsCorrectAfterAddCell_bug43901() throws IOException {
+    void testLastCellNumIsCorrectAfterAddCell_bug43901() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row = sheet.createRow(0);
@@ -223,7 +223,7 @@ public abstract class BaseTestRow {
      * Tests for the missing/blank cell policy stuff
      */
     @Test
-    public void testGetCellPolicy() throws IOException {
+    void testGetCellPolicy() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row = sheet.createRow(0);
@@ -295,7 +295,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testRowHeight() throws IOException {
+    protected void testRowHeight() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
         Row row1 = sheet.createRow(0);
@@ -351,7 +351,7 @@ public abstract class BaseTestRow {
      * Test adding cells to a row in various places and see if we can find them again.
      */
     @Test
-    public void testCellIterator() throws IOException {
+    void testCellIterator() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -409,7 +409,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testRowStyle() throws IOException {
+    void testRowStyle() throws IOException {
        Workbook wb1 = _testDataProvider.createWorkbook();
        Sheet sheet = wb1.createSheet("test");
        Row row1 = sheet.createRow(0);
@@ -452,7 +452,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testCellShiftingRight() {
+    protected void testCellShiftingRight() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
         Row row = sheet.createRow(0);
@@ -481,8 +481,9 @@ public abstract class BaseTestRow {
         Cell c1 = row.getCell(2);
         assertNull(c1);
     }
+
     @Test
-    public void testCellShiftingLeft() {
+    protected void testCellShiftingLeft() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
         Row row = sheet.createRow(0);
@@ -511,7 +512,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testLastRowEmptySheet() {
+    void testLastRowEmptySheet() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
 
@@ -523,7 +524,7 @@ public abstract class BaseTestRow {
     }
 
     @Test
-    public void testFirstRowEmptySheet() {
+    void testFirstRowEmptySheet() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
 

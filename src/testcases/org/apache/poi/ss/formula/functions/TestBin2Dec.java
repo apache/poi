@@ -54,7 +54,7 @@ public final class TestBin2Dec {
     }
 
     @Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("Converts binary '00101' to decimal (5)", "00101", "5");
 		confirmValue("Converts binary '1111111111' to decimal (-1)", "1111111111", "-1");
 		confirmValue("Converts binary '1111111110' to decimal (-2)", "1111111110", "-2");
@@ -62,14 +62,14 @@ public final class TestBin2Dec {
 	}
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("does not support more than 10 digits","01010101010", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid binary number","GGGGGGG", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid binary number","3.14159", ErrorEval.NUM_ERROR);
     }
 
     @Test
-    public void testEvalOperationEvaluationContext() {
+    void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
@@ -80,7 +80,7 @@ public final class TestBin2Dec {
     }
 
     @Test
-    public void testEvalOperationEvaluationContextFails() {
+    void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
@@ -99,7 +99,7 @@ public final class TestBin2Dec {
     }
 
     @Test
-    public void testRefs() {
+    void testRefs() {
         OperationEvaluationContext ctx = createContext();
 
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };

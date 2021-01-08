@@ -62,7 +62,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPageSettingsBlock {
 	@Test
-	public void testPrintSetup_bug46548() {
+	void testPrintSetup_bug46548() {
 		// PageSettingBlock in this file contains PLS (sid=x004D) record
 		// followed by ContinueRecord (sid=x003C)
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex46548-23133.xls");
@@ -78,7 +78,7 @@ public final class TestPageSettingsBlock {
 	 * {@link PageSettingsBlock}.
 	 */
 	@Test
-	public void testHeaderFooter_bug46840() {
+	void testHeaderFooter_bug46840() {
 
 		int rowIx = 5;
 		int colIx = 6;
@@ -115,7 +115,7 @@ public final class TestPageSettingsBlock {
 	 * Bug 46953 occurred because POI didn't handle late PSB records properly.
 	 */
 	@Test
-	public void testLateHeaderFooter_bug46953() {
+	void testLateHeaderFooter_bug46953() {
 
 		int rowIx = 5;
 		int colIx = 6;
@@ -160,7 +160,7 @@ public final class TestPageSettingsBlock {
 	 * </ul>
 	 */
 	@Test
-	public void testLateMargins_bug47199() {
+	void testLateMargins_bug47199() {
 
 		BottomMarginRecord bottomMargin = new BottomMarginRecord();
 		bottomMargin.setMargin(0.787F);
@@ -194,7 +194,7 @@ public final class TestPageSettingsBlock {
 	 * was added while fixing bug 47199.  All existing POI test samples comply with this requirement.
 	 */
 	@Test
-	public void testDuplicatePSBRecord_bug47199() {
+	void testDuplicatePSBRecord_bug47199() {
 		// Hypothetical setup of PSB records which should cause POI to crash
 		org.apache.poi.hssf.record.Record[] recs = {
 			new HeaderRecord("&LSales Figures"),
@@ -215,7 +215,7 @@ public final class TestPageSettingsBlock {
 	 * Excel in this regard.
 	 */
 	@Test
-	public void testMissingHeaderFooter() {
+	void testMissingHeaderFooter() {
 		// initialise PSB with some records, but not the header / footer
 		org.apache.poi.hssf.record.Record[] recs = {
 				new HCenterRecord(),
@@ -251,7 +251,7 @@ public final class TestPageSettingsBlock {
 	 * As of June 2009, PLS is still uninterpreted by POI
 	 */
 	@Test
-	public void testDuplicatePLS_bug47415() {
+	void testDuplicatePLS_bug47415() {
 		Record plsA = new UnknownRecord(UnknownRecord.PLS_004D, HexRead.readFromString("BA AD F0 0D"));
 		Record plsB = new UnknownRecord(UnknownRecord.PLS_004D, HexRead.readFromString("DE AD BE EF"));
 		Record contB1 = new ContinueRecord(HexRead.readFromString("FE ED"));
@@ -277,7 +277,7 @@ public final class TestPageSettingsBlock {
 	}
 
 	@Test
-    public void testDuplicateHeaderFooter_bug48026() {
+    void testDuplicateHeaderFooter_bug48026() {
 
         org.apache.poi.hssf.record.Record[] recs = {
                 BOFRecord.createSheetBOF(),
@@ -349,7 +349,7 @@ public final class TestPageSettingsBlock {
     }
 
 	@Test
-    public void testDuplicateHeaderFooterInside_bug48026() {
+    void testDuplicateHeaderFooterInside_bug48026() {
 
         Record[] recs = {
                 BOFRecord.createSheetBOF(),

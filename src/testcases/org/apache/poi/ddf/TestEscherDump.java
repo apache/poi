@@ -74,7 +74,7 @@ public class TestEscherDump {
 
     // simple test to at least cover some parts of the class
     @Test
-    public void testSimple() throws Exception {
+    void testSimple() throws Exception {
         // Decode the stream to bytes
         byte[] bytes = RawDataUtil.decompress(recordData);
         // Dump the contents of escher to stream.
@@ -91,13 +91,13 @@ public class TestEscherDump {
     }
 
     @Test
-    public void testWithData() {
+    void testWithData() {
         dumper.dump(8, new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, stream);
         assertEquals(6, countProperties());
     }
 
     @Test
-    public void testWithSamplefile() throws Exception {
+    void testWithSamplefile() throws Exception {
         //InputStream stream = HSSFTestDataSamples.openSampleFileStream(")
         byte[] data = POIDataSamples.getDDFInstance().readFile("Container.dat");
         dumper.dump(data.length, data, stream);
@@ -113,7 +113,7 @@ public class TestEscherDump {
     }
 
     @Test
-    public void testCopy() throws Exception {
+    void testCopy() throws Exception {
         byte[] data1 = RawDataUtil.decompress(recordData);
 
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();

@@ -56,17 +56,17 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
     }
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         testRead("WithConditionalFormatting.xls");
     }
 
     @Test
-    public void testReadOffice2007() throws IOException {
+    void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xls");
     }
 
     @Test
-    public void test53691() throws IOException {
+    void test53691() throws IOException {
         SheetConditionalFormatting cf;
         final Workbook wb = HSSFITestDataProvider.instance.openSampleWorkbook("53691.xls");
         /*

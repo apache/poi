@@ -35,7 +35,7 @@ public final class TestAxisLineFormatRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         AxisLineFormatRecord record = new AxisLineFormatRecord(TestcaseRecordInputStream.create(0x1021, data));
         assertEquals( AxisLineFormatRecord.AXIS_TYPE_MAJOR_GRID_LINE, record.getAxisType());
 
@@ -44,7 +44,7 @@ public final class TestAxisLineFormatRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AxisLineFormatRecord record = new AxisLineFormatRecord();
         record.setAxisType( AxisLineFormatRecord.AXIS_TYPE_MAJOR_GRID_LINE );
 

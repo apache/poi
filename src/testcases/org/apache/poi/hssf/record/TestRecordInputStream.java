@@ -55,7 +55,7 @@ public final class TestRecordInputStream {
 
 
 	@Test
-	public void testChangeOfCompressionFlag_bug25866() {
+	void testChangeOfCompressionFlag_bug25866() {
 		byte[] changingFlagSimpleData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
 				+ "06 00 "  // first rec len 6
@@ -69,7 +69,7 @@ public final class TestRecordInputStream {
 	}
 
 	@Test
-	public void testChangeFromUnCompressedToCompressed() {
+	void testChangeFromUnCompressedToCompressed() {
 		byte[] changingFlagSimpleData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
 				+ "0F 00 "  // first rec len 15
@@ -81,7 +81,7 @@ public final class TestRecordInputStream {
 	}
 
 	@Test
-	public void testReadString() {
+	void testReadString() {
 		byte[] changingFlagFullData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
 				+ "12 00 "  // first rec len 18 (15 + next 3 bytes)
@@ -96,7 +96,7 @@ public final class TestRecordInputStream {
 
 	@ParameterizedTest
 	@CsvSource({"1, 200", "0, 200", "999999999, 200", HeaderRecord.sid+", 200"})
-	public void testLeftoverDataException(int sid, int remainingByteCount) {
+	void testLeftoverDataException(int sid, int remainingByteCount) {
 	    // just ensure that the exception is created correctly, even with unknown sids
 		assertDoesNotThrow(() -> new RecordInputStream.LeftoverDataException(sid, remainingByteCount));
 	}

@@ -41,7 +41,7 @@ public final class TestCellRangeAddress {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         CellRangeAddress ref = new CellRangeAddress(
                 TestcaseRecordInputStream.create(0x000, data));
         assertEquals(2, ref.getFirstRow());
@@ -53,14 +53,14 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testLoadInvalid() {
+    void testLoadInvalid() {
         RuntimeException e = assertThrows(RuntimeException.class, () ->
             new CellRangeAddress(TestcaseRecordInputStream.create(0x000, new byte[]{(byte) 0x02})));
         assertTrue(e.getMessage().contains("Ran out of data"));
     }
 
     @Test
-    public void testStore() throws IOException {
+    void testStore() throws IOException {
         CellRangeAddress ref = new CellRangeAddress(0, 0, 0, 0);
 
         byte[] recordBytes;
@@ -93,26 +93,26 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testCreateIllegal() {
+    void testCreateIllegal() {
         // for some combinations we expected exceptions
         assertThrows(IllegalArgumentException.class, () -> new CellRangeAddress(1, 0, 0, 0));
         assertThrows(IllegalArgumentException.class, () -> new CellRangeAddress(0, 0, 1, 0));
     }
 
     @Test
-    public void testCopy() throws IOException {
+    void testCopy() throws IOException {
         CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         CellRangeAddress copy = ref.copy();
         assertEquals(ref.toString(), copy.toString());
     }
 
     @Test
-    public void testGetEncodedSize() {
+    void testGetEncodedSize() {
         assertEquals(2*CellRangeAddress.ENCODED_SIZE, CellRangeAddress.getEncodedSize(2));
     }
 
     @Test
-    public void testFormatAsString() {
+    void testFormatAsString() {
         CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
 
         assertEquals("D2:E3", ref.formatAsString());
@@ -167,7 +167,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         final CellRangeAddress ref1 = new CellRangeAddress(1, 2, 3, 4);
         final CellRangeAddress ref2 = new CellRangeAddress(1, 2, 3, 4);
         assertEquals(ref1, ref2);
@@ -187,7 +187,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testGetMinMaxRow() {
+    void testGetMinMaxRow() {
         final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         assertEquals(1, ref.getMinRow());
         assertEquals(2, ref.getMaxRow());
@@ -199,7 +199,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testGetMinMaxColumn() {
+    void testGetMinMaxColumn() {
         final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         assertEquals(3, ref.getMinColumn());
         assertEquals(4, ref.getMaxColumn());
@@ -211,7 +211,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void testIntersects() {
+    void testIntersects() {
         final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1);
 
         final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1);

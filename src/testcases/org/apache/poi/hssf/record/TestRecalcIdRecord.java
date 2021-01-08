@@ -35,7 +35,7 @@ public final class TestRecalcIdRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testBasicDeserializeReserialize() {
+	void testBasicDeserializeReserialize() {
 
 		byte[] data = HexRead.readFromString(
 				"C1 01" +  // rt
@@ -47,7 +47,7 @@ public final class TestRecalcIdRecord {
 	}
 
 	@Test
-	public void testBadFirstField_bug48096() {
+	void testBadFirstField_bug48096() {
 		/*
 		 * Data taken from the sample file referenced in Bugzilla 48096, file offset 0x0D45.
 		 * The apparent problem is that the first data short field has been written with the

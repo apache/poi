@@ -90,7 +90,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void testEmptyRow() {
+    void testEmptyRow() {
         // leave some rows empty in-between
         Row row = sheet1.createRow(23);
         row.createCell(0).setCellValue(1.2);
@@ -104,7 +104,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void testSameSheet() {
+    void testSameSheet() {
         // leave some rows empty in-between
         Row row = sheet1.createRow(23);
         row.createCell(0).setCellValue(1.2);
@@ -119,7 +119,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void testCopyStyles() {
+    void testCopyStyles() {
         String cellContent = "D6 aligned to the right";
         HorizontalAlignment toTheRight = HorizontalAlignment.RIGHT;
         // create cell with content aligned to the right
@@ -138,7 +138,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void testMergedRanges() {
+    void testMergedRanges() {
         String cellContent = "D6 merged to E7";
 
         // create cell merged from D6 to E7

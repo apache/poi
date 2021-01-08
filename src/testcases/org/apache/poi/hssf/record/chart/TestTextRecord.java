@@ -48,7 +48,7 @@ public final class TestTextRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         TextRecord record = new TextRecord(TestcaseRecordInputStream.create(0x1025, data));
         assertEquals( TextRecord.HORIZONTAL_ALIGNMENT_CENTER, record.getHorizontalAlignment());
         assertEquals( TextRecord.VERTICAL_ALIGNMENT_CENTER, record.getVerticalAlignment());
@@ -83,7 +83,7 @@ public final class TestTextRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         TextRecord record = new TextRecord();
         record.setHorizontalAlignment( TextRecord.HORIZONTAL_ALIGNMENT_CENTER );
         record.setVerticalAlignment( TextRecord.VERTICAL_ALIGNMENT_CENTER );

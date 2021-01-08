@@ -48,7 +48,7 @@ public final class TestFontRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         FontRecord record = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         assertEquals(0xc8, record.getFontHeight());
@@ -70,7 +70,7 @@ public final class TestFontRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
 //      .fontheight      = c8
 //      .attributes      = 0
 //           .italic     = false
@@ -102,7 +102,7 @@ public final class TestFontRecord {
     }
 
     @Test
-    public void testCloneOnto() {
+    void testCloneOnto() {
         FontRecord base = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
 
         FontRecord other = new FontRecord();
@@ -115,7 +115,7 @@ public final class TestFontRecord {
     }
 
     @Test
-    public void testSameProperties() {
+    void testSameProperties() {
         FontRecord f1 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         FontRecord f2 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
 
@@ -138,7 +138,7 @@ public final class TestFontRecord {
      * samples to say otherwise.
      */
     @Test
-    public void testEmptyName_bug47250() {
+    void testEmptyName_bug47250() {
         byte[] emptyNameData = HexRead.readFromString(
                 "C8 00 00 00 FF 7F 90 01 00 00 00 00 00 00 "
                 + "00" // zero length

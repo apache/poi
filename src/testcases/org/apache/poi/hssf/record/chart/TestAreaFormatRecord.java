@@ -43,7 +43,7 @@ public final class TestAreaFormatRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         AreaFormatRecord record = new AreaFormatRecord(TestcaseRecordInputStream.create(0x100a, data));
         assertEquals( 0xFFFFFF, record.getForegroundColor());
         assertEquals( 0x000000, record.getBackgroundColor());
@@ -60,7 +60,7 @@ public final class TestAreaFormatRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AreaFormatRecord record = new AreaFormatRecord();
         record.setForegroundColor( 0xFFFFFF );
         record.setBackgroundColor( 0x000000 );

@@ -44,7 +44,7 @@ public class TestDataSource {
     private static final POIDataSamples data = POIDataSamples.getPOIFSInstance();
 
     @Test
-    public void testFile() throws Exception {
+    void testFile() throws Exception {
         File f = data.getFile("Notes.ole2");
 
         try (FileBackedDataSource ds = new FileBackedDataSource(f)) {
@@ -58,7 +58,7 @@ public class TestDataSource {
     }
 
     @Test
-    public void testFileWritable() throws Exception {
+    void testFileWritable() throws Exception {
         File temp = TempFile.createTempFile("TestDataSource", ".test");
         try {
             writeDataToFile(temp);
@@ -81,7 +81,7 @@ public class TestDataSource {
 
 
     @Test
-    public void testRewritableFile() throws Exception {
+    void testRewritableFile() throws Exception {
         File temp = TempFile.createTempFile("TestDataSource", ".test");
         try {
             writeDataToFile(temp);
@@ -167,7 +167,7 @@ public class TestDataSource {
     }
 
     @Test
-    public void testByteArray() {
+    void testByteArray() {
         byte[] data = new byte[256];
         byte b;
         for (int i = 0; i < data.length; i++) {

@@ -33,7 +33,7 @@ public final class TestUnicodeWorkbook {
      *  It should have been written as a compressed unicode.
      */
     @Test
-    public void testUmlatReadWrite() throws IOException {
+    void testUmlatReadWrite() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             //Create a unicode sheet name (euro symbol)

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestFormulaParser {
     @Test
-    public void testParse(){
+    void testParse(){
 
         Formula[] ops = {
             newGuide("adj1", "val 100"),

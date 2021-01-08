@@ -56,7 +56,7 @@ public final class TestSheet {
 	}
 
 	@Test
-	public void testCreateSheet() {
+	void testCreateSheet() {
 		// Check we're adding row and cell aggregates
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(BOFRecord.createSheetBOF());
@@ -105,7 +105,7 @@ public final class TestSheet {
 	}
 
     @Test
-	public void testAddMergedRegion() {
+	void testAddMergedRegion() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		final int regionsToAdd = 4096;
 
@@ -141,7 +141,7 @@ public final class TestSheet {
 	}
 
     @Test
-	public void testRemoveMergedRegion() {
+	void testRemoveMergedRegion() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		int regionsToAdd = 4096;
 
@@ -172,7 +172,7 @@ public final class TestSheet {
 	 *
 	 */
     @Test
-	public void testMovingMergedRegion() {
+	void testMovingMergedRegion() {
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
 		CellRangeAddress[] cras = {
@@ -197,12 +197,12 @@ public final class TestSheet {
 	}
 
     // @Test
-	// public void testGetMergedRegionAt() {
+	// void testGetMergedRegionAt() {
 	// TODO
 	// }
 
 	// @Test
-	// public void testGetNumMergedRegions() {
+	// void testGetNumMergedRegions() {
 	// TODO
 	// }
 
@@ -211,7 +211,7 @@ public final class TestSheet {
 	 *
 	 */
     @Test
-	public void testRowAggregation() {
+	void testRowAggregation() {
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
 		records.add(InternalSheet.createBOF());
@@ -235,7 +235,7 @@ public final class TestSheet {
 	 *
 	 */
     @Test
-	public void testRowPageBreaks() {
+	void testRowPageBreaks() {
 		short colFrom = 0;
 		short colTo = 255;
 
@@ -291,7 +291,7 @@ public final class TestSheet {
 	 *
 	 */
     @Test
-	public void testColPageBreaks() {
+	void testColPageBreaks() {
 		short rowFrom = 0;
 		short rowTo = (short)65535;
 
@@ -352,7 +352,7 @@ public final class TestSheet {
 	 * works as designed.
 	 */
     @Test
-	public void testXFIndexForColumn() {
+	void testXFIndexForColumn() {
 		final short TEST_IDX = 10;
 		final short DEFAULT_IDX = 0xF; // 15
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -422,7 +422,7 @@ public final class TestSheet {
 	 * when an <tt>UncalcedRecord</tt> was present.<p>
 	 */
     @Test
-	public void testUncalcSize_bug45066() {
+	void testUncalcSize_bug45066() {
 
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(BOFRecord.createSheetBOF());
@@ -455,7 +455,7 @@ public final class TestSheet {
 	 * The code here represents a normal POI use case where a spreadsheet is created from scratch.
 	 */
     @Test
-	public void testRowValueAggregatesOrder_bug45145() {
+	void testRowValueAggregatesOrder_bug45145() {
 
 		InternalSheet sheet = InternalSheet.createSheet();
 
@@ -519,7 +519,7 @@ public final class TestSheet {
 	 * which in turn got the dimensions record out of alignment
 	 */
     @Test
-	public void testGutsRecord_bug45640() {
+	void testGutsRecord_bug45640() {
 
 		InternalSheet sheet = InternalSheet.createSheet();
 		sheet.addRow(new RowRecord(0));
@@ -533,7 +533,7 @@ public final class TestSheet {
 	}
 
     @Test
-	public void testMisplacedMergedCellsRecords_bug45699() throws Exception {
+	void testMisplacedMergedCellsRecords_bug45699() throws Exception {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls")) {
 			HSSFSheet sheet = wb.getSheetAt(0);
 			HSSFRow row = sheet.getRow(3);
@@ -546,7 +546,7 @@ public final class TestSheet {
 	 * In 3.1, setting margins between creating first row and first cell caused an exception.
 	 */
     @Test
-	public void testSetMargins_bug45717() throws Exception {
+	void testSetMargins_bug45717() throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Vorschauliste");
 		HSSFRow row = sheet.createRow(0);
@@ -569,7 +569,7 @@ public final class TestSheet {
 	 * Excel(2007) tolerates this, so POI should too.
 	 */
     @Test
-	public void testMissingDims() {
+	void testMissingDims() {
 
 		int rowIx = 5;
 		int colIx = 6;
@@ -604,7 +604,7 @@ public final class TestSheet {
 	 * and since there is a slight performance hit the fix was made to avoid it.
 	 */
     @Test
-	public void testShiftFormulasAddCondFormat_bug46547() {
+	void testShiftFormulasAddCondFormat_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
 		InternalSheet sheet = InternalSheet.createSheet();
 
@@ -621,7 +621,7 @@ public final class TestSheet {
 	 * which already had data validity constraints.
 	 */
     @Test
-	public void testAddCondFormatAfterDataValidation_bug46547() {
+	void testAddCondFormatAfterDataValidation_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
 		InternalSheet sheet = InternalSheet.createSheet();
 		sheet.getOrCreateDataValidityTable();
@@ -632,7 +632,7 @@ public final class TestSheet {
 	}
 
     @Test
-	public void testCloneMulBlank_bug46776() {
+	void testCloneMulBlank_bug46776() {
 		org.apache.poi.hssf.record.Record[] recs = {
 				InternalSheet.createBOF(),
 				new DimensionsRecord(),
@@ -654,7 +654,7 @@ public final class TestSheet {
 	}
 
     @Test
-    public void testCreateAggregate() {
+    void testCreateAggregate() {
         String msoDrawingRecord1 =
                 "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
                 "03 00 00 00 02 04 00 00 0F 00 03 F0 08 01 00 00 \n" +
@@ -742,7 +742,7 @@ public final class TestSheet {
     }
 
     @Test
-    public void testSheetDimensions() {
+    void testSheetDimensions() {
         InternalSheet sheet = InternalSheet.createSheet();
         DimensionsRecord dimensions = (DimensionsRecord)sheet.findFirstRecordBySid(DimensionsRecord.sid);
         assertNotNull(dimensions);

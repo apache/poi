@@ -35,7 +35,7 @@ public final class TestObjectLinkRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         ObjectLinkRecord record = new ObjectLinkRecord(TestcaseRecordInputStream.create(0x1027, data));
 
         assertEquals( (short)3, record.getAnchorId());
@@ -47,7 +47,7 @@ public final class TestObjectLinkRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         ObjectLinkRecord record = new ObjectLinkRecord();
 
         record.setAnchorId( (short)3 );

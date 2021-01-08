@@ -42,7 +42,7 @@ public final class TestTickRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         TickRecord record = new TickRecord(TestcaseRecordInputStream.create(0x101e, data));
         assertEquals( (byte)2, record.getMajorTickType());
         assertEquals( (byte)0, record.getMinorTickType());
@@ -65,7 +65,7 @@ public final class TestTickRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         TickRecord record = new TickRecord();
         record.setMajorTickType( (byte)2 );
         record.setMinorTickType( (byte)0 );

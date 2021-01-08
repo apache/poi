@@ -33,7 +33,7 @@ public final class TestIntegerField {
     private static final int[] _test_array = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
 
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> new IntegerField(-1));
         IntegerField field = new IntegerField(2);
 
@@ -62,7 +62,7 @@ public final class TestIntegerField {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 
@@ -80,7 +80,7 @@ public final class TestIntegerField {
     }
 
     @Test
-    public void testReadFromBytes() {
+    void testReadFromBytes() {
         IntegerField field1 = new IntegerField(1);
         byte[]       array = new byte[ 4 ];
 
@@ -97,7 +97,7 @@ public final class TestIntegerField {
     }
 
     @Test
-    public void testReadFromStream() throws IOException {
+    void testReadFromStream() throws IOException {
         IntegerField field  = new IntegerField(0);
         byte[]       buffer = new byte[ _test_array.length * 4 ];
 
@@ -116,7 +116,7 @@ public final class TestIntegerField {
     }
 
     @Test
-    public void testWriteToBytes() {
+    void testWriteToBytes() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 

@@ -55,7 +55,7 @@ public final class TestSlope {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		Double exp = Math.pow(10, 7.5);
 		ValueEval[] yValues = {
 			new NumberEval(3+exp),
@@ -84,7 +84,7 @@ public final class TestSlope {
 	 * number of items in array is not limited to 30
 	 */
 	@Test
-	public void testLargeArrays() {
+	void testLargeArrays() {
 		ValueEval[] yValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
 		yValues[0] = new NumberEval(2.0); // Changes first element to 2
 		ValueEval[] xValues = createMockNumberArray(100, 101); // [1,2,3,4,...,99,100]
@@ -107,7 +107,7 @@ public final class TestSlope {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,
 				new NumberEval(2),

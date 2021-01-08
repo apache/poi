@@ -37,7 +37,7 @@ public final class TestLittleEndian {
      * test the getShort() method
      */
     @Test
-    public void testGetShort() {
+    void testGetShort() {
         byte[] testdata = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
 
         testdata[0] = 0x01;
@@ -52,7 +52,7 @@ public final class TestLittleEndian {
     }
 
     @Test
-    public void testGetUShort() {
+    void testGetUShort() {
         byte[] testdata = {
             (byte) 0x01,
             (byte) 0xFF,
@@ -99,7 +99,7 @@ public final class TestLittleEndian {
      * test the getDouble() method
      */
     @Test
-    public void testGetDouble() {
+    void testGetDouble() {
         assertEquals(_doubles[0], LittleEndian.getDouble(_double_array, 0), 0.000001 );
         assertEquals(_doubles[1], LittleEndian.getDouble( _double_array, LittleEndianConsts.DOUBLE_SIZE), 0.000001);
         assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array, 0)));
@@ -116,7 +116,7 @@ public final class TestLittleEndian {
      * test the getInt() method
      */
     @Test
-    public void testGetInt() {
+    void testGetInt() {
         // reading 4 byte data from a 5 byte buffer
         byte[] testdata = {
                 (byte) 0x01,
@@ -134,7 +134,7 @@ public final class TestLittleEndian {
      * test the getLong method
      */
     @Test
-    public void testGetLong() {
+    void testGetLong() {
 
         // reading 8 byte values from a 9 byte buffer
         byte[] testdata = {
@@ -157,7 +157,7 @@ public final class TestLittleEndian {
      * test the PutShort method
      */
     @Test
-    public void testPutShort() {
+    void testPutShort() {
         byte[] expected = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
 
         expected[0] = 0x01;
@@ -178,7 +178,7 @@ public final class TestLittleEndian {
      * test the putInt method
      */
     @Test
-    public void testPutInt() {
+    void testPutInt() {
         // writing 4 byte data to a 5 byte buffer
         byte[] expected = {
                 (byte) 0x01,
@@ -199,7 +199,7 @@ public final class TestLittleEndian {
      * test the putDouble methods
      */
     @Test
-    public void testPutDouble() {
+    void testPutDouble() {
         byte[] received = new byte[ LittleEndianConsts.DOUBLE_SIZE + 1 ];
 
         LittleEndian.putDouble(received, 0, _doubles[0]);
@@ -216,7 +216,7 @@ public final class TestLittleEndian {
      * test the putLong method
      */
     @Test
-    public void testPutLong() {
+    void testPutLong() {
         // writing 8 byte values to a 9 byte buffer
         byte[] expected = {
             (byte) 0x01,
@@ -253,7 +253,7 @@ public final class TestLittleEndian {
      * test the readShort method
      */
     @Test
-    public void testReadShort() throws IOException {
+    void testReadShort() throws IOException {
         short       expected_value = 0x0201;
         InputStream stream         = new ByteArrayInputStream(_good_array);
         int         count          = 0;
@@ -277,7 +277,7 @@ public final class TestLittleEndian {
      * test the readInt method
      */
     @Test
-    public void testReadInt() throws IOException {
+    void testReadInt() throws IOException {
         int         expected_value = 0x02010201;
         InputStream stream         = new ByteArrayInputStream(_good_array);
         int         count          = 0;
@@ -300,7 +300,7 @@ public final class TestLittleEndian {
      * test the readLong method
      */
     @Test
-    public void testReadLong() throws IOException {
+    void testReadLong() throws IOException {
         long        expected_value = 0x0201020102010201L;
         InputStream stream         = new ByteArrayInputStream(_good_array);
         int         count          = 0;
@@ -320,7 +320,7 @@ public final class TestLittleEndian {
     }
 
     @Test
-    public void testReadFromStream() throws IOException {
+    void testReadFromStream() throws IOException {
         int actual;
         actual = LittleEndian.readUShort(new ByteArrayInputStream(new byte[] { 5, -128, }));
         assertEquals(32773, actual);
@@ -333,7 +333,7 @@ public final class TestLittleEndian {
     }
 
     @Test
-    public void testUnsignedByteToInt() {
+    void testUnsignedByteToInt() {
         assertEquals(255, LittleEndian.ubyteToInt((byte)255));
     }
 
@@ -350,7 +350,7 @@ public final class TestLittleEndian {
     }
 
     @Test
-    public void testUnsignedShort() {
+    void testUnsignedShort() {
         assertEquals(0xffff, LittleEndian.getUShort(new byte[] { (byte)0xff, (byte)0xff }, 0));
     }
 }

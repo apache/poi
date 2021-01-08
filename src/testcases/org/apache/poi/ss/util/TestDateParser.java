@@ -39,14 +39,14 @@ public class TestDateParser {
         // fail when is invalid date
         "13/13/13"
     })
-    public void testFailWhenInvalidDate(String invalidDate) {
+    void testFailWhenInvalidDate(String invalidDate) {
         EvaluationException e = assertThrows(EvaluationException.class,
             () -> DateParser.parseDate(invalidDate), "Shouldn't parse " + invalidDate);
         assertEquals(ErrorEval.VALUE_INVALID, e.getErrorEval());
     }
 
     @Test
-    public void testShouldParseValidDate() throws EvaluationException {
+    void testShouldParseValidDate() throws EvaluationException {
         Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
         Calendar actDate = DateParser.parseDate("1984/10/20");
         assertEquals(expDate, actDate,
@@ -55,7 +55,7 @@ public class TestDateParser {
     }
 
     @Test
-    public void testShouldIgnoreTimestamp() throws EvaluationException {
+    void testShouldIgnoreTimestamp() throws EvaluationException {
         Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
         Calendar actDate = DateParser.parseDate("1984/10/20 12:34:56");
         assertEquals(expDate, actDate,

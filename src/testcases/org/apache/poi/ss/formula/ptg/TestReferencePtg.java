@@ -38,7 +38,7 @@ public final class TestReferencePtg {
      * Tests reading a file containing this ptg.
      */
     @Test
-    public void testReading() {
+    void testReading() {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ReferencePtg.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
 
@@ -69,7 +69,7 @@ public final class TestReferencePtg {
     }
 
     @Test
-    public void testBug44921() throws IOException {
+    void testBug44921() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex44921-21902.xls")) {
             HSSFTestDataSamples.writeOutAndReadBack(wb).close();
         }
@@ -80,7 +80,7 @@ public final class TestReferencePtg {
     };
 
     @Test
-    public void testReadWrite_tRefN_bug45091() {
+    void testReadWrite_tRefN_bug45091() {
     	LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(tRefN_data);
         Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
@@ -94,7 +94,7 @@ public final class TestReferencePtg {
      * see Bugzilla 50096
      */
     @Test
-    public void testColumnGreater255() {
+    void testColumnGreater255() {
         RefPtgBase ptg;
         ptg = new RefPtg("IW1");
         assertEquals(256, ptg.getColumn());

@@ -66,7 +66,7 @@ public class TestBiffViewer extends BaseTestIteratingXLS {
 //    @Test
 //    @Disabled("only used for manual tests")
 //    @SuppressWarnings("java:S2699")
-//    public void testOneFile() throws Exception {
+//    void testOneFile() throws Exception {
 //        POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
 //        runOneFile(samples.getFile("43493.xls"));
 //    }

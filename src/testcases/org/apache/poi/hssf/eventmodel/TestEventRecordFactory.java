@@ -60,7 +60,7 @@ public final class TestEventRecordFactory {
      * tests that the records can be processed and properly return values.
      */
     @Test
-    public void testProcessRecords() {
+    void testProcessRecords() {
         final boolean[] wascalled = { false }; // hack to pass boolean by ref into inner class
 
         ERFListener listener = rec -> {
@@ -94,7 +94,7 @@ public final class TestEventRecordFactory {
      * constructed record in the simple case.
      */
     @Test
-    public void testCreateRecord() {
+    void testCreateRecord() {
         BOFRecord bof = new BOFRecord();
         bof.setBuild((short)0);
         bof.setBuildYear((short)1999);
@@ -122,7 +122,7 @@ public final class TestEventRecordFactory {
     // @NotImplemented
     // @Test
     // @Disabled
-    // public void testCreateContinuedRecord() {
+    // void testCreateContinuedRecord() {
     // }
 
 
@@ -135,7 +135,7 @@ public final class TestEventRecordFactory {
      *
      */
     @Test
-     public void testContinuedUnknownRecord() throws IOException {
+     void testContinuedUnknownRecord() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         for (byte[] b : CONTINUE_DATA) {
             bos.write(b);

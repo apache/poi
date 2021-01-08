@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 
 public final class TestHSSFColor {
     @Test
-    public void testBasics() {
+    void testBasics() {
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
 	}
 
     @Test
-	public void testContents() {
+	void testContents() {
 	    short[] triplet = HSSFColorPredefined.YELLOW.getTriplet();
 		assertEquals(3, triplet.length);
 		assertEquals(255, triplet[0]);
@@ -44,7 +44,7 @@ public final class TestHSSFColor {
 	}
 
     @Test
-	public void testTripletHash() {
+	void testTripletHash() {
 		Map<String, HSSFColor> triplets = HSSFColor.getTripletHash();
 
 		assertEquals(

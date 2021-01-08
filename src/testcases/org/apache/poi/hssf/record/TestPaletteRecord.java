@@ -35,7 +35,7 @@ public final class TestPaletteRecord {
      * Tests that the default palette matches the constants of HSSFColor
      */
     @Test
-    public void testDefaultPalette() {
+    void testDefaultPalette() {
         PaletteRecord palette = new PaletteRecord();
 
         //make sure all the HSSFColor constants match

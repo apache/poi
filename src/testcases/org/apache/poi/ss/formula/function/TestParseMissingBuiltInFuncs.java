@@ -67,38 +67,38 @@ public final class TestParseMissingBuiltInFuncs {
 	}
 
 	@Test
-	public void testDatedif() throws IOException {
+	void testDatedif() throws IOException {
 		int expSize = 4;   // NB would be 5 if POI added tAttrVolatile properly
 		confirmFunc("DATEDIF(NOW(),NOW(),\"d\")", expSize, false, 351);
 	}
 
 	@Test
-	public void testDdb() throws IOException {
+	void testDdb() throws IOException {
 		confirmFunc("DDB(1,1,1,1,1)", 6, true, 144);
 	}
 
 	@Test
-	public void testAtan() throws IOException {
+	void testAtan() throws IOException {
 		confirmFunc("ATAN(1)", 2, false, 18);
 	}
 
 	@Test
-	public void testUsdollar() throws IOException {
+	void testUsdollar() throws IOException {
 		confirmFunc("USDOLLAR(1)", 2, true, 204);
 	}
 
 	@Test
-	public void testDBCS() throws IOException {
+	void testDBCS() throws IOException {
 		confirmFunc("DBCS(\"abc\")", 2, false, 215);
 	}
 
 	@Test
-	public void testIsnontext() throws IOException {
+	void testIsnontext() throws IOException {
 		confirmFunc("ISNONTEXT(\"abc\")", 2, false, 190);
 	}
 
 	@Test
-	public void testDproduct() throws IOException {
+	void testDproduct() throws IOException {
 		confirmFunc("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", 4, false, 189);
 	}
 }

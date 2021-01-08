@@ -26,7 +26,7 @@ public final class TestPOILogFactory {
      * test log creation
      */
     @Test
-    public void testLog() {
+    void testLog() {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging
         //    output is done.

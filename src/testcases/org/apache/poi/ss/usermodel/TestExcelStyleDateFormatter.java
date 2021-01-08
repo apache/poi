@@ -50,7 +50,7 @@ public class TestExcelStyleDateFormatter {
      * [Bug 60369] Month format 'MMMMM' issue with TEXT-formula and Java 8
      */
     @Test
-    public void test60369() {
+    void test60369() {
         Map<Locale, String> testMap = initializeLocales();
 
         // We have to set up dates as well.
@@ -137,13 +137,13 @@ public class TestExcelStyleDateFormatter {
     }
 
     @Test
-    public void testConstruct() {
+    void testConstruct() {
         new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT, LocaleUtil.getUserLocale());
         new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT);
     }
 
     @Test
-    public void testWithLocale() throws ParseException {
+    void testWithLocale() throws ParseException {
         Locale before = LocaleUtil.getUserLocale();
         try {
             LocaleUtil.setUserLocale(Locale.GERMAN);
@@ -156,7 +156,7 @@ public class TestExcelStyleDateFormatter {
     }
 
     @Test
-    public void testWithPattern() throws ParseException {
+    void testWithPattern() throws ParseException {
         String dateStr = new ExcelStyleDateFormatter("yyyy|" + EXCEL_DATE_FORMAT + "|").format(
                 DATE_FORMAT.parse("2016-03-26"));
         assertEquals("2016|M|", dateStr);

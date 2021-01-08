@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherSplitMenuColorsRecord {
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         EscherSplitMenuColorsRecord r = createRecord();
 
         byte[] data = new byte[24];
@@ -42,7 +42,7 @@ public final class TestEscherSplitMenuColorsRecord {
     }
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String hexData = "40 00 " +
                 "1E F1 " +
                 "10 00 00 00 " +
@@ -62,7 +62,7 @@ public final class TestEscherSplitMenuColorsRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String expected =
             "{   /* SPLIT_MENU_COLORS */\n" +
             "\t  \"recordId\": -3810 /* 0xf11e */\n" +

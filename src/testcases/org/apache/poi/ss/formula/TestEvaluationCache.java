@@ -311,7 +311,7 @@ public class TestEvaluationCache {
 	}
 
 	@Test
-	public void testMediumComplex() {
+	void testMediumComplex() {
 		MySheet ms = createMediumComplex();
 		// completely fresh evaluation
 		confirmEvaluate(ms, "A1", 46);
@@ -389,7 +389,7 @@ public class TestEvaluationCache {
 	}
 
 	@Test
-	public void testMediumComplexWithDependencyChange() {
+	void testMediumComplexWithDependencyChange() {
 		// Changing an intermediate formula
 		MySheet ms = createMediumComplex();
 		confirmEvaluate(ms, "A1", 46);
@@ -448,7 +448,7 @@ public class TestEvaluationCache {
 	 * only when the plain cell's value actually changes
 	 */
 	@Test
-	public void testRedundantUpdate() {
+	void testRedundantUpdate() {
 		MySheet ms = new MySheet();
 
 		ms.setCellValue("B1", 12);
@@ -492,7 +492,7 @@ public class TestEvaluationCache {
 	 * effect in almost every function and operator.
 	 */
 	@Test
-	public void testSimpleWithDependencyChange() {
+	void testSimpleWithDependencyChange() {
 		MySheet ms = new MySheet();
 
 		ms.setCellFormula("A1", "INDEX(C1:E1,1,B1)");
@@ -542,7 +542,7 @@ public class TestEvaluationCache {
 	}
 
 	@Test
-	public void testBlankCells() {
+	void testBlankCells() {
 		MySheet ms = new MySheet();
 
 		ms.setCellFormula("A1", "sum(B1:D4,B5:E6)");
@@ -592,7 +592,7 @@ public class TestEvaluationCache {
 	 * have their cached results cleared.
 	 */
 	@Test
-	public void testBlankCellChangedToValueCell_bug46053() {
+	void testBlankCellChangedToValueCell_bug46053() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFRow row = sheet.createRow(0);
@@ -628,7 +628,7 @@ public class TestEvaluationCache {
 	 * same use-case as the test for bug 46053, but checking trace values too
 	 */
 	@Test
-	public void testBlankCellChangedToValueCell() {
+	void testBlankCellChangedToValueCell() {
 
 		MySheet ms = new MySheet();
 
@@ -669,7 +669,7 @@ public class TestEvaluationCache {
 	}
 
 	@Test
-    public void testPlainValueCache()  {
+    void testPlainValueCache()  {
 
         Workbook wb = new HSSFWorkbook();
         int numberOfSheets = 4098; // Bug 51448 reported that  Evaluation Cache got messed up after 256 sheets

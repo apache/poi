@@ -41,7 +41,7 @@ public final class TestLineFormatRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         LineFormatRecord record = new LineFormatRecord(TestcaseRecordInputStream.create(0x1007, data));
         assertEquals( 0, record.getLineColor());
         assertEquals( 0, record.getLinePattern());
@@ -56,7 +56,7 @@ public final class TestLineFormatRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         LineFormatRecord record = new LineFormatRecord();
         record.setLineColor( 0 );
         record.setLinePattern( (short)0 );

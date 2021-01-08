@@ -74,7 +74,7 @@ public final class TestMetaDataIPI {
 	 * Sets the most important information in DocumentSummaryInformation and Summary Information and rereads it
 	 */
 	@Test
-	public void testOne() throws Exception {
+	void testOne() throws Exception {
 
 		// DocumentSummaryInformation
 		dsi.setCompany("xxxCompanyxxx");
@@ -154,7 +154,7 @@ public final class TestMetaDataIPI {
 	 * Test very long input in each of the fields (approx 30-60KB each)
 	 */
     @Test
-	public void testTwo() throws Exception {
+	void testTwo() throws Exception {
 
 		String company = elongate("company");
 		String manager = elongate("manager");
@@ -238,7 +238,7 @@ public final class TestMetaDataIPI {
 	 * Tests with strange characters in keys and data (Umlaute etc.)
 	 */
     @Test
-	public void testThree() throws Exception {
+	void testThree() throws Exception {
 
 		String company = strangize("company");
 		String manager = strangize("manager");
@@ -322,7 +322,7 @@ public final class TestMetaDataIPI {
 	 * Iterative testing: writing, reading etc.
 	 */
     @Test
-	public void testFour() throws Exception {
+	void testFour() throws Exception {
 		for (int i = 1; i < 100; i++) {
             testThree();
 			closeAndReOpen();
@@ -333,7 +333,7 @@ public final class TestMetaDataIPI {
 	 * Unicode test
 	 */
     @Test
-	public void testUnicode() throws Exception {
+	void testUnicode() throws Exception {
 		String company = strangizeU("company");
 		String manager = strangizeU("manager");
 		String category = strangizeU("category");
@@ -414,7 +414,7 @@ public final class TestMetaDataIPI {
 	 *
 	 */
     @Test
-	public void testSix() throws Exception {
+	void testSix() throws Exception {
 		for (int i = 1; i < 100; i++) {
             testUnicode();
 			closeAndReOpen();
@@ -426,7 +426,7 @@ public final class TestMetaDataIPI {
 	 * Tests conversion in custom fields and errors
 	 */
     @Test
-	public void testConvAndExistence() throws Exception {
+	void testConvAndExistence() throws Exception {
 
 		CustomProperties customProperties = dsi.getCustomProperties();
 		if (customProperties == null) {

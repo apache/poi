@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestPatriarch {
     @Test
-    public void testGetPatriarch(){
+    void testGetPatriarch(){
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         assertNull(sh.getDrawingPatriarch());

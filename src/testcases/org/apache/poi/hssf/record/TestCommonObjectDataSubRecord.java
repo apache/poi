@@ -40,7 +40,7 @@ public final class TestCommonObjectDataSubRecord {
 	};
 
 	@Test
-	public void testLoad() {
+	void testLoad() {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createLittleEndian(data), data.length);
 
 		assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
@@ -58,7 +58,7 @@ public final class TestCommonObjectDataSubRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testStore() {
+	void testStore() {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();
 
 		record.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX);

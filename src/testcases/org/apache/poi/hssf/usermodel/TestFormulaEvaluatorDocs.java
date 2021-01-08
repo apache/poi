@@ -38,7 +38,7 @@ public final class TestFormulaEvaluatorDocs {
 	 * https://poi.apache.org/hssf/eval.html#EvaluateAll
 	 */
 	@Test
-	public void testEvaluateAll() throws IOException {
+	void testEvaluateAll() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet s1 = wb.createSheet();
 			HSSFSheet s2 = wb.createSheet();

@@ -44,7 +44,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      * Test that we can read hyperlinks.
      */
     @Test
-    public void testRead() {
+    void testRead() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
@@ -90,7 +90,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testModify() {
+    void testModify() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
@@ -121,7 +121,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      * @throws IOException
      */
     @Test
-    public void testCreateDocumentLink() throws IOException {
+    void testCreateDocumentLink() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         //link to a place in this workbook
@@ -168,7 +168,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testCloneSheet() {
+    void testCloneSheet() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFCell cell;
@@ -188,7 +188,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testCreate() throws IOException {
+    void testCreate() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFHyperlink link;
@@ -220,7 +220,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      * see bugs #46445 and #29957
      */
     @Test
-    public void testShiftRows(){
+    void testShiftRows(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("46445.xls");
 
 
@@ -268,7 +268,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
 
     /*
     @Test
-    public void testCopyXSSFHyperlink() throws IOException {
+    void testCopyXSSFHyperlink() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFCreationHelper helper = wb.getCreationHelper();
         XSSFHyperlink xlink = helper.createHyperlink(Hyperlink.LINK_URL);

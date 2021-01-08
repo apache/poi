@@ -75,7 +75,7 @@ public abstract class BaseTestMissingWorkbook {
 	}
 
 	@Test
-	public void testMissingWorkbookMissing() {
+	void testMissingWorkbookMissing() {
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
 
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
@@ -89,7 +89,7 @@ public abstract class BaseTestMissingWorkbook {
 	}
 
 	@Test
-	public void testMissingWorkbookMissingOverride() {
+	void testMissingWorkbookMissingOverride() {
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
 		Cell lA1Cell = lSheet.getRow(0).getCell(0);
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);
@@ -118,7 +118,7 @@ public abstract class BaseTestMissingWorkbook {
 	}
 
 	@Test
-	public void testExistingWorkbook() {
+	void testExistingWorkbook() {
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
 		Cell lA1Cell = lSheet.getRow(0).getCell(0);
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);

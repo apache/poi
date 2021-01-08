@@ -43,7 +43,7 @@ public class TestDocument {
      * Integration test -- really about all we can do
      */
     @Test
-    public void testPOIFSDocument() throws IOException {
+    void testPOIFSDocument() throws IOException {
 
         try (POIFSFileSystem poifs = new POIFSFileSystem()) {
 

@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCFRuleRecord {
     @Test
-    public void testConstructors () throws IOException {
+    void testConstructors () throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
 
@@ -76,7 +76,7 @@ public final class TestCFRuleRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testCreateCFRuleRecord() throws IOException {
+    void testCreateCFRuleRecord() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             CFRuleRecord record = CFRuleRecord.create(sheet, "7");
@@ -99,7 +99,7 @@ public final class TestCFRuleRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testCreateCFRule12Record() throws IOException {
+    void testCreateCFRule12Record() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             CFRule12Record record = CFRule12Record.create(sheet, "7");
@@ -121,7 +121,7 @@ public final class TestCFRuleRecord {
     }
 
     @Test
-    public void testCreateIconCFRule12Record() throws IOException {
+    void testCreateIconCFRule12Record() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
@@ -372,7 +372,7 @@ public final class TestCFRuleRecord {
     }
 
     @Test
-    public void testWrite() throws IOException {
+    void testWrite() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             CFRuleRecord rr = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "5", "10");
@@ -410,7 +410,7 @@ public final class TestCFRuleRecord {
      * tRefN and tAreaN tokens must be preserved when re-serializing conditional format formulas
      */
     @Test
-    public void testReserializeRefNTokens() {
+    void testReserializeRefNTokens() {
 
         RecordInputStream is = TestcaseRecordInputStream.create(CFRuleRecord.sid, DATA_REFN);
         CFRuleRecord rr = new CFRuleRecord(is);
@@ -427,7 +427,7 @@ public final class TestCFRuleRecord {
     }
 
     @Test
-    public void testBug53691() throws IOException {
+    void testBug53691() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
 
@@ -442,7 +442,7 @@ public final class TestCFRuleRecord {
     }
 
     @Test
-    public void testBug57231_rewrite() throws IOException {
+    void testBug57231_rewrite() throws IOException {
         try (HSSFWorkbook wb1 = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls")) {
             assertEquals(7, wb1.getNumberOfSheets());
             try (HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {

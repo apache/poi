@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class TestAbstractFunctionPtg  {
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         FunctionPtg ptg = new FunctionPtg(1, 2, null, 255);
         assertEquals(1, ptg.getFunctionIndex());
         assertEquals(2, ptg.getDefaultOperandClass());
@@ -34,12 +34,12 @@ public class TestAbstractFunctionPtg  {
     }
 
     @Test
-    public void testInvalidFunctionIndex() {
+    void testInvalidFunctionIndex() {
         assertThrows(RuntimeException.class, () -> new FunctionPtg(40000, 2, null, 255));
     }
 
     @Test
-    public void testInvalidRuntimeClass() {
+    void testInvalidRuntimeClass() {
         assertThrows(RuntimeException.class, () -> new FunctionPtg(1, 300, null, 255));
     }
 

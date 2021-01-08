@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestJDK12 {
     @Test
-    public void test() {
+    void test() {
         assertDoesNotThrow(() -> {
             BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();

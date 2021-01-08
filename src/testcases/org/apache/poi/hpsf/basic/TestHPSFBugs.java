@@ -52,7 +52,7 @@ public final class TestHPSFBugs {
     *  reload, and still access & change them.
     */
    @Test
-   public void test48832() throws IOException {
+   void test48832() throws IOException {
       HSSFWorkbook wb1 = new HSSFWorkbook();
 
       // Starts empty
@@ -112,7 +112,7 @@ public final class TestHPSFBugs {
     * reading junk
     */
    @Test
-   public void test54233() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+   void test54233() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
        InputStream is = _samples.openResourceAsStream("TestNon4ByteBoundary.doc");
        POIFSFileSystem fs = new POIFSFileSystem(is);
        is.close();
@@ -150,7 +150,7 @@ public final class TestHPSFBugs {
     * CodePage Strings can be zero length
     */
    @Test
-   public void test56138() throws IOException, NoPropertySetStreamException {
+   void test56138() throws IOException, NoPropertySetStreamException {
        InputStream is = _samples.openResourceAsStream("TestZeroLengthCodePage.mpp");
        POIFSFileSystem fs = new POIFSFileSystem(is);
        is.close();

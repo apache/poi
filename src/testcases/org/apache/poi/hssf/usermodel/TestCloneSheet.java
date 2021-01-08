@@ -45,7 +45,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetWithoutDrawings(){
+    void testCloneSheetWithoutDrawings(){
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s = b.createSheet("Test");
         HSSFSheet s2 = s.cloneSheet(b);
@@ -56,7 +56,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetWithEmptyDrawingAggregate(){
+    void testCloneSheetWithEmptyDrawingAggregate(){
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s = b.createSheet("Test");
         HSSFPatriarch patriarch = s.createDrawingPatriarch();
@@ -92,7 +92,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneComment() throws IOException {
+    void testCloneComment() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch p = sh.createDrawingPatriarch();

@@ -41,7 +41,7 @@ public class TestIfError {
      * =IFERROR(C1,\"Error in calculation\")"      References the result of dividing 55 by 0 and returns the error text
      */
     @Test
-    public void testEvaluate() throws IOException {
+    void testEvaluate() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row1 = sh.createRow(0);

@@ -35,7 +35,7 @@ public final class TestSeriesTextRecord {
 			.readFromString("00 00 0C 00 56 61 6C 75 65 20 4E 75 6D 62 65 72");
 
 	@Test
-	public void testLoad() {
+	void testLoad() {
 		SeriesTextRecord record = new SeriesTextRecord(TestcaseRecordInputStream.create(0x100d, SIMPLE_DATA));
 
 		assertEquals((short) 0, record.getId());
@@ -46,7 +46,7 @@ public final class TestSeriesTextRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testStore() {
+	void testStore() {
 		SeriesTextRecord record = new SeriesTextRecord();
 
 		record.setId(0);
@@ -57,7 +57,7 @@ public final class TestSeriesTextRecord {
 	}
 
 	@Test
-	public void testReserializeLongTitle() {
+	void testReserializeLongTitle() {
 		// Hex dump from bug 45784 attachment 22560 streamOffset=0x0CD1
 		byte[] data = HexRead.readFromString(
 				"00 00, "

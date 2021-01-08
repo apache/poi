@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestStringCodepointsIterable {
 
     @Test
-    public void testIterable() {
+    void testIterable() {
         final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
                 + "abcdef123456";
         StringCodepointsIterable sci = new StringCodepointsIterable(unicodeSurrogates);

@@ -32,7 +32,7 @@ public final class TestExpandedDouble {
 	private static final BigInteger BIG_POW_10 = BigInteger.valueOf(1000000000);
 
 	@Test
-	public void testNegative() {
+	void testNegative() {
 		ExpandedDouble hd = new ExpandedDouble(0xC010000000000000L);
 		assertNotEquals(-2046, hd.getBinaryExponent(), "identified bug - sign bit not masked out of exponent");
 		assertEquals(2, hd.getBinaryExponent());
@@ -42,7 +42,7 @@ public final class TestExpandedDouble {
 	}
 
 	@Test
-	public void testSubnormal() {
+	void testSubnormal() {
 		ExpandedDouble hd = new ExpandedDouble(0x0000000000000001L);
 		assertNotEquals(-1023, hd.getBinaryExponent(), "identified bug - subnormal numbers not decoded properly");
 		assertEquals(-1086, hd.getBinaryExponent());
@@ -55,7 +55,7 @@ public final class TestExpandedDouble {
 	 * Tests specific values for conversion from {@link ExpandedDouble} to {@link NormalisedDecimal} and back
 	 */
 	@Test
-	public void testRoundTripShifting() {
+	void testRoundTripShifting() {
 		long[] rawValues = {
 				0x4010000000000004L,
 				0x7010000000000004L,

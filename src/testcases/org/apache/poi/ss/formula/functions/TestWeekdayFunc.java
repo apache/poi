@@ -45,7 +45,7 @@ public class TestWeekdayFunc {
 
 
     @Test
-    public void testEvaluate() {
+    void testEvaluate() {
         assertEvaluateEquals(2.0,  1.0);
         assertEvaluateEquals(2.0,  1.0, 1.0);
         assertEvaluateEquals(1.0,  1.0, 2.0);
@@ -80,7 +80,7 @@ public class TestWeekdayFunc {
     }
 
     @Test
-    public void testEvaluateInvalid() {
+    void testEvaluateInvalid() {
         assertEvaluateEquals("no args",       ErrorEval.VALUE_INVALID);
         assertEvaluateEquals("too many args", ErrorEval.VALUE_INVALID, new NumberEval(1.0), new NumberEval(1.0), new NumberEval(1.0));
         assertEvaluateEquals("negative date", ErrorEval.NUM_ERROR, new NumberEval(-1.0));

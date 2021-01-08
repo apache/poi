@@ -57,7 +57,7 @@ public class TestRecordLister extends BaseTestIteratingXLS {
 	}
 
 	//@Test
-	public void testFile() throws IOException {
+	void testFile() throws IOException {
 	    RecordLister viewer = new RecordLister();
         viewer.setFile(new File("test-data/spreadsheet/testEXCEL_95.xls").getAbsolutePath());
         viewer.run();

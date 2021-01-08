@@ -33,7 +33,7 @@ public final class TestEmptyDocument {
     private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
 
     @Test
-	public void testSingleEmptyDocument() throws IOException {
+	void testSingleEmptyDocument() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Foo", new ByteArrayInputStream(new byte[] {}));
@@ -45,7 +45,7 @@ public final class TestEmptyDocument {
 	}
 
     @Test
-	public void testSingleEmptyDocumentEvent() throws IOException {
+	void testSingleEmptyDocumentEvent() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Foo", 0, event -> LOG.log(POILogger.WARN, "written"));
@@ -57,7 +57,7 @@ public final class TestEmptyDocument {
 	}
 
     @Test
-	public void testEmptyDocumentWithFriend() throws IOException {
+	void testEmptyDocumentWithFriend() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Bar", new ByteArrayInputStream(new byte[] { 0 }));
@@ -70,7 +70,7 @@ public final class TestEmptyDocument {
 	}
 
     @Test
-	public void testEmptyDocumentEventWithFriend() throws IOException {
+	void testEmptyDocumentEventWithFriend() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Bar", 1, event -> {
@@ -89,7 +89,7 @@ public final class TestEmptyDocument {
 	}
 
     @Test
-	public void testEmptyDocumentBug11744() throws Exception {
+	void testEmptyDocumentBug11744() throws Exception {
 		byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 		POIFSFileSystem fs = new POIFSFileSystem();

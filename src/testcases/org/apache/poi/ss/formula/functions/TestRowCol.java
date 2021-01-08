@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestRowCol {
 
 	@Test
-	public void testCol() {
+	void testCol() {
 		Function target = new Column();
 		{
 			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
@@ -45,7 +45,7 @@ public final class TestRowCol {
 	}
 
 	@Test
-	public void testRow() {
+	void testRow() {
 		Function target = new RowFunc();
 		{
 			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
@@ -60,7 +60,7 @@ public final class TestRowCol {
 	}
 
 	@Test
-	public void testColumns() {
+	void testColumns() {
 
 		confirmColumnsFunc("A1:F1", 6, 1);
 		confirmColumnsFunc("A1:C2", 3, 2);
@@ -73,7 +73,7 @@ public final class TestRowCol {
 	}
 
 	@Test
-	public void testRows() {
+	void testRows() {
 
 		confirmRowsFunc("A1:F1", 6, 1);
 		confirmRowsFunc("A1:C2", 3, 2);

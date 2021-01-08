@@ -40,7 +40,7 @@ public final class TestAxisOptionsRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         AxisOptionsRecord record = new AxisOptionsRecord(TestcaseRecordInputStream.create(0x1062, data));
         assertEquals( 0, record.getMinimumCategory());
         assertEquals( 0, record.getMaximumCategory());
@@ -65,7 +65,7 @@ public final class TestAxisOptionsRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AxisOptionsRecord record = new AxisOptionsRecord();
         record.setMinimumCategory( (short)0 );
         record.setMaximumCategory( (short)0 );

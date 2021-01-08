@@ -48,7 +48,7 @@ public class TestHexDump {
     }
 
     @Test
-    public void testDump() throws IOException {
+    void testDump() throws IOException {
         byte[] testArray = testArray();
         ByteArrayOutputStream streamAct = new ByteArrayOutputStream();
         HexDump.dump(testArray, 0, streamAct, 0);
@@ -133,7 +133,7 @@ public class TestHexDump {
     }
 
     @Test
-    public void testToHex() {
+    void testToHex() {
         assertEquals("000A", HexDump.toHex((short)0xA));
 
         assertEquals("0A", HexDump.toHex((byte)0xA));
@@ -158,7 +158,7 @@ public class TestHexDump {
     }
 
 	@Test
-    public void testDumpToString() {
+    void testDumpToString() {
         byte[] testArray = testArray();
         String dump = HexDump.dump(testArray, 0, 0);
         //System.out.println("Hex: \n" + dump);
@@ -170,19 +170,19 @@ public class TestHexDump {
     }
 
     @Test
-    public void testDumpToStringOutOfIndex1() {
+    void testDumpToStringOutOfIndex1() {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, -1));
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 2));
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 1));
     }
 
     @Test
-    public void testDumpToStringNoDataEOL1() {
+    void testDumpToStringNoDataEOL1() {
         HexDump.dump(new byte[0], 0, 1);
     }
 
     @Test
-    public void testDumpToStringNoDataEOL2() {
+    void testDumpToStringNoDataEOL2() {
         HexDump.dump(new byte[0], 0, 0);
     }
 

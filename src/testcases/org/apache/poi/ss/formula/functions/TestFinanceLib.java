@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestFinanceLib extends BaseTestNumeric {
 
     @Test
-    public void testFv() {
+    void testFv() {
         double f, r, y, p, x;
         int n;
         boolean t = false;
@@ -74,7 +74,7 @@ public class TestFinanceLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testNpv() {
+    void testNpv() {
         double r;
         double[] v;
         double npv;
@@ -102,7 +102,7 @@ public class TestFinanceLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testPmt() {
+    void testPmt() {
         double f, r, y, p, x;
         int n;
         boolean t = false;
@@ -136,7 +136,7 @@ public class TestFinanceLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testPv() {
+    void testPv() {
         double f, r, y, p, x;
         int n;
         boolean t = false;
@@ -180,7 +180,7 @@ public class TestFinanceLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testNper() {
+    void testNper() {
         double f, r, y, p, x, n;
         boolean t = false;
 

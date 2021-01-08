@@ -46,7 +46,7 @@ public final class TestPOIFSMiniStore {
      * out what the next one is
      */
     @Test
-    public void testNextBlock() throws Exception {
+    void testNextBlock() throws Exception {
         // It's the same on 512 byte and 4096 byte block files!
         POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
         POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
@@ -124,7 +124,7 @@ public final class TestPOIFSMiniStore {
      * Check we get the right data back for each block
      */
     @Test
-    public void testGetBlock() throws Exception {
+    void testGetBlock() throws Exception {
         // It's the same on 512 byte and 4096 byte block files!
         POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
         POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
@@ -195,7 +195,7 @@ public final class TestPOIFSMiniStore {
      * to be had from the SFAT
      */
     @Test
-    public void testGetFreeBlockWithSpare() throws Exception {
+    void testGetFreeBlockWithSpare() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
         POIFSMiniStore ministore = fs.getMiniStore();
 
@@ -227,7 +227,7 @@ public final class TestPOIFSMiniStore {
      * stream needs to be extended and another SBAT added
      */
     @Test
-    public void testGetFreeBlockWithNoneSpare() throws Exception {
+    void testGetFreeBlockWithNoneSpare() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         POIFSMiniStore ministore = fs.getMiniStore();
 
@@ -269,7 +269,7 @@ public final class TestPOIFSMiniStore {
      * big blocks that make up the ministream as needed
      */
     @Test
-    public void testCreateBlockIfNeeded() throws Exception {
+    void testCreateBlockIfNeeded() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         POIFSMiniStore ministore = fs.getMiniStore();
 
@@ -344,7 +344,7 @@ public final class TestPOIFSMiniStore {
     }
 
     @Test
-    public void testCreateMiniStoreFirst() throws Exception {
+    void testCreateMiniStoreFirst() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem();
         POIFSMiniStore ministore = fs.getMiniStore();
         DocumentInputStream dis;
@@ -412,7 +412,7 @@ public final class TestPOIFSMiniStore {
     }
 
     @Test
-    public void testMultiBlockStream() throws Exception {
+    void testMultiBlockStream() throws Exception {
         byte[] data1B = new byte[63];
         byte[] data2B = new byte[64 + 14];
         for (int i = 0; i < data1B.length; i++) {

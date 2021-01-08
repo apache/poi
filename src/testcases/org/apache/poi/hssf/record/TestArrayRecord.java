@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public final class TestArrayRecord {
 
     @Test
-    public void testRead() {
+    void testRead() {
         String hex =
                 "21 02 25 00 01 00 01 00 01 01 00 00 00 00 00 00 " +
                 "17 00 65 00 00 01 00 02 C0 02 C0 65 00 00 01 00 " +
@@ -62,7 +62,7 @@ public final class TestArrayRecord {
     }
 
     @Test
-    public void testBug57231() {
+    void testBug57231() {
         HSSFWorkbook wb = HSSFTestDataSamples
                 .openSampleWorkbook("57231_MixedGasReport.xls");
         HSSFSheet sheet = wb.getSheet("master");

@@ -36,22 +36,22 @@ public final class TestBATBlock {
 
 
     @Test
-    public void testEntriesPerBlock() {
+    void testEntriesPerBlock() {
         assertEquals(128, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getBATEntriesPerBlock());
     }
 
     @Test
-    public void testEntriesPerXBATBlock() {
+    void testEntriesPerXBATBlock() {
         assertEquals(127, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getXBATEntriesPerBlock());
     }
 
     @Test
-    public void testGetXBATChainOffset() {
+    void testGetXBATChainOffset() {
         assertEquals(508, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getNextXBATChainOffset());
     }
 
     @Test
-    public void testCalculateMaximumSize() {
+    void testCalculateMaximumSize() {
         // Zero fat blocks isn't technically valid, but it'd be header only
         assertEquals(
                 512,
@@ -123,7 +123,7 @@ public final class TestBATBlock {
     }
 
     @Test
-    public void testUsedSectors() {
+    void testUsedSectors() {
         POIFSBigBlockSize b512 = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
         POIFSBigBlockSize b4096 = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS;
 
@@ -177,7 +177,7 @@ public final class TestBATBlock {
     }
 
     @Test
-    public void testOccupiedSize() {
+    void testOccupiedSize() {
         POIFSBigBlockSize b512 = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
         POIFSBigBlockSize b4096 = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS;
 
@@ -238,7 +238,7 @@ public final class TestBATBlock {
     }
 
     @Test
-    public void testGetBATBlockAndIndex() {
+    void testGetBATBlockAndIndex() {
         HeaderBlock header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         List<BATBlock> blocks = new ArrayList<>();
         int offset;

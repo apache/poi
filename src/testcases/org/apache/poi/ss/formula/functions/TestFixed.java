@@ -52,7 +52,7 @@ public final class TestFixed {
     }
 
     @Test
-    public void testValid() {
+    void testValid() {
         // thousands separator
         confirm("FIXED(1234.56789,2,TRUE)", "1234.57");
         confirm("FIXED(1234.56789,2,FALSE)", "1,234.57");
@@ -88,7 +88,7 @@ public final class TestFixed {
     }
 
     @Test
-    public void testOptionalParams() {
+    void testOptionalParams() {
         Fixed fixed = new Fixed();
         ValueEval evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789));
         assertTrue(evaluate instanceof StringEval);

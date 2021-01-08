@@ -52,7 +52,7 @@ public final class TestFormatTrackingHSSFListener {
 	}
 
 	@Test
-	public void testFormats() throws Exception {
+	void testFormats() throws Exception {
 		processFile("MissingBits.xls");
 
 		assertEquals("_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(41));
@@ -69,7 +69,7 @@ public final class TestFormatTrackingHSSFListener {
 	 *  want to check the exact strings!
 	 */
 	@Test
-	public void testTurnToString() throws Exception {
+	void testTurnToString() throws Exception {
 		String[] files = new String[] {
 				"45365.xls", "45365-2.xls", "MissingBits.xls"
 		};

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestEscherPropertyFactory {
     @Test
-    public void testCreateProperties() {
+    void testCreateProperties() {
         String dataStr = "41 C1 " +     // propid, complex ind
                 "03 00 00 00 " +         // size of complex property
                 "01 00 " +              // propid, complex ind

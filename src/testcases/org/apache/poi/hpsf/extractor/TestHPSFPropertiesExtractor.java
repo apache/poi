@@ -36,7 +36,7 @@ public final class TestHPSFPropertiesExtractor {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     @Test
-    public void testNormalProperties() throws Exception {
+    void testNormalProperties() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("TestMickey.doc");
              POIFSFileSystem fs = new POIFSFileSystem(is);
              HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
@@ -59,7 +59,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void testNormalUnicodeProperties() throws Exception {
+    void testNormalUnicodeProperties() throws Exception {
 
         try (InputStream is = _samples.openResourceAsStream("TestUnicode.xls");
              POIFSFileSystem fs = new POIFSFileSystem(is);
@@ -83,7 +83,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void testCustomProperties() throws Exception {
+    void testCustomProperties() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("TestMickey.doc");
              POIFSFileSystem fs = new POIFSFileSystem(is);
              HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
@@ -100,7 +100,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void testConstructors() throws IOException {
+    void testConstructors() throws IOException {
         final String fsText;
         final String hwText;
         final String eeText;
@@ -136,7 +136,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void test42726() throws IOException {
+    void test42726() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42726.xls");
              HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(wb)) {
             String txt = ext.getText();
@@ -148,7 +148,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void testThumbnail() throws Exception {
+    void testThumbnail() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestThumbnail.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(fs);
         Thumbnail thumbnail = new Thumbnail(wb.getSummaryInformation().getThumbnail());
@@ -159,7 +159,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void test52258() throws Exception {
+    void test52258() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("TestVisioWithCodepage.vsd");
              POIFSFileSystem fs = new POIFSFileSystem(is);
              HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
@@ -172,7 +172,7 @@ public final class TestHPSFPropertiesExtractor {
     }
 
     @Test
-    public void test61300Extractor() throws IOException {
+    void test61300Extractor() throws IOException {
         try (POIFSFileSystem poifs = new POIFSFileSystem(
                 POIDataSamples.getPOIFSInstance().getFile("61300.bin"))) {
             HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(poifs);

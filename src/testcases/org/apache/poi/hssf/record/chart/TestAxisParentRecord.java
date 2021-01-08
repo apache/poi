@@ -39,7 +39,7 @@ public final class TestAxisParentRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         AxisParentRecord record = new AxisParentRecord(TestcaseRecordInputStream.create(0x1041, data));
         assertEquals( AxisParentRecord.AXIS_TYPE_MAIN, record.getAxisType());
         assertEquals( 0x021d, record.getX());
@@ -52,7 +52,7 @@ public final class TestAxisParentRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AxisParentRecord record = new AxisParentRecord();
         record.setAxisType( AxisParentRecord.AXIS_TYPE_MAIN );
         record.setX( 0x021d );

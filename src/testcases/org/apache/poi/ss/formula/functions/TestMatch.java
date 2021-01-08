@@ -59,7 +59,7 @@ public final class TestMatch {
 	}
 
 	@Test
-	public void testSimpleNumber() {
+	void testSimpleNumber() {
 
 		ValueEval[] values = {
 			new NumberEval(4),
@@ -81,7 +81,7 @@ public final class TestMatch {
 	}
 
 	@Test
-	public void testReversedNumber() {
+	void testReversedNumber() {
 
 		ValueEval[] values = {
 			new NumberEval(25),
@@ -103,7 +103,7 @@ public final class TestMatch {
 	}
 
 	@Test
-	public void testSimpleString() {
+	void testSimpleString() {
         // Arrange
 		ValueEval[] values = {
 			new StringEval("Albert"),
@@ -125,7 +125,7 @@ public final class TestMatch {
 	}
 
 	@Test
-    public void testSimpleWildcardValuesString() {
+    void testSimpleWildcardValuesString() {
         // Arrange
         ValueEval[] values = {
                 new StringEval("Albert"),
@@ -155,7 +155,7 @@ public final class TestMatch {
     }
 
 	@Test
-    public void testTildeString() {
+    void testTildeString() {
 
         ValueEval[] values = {
                 new StringEval("what?"),
@@ -169,7 +169,7 @@ public final class TestMatch {
     }
 
 	@Test
-	public void testSimpleBoolean() {
+	void testSimpleBoolean() {
 
 		ValueEval[] values = {
 				BoolEval.FALSE,
@@ -188,7 +188,7 @@ public final class TestMatch {
 	}
 
 	@Test
-	public void testHeterogeneous() {
+	void testHeterogeneous() {
 
 		ValueEval[] values = {
 				new NumberEval(4),
@@ -241,7 +241,7 @@ public final class TestMatch {
 	 * Bugzilla 44421
 	 */
 	@Test
-	public void testMatchArgTypeArea() {
+	void testMatchArgTypeArea() {
 
 		ValueEval[] values = {
 			new NumberEval(4),
@@ -268,7 +268,7 @@ public final class TestMatch {
 	}
 
 	@Test
-	public void testInvalidMatchType() {
+	void testInvalidMatchType() {
 
         ValueEval[] values = {
             new NumberEval(4),

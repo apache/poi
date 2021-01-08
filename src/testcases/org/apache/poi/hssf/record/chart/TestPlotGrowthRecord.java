@@ -36,7 +36,7 @@ public final class TestPlotGrowthRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         PlotGrowthRecord record = new PlotGrowthRecord(TestcaseRecordInputStream.create(0x1064, data));
         assertEquals( 65536, record.getHorizontalScale());
@@ -47,7 +47,7 @@ public final class TestPlotGrowthRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         PlotGrowthRecord record = new PlotGrowthRecord();
         record.setHorizontalScale( 65536 );
         record.setVerticalScale( 65536 );

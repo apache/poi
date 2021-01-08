@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 public final class TestChartTitleFormatRecord {
 
 	@Test
-    public void testRecord() throws Exception {
+    void testRecord() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				HSSFTestDataSamples.getSampleFile("WithFormattedGraphTitle.xls"));
 

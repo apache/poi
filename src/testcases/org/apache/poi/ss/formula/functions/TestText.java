@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestText {
     @Test
-    public void testTextWithStringFirstArg() {
+    void testTextWithStringFirstArg() {
         ValueEval strArg = new StringEval("abc");
         ValueEval formatArg = new StringEval("abc");
         ValueEval[] args = { strArg, formatArg };
@@ -45,7 +45,7 @@ public final class TestText {
     }
 
     @Test
-    public void testTextWithDeciamlFormatSecondArg() {
+    void testTextWithDeciamlFormatSecondArg() {
         ValueEval numArg = new NumberEval(321321.321);
         ValueEval formatArg = new StringEval("#,###.00000");
         ValueEval[] args = { numArg, formatArg };
@@ -71,7 +71,7 @@ public final class TestText {
     }
 
     @Test
-    public void testTextWithFractionFormatSecondArg() {
+    void testTextWithFractionFormatSecondArg() {
         ValueEval numArg = new NumberEval(321.321);
         ValueEval formatArg = new StringEval("# #/#");
         ValueEval[] args = { numArg, formatArg };
@@ -93,7 +93,7 @@ public final class TestText {
     }
 
     @Test
-    public void testTextWithDateFormatSecondArg() {
+    void testTextWithDateFormatSecondArg() {
         TimeZone userTZ = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {

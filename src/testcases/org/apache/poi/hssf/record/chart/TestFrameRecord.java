@@ -38,7 +38,7 @@ public final class TestFrameRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         FrameRecord record = new FrameRecord(TestcaseRecordInputStream.create(0x1032, data));
         assertEquals( FrameRecord.BORDER_TYPE_REGULAR, record.getBorderType());
         assertEquals( 2, record.getOptions());
@@ -50,7 +50,7 @@ public final class TestFrameRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         FrameRecord record = new FrameRecord();
         record.setBorderType( FrameRecord.BORDER_TYPE_REGULAR );
         record.setOptions( (short)2 );

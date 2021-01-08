@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public final class TestHSSFPatriarch {
 
 	@Test
-	public void testBasic() throws IOException {
+	void testBasic() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet();
 
@@ -38,7 +38,7 @@ public final class TestHSSFPatriarch {
 	}
 
 	@Test
-	public void test44916() throws IOException {
+	void test44916() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet();
 

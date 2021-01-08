@@ -54,7 +54,7 @@ public final class TestEscherGraphics2d {
 	}
 
 	@Test
-	public void testDrawString() {
+	void testDrawString() {
 		graphics.drawString("This is a test", 10, 10);
 		HSSFTextbox t = (HSSFTextbox) escherGroup.getChildren().get(0);
 		assertEquals("This is a test", t.getString().getString());
@@ -80,7 +80,7 @@ public final class TestEscherGraphics2d {
 	}
 
 	@Test
-    public void testFillRect() {
+    void testFillRect() {
 		graphics.fillRect( 10, 10, 20, 20 );
 		HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
 		assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, s.getShapeType());
@@ -91,7 +91,7 @@ public final class TestEscherGraphics2d {
 	}
 
 	@Test
-    public void testGetFontMetrics() {
+    void testGetFontMetrics() {
 		FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
 		if (isDialogPresent()) {
 		    // if dialog is returned we can't run the test properly.
@@ -102,20 +102,20 @@ public final class TestEscherGraphics2d {
 	}
 
 	@Test
-    public void testSetFont() {
+    void testSetFont() {
 		Font f = new Font("Helvetica", Font.PLAIN, 12);
 		graphics.setFont(f);
 		assertEquals(f, graphics.getFont());
 	}
 
 	@Test
-    public void testSetColor() {
+    void testSetColor() {
 		graphics.setColor(Color.red);
 		assertEquals(Color.red, graphics.getColor());
 	}
 
 	@Test
-    public void testGetFont() {
+    void testGetFont() {
 		Font f = graphics.getFont();
 		if (isDialogPresent()) {
 		    // if dialog is returned we can't run the test properly.
@@ -131,7 +131,7 @@ public final class TestEscherGraphics2d {
 	}
 
 	@Test
-    public void testDraw() {
+    void testDraw() {
 		graphics.draw(new Line2D.Double(10,10,20,20));
 		HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
         assertEquals(s.getShapeType(), HSSFSimpleShape.OBJECT_TYPE_LINE);

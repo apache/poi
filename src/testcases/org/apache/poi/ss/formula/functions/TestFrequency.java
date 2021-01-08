@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class TestFrequency {
 
     @Test
-    public void testHistogram() {
+    void testHistogram() {
         assertArrayEquals(new int[]{3, 2, 2, 0, 1, 1},
                 histogram(
                         new double[]{11, 12, 13, 21, 29, 36, 40, 58, 69},
@@ -61,7 +61,7 @@ public class TestFrequency {
     }
 
     @Test
-    public void testEvaluate() {
+    void testEvaluate() {
         Workbook wb = new HSSFWorkbook();
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 

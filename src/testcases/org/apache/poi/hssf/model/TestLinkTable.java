@@ -59,7 +59,7 @@ public final class TestLinkTable {
 	 * It's not clear what exact steps need to be taken in Excel to create such a workbook
 	 */
 	@Test
-	public void testLinkTableWithoutExternalBookRecord_bug45046() {
+	void testLinkTableWithoutExternalBookRecord_bug45046() {
 		// Bug 45046 b: DEFINEDNAME is part of LinkTable
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
 		// some other sanity checks
@@ -74,7 +74,7 @@ public final class TestLinkTable {
 	}
 
 	@Test
-	public void testMultipleExternSheetRecords_bug45698() {
+	void testMultipleExternSheetRecords_bug45698() {
 		// Bug: Extern sheet is part of LinkTable
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
 		// some other sanity checks
@@ -82,7 +82,7 @@ public final class TestLinkTable {
 	}
 
 	@Test
-	public void testExtraSheetRefs_bug45978() {
+	void testExtraSheetRefs_bug45978() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls");
 		/*
 		ex45978-extraLinkTableSheets.xls is a cut-down version of attachment 22561.
@@ -121,7 +121,7 @@ public final class TestLinkTable {
 	 * when reading the workbook of attachment 23468 from bugzilla 47001
 	 */
 	@Test
-	public void testMissingExternSheetRecord_bug47001b() {
+	void testMissingExternSheetRecord_bug47001b() {
 
 		Record[] recs = {
 				SupBookRecord.createAddInFunctions(),
@@ -136,7 +136,7 @@ public final class TestLinkTable {
 	}
 
 	@Test
-	public void testNameCommentRecordBetweenNameRecords() {
+	void testNameCommentRecordBetweenNameRecords() {
 
 		final Record[] recs = {
         new NameRecord(),
@@ -160,7 +160,7 @@ public final class TestLinkTable {
 	}
 
 	@Test
-    public void testAddNameX(){
+    void testAddNameX(){
         WorkbookRecordList wrl = new WorkbookRecordList();
         wrl.add(0, new BOFRecord());
         wrl.add(1, new CountryRecord());

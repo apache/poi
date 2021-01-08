@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class TestCellCacheEntry {
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
 		ValueEval ve = pcce.getValue();
 		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);

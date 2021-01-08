@@ -30,7 +30,7 @@ public final class TestRKUtil {
 	 * Check we can decode correctly.
 	 */
 	@Test
-	public void testDecode() {
+	void testDecode() {
 
 		int[] values = { 1074266112, 1081384961, 1081397249,
 				0x3FF00000, 0x405EC001, 0x02F1853A, 0x02F1853B, 0xFCDD699A,

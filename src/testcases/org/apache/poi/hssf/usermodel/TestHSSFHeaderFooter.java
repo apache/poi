@@ -34,7 +34,7 @@ public final class TestHSSFHeaderFooter {
 	 * Tests that get header retrieves the proper values.
 	 */
 	@Test
-	public void testRetrieveCorrectHeader() throws IOException {
+	void testRetrieveCorrectHeader() throws IOException {
 
 		try (HSSFWorkbook wb = openSampleWorkbook("EmbeddedChartHeaderTest.xls")) {
 			HSSFSheet s = wb.getSheetAt(0);
@@ -47,7 +47,7 @@ public final class TestHSSFHeaderFooter {
 	}
 
 	@Test
-	public void testSpecialChars() {
+	void testSpecialChars() {
 		assertEquals("&U", HSSFHeader.startUnderline());
 		assertEquals("&U", HSSFHeader.endUnderline());
 		assertEquals("&P", HSSFHeader.page());
@@ -57,7 +57,7 @@ public final class TestHSSFHeaderFooter {
 	}
 
 	@Test
-	public void testStripFields() throws IOException {
+	void testStripFields() throws IOException {
 		String simple = "I am a test header";
 		String withPage = "I am a&P test header";
 		String withLots = "I&A am&N a&P test&T header&U";
@@ -96,7 +96,7 @@ public final class TestHSSFHeaderFooter {
 	 * Tests that get header retrieves the proper values.
 	 */
 	@Test
-	public void testRetrieveCorrectFooter() throws IOException {
+	void testRetrieveCorrectFooter() throws IOException {
 		try (HSSFWorkbook wb = openSampleWorkbook("EmbeddedChartHeaderTest.xls")) {
 			HSSFSheet s = wb.getSheetAt(0);
 			HSSFFooter foot = s.getFooter();
@@ -111,7 +111,7 @@ public final class TestHSSFHeaderFooter {
 	 * Testcase for Bug 17039 HSSFHeader  does not support DBCS
 	 */
 	@Test
-	public void testHeaderHas16bitCharacter() throws IOException {
+	void testHeaderHas16bitCharacter() throws IOException {
 		try (HSSFWorkbook b = new HSSFWorkbook()) {
 			HSSFSheet s = b.createSheet("Test");
 			HSSFHeader h = s.getHeader();
@@ -133,7 +133,7 @@ public final class TestHSSFHeaderFooter {
 	 * Testcase for Bug 17039 HSSFFooter does not support DBCS
 	 */
 	@Test
-	 public void testFooterHas16bitCharacter() throws IOException {
+	 void testFooterHas16bitCharacter() throws IOException {
 		try (HSSFWorkbook b = new HSSFWorkbook()) {
 			HSSFSheet s = b.createSheet("Test");
 			HSSFFooter f = s.getFooter();
@@ -152,7 +152,7 @@ public final class TestHSSFHeaderFooter {
 	}
 
 	@Test
-	public void testReadDBCSHeaderFooter() throws IOException {
+	void testReadDBCSHeaderFooter() throws IOException {
 		try (HSSFWorkbook wb = openSampleWorkbook("DBCSHeader.xls")) {
 			HSSFSheet s = wb.getSheetAt(0);
 			HSSFHeader h = s.getHeader();
@@ -171,7 +171,7 @@ public final class TestHSSFHeaderFooter {
 	 * Excel tolerates files with missing HEADER/FOOTER records.  POI should do the same.
 	 */
 	@Test
-	public void testMissingHeaderFooterRecord_bug47244() throws IOException {
+	void testMissingHeaderFooterRecord_bug47244() throws IOException {
 		// noHeaderFooter47244.xls was created by a slightly modified POI
 		// which omitted the HEADER/FOOTER records
 		try (HSSFWorkbook wb = openSampleWorkbook("noHeaderFooter47244.xls")) {

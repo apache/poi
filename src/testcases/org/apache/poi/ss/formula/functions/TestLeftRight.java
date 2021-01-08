@@ -49,13 +49,13 @@ public class TestLeftRight {
 	}
 
 	@Test
-	public void testLeftRight_bug49841() {
+	void testLeftRight_bug49841() {
 		invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND);
 		invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND);
 	}
 
 	@Test
-	public void testLeftRightNegativeOperand() {
+	void testLeftRightNegativeOperand() {
 		assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
 		assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
 	}

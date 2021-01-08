@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public final class TestNpv {
 
     @Test
-    public void testEvaluateInSheetExample2() {
+    void testEvaluateInSheetExample2() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(0);
@@ -73,7 +73,7 @@ public final class TestNpv {
      * the cached formula result pre-calculated by Excel
      */
     @Test
-    public void testNpvFromSpreadsheet(){
+    void testNpvFromSpreadsheet(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

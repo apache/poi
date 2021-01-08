@@ -54,7 +54,7 @@ public abstract class BaseTestConditionalFormatting {
     protected abstract void assertColor(String hexExpected, Color actual);
 
     @Test
-    public void testBasic() throws Throwable {
+    void testBasic() throws Throwable {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             SheetConditionalFormatting sheetCF = sh.getSheetConditionalFormatting();
@@ -100,7 +100,7 @@ public abstract class BaseTestConditionalFormatting {
      * Test format conditions based on a boolean formula
      */
     @Test
-    public void testBooleanFormulaConditions() throws IOException {
+    void testBooleanFormulaConditions() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             SheetConditionalFormatting sheetCF = sh.getSheetConditionalFormatting();
@@ -136,7 +136,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testSingleFormulaConditions() throws IOException {
+    void testSingleFormulaConditions() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             SheetConditionalFormatting sheetCF = sh.getSheetConditionalFormatting();
@@ -200,7 +200,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCopy() throws IOException {
+    void testCopy() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet();
             Sheet sheet2 = wb.createSheet();
@@ -240,7 +240,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testRemove() throws IOException {
+    void testRemove() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet();
             SheetConditionalFormatting sheetCF = sheet1.getSheetConditionalFormatting();
@@ -274,7 +274,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateCF() throws IOException {
+    void testCreateCF() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             String formula = "7";
@@ -352,7 +352,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testClone() throws IOException {
+    void testClone() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             String formula = "7";
@@ -384,7 +384,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testShiftRows() throws IOException {
+    void testShiftRows() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -522,7 +522,7 @@ public abstract class BaseTestConditionalFormatting {
         }
     }
 
-    public void testReadOffice2007(String filename) throws IOException {
+    protected void testReadOffice2007(String filename) throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook(filename)) {
             Sheet s = wb.getSheet("CF");
 
@@ -851,7 +851,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateFontFormatting() throws IOException {
+    void testCreateFontFormatting() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -919,7 +919,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreatePatternFormatting() throws IOException {
+    void testCreatePatternFormatting() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -966,7 +966,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testAllCreateBorderFormatting() throws IOException {
+    void testAllCreateBorderFormatting() throws IOException {
         // Make sure it is possible to create a conditional formatting rule
         // with every type of Border Style
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
@@ -997,7 +997,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateBorderFormatting() throws IOException {
+    void testCreateBorderFormatting() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
 
@@ -1060,7 +1060,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateIconFormatting() throws IOException {
+    void testCreateIconFormatting() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -1115,7 +1115,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateColorScaleFormatting() throws IOException {
+    void testCreateColorScaleFormatting() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -1163,7 +1163,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testCreateDataBarFormatting() throws IOException {
+    void testCreateDataBarFormatting() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -1214,7 +1214,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testBug55380() throws IOException {
+    void testBug55380() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             CellRangeAddress[] ranges = new CellRangeAddress[]{
@@ -1226,7 +1226,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testSetCellRangeAddresswithSingleRange() throws IOException {
+    void testSetCellRangeAddresswithSingleRange() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
             final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
@@ -1256,7 +1256,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testSetCellRangeAddressWithMultipleRanges() throws IOException {
+    void testSetCellRangeAddressWithMultipleRanges() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
             final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
@@ -1289,7 +1289,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    public void testSetCellRangeAddressWithNullRanges() throws IOException {
+    void testSetCellRangeAddressWithNullRanges() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
             final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
@@ -1307,7 +1307,7 @@ public abstract class BaseTestConditionalFormatting {
 
 
     @Test
-    public void test52122() throws IOException {
+    void test52122() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet("Conditional Formatting Test");
             sheet.setColumnWidth(0, 256 * 10);

@@ -124,7 +124,7 @@ public final class TestMultiSheetEval {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void testFunction(String testName, String functionName, Cell expected, Row testRow) {
+	void testFunction(String testName, String functionName, Cell expected, Row testRow) {
 
 		Cell c = testRow.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
 		if (c == null || c.getCellType() != CellType.FORMULA) {

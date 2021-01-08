@@ -77,7 +77,7 @@ public final class TestDocumentInputStream {
      * test constructor
      */
     @Test
-    public void testConstructor() throws IOException {
+    void testConstructor() throws IOException {
         try (DocumentInputStream nstream = new DocumentInputStream(_workbook_n)) {
             assertEquals(_workbook_size, _workbook_n.getSize());
             assertEquals(_workbook_size, available(nstream));
@@ -88,7 +88,7 @@ public final class TestDocumentInputStream {
      * test available() behavior
      */
     @Test
-    public void testAvailable() throws IOException {
+    void testAvailable() throws IOException {
         DocumentInputStream nstream = new DocumentInputStream(_workbook_n);
         assertEquals(_workbook_size, available(nstream));
         nstream.close();
@@ -101,7 +101,7 @@ public final class TestDocumentInputStream {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    public void testMarkFunctions() throws IOException {
+    void testMarkFunctions() throws IOException {
         byte[] buffer = new byte[_workbook_size / 5];
         byte[] small_buffer = new byte[212];
 
@@ -215,7 +215,7 @@ public final class TestDocumentInputStream {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    public void testReadSingleByte() throws IOException {
+    void testReadSingleByte() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         int remaining = _workbook_size;
 
@@ -241,7 +241,7 @@ public final class TestDocumentInputStream {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    public void testBufferRead() throws IOException {
+    void testBufferRead() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         // Need to give a byte array to read
         assertThrows(NullPointerException.class, () -> stream.read(null));
@@ -284,7 +284,7 @@ public final class TestDocumentInputStream {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    public void testComplexBufferRead() throws IOException {
+    void testComplexBufferRead() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         assertThrows(IllegalArgumentException.class, () -> stream.read(null, 0, 1));
 
@@ -340,7 +340,7 @@ public final class TestDocumentInputStream {
      * Tests that we can skip within the stream
      */
     @Test
-    public void testSkip() throws IOException {
+    void testSkip() throws IOException {
         DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         assertEquals(_workbook_size, available(stream));
         int count = available(stream);
@@ -368,7 +368,7 @@ public final class TestDocumentInputStream {
      * Test that we can read files at multiple levels down the tree
      */
     @Test
-    public void testReadMultipleTreeLevels() throws Exception {
+    void testReadMultipleTreeLevels() throws Exception {
         final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
         File sample = _samples.getFile("Sample.pub");
 

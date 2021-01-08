@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestPresetGeometries {
     @Test
-    public void testRead(){
+    void testRead(){
         PresetGeometries shapes = PresetGeometries.getInstance();
         assertEquals(187, shapes.size());
         assertEquals(0x4533584F, shapes.hashCode());
@@ -52,7 +52,7 @@ public class TestPresetGeometries {
 
     @Disabled("problem solved? Turn back on if this debugging is still in process.")
     @Test
-    public void testCheckXMLParser() throws Exception{
+    void testCheckXMLParser() throws Exception{
         // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where
         // this comes from
         //

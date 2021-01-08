@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestPolygon {
     @Test
-    public void testResultEqualsToAbstractShape() throws IOException {
+    void testResultEqualsToAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -76,7 +76,7 @@ public class TestPolygon {
     }
 
     @Test
-    public void testPolygonPoints() throws IOException {
+    void testPolygonPoints() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -129,7 +129,7 @@ public class TestPolygon {
     }
 
     @Test
-    public void testSetGetProperties() throws IOException {
+    void testSetGetProperties() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -178,7 +178,7 @@ public class TestPolygon {
     }
 
     @Test
-    public void testAddToExistingFile() throws IOException {
+    void testAddToExistingFile() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -232,7 +232,7 @@ public class TestPolygon {
     }
 
     @Test
-    public void testExistingFile() throws IOException {
+    void testExistingFile() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("polygon");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -248,7 +248,7 @@ public class TestPolygon {
     }
 
     @Test
-    public void testPolygonType() throws IOException {
+    void testPolygonType() throws IOException {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();

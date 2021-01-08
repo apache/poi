@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public final class TestDocumentProperty {
 
     @Test
-    public void testConstructor() throws IOException {
+    void testConstructor() throws IOException {
         // test with short name, small file
         verifyProperty("foo", 1234);
 
@@ -52,7 +52,7 @@ public final class TestDocumentProperty {
     }
 
     @Test
-    public void testReadingConstructor() throws IOException {
+    void testReadingConstructor() throws IOException {
         String[] hexData = {
             "52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
             "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",

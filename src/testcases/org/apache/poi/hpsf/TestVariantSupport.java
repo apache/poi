@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestVariantSupport {
     @Test
-    public void test52337() throws Exception {
+    void test52337() throws Exception {
         // document summary stream   from test1-excel.doc attached to Bugzilla 52337
         String documentSummaryEnc =
             "H4sIAAAAAAAAAG2RsUvDQBjFXxsraiuNKDoI8ZwclIJOjhYCGpQitINbzXChgTQtyQ3+Hw52cHB0E"+

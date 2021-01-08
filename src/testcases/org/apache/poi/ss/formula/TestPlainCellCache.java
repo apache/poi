@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestPlainCellCache {
 
     @Test
-    public void testLoc(){
+    void testLoc(){
         PlainCellCache cache = new PlainCellCache();
         for (int bookIndex = 0; bookIndex < 0x1000; bookIndex += 0x100) {
             for (int sheetIndex = 0; sheetIndex < 0x1000; sheetIndex += 0x100) {

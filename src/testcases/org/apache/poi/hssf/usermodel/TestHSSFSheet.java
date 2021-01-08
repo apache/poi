@@ -1067,7 +1067,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void test58746() throws IOException {
+    void test58746() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
             HSSFSheet first = wb.createSheet("first");

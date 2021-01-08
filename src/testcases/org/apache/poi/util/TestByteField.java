@@ -36,7 +36,7 @@ public final class TestByteField {
     };
 
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         try {
             new ByteField(-1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
@@ -80,7 +80,7 @@ public final class TestByteField {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 
@@ -95,7 +95,7 @@ public final class TestByteField {
     }
 
     @Test
-    public void testReadFromBytes() {
+    void testReadFromBytes() {
         ByteField field = new ByteField(1);
         byte[]    array = new byte[ 1 ];
 
@@ -114,7 +114,7 @@ public final class TestByteField {
     }
 
     @Test
-    public void testReadFromStream() throws IOException {
+    void testReadFromStream() throws IOException {
         ByteField field  = new ByteField(0);
         ByteArrayInputStream stream = new ByteArrayInputStream(_test_array.clone());
 
@@ -125,7 +125,7 @@ public final class TestByteField {
     }
 
     @Test
-    public void testWriteToBytes() {
+    void testWriteToBytes() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 

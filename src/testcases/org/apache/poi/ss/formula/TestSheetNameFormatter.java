@@ -35,7 +35,7 @@ public final class TestSheetNameFormatter {
 	 * Tests main public method 'format'
 	 */
 	@Test
-	public void testFormat() {
+	void testFormat() {
 
 		confirmFormat("abc", "abc");
 		confirmFormat("123", "'123'");
@@ -74,7 +74,7 @@ public final class TestSheetNameFormatter {
 	}
 
 	@Test
-	public void testFormatWithWorkbookName() {
+	void testFormatWithWorkbookName() {
 
 		confirmFormat("abc", "abc", "[abc]abc");
 		confirmFormat("abc", "123", "'[abc]123'");
@@ -113,7 +113,7 @@ public final class TestSheetNameFormatter {
 	}
 
 	@Test
-	public void testFormatException() {
+	void testFormatException() {
 		Appendable mock = new Appendable() {
 			@Override
 			public Appendable append(CharSequence csq) throws IOException {
@@ -136,7 +136,7 @@ public final class TestSheetNameFormatter {
 	}
 
 	@Test
-	public void testBooleanLiterals() {
+	void testBooleanLiterals() {
 		confirmFormat("TRUE", "'TRUE'");
 		confirmFormat("FALSE", "'FALSE'");
 		confirmFormat("True", "'True'");
@@ -155,7 +155,7 @@ public final class TestSheetNameFormatter {
 	 * would look (to Excel) like a cell name.
 	 */
 	@Test
-	public void testLooksLikePlainCellReference() {
+	void testLooksLikePlainCellReference() {
 
 		confirmCellNameMatch("A1", true);
 		confirmCellNameMatch("a111", true);
@@ -178,7 +178,7 @@ public final class TestSheetNameFormatter {
 	 * letters followed by one or more digits).
 	 */
 	@Test
-	public void testCellRange() {
+	void testCellRange() {
 		confirmCellRange("A1", 1, true);
 		confirmCellRange("a111", 1, true);
 		confirmCellRange("A65536", 1, true);

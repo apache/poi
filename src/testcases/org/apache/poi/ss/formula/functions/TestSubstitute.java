@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestSubstitute {
     @Test
-    public void testSubstitute() {
+    void testSubstitute() {
         Substitute fun = new Substitute();
         assertEquals("ADEFC", ((StringValueEval)fun.evaluate(0, 1,
                 new StringEval("ABC"), new StringEval("B"), new StringEval("DEF"))).getStringValue());
@@ -41,7 +41,7 @@ public class TestSubstitute {
     }
 
     @Test
-    public void testSubstituteInvalidArg() {
+    void testSubstituteInvalidArg() {
         Substitute fun = new Substitute();
         assertEquals(ErrorEval.valueOf(FormulaError.VALUE.getLongCode()),
                 fun.evaluate(0, 1,
@@ -59,7 +59,7 @@ public class TestSubstitute {
     }
 
     @Test
-    public void testSubstituteOne() {
+    void testSubstituteOne() {
         Substitute fun = new Substitute();
         assertEquals("ADEFC", ((StringValueEval)fun.evaluate(0, 1,
                 new StringEval("ABC"), new StringEval("B"), new StringEval("DEF"), new NumberEval(1))).getStringValue());
@@ -69,7 +69,7 @@ public class TestSubstitute {
     }
 
     @Test
-    public void testSubstituteNotFound() {
+    void testSubstituteNotFound() {
         Substitute fun = new Substitute();
         assertEquals("ABC", ((StringValueEval)fun.evaluate(0, 1,
                 new StringEval("ABC"), new StringEval("B"), new StringEval("DEF"), new NumberEval(12))).getStringValue());
@@ -79,7 +79,7 @@ public class TestSubstitute {
     }
 
     @Test
-    public void testSearchEmpty() {
+    void testSearchEmpty() {
         Substitute fun = new Substitute();
         assertEquals("ABC", ((StringValueEval)fun.evaluate(0, 1,
                 new StringEval("ABC"), new StringEval(""), new StringEval("CDE"))).getStringValue());

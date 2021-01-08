@@ -38,7 +38,7 @@ public class TestPOIFSProperties {
     private static final String title = "Testing POIFS properties";
 
     @Test
-    public void testFail() throws Exception {
+    void testFail() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         { // read the workbook, adjust the SummaryInformation and write the data to a byte array
             POIFSFileSystem fs = openFileSystem();
@@ -60,7 +60,7 @@ public class TestPOIFSProperties {
     }
 
     @Test
-    public void testOK() throws Exception {
+    void testOK() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         { // read the workbook, adjust the SummaryInformation and write the data to a byte array
             POIFSFileSystem fs = openFileSystem();

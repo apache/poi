@@ -47,7 +47,7 @@ public abstract class BaseTestFormulaEvaluator {
 	}
 
 	@Test
-    public void testSimpleArithmetic() throws IOException {
+    void testSimpleArithmetic() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -72,7 +72,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
 	@Test
-	public void testSumCount() throws IOException {
+	void testSumCount() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -117,7 +117,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-	public void testSharedFormulas() throws IOException {
+	void testSharedFormulas() throws IOException {
         String fileName = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
 
@@ -148,7 +148,7 @@ public abstract class BaseTestFormulaEvaluator {
      * Test creation / evaluation of formulas with sheet-level names
      */
 	@Test
-    public void testSheetLevelFormulas() throws IOException {
+    void testSheetLevelFormulas() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Row row;
@@ -184,7 +184,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
 	@Test
-    public void testFullColumnRefs() throws IOException {
+    void testFullColumnRefs() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
@@ -218,7 +218,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
 	@Test
-    public void testRepeatedEvaluation() throws IOException {
+    void testRepeatedEvaluation() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
        Sheet sheet = wb.createSheet("Sheet1");
@@ -271,7 +271,7 @@ public abstract class BaseTestFormulaEvaluator {
      * is <code>null</code> or blank.
      */
     @Test
-    public void testEvaluateBlank() throws IOException {
+    void testEvaluateBlank() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertNull(fe.evaluate(null));
@@ -285,7 +285,7 @@ public abstract class BaseTestFormulaEvaluator {
      * Test for bug due to attempt to convert a cached formula error result to a boolean
      */
     @Test
-    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
+    void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");
             Row row = sheet.createRow(0);
@@ -312,7 +312,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testRounding_bug51339() throws IOException {
+    void testRounding_bug51339() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
@@ -345,7 +345,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug61148() throws IOException {
+    void testBug61148() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Cell cell = wb.createSheet().createRow(0).createCell(0);
             cell.setCellFormula("1+2");
@@ -362,7 +362,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testMultisheetFormulaEval() throws IOException {
+    void testMultisheetFormulaEval() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet("Sheet1");
             Sheet sheet2 = wb.createSheet("Sheet2");
@@ -403,7 +403,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843() throws IOException {
+    void testBug55843() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -425,7 +425,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843a() throws IOException {
+    void testBug55843a() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -447,7 +447,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843b() throws IOException {
+    void testBug55843b() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -470,7 +470,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843c() throws IOException {
+    void testBug55843c() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -487,7 +487,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843d() throws IOException {
+    void testBug55843d() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -504,7 +504,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843e() throws IOException {
+    void testBug55843e() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -521,7 +521,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug55843f() throws IOException {
+    void testBug55843f() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -538,7 +538,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug56655() throws IOException {
+    void testBug56655() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -555,7 +555,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug56655a() throws IOException {
+    void testBug56655a() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -601,7 +601,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug61532() throws IOException {
+    void testBug61532() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Cell cell = wb.createSheet().createRow(0).createCell(0);
             cell.setCellFormula("1+2");
@@ -628,7 +628,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testFormulaEvaluatorEvaluateSimpleFormulaCell() throws Exception {
+    void testFormulaEvaluatorEvaluateSimpleFormulaCell() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Row row = wb.createSheet().createRow(0);
             final Cell a1 = row.createCell(0, CellType.NUMERIC);
@@ -654,7 +654,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testFormulaEvaluatorEvaluateVlookupFormulaCell() throws Exception {
+    void testFormulaEvaluatorEvaluateVlookupFormulaCell() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet mainSheet = wb.createSheet("main");
             final Sheet otherSheet = wb.createSheet("other");
@@ -701,7 +701,7 @@ public abstract class BaseTestFormulaEvaluator {
     // setting an evaluation of function arguments with the intersect operator (space)
     // see https://bz.apache.org/bugzilla/show_bug.cgi?id=60980
     @Test
-    public void testIntersectionInFunctionArgs_60980() throws IOException {
+    void testIntersectionInFunctionArgs_60980() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 

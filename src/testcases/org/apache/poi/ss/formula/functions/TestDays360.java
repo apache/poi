@@ -49,7 +49,7 @@ public final class TestDays360 {
     }
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         confirm(120, 2009, 1, 15, 2009, 5, 15);
         confirm(158, 2009, 1, 26, 2009, 7, 4);
 
@@ -84,7 +84,7 @@ public final class TestDays360 {
      * is the last day of the month that does <em>not</em> have 30 days.
      */
     @Test
-    public void testMonthBoundaries() {
+    void testMonthBoundaries() {
         // jan
         confirmMonthBoundary(false, 2001, 1, 0, 0, 2, 3, 4);
         confirmMonthBoundary(true,  2001, 1, 0, 0, 1, 2, 3);

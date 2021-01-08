@@ -36,7 +36,7 @@ public final class TestNoteStructureSubRecord {
     };
 
     @Test
-    public void testRead() {
+    void testRead() {
         NoteStructureSubRecord record = new NoteStructureSubRecord(TestcaseRecordInputStream.create(NoteStructureSubRecord.sid, data), data.length);
 
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
@@ -44,7 +44,7 @@ public final class TestNoteStructureSubRecord {
     }
 
     @Test
-    public void testWrite() {
+    void testWrite() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
         assertEquals(data.length, record.getDataSize());
@@ -54,7 +54,7 @@ public final class TestNoteStructureSubRecord {
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         byte[] src = record.serialize();
 

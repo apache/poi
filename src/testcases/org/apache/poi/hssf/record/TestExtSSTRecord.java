@@ -32,7 +32,7 @@ public final class TestExtSSTRecord {
      *  ExtSSTRecord can be continued. Ensure we properly read the continue remainder.
      */
     @Test
-    public void test50967() throws IOException {
+    void test50967() throws IOException {
         // hex dump from ISBN_UPD_PL_20100104_1525.xls attached to Bugzilla 50867
         byte[] bytes = RawDataUtil.decompress("H4sIAAAAAAAAACWaBbAVxxZF9/jgrkFDcAvu7hrc3d3dLbhrgBDcXR8OwV2CEz" +
           "RIIFhw+4G/Zqiiqrn3zkyvvc/p7tM976sSp/CVOJIUVVJH2sa022lX0e6OLK0zpE9RpKemdCQav9lSlhhSCldqEEuq7EsbYkuLuGdJHG" +

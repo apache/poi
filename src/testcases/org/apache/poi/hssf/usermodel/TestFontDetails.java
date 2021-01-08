@@ -40,19 +40,19 @@ public final class TestFontDetails {
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         assertEquals(13, fontDetails.getHeight());
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(3, fontDetails.getCharWidth('f'));
     }
 
     @Test
-    public void testGetStringWidth() {
+    void testGetStringWidth() {
         assertEquals(9, fontDetails.getStringWidth("af"));
     }
 
     @Test
-    public void testGetCharWidth() {
+    void testGetCharWidth() {
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(9, fontDetails.getCharWidth('='));
     }

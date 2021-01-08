@@ -46,7 +46,7 @@ public final class TestSanityChecker {
 	}
 
 	@Test
-	public void testCheckRecordOrder() {
+	void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(new BOFRecord());

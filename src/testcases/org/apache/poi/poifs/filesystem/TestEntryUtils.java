@@ -37,7 +37,7 @@ public class TestEntryUtils {
     private static final byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
 
     @Test
-    public void testCopyRecursively() throws IOException {
+    void testCopyRecursively() throws IOException {
        POIFSFileSystem fsD = new POIFSFileSystem();
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
@@ -100,7 +100,7 @@ public class TestEntryUtils {
     }
 
     @Test
-    public void testAreDocumentsIdentical() throws IOException {
+    void testAreDocumentsIdentical() throws IOException {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
@@ -149,7 +149,7 @@ public class TestEntryUtils {
     }
 
     @Test
-    public void testAreDirectoriesIdentical() throws IOException {
+    void testAreDirectoriesIdentical() throws IOException {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");

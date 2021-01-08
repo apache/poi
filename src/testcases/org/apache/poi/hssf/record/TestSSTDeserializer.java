@@ -53,7 +53,7 @@ public final class TestSSTDeserializer {
     }
 
     @Test
-    public void testSpanRichTextToPlainText() throws IOException {
+    void testSpanRichTextToPlainText() throws IOException {
         byte[] header = readSampleHexData("richtextdata.txt", "header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("richtextdata.txt", "continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
@@ -67,7 +67,7 @@ public final class TestSSTDeserializer {
     }
 
     @Test
-    public void testContinuationWithNoOverlap() throws IOException {
+    void testContinuationWithNoOverlap() throws IOException {
         byte[] header = readSampleHexData("evencontinuation.txt", "header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("evencontinuation.txt", "continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
@@ -84,7 +84,7 @@ public final class TestSSTDeserializer {
      * Strings can actually span across more than one continuation.
      */
     @Test
-    public void testStringAcross2Continuations() throws IOException {
+    void testStringAcross2Continuations() throws IOException {
         byte[] header = readSampleHexData("stringacross2continuations.txt", "header", FAKE_SID);
         byte[] continue1 = readSampleHexData("stringacross2continuations.txt", "continue1", ContinueRecord.sid);
         byte[] continue2 = readSampleHexData("stringacross2continuations.txt", "continue2", ContinueRecord.sid);
@@ -100,7 +100,7 @@ public final class TestSSTDeserializer {
     }
 
     @Test
-    public void testExtendedStrings() throws IOException {
+    void testExtendedStrings() throws IOException {
         byte[] header = readSampleHexData("extendedtextstrings.txt", "rich-header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("extendedtextstrings.txt", "rich-continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));

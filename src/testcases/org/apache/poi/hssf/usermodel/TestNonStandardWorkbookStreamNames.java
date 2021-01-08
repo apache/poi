@@ -41,7 +41,7 @@ public final class TestNonStandardWorkbookStreamNames {
 	 * Test that we can open a file with WORKBOOK
 	 */
     @Test
-	public void testOpenWORKBOOK() throws IOException {
+	void testOpenWORKBOOK() throws IOException {
         // Try to open the workbook
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
 		HSSFWorkbook wb = new HSSFWorkbook(is);
@@ -62,7 +62,7 @@ public final class TestNonStandardWorkbookStreamNames {
     * Test that we can open a file with BOOK
     */
    @Test
-   public void testOpenBOOK() throws IOException {
+   void testOpenBOOK() throws IOException {
        // Try to open the workbook
       InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsB);
       HSSFWorkbook wb = new HSSFWorkbook(is);
@@ -83,7 +83,7 @@ public final class TestNonStandardWorkbookStreamNames {
 	 * Test that when we write out, we go back to the correct case
 	 */
     @Test
-	public void testWrite() throws IOException {
+	void testWrite() throws IOException {
 	   for (String file : new String[] {xlsA, xlsB}) {
            // Open the workbook, not preserving nodes
 	       InputStream is = HSSFTestDataSamples.openSampleFileStream(file);
@@ -110,7 +110,7 @@ public final class TestNonStandardWorkbookStreamNames {
 	 *  correct case
 	 */
     @Test
-	public void testWritePreserve() throws IOException {
+	void testWritePreserve() throws IOException {
         // Open the workbook, not preserving nodes
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
         HSSFWorkbook wb = new HSSFWorkbook(is,true);

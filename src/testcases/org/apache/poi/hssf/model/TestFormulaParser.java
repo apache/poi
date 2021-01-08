@@ -72,35 +72,35 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testSimpleFormula() {
+    void testSimpleFormula() {
         confirmTokenClasses("2+2",IntPtg.class, IntPtg.class, AddPtg.class);
     }
 
     @Test
-    public void testFormulaWithSpace1() {
+    void testFormulaWithSpace1() {
         confirmTokenClasses(" 2 + 2 ",IntPtg.class, IntPtg.class, AddPtg.class);
     }
 
     @Test
-    public void testFormulaWithSpace2() {
+    void testFormulaWithSpace2() {
         Ptg[] ptgs = parseFormula("2+ sum( 3 , 4) ");
         assertEquals(5, ptgs.length);
     }
 
     @Test
-    public void testFormulaWithSpaceNRef() {
+    void testFormulaWithSpaceNRef() {
         Ptg[] ptgs = parseFormula("sum( A2:A3 )");
         assertEquals(2, ptgs.length);
     }
 
     @Test
-    public void testFormulaWithString() {
+    void testFormulaWithString() {
         Ptg[] ptgs = parseFormula("\"hello\" & \"world\" ");
         assertEquals(3, ptgs.length);
     }
 
     @Test
-    public void testTRUE() {
+    void testTRUE() {
         Ptg[] ptgs = parseFormula("TRUE");
         assertEquals(1, ptgs.length);
         BoolPtg flag  = (BoolPtg) ptgs[0];
@@ -108,7 +108,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testSumIf() {
+    void testSumIf() {
         Ptg[] ptgs = parseFormula("SUMIF(A1:A5,\">4000\",B1:B5)");
         assertEquals(4, ptgs.length);
     }
@@ -119,14 +119,14 @@ public final class TestFormulaParser {
      *
      */
     @Test
-    public void testNonAlphaFormula() {
+    void testNonAlphaFormula() {
         Ptg[] ptgs = parseFormula("\"TOTAL[\"&F3&\"]\"");
         confirmTokenClasses(ptgs, StringPtg.class, RefPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class);
         assertEquals("TOTAL[", ((StringPtg)ptgs[0]).getValue());
     }
 
     @Test
-    public void testMacroFunction() throws IOException {
+    void testMacroFunction() throws IOException {
         // testNames.xls contains a VB function called 'myFunc'
         final String testFile = "testNames.xls";
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(testFile)) {
@@ -191,19 +191,19 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testEmbeddedSlash() {
+    void testEmbeddedSlash() {
         confirmTokenClasses("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\")",
                         StringPtg.class, StringPtg.class, FuncVarPtg.class);
     }
 
     @Test
-    public void testConcatenate() {
+    void testConcatenate() {
         confirmTokenClasses("CONCATENATE(\"first\",\"second\")",
                 StringPtg.class, StringPtg.class, FuncVarPtg.class);
     }
 
     @Test
-    public void testWorksheetReferences() throws IOException {
+    void testWorksheetReferences() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
             HSSFSheet sheet1 = wb.createSheet("NoQuotesNeeded");
@@ -231,12 +231,12 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testUnaryMinus() {
+    void testUnaryMinus() {
         confirmTokenClasses("-A1", RefPtg.class, UnaryMinusPtg.class);
     }
 
     @Test
-    public void testUnaryPlus() {
+    void testUnaryPlus() {
         confirmTokenClasses("+A1", RefPtg.class, UnaryPlusPtg.class);
     }
 
@@ -248,7 +248,7 @@ public final class TestFormulaParser {
      * check that POI follows the same encoding rules as Excel.
      */
     @Test
-    public void testExactEncodingOfUnaryPlusAndMinus() {
+    void testExactEncodingOfUnaryPlusAndMinus() {
         // as tested in Excel:
         confirmUnary("-3", -3, NumberPtg.class);
         confirmUnary("--4", -4, NumberPtg.class, UnaryMinusPtg.class);
@@ -278,7 +278,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testLeadingSpaceInString() {
+    void testLeadingSpaceInString() {
         String value = "  hi  ";
         Ptg[] ptgs = parseFormula("\"" + value + "\"");
         confirmTokenClasses(ptgs, StringPtg.class);
@@ -286,7 +286,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testLookupAndMatchFunctionArgs() {
+    void testLookupAndMatchFunctionArgs() {
         Ptg[] ptgs = parseFormula("lookup(A1, A3:A52, B3:B52)");
         confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, AreaPtg.class, FuncVarPtg.class);
         assertEquals(ptgs[0].getPtgClass(), Ptg.CLASS_VALUE, "ptg0 has Value class");
@@ -298,20 +298,20 @@ public final class TestFormulaParser {
 
     /** bug 33160*/
     @Test
-    public void testLargeInt() {
+    void testLargeInt() {
         confirmTokenClasses("40", IntPtg.class);
         confirmTokenClasses("40000", IntPtg.class);
     }
 
     /** bug 33160 */
     @Test
-    public void testSimpleLongFormula() {
+    void testSimpleLongFormula() {
         confirmTokenClasses("40000/2", IntPtg.class, IntPtg.class, DividePtg.class);
     }
 
     /** bug 35027, underscore in sheet name */
     @Test
-    public void testUnderscore() throws IOException {
+    void testUnderscore() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet1 = wb.createSheet("Cash_Flow");
             sheet1.createRow(0).createCell(0).setCellValue("Cash_Flow");
@@ -331,7 +331,7 @@ public final class TestFormulaParser {
 
     /** bug 49725, defined names with underscore */
     @Test
-    public void testNamesWithUnderscore() throws IOException {
+    void testNamesWithUnderscore() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
 
@@ -378,14 +378,14 @@ public final class TestFormulaParser {
 
     // bug 38396 : Formula with exponential numbers not parsed correctly.
     @Test
-    public void testExponentialParsing() {
+    void testExponentialParsing() {
         confirmTokenClasses("1.3E21/2",  NumberPtg.class, IntPtg.class, DividePtg.class);
         confirmTokenClasses("1322E21/2", NumberPtg.class, IntPtg.class, DividePtg.class);
         confirmTokenClasses("1.3E1/2",   NumberPtg.class, IntPtg.class, DividePtg.class);
     }
 
     @Test
-    public void testExponentialInSheet() throws IOException {
+    void testExponentialInSheet() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         wb.createSheet("Cash_Flow");
@@ -459,7 +459,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testNumbers() throws IOException {
+    void testNumbers() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         wb.createSheet("Cash_Flow");
@@ -501,7 +501,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testRanges() throws IOException {
+    void testRanges() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         wb.createSheet("Cash_Flow");
@@ -527,7 +527,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testMultiSheetReference() throws IOException {
+    void testMultiSheetReference() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         wb.createSheet("Cash_Flow");
@@ -582,7 +582,7 @@ public final class TestFormulaParser {
      * a formula consisting of a single no-arg function got rendered without the function braces
      */
     @Test
-    public void testToFormulaStringZeroArgFunction() throws IOException {
+    void testToFormulaStringZeroArgFunction() throws IOException {
         HSSFWorkbook book = new HSSFWorkbook();
 
         Ptg[] ptgs = {
@@ -594,7 +594,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testPercent() {
+    void testPercent() {
 
         confirmTokenClasses("5%", IntPtg.class, PercentPtg.class);
         // spaces OK
@@ -621,7 +621,7 @@ public final class TestFormulaParser {
      * Tests combinations of various operators in the absence of brackets
      */
     @Test
-    public void testPrecedenceAndAssociativity() {
+    void testPrecedenceAndAssociativity() {
 
         // TRUE=TRUE=2=2  evaluates to FALSE
         confirmTokenClasses("TRUE=TRUE=2=2", BoolPtg.class, BoolPtg.class, EqualPtg.class,
@@ -664,7 +664,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testPower() {
+    void testPower() {
         confirmTokenClasses("2^5", IntPtg.class, IntPtg.class, PowerPtg.class);
     }
 
@@ -677,7 +677,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseNumber() {
+    void testParseNumber() {
         IntPtg ip;
 
         // bug 33160
@@ -697,7 +697,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testMissingArgs() {
+    void testMissingArgs() {
         confirmTokenClasses("if(A1, ,C1)",
                 RefPtg.class,
                 AttrPtg.class, // tAttrIf
@@ -713,7 +713,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseErrorLiterals() {
+    void testParseErrorLiterals() {
 
         confirmParseErrorLiteral(ErrPtg.NULL_INTERSECTION, "#NULL!");
         confirmParseErrorLiteral(ErrPtg.DIV_ZERO, "#DIV/0!");
@@ -744,7 +744,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseStringLiterals_bug28754() throws IOException {
+    void testParseStringLiterals_bug28754() throws IOException {
 
         StringPtg sp;
         try {
@@ -771,7 +771,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseStringLiterals() {
+    void testParseStringLiterals() {
         confirmStringParse("goto considered harmful");
 
         confirmStringParse("goto 'considered' harmful");
@@ -784,7 +784,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseSumIfSum() {
+    void testParseSumIfSum() {
         String formulaString;
         Ptg[] ptgs;
         ptgs = parseFormula("sum(5, 2, if(3>2, sum(A1:A2), 6))");
@@ -797,7 +797,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParserErrors() {
+    void testParserErrors() {
         parseExpectedException(" 12 . 345  ");
         parseExpectedException("1 .23  ");
 
@@ -824,7 +824,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testSetFormulaWithRowBeyond32768_Bug44539() throws IOException {
+    void testSetFormulaWithRowBeyond32768_Bug44539() throws IOException {
 
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -840,7 +840,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testSpaceAtStartOfFormula() {
+    void testSpaceAtStartOfFormula() {
         // Simulating cell formula of "= 4" (note space)
         // The same Ptg array can be observed if an excel file is saved with that exact formula
 
@@ -868,7 +868,7 @@ public final class TestFormulaParser {
      * Checks some internal error detecting logic ('stack underflow error' in toFormulaString)
      */
     @Test
-    public void testTooFewOperandArgs() {
+    void testTooFewOperandArgs() {
         // Simulating badly encoded cell formula of "=/1"
         // Not sure if Excel could ever produce this
         Ptg[] ptgs = {
@@ -889,7 +889,7 @@ public final class TestFormulaParser {
      * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead.
      */
     @Test
-    public void testFuncPtgSelection() {
+    void testFuncPtgSelection() {
 
         Ptg[] ptgs = parseFormula("countif(A1:A2, 1)");
         assertEquals(3, ptgs.length);
@@ -900,7 +900,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testWrongNumberOfFunctionArgs() throws IOException {
+    void testWrongNumberOfFunctionArgs() throws IOException {
         confirmArgCountMsg("sin()", "Too few arguments to function 'SIN'. Expected 1 but got 0.");
         confirmArgCountMsg("countif(1, 2, 3, 4)", "Too many arguments to function 'COUNTIF'. Expected 2 but got 4.");
         confirmArgCountMsg("index(1, 2, 3, 4, 5, 6)", "Too many arguments to function 'INDEX'. At most 4 were expected but got 6.");
@@ -915,7 +915,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseErrorExpectedMsg() {
+    void testParseErrorExpectedMsg() {
         FormulaParseException e;
         e = assertThrows(FormulaParseException.class, () -> parseFormula("round(3.14;2)"));
         confirmParseException(e, "Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'");
@@ -928,7 +928,7 @@ public final class TestFormulaParser {
      * this function name has a dot in it.
      */
     @Test
-    public void testParseErrorTypeFunction() {
+    void testParseErrorTypeFunction() {
 
         Ptg[] ptgs;
         try {
@@ -944,7 +944,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testNamedRangeThatLooksLikeCell() throws IOException {
+    void testNamedRangeThatLooksLikeCell() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("Sheet1");
             HSSFName name = wb.createName();
@@ -972,7 +972,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseAreaRefHighRow_bug45358() throws IOException {
+    void testParseAreaRefHighRow_bug45358() throws IOException {
         Ptg[] ptgs;
         AreaI aptg;
 
@@ -997,7 +997,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseArray()  {
+    void testParseArray()  {
         Ptg[] ptgs;
         ptgs = parseFormula("mode({1,2,2,#REF!;FALSE,3,3,2})");
         confirmTokenClasses(ptgs, ArrayPtg.class, FuncVarPtg.class);
@@ -1010,7 +1010,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseStringElementInArray() {
+    void testParseStringElementInArray() {
         Ptg[] ptgs;
         ptgs = parseFormula("MAX({\"5\"},3)");
         confirmTokenClasses(ptgs, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);
@@ -1037,7 +1037,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseArrayNegativeElement() {
+    void testParseArrayNegativeElement() {
         Ptg[] ptgs;
         try {
             ptgs = parseFormula("{-42}");
@@ -1060,7 +1060,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testRangeOperator() throws IOException {
+    void testRangeOperator() throws IOException {
 
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -1085,7 +1085,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testBooleanNamedSheet() throws IOException {
+    void testBooleanNamedSheet() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("true");
         HSSFCell cell = sheet.createRow(0).createCell(0);
@@ -1097,7 +1097,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testParseExternalWorkbookReference() throws IOException {
+    void testParseExternalWorkbookReference() throws IOException {
         HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
         HSSFCell cell = wbA.getSheetAt(0).getRow(0).getCell(0);
 
@@ -1129,7 +1129,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testUnion() throws IOException {
+    void testUnion() throws IOException {
         String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
@@ -1157,7 +1157,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testIntersection() throws IOException {
+    void testIntersection() throws IOException {
        String formula = "Sheet1!$B$2:$C$3 OFFSET(Sheet1!$E$2:$E$4, 1,Sheet1!$A$1) Sheet1!$D$6";
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
@@ -1185,7 +1185,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testComparisonInParen() {
+    void testComparisonInParen() {
         confirmTokenClasses("(A1 > B2)",
             RefPtg.class,
             RefPtg.class,
@@ -1195,7 +1195,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testUnionInParen() {
+    void testUnionInParen() {
         confirmTokenClasses("(A1:B2,B2:C3)",
           MemAreaPtg.class,
           AreaPtg.class,
@@ -1206,7 +1206,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testIntersectionInParen() {
+    void testIntersectionInParen() {
         confirmTokenClasses("(A1:B2 B2:C3)",
             MemAreaPtg.class,
             AreaPtg.class,
@@ -1218,7 +1218,7 @@ public final class TestFormulaParser {
 
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=60980
     @Test
-    public void testIntersectionInFunctionArgs() {
+    void testIntersectionInFunctionArgs() {
         confirmTokenClasses("SUM(A1:B2 B2:C3)",
                 MemAreaPtg.class,
                 AreaPtg.class,
@@ -1229,7 +1229,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testIntersectionNamesInFunctionArgs() {
+    void testIntersectionNamesInFunctionArgs() {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFName name1 = wb.createName();
@@ -1252,7 +1252,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testRange_bug46643() throws IOException {
+    void testRange_bug46643() throws IOException {
         String formula = "Sheet1!A1:Sheet1!B3";
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
@@ -1276,7 +1276,7 @@ public final class TestFormulaParser {
 
     /** Named ranges with backslashes, e.g. 'POI\\2009' */
     @Test
-    public void testBackSlashInNames() throws IOException {
+    void testBackSlashInNames() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFName name = wb.createName();
@@ -1301,7 +1301,7 @@ public final class TestFormulaParser {
      * See the related/similar test: {@link BaseTestBugzillaIssues#bug42448()}
      */
     @Test
-    public void testParseAbnormalSheetNamesAndRanges_bug42448() throws IOException {
+    void testParseAbnormalSheetNamesAndRanges_bug42448() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("A");
         try {
@@ -1316,7 +1316,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testRangeFuncOperand_bug46951() throws IOException {
+    void testRangeFuncOperand_bug46951() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Ptg[] ptgs;
             try {
@@ -1341,7 +1341,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testUnionOfFullCollFullRowRef() throws IOException {
+    void testUnionOfFullCollFullRowRef() throws IOException {
         parseFormula("3:4");
         Ptg[] ptgs = parseFormula("$Z:$AC");
         confirmTokenClasses(ptgs, AreaPtg.class);
@@ -1378,7 +1378,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void testExplicitRangeWithTwoSheetNames() throws IOException {
+    void testExplicitRangeWithTwoSheetNames() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
         Ptg[] ptgs = HSSFFormulaParser.parse("Sheet1!F1:Sheet1!G2", wb);
@@ -1399,7 +1399,7 @@ public final class TestFormulaParser {
      * and that the {@link MemFuncPtg} / {@link MemAreaPtg} is added correctly
      */
     @Test
-    public void testComplexExplicitRangeEncodings() {
+    void testComplexExplicitRangeEncodings() {
 
         Ptg[] ptgs;
         ptgs = parseFormula("SUM(OFFSET(A1,0,0):B2:C3:D4:E5:OFFSET(F6,1,1):G7)");
@@ -1448,7 +1448,7 @@ public final class TestFormulaParser {
      *
      */
     @Test
-    public void testEdgeCaseParserErrors() throws IOException {
+    void testEdgeCaseParserErrors() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
 
@@ -1478,7 +1478,7 @@ public final class TestFormulaParser {
      * POI should also be able to parse such defined names.
      */
     @Test
-    public void testParseComplexName() throws IOException {
+    void testParseComplexName() throws IOException {
 
         // Mock up a spreadsheet to match the critical details of the sample
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -1512,7 +1512,7 @@ public final class TestFormulaParser {
      * references during parsing.
      */
     @Test
-    public void testZeroRowRefs() throws IOException {
+    void testZeroRowRefs() throws IOException {
         String badCellRef = "B0"; // bad because zero is not a valid row number
         String leadingZeroCellRef = "B000001"; // this should get parsed as "B1"
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -1546,7 +1546,7 @@ public final class TestFormulaParser {
     }
 
     @Test
-    public void test57196_Formula() throws IOException {
+    void test57196_Formula() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         Ptg[] ptgs = HSSFFormulaParser.parse("DEC2HEX(HEX2DEC(O8)-O2+D2)", wb, FormulaType.CELL, -1);
         assertNotNull(ptgs, "Ptg array should not be null");

@@ -44,7 +44,7 @@ public abstract class BaseTestBorderStyle {
      *   how to format normal numbers
      */
     @Test
-    public void testBorderStyle() throws IOException {
+    void testBorderStyle() throws IOException {
         String ext = _testDataProvider.getStandardFileNameExtension();
         Workbook wb = _testDataProvider.openSampleWorkbook("59264."+ext);
         Sheet sh = wb.getSheetAt(0);

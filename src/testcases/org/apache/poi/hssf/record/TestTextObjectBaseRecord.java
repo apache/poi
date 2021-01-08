@@ -53,7 +53,7 @@ public final class TestTextObjectBaseRecord {
     );
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(data);
         TextObjectRecord record = new TextObjectRecord(in);
 
@@ -66,7 +66,7 @@ public final class TestTextObjectBaseRecord {
     }
 
     @Test
-    public void testStore() {
+    void testStore() {
         TextObjectRecord record = new TextObjectRecord();
 
         HSSFRichTextString str = new HSSFRichTextString("AB");

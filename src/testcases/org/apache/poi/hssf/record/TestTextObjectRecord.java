@@ -50,7 +50,7 @@ public final class TestTextObjectRecord {
     );
 
     @Test
-    public void testRead() {
+    void testRead() {
 
         RecordInputStream is =TestcaseRecordInputStream.create(simpleData);
         TextObjectRecord record = new TextObjectRecord(is);
@@ -63,7 +63,7 @@ public final class TestTextObjectRecord {
     }
 
     @Test
-    public void testWrite() {
+    void testWrite() {
         HSSFRichTextString str = new HSSFRichTextString("Hello, World!");
 
         TextObjectRecord record = new TextObjectRecord();
@@ -88,7 +88,7 @@ public final class TestTextObjectRecord {
      * Zero {@link ContinueRecord}s follow a {@link TextObjectRecord} if the text is empty
      */
     @Test
-    public void testWriteEmpty() {
+    void testWriteEmpty() {
         HSSFRichTextString str = new HSSFRichTextString("");
 
         TextObjectRecord record = new TextObjectRecord();
@@ -111,7 +111,7 @@ public final class TestTextObjectRecord {
      * Test that TextObjectRecord serializes logs records properly.
      */
     @Test
-    public void testLongRecords() {
+    void testLongRecords() {
         int[] lengths = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
         for (int length : lengths) {
             StringBuilder buff = new StringBuilder(length);
@@ -138,7 +138,7 @@ public final class TestTextObjectRecord {
      * Test cloning
      */
     @Test
-    public void testClone() {
+    void testClone() {
         String text = "Hello, World";
         HSSFRichTextString str = new HSSFRichTextString(text);
 
@@ -183,7 +183,7 @@ public final class TestTextObjectRecord {
         );
 
     @Test
-    public void testLinkFormula() {
+    void testLinkFormula() {
         RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(linkData));
         is.nextRecord();
         TextObjectRecord rec = new TextObjectRecord(is);

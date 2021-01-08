@@ -45,7 +45,7 @@ public final class TestAbortableListener {
 	}
 
 	@Test
-	public void testAbortingBasics() throws Exception {
+	void testAbortingBasics() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1000);
 
 		HSSFRequest req = new HSSFRequest();
@@ -65,7 +65,7 @@ public final class TestAbortableListener {
 	}
 
 	@Test
-	public void testAbortStops() throws Exception {
+	void testAbortStops() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1);
 
 		HSSFRequest req = new HSSFRequest();

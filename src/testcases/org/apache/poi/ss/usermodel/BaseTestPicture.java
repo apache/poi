@@ -104,7 +104,7 @@ public abstract class BaseTestPicture {
 
 
     @Test
-    public void testResizeNoColumns() throws IOException {
+    void testResizeNoColumns() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -115,7 +115,7 @@ public abstract class BaseTestPicture {
     }
 
     @Test
-    public void testResizeWithColumns() throws IOException {
+    void testResizeWithColumns() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPageItemRecord {
 	@Test
-	public void testMoreThanOneInfoItem_bug46917() {
+	void testMoreThanOneInfoItem_bug46917() {
 		byte[] data = HexRead.readFromString("01 02 03 04 05 06 07 08 09 0A 0B 0C");
 		RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
 		PageItemRecord rec = new PageItemRecord(in);
@@ -43,7 +43,7 @@ public final class TestPageItemRecord {
 	}
 
 	@Test
-	public void testSerialize() {
+	void testSerialize() {
 		confirmSerialize("01 02 03 04 05 06");
 		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C");
 		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12");

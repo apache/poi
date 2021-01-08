@@ -30,7 +30,7 @@ public final class TestDrawingGroupRecord {
     private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
 
     @Test
-    public void testGetRecordSize() {
+    void testGetRecordSize() {
         DrawingGroupRecord r = new DrawingGroupRecord();
         assertEquals(4, r.getRecordSize());
 
@@ -67,7 +67,7 @@ public final class TestDrawingGroupRecord {
     }
 
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         // Check under max record size
         DrawingGroupRecord r = new DrawingGroupRecord();
         byte[] rawData = new byte[100];
@@ -118,7 +118,7 @@ public final class TestDrawingGroupRecord {
     }
 
     @Test
-    public void testGrossSizeFromDataSize() {
+    void testGrossSizeFromDataSize() {
         assertEquals( 4, DrawingGroupRecord.grossSizeFromDataSize( 0 ) );
         assertEquals( 5, DrawingGroupRecord.grossSizeFromDataSize( 1 ) );
         assertEquals( MAX_RECORD_SIZE, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE ) );

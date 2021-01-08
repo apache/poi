@@ -31,7 +31,7 @@ public final class TestAutoFilterInfoRecord {
     };
 
     @Test
-    public void testRead() {
+    void testRead() {
 
         AutoFilterInfoRecord record = new AutoFilterInfoRecord(TestcaseRecordInputStream.create(AutoFilterInfoRecord.sid, data));
 
@@ -43,7 +43,7 @@ public final class TestAutoFilterInfoRecord {
     }
 
     @Test
-    public void testWrite() {
+    void testWrite() {
         AutoFilterInfoRecord record = new AutoFilterInfoRecord();
         record.setNumEntries((short)3);
 
@@ -54,7 +54,7 @@ public final class TestAutoFilterInfoRecord {
     }
 
     @Test
-    public void testClone()
+    void testClone()
     {
         AutoFilterInfoRecord record = new AutoFilterInfoRecord();
         record.setNumEntries((short)3);

@@ -36,7 +36,7 @@ public final class TestSheetHiding extends BaseTestSheetHiding {
     }
 
     @Test
-    public void testInternalWorkbookHidden() {
+    void testInternalWorkbookHidden() {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("MySheet");
         InternalWorkbook intWb = wb.getWorkbook();

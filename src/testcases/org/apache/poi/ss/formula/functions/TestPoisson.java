@@ -45,7 +45,7 @@ public class TestPoisson {
 	}
 
     @Test
-    public void testCumulativeProbability()
+    void testCumulativeProbability()
     {
         double x = 1;
         double mean = 0.2;
@@ -57,7 +57,7 @@ public class TestPoisson {
     }
 
     @Test
-    public void testNonCumulativeProbability()
+    void testNonCumulativeProbability()
     {
         double x = 0;
         double mean = 0.2;
@@ -69,7 +69,7 @@ public class TestPoisson {
     }
 
     @Test
-    public void testNegativeMean()
+    void testNegativeMean()
     {
         double x = 0;
         double mean = -0.2;
@@ -80,7 +80,7 @@ public class TestPoisson {
     }
 
     @Test
-    public void testNegativeX()
+    void testNegativeX()
     {
         double x = -1;
         double mean = 0.2;
@@ -91,7 +91,7 @@ public class TestPoisson {
     }
 
     @Test
-    public void testXAsDecimalNumber()
+    void testXAsDecimalNumber()
     {
         double x = 1.1;
         double mean = 0.2;
@@ -103,7 +103,7 @@ public class TestPoisson {
     }
 
     @Test
-    public void testXZeroMeanZero()
+    void testXZeroMeanZero()
     {
         double x = 0;
         double mean = 0;

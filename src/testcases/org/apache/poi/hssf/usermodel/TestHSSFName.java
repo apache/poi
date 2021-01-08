@@ -55,7 +55,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
     @Test
-    public void testRepeatingRowsAndColumnsNames() throws Exception {
+    void testRepeatingRowsAndColumnsNames() throws Exception {
          // First test that setting RR&C for same sheet more than once only creates a
          // single  Print_Titles built-in record
          HSSFWorkbook wb = new HSSFWorkbook();
@@ -103,7 +103,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      }
 
     @Test
-    public void testNamedRange() throws Exception {
+    void testNamedRange() throws Exception {
         HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
         //Creating new Named Range
@@ -141,7 +141,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9632" target="_bug">#9632</a>
      */
     @Test
-    public void testNamedRead() throws Exception {
+    void testNamedRead() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         //Get index of the named range with the name = "NamedRangeName" , which was defined in input.xls as A1:D10
@@ -174,7 +174,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16411" target="_bug">#16411</a>
      */
     @Test
-    public void testNamedReadModify() throws Exception {
+    void testNamedReadModify() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         HSSFName name = wb.getNameAt(0);
@@ -195,7 +195,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
       * Test to see if the print area can be retrieved from an excel created file
       */
     @Test
-    public void testPrintAreaFileRead() throws Exception {
+    void testPrintAreaFileRead() throws Exception {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPrintArea.xls");
 
         String sheetName = workbook.getSheetName(0);
@@ -206,7 +206,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
     @Test
-    public void testDeletedReference() throws Exception {
+    void testDeletedReference() throws Exception {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls")) {
             assertEquals(2, wb.getNumberOfNames());
 
@@ -232,7 +232,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * otherwise created named don't appear in the drop-down to the left of formula bar in Excel
      */
     @Test
-    public void testTypeOfRootPtg() throws Exception {
+    void testTypeOfRootPtg() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("CSCO");
 

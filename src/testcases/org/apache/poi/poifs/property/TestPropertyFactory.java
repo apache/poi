@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public final class TestPropertyFactory {
 
     @Test
-    public void testConvertToProperties() throws IOException {
+    void testConvertToProperties() throws IOException {
 
 		// real data from a real file!
 		String hexData =

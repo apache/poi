@@ -36,7 +36,7 @@ public class TestStringUtil {
      * test getFromUnicodeHigh for symbols with code below and more 127
      */
     @Test
-    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127() {
+    void testGetFromUnicodeHighSymbolsWithCodesMoreThan127() {
         byte[] test_data = new byte[]{0x22, 0x04,
                                       0x35, 0x04,
                                       0x41, 0x04,
@@ -54,7 +54,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void testPutCompressedUnicode() {
+    void testPutCompressedUnicode() {
         byte[] output = new byte[100];
         byte[] expected_output =
                 {
@@ -81,7 +81,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void testPutUncompressedUnicode() {
+    void testPutUncompressedUnicode() {
         byte[] output = new byte[100];
         String input = "Hello World";
         byte[] expected_output = {

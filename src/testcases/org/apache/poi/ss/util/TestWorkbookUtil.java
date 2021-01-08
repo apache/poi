@@ -32,7 +32,7 @@ public final class TestWorkbookUtil {
 	 * {@link org.apache.poi.hssf.record.TestBoundSheetRecord#testValidNames()}
 	 */
 	@Test
-	public void testCreateSafeNames() {
+	void testCreateSafeNames() {
 
 		String p = "Sheet1";
 		String actual = WorkbookUtil.createSafeSheetName(p);

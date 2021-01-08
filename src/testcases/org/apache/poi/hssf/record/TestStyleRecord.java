@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestStyleRecord {
 	@Test
-	public void testUnicodeReadName() {
+	void testUnicodeReadName() {
 		byte[] data = HexRead.readFromString(
 				"11 00 09 00 01 38 5E C4 89 5F 00 53 00 68 00 65 00 65 00 74 00 31 00");
 		RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);

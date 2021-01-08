@@ -143,7 +143,7 @@ public class TestDrawingAggregate {
      */
     @ParameterizedTest
     @MethodSource("samples")
-    public void testAllTestSamples(File file) throws IOException {
+    void testAllTestSamples(File file) throws IOException {
         boolean ignoreParse = true;
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(file.getName())) {
             ignoreParse = false;
@@ -196,7 +196,7 @@ public class TestDrawingAggregate {
      * when reading incomplete data ensure that the serialized bytes match the source
      */
     @Test
-    public void testIncompleteData() throws IOException {
+    void testIncompleteData() throws IOException {
         //EscherDgContainer and EscherSpgrContainer length exceeds the actual length of the data
         String data =
             "H4sIAAAAAAAAAGWOOw7CQAxE32YTsSRIWSgQJSUloqSm5g4ICURBg+iBK3APGi6wBWeh9xGYbEps2WON"+
@@ -227,7 +227,7 @@ public class TestDrawingAggregate {
      * TODO: figure out why it fails with "RecordFormatException: 0 bytes written but getRecordSize() reports 80"
      */
     @Test
-    public void testFailing() throws IOException {
+    void testFailing() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("15573.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
             HSSFPatriarch dp = sh.getDrawingPatriarch();
@@ -255,7 +255,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testSolverContainerMustBeSavedDuringSerialization() throws IOException{
+    void testSolverContainerMustBeSavedDuringSerialization() throws IOException{
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("SolverContainerAfterSPGR.xls")) {
             HSSFSheet sh = wb1.getSheetAt(0);
             InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
@@ -289,7 +289,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testFileWithTextbox() throws IOException{
+    void testFileWithTextbox() throws IOException{
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("text.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
             InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
@@ -309,7 +309,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testFileWithCharts() throws IOException {
+    void testFileWithCharts() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
             InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
@@ -337,7 +337,7 @@ public class TestDrawingAggregate {
      * test reading drawing aggregate from a test file from Bugzilla 45129
      */
     @Test
-    public void test45129() throws IOException {
+    void test45129() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45129.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
 
@@ -401,7 +401,7 @@ public class TestDrawingAggregate {
      * ...
      */
     @Test
-    public void testSerializeDrawingBigger8k() throws IOException {
+    void testSerializeDrawingBigger8k() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls")) {
             InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
             HSSFSheet sh = wb.getSheetAt(0);
@@ -458,7 +458,7 @@ public class TestDrawingAggregate {
 
 
     @Test
-    public void testSerializeDrawingBigger8k_noAggregation() throws IOException {
+    void testSerializeDrawingBigger8k_noAggregation() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls")) {
             InternalSheet isheet = HSSFTestHelper.getSheetForTest(wb1.getSheetAt(0));
             List<RecordBase> records = isheet.getRecords();
@@ -483,7 +483,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testSerializeDrawingWithComments() throws IOException {
+    void testSerializeDrawingWithComments() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingAndComments.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
             InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
@@ -539,7 +539,7 @@ public class TestDrawingAggregate {
 
 
     @Test
-    public void testFileWithPictures() throws IOException {
+    void testFileWithPictures() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ContinueRecordProblem.xls")) {
             HSSFSheet sh = wb.getSheetAt(0);
 
@@ -594,7 +594,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testUnhandledContinue() throws IOException {
+    void testUnhandledContinue() throws IOException {
         String data =
             "H4sIAAAAAAAAAO3adVRU2/4A8EPHAEOnlEooNaSUdCNIg4CUDCEtQ6gwlITSjYiSkoKA0ikg0i1IyCjS"+
             "QwpSEr8B73v3PS6+9+67vz/eH+615pyz9tn71PqevT/rfGcJOIcLBtDXrNgAgBjAXcMFAAAb9SPDBAAw"+
@@ -737,7 +737,7 @@ public class TestDrawingAggregate {
     }
 
     @Test
-    public void testUnhandledContinue2() throws IOException {
+    void testUnhandledContinue2() throws IOException {
         String data =
             "H4sIAAAAAAAAAO3bdVRUW9sA8AGGrqFHSlpAhSEcQAkJ6UYQyaFBmiEFpCVEOiREGikJSekGlRJQuiQl"+
             "FQFB4ptBvxvIvd+97/fete4f7rWYc9aZc4aZw7P3/s3zbFYB/FiEANTNeD4AAATA2sQCAADIH0wgAEAI"+

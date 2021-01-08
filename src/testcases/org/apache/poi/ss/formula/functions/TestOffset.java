@@ -54,12 +54,12 @@ public final class TestOffset {
 		"+0.01,  0", "0.00,  0","-0.01, -1", "-0.99, -1", "-1.00, -1",
 		"-1.01, -2", "-1.99, -2", "-2.00, -2", "-2.01, -3"
 	})
-	public void testDoubleConversion(double doubleVal, int expected) throws EvaluationException {
+	void testDoubleConversion(double doubleVal, int expected) throws EvaluationException {
 		assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
 	}
 
 	@Test
-	public void testLinearOffsetRange() {
+	void testLinearOffsetRange() {
 		LinearOffsetRange lor;
 
 		lor = new LinearOffsetRange(3, 2);
@@ -89,7 +89,7 @@ public final class TestOffset {
 	}
 
 	@Test
-	public void testOffsetWithEmpty23Arguments() throws IOException {
+	void testOffsetWithEmpty23Arguments() throws IOException {
 		try (Workbook workbook = new HSSFWorkbook()) {
 			Cell cell = workbook.createSheet().createRow(0).createCell(0);
 			cell.setCellFormula("OFFSET(B1,,)");

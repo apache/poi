@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFuncPtg {
 
     @Test
-    public void testRead() {
+    void testRead() {
     	// This function index represents the LEN() function
         byte[] fakeData = { 0x20, 0x00,};
 
@@ -40,7 +40,7 @@ public final class TestFuncPtg {
     }
 
     @Test
-    public void testNumberOfOperands() {
+    void testNumberOfOperands() {
         FuncPtg funcPtg = FuncPtg.create(27); // ROUND() - takes 2 args
         assertEquals(2, funcPtg.getNumberOfOperands());
         assertEquals("ROUND", funcPtg.getName());

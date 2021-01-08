@@ -32,7 +32,7 @@ public final class TestHSSFTextbox {
      * Test that accessors to horizontal and vertical alignment work properly
      */
     @Test
-    public void testAlignment() throws IOException {
+    void testAlignment() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sh1 = wb.createSheet();
             HSSFPatriarch patriarch = sh1.createDrawingPatriarch();
@@ -53,7 +53,7 @@ public final class TestHSSFTextbox {
      * When inserting text make sure that if font is not set we must set the default one.
      */
     @Test
-    public void testSetDeafultTextFormat() throws IOException {
+    void testSetDeafultTextFormat() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

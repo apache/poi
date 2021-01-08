@@ -32,7 +32,7 @@ public final class TestAreaErrPtg extends BaseTestPtg {
      * Tests reading a file containing this ptg.
      */
     @Test
-    public void testReading() throws IOException {
+    void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("AreaErrPtg.xls")) {
             assertEquals("SUM(#REF!)", workbook.getSheetAt(0).getRow(0).getCell(2).getCellFormula(),
                 "Wrong formula string for area error");

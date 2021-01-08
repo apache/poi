@@ -38,7 +38,7 @@ public final class TestBarRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         BarRecord record = new BarRecord(TestcaseRecordInputStream.create(0x1017, data));
         assertEquals( 0, record.getBarSpace());
         assertEquals( 0x96, record.getCategorySpace());
@@ -53,7 +53,7 @@ public final class TestBarRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         BarRecord record = new BarRecord();
         record.setBarSpace( (short)0 );
         record.setCategorySpace( (short)0x96 );

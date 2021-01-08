@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCellReference {
     @Test
-    public void testColNumConversion() {
+    void testColNumConversion() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));
         assertEquals(1, CellReference.convertColStringToIndex("B"));
         assertEquals(25, CellReference.convertColStringToIndex("Z"));
@@ -61,7 +61,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testAbsRef1(){
+    void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
@@ -109,7 +109,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testSpecialSheetNames() {
+    void testSpecialSheetNames() {
         CellReference cf;
         cf = new CellReference("'profit + loss'!A1");
         confirmCell(cf, "profit + loss", 0, 0, false, false, "'profit + loss'!A1");
@@ -133,7 +133,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testClassifyCellReference() {
+    void testClassifyCellReference() {
         confirmNameType("a1", NameType.CELL);
         confirmNameType("pfy1", NameType.NAMED_RANGE);
         confirmNameType("pf1", NameType.NAMED_RANGE); // (col) out of cell range
@@ -148,7 +148,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testClassificationOfRowReferences(){
+    void testClassificationOfRowReferences(){
         confirmNameType("10", NameType.ROW);
         confirmNameType("$10", NameType.ROW);
         confirmNameType("65536", NameType.ROW);

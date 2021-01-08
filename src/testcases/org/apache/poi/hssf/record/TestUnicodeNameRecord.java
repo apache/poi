@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestUnicodeNameRecord {
 
 	@Test
-	public void testReadBook() throws IOException {
+	void testReadBook() throws IOException {
 		// This bit used to crash
 		try (HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls")) {
 			HSSFSheet sheet = book.getSheetAt(0);

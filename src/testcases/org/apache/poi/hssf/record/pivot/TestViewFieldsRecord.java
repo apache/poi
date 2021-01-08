@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public final class TestViewFieldsRecord {
 
 	@Test
-	public void testUnicodeFlag_bug46693() {
+	void testUnicodeFlag_bug46693() {
 		byte[] data = HexRead.readFromString("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
 		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
 		ViewFieldsRecord rec = new ViewFieldsRecord(in);
@@ -43,7 +43,7 @@ public final class TestViewFieldsRecord {
 	}
 
 	@Test
-	public void testSerialize() {
+	void testSerialize() {
 		// This hex data was produced by changing the 'Custom Name' property,
 		// available under 'Field Settings' from the 'PivotTable Field List' (Excel 2007)
 		confirmSerialize("00 00 01 00 01 00 00 00 FF FF");

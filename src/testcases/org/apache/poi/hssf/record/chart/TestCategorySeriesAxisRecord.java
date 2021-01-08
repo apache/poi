@@ -40,7 +40,7 @@ public final class TestCategorySeriesAxisRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(TestcaseRecordInputStream.create(0x1020, data));
         assertEquals( 1, record.getCrossingPoint());
         assertEquals( 1, record.getLabelFrequency());
@@ -55,7 +55,7 @@ public final class TestCategorySeriesAxisRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord();
         record.setCrossingPoint( (short)1 );
         record.setLabelFrequency( (short)1 );

@@ -33,14 +33,14 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPowerEval {
     @Test
-    public void testPositiveValues() {
+    void testPositiveValues() {
         confirm(0, 0, 1);
         confirm(1, 1, 0);
         confirm(9, 3, 2);
     }
 
     @Test
-    public void testNegativeValues() {
+    void testNegativeValues() {
         confirm(-1, -1, 1);
         confirm(1, 1, -1);
         confirm(1, -10, 0);
@@ -48,22 +48,22 @@ public final class TestPowerEval {
     }
 
     @Test
-    public void testPositiveDecimalValues() {
+    void testPositiveDecimalValues() {
         confirm(3, 27, (1/3.0));
     }
 
     @Test
-    public void testNegativeDecimalValues() {
+    void testNegativeDecimalValues() {
         confirm(-3, -27, (1/3.0));
     }
 
     @Test
-    public void testErrorValues() {
+    void testErrorValues() {
         confirmError(-1.00001, 1.1);
     }
 
     @Test
-    public void testInSpreadSheet() {
+    void testInSpreadSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(0);

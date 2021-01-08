@@ -283,7 +283,7 @@ public final class TestHyperlinkRecord {
 	}
 
     @Test
-    public void testReadURLLink(){
+    void testReadURLLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data1);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(2, link.getFirstRow());
@@ -303,7 +303,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testReadFileLink(){
+    void testReadFileLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data2);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(0, link.getFirstRow());
@@ -323,7 +323,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testReadEmailLink(){
+    void testReadEmailLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data3);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(1, link.getFirstRow());
@@ -342,7 +342,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testReadDocumentLink(){
+    void testReadDocumentLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data4);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(3, link.getFirstRow());
@@ -372,7 +372,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testSerialize(){
+    void testSerialize(){
         serialize(data1);
         serialize(data2);
         serialize(data3);
@@ -380,7 +380,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testCreateURLRecord() {
+    void testCreateURLRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
         link.setFirstRow((short)2);
@@ -395,7 +395,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testCreateFileRecord() {
+    void testCreateFileRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newFileLink();
         link.setFirstRow((short)0);
@@ -410,7 +410,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testCreateDocumentRecord() {
+    void testCreateDocumentRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newDocumentLink();
         link.setFirstRow((short)3);
@@ -425,7 +425,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testCreateEmailtRecord() {
+    void testCreateEmailtRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
         link.setFirstRow((short)1);
@@ -440,7 +440,7 @@ public final class TestHyperlinkRecord {
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         byte[][] data = {data1, data2, data3, data4};
         for (final byte[] d : data) {
             RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, d);
@@ -453,7 +453,7 @@ public final class TestHyperlinkRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testReserializeTargetFrame() {
+    void testReserializeTargetFrame() {
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataTargetFrame);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
@@ -461,7 +461,7 @@ public final class TestHyperlinkRecord {
 	}
 
     @Test
-	public void testReserializeLinkToWorkbook() {
+	void testReserializeLinkToWorkbook() {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataLinkToWorkbook);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
@@ -472,7 +472,7 @@ public final class TestHyperlinkRecord {
 	}
 
     @Test
-    public void testReserializeUNC() {
+    void testReserializeUNC() {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataUNC);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
@@ -482,7 +482,7 @@ public final class TestHyperlinkRecord {
 	}
 
     @Test
-	public void testGUID() throws IOException {
+	void testGUID() throws IOException {
 		ClassID g;
 		g = new ClassID("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
 		confirmGUID(g, 0x3F2504E0, 0x4F89, 0x11D3, 0x9A0C0305E82C3301L);
@@ -522,7 +522,7 @@ public final class TestHyperlinkRecord {
 	}
 
 	@Test
-    public void test47498(){
+    void test47498(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data_47498);
         HyperlinkRecord link = new HyperlinkRecord(is);
         assertEquals(2, link.getFirstRow());

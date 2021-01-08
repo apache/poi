@@ -33,7 +33,7 @@ public final class TestPercentPtg extends BaseTestPtg {
      * Tests reading a file containing this ptg.
      */
     @Test
-    public void testReading() throws IOException {
+    void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("PercentPtg.xls")) {
             HSSFSheet sheet = workbook.getSheetAt(0);
 

@@ -58,7 +58,7 @@ public final class TestFilteringDirectoryNode {
     }
 
     @Test
-    public void testNoFiltering() throws Exception {
+    void testNoFiltering() throws Exception {
         FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<>());
         assertEquals(3, d.getEntryCount());
         assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
@@ -80,7 +80,7 @@ public final class TestFilteringDirectoryNode {
     }
 
     @Test
-    public void testChildFiltering() throws Exception {
+    void testChildFiltering() throws Exception {
         List<String> excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName());
         FilteringDirectoryNode d1 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
@@ -132,7 +132,7 @@ public final class TestFilteringDirectoryNode {
     }
 
     @Test
-    public void testNestedFiltering() throws Exception {
+    void testNestedFiltering() throws Exception {
         List<String> excl = Arrays.asList(dirA.getName() + "/" + "MadeUp",
             dirA.getName() + "/" + eA.getName(),
             dirA.getName() + "/" + dirAA.getName() + "/Test",
@@ -158,7 +158,7 @@ public final class TestFilteringDirectoryNode {
     }
 
     @Test
-    public void testNullDirectory() {
+    void testNullDirectory() {
         assertThrows(IllegalArgumentException.class, () -> new FilteringDirectoryNode(null, null));
     }
 }

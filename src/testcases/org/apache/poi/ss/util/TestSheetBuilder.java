@@ -46,7 +46,7 @@ public final class TestSheetBuilder {
     };
 
     @Test
-    public void testNotCreateEmptyCells() throws IOException {
+    void testNotCreateEmptyCells() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = new SheetBuilder(wb, testData).build();
 
@@ -74,7 +74,7 @@ public final class TestSheetBuilder {
     }
 
     @Test
-    public void testEmptyCells() throws IOException {
+    void testEmptyCells() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = new SheetBuilder(wb, testData).setCreateEmptyCells(true).build();
 
@@ -85,7 +85,7 @@ public final class TestSheetBuilder {
     }
 
     @Test
-    public void testSheetName() throws IOException {
+    void testSheetName() throws IOException {
         final String sheetName = "TEST SHEET NAME";
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = new SheetBuilder(wb, testData).setSheetName(sheetName).build();

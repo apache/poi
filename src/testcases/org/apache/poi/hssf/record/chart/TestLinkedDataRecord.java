@@ -158,7 +158,7 @@ recordid = 0x1051, size =8
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         LinkedDataRecord record = new LinkedDataRecord(TestcaseRecordInputStream.create(0x1051, data));
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
         assertEquals( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET, record.getReferenceType());
@@ -177,7 +177,7 @@ recordid = 0x1051, size =8
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         LinkedDataRecord record = new LinkedDataRecord();
         record.setLinkType( LinkedDataRecord.LINK_TYPE_VALUES );
         record.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );

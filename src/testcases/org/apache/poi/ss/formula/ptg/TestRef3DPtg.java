@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRef3DPtg extends BaseTestPtg {
 	@Test
-	public void testToFormulaString() throws IOException {
+	void testToFormulaString() throws IOException {
 
 		Ref3DPtg target = new Ref3DPtg("A1", (short)0);
 

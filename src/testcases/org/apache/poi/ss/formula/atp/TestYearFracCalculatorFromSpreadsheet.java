@@ -52,7 +52,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 	}
 
 	@Test
-	public void testAll() throws Exception {
+	void testAll() throws Exception {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("yearfracExamples.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);

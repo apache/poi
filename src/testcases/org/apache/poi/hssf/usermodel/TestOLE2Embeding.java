@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 public final class TestOLE2Embeding {
 
     @Test
-    public void testEmbeding() throws Exception {
+    void testEmbeding() throws Exception {
         // This used to break, until bug #43116 was fixed
         try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
             // Check we can get at the Escher layer still
@@ -49,7 +49,7 @@ public final class TestOLE2Embeding {
     }
 
     @Test
-    public void testEmbeddedObjects() throws Exception {
+    void testEmbeddedObjects() throws Exception {
         try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
             List<HSSFObjectData> objects = workbook.getAllEmbeddedObjects();
             assertEquals(2, objects.size(), "Wrong number of objects");
@@ -59,7 +59,7 @@ public final class TestOLE2Embeding {
     }
 
     @Test
-    public void testReallyEmbedSomething() throws Exception {
+    void testReallyEmbedSomething() throws Exception {
     	HSSFWorkbook wb1 = new HSSFWorkbook();
     	HSSFSheet sheet = wb1.createSheet();
     	HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

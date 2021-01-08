@@ -66,7 +66,7 @@ public final class TestPropertySorter {
      * Test sorting of properties in <code>DirectoryProperty</code>
      */
     @Test
-    public void testSortProperties() throws IOException {
+    void testSortProperties() throws IOException {
         POIFSFileSystem fs = openSampleFS();
         Property[] props = getVBAProperties(fs);
 
@@ -98,7 +98,7 @@ public final class TestPropertySorter {
      * Serialize file system and verify that the order of properties is the same as in the original file.
      */
     @Test
-    public void testSerialization() throws IOException {
+    void testSerialization() throws IOException {
         POIFSFileSystem fs = openSampleFS();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -61,7 +61,7 @@ public final class TestSumifs {
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
     @Test
-	public void testExample1() {
+	void testExample1() {
         // mimic test sample from http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
         ValueEval[] a2a9 = new ValueEval[] {
                 new NumberEval(5),
@@ -144,7 +144,7 @@ public final class TestSumifs {
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
     @Test
-    public void testExample2() {
+    void testExample2() {
         ValueEval[] b2e2 = new ValueEval[] {
                 new NumberEval(100),
                 new NumberEval(390),
@@ -195,7 +195,7 @@ public final class TestSumifs {
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
     @Test
-    public void testExample3() {
+    void testExample3() {
         //3.3	0.8	5.5	5.5
         ValueEval[] b2e2 = new ValueEval[] {
                 new NumberEval(3.3),
@@ -239,7 +239,7 @@ public final class TestSumifs {
      *  Criteria entered as reference and by using wildcard characters
      */
     @Test
-    public void testFromFile() {
+    void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("sumifs.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -278,7 +278,7 @@ public final class TestSumifs {
     }
 
     @Test
-    public void testBug56655() {
+    void testBug56655() {
         ValueEval[] a2a9 = new ValueEval[] {
                 new NumberEval(5),
                 new NumberEval(4),
@@ -310,7 +310,7 @@ public final class TestSumifs {
     }
 
     @Test
-    public void testBug56655b() {
+    void testBug56655b() {
 /*
         setCellFormula(sheet, 0, 0, "B1*C1");
         sheet.getRow(0).createCell(1).setCellValue("A");
@@ -335,7 +335,7 @@ public final class TestSumifs {
     }
 
     @Test
-    public void testBug56655c() {
+    void testBug56655c() {
 /*
         setCellFormula(sheet, 0, 0, "B1*C1");
         sheet.getRow(0).createCell(1).setCellValue("A");

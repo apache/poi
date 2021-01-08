@@ -53,7 +53,7 @@ public final class TestFormulas {
      * Add 1+1 -- WHoohoo!
      */
     @Test
-    public void testBasicAddIntegers() throws IOException {
+    void testBasicAddIntegers() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();
 
@@ -76,7 +76,7 @@ public final class TestFormulas {
      * Add various integers
      */
     @Test
-    public void testAddIntegers() throws IOException {
+    void testAddIntegers() throws IOException {
         binomialOperator("+");
     }
 
@@ -84,7 +84,7 @@ public final class TestFormulas {
      * Multiply various integers
      */
     @Test
-    public void testMultplyIntegers() throws IOException {
+    void testMultplyIntegers() throws IOException {
         binomialOperator("*");
     }
 
@@ -92,7 +92,7 @@ public final class TestFormulas {
      * Subtract various integers
      */
     @Test
-    public void testSubtractIntegers() throws IOException {
+    void testSubtractIntegers() throws IOException {
         binomialOperator("-");
     }
 
@@ -100,7 +100,7 @@ public final class TestFormulas {
      * Subtract various integers
      */
     @Test
-    public void testDivideIntegers() throws IOException {
+    void testDivideIntegers() throws IOException {
         binomialOperator("/");
     }
 
@@ -108,7 +108,7 @@ public final class TestFormulas {
      * Exponentialize various integers;
      */
     @Test
-    public void testPowerIntegers() throws IOException {
+    void testPowerIntegers() throws IOException {
         binomialOperator("^");
     }
 
@@ -116,7 +116,7 @@ public final class TestFormulas {
      * Concatenate two numbers 1&2 = 12
      */
     @Test
-    public void testConcatIntegers() throws IOException {
+    void testConcatIntegers() throws IOException {
         binomialOperator("&");
     }
 
@@ -124,7 +124,7 @@ public final class TestFormulas {
      * tests 1*2+3*4
      */
     @Test
-    public void testOrderOfOperationsMultiply() throws IOException {
+    void testOrderOfOperationsMultiply() throws IOException {
         orderTest("1*2+3*4");
     }
 
@@ -132,7 +132,7 @@ public final class TestFormulas {
      * tests 1*2+3^4
      */
     @Test
-    public void testOrderOfOperationsPower() throws IOException {
+    void testOrderOfOperationsPower() throws IOException {
         orderTest("1*2+3^4");
     }
 
@@ -140,12 +140,12 @@ public final class TestFormulas {
      * Tests that parenthesis are obeyed
      */
     @Test
-    public void testParenthesis() throws IOException {
+    void testParenthesis() throws IOException {
         orderTest("(1*3)+2+(1+2)*(3^4)^5");
     }
 
     @Test
-    public void testReferencesOpr() throws IOException {
+    void testReferencesOpr() throws IOException {
         String[] operation = new String[] {
                             "+", "-", "*", "/", "^", "&"
                            };
@@ -159,7 +159,7 @@ public final class TestFormulas {
      *
      */
     @Test
-    public void testFloat() throws IOException {
+    void testFloat() throws IOException {
         floatTest("*");
         floatTest("/");
     }
@@ -211,22 +211,22 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testAreaSum() throws IOException {
+    void testAreaSum() throws IOException {
         areaFunctionTest("SUM");
     }
 
     @Test
-    public void testAreaAverage() throws IOException {
+    void testAreaAverage() throws IOException {
         areaFunctionTest("AVERAGE");
     }
 
     @Test
-    public void testRefArraySum() throws IOException {
+    void testRefArraySum() throws IOException {
         refArrayFunctionTest("SUM");
     }
 
     @Test
-    public void testAreaArraySum() throws IOException {
+    void testAreaArraySum() throws IOException {
         refAreaArrayFunctionTest("SUM");
     }
 
@@ -479,7 +479,7 @@ public final class TestFormulas {
 
 
     @Test
-    public void testAbsRefs() throws IOException {
+    void testAbsRefs() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();
             HSSFRow r = s.createRow(0);
@@ -512,7 +512,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testSheetFunctions() throws IOException {
+    void testSheetFunctions() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet("A");
             HSSFRow r = s.createRow(0);
@@ -544,7 +544,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testRVAoperands() throws IOException {
+    void testRVAoperands() throws IOException {
         File file = TempFile.createTempFile("testFormulaRVA",".xls");
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
@@ -583,7 +583,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testStringFormulas() throws IOException {
+    void testStringFormulas() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet("A");
             HSSFRow r = s.createRow(0);
@@ -606,7 +606,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testLogicalFormulas() throws IOException {
+    void testLogicalFormulas() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet("A");
             HSSFRow r = s.createRow(0);
@@ -623,7 +623,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testDateFormulas() throws IOException {
+    void testDateFormulas() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet("testSheet1");
             HSSFRow r = s.createRow(0);
@@ -653,7 +653,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testIfFormulas() throws IOException {
+    void testIfFormulas() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet("testSheet1");
             HSSFRow r = s.createRow(0);
@@ -722,7 +722,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testSumIf() throws IOException {
+    void testSumIf() throws IOException {
         String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
 
         try (HSSFWorkbook wb = openSample("sumifformula.xls")) {
@@ -774,7 +774,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testSquareMacro() throws IOException {
+    void testSquareMacro() throws IOException {
         try (HSSFWorkbook w = openSample("SquareMacro.xls")) {
             HSSFSheet s0 = w.getSheetAt(0);
             HSSFRow[] r = {s0.getRow(0), s0.getRow(1)};
@@ -814,7 +814,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testStringFormulaRead() throws IOException {
+    void testStringFormulaRead() throws IOException {
         try (HSSFWorkbook w = openSample("StringFormulas.xls")) {
             HSSFCell c = w.getSheetAt(0).getRow(0).getCell(0);
             assertEquals("XYZ", c.getRichStringCellValue().getString(), "String Cell value");
@@ -823,7 +823,7 @@ public final class TestFormulas {
 
     /** test for bug 34021*/
     @Test
-    public void testComplexSheetRefs() throws IOException {
+    void testComplexSheetRefs() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s1 = wb1.createSheet("Sheet a.1");
             HSSFSheet s2 = wb1.createSheet("Sheet.A");
@@ -843,7 +843,7 @@ public final class TestFormulas {
 
     /** Unknown Ptg 3C*/
     @Test
-    public void test27272_1() throws IOException {
+    void test27272_1() throws IOException {
         try (HSSFWorkbook wb = openSample("27272_1.xls")) {
             wb.getSheetAt(0);
             assertEquals("Compliance!#REF!", wb.getNameAt(0).getRefersToFormula(), "Reference for named range");
@@ -853,7 +853,7 @@ public final class TestFormulas {
 
     /** Unknown Ptg 3D*/
     @Test
-    public void test27272_2() throws IOException {
+    void test27272_2() throws IOException {
         try (HSSFWorkbook wb = openSample("27272_2.xls")) {
             assertEquals("LOAD.POD_HISTORIES!#REF!", wb.getNameAt(0).getRefersToFormula(), "Reference for named range");
             writeOutAndReadBack(wb).close();
@@ -862,7 +862,7 @@ public final class TestFormulas {
 
     /** MissingArgPtg */
     @Test
-    public void testMissingArgPtg() throws IOException {
+    void testMissingArgPtg() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
             assertDoesNotThrow(() -> cell.setCellFormula("IF(A1=\"A\",1,)"));
@@ -870,7 +870,7 @@ public final class TestFormulas {
     }
 
     @Test
-    public void testSharedFormula() throws IOException {
+    void testSharedFormula() throws IOException {
         try (HSSFWorkbook wb = openSample("SharedFormulaTest.xls")) {
             assertEquals("A$1*2", wb.getSheetAt(0).getRow(1).getCell(1).toString());
             assertEquals("$A11*2", wb.getSheetAt(0).getRow(11).getCell(1).toString());
@@ -883,7 +883,7 @@ public final class TestFormulas {
      * Test creation / evaluation of formulas with sheet-level names
      */
     @Test
-    public void testSheetLevelFormulas() throws IOException {
+    void testSheetLevelFormulas() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sh1 = wb.createSheet("Sheet1");
             HSSFName nm1 = wb.createName();
@@ -931,7 +931,7 @@ public final class TestFormulas {
      * see Bug #49640
      */
     @Test
-    public void testFormulasWithUnderscore() throws IOException{
+    void testFormulasWithUnderscore() throws IOException{
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Name nm1 = wb.createName();
             nm1.setNameName("_score1");

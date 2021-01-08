@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCellReference {
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         CellReference cellReference;
         final String sheet = "Sheet1";
         final String cellRef = "A1";
@@ -87,7 +87,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testCtorFromCell() {
+    void testCtorFromCell() {
         Cell cell = mock(Cell.class, RETURNS_DEEP_STUBS);
         when(cell.getSheet().getSheetName()).thenReturn("sheet");
 
@@ -100,7 +100,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testFormatAsString() {
+    void testFormatAsString() {
         CellReference cellReference;
 
         cellReference = new CellReference(null, 0, 0, false, false);
@@ -128,7 +128,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testGetCellRefParts() {
+    void testGetCellRefParts() {
         CellReference cellReference;
         String[] parts;
 
@@ -196,7 +196,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testGetColNumFromRef() {
+    void testGetColNumFromRef() {
         String cellRef = "A1";
         CellReference cellReference = new CellReference(cellRef);
         assertEquals(0, cellReference.getCol());
@@ -240,7 +240,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testGetRowNumFromRef() {
+    void testGetRowNumFromRef() {
         String cellRef = "A1";
         CellReference cellReference = new CellReference(cellRef);
         assertEquals(0, cellReference.getRow());
@@ -255,7 +255,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testConvertNumToColString() {
+    void testConvertNumToColString() {
         short col = 702;
         String collRef = new CellReference(0, col).formatAsString();
         assertEquals("AAA1", collRef);
@@ -274,7 +274,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testBadRowNumber() {
+    void testBadRowNumber() {
         SpreadsheetVersion v97 = SpreadsheetVersion.EXCEL97;
         SpreadsheetVersion v2007 = SpreadsheetVersion.EXCEL2007;
 
@@ -295,7 +295,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testInvalidReference() {
+    void testInvalidReference() {
         for (String s : new String[]{"Sheet1!#REF!", "'MySheetName'!#REF!", "#REF!"}) {
             assertThrows(IllegalArgumentException.class, () -> new CellReference(s),
                 "Shouldn't be able to create a #REF! "+s);
@@ -310,7 +310,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testConvertColStringToIndex() {
+    void testConvertColStringToIndex() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));
         assertEquals(1, CellReference.convertColStringToIndex("B"));
         assertEquals(14, CellReference.convertColStringToIndex("O"));
@@ -326,7 +326,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testConvertNumColColString() {
+    void testConvertNumColColString() {
         assertEquals("A", CellReference.convertNumToColString(0));
         assertEquals("AV", CellReference.convertNumToColString(47));
         assertEquals("AW", CellReference.convertNumToColString(48));
@@ -362,13 +362,13 @@ public final class TestCellReference {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         CellReference ref = new CellReference("'Sheet 1'!A5");
         assertEquals("org.apache.poi.ss.util.CellReference ['Sheet 1'!A5]", ref.toString());
     }
 
     @Test
-    public void testEqualsAndHashCode() {
+    void testEqualsAndHashCode() {
         CellReference ref1 = new CellReference("'Sheet 1'!A5");
         CellReference ref2 = new CellReference("Sheet 1", 4, 0, false, false);
         assertEquals(ref1, ref2);
@@ -455,7 +455,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void test62828() {
+    void test62828() {
         final Workbook wb = new HSSFWorkbook();
         final Sheet sheet = wb.createSheet("Ctor test");
         final String sheetName = sheet.getSheetName();

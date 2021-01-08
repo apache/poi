@@ -45,7 +45,7 @@ public class TestBinaryRC4 {
     }
 
     @Test
-    public void testValidateWithDefaultPassword() throws GeneralSecurityException {
+    void testValidateWithDefaultPassword() throws GeneralSecurityException {
 
         String docIdSuffixA = "F 35 52 38 0D 75 4A E6 85 C2 FD 78 CE 3D D1 B6"; // valid prefix is 'D'
         String saltHashA = "30 38 BE 5E 93 C5 7E B4 5F 52 CD A1 C6 8F B6 2A";
@@ -62,7 +62,7 @@ public class TestBinaryRC4 {
     }
 
     @Test
-    public void testValidateWithSuppliedPassword() throws GeneralSecurityException {
+    void testValidateWithSuppliedPassword() throws GeneralSecurityException {
 
         String docId = "DF 35 52 38 0D 75 4A E6 85 C2 FD 78 CE 3D D1 B6";
         String saltData = "D4 04 43 EC B7 A7 6F 6A D2 68 C7 DF CF A8 80 68";

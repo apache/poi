@@ -60,21 +60,21 @@ public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
     @Test
-    public void testBug54524() throws IOException {
+    protected void testBug54524() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
     @Test
-    public void testCommentsShifting() throws IOException {
+    protected void testCommentsShifting() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
     @Test
-    public void testShiftWithMergedRegions() throws IOException {
+    protected void testShiftWithMergedRegions() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
         // After removing, you can re-add 'final' keyword to specification of original method.
@@ -82,5 +82,5 @@ public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
     @Test
-    public void testShiftHyperlinks() throws IOException {}
+    protected void testShiftHyperlinks() throws IOException {}
 }

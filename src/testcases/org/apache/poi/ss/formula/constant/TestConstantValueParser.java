@@ -45,13 +45,13 @@ public final class TestConstantValueParser {
 		"10 07 00 00 00 00 00 00 00");
 
 	@Test
-	public void testGetEncodedSize() {
+	void testGetEncodedSize() {
 		int actual = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
 		assertEquals(51, actual);
 	}
 
 	@Test
-	public void testEncode() {
+	void testEncode() {
 		int size = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
 		byte[] data = new byte[size];
 
@@ -61,7 +61,7 @@ public final class TestConstantValueParser {
 	}
 
 	@Test
-	public void testDecode() {
+	void testDecode() {
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SAMPLE_ENCODING);
 
 		Object[] values = ConstantValueParser.parse(in, 4);

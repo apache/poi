@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestMultiOperandNumericFunction {
 
     @Test
-    public void testSettings() {
+    void testSettings() {
         MultiOperandNumericFunction fun = new MultiOperandNumericFunction(true, true) {
             @Override
             protected double evaluate(double[] values) throws EvaluationException {

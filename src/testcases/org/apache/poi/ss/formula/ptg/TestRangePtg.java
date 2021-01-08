@@ -33,7 +33,7 @@ public final class TestRangePtg extends BaseTestPtg {
      * Tests reading a file containing this ptg.
      */
     @Test
-    public void testReading() throws IOException {
+    void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("RangePtg.xls")) {
             HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(1);
             assertEquals(10.0, cell.getNumericCellValue(), 0.0, "Wrong cell value");

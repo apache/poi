@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFormulaParserEval {
 
 	@Test
-	public void testWithNamedRange() {
+	void testWithNamedRange() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 
 		HSSFSheet s = workbook.createSheet("Foo");
@@ -76,7 +76,7 @@ public final class TestFormulaParserEval {
 	}
 
 	@Test
-	public void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
+	void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();

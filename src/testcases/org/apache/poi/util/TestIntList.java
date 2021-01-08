@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestIntList {
     @Test
-    public void testConstructors() {
+    void testConstructors() {
         IntList list = new IntList();
 
         assertTrue(list.isEmpty());
@@ -49,7 +49,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         IntList list = new IntList();
         int[] testArray =
             {
@@ -111,7 +111,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testAddAll() {
+    void testAddAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 5; j++) {
@@ -175,7 +175,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testAddAllGrow() {
+    void testAddAllGrow() {
         IntList list = new IntList(0);
         IntList addList = new IntList(0);
         addList.add(1);
@@ -185,7 +185,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         IntList list = new IntList();
 
         for (int j = 0; j < 500; j++) {
@@ -204,7 +204,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j += 2) {
@@ -220,7 +220,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testContainsAll() {
+    void testContainsAll() {
         IntList list = new IntList();
 
         assertTrue(list.containsAll(list));
@@ -240,7 +240,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         IntList list = new IntList();
 
         assertEquals(list, list);
@@ -267,7 +267,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testGet() {
+    void testGet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -281,7 +281,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testIndexOf() {
+    void testIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -297,7 +297,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         IntList list1 = new IntList();
         IntList list2 = new IntList(1000);
         IntList list3 = new IntList(list1);
@@ -320,7 +320,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testLastIndexOf() {
+    void testLastIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -336,7 +336,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testRemove() {
+    void testRemove() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -358,7 +358,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testRemoveValue() {
+    void testRemoveValue() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -374,7 +374,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testRemoveAll() {
+    void testRemoveAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -411,7 +411,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testRetainAll() {
+    void testRetainAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -447,7 +447,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -461,7 +461,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {
@@ -477,7 +477,7 @@ public final class TestIntList {
     }
 
     @Test
-    public void testToArray() {
+    void testToArray() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++) {

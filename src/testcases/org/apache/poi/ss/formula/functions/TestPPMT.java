@@ -39,7 +39,7 @@ public final class TestPPMT {
      *  http://office.microsoft.com/en-001/excel-help/ppmt-function-HP010342774.aspx
      */
     @Test
-    public void testFromFile() {
+    void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("finance.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

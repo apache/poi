@@ -40,7 +40,7 @@ public class TestOle10Native {
     private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();
 
     @Test
-    public void testOleNative() throws IOException, Ole10NativeException {
+    void testOleNative() throws IOException, Ole10NativeException {
         POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("oleObject1.bin"));
 
         Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(fs);
@@ -50,7 +50,7 @@ public class TestOle10Native {
     }
 
     @Test
-    public void testFiles() throws IOException, Ole10NativeException {
+    void testFiles() throws IOException, Ole10NativeException {
         File[] files = {
                 // bug 51891
                 POIDataSamples.getPOIFSInstance().getFile("multimedia.doc"),
@@ -98,7 +98,7 @@ public class TestOle10Native {
     }
 
     @Test
-    public void testOleNativeOOM() throws IOException {
+    void testOleNativeOOM() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"))) {
             RecordFormatException ex = assertThrows(
                 RecordFormatException.class,

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestAreaReference {
     @Test
-    public void testWholeColumn() {
+    void testWholeColumn() {
         AreaReference oldStyle = AreaReference.getWholeColumn(SpreadsheetVersion.EXCEL97, "A", "B");
         assertEquals(0, oldStyle.getFirstCell().getCol());
         assertEquals(0, oldStyle.getFirstCell().getRow());
@@ -56,7 +56,7 @@ public class TestAreaReference {
     }
 
     @Test
-    public void testWholeRow() {
+    void testWholeRow() {
         AreaReference oldStyle = AreaReference.getWholeRow(SpreadsheetVersion.EXCEL97, "1", "2");
         assertEquals(0, oldStyle.getFirstCell().getCol());
         assertEquals(0, oldStyle.getFirstCell().getRow());
@@ -71,7 +71,7 @@ public class TestAreaReference {
     }
 
     @Test
-    public void test62810() {
+    void test62810() {
         final Workbook wb = new HSSFWorkbook();
         final Sheet sheet = wb.createSheet("Ctor test");
         final String sheetName = sheet.getSheetName();

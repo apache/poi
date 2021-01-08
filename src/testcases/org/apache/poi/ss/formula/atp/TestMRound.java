@@ -38,7 +38,7 @@ public class TestMRound {
         =MROUND(5, -2) 	Returns an error, because -2 and 5 have different signs (#NUM!)     *
      */
     @Test
-    public void testEvaluate(){
+    void testEvaluate(){
         Workbook wb = new HSSFWorkbook();
         Sheet sh = wb.createSheet();
         Cell cell1 = sh.createRow(0).createCell(0);

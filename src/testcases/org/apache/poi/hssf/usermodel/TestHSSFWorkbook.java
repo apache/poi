@@ -857,7 +857,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void testMethods() throws IOException {
+    void testMethods() throws IOException {
         try (HSSFWorkbook wb=new HSSFWorkbook()) {
             assertDoesNotThrow(wb::insertChartRecord);
             //wb.dumpDrawingGroupRecords(true);
@@ -1012,7 +1012,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	}
 
 	@Test
-	public void test49423() throws Exception
+	void test49423() throws Exception
     {
 		HSSFWorkbook workbook = openSampleWorkbook("49423.xls");
 
@@ -1045,7 +1045,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void testRewriteFileBug58480() throws IOException {
+    void testRewriteFileBug58480() throws IOException {
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
 
         try {
@@ -1167,7 +1167,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void testWriteToNewFile() throws Exception {
+    void testWriteToNewFile() throws Exception {
         // Save to a new temp file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
 

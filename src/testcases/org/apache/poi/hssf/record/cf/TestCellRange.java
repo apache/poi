@@ -70,7 +70,7 @@ public final class TestCellRange {
 	}
 
 	@Test
-	public void testContainsMethod()
+	void testContainsMethod()
 	{
 		CellRangeAddress [] ranges = sampleRanges;
 		for(int i=0; i!=ranges.length;i++)
@@ -96,7 +96,7 @@ public final class TestCellRange {
 	private static final CellRangeAddress box5     = createCR( 1, 3, 1,3);
 
 	@Test
-	public void testHasSharedBorderMethod() {
+	void testHasSharedBorderMethod() {
 		assertFalse(CellRangeUtil.hasExactSharedBorder(col1, col1));
 		assertFalse(CellRangeUtil.hasExactSharedBorder(col2, col2));
 		assertTrue(CellRangeUtil.hasExactSharedBorder(col1, col2));
@@ -139,7 +139,7 @@ public final class TestCellRange {
 	}
 
 	@Test
-	public void testIntersectMethod() {
+	void testIntersectMethod() {
 		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(box0, box5));
 		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(box5, box0));
 		assertEquals(CellRangeUtil.NO_INTERSECTION, CellRangeUtil.intersect(box1, box4));
@@ -166,7 +166,7 @@ public final class TestCellRange {
 	 * =$C:$IV,$B$1:$B$8,$B$10:$B$65536,$A:$A
 	 */
 	@Test
-	public void testCreate() {
+	void testCreate() {
 		CellRangeAddress cr = createCR(0, -1, 2, 255); // $C:$IV
 
 		assertFalse(cr.isFullRowRange(), "isFullRowRange");
@@ -181,7 +181,7 @@ public final class TestCellRange {
 	}
 
 	@Test
-	public void testNumberOfCells() {
+	void testNumberOfCells() {
 		assertEquals(1, oneCell.getNumberOfCells());
 		assertEquals(100, box9x9.getNumberOfCells());
 		assertEquals(121, box10to20c.getNumberOfCells());
@@ -189,7 +189,7 @@ public final class TestCellRange {
 
 	@SuppressWarnings("RedundantArrayCreation")
 	@Test
-    public void testMergeCellRanges() {
+    void testMergeCellRanges() {
         // no result on empty
         cellRangeTest(new String[]{ });
 
@@ -222,13 +222,13 @@ public final class TestCellRange {
 
 	@SuppressWarnings("RedundantArrayCreation")
 	@Test
-    public void testMergeCellRanges55380() {
+    void testMergeCellRanges55380() {
         cellRangeTest(new String[]{"C1:D2", "C2:C3"}, new String[] {"C1:D2", "C2:C3"});
         cellRangeTest(new String[]{"A1:C3", "B2:D2"}, new String[] {"A1:C3", "B2:D2"});
         cellRangeTest(new String[]{"C9:D30", "C7:C31"}, new String[] {"C9:D30",  "C7:C31"});
     }
 
-//    public void testResolveRangeOverlap() {
+//    void testResolveRangeOverlap() {
 //        resolveRangeOverlapTest("C1:D2", "C2:C3");
 //    }
 
@@ -258,7 +258,7 @@ public final class TestCellRange {
     }
 
 	@Test
-    public void testValueOf() {
+    void testValueOf() {
         CellRangeAddress cr1 = CellRangeAddress.valueOf("A1:B1");
         assertEquals(0, cr1.getFirstColumn());
         assertEquals(0, cr1.getFirstRow());

@@ -37,7 +37,7 @@ public final class TestEscherContainerRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
     @Test
-	public void testFillFields() {
+	void testFillFields() {
 		EscherRecordFactory f = new DefaultEscherRecordFactory();
 		byte[] data = HexRead.readFromString("0F 02 11 F1 00 00 00 00");
 		EscherRecord r = f.createRecord(data, 0);
@@ -57,7 +57,7 @@ public final class TestEscherContainerRecord {
 	}
 
     @Test
-	public void testSerialize() {
+	void testSerialize() {
 		UnknownEscherRecord r = new UnknownEscherRecord();
 		r.setOptions((short) 0x123F);
 		r.setRecordId((short) 0xF112);
@@ -78,7 +78,7 @@ public final class TestEscherContainerRecord {
 	}
 
     @Test
-	public void testToString() {
+	void testToString() {
 		EscherContainerRecord r = new EscherContainerRecord();
 		r.setRecordId(EscherContainerRecord.SP_CONTAINER);
 		r.setOptions((short) 0x000F);
@@ -176,7 +176,7 @@ public final class TestEscherContainerRecord {
 	}
 
     @Test
-	public void testGetRecordSize() {
+	void testGetRecordSize() {
 		EscherContainerRecord r = new EscherContainerRecord();
 		r.addChildRecord(new DummyEscherRecord());
 		assertEquals(18, r.getRecordSize());
@@ -187,7 +187,7 @@ public final class TestEscherContainerRecord {
 	 *  but hopefully we now read the correct size.
 	 */
     @Test
-	public void testBug44857() {
+	void testBug44857() {
 		byte[] data = _samples.readFile("Container.dat");
 
 		// This used to fail with an OutOfMemory
@@ -203,7 +203,7 @@ public final class TestEscherContainerRecord {
 	 * Ensure {@link EscherContainerRecord} doesn't spill its guts everywhere
 	 */
     @Test
-	public void testChildren() {
+	void testChildren() {
 		EscherContainerRecord ecr = new EscherContainerRecord();
 		List<EscherRecord> children0 = ecr.getChildRecords();
 		assertEquals(0, children0.size());

@@ -35,7 +35,7 @@ public final class TestSeriesChartGroupIndexRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         SeriesChartGroupIndexRecord record = new SeriesChartGroupIndexRecord(TestcaseRecordInputStream.create(0x1045, data));
         assertEquals( 0, record.getChartGroupIndex());
 
@@ -44,7 +44,7 @@ public final class TestSeriesChartGroupIndexRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SeriesChartGroupIndexRecord record = new SeriesChartGroupIndexRecord();
         record.setChartGroupIndex( (short)0 );
 

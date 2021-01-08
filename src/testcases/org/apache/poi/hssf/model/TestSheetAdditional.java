@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestSheetAdditional {
 	@Test
-	public void testGetCellWidth() {
+	void testGetCellWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		ColumnInfoRecord nci = new ColumnInfoRecord();
 
@@ -55,7 +55,7 @@ public final class TestSheetAdditional {
 	}
 
 	@Test
-	public void testMaxColumnWidth() {
+	void testMaxColumnWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		// the limit
 		sheet.setColumnWidth(0, 255*256);

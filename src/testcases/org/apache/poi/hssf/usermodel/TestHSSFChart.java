@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public final class TestHSSFChart {
 
 	@Test
-	public void testSingleChart() {
+	void testSingleChart() {
 		HSSFWorkbook wb = openSampleWorkbook("WithChart.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
@@ -69,7 +69,7 @@ public final class TestHSSFChart {
 	}
 
 	@Test
-	public void testTwoCharts() {
+	void testTwoCharts() {
 		HSSFWorkbook wb = openSampleWorkbook("WithTwoCharts.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
@@ -102,7 +102,7 @@ public final class TestHSSFChart {
 	}
 
 	@Test
-	public void testThreeCharts() {
+	void testThreeCharts() {
 		HSSFWorkbook wb = openSampleWorkbook("WithThreeCharts.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
@@ -143,7 +143,7 @@ public final class TestHSSFChart {
 	}
 
     @Test
-    public void testExistingSheet3() throws Exception {
+    void testExistingSheet3() throws Exception {
         HSSFWorkbook wb = openSampleWorkbook("49581.xls");
 
         HSSFSheet sheet = wb.getSheetAt( 2 ) ;
@@ -166,7 +166,7 @@ public final class TestHSSFChart {
     }
 
     @Test
-    public void testExistingSheet2() throws Exception {
+    void testExistingSheet2() throws Exception {
         HSSFWorkbook wb = openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
@@ -198,7 +198,7 @@ public final class TestHSSFChart {
     }
 
     @Test
-    public void testExistingSheet1() throws Exception {
+    void testExistingSheet1() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("49581.xls")) {
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFChart[] charts = HSSFChart.getSheetCharts(sheet);
@@ -237,7 +237,7 @@ public final class TestHSSFChart {
      * Bug 26862: HSSFWorkbook.cloneSheet copies charts
      */
     @Test
-    public void test26862() throws IOException, Exception {
+    void test26862() throws IOException, Exception {
         HSSFWorkbook wb = openSampleWorkbook("SimpleChart.xls");
         HSSFSheet srcSheet = wb.getSheetAt(0);
         HSSFChart[] srcCharts = HSSFChart.getSheetCharts(srcSheet);

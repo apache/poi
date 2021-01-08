@@ -45,7 +45,7 @@ public final class TestLbsDataSubRecord {
      * test data was taken from 47701.xls
      */
     @Test
-    public void test_47701(){
+    void test_47701(){
         byte[] data = HexRead.readFromString(
                         "15, 00, 12, 00, 12, 00, 02, 00, 11, 20, " +
                         "00, 00, 00, 00, 80, 3D, 03, 05, 00, 00, " +
@@ -79,7 +79,7 @@ public final class TestLbsDataSubRecord {
      * test data was taken from the file attached to Bugzilla 45778
      */
     @Test
-    public void test_45778(){
+    void test_45778(){
         byte[] data = HexRead.readFromString(
                                 "15, 00, 12, 00, 14, 00, 01, 00, 01, 00, " +
                                 "01, 21, 00, 00, 3C, 13, F4, 03, 00, 00, " +
@@ -119,7 +119,7 @@ public final class TestLbsDataSubRecord {
      * There are 5 padding bytes that are removed by POI
      */
     @Test
-    public void test_remove_padding(){
+    void test_remove_padding(){
         byte[] data = HexRead.readFromString(
                         "5D, 00, 4C, 00, " +
                         "15, 00, 12, 00, 12, 00, 01, 00, 11, 00, " +
@@ -153,7 +153,7 @@ public final class TestLbsDataSubRecord {
     }
 
     @Test
-    public void test_LbsDropData() throws IOException{
+    void test_LbsDropData() throws IOException{
         byte[] data = HexRead.readFromString(
                                  //LbsDropData
                                  "0A, 00, " + //flags

@@ -65,7 +65,7 @@ public final class TestTFunc {
 	}
 
 	@Test
-	public void testTextValues() {
+	void testTextValues() {
 		confirmText("abc");
 		confirmText("");
 		confirmText(" ");
@@ -80,7 +80,7 @@ public final class TestTFunc {
 	}
 
 	@Test
-	public void testErrorValues() {
+	void testErrorValues() {
 
 		confirmError(ErrorEval.VALUE_INVALID);
 		confirmError(ErrorEval.NA);
@@ -98,14 +98,14 @@ public final class TestTFunc {
 	}
 
 	@Test
-	public void testOtherValues() {
+	void testOtherValues() {
 		confirmOther(new NumberEval(2));
 		confirmOther(BoolEval.FALSE);
 		confirmOther(BlankEval.instance);  // can this particular case be verified?
 	}
 
 	@Test
-	public void testRefValues() {
+	void testRefValues() {
 		ValueEval eval;
 
 		eval = invokeTWithReference(new StringEval("def"));
@@ -123,7 +123,7 @@ public final class TestTFunc {
 	}
 
 	@Test
-	public void testAreaArg() {
+	void testAreaArg() {
 		ValueEval[] areaValues = new ValueEval[] {
 			new StringEval("abc"), new StringEval("def"),
 			new StringEval("ghi"), new StringEval("jkl"),

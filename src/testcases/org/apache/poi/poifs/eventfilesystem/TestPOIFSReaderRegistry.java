@@ -60,7 +60,7 @@ public final class TestPOIFSReaderRegistry {
      * Test empty registry
      */
     @Test
-    public void testEmptyRegistry() {
+    void testEmptyRegistry() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
         for (POIFSDocumentPath path : paths) {
@@ -77,7 +77,7 @@ public final class TestPOIFSReaderRegistry {
      * Test mixed registration operations
      */
     @Test
-    public void testMixedRegistrationOperations() {
+    void testMixedRegistrationOperations() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
         for (int j = 0; j < listeners.length; j++)

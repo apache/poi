@@ -35,7 +35,7 @@ public final class TestAxisUsedRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         AxisUsedRecord record = new AxisUsedRecord(TestcaseRecordInputStream.create(0x1046, data));
         assertEquals( 1, record.getNumAxis());
 
@@ -44,7 +44,7 @@ public final class TestAxisUsedRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         AxisUsedRecord record = new AxisUsedRecord();
         record.setNumAxis( (short)1 );
 

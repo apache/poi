@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestHSSFOptimiser {
     @Test
-    public void testDoesNoHarmIfNothingToDo() {
+    void testDoesNoHarmIfNothingToDo() {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // New files start with 4 built in fonts, and 21 built in styles
@@ -69,7 +69,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testOptimiseFonts() {
+    void testOptimiseFonts() {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // Add 6 fonts, some duplicates
@@ -168,7 +168,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testOptimiseStyles() {
+    void testOptimiseStyles() {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // Two fonts
@@ -285,7 +285,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testOptimiseStylesCheckActualStyles() {
+    void testOptimiseStylesCheckActualStyles() {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // Several styles
@@ -326,7 +326,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testColumnAndRowStyles() {
+    void testColumnAndRowStyles() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
@@ -359,7 +359,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testUnusedStyle() {
+    void testUnusedStyle() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
@@ -397,7 +397,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testUnusedStyleOneUsed() {
+    void testUnusedStyleOneUsed() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
@@ -435,7 +435,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testDefaultColumnStyleWitoutCell() {
+    void testDefaultColumnStyleWitoutCell() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
@@ -477,7 +477,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testUserDefinedStylesAreNeverOptimizedAway() {
+    void testUserDefinedStylesAreNeverOptimizedAway() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
@@ -536,7 +536,7 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testBug57517() {
+    void testBug57517() {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(21, wb.getNumCellStyles(),
             "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");

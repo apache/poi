@@ -42,7 +42,7 @@ public final class TestExternalNameReference {
 	 * tests <tt>NameXPtg for external cell reference by name</tt> and logic in Workbook below that
 	 */
 	@Test
-	public void testReadCalcSheet() {
+	void testReadCalcSheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("XRefCalc.xls");
 		HSSFName name = wb.getName("QUANT");
 		assertNotNull(name);
@@ -78,7 +78,7 @@ public final class TestExternalNameReference {
 	}
 
 	@Test
-	public void testReadReferencedSheet() {
+	void testReadReferencedSheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("XRefCalcData.xls");
 		HSSFName name = wb.getName("COSTS");
 		assertNotNull(name);
@@ -92,7 +92,7 @@ public final class TestExternalNameReference {
 	}
 
 	@Test
-	public void testEvaluate() {
+	void testEvaluate() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("XRefCalc.xls");
 		HSSFWorkbook wb2 = HSSFTestDataSamples.openSampleWorkbook("XRefCalcData.xls");
 		HSSFName name = wb.getName("QUANT");

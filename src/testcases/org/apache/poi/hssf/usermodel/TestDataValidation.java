@@ -114,7 +114,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testAddToExistingSheet() throws Exception {
+    void testAddToExistingSheet() throws Exception {
 
 		// dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no
 		// DataValidations.  It's important that the example has one SHEETPROTECTION record.
@@ -191,7 +191,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
 	}
 
 	@Test
-    public void testGetDataValidationsAny() throws Exception {
+    void testGetDataValidationsAny() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -236,7 +236,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsIntegerFormula() throws Exception {
+    void testGetDataValidationsIntegerFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -263,7 +263,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsIntegerValue() throws Exception {
+    void testGetDataValidationsIntegerValue() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -290,7 +290,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsDecimal() throws Exception {
+    void testGetDataValidationsDecimal() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -317,7 +317,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsDate() throws Exception {
+    void testGetDataValidationsDate() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -344,7 +344,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsListExplicit() throws Exception {
+    void testGetDataValidationsListExplicit() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -378,7 +378,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsListFormula() throws Exception {
+    void testGetDataValidationsListFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -407,7 +407,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 	@Test
-    public void testGetDataValidationsFormula() throws Exception {
+    void testGetDataValidationsFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             List<HSSFDataValidation> list = sheet.getDataValidations();

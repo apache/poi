@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCFHeaderRecord {
 	@Test
-	public void testCreateCFHeaderRecord () {
+	void testCreateCFHeaderRecord () {
 		CFHeaderRecord record = new CFHeaderRecord();
 		CellRangeAddress[] ranges = {
 			new CellRangeAddress(0,0xFFFF,5,5),
@@ -64,7 +64,7 @@ public final class TestCFHeaderRecord {
 	}
 
 	@Test
-    public void testCreateCFHeader12Record () {
+    void testCreateCFHeader12Record () {
         CFHeader12Record record = new CFHeader12Record();
         CellRangeAddress[] ranges = {
             new CellRangeAddress(0,0xFFFF,5,5),
@@ -97,7 +97,7 @@ public final class TestCFHeaderRecord {
     }
 
 	@Test
-	public void testSerialization() {
+	void testSerialization() {
 		byte[] recordData =
 		{
 			(byte)0x03, (byte)0x00,
@@ -149,7 +149,7 @@ public final class TestCFHeaderRecord {
 	}
 
 	@Test
-	public void testExtremeRows() {
+	void testExtremeRows() {
 		byte[] recordData = {
 			(byte)0x13, (byte)0x00, // nFormats
 			(byte)0x00,	(byte)0x00,

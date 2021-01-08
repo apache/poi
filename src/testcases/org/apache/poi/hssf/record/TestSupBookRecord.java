@@ -60,7 +60,7 @@ public final class TestSupBookRecord {
      * tests that we can load the record
      */
     @Test
-    public void testLoadIR() {
+    void testLoadIR() {
         SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataIR));
         assertTrue( record.isInternalReferences() );             //expected flag
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
@@ -72,7 +72,7 @@ public final class TestSupBookRecord {
      * tests that we can load the record
      */
     @Test
-    public void testLoadER() {
+    void testLoadER() {
         SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataER));
         assertTrue( record.isExternalReferences() );             //expected flag
         assertEquals( 0x2, record.getNumberOfSheets() );    //expected # of sheets
@@ -90,7 +90,7 @@ public final class TestSupBookRecord {
      * tests that we can load the record
      */
     @Test
-    public void testLoadAIF() {
+    void testLoadAIF() {
         SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataAIF));
         assertTrue( record.isAddInFunctions() );             //expected flag
         assertEquals( 0x1, record.getNumberOfSheets() );    //expected # of sheets
@@ -102,7 +102,7 @@ public final class TestSupBookRecord {
      */
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStoreIR() {
+    void testStoreIR() {
         SupBookRecord record = SupBookRecord.createInternalReferences((short)4);
 
         confirmRecordEncoding(0x01AE, dataIR, record.serialize());
@@ -110,7 +110,7 @@ public final class TestSupBookRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStoreER() {
+    void testStoreER() {
         String url = "testURL";
         String[] sheetNames = { "Sheet1", "Sheet2", };
         SupBookRecord record = SupBookRecord.createExternalReferences(url, sheetNames);
@@ -119,7 +119,7 @@ public final class TestSupBookRecord {
     }
 
     @Test
-    public void testStoreAIF() {
+    void testStoreAIF() {
         SupBookRecord record = SupBookRecord.createAddInFunctions();
         assertEquals(1, record.getNumberOfSheets());
         assertTrue(record.isAddInFunctions());
@@ -127,7 +127,7 @@ public final class TestSupBookRecord {
     }
 
     @Test
-    public void testExternalReferenceUrl() {
+    void testExternalReferenceUrl() {
     	String[] sheetNames = new String[]{"SampleSheet"};
     	final char startMarker = (char)1;
 

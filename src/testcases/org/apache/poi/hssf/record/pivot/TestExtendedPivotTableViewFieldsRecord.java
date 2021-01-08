@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public final class TestExtendedPivotTableViewFieldsRecord {
 
 	@Test
-	public void testSubNameNotPresent_bug46693() {
+	void testSubNameNotPresent_bug46693() {
 		// This data came from attachment 23347 of bug 46693 at offset 0xAA43
 		byte[] data = HexRead.readFromString(
 				"00 01 14 00" + // BIFF header
@@ -46,7 +46,7 @@ public final class TestExtendedPivotTableViewFieldsRecord {
 
 	@SuppressWarnings("squid:S2699")
 	@Test
-	public void testOlderFormat_bug46918() {
+	void testOlderFormat_bug46918() {
 		// There are 10 SXVDEX records in the file (not uploaded) that originated bugzilla 46918
 		// They all had the following hex encoding:
         byte[] data = HexRead.readFromString("00 01 0A 00 1E 14 00 0A FF FF FF FF 00 00");

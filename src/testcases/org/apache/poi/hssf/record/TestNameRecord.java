@@ -45,7 +45,7 @@ public final class TestNameRecord {
 	 * Makes sure that additional name information is parsed properly such as menu/description
 	 */
 	@Test
-	public void testFillExtras() {
+	void testFillExtras() {
 
 		byte[] examples = HexRead.readFromString(""
 				+ "88 03 67 06 07 00 00 00 00 00 00 23 00 00 00 4D "
@@ -60,7 +60,7 @@ public final class TestNameRecord {
 	}
 
 	@Test
-	public void testReserialize() {
+	void testReserialize() {
 		byte[] data = HexRead
 				.readFromString(""
 						+ "20 00 00 01 0B 00 00 00 01 00 00 00 00 00 00 06 3B 00 00 00 00 02 00 00 00 09 00]");
@@ -72,7 +72,7 @@ public final class TestNameRecord {
 	}
 
 	@Test
-	public void testFormulaRelAbs_bug46174() throws IOException {
+	void testFormulaRelAbs_bug46174() throws IOException {
 		// perhaps this testcase belongs on TestHSSFName
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFName name = wb.createName();
@@ -85,7 +85,7 @@ public final class TestNameRecord {
 	}
 
 	@Test
-	public void testFormulaGeneral() throws IOException {
+	void testFormulaGeneral() throws IOException {
 		// perhaps this testcase belongs on TestHSSFName
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFName name = wb.createName();
@@ -103,7 +103,7 @@ public final class TestNameRecord {
      *  A NameRecord followed by a ContinueRecord. See Bugzilla 50244
      */
 	@Test
-    public void test50244() throws IOException {
+    void test50244() throws IOException {
         byte[] data1 = RawDataUtil.decompress(
 			"H4sIAAAAAAAAAI3Zu2qWQRAA0I8EQcHGzkrwBcLO7B0sBR9AwdYIKdKFoPhovp7xLyQWyX+m2OWw7TIX5u3x/t1xHG9ePhyXxyl+" +
 			"fbz+cf3p/ufd3c3nm/vbm6tvx++L18fXy4fr4tVxxNWXLFelhCENlRCIZuiERAzDJFTEMmxCM/RiCMJApKESJqIZOmEhhmESNmIZ" +
@@ -139,7 +139,7 @@ public final class TestNameRecord {
     }
 
 	@Test
-    public void testBug57923() {
+    void testBug57923() {
         NameRecord record = new NameRecord();
         assertEquals(0, record.getExternSheetNumber());
 

@@ -136,7 +136,7 @@ public abstract class BaseTestSheetShiftRows {
      * When shifting rows, the page breaks should go with it
      */
     @Test
-    public void testShiftRowBreaks() throws IOException {
+    protected void testShiftRowBreaks() throws IOException {
         // TODO - enable XSSF test
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -150,7 +150,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void testShiftWithComments() throws IOException {
+    void testShiftWithComments() throws IOException {
         Workbook wb1 = _testDataProvider.openSampleWorkbook("comments." + _testDataProvider.getStandardFileNameExtension());
 
         Sheet sheet = wb1.getSheet("Sheet1");
@@ -478,7 +478,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void testBug55280() throws IOException {
+    void testBug55280() throws IOException {
         Workbook w = _testDataProvider.createWorkbook();
         Sheet s = w.createSheet();
         for (int row = 0; row < 5000; ++row) {
@@ -490,7 +490,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void test47169() throws IOException {
+    void test47169() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         sheet.createRow(30);
@@ -506,7 +506,7 @@ public abstract class BaseTestSheetShiftRows {
      * bug 52903: HSSFSheet.shiftRows should shift hyperlinks
      */
     @Test
-    public void testBug46742_52903_shiftHyperlinks() throws IOException {
+    void testBug46742_52903_shiftHyperlinks() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(0);
@@ -742,7 +742,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void test61840_shifting_rows_up_does_not_produce_REF_errors() throws IOException {
+    void test61840_shifting_rows_up_does_not_produce_REF_errors() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Cell cell = sheet.createRow(4).createCell(0);

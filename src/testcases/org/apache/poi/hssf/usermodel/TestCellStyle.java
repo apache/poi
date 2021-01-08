@@ -72,7 +72,7 @@ public final class TestCellStyle {
      *
      */
     @Test
-    public void testWriteSheetFont() throws IOException{
+    void testWriteSheetFont() throws IOException{
         File file = TempFile.createTempFile("testWriteSheetFont", ".xls");
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
@@ -112,7 +112,7 @@ public final class TestCellStyle {
      * Tests that is creating a file with a date or an calendar works correctly.
      */
     @Test
-    public void testDataStyle() throws IOException {
+    void testDataStyle() throws IOException {
         File file = TempFile.createTempFile("testWriteSheetStyleDate", ".xls");
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
@@ -144,7 +144,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void testHashEquals() throws IOException {
+    void testHashEquals() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             HSSFCellStyle cs1 = wb.createCellStyle();
@@ -185,7 +185,7 @@ public final class TestCellStyle {
      *
      */
     @Test
-    public void testWriteSheetStyle() throws IOException {
+    void testWriteSheetStyle() throws IOException {
         File file = TempFile.createTempFile("testWriteSheetStyle", ".xls");
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
@@ -233,7 +233,7 @@ public final class TestCellStyle {
      *  HSSFWorkbook
      */
     @Test
-    public void testCloneStyleSameWB() throws IOException {
+    void testCloneStyleSameWB() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFFont fnt = wb.createFont();
             fnt.setFontName("TestingFont");
@@ -266,7 +266,7 @@ public final class TestCellStyle {
      *  two different HSSFWorkbooks
      */
     @Test
-    public void testCloneStyleDiffWB() throws IOException {
+    void testCloneStyleDiffWB() throws IOException {
         try (HSSFWorkbook wbOrig = new HSSFWorkbook()) {
 
             HSSFFont fnt = wbOrig.createFont();
@@ -308,7 +308,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void testStyleNames() throws IOException {
+    void testStyleNames() throws IOException {
         try (HSSFWorkbook wb = openSample("WithExtendedStyles.xls")) {
             HSSFSheet s = wb.getSheetAt(0);
             HSSFCell c1 = s.getRow(0).getCell(0);
@@ -362,7 +362,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void testGetSetBorderHair() throws IOException {
+    void testGetSetBorderHair() throws IOException {
         BorderStyle[] bs = {
             HAIR, DOTTED, DASH_DOT_DOT, DASHED, THIN, MEDIUM_DASH_DOT_DOT, SLANTED_DASH_DOT,
             MEDIUM_DASH_DOT, MEDIUM_DASHED, MEDIUM, THICK, DOUBLE
@@ -378,7 +378,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void testShrinkToFit() throws IOException {
+    void testShrinkToFit() throws IOException {
     	// Existing file
     	try (HSSFWorkbook wb1 = openSample("ShrinkToFit.xls")) {
             HSSFSheet s = wb1.getSheetAt(0);
@@ -412,7 +412,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void test56563() {
+    void test56563() {
         Stream.of("56563a.xls", "56563b.xls").parallel().forEach(fileName -> assertDoesNotThrow(() -> {
             Random rand = new Random();
             for(int i=0; i<10; i++) {
@@ -434,7 +434,7 @@ public final class TestCellStyle {
     }
 
     @Test
-    public void test56959() throws IOException {
+    void test56959() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet("somesheet");
 
@@ -469,7 +469,7 @@ public final class TestCellStyle {
 
 
     @Test
-    public void test58043() throws IOException {
+    void test58043() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCellStyle cellStyle = wb.createCellStyle();
 

@@ -36,7 +36,7 @@ public final class TestDrawingRecord {
      * See Bugzilla #47548
      */
     @Test
-    public void testReadContinued() throws IOException {
+    void testReadContinued() throws IOException {
 
         //simulate a continues drawing record
         ByteArrayOutputStream out = new ByteArrayOutputStream();

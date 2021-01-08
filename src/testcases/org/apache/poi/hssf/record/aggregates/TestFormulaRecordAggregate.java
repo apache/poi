@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFormulaRecordAggregate {
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		FormulaRecord f = new FormulaRecord();
 		f.setCachedResultTypeString();
 		StringRecord s = new StringRecord();
@@ -56,7 +56,7 @@ public final class TestFormulaRecordAggregate {
 	 * the extra record.  POI should do the same.
 	 */
 	@Test
-	public void testExtraStringRecord_bug46213() {
+	void testExtraStringRecord_bug46213() {
 		FormulaRecord fr = new FormulaRecord();
 		fr.setValue(2.0);
 		StringRecord sr = new StringRecord();
@@ -71,7 +71,7 @@ public final class TestFormulaRecordAggregate {
 	}
 
 	@Test
-	public void testArrayFormulas() {
+	void testArrayFormulas() {
 		int rownum = 4;
 		int colnum = 4;
 

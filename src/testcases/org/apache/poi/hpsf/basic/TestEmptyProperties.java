@@ -80,7 +80,7 @@ public final class TestEmptyProperties {
      * are expected to be in a certain order.
      */
     @Test
-    public void testReadFiles() {
+    void testReadFiles() {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)
             assertEquals(poiFiles.get(i).getName(), expected[i]);
@@ -101,7 +101,7 @@ public final class TestEmptyProperties {
      * supported.
      */
     @Test
-    public void testCreatePropertySets()
+    void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException {
         Class<?>[] expected =  {
             NoPropertySetStreamException.class,
@@ -130,7 +130,7 @@ public final class TestEmptyProperties {
      * @exception HPSFException if an HPSF operation fails
      */
     @Test
-    public void testPropertySetMethods() throws IOException, HPSFException {
+    void testPropertySetMethods() throws IOException, HPSFException {
         byte[] b = poiFiles.get(1).getBytes();
         PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
         SummaryInformation s = (SummaryInformation) ps;

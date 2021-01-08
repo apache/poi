@@ -46,7 +46,7 @@ public final class TestFormulaBugs {
 	 * added <em>long</em> after the relevant functionality was fixed.
 	 */
 	@Test
-	public void test27349() throws Exception {
+	void test27349() throws Exception {
 		// 27349-vlookupAcrossSheets.xls is bugzilla/attachment.cgi?id=10622
 		InputStream is = HSSFTestDataSamples.openSampleFileStream("27349-vlookupAcrossSheets.xls");
 		// original bug may have thrown exception here,
@@ -78,7 +78,7 @@ public final class TestFormulaBugs {
 	 * seems to be a duplicate of 24925
 	 */
 	@Test
-	public void test27405() throws Exception {
+	void test27405() throws Exception {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("input");
 		// input row 0
@@ -127,7 +127,7 @@ public final class TestFormulaBugs {
 	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p>
 	 */
 	@Test
-	public void test42448() throws IOException {
+	void test42448() throws IOException {
 		try (Workbook wb = new HSSFWorkbook()) {
 			Sheet sheet1 = wb.createSheet("Sheet1");
 
@@ -178,7 +178,7 @@ public final class TestFormulaBugs {
 	}
 
 	@Test
-	public void test55032() throws IOException {
+	void test55032() throws IOException {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("input");
 
@@ -199,7 +199,7 @@ public final class TestFormulaBugs {
 	// bug 52063: LOOKUP(2-arg) and LOOKUP(3-arg)
 	// FIXME: This could be moved into LookupFunctionsTestCaseData.xls, which is tested by TestLookupFunctionsFromSpreadsheet.java
 	@Test
-	public void testLookupFormula() throws Exception {
+	void testLookupFormula() throws Exception {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("52063");
 

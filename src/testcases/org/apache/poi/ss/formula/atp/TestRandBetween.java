@@ -56,7 +56,7 @@ public class TestRandBetween {
 	 * Check where values are the same
 	 */
 	@Test
-	public void testRandBetweenSameValues() {
+	void testRandBetweenSameValues() {
 		evaluator.clearAllCachedResultValues();
 		formulaCell.setCellFormula("RANDBETWEEN(1,1)");
 		evaluator.evaluateFormulaCell(formulaCell);
@@ -69,7 +69,7 @@ public class TestRandBetween {
 	}
 
 	@Test
-	public void testRandBetweenLargeLongs() {
+	void testRandBetweenLargeLongs() {
         for (int i = 0; i < 100; i++) {
             evaluator.clearAllCachedResultValues();
             formulaCell.setCellFormula("RANDBETWEEN(0,9999999999)");
@@ -85,7 +85,7 @@ public class TestRandBetween {
 	 * top value.
 	 */
 	@Test
-	public void testRandBetweenSpecialCase() {
+	void testRandBetweenSpecialCase() {
 		bottomValueCell.setCellValue(0.05);
 		topValueCell.setCellValue(0.1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
@@ -116,7 +116,7 @@ public class TestRandBetween {
 	 * Check top value of BLANK which Excel will evaluate as 0
 	 */
 	@Test
-	public void testRandBetweenTopBlank() {
+	void testRandBetweenTopBlank() {
 		bottomValueCell.setCellValue(-1);
 		topValueCell.setBlank();
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
@@ -129,7 +129,7 @@ public class TestRandBetween {
 	 * Check where input values are of wrong type
 	 */
 	@Test
-	public void testRandBetweenWrongInputTypes() {
+	void testRandBetweenWrongInputTypes() {
 		// Check case where bottom input is of the wrong type
 		bottomValueCell.setCellValue("STRING");
 		topValueCell.setCellValue(1);
@@ -163,7 +163,7 @@ public class TestRandBetween {
 	 * Check case where bottom is greater than top
 	 */
 	@Test
-	public void testRandBetweenBottomGreaterThanTop() {
+	void testRandBetweenBottomGreaterThanTop() {
 		// Check case where bottom is greater than top
 		bottomValueCell.setCellValue(1);
 		topValueCell.setCellValue(0);
@@ -185,7 +185,7 @@ public class TestRandBetween {
 	 * Boundary check of Double MIN and MAX values
 	 */
 	@Test
-	public void testRandBetweenBoundaryCheck() {
+	void testRandBetweenBoundaryCheck() {
 		bottomValueCell.setCellValue(Double.MIN_VALUE);
 		topValueCell.setCellValue(Double.MAX_VALUE);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");

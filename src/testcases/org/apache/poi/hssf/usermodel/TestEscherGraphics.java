@@ -62,7 +62,7 @@ public final class TestEscherGraphics {
     }
 
     @Test
-    public void testGetFont() {
+    void testGetFont() {
         Font f = graphics.getFont();
         if (! f.toString().contains("dialog") && ! f.toString().contains("Dialog")) {
             assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
@@ -70,7 +70,7 @@ public final class TestEscherGraphics {
     }
 
     @Test
-    public void testGetFontMetrics() {
+    void testGetFontMetrics() {
         Font f = graphics.getFont();
         if (f.toString().contains("dialog") || f.toString().contains("Dialog")) {
             return;
@@ -81,20 +81,20 @@ public final class TestEscherGraphics {
     }
 
     @Test
-    public void testSetFont() {
+    void testSetFont() {
         Font f = new Font("Helvetica", 0, 12);
         graphics.setFont(f);
         assertEquals(f, graphics.getFont());
     }
 
     @Test
-    public void testSetColor() {
+    void testSetColor() {
         graphics.setColor(Color.red);
         assertEquals(Color.red, graphics.getColor());
     }
 
     @Test
-    public void testFillRect() {
+    void testFillRect() {
         graphics.fillRect( 10, 10, 20, 20 );
         HSSFSimpleShape s = (HSSFSimpleShape) escherGroupA.getChildren().get(0);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, s.getShapeType());
@@ -105,14 +105,14 @@ public final class TestEscherGraphics {
     }
 
     @Test
-    public void testDrawString() {
+    void testDrawString() {
         graphics.drawString("This is a test", 10, 10);
         HSSFTextbox t = (HSSFTextbox) escherGroupA.getChildren().get(0);
         assertEquals("This is a test", t.getString().getString());
     }
 
     @Test
-    public void testGetDataBackAgain() throws Exception {
+    void testGetDataBackAgain() throws Exception {
     	HSSFSheet s;
     	HSSFShapeGroup s1;
     	HSSFShapeGroup s2;

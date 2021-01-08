@@ -44,7 +44,7 @@ public final class TestHSSFRow extends BaseTestRow {
     }
 
     @Test
-    public void testLastAndFirstColumns_bug46654() throws IOException {
+    void testLastAndFirstColumns_bug46654() throws IOException {
         int ROW_IX = 10;
         int COL_IX = 3;
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -73,7 +73,7 @@ public final class TestHSSFRow extends BaseTestRow {
     }
 
     @Test
-    public void testMoveCell() throws IOException {
+    void testMoveCell() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow(0);
@@ -113,7 +113,7 @@ public final class TestHSSFRow extends BaseTestRow {
 
     @Override
     @Test
-    public void testRowHeight() throws IOException{
+    protected void testRowHeight() throws IOException{
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow(0);

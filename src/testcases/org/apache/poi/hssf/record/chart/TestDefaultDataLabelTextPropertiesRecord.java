@@ -35,7 +35,7 @@ public final class TestDefaultDataLabelTextPropertiesRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord(TestcaseRecordInputStream.create(0x1024, data));
         assertEquals( 2, record.getCategoryDataType());
@@ -45,7 +45,7 @@ public final class TestDefaultDataLabelTextPropertiesRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord();
         record.setCategoryDataType( (short)2 );
 

@@ -42,7 +42,7 @@ public final class TestCellRangeUtil {
     private static final CellRangeAddress A1_A2 = new CellRangeAddress(0, 1, 0, 0);
 
     @Test
-    public void testMergeCellRanges() {
+    void testMergeCellRanges() {
         // Note that the order of the output array elements does not matter
         // And that there may be more than one valid outputs for a given input. Any valid output is accepted.
         // POI should use a strategy that is consistent and predictable (it currently is not).

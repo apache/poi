@@ -60,7 +60,7 @@ public final class TestIntercept {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		Double exp = Math.pow(10, 7.5);
 		ValueEval[] yValues = {
 			new NumberEval(3+exp),
@@ -89,7 +89,7 @@ public final class TestIntercept {
 	 * number of items in array is not limited to 30
 	 */
 	@Test
-	public void testLargeArrays() {
+	void testLargeArrays() {
 		ValueEval[] yValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
 		yValues[0] = new NumberEval(2.0); // Changes first element to 2
 		ValueEval[] xValues = createMockNumberArray(100, 101); // [1,2,3,4,...,99,100]
@@ -112,7 +112,7 @@ public final class TestIntercept {
 	}
 
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,
 				new NumberEval(2),
@@ -150,7 +150,7 @@ public final class TestIntercept {
      *  http://office.microsoft.com/en-us/excel-help/intercept-function-HP010062512.aspx?CTT=5&origin=HA010277524
      */
 	@Test
-    public void testFromFile() {
+    void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("intercept.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

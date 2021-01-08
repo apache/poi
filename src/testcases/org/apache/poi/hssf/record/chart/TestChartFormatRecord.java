@@ -45,7 +45,7 @@ public final class TestChartFormatRecord {
 	 * The correct size of a {@link ChartFormatRecord} is 20 bytes (not including header).
 	 */
 	@Test
-	public void testLoad() {
+	void testLoad() {
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		ChartFormatRecord record = new ChartFormatRecord(in);
 		assertNotEquals(2, in.remaining(), "Identified bug 44693d");

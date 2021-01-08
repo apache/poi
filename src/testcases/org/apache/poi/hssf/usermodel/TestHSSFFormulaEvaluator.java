@@ -50,7 +50,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
      * (single cells and rectangular areas)
      */
     @Test
-    public void testEvaluateSimple() throws IOException {
+    void testEvaluateSimple() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFCell cell = sheet.getRow(8).getCell(0);
@@ -69,7 +69,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
      * for but POI should look elsewhere to decide whether it can evaluate the name.
      */
     @Test
-    public void testDefinedNameWithComplexFlag_bug47048() throws IOException {
+    void testDefinedNameWithComplexFlag_bug47048() throws IOException {
         // Mock up a spreadsheet to match the critical details of the sample
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Input");
@@ -130,7 +130,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
      * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
      */
     @Test
-    public void testShortCircuitIfEvaluation() throws IOException {
+    void testShortCircuitIfEvaluation() throws IOException {
         // Set up a simple IF() formula that has measurable evaluation cost for its operands.
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -160,7 +160,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
      * we parse.
      */
     @Test
-    public void testXRefs() throws IOException {
+    void testXRefs() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("XRefCalc.xls");
         HSSFWorkbook wb2 = HSSFTestDataSamples.openSampleWorkbook("XRefCalcData.xls")) {
 			Cell cell;

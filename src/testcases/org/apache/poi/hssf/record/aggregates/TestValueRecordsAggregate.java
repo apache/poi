@@ -69,7 +69,7 @@ public final class TestValueRecordsAggregate {
 	 * as part of the value records
 	 */
     @Test
-	public void testSharedFormula() {
+	void testSharedFormula() {
 		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(new FormulaRecord());
 		records.add(new SharedFormulaRecord());
@@ -110,7 +110,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testInsertCell() {
+	void testInsertCell() {
 		assertEquals(0, getValueRecords().size());
 
 		BlankRecord blankRecord = newBlankRecord();
@@ -119,7 +119,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-    public void testRemoveCell() {
+    void testRemoveCell() {
 		BlankRecord blankRecord1 = newBlankRecord();
 		valueRecord.insertCell( blankRecord1 );
 		BlankRecord blankRecord2 = newBlankRecord();
@@ -131,7 +131,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testGetPhysicalNumberOfCells() {
+	void testGetPhysicalNumberOfCells() {
 		assertEquals(0, valueRecord.getPhysicalNumberOfCells());
 		BlankRecord blankRecord1 = newBlankRecord();
 		valueRecord.insertCell( blankRecord1 );
@@ -141,7 +141,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testGetFirstCellNum() {
+	void testGetFirstCellNum() {
 		assertEquals( -1, valueRecord.getFirstCellNum() );
 		valueRecord.insertCell( newBlankRecord( 2, 2 ) );
 		assertEquals( 2, valueRecord.getFirstCellNum() );
@@ -154,7 +154,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testGetLastCellNum() {
+	void testGetLastCellNum() {
 		assertEquals( -1, valueRecord.getLastCellNum() );
 		valueRecord.insertCell( newBlankRecord( 2, 2 ) );
 		assertEquals( 2, valueRecord.getLastCellNum() );
@@ -187,7 +187,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testSerialize() {
+	void testSerialize() {
 		byte[] expectedArray = HexRead.readFromString(""
 				+ "06 00 16 00 " // Formula
 				+ "01 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 "
@@ -246,7 +246,7 @@ public final class TestValueRecordsAggregate {
 	 *
 	 */
     @Test
-	public void testSpuriousSharedFormulaFlag() throws Exception {
+	void testSpuriousSharedFormulaFlag() throws Exception {
 
 		long actualCRC = getFileCRC(HSSFTestDataSamples.openSampleFileStream(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE));
 		long expectedCRC = 2277445406L;
@@ -317,7 +317,7 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testRemoveNewRow_bug46312() throws IOException {
+	void testRemoveNewRow_bug46312() throws IOException {
 		// To make bug occur, rowIndex needs to be >= ValueRecordsAggregate.records.length
 		int rowIndex = 30;
 
@@ -341,7 +341,7 @@ public final class TestValueRecordsAggregate {
 	 * are use appropriately
 	 */
     @Test
-	public void testMultipleBlanks() {
+	void testMultipleBlanks() {
 		BlankRecord brA2 = newBlankRecord(0, 1);
 		BlankRecord brB2 = newBlankRecord(1, 1);
 		BlankRecord brC2 = newBlankRecord(2, 1);

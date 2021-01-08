@@ -30,7 +30,7 @@ public class TestEscherProperty {
      * See Bugzilla 50401
      */
     @Test
-    public void testPropertyNames() throws Exception {
+    void testPropertyNames() throws Exception {
         EscherProperty p1 = new EscherSimpleProperty( EscherPropertyTypes.GROUPSHAPE__SHAPENAME, 0);
         assertEquals("groupshape.shapename", p1.getName());
         assertEquals(EscherPropertyTypes.GROUPSHAPE__SHAPENAME.propNumber, p1.getPropertyNumber());

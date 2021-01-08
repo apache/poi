@@ -49,31 +49,31 @@ public class TestWorkdayFunction {
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 1, 1, 1, null);
 
     @Test
-    public void testFailWhenNoArguments() {
+    void testFailWhenNoArguments() {
         ValueEval[] ve = new ValueEval[0];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
-    public void testFailWhenLessThan2Arguments() {
+    void testFailWhenLessThan2Arguments() {
         ValueEval[] ve = new ValueEval[1];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
-    public void testFailWhenMoreThan3Arguments() {
+    void testFailWhenMoreThan3Arguments() {
         ValueEval[] ve = new ValueEval[4];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
-    public void testFailWhenArgumentsAreNotDatesNorNumbers() {
+    void testFailWhenArgumentsAreNotDatesNorNumbers() {
         ValueEval[] ve = {new StringEval("Potato"), new StringEval("Cucumber")};
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, EC));
     }
 
     @Test
-    public void testReturnWorkdays() {
+    void testReturnWorkdays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 3, 30);
         Date expDate = expCal.getTime();
         ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(151)};
@@ -82,7 +82,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnWorkdaysSpanningAWeekendSubtractingDays() {
+    void testReturnWorkdaysSpanningAWeekendSubtractingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 8, 27);
         Date expDate = expCal.getTime();
 
@@ -95,7 +95,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnWorkdaysSpanningAWeekendAddingDays() {
+    void testReturnWorkdaysSpanningAWeekendAddingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 8, 30);
         Date expDate = expCal.getTime();
 
@@ -108,7 +108,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
+    void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 9, 7);
         Date expDate = expCal.getTime();
 
@@ -121,7 +121,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
+    void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 9, 4);
         Date expDate = expCal.getTime();
 
@@ -134,7 +134,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnWorkdaysWithDaysTruncated() {
+    void testReturnWorkdaysWithDaysTruncated() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 3, 30);
         Date expDate = expCal.getTime();
 
@@ -146,7 +146,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnRetroativeWorkday() {
+    void testReturnRetroativeWorkday() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2008, 8, 23);
         Date expDate = expCal.getTime();
 
@@ -158,7 +158,7 @@ public class TestWorkdayFunction {
     }
 
     @Test
-    public void testReturnNetworkdaysWithManyHolidays() {
+    void testReturnNetworkdaysWithManyHolidays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 4, 5);
         Date expDate = expCal.getTime();
 

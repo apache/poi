@@ -48,7 +48,7 @@ public final class TestPercentEval {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirm(new NumberEval(5), 0.05);
 		confirm(new NumberEval(3000), 30.0);
 		confirm(new NumberEval(-150), -1.5);
@@ -57,13 +57,13 @@ public final class TestPercentEval {
 	}
 
 	@Test
-	public void test1x1Area() {
+	void test1x1Area() {
 		AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
 		confirm(ae, 0.5);
 	}
 
 	@Test
-	public void testInSpreadSheet() throws IOException {
+	void testInSpreadSheet() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet sheet = wb.createSheet("Sheet1");
 			HSSFRow row = sheet.createRow(0);

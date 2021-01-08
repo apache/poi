@@ -44,7 +44,7 @@ public final class TestRecordFactory {
 	 *
 	 */
     @Test
-	public void testBasicRecordConstruction() {
+	void testBasicRecordConstruction() {
 		short recType = BOFRecord.sid;
 		byte[]   data	= {
 			0, 6, 5, 0, -2, 28, -51, 7, -55, 64, 0, 0, 6, 1, 0, 0
@@ -87,7 +87,7 @@ public final class TestRecordFactory {
 	 *
 	 */
     @Test
-    public void testSpecial() {
+    void testSpecial() {
 		short recType = RKRecord.sid;
 		byte[] data = {
 			0, 0, 0, 0, 21, 0, 0, 0, 0, 0
@@ -114,7 +114,7 @@ public final class TestRecordFactory {
 	 * FAILURE:	The wrong records are created or contain the wrong values <P>
 	 */
     @Test
-	public void testContinuedUnknownRecord() {
+	void testContinuedUnknownRecord() {
 		byte[] data = {
 			0, -1, 0, 0, // an unknown record with 0 length
 			0x3C , 0, 3, 0, 1, 2, 3, // a continuation record with 3 bytes of data
@@ -144,7 +144,7 @@ public final class TestRecordFactory {
 	 * Record factory must preserve this structure when reading records.
 	 */
     @Test
-	public void testMixedContinue() throws IOException {
+	void testMixedContinue() throws IOException {
 		// Adapted from a real test sample file 39512.xls (Offset 0x4854).
 		// See Bug 39512 for details.
 		String dump =
@@ -194,7 +194,7 @@ public final class TestRecordFactory {
 	}
 
     @Test
-	public void testNonZeroPadding_bug46987() throws IOException {
+	void testNonZeroPadding_bug46987() throws IOException {
 		Record[] recs = {
 			new BOFRecord(),
 			new WriteAccessRecord(), // need *something* between BOF and EOF

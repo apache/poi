@@ -38,7 +38,7 @@ public final class TestChartRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         ChartRecord record = new ChartRecord(TestcaseRecordInputStream.create(0x1002, data));
         assertEquals( 0, record.getX());
         assertEquals( 0, record.getY());
@@ -50,7 +50,7 @@ public final class TestChartRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         ChartRecord record = new ChartRecord();
         record.setX( 0 );
         record.setY( 0 );

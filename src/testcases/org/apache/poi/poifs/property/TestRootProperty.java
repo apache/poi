@@ -39,7 +39,7 @@ public final class TestRootProperty {
 	private byte[] _testblock;
 
 	@Test
-	public void testConstructor() throws IOException {
+	void testConstructor() throws IOException {
 		createBasicRootProperty();
 		verifyProperty();
 	}
@@ -92,7 +92,7 @@ public final class TestRootProperty {
 	}
 
 	@Test
-	public void testSetSize() {
+	void testSetSize() {
 		for (int j = 0; j < 10; j++) {
 			createBasicRootProperty();
 			_property.setSize(j);
@@ -101,7 +101,7 @@ public final class TestRootProperty {
 	}
 
 	@Test
-	public void testReadingConstructor() {
+	void testReadingConstructor() {
 		String[] input = {
 			"52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
 			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",

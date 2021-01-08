@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestIrr {
 
     @Test
-    public void testIrr() {
+    void testIrr() {
         // http://en.wikipedia.org/wiki/Internal_rate_of_return#Example
         double[] incomes = {-4000d, 1200d, 1410d, 1875d, 1050d};
         double irr = Irr.irr(incomes);
@@ -65,7 +65,7 @@ public final class TestIrr {
     }
 
     @Test
-    public void testEvaluateInSheet() {
+    void testEvaluateInSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(0);
@@ -87,7 +87,7 @@ public final class TestIrr {
     }
 
     @Test
-    public void testIrrFromSpreadsheet(){
+    void testIrrFromSpreadsheet(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);

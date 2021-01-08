@@ -41,7 +41,7 @@ public final class TestRowStyle {
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
     @Test
-    public void testWriteSheetFont() throws IOException {
+    void testWriteSheetFont() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             HSSFFont fnt = wb.createFont();
@@ -68,7 +68,7 @@ public final class TestRowStyle {
      * Tests that is creating a file with a date or an calendar works correctly.
      */
     @Test
-    public void testDataStyle() throws IOException {
+    void testDataStyle() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             HSSFCellStyle cs = wb.createCellStyle();
@@ -106,7 +106,7 @@ public final class TestRowStyle {
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
     @Test
-    public void testWriteSheetStyle() throws IOException {
+    void testWriteSheetStyle() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             HSSFFont fnt = wb.createFont();

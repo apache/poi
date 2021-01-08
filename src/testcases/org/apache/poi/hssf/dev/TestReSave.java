@@ -86,7 +86,7 @@ public class TestReSave extends BaseTestIteratingXLS {
 
     @Disabled("Only used for local testing")
     @Test
-    public void testOneFile() throws Exception {
+    void testOneFile() throws Exception {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
             dataDirName = "test-data";

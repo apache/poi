@@ -37,7 +37,7 @@ public final class TestFuncVarPtg {
 	 * This functionality is related to the setParameterRVA() methods of <tt>FormulaParser</tt>
 	 */
 	@Test
-	public void testOperandClass() {
+	void testOperandClass() {
 		HSSFWorkbook book = new HSSFWorkbook();
 		Ptg[] ptgs = HSSFFormulaParser.parse("sum(A1:A2)", book);
 		assertEquals(2, ptgs.length);

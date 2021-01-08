@@ -84,7 +84,7 @@ public final class TestFileSystemBugs {
      * These have a top level directory without a name....
      */
     @Test
-    public void testNotesOLE2Files() throws Exception {
+    void testNotesOLE2Files() throws Exception {
         // Check the contents
         DirectoryNode root = openSample("Notes.ole2");
         assertEquals(1, root.getEntryCount());
@@ -119,7 +119,7 @@ public final class TestFileSystemBugs {
      *  can't cope with this level of corruption
      */
     @Test
-    public void testCorruptedProperties() throws Exception {
+    void testCorruptedProperties() throws Exception {
         DirectoryNode root = openSample("unknown_properties.msg");
         assertEquals(42, root.getEntryCount());
     }
@@ -128,7 +128,7 @@ public final class TestFileSystemBugs {
      * With heavily nested documents, ensure we still re-write the same
      */
     @Test
-    public void testHeavilyNestedReWrite() throws Exception {
+    void testHeavilyNestedReWrite() throws Exception {
         DirectoryNode root = openSSSample("ex42570-20305.xls");
         // Record the structure
         Map<String,Integer> entries = new HashMap<>();

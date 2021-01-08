@@ -42,7 +42,7 @@ public final class TestValueRangeRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
 
         ValueRangeRecord record = new ValueRangeRecord(TestcaseRecordInputStream.create(0x101f, data));
         assertEquals( 0.0, record.getMinimumAxisValue(), 0.001);
@@ -66,7 +66,7 @@ public final class TestValueRangeRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         ValueRangeRecord record = new ValueRangeRecord();
         record.setMinimumAxisValue( 0 );
         record.setMaximumAxisValue( 0 );

@@ -56,7 +56,7 @@ public class TestEscherRecordFactory {
     }
 
     @Test
-    public void testDetectContainer() {
+    void testDetectContainer() {
         Random rnd = new Random();
         assertTrue(isContainer((short) 0x0, EscherContainerRecord.DG_CONTAINER));
         assertTrue(isContainer((short) 0x0, EscherContainerRecord.SOLVER_CONTAINER));
@@ -81,7 +81,7 @@ public class TestEscherRecordFactory {
     }
 
     @Test
-    public void testDgContainerMustBeRootOfHSSFSheetEscherRecords() {
+    void testDgContainerMustBeRootOfHSSFSheetEscherRecords() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47251.xls");
         HSSFSheet sh = wb.getSheetAt(0);
         InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);

@@ -47,7 +47,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void testSimple() throws IOException {
+	void testSimple() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("Simple.xls")) {
 			assertEquals("Sheet1\nreplaceMe\nSheet2\nSheet3\n", extractor.getText());
 
@@ -58,7 +58,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void testNumericFormula() throws IOException {
+	void testNumericFormula() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("sumifformula.xls")) {
 			assertEquals(
 					"Sheet1\n" +
@@ -87,7 +87,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void testWithContinueRecords() throws IOException {
+	void testWithContinueRecords() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("StringContinueRecords.xls")) {
 			// Has masses of text
 			// Until we fixed bug #41064, this would've
@@ -97,7 +97,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testStringConcat() throws IOException {
+    void testStringConcat() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("SimpleWithFormula.xls")) {
 			// Comes out as NaN if treated as a number
 			// And as XYZ if treated as a string
@@ -110,7 +110,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testStringFormula() throws IOException {
+    void testStringFormula() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("StringFormulas.xls")) {
 			// Comes out as NaN if treated as a number
 			// And as XYZ if treated as a string
@@ -124,7 +124,7 @@ public final class TestExcelExtractor {
 
 
 	@Test
-    public void testEventExtractor() throws Exception {
+    void testEventExtractor() throws Exception {
 		// First up, a simple file with string
 		//  based formulas in it
 		try (EventBasedExcelExtractor extractor1 = new EventBasedExcelExtractor(
@@ -167,7 +167,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testWithComments() throws IOException {
+    void testWithComments() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("SimpleWithComments.xls")) {
 			extractor.setIncludeSheetNames(false);
 
@@ -191,7 +191,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testWithBlank() throws IOException {
+    void testWithBlank() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("MissingBits.xls")) {
 			String def = extractor.getText();
 			extractor.setIncludeBlankCells(true);
@@ -214,7 +214,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testFormatting() throws Exception {
+    void testFormatting() throws Exception {
 	    Locale userLocale = LocaleUtil.getUserLocale();
 	    LocaleUtil.setUserLocale(Locale.ROOT);
 	    try (ExcelExtractor extractor = createExtractor("Formatting.xls")) {
@@ -243,7 +243,7 @@ public final class TestExcelExtractor {
 	 * Embeded in a non-excel file
 	 */
 	@Test
-    public void testWithEmbeded() throws Exception {
+    void testWithEmbeded() throws Exception {
 		POIFSFileSystem fs = null;
 
 		HSSFWorkbook wbA = null, wbB = null;
@@ -278,7 +278,7 @@ public final class TestExcelExtractor {
 	 * Excel embeded in excel
 	 */
 	@Test
-    public void testWithEmbededInOwn() throws Exception {
+    void testWithEmbededInOwn() throws Exception {
 		POIDataSamples ssSamples = POIDataSamples.getSpreadSheetInstance();
 		POIFSFileSystem fs = null;
 		HSSFWorkbook wbA = null, wbB = null;
@@ -319,7 +319,7 @@ public final class TestExcelExtractor {
 	 * Test that we get text from headers and footers
 	 */
 	@Test
-    public void test45538() throws IOException {
+    void test45538() throws IOException {
 		String[] files = {
 			"45538_classic_Footer.xls", "45538_form_Footer.xls",
 			"45538_classic_Header.xls", "45538_form_Header.xls"
@@ -334,7 +334,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testPassword() throws IOException {
+    void testPassword() throws IOException {
 		Biff8EncryptionKey.setCurrentUserPassword("password");
 		try (ExcelExtractor extractor = createExtractor("password.xls")) {
 			String text = extractor.getText();
@@ -346,7 +346,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-    public void testNullPointerException() throws IOException {
+    void testNullPointerException() throws IOException {
 		try (ExcelExtractor extractor = createExtractor("ar.org.apsme.www_Form%20Inscripcion%20Curso%20NO%20Socios.xls")) {
 			assertNotNull(extractor);
 			assertNotNull(extractor.getText());
@@ -354,7 +354,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void test61045() throws IOException {
+	void test61045() throws IOException {
 		//bug 61045. File is govdocs1 626534
 		try (ExcelExtractor extractor = createExtractor("61045_govdocs1_626534.xls")) {
 			String txt = extractor.getText();
@@ -363,7 +363,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void test60405a() throws IOException {
+	void test60405a() throws IOException {
 		//bug 61045. File is govdocs1 626534
 		try (ExcelExtractor extractor = createExtractor("60405.xls")) {
 			String txt = extractor.getText();
@@ -373,7 +373,7 @@ public final class TestExcelExtractor {
 	}
 
 	@Test
-	public void test60405b() throws IOException {
+	void test60405b() throws IOException {
 		//bug 61045. File is govdocs1 626534
 		try (ExcelExtractor extractor = createExtractor("60405.xls")) {
 			extractor.setFormulasNotResults(true);

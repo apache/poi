@@ -33,7 +33,7 @@ public final class TestUnionPtg extends BaseTestPtg {
      * Tests reading a file containing this ptg.
      */
     @Test
-    public void testReading() throws IOException {
+    void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("UnionPtg.xls")) {
             HSSFCell cell = workbook.getSheetAt(0).getRow(4).getCell(2);
             assertEquals(24.0, cell.getNumericCellValue(), 0.0, "Wrong cell value");

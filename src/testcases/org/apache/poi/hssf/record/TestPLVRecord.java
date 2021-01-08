@@ -42,7 +42,7 @@ public final class TestPLVRecord {
     private final static String SHEET_NAME = "S2";
 
     @Test
-    public void testPLVRecord() throws Exception {
+    void testPLVRecord() throws Exception {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream(XLS_FILENAME);
              HSSFWorkbook workbook = new HSSFWorkbook(is)) {
 

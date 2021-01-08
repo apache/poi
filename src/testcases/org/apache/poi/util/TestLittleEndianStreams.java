@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestLittleEndianStreams {
 
 	@Test
-	public void testRead() throws IOException {
+	void testRead() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (LittleEndianOutputStream leo = new LittleEndianOutputStream(baos)) {
 			leo.writeInt(12345678);
@@ -64,7 +64,7 @@ public final class TestLittleEndianStreams {
 	 * array.
 	 */
 	@Test
-	public void testReadFully() {
+	void testReadFully() {
 		byte[] srcBuf = HexRead.readFromString("99 88 77 66 55 44 33");
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
 
@@ -84,7 +84,7 @@ public final class TestLittleEndianStreams {
 	}
 
 	@Test
-	public void testBufferOverrun() {
+	void testBufferOverrun() {
 		byte[] srcBuf = HexRead.readFromString("99 88 77");
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
 
@@ -97,7 +97,7 @@ public final class TestLittleEndianStreams {
 	}
 
 	@Test
-	public void testBufferOverrunStartOffset() {
+	void testBufferOverrunStartOffset() {
 		byte[] srcBuf = HexRead.readFromString("99 88 77 88 99");
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2);
 
@@ -107,7 +107,7 @@ public final class TestLittleEndianStreams {
 	}
 
 	@Test
-	public void testBufferOverrunStartOffset2() {
+	void testBufferOverrunStartOffset2() {
 		byte[] srcBuf = HexRead.readFromString("99 88 77 88 99");
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2, 2);
 

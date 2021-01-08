@@ -37,7 +37,7 @@ public final class TestDatRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         DatRecord record = new DatRecord(TestcaseRecordInputStream.create(0x1063, data));
         assertEquals( 0xD, record.getOptions());
         assertTrue(record.isHorizontalBorder());
@@ -50,7 +50,7 @@ public final class TestDatRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         DatRecord record = new DatRecord();
         record.setHorizontalBorder( true );
         record.setVerticalBorder( false );

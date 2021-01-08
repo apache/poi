@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public final class TestBoolErrRecord {
 
 	@Test
-	public void testError() {
+	void testError() {
 		byte[] data = HexRead.readFromString(
 				"00 00 00 00 0F 00 " + // row, col, xfIndex
 				"07 01 " // #DIV/0!, isError
@@ -54,7 +54,7 @@ public final class TestBoolErrRecord {
 	 * work by the same coincidence).
 	 */
 	@Test
-	public void testOooBadFormat_bug47479() {
+	void testOooBadFormat_bug47479() {
 		byte[] data = HexRead.readFromString(
 				"05 02 09 00 " + // sid, size
 				"00 00 00 00 0F 00 " + // row, col, xfIndex

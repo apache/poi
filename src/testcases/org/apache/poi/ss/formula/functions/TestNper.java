@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public final class TestNper {
 
     @Test
-	public void testSimpleEvaluate() {
+	void testSimpleEvaluate() {
 		ValueEval[] args = {
 			new NumberEval(0.05),
 			new NumberEval(250),
@@ -50,7 +50,7 @@ public final class TestNper {
 	}
 
     @Test
-	public void testEvaluate_bug_45732() throws IOException {
+	void testEvaluate_bug_45732() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFCell cell = sheet.createRow(0).createCell(0);

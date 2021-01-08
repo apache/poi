@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestEscherChildAnchorRecord {
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         EscherChildAnchorRecord r = createRecord();
 
         byte[] data = new byte[8 + 16];
@@ -41,7 +41,7 @@ public final class TestEscherChildAnchorRecord {
     }
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String hexData = "01 00 " +
                 "0F F0 " +
                 "10 00 00 00 " +
@@ -63,7 +63,7 @@ public final class TestEscherChildAnchorRecord {
     }
 
     @Test
-    public void testToString(){
+    void testToString(){
         String expected =
             "{   /* CHILD_ANCHOR */\n" +
             "\t  \"recordId\": -4081 /* 0xf00f */\n" +

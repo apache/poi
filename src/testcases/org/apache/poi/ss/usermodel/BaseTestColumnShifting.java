@@ -60,7 +60,7 @@ public abstract class BaseTestColumnShifting {
     protected void initColumnShifter() {}
 
     @Test
-    public void testShift3ColumnsRight() {
+    void testShift3ColumnsRight() {
         columnShifter.shiftColumns(1, 2, 3);
 
         Cell cell = sheet1.getRow(0).getCell(4);
@@ -74,7 +74,7 @@ public abstract class BaseTestColumnShifting {
     }
 
     @Test
-    public void testShiftLeft() {
+    void testShiftLeft() {
         assertThrows(IllegalStateException.class, () -> columnShifter.shiftColumns(1, 2, -3),
             "Shift to negative indices should throw exception");
     }

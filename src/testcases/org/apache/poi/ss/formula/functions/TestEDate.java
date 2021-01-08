@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class TestEDate {
 
     @Test
-    public void testEDateProperValues() {
+    void testEDateProperValues() {
         // verify some border-case combinations of startDate and month-increase
         checkValue(1000, 0, 1000d);
         checkValue(1, 0, 1d);
@@ -55,14 +55,14 @@ public class TestEDate {
     }
 
     @Test
-    public void testEDateInvalidValues() {
+    void testEDateInvalidValues() {
         EDate eDate = new EDate();
         ErrorEval result = (ErrorEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000)}, null);
         assertEquals(FormulaError.VALUE.getCode(), result.getErrorCode(), 0);
     }
 
     @Test
-    public void testEDateIncrease() {
+    void testEDateIncrease() {
         EDate eDate = new EDate();
         Date startDate = new Date();
         int offset = 2;
@@ -76,7 +76,7 @@ public class TestEDate {
     }
 
     @Test
-    public void testEDateDecrease() {
+    void testEDateDecrease() {
         EDate eDate = new EDate();
         Date startDate = new Date();
         int offset = -2;
@@ -89,34 +89,34 @@ public class TestEDate {
     }
 
     @Test
-    public void testBug56688() {
+    void testBug56688() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000), new RefEvalImplementation(new NumberEval(0))}, null);
         assertEquals(1000d, result.getNumberValue(), 0);
     }
 
     @Test
-    public void testRefEvalStartDate() {
+    void testRefEvalStartDate() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(new NumberEval(1000)), new NumberEval(0)}, null);
         assertEquals(1000d, result.getNumberValue(), 0);
     }
 
     @Test
-    public void testEDateInvalidValueEval() {
+    void testEDateInvalidValueEval() {
         ValueEval evaluate = new EDate().evaluate(new ValueEval[]{new ValueEval() {}, new NumberEval(0)}, null);
         assertTrue(evaluate instanceof ErrorEval);
         assertEquals(ErrorEval.VALUE_INVALID, evaluate);
     }
 
     @Test
-    public void testEDateBlankValueEval() {
+    void testEDateBlankValueEval() {
         NumberEval evaluate = (NumberEval) new EDate().evaluate(new ValueEval[]{BlankEval.instance, new NumberEval(0)}, null);
         assertEquals(-1.0d, evaluate.getNumberValue(), 0);
     }
 
     @Test
-    public void testEDateBlankRefValueEval() {
+    void testEDateBlankRefValueEval() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(BlankEval.instance), new NumberEval(0)}, null);
         assertEquals(-1.0d, result.getNumberValue(), 0, "0 startDate triggers BAD_DATE currently, thus -1.0!");

@@ -38,7 +38,7 @@ public final class TestPaneRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         PaneRecord record = new PaneRecord(TestcaseRecordInputStream.create(0x41, data));
 
         assertEquals( (short)1, record.getX());
@@ -52,7 +52,7 @@ public final class TestPaneRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         PaneRecord record = new PaneRecord();
 
         record.setX( (short) 1);

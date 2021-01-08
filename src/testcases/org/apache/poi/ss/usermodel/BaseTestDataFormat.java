@@ -79,7 +79,7 @@ public abstract class BaseTestDataFormat {
      * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
      */
     @Test
-    public void test49928() throws IOException {
+    void test49928() throws IOException {
         String fileName = "49928.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
             DataFormatter df = new DataFormatter();
@@ -118,7 +118,7 @@ public abstract class BaseTestDataFormat {
     }
 
     @Test
-    public void testReadbackFormat() throws IOException {
+    void testReadbackFormat() throws IOException {
         readbackFormat("built-in format", "0.00");
         readbackFormat("overridden built-in format", POUND_FMT);
 
@@ -140,7 +140,7 @@ public abstract class BaseTestDataFormat {
      * [Bug 58532] Handle formats that go numnum, numK, numM etc
      */
     @Test
-    public void test58532() throws IOException {
+    void test58532() throws IOException {
         String fileName = "FormatKM.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
             Sheet s = wb.getSheetAt(0);

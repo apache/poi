@@ -50,7 +50,7 @@ public final class TestDelta {
     }
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 		confirmValue("5","4", 0); // Checks whether 5 equals 4 (0)
 		confirmValue("5","5", 1); // Checks whether 5 equals 5 (1)
 
@@ -60,7 +60,7 @@ public final class TestDelta {
 	}
 
 	@Test
-    public void testErrors() {
+    void testErrors() {
         confirmValueError("A1","B2");
         confirmValueError("AAAA","BBBB");
     }

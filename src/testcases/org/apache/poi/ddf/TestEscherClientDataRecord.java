@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestEscherClientDataRecord {
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         EscherClientDataRecord r = createRecord();
 
         byte[] data = new byte[8];
@@ -38,7 +38,7 @@ public class TestEscherClientDataRecord {
     }
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         String hexData = "02 00 " +
                 "11 F0 " +
                 "00 00 00 00 ";
@@ -52,7 +52,7 @@ public class TestEscherClientDataRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String expected =
             "{   /* CLIENT_DATA */\n" +
             "\t  \"recordId\": -4079 /* 0xf011 */\n" +

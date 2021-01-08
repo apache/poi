@@ -46,7 +46,7 @@ public final class TestOperandClassTransformer {
     }
 
     @Test
-    public void testMdeterm() {
+    void testMdeterm() {
         String formula = "MDETERM(ABS(A1))";
         Ptg[] ptgs = parseFormula(formula);
 
@@ -56,7 +56,7 @@ public final class TestOperandClassTransformer {
     }
 
     @Test
-    public void testMdetermReturnsValueInvalidOnABlankCell() {
+    void testMdetermReturnsValueInvalidOnABlankCell() {
         ValueEval matrixRef = EvalFactory.createAreaEval("A1:B2",
                 new ValueEval[]{
                         BlankEval.instance,
@@ -80,7 +80,7 @@ public final class TestOperandClassTransformer {
      */
     @Test
     @Disabled
-    public void testIndexPi1() {
+    void testIndexPi1() {
         String formula = "INDEX(PI(),1)";
         Ptg[] ptgs = parseFormula(formula);
 
@@ -93,7 +93,7 @@ public final class TestOperandClassTransformer {
      * value operator it must get type V
      */
     @Test
-    public void testDirectOperandOfValueOperator() {
+    void testDirectOperandOfValueOperator() {
         String formula = "COUNT(A1*1)";
         Ptg[] ptgs = parseFormula(formula);
         assertNotEquals(Ptg.CLASS_REF, ptgs[0].getPtgClass());
@@ -105,7 +105,7 @@ public final class TestOperandClassTransformer {
      * A cell ref passed to a function expecting type V should be converted to type V
      */
     @Test
-    public void testRtoV() {
+    void testRtoV() {
 
         String formula = "lookup(A1, A3:A52, B3:B52)";
         Ptg[] ptgs = parseFormula(formula);
@@ -113,7 +113,7 @@ public final class TestOperandClassTransformer {
     }
 
     @Test
-    public void testComplexIRR_bug45041() {
+    void testComplexIRR_bug45041() {
         String formula = "(1+IRR(SUMIF(A:A,ROW(INDIRECT(MIN(A:A)&\":\"&MAX(A:A))),B:B),0))^365-1";
         Ptg[] ptgs = parseFormula(formula);
 

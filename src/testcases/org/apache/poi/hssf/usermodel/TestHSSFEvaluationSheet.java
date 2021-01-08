@@ -37,7 +37,7 @@ public class TestHSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     }
 
     @Test
-    public void testMissingExternalName() throws IOException {
+    void testMissingExternalName() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("external_name.xls")) {
             // this sometimes causes exceptions
             wb.getAllNames().stream().filter(n -> !n.isFunctionName()).forEach(

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class TestStatsLib extends BaseTestNumeric {
 
     @Test
-    public void testDevsq() {
+    void testDevsq() {
         double[] v;
         double d, x;
 
@@ -69,7 +69,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testKthLargest() {
+    void testKthLargest() {
         double[] v;
         double d, x;
 
@@ -106,11 +106,11 @@ public class TestStatsLib extends BaseTestNumeric {
 
     @Test
     @Disabled("... implement ...")
-    public void testKthSmallest() {
+    void testKthSmallest() {
     }
 
     @Test
-    public void testAvedev() {
+    void testAvedev() {
         double[] v;
         double d, x;
 
@@ -146,7 +146,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testMedian() {
+    void testMedian() {
         double[] v;
         double d, x;
 
@@ -192,7 +192,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testMode() {
+    void testMode() {
         double[] v;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
@@ -240,7 +240,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testStddev() {
+    void testStddev() {
         double[] v;
         double d, x;
 
@@ -276,7 +276,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testVar() {
+    void testVar() {
         double[] v;
         double d, x;
 
@@ -302,7 +302,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     @Test
-    public void testVarp() {
+    void testVarp() {
         double[] v;
         double d, x;
 

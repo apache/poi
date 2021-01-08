@@ -55,7 +55,7 @@ public final class TestMid {
 	}
 
 	@Test
-	public void testBasic() {
+	void testBasic() {
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3), new NumberEval(4), "lact");
 	}
@@ -64,7 +64,7 @@ public final class TestMid {
 	 * Valid cases where args are not precisely (string, int, int) but can be resolved OK.
 	 */
 	@Test
-	public void testUnusualArgs() {
+	void testUnusualArgs() {
 		// startPos with fractional digits
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), new NumberEval(4), "lact");
 
@@ -91,7 +91,7 @@ public final class TestMid {
 	 * Extreme values for startPos and numChars
 	 */
 	@Test
-	public void testExtremes() {
+	void testExtremes() {
 		confirmMid(new StringEval("galactic"), new NumberEval(4), new NumberEval(400), "actic");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(30), new NumberEval(4), "");
@@ -102,7 +102,7 @@ public final class TestMid {
 	 * All sorts of ways to make MID return defined errors.
 	 */
 	@Test
-	public void testErrors() {
+	void testErrors() {
 		confirmMid(ErrorEval.NAME_INVALID, new NumberEval(3), new NumberEval(4), ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), ErrorEval.NAME_INVALID, new NumberEval(4), ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), new NumberEval(3), ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);

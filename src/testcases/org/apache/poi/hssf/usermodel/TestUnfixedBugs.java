@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestUnfixedBugs {
     @Test
-    public void testFormulaRecordAggregate_1() throws Exception {
+    void testFormulaRecordAggregate_1() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
         try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958_1.xls")) {
             for (int i = 0; i < wb.getNumberOfSheets(); i++) {
@@ -66,7 +66,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testFormulaRecordAggregate() throws Exception {
+    void testFormulaRecordAggregate() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
         try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls")) {
             for (int i = 0; i < wb.getNumberOfSheets(); i++) {
@@ -90,7 +90,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testBug57074() throws IOException {
+    void testBug57074() throws IOException {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("57074.xls");
         Sheet sheet = wb.getSheet("Sheet1");
         Row row = sheet.getRow(0);
@@ -109,13 +109,13 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testBug62242() {
+    void testBug62242() {
         CellFormat cfUK  = CellFormat.getInstance("_ * #,##0.00_ ;_ * \\-#,##0.00_ ;_ * \"-\"??_ ;_ @_");
         assertEquals("    -   ", cfUK.apply((double) 0).text);
     }
 
     @Test
-    public void testDataFormattingWithQuestionMarkBug62242() {
+    void testDataFormattingWithQuestionMarkBug62242() {
         // The question mark in the format should be replaced by blanks, but
         // this is currently not handled when producing the Java formatting and
         // so we end up with a trailing zero here
@@ -124,7 +124,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testDataFormattingWithQuestionMarkAndPoundBug62242() {
+    void testDataFormattingWithQuestionMarkAndPoundBug62242() {
         char pound = '\u00A3';
 
         // The question mark in the format should be replaced by blanks, but

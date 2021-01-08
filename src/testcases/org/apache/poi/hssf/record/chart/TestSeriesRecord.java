@@ -40,7 +40,7 @@ public final class TestSeriesRecord {
     };
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         SeriesRecord record = new SeriesRecord(TestcaseRecordInputStream.create(0x1003, data));
         assertEquals( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, record.getCategoryDataType());
         assertEquals( SeriesRecord.VALUES_DATA_TYPE_NUMERIC, record.getValuesDataType());
@@ -55,7 +55,7 @@ public final class TestSeriesRecord {
 
     @SuppressWarnings("squid:S2699")
     @Test
-    public void testStore() {
+    void testStore() {
         SeriesRecord record = new SeriesRecord();
         record.setCategoryDataType( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC );
         record.setValuesDataType( SeriesRecord.VALUES_DATA_TYPE_NUMERIC );

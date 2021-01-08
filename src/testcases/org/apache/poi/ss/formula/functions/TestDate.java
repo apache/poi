@@ -51,13 +51,13 @@ public final class TestDate {
      */
     @Test
     @Disabled
-    public void testSomeArgumentsMissing() {
+    void testSomeArgumentsMissing() {
         confirm("DATE(, 1, 0)", 0.0);
         confirm("DATE(, 1, 1)", 1.0);
     }
 
     @Test
-    public void testValid() {
+    void testValid() {
         confirm("DATE(1900, 1, 1)", 1);
         confirm("DATE(1900, 1, 32)", 32);
         confirm("DATE(1900, 222, 1)", 6727);
@@ -67,7 +67,7 @@ public final class TestDate {
     }
 
     @Test
-    public void testBugDate() {
+    void testBugDate() {
         confirm("DATE(1900, 2, 29)", 60);
         confirm("DATE(1900, 2, 30)", 61);
         confirm("DATE(1900, 1, 222)", 222);
@@ -76,7 +76,7 @@ public final class TestDate {
     }
 
     @Test
-    public void testPartYears() {
+    void testPartYears() {
         confirm("DATE(4, 1, 1)", 1462.00);
         confirm("DATE(14, 1, 1)", 5115.00);
         confirm("DATE(104, 1, 1)", 37987.00);

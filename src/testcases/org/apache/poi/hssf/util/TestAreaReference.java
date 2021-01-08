@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 public final class TestAreaReference {
 
     @Test
-    public void testAreaRef1() {
+    void testAreaRef1() {
         AreaReference ar = new AreaReference("$A$1:$B$2", SpreadsheetVersion.EXCEL97);
         assertFalse(ar.isSingleCell(), "Two cells expected");
         CellReference cf = ar.getFirstCell();
@@ -91,7 +91,7 @@ public final class TestAreaReference {
      * Arne.Clauss@gedas.de
      */
     @Test
-    public void testReferenceWithSheet() {
+    void testReferenceWithSheet() {
         AreaReference ar;
 
         ar = new AreaReference("Tabelle1!B5:B5", SpreadsheetVersion.EXCEL97);
@@ -115,7 +115,7 @@ public final class TestAreaReference {
     }
 
     @Test
-    public void testContiguousReferences() {
+    void testContiguousReferences() {
         String refSimple = "$C$10:$C$10";
         String ref2D = "$C$10:$D$11";
         String refDCSimple = "$C$10:$C$10,$D$12:$D$12,$E$14:$E$14";
@@ -199,7 +199,7 @@ public final class TestAreaReference {
     }
 
     @Test
-    public void testDiscontinousReference() throws Exception {
+    void testDiscontinousReference() throws Exception {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
              HSSFWorkbook wb = new HSSFWorkbook(is)) {
             InternalWorkbook workbook = TestHSSFWorkbook.getInternalWorkbook(wb);
@@ -263,7 +263,7 @@ public final class TestAreaReference {
     }
 
     @Test
-    public void testSpecialSheetNames() {
+    void testSpecialSheetNames() {
         AreaReference ar;
         ar = new AreaReference("'Sheet A'!A1:A1", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "Sheet A", "'Sheet A'!A1");
@@ -288,7 +288,7 @@ public final class TestAreaReference {
     }
 
     @Test
-    public void testWholeColumnRefs() {
+    void testWholeColumnRefs() {
         confirmWholeColumnRef("A:A", 0, 0, false, false);
         confirmWholeColumnRef("$C:D", 2, 3, true, false);
         confirmWholeColumnRef("AD:$AE", 29, 30, false, true);

@@ -43,7 +43,7 @@ public final class TestStringRecord {
 	);
 
 	@Test
-	public void testLoad() {
+	void testLoad() {
 
 		StringRecord record = new StringRecord(TestcaseRecordInputStream.create(0x207, data));
 		assertEquals( "Fahrzeugtyp", record.getString());
@@ -52,7 +52,7 @@ public final class TestStringRecord {
 	}
 
 	@Test
-    public void testStore() {
+    void testStore() {
 		StringRecord record = new StringRecord();
 		record.setString("Fahrzeugtyp");
 
@@ -64,7 +64,7 @@ public final class TestStringRecord {
 	}
 
 	@Test
-    public void testContinue() throws IOException {
+    void testContinue() throws IOException {
 		int MAX_BIFF_DATA = RecordInputStream.MAX_RECORD_DATA_SIZE;
 		int TEXT_LEN = MAX_BIFF_DATA + 1000; // deliberately over-size
 		String textChunk = "ABCDEGGHIJKLMNOP"; // 16 chars

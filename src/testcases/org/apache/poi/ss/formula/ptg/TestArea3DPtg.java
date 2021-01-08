@@ -34,7 +34,7 @@ public final class TestArea3DPtg extends BaseTestPtg {
 	 * confirms that sheet names get properly escaped
 	 */
 	@Test
-	public void testToFormulaString() throws IOException {
+	void testToFormulaString() throws IOException {
 
 		Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
 

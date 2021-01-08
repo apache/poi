@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestEscherOptRecord {
 
     @Test
-    public void testFillFields() {
+    void testFillFields() {
         checkFillFieldsSimple();
         checkFillFieldsComplex();
     }
@@ -81,7 +81,7 @@ public final class TestEscherOptRecord {
     }
 
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         checkSerializeSimple();
         checkSerializeComplex();
     }
@@ -139,7 +139,7 @@ public final class TestEscherOptRecord {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         EscherOptRecord r = new EscherOptRecord();
         // don't try to shoot in foot, please -- vlsergey
         // r.setOptions((short)0x000F);
@@ -173,7 +173,7 @@ public final class TestEscherOptRecord {
      * This test is currently broken!
      */
     @Test
-    public void testComplexSerialise() {
+    void testComplexSerialise() {
     	byte[] data = {
     		0x53, 0x01, 0x0B, 0xF0-256, 0x9C-256, 0x01, 0x00, 0x00,
     		// Simple data follows
@@ -273,7 +273,7 @@ public final class TestEscherOptRecord {
      * See Bug 41946 for details.
      */
     @Test
-    public void test41946() throws IOException {
+    void test41946() throws IOException {
         String data64 =
             "H4sIAAAAAAAAAB3SuW5TQRjF8TPfOOZCHMeARAluEKIzSEgUSCQsLaLgDYCehgIJCe8L+xIgQB6"+
             "AEvEAOI6zOwlhX54BpBRIiGqY+Vvy7x6d+3k8nmufje/ISzVVrjrVNftWapCb5JbSqyMX7ZJ72I"+
@@ -302,7 +302,7 @@ public final class TestEscherOptRecord {
      * with empty complex part.
      */
     @Test
-    public void testEmptyArrayProperty() {
+    void testEmptyArrayProperty() {
         EscherOptRecord r = new EscherOptRecord();
         EscherArrayProperty p = new EscherArrayProperty(EscherPropertyTypes.FILL__SHADECOLORS, false, 0);
         assertEquals(0, p.getNumberOfElementsInArray());
