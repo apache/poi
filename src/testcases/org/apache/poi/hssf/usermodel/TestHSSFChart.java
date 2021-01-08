@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -38,7 +40,7 @@ public final class TestHSSFChart {
 
 	@Test
 	public void testSingleChart() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
+		HSSFWorkbook wb = openSampleWorkbook("WithChart.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);
@@ -68,7 +70,7 @@ public final class TestHSSFChart {
 
 	@Test
 	public void testTwoCharts() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
+		HSSFWorkbook wb = openSampleWorkbook("WithTwoCharts.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);
@@ -101,7 +103,7 @@ public final class TestHSSFChart {
 
 	@Test
 	public void testThreeCharts() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xls");
+		HSSFWorkbook wb = openSampleWorkbook("WithThreeCharts.xls");
 
 		HSSFSheet s1 = wb.getSheetAt(0);
 		HSSFSheet s2 = wb.getSheetAt(1);
@@ -142,7 +144,7 @@ public final class TestHSSFChart {
 
     @Test
     public void testExistingSheet3() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
+        HSSFWorkbook wb = openSampleWorkbook("49581.xls");
 
         HSSFSheet sheet = wb.getSheetAt( 2 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
@@ -165,7 +167,7 @@ public final class TestHSSFChart {
 
     @Test
     public void testExistingSheet2() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
+        HSSFWorkbook wb = openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
 
@@ -197,45 +199,38 @@ public final class TestHSSFChart {
 
     @Test
     public void testExistingSheet1() throws Exception {
-       HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
-        HSSFSheet sheet = wb.getSheetAt( 0 ) ;
-        HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
+        try (HSSFWorkbook wb = openSampleWorkbook("49581.xls")) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFChart[] charts = HSSFChart.getSheetCharts(sheet);
 
-        for ( HSSFChart chart : charts ) {
-            //System.out.println( chart.getType() ) ;
-            HSSFSeries[] seriesArray = chart.getSeries() ;
-            //System.out.println( "seriesArray.length=" + seriesArray.length ) ;
-            for ( HSSFSeries series : seriesArray )
-            {
-                //System.out.println( "serie.getNumValues()=" + series.getNumValues() ) ;
-                CellRangeAddressBase range ;
+            for (HSSFChart chart : charts) {
+                for (HSSFSeries series : chart.getSeries()) {
+                    CellRangeAddressBase range;
 
-                range = series.getValuesCellRange() ;
-                //System.out.println( range.toString() ) ;
-                range.setLastRow( range.getLastRow() + 1 ) ;
-                series.setValuesCellRange( range ) ;
+                    range = series.getValuesCellRange();
+                    range.setLastRow(range.getLastRow() + 1);
+                    series.setValuesCellRange(range);
 
-                range = series.getCategoryLabelsCellRange() ;
-                //System.out.println( range.toString() ) ;
-                range.setLastRow( range.getLastRow() + 1 ) ;
-                series.setCategoryLabelsCellRange( range ) ;
-            }
+                    range = series.getCategoryLabelsCellRange();
+                    range.setLastRow(range.getLastRow() + 1);
+                    series.setCategoryLabelsCellRange(range);
+                }
 
-            for ( int id = 0 ; id < 2 ; id++ )
-            {
-                HSSFSeries newSeries = chart.createSeries() ;
-                newSeries.setValuesCellRange( new CellRangeAddress( 1 + id, 4, 3, 3 ) ) ;
-                String oldSeriesTitle = newSeries.getSeriesTitle() ;
-                if ( oldSeriesTitle != null )
-                {
-                    //System.out.println( "old series title: " + oldSeriesTitle ) ;
-                    newSeries.setSeriesTitle( "new series" ) ;
+                for (int id = 0; id < 2; id++) {
+                    HSSFSeries newSeries = chart.createSeries();
+                    assertNotNull(newSeries);
+                    newSeries.setValuesCellRange(new CellRangeAddress(1 + id, 4, 3, 3));
+                    String oldSeriesTitle = newSeries.getSeriesTitle();
+                    if (oldSeriesTitle != null) {
+                        newSeries.setSeriesTitle("new series");
+                    }
                 }
             }
-        }
 
-        HSSFChart chart = charts[ 2 ] ;
-        chart.removeSeries( chart.getSeries()[ 0 ] ) ;
+            HSSFChart chart = charts[2];
+            chart.removeSeries(chart.getSeries()[0]);
+            assertEquals(2, chart.getSeries().length);
+        }
     }
 
     /**
@@ -243,7 +238,7 @@ public final class TestHSSFChart {
      */
     @Test
     public void test26862() throws IOException, Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
+        HSSFWorkbook wb = openSampleWorkbook("SimpleChart.xls");
         HSSFSheet srcSheet = wb.getSheetAt(0);
         HSSFChart[] srcCharts = HSSFChart.getSheetCharts(srcSheet);
         assertEquals(1, srcCharts.length);

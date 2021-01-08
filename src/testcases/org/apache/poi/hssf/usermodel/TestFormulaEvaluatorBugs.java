@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -43,6 +45,7 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -76,7 +79,7 @@ public final class TestFormulaEvaluatorBugs {
         // Open the existing file, tweak one value and
         // re-calculate
 
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44636.xls");
+        HSSFWorkbook wb = openSampleWorkbook("44636.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
 
@@ -129,7 +132,7 @@ public final class TestFormulaEvaluatorBugs {
     @Test
     public void test44297() throws Exception {
 
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44297.xls");
+        HSSFWorkbook wb = openSampleWorkbook("44297.xls");
 
         HSSFRow row;
         HSSFCell cell;
@@ -192,7 +195,7 @@ public final class TestFormulaEvaluatorBugs {
      */
     @Test
     public void test44410() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SingleLetterRanges.xls");
+        HSSFWorkbook wb = openSampleWorkbook("SingleLetterRanges.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
 
@@ -273,27 +276,23 @@ public final class TestFormulaEvaluatorBugs {
 
     @Test
     public void testClassCast_bug44861() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44861.xls");
+        try (HSSFWorkbook wb = openSampleWorkbook("44861.xls")) {
+            // Check direct
+            HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 
-        // Check direct
-        HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            // And via calls
+            for (Sheet s : wb) {
+                HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
 
-        // And via calls
-        int numSheets = wb.getNumberOfSheets();
-        for (int i = 0; i < numSheets; i++) {
-            HSSFSheet s = wb.getSheetAt(i);
-            HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
-
-            for (Iterator<Row> rows = s.rowIterator(); rows.hasNext();) {
-                HSSFRow r = (HSSFRow)rows.next();
-                for (Iterator<Cell> cells = r.cellIterator(); cells.hasNext();) {
-                    HSSFCell c = (HSSFCell)cells.next();
-                    eval.evaluateFormulaCell(c);
+                for (Row r : s) {
+                    for (Cell c : r) {
+                        CellType ct = eval.evaluateFormulaCell(c);
+                        assertNotNull(ct);
+                    }
                 }
             }
-        }
 
-        wb.close();
+        }
     }
 
     @Test

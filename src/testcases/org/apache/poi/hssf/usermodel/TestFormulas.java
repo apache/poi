@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -864,7 +865,7 @@ public final class TestFormulas {
     public void testMissingArgPtg() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
-            cell.setCellFormula("IF(A1=\"A\",1,)");
+            assertDoesNotThrow(() -> cell.setCellFormula("IF(A1=\"A\",1,)"));
         }
     }
 

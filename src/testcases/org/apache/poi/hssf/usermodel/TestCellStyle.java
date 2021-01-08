@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.ss.usermodel.BorderStyle.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -189,10 +193,10 @@ public final class TestCellStyle {
             HSSFCellStyle cs = wb.createCellStyle();
             HSSFCellStyle cs2 = wb.createCellStyle();
 
-            cs.setBorderBottom(BorderStyle.THIN);
-            cs.setBorderLeft(BorderStyle.THIN);
-            cs.setBorderRight(BorderStyle.THIN);
-            cs.setBorderTop(BorderStyle.THIN);
+            cs.setBorderBottom(THIN);
+            cs.setBorderLeft(THIN);
+            cs.setBorderRight(THIN);
+            cs.setBorderTop(THIN);
             cs.setFillForegroundColor((short) 0xA);
             cs.setFillPattern(FillPatternType.DIAMONDS);
             fnt.setColor((short) 0xf);
@@ -359,45 +363,17 @@ public final class TestCellStyle {
 
     @Test
     public void testGetSetBorderHair() throws IOException {
-    	try (HSSFWorkbook wb = openSample("55341_CellStyleBorder.xls")) {
+        BorderStyle[] bs = {
+            HAIR, DOTTED, DASH_DOT_DOT, DASHED, THIN, MEDIUM_DASH_DOT_DOT, SLANTED_DASH_DOT,
+            MEDIUM_DASH_DOT, MEDIUM_DASHED, MEDIUM, THICK, DOUBLE
+        };
+
+        try (HSSFWorkbook wb = openSample("55341_CellStyleBorder.xls")) {
             HSSFSheet s = wb.getSheetAt(0);
-            HSSFCellStyle cs;
-
-            cs = s.getRow(0).getCell(0).getCellStyle();
-            assertEquals(BorderStyle.HAIR, cs.getBorderRight());
-
-            cs = s.getRow(1).getCell(1).getCellStyle();
-            assertEquals(BorderStyle.DOTTED, cs.getBorderRight());
-
-            cs = s.getRow(2).getCell(2).getCellStyle();
-            assertEquals(BorderStyle.DASH_DOT_DOT, cs.getBorderRight());
-
-            cs = s.getRow(3).getCell(3).getCellStyle();
-            assertEquals(BorderStyle.DASHED, cs.getBorderRight());
-
-            cs = s.getRow(4).getCell(4).getCellStyle();
-            assertEquals(BorderStyle.THIN, cs.getBorderRight());
-
-            cs = s.getRow(5).getCell(5).getCellStyle();
-            assertEquals(BorderStyle.MEDIUM_DASH_DOT_DOT, cs.getBorderRight());
-
-            cs = s.getRow(6).getCell(6).getCellStyle();
-            assertEquals(BorderStyle.SLANTED_DASH_DOT, cs.getBorderRight());
-
-            cs = s.getRow(7).getCell(7).getCellStyle();
-            assertEquals(BorderStyle.MEDIUM_DASH_DOT, cs.getBorderRight());
-
-            cs = s.getRow(8).getCell(8).getCellStyle();
-            assertEquals(BorderStyle.MEDIUM_DASHED, cs.getBorderRight());
-
-            cs = s.getRow(9).getCell(9).getCellStyle();
-            assertEquals(BorderStyle.MEDIUM, cs.getBorderRight());
-
-            cs = s.getRow(10).getCell(10).getCellStyle();
-            assertEquals(BorderStyle.THICK, cs.getBorderRight());
-
-            cs = s.getRow(11).getCell(11).getCellStyle();
-            assertEquals(BorderStyle.DOUBLE, cs.getBorderRight());
+            for (int i = 0; i<bs.length; i++) {
+                HSSFCellStyle cs = s.getRow(i).getCell(i).getCellStyle();
+                assertEquals(bs[i], cs.getBorderRight());
+            }
         }
     }
 
@@ -435,62 +411,26 @@ public final class TestCellStyle {
         }
     }
 
-
-
-    private static class CellFormatBugExample extends Thread {
-        private final String fileName;
-        private Throwable exception;
-
-        public CellFormatBugExample(String fileName) {
-            this.fileName = fileName;
-        }
-
-        @Override
-        public void run() {
-            try {
-                for(int i = 0;i< 10;i++) {
-                    try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook(fileName)) {
-                        Sheet sheet = wb.getSheetAt(0);
-
-                        for (Row row : sheet) {
-                            for (int idxCell = 0; idxCell < row.getLastCellNum(); idxCell++) {
-
-                                Cell cell = row.getCell(idxCell);
-                                cell.getCellStyle().getDataFormatString();
-                                if (cell.getCellType() == CellType.NUMERIC) {
-                                    boolean isDate = DateUtil.isCellDateFormatted(cell);
-                                    assertFalse(idxCell > 0 && isDate, "cell " + idxCell + " is not a date.");
-                                }
+    @Test
+    public void test56563() {
+        Stream.of("56563a.xls", "56563b.xls").parallel().forEach(fileName -> assertDoesNotThrow(() -> {
+            Random rand = new Random();
+            for(int i=0; i<10; i++) {
+                Thread.sleep(rand.nextInt(300));
+                try (Workbook wb = openSample(fileName)) {
+                    for (Row row : wb.getSheetAt(0)) {
+                        for (Cell cell : row) {
+                            cell.getCellStyle().getDataFormatString();
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                boolean isDate = DateUtil.isCellDateFormatted(cell);
+                                int cid = cell.getColumnIndex();
+                                assertFalse(cid > 0 && isDate, "cell " + cid + " is not a date.");
                             }
                         }
                     }
                 }
-            } catch (Throwable e) {
-                exception = e;
             }
-        }
-
-        public Throwable getException() {
-            return exception;
-        }
-    }
-
-    @Test
-    public void test56563() throws Throwable {
-        CellFormatBugExample threadA = new CellFormatBugExample("56563a.xls");
-        threadA.start();
-        CellFormatBugExample threadB = new CellFormatBugExample("56563b.xls");
-        threadB.start();
-
-        threadA.join();
-        threadB.join();
-
-        if(threadA.getException() != null) {
-            throw threadA.getException();
-        }
-        if(threadB.getException() != null) {
-            throw threadB.getException();
-        }
+        }));
     }
 
     @Test
@@ -509,7 +449,7 @@ public final class TestCellStyle {
             font.setColor(Font.COLOR_RED);
 
             CellStyle style = wb.createCellStyle();
-            style.setBorderBottom(BorderStyle.DOTTED);
+            style.setBorderBottom(DOTTED);
             style.setFont(font);
 
             Cell cell = row.createCell(0);
@@ -522,7 +462,7 @@ public final class TestCellStyle {
             newCell.setCellValue("2testtext2");
 
             CellStyle newStyle = newCell.getCellStyle();
-            assertEquals(BorderStyle.DOTTED, newStyle.getBorderBottom());
+            assertEquals(DOTTED, newStyle.getBorderBottom());
             assertEquals(Font.COLOR_RED, ((HSSFCellStyle) newStyle).getFont(wb).getColor());
         }
     }
