@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class XWPFAbstractNumTest {
 
     @Test
-    public void getXmlObject() {
+    void getXmlObject() {
         // minimal test to include generated classes in poi-ooxml-lite
         XWPFAbstractNum num = new XWPFAbstractNum();
         assertNull(num.getCTAbstractNum());

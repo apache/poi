@@ -54,7 +54,7 @@ public class TestCommentsTable {
     private static final String TEST_AUTHOR = "test author";
 
     @Test
-    public void findAuthor() {
+    void findAuthor() {
         CommentsTable sheetComments = new CommentsTable();
         assertEquals(1, sheetComments.getNumberOfAuthors());
         assertEquals(0, sheetComments.findAuthor(""));
@@ -68,7 +68,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void getCellComment() {
+    void getCellComment() {
         CommentsTable sheetComments = new CommentsTable();
 
         CTComments comments = sheetComments.getCTComments();
@@ -94,7 +94,7 @@ public class TestCommentsTable {
 
 
     @Test
-    public void existing() throws IOException {
+    void existing() throws IOException {
         try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx")) {
             Sheet sheet1 = workbook.getSheetAt(0);
             Sheet sheet2 = workbook.getSheetAt(1);
@@ -126,7 +126,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void writeRead() throws IOException {
+    void writeRead() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx")) {
             XSSFSheet sheet1 = workbook.getSheetAt(0);
             XSSFSheet sheet2 = workbook.getSheetAt(1);
@@ -175,7 +175,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void readWriteMultipleAuthors() throws IOException {
+    void readWriteMultipleAuthors() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
             XSSFSheet sheet1 = workbook.getSheetAt(0);
             XSSFSheet sheet2 = workbook.getSheetAt(1);
@@ -213,7 +213,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void removeComment() {
+    void removeComment() {
         final CellAddress addrA1 = new CellAddress("A1");
         final CellAddress addrA2 = new CellAddress("A2");
         final CellAddress addrA3 = new CellAddress("A3");
@@ -248,7 +248,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void bug54920() throws IOException {
+    void bug54920() throws IOException {
         final Workbook workbook = new XSSFWorkbook();
         final Sheet sheet = workbook.createSheet("sheet01");
         // create anchor

@@ -429,7 +429,7 @@ public class TestExtractorFactory {
      *   "No supported documents found in the OLE2 stream"
      */
     @Test
-    public void bug59074() throws Exception {
+    void bug59074() throws Exception {
         try (POITextExtractor extractor = ex("59074.xls")) {
             String text = extractor.getText();
             assertContains(text, "Exotic warrant");

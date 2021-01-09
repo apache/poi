@@ -83,13 +83,13 @@ public class TestTempFileThreaded {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // Initialize array to allow to summarize afterwards
         executions = new int[NUMBER_OF_THREADS];
     }
 
     @Test
-    public void runTest() throws Throwable {
+    void runTest() throws Throwable {
         List<Thread> threads = new LinkedList<>();
 
         // start all threads
@@ -124,7 +124,7 @@ public class TestTempFileThreaded {
             }
         }
 
-        public void doEnd(int threadNum) {
+        void doEnd(int threadNum) {
             for (File file : files.get(threadNum)) {
                 if (!file.exists()) {
                     throw new IllegalStateException("File " + file + " does not exist");
@@ -135,7 +135,7 @@ public class TestTempFileThreaded {
             }
         }
 
-        public void run(int threadNum, int iter) throws Exception {
+        void run(int threadNum, int iter) throws Exception {
             try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
                 SXSSFSheet sheet = wb.createSheet("test");
 

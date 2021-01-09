@@ -104,7 +104,7 @@ public final class TestStylesTable {
         }
     }
 
-    public void doTestExisting(StylesTable st) {
+    void doTestExisting(StylesTable st) {
         // Check contents
         assertNotNull(st.getCTStylesheet());
         assertEquals(11, st._getXfsSize());
@@ -132,7 +132,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void populateNew() throws IOException {
+    void populateNew() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable st = wb.getStylesSource();
 
@@ -164,7 +164,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void populateExisting() throws IOException {
+    void populateExisting() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
             assertNotNull(workbook.getStylesSource());
 
@@ -192,7 +192,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void exceedNumberFormatLimit() throws IOException {
+    void exceedNumberFormatLimit() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             for (int i = 0; i < styles.getMaxNumberOfDataFormats(); i++) {
@@ -216,7 +216,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void removeNumberFormat() throws IOException {
+    void removeNumberFormat() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             final String fmt = customDataFormat;
             final short fmtIdx = (short) wb1.getStylesSource().putNumberFormat(fmt);
@@ -269,7 +269,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void maxNumberOfDataFormats() throws IOException {
+    void maxNumberOfDataFormats() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
 
@@ -292,7 +292,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void addDataFormatsBeyondUpperLimit() throws IOException {
+    void addDataFormatsBeyondUpperLimit() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             styles.setMaxNumberOfDataFormats(0);
@@ -304,7 +304,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void decreaseUpperLimitBelowCurrentNumDataFormats() throws IOException {
+    void decreaseUpperLimitBelowCurrentNumDataFormats() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             styles.putNumberFormat(customDataFormat);

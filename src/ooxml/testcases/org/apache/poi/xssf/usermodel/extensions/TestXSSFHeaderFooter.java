@@ -44,7 +44,7 @@ public class TestXSSFHeaderFooter {
     private XSSFHeaderFooter fF;
 
     @BeforeEach
-    public void before() {
+    void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
         hO = (XSSFHeaderFooter) sheet.getOddHeader();
@@ -56,7 +56,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @AfterEach
-    public void after() throws Exception {
+    void after() throws Exception {
         wb.close();
     }
 

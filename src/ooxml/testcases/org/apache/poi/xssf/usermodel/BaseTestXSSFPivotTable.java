@@ -49,10 +49,10 @@ public abstract class BaseTestXSSFPivotTable {
      * required to set up the test pivot tables and cell reference, either by name or reference.
      */
     @BeforeEach
-    public abstract void setUp();
+    protected abstract void setUp();
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         if (wb != null) {
             XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
             wb.close();

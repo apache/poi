@@ -142,7 +142,7 @@ public final class TestContentTypeManager {
     }
 
     @Test
-    public void bug62629CombinePictures() throws Exception {
+    void bug62629CombinePictures() throws Exception {
         // this file has incorrect default content-types which caused problems in Apache POI
         // we now handle this broken file more gracefully
         XSSFWorkbook book = XSSFTestDataSamples.openSampleWorkbook("62629_target.xlsm");

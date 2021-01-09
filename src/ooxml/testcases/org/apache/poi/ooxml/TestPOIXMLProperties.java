@@ -55,7 +55,7 @@ public final class TestPOIXMLProperties {
     private CoreProperties _coreProperties;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
         sampleNoThumb = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         assertNotNull(sampleDoc);
@@ -66,7 +66,7 @@ public final class TestPOIXMLProperties {
     }
 
     @AfterEach
-    public void closeResources() throws Exception {
+    void closeResources() throws Exception {
         sampleDoc.close();
         sampleNoThumb.close();
     }

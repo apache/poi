@@ -168,7 +168,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
+	void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
 	    Row formulasRow = sheet.getRow(formulasRowIdx);
 	    Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
 

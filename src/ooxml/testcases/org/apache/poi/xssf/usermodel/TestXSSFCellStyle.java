@@ -64,7 +64,7 @@ public class TestXSSFCellStyle {
     private XSSFCellStyle cellStyle;
 
     @BeforeEach
-	public void setUp() {
+	void setUp() {
 		stylesTable = new StylesTable();
 
         CTStylesheet ctStylesheet = stylesTable.getCTStylesheet();
@@ -1068,7 +1068,7 @@ public class TestXSSFCellStyle {
     }
 
     @Test
-    public void bug58996_UsedToWorkIn3_11_ButNotIn3_13() throws IOException {
+    void bug58996_UsedToWorkIn3_11_ButNotIn3_13() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
 
         XSSFCellStyle cellStyle = workbook.createCellStyle();

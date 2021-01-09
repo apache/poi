@@ -68,7 +68,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestEncryptor {
     @Test
-    public void binaryRC4Encryption() throws Exception {
+    void binaryRC4Encryption() throws Exception {
         // please contribute a real sample file, which is binary rc4 encrypted
         // ... at least the output can be opened in Excel Viewer
         String password = "pass";
@@ -107,7 +107,7 @@ public class TestEncryptor {
     }
 
     @Test
-    public void tempFileAgileEncryption() throws Exception {
+    void tempFileAgileEncryption() throws Exception {
         String password = "pass";
 
         final byte[] payloadExpected;
@@ -144,7 +144,7 @@ public class TestEncryptor {
     }
 
     @Test
-    public void agileEncryption() throws Exception {
+    void agileEncryption() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
@@ -243,7 +243,7 @@ public class TestEncryptor {
     }
 
     @Test
-    public void standardEncryption() throws Exception {
+    void standardEncryption() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
         final String pass = "solrcell";
 
@@ -334,7 +334,7 @@ public class TestEncryptor {
      * http://stackoverflow.com/questions/28593223
      */
     @Test
-    public void encryptPackageWithoutCoreProperties() throws Exception {
+    void encryptPackageWithoutCoreProperties() throws Exception {
         // Open our file without core properties
         final byte[] encBytes;
         try (InputStream is = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("OPCCompliance_NoCoreProperties.xlsx");
@@ -384,7 +384,7 @@ public class TestEncryptor {
 
     @Test
     @Disabled
-    public void inPlaceRewrite() throws Exception {
+    void inPlaceRewrite() throws Exception {
         File f = TempFile.createTempFile("protected_agile", ".docx");
 
         try (FileOutputStream fos = new FileOutputStream(f);
@@ -460,7 +460,7 @@ public class TestEncryptor {
      * the default way of defining the encryption settings is via the EncryptionInfo class
      */
     @Test
-    public void bug60320CustomEncrypt() throws Exception {
+    void bug60320CustomEncrypt() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
@@ -594,7 +594,7 @@ public class TestEncryptor {
     }
 
     @Test
-    public void smallFile() throws IOException, GeneralSecurityException {
+    void smallFile() throws IOException, GeneralSecurityException {
         // see https://stackoverflow.com/questions/61463301
         final int tinyFileSize = 80_000_000;
         final String pass = "s3cr3t";

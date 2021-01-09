@@ -65,7 +65,7 @@ public class TestXWPFRun {
     private XWPFDocument doc;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         doc = new XWPFDocument();
         p = doc.createParagraph();
         irb = p;
@@ -74,7 +74,7 @@ public class TestXWPFRun {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         doc.close();
     }
 

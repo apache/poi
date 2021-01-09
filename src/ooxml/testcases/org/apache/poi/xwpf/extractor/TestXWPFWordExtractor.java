@@ -462,7 +462,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void bug55966() throws IOException  {
+    void bug55966() throws IOException  {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55966.docx")) {
             String expected = "Content control within a paragraph is here text content from within a paragraph second control with a new\n" +
                     "line\n" +

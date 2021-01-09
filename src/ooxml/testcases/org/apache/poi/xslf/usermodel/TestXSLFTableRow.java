@@ -36,7 +36,7 @@ public class TestXSLFTableRow {
 
     /** Copied from {@link TestXSLFTable#testRead()} */
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide = ppt.getSlides().get(3);
@@ -47,14 +47,14 @@ public class TestXSLFTableRow {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         ppt.getPackage().revert();
         ppt.close();
     }
 
 
     @Test
-    public void constructor() {
+    void constructor() {
         XSLFTableRow row2 = new XSLFTableRow(row.getXmlObject(), tbl);
         assertSame(row.getXmlObject(), row2.getXmlObject());
         assertEquals(row.getHeight(), row2.getHeight(), 1e-16);
@@ -69,7 +69,7 @@ public class TestXSLFTableRow {
 
     /** copied from {@link TestXSLFTable#testCreate()} */
     @Test
-    public void getCells() {
+    void getCells() {
         List<XSLFTableCell> cells = row.getCells();
         assertNotNull(cells);
         assertEquals(3, cells.size());
@@ -87,7 +87,7 @@ public class TestXSLFTableRow {
 
     /** copied from {@link TestXSLFTable#testCreate()} */
     @Test
-    public void addCell() {
+    void addCell() {
         XSLFTableCell cell = row.addCell();
         assertNotNull(cell);
 
@@ -101,7 +101,7 @@ public class TestXSLFTableRow {
     }
 
     @Test
-    public void mergeCells() {
+    void mergeCells() {
         assertThrows(IllegalArgumentException.class, () -> row.mergeCells(0, 0),
             "expected IllegalArgumentException when merging fewer than 2 columns");
 
@@ -114,14 +114,14 @@ public class TestXSLFTableRow {
     }
 
     @Test
-    public void getXmlObject() {
+    void getXmlObject() {
         CTTableRow ctrow = row.getXmlObject();
         assertNotNull(ctrow);
     }
 
 
     @Test
-    public void getShapeNameOfCells() throws Exception {
+    void getShapeNameOfCells() throws Exception {
         try(XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("table_test.pptx")) {
             for (XSLFSlide slide : ss1.getSlides()) {
                 for (XSLFShape shape : slide.getShapes()) {

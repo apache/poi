@@ -73,7 +73,7 @@ public class TestHxxFEncryption {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void extract(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+    void extract(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te = ExtractorFactory.createExtractor(f)) {
@@ -86,13 +86,13 @@ public class TestHxxFEncryption {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void changePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+    void changePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         newPassword("test", sampleDir, file, password, expected);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void removePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+    void removePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         newPassword(null, sampleDir, file, password, expected);
     }
 
@@ -118,7 +118,7 @@ public class TestHxxFEncryption {
     /** changing the encryption mode and key size in poor mans style - see comments below */
     @ParameterizedTest
     @MethodSource("data")
-    public void changeEncryption(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+    void changeEncryption(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);

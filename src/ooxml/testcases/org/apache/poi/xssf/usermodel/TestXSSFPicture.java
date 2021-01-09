@@ -46,7 +46,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
     }
 
     @Test
-    public void create() throws IOException {
+    void create() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -83,7 +83,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
      * See Bugzilla 50458
      */
     @Test
-    public void incrementShapeId() throws IOException {
+    void incrementShapeId() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -106,7 +106,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
      * same image refrerred by mulitple sheets
      */
     @Test
-    public void multiRelationShips() throws IOException {
+    void multiRelationShips() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
             byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);

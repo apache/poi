@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class TestXDDFChartExtensionList {
 
     @Test
-    public void getXmlObject() {
+    void getXmlObject() {
         // minimal test to include generated classes in poi-ooxml-lite
         XDDFChartExtensionList list = new XDDFChartExtensionList();
         assertNotNull(list.getXmlObject());

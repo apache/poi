@@ -52,7 +52,7 @@ public class TestVlookup {
     }
 
     @Test
-    public void bug62275_true() throws IOException {
+    void bug62275_true() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -69,7 +69,7 @@ public class TestVlookup {
     }
 
     @Test
-    public void bug62275_false() throws IOException {
+    void bug62275_false() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -86,7 +86,7 @@ public class TestVlookup {
     }
 
     @Test
-    public void bug62275_empty_3args() throws IOException {
+    void bug62275_empty_3args() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -103,7 +103,7 @@ public class TestVlookup {
     }
 
     @Test
-    public void bug62275_empty_2args() throws IOException {
+    void bug62275_empty_2args() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -120,7 +120,7 @@ public class TestVlookup {
     }
 
     @Test
-    public void bug62275_empty_1arg() throws IOException {
+    void bug62275_empty_1arg() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);

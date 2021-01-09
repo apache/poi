@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestXSSFDrawing {
     @Test
-    public void bug54803() throws Exception {
+    void bug54803() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("bug54803.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
             sheet.createDrawingPatriarch();

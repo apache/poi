@@ -47,12 +47,12 @@ public class TestXSLFSlideShow {
     private OPCPackage pack;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
 		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
     	pack.close();
 	}
 

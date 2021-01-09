@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSSFPropertyTemplate {
 
     @Test
-    public void applyBorders() throws IOException {
+    void applyBorders() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         CellRangeAddress b2 = new CellRangeAddress(1, 1, 1, 1);
         PropertyTemplate pt = new PropertyTemplate();
@@ -99,7 +99,7 @@ public class TestXSSFPropertyTemplate {
     }
 
     @Test
-    public void clonePropertyTemplate() throws IOException {
+    void clonePropertyTemplate() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorders(a1c3, BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), BorderExtent.ALL);

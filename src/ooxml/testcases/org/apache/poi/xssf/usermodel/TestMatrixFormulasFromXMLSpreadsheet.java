@@ -145,7 +145,7 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void processFunctionRow(String targetFunctionName, int formulasRowIdx) {
+    void processFunctionRow(String targetFunctionName, int formulasRowIdx) {
 
        int endColNum = Navigator.START_RESULT_COL_INDEX + Navigator.COL_OFF_EXPECTED_RESULT;
 

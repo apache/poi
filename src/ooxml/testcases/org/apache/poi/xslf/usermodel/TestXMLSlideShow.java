@@ -46,12 +46,12 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         pack.revert();
     }
 

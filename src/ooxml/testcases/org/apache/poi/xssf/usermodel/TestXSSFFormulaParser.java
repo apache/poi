@@ -74,7 +74,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void basicParsing() throws IOException {
+    void basicParsing() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -144,7 +144,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void builtInFormulas() throws IOException {
+    void builtInFormulas() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -162,7 +162,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void formulaReferencesSameWorkbook() throws IOException {
+    void formulaReferencesSameWorkbook() throws IOException {
         // Use a test file with "other workbook" style references
         //  to itself
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
@@ -183,7 +183,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void formulaReferencesOtherSheets() throws IOException {
+    void formulaReferencesOtherSheets() throws IOException {
         // Use a test file with the named ranges in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -225,7 +225,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void formulaReferencesOtherWorkbook() throws IOException {
+    void formulaReferencesOtherWorkbook() throws IOException {
         // Use a test file with the external linked table in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -272,7 +272,7 @@ public final class TestXSSFFormulaParser {
      * (but not evaluate - that's elsewhere in the test suite)
      */
     @Test
-    public void multiSheetReferencesHSSFandXSSF() throws IOException {
+    void multiSheetReferencesHSSFandXSSF() throws IOException {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
                 XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
@@ -560,7 +560,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void parseStructuredReferences() throws IOException {
+    void parseStructuredReferences() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);

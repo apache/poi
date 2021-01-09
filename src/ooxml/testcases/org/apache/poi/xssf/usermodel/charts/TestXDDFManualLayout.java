@@ -40,7 +40,7 @@ public final class TestXDDFManualLayout {
     private XDDFManualLayout layout;
 
     @BeforeEach
-    public void createEmptyLayout() {
+    void createEmptyLayout() {
         wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -51,7 +51,7 @@ public final class TestXDDFManualLayout {
     }
 
     @AfterEach
-    public void closeWB() throws IOException {
+    void closeWB() throws IOException {
         wb.close();
     }
 

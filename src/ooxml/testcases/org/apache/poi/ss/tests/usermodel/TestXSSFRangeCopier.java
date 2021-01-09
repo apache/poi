@@ -43,7 +43,7 @@ public class TestXSSFRangeCopier extends BaseTestRangeCopier {
     }
 
     @BeforeEach
-    public void init() {
+    void init() {
         workbook = XSSFTestDataSamples.openSampleWorkbook("tile-range-test.xlsx");
         initSheets();
         rangeCopier = new XSSFRangeCopier(sheet1, sheet1);
@@ -51,12 +51,12 @@ public class TestXSSFRangeCopier extends BaseTestRangeCopier {
     }
 
     @AfterEach
-    public void shutdown() throws IOException {
+    void shutdown() throws IOException {
         workbook.close();
     }
 
     @Test // XSSF only. HSSF version wouldn't be so simple. And also this test is contained in following, more complex tests, so it's not really important.
-    public void copyRow() {
+    void copyRow() {
         Row existingRow = sheet1.getRow(4);
         XSSFRow newRow = (XSSFRow)sheet1.getRow(5);
         CellCopyPolicy policy = new CellCopyPolicy();

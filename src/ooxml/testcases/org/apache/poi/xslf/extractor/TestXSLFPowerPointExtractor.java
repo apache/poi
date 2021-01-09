@@ -299,7 +299,7 @@ public class TestXSLFPowerPointExtractor {
 
 
     @Test
-    public void bug54570() throws IOException {
+    void bug54570() throws IOException {
         try (XMLSlideShow xml = openPPTX("bug54570.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             String text = extractor.getText();
@@ -314,7 +314,7 @@ public class TestXSLFPowerPointExtractor {
     }
 
     @Test
-    public void setSlTests() throws IOException {
+    void setSlTests() throws IOException {
         try (XMLSlideShow xml = openPPTX("aascu.org_hbcu_leadershipsummit_cooper_.pptx")) {
             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml);
             assertNotNull(extractor);

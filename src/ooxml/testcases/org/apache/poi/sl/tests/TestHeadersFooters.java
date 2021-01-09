@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestHeadersFooters {
     @Test
-    public void bug58144c() throws IOException {
+    void bug58144c() throws IOException {
         SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2007.pptx");
         testSlideShow(ppt);
         ppt.close();

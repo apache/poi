@@ -63,14 +63,14 @@ public class TestAutoSizeColumnTracker {
     private final static String LONG_MESSAGE = "This is a test of a long message! This is a test of a long message!";
 
     @BeforeEach
-    public void setUpSheetAndWorkbook() {
+    void setUpSheetAndWorkbook() {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         tracker = new AutoSizeColumnTracker(sheet);
     }
 
     @AfterEach
-    public void tearDownSheetAndWorkbook() throws IOException {
+    void tearDownSheetAndWorkbook() throws IOException {
         if (sheet != null) {
             sheet.dispose();
         }
@@ -80,7 +80,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void trackAndUntrackColumn() {
+    void trackAndUntrackColumn() {
         assumeTrue(tracker.getTrackedColumns().isEmpty());
         tracker.trackColumn(0);
         Set<Integer> expected = new HashSet<>();
@@ -91,7 +91,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void trackAndUntrackColumns() {
+    void trackAndUntrackColumns() {
         assumeTrue(tracker.getTrackedColumns().isEmpty());
         tracker.trackColumns(columns);
         assertEquals(columns, tracker.getTrackedColumns());
@@ -108,14 +108,14 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void trackAndUntrackAllColumns() {
+    void trackAndUntrackAllColumns() {
         createColumnsAndTrackThemAll();
         tracker.untrackAllColumns();
         assertTrue(tracker.getTrackedColumns().isEmpty());
     }
 
     @Test
-    public void isColumnTracked() {
+    void isColumnTracked() {
         assumeFalse(tracker.isColumnTracked(0));
         tracker.trackColumn(0);
         assertTrue(tracker.isColumnTracked(0));
@@ -124,7 +124,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void isColumnTrackedAndTrackAllColumns() {
+    void isColumnTrackedAndTrackAllColumns() {
         createColumnsAndTrackThemAll();
         tracker.untrackColumn(0);
         SortedSet<Integer> _newColumns = new TreeSet<>();
@@ -136,7 +136,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void getTrackedColumns() {
+    void getTrackedColumns() {
         assumeTrue(tracker.getTrackedColumns().isEmpty());
 
         for (int column : columns) {
@@ -148,7 +148,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void isAllColumnsTracked() {
+    void isAllColumnsTracked() {
         assertFalse(tracker.isAllColumnsTracked());
         tracker.trackAllColumns();
         assertTrue(tracker.isAllColumnsTracked());
@@ -157,7 +157,7 @@ public class TestAutoSizeColumnTracker {
     }
 
     @Test
-    public void updateColumnWidths_and_getBestFitColumnWidth() {
+    void updateColumnWidths_and_getBestFitColumnWidth() {
         tracker.trackAllColumns();
         Row row1 = sheet.createRow(0);
         Row row2 = sheet.createRow(1);

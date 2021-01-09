@@ -127,7 +127,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug62929() throws Exception {
+    void bug62929() throws Exception {
         try (XMLSlideShow ss1 = openSampleDocument("missing-blip-fill.pptx")) {
             assertEquals(1, ss1.getSlides().size());
 
@@ -146,7 +146,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug62736() throws Exception {
+    void bug62736() throws Exception {
         XMLSlideShow ss1 = openSampleDocument("bug62736.pptx");
 
         assertEquals(1, ss1.getSlides().size());
@@ -228,7 +228,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug61589() throws IOException {
+    void bug61589() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (XMLSlideShow src = new XMLSlideShow();
              XMLSlideShow dest = new XMLSlideShow()) {
@@ -275,7 +275,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug62587() throws IOException {
+    void bug62587() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             Slide<?, ?> slide = ppt.createSlide();
@@ -326,7 +326,7 @@ public class TestXSLFBugs {
 
 
     @Test
-    public void bug60499() throws IOException, InvalidFormatException {
+    void bug60499() throws IOException, InvalidFormatException {
         InputStream is = slTests.openResourceAsStream("bug60499.pptx");
         byte[] buf = IOUtils.toByteArray(is);
         is.close();
@@ -370,7 +370,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug51187() throws Exception {
+    void bug51187() throws Exception {
         XMLSlideShow ss1 = openSampleDocument("51187.pptx");
 
         assertEquals(1, ss1.getSlides().size());
@@ -411,7 +411,7 @@ public class TestXSLFBugs {
      * Slide relations with anchors in them
      */
     @Test
-    public void tika705() throws Exception {
+    void tika705() throws Exception {
         XMLSlideShow ss = openSampleDocument("with_japanese.pptx");
 
         // Should have one slide
@@ -455,7 +455,7 @@ public class TestXSLFBugs {
      * rID2 -> slide3.xml
      */
     @Test
-    public void bug54916() throws IOException {
+    void bug54916() throws IOException {
         try (XMLSlideShow ss = openSampleDocument("OverlappingRelations.pptx")) {
             XSLFSlide slide;
 
@@ -484,7 +484,7 @@ public class TestXSLFBugs {
      * gives a NPE, see bug #56812
      */
     @Test
-    public void bug56812() throws Exception {
+    void bug56812() throws Exception {
         XMLSlideShow ppt = openSampleDocument("56812.pptx");
 
         int internalPictures = 0;
@@ -527,7 +527,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug57250() throws Exception {
+    void bug57250() throws Exception {
         XMLSlideShow ss = new XMLSlideShow();
         for (String s : new String[]{"Slide1", "Slide2"}) {
             ss.createSlide().createTextBox().setText(s);
@@ -677,7 +677,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug58205() throws IOException {
+    void bug58205() throws IOException {
         XMLSlideShow ss = openSampleDocument("themes.pptx");
 
         int i = 1;
@@ -689,14 +689,14 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug55791a() throws IOException {
+    void bug55791a() throws IOException {
         XMLSlideShow ppt = openSampleDocument("45541_Footer.pptx");
         removeAndCreateSlide(ppt);
         ppt.close();
     }
 
     @Test
-    public void bug55791b() throws IOException {
+    void bug55791b() throws IOException {
         XMLSlideShow ppt = openSampleDocument("SampleShow.pptx");
         removeAndCreateSlide(ppt);
         ppt.close();
@@ -709,7 +709,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void blibFillAlternateContent() throws IOException {
+    void blibFillAlternateContent() throws IOException {
         XMLSlideShow ppt = openSampleDocument("2411-Performance_Up.pptx");
         XSLFPictureShape ps = (XSLFPictureShape) ppt.getSlides().get(4).getShapes().get(0);
         assertNotNull(ps.getPictureData());
@@ -717,7 +717,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug59434() throws IOException {
+    void bug59434() throws IOException {
         String url1 = "https://poi.apache.org/changes.html";
         String url2 = "https://poi.apache.org/faq.html";
         XMLSlideShow ppt1 = new XMLSlideShow();
@@ -744,7 +744,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug58217() throws IOException {
+    void bug58217() throws IOException {
         Color fillColor = new Color(1f, 1f, 0f, 0.1f);
         Color lineColor = new Color(25.3f / 255f, 1f, 0f, 0.4f);
         Color textColor = new Color(1f, 1f, 0f, 0.6f);
@@ -782,7 +782,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug55714() throws IOException {
+    void bug55714() throws IOException {
         XMLSlideShow srcPptx = openSampleDocument("pptx2svg.pptx");
         XMLSlideShow newPptx = new XMLSlideShow();
         XSLFSlide srcSlide = srcPptx.getSlides().get(0);
@@ -808,7 +808,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug59273() throws IOException {
+    void bug59273() throws IOException {
         XMLSlideShow ppt = openSampleDocument("bug59273.potx");
         ppt.getPackage().replaceContentType(
             XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
@@ -828,7 +828,7 @@ public class TestXSLFBugs {
 
 
     @Test
-    public void bug60373() throws IOException {
+    void bug60373() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide sl = ppt.createSlide();
         XSLFTable t = sl.createTable();
@@ -852,14 +852,14 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug60715() throws IOException {
+    void bug60715() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("bug60715.pptx")) {
             assertDoesNotThrow((ThrowingSupplier<XSLFSlide>) ppt::createSlide);
         }
     }
 
     @Test
-    public void bug60662() throws IOException {
+    void bug60662() throws IOException {
         XMLSlideShow src = new XMLSlideShow();
         XSLFSlide sl = src.createSlide();
         XSLFGroupShape gs = sl.createGroup();
@@ -938,7 +938,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug62051() throws IOException {
+    void bug62051() throws IOException {
         final Function<List<XSLFShape>, int[]> ids = (shapes) ->
             shapes.stream().mapToInt(Shape::getShapeId).toArray();
 
@@ -966,7 +966,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug63200() throws Exception {
+    void bug63200() throws Exception {
         try (XMLSlideShow ss1 = openSampleDocument("63200.pptx")) {
             assertEquals(1, ss1.getSlides().size());
 
@@ -983,7 +983,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void alternateContent() throws Exception {
+    void alternateContent() throws Exception {
         try (XMLSlideShow ppt = openSampleDocument("alterman_security.pptx")) {
             XSLFSlideMaster slide = ppt.getSlideMasters().get(0);
             XSLFObjectShape os = (XSLFObjectShape) slide.getShapes().get(0);
@@ -1005,7 +1005,7 @@ public class TestXSLFBugs {
 
 
     @Test
-    public void bug57796() throws IOException {
+    void bug57796() throws IOException {
         assumeFalse(xslfOnly);
 
         try (SlideShow<?, ?> ppt = SlideShowFactory.create(slTests.getFile("WithLinks.ppt"))) {

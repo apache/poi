@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFNotes {
 
     @Test
-    public void createNewNote() throws IOException {
+    void createNewNote() throws IOException {
 
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();
@@ -56,7 +56,7 @@ public class TestXSLFNotes {
     }
 
     @Test
-    public void addNote() throws IOException {
+    void addNote() throws IOException {
 
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("sample.pptx");
 
@@ -79,7 +79,7 @@ public class TestXSLFNotes {
     }
 
     @Test
-    public void replaceNotes() throws IOException {
+    void replaceNotes() throws IOException {
 
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("sample.pptx");
 

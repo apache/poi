@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
 public class TestXWPFBugs {
     @Test
-    public void bug55802() throws Exception {
+    void bug55802() throws Exception {
         String blabla =
                 "Bir, iki, \u00fc\u00e7, d\u00f6rt, be\u015f,\n" +
                         "\nalt\u0131, yedi, sekiz, dokuz, on.\n" +
@@ -62,7 +62,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void bug57312_NullPointException() throws IOException {
+    void bug57312_NullPointException() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("57312.docx")) {
             assertNotNull(doc);
 
@@ -89,7 +89,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void bug57495_getTableArrayInDoc() throws IOException {
+    void bug57495_getTableArrayInDoc() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             //let's create a few tables for the test
             for (int i = 0; i < 3; i++) {
@@ -104,7 +104,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void bug57495_getParagraphArrayInTableCell() throws IOException {
+    void bug57495_getParagraphArrayInTableCell() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             //let's create a table for the test
             XWPFTable table = doc.createTable(2, 2);
@@ -118,7 +118,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void bug57495_convertPixelsToEMUs() {
+    void bug57495_convertPixelsToEMUs() {
         int pixels = 100;
         int expectedEMU = 952500;
         int result = Units.pixelToEMU(pixels);

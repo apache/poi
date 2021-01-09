@@ -39,7 +39,7 @@ public final class TestListParts {
 	private TreeMap<PackagePartName, String> values;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	void setUp() throws Exception {
 		values = new TreeMap<>();
 
 		// Expected values

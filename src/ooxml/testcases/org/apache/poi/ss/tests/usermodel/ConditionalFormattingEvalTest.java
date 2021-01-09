@@ -50,14 +50,14 @@ public class ConditionalFormattingEvalTest {
     private List<EvaluationConditionalFormatRule> rules;
 
     @BeforeEach
-    public void openWB() {
+    void openWB() {
         wb = XSSFTestDataSamples.openSampleWorkbook("ConditionalFormattingSamples.xlsx");
         formulaEval = new XSSFFormulaEvaluator(wb);
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
     }
 
     @AfterEach
-    public void closeWB() {
+    void closeWB() {
         formulaEval = null;
         cfe = null;
         ref = null;

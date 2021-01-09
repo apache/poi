@@ -44,7 +44,7 @@ public class TestEmbeddedExtractor {
     private static final POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void extractPDFfromEMF() throws Exception {
+    void extractPDFfromEMF() throws Exception {
         InputStream fis = samples.openResourceAsStream("Basic_Expense_Template_2011.xls");
         Workbook wb = WorkbookFactory.create(fis);
         fis.close();
@@ -72,7 +72,7 @@ public class TestEmbeddedExtractor {
     }
 
     @Test
-    public void extractFromXSSF() throws IOException, EncryptedDocumentException, InvalidFormatException {
+    void extractFromXSSF() throws IOException, EncryptedDocumentException, InvalidFormatException {
         InputStream fis = samples.openResourceAsStream("58325_db.xlsx");
         Workbook wb = WorkbookFactory.create(fis);
         fis.close();

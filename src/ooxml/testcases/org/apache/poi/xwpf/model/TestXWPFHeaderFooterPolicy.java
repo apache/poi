@@ -43,7 +43,7 @@ public class TestXWPFHeaderFooterPolicy {
     private XWPFDocument diffFirst;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
         header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
         headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
@@ -53,7 +53,7 @@ public class TestXWPFHeaderFooterPolicy {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         noHeader.close();
         header.close();
         headerFooter.close();

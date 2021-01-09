@@ -172,7 +172,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void bug56076_read() throws IOException {
+    void bug56076_read() throws IOException {
         // test legacy xored-hashed password
         assertEquals("64CEED7E", CryptoFunctions.xorHashPassword("Example"));
         // check leading 0
@@ -186,7 +186,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void bug56076_write() throws IOException {
+    void bug56076_write() throws IOException {
         // test document write protection with password
         XWPFDocument doc1 = new XWPFDocument();
         doc1.enforceCommentsProtection("Example", HashAlgorithm.sha512);

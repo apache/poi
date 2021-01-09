@@ -49,7 +49,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         ((DeferredSXSSFITestDataProvider) _testDataProvider).cleanup();
     }
 
@@ -82,14 +82,14 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Override
     @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
-    public void parentReferences() {}
+    protected void parentReferences() {}
 
     @Override
     @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
-    public void unicodeInAll() {}
+    protected void unicodeInAll() {}
 
     @Test
-    public void existingWorkbook() throws IOException {
+    void existingWorkbook() throws IOException {
         XSSFWorkbook xssfWb1 = new XSSFWorkbook();
         xssfWb1.createSheet("S1");
         DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook(xssfWb1);
@@ -110,7 +110,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void addToExistingWorkbook() throws IOException {
+    void addToExistingWorkbook() throws IOException {
         XSSFWorkbook xssfWb1 = new XSSFWorkbook();
         xssfWb1.createSheet("S1");
         Sheet sheet = xssfWb1.createSheet("S2");
@@ -189,7 +189,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void sheetdataWriter() throws IOException {
+    void sheetdataWriter() throws IOException {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
         SXSSFSheet sh = wb.createSheet();
         assertSame(sh.getClass(), DeferredSXSSFSheet.class);
@@ -199,7 +199,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void removeSheet() throws IOException {
+    void removeSheet() throws IOException {
         try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
             DeferredSXSSFSheet sheet1 = wb.createSheet("sheet1");
             sheet1.setRowGenerator((sh) -> {
@@ -224,7 +224,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void gzipSheetdataWriter() throws IOException {
+    void gzipSheetdataWriter() throws IOException {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
 
         final int rowNum = 1000;
@@ -255,7 +255,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void workbookDispose() throws IOException {
+    void workbookDispose() throws IOException {
         DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook();
         // the underlying writer is SheetDataWriter
         assertWorkbookDispose(wb1);
@@ -304,7 +304,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    public void changeSheetNameWithSharedFormulas() {
+    void changeSheetNameWithSharedFormulas() {
         /* not implemented */
     }
 }

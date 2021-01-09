@@ -79,7 +79,7 @@ public class TestFonts {
     }
 
     @Test
-    public void resizeToFitTextHSLF() throws IOException {
+    void resizeToFitTextHSLF() throws IOException {
         assumeFalse(xslfOnly());
         SlideShow<?,?> ppt = SlideShowFactory.create(false);
         resizeToFitText(ppt);
@@ -87,7 +87,7 @@ public class TestFonts {
     }
 
     @Test
-    public void resizeToFitTextXSLF() throws IOException {
+    void resizeToFitTextXSLF() throws IOException {
         SlideShow<?,?> ppt = new XMLSlideShow();
         resizeToFitText(ppt);
         ppt.close();

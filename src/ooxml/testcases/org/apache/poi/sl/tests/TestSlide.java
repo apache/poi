@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class TestSlide {
 
     @Test
-    public void hideHSLF() throws IOException {
+    void hideHSLF() throws IOException {
         assumeFalse(xslfOnly());
         try (SlideShow<?,?> ppt1 = SlideShowFactory.create(false)) {
             hideSlide(ppt1);
@@ -46,7 +46,7 @@ public class TestSlide {
     }
 
     @Test
-    public void hideXSLF() throws IOException {
+    void hideXSLF() throws IOException {
         try (SlideShow<?,?> ppt1 = new XMLSlideShow()) {
             hideSlide(ppt1);
         }

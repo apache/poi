@@ -91,7 +91,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * Tests that we can save, and then re-load a new document
      */
     @Test
-    public void saveLoadNew() throws IOException, InvalidFormatException {
+    void saveLoadNew() throws IOException, InvalidFormatException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
 
         //check that the default date system is set to 1900
@@ -163,7 +163,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void existing() throws Exception {
+    void existing() throws Exception {
 
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
         assertNotNull(workbook.getSharedStringSource());
@@ -183,7 +183,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void getCellStyleAt() throws IOException{
+    void getCellStyleAt() throws IOException{
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             short i = 0;
             //get default style
@@ -203,7 +203,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void getFontAt() throws IOException{
+    void getFontAt() throws IOException{
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             StylesTable styleSource = workbook.getStylesSource();
             short i = 0;
@@ -221,7 +221,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void getNumCellStyles() throws IOException{
+    void getNumCellStyles() throws IOException{
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             //get default cellStyles
             assertEquals(1, workbook.getNumCellStyles());
@@ -229,7 +229,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void loadSave() throws IOException {
+    void loadSave() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
         assertEquals(3, workbook.getNumberOfSheets());
         assertEquals("dd/mm/yyyy", workbook.getSheetAt(0).getRow(1).getCell(0).getRichStringCellValue().getString());
@@ -256,7 +256,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void styles() throws IOException {
+    void styles() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 
         StylesTable ss = wb1.getStylesSource();
@@ -297,7 +297,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void incrementSheetId() throws IOException {
+    void incrementSheetId() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             int sheetId = (int) wb.createSheet().sheet.getSheetId();
             assertEquals(1, sheetId);
@@ -317,7 +317,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      *  Test setting of core properties such as Title and Author
      */
     @Test
-    public void workbookProperties() throws IOException {
+    void workbookProperties() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             POIXMLProperties props = workbook.getProperties();
             assertNotNull(props);
@@ -345,7 +345,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * fails, the test data is not working properly.
      */
     @Test
-    public void bug47668() throws Exception {
+    void bug47668() throws Exception {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("47668.xlsx");
         List<XSSFPictureData> allPictures = workbook.getAllPictures();
         assertEquals(1, allPictures.size());
@@ -383,7 +383,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void bug47737() throws IOException {
+    void bug47737() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47737.xlsx");
         assertEquals(2, wb.getNumberOfNames());
         assertNotNull(wb.getCalculationChain());
@@ -411,7 +411,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * Problems with XSSFWorkbook.removeSheetAt when workbook contains charts
      */
     @Test
-    public void bug47813() throws IOException {
+    void bug47813() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");
         assertEquals(3, wb1.getNumberOfSheets());
         assertNotNull(wb1.getCalculationChain());
@@ -441,7 +441,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      *  coming out wrong
      */
     @Test
-    public void bug49702() throws IOException {
+    void bug49702() throws IOException {
         // First try with a new file
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
 
@@ -480,7 +480,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void recalcId() throws IOException {
+    void recalcId() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             assertFalse(wb.getForceFormulaRecalculation());
             CTWorkbook ctWorkbook = wb.getCTWorkbook();
@@ -513,7 +513,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void columnWidthPOI52233() throws Exception {
+    void columnWidthPOI52233() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -545,7 +545,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug48495() throws IOException {
+    void bug48495() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48495.xlsx");
 
         assertSheetOrder(wb, "Sheet1");
@@ -576,7 +576,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug47090a() throws IOException {
+    void bug47090a() throws IOException {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
         assertSheetOrder(workbook, "Sheet1", "Sheet2");
         workbook.removeSheetAt(0);
@@ -590,7 +590,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug47090b() throws IOException {
+    void bug47090b() throws IOException {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
         assertSheetOrder(workbook, "Sheet1", "Sheet2");
         workbook.removeSheetAt(1);
@@ -604,7 +604,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug47090c() throws IOException {
+    void bug47090c() throws IOException {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
         assertSheetOrder(workbook, "Sheet1", "Sheet2");
         workbook.removeSheetAt(0);
@@ -618,7 +618,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug47090d() throws IOException {
+    void bug47090d() throws IOException {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
         assertSheetOrder(workbook, "Sheet1", "Sheet2");
         workbook.createSheet();
@@ -634,7 +634,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug51158() throws IOException {
+    void bug51158() throws IOException {
         // create a workbook
         final XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet("Test Sheet");
@@ -679,7 +679,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug51158a() throws IOException {
+    void bug51158a() throws IOException {
         // create a workbook
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             workbook.createSheet("Test Sheet");
@@ -703,7 +703,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void bug60509() throws Exception {
+    void bug60509() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60509.xlsx");
         assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
         int sheetIndex = wb.getSheetIndex("Sheet1");
@@ -934,7 +934,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void bug58245_XSSFSheetIterator() throws IOException {
+    void bug58245_XSSFSheetIterator() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
 
@@ -1023,7 +1023,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void closeDoesNotModifyWorkbook() throws IOException {
+    void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
         Workbook wb;
@@ -1072,7 +1072,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * See bug #57840 test data tables
      */
     @Test
-    public void getTable() throws IOException {
+    void getTable() throws IOException {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTable.xlsx");
        XSSFTable table1 = wb.getTable("Tabella1");
        assertNotNull(table1, "Tabella1 was not found in workbook");

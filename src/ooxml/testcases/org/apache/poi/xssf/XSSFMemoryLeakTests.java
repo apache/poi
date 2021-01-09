@@ -55,7 +55,7 @@ public class XSSFMemoryLeakTests {
     private final List<Object> references = new ArrayList<>();
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         verifier.assertGarbageCollected();
     }
 

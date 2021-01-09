@@ -29,7 +29,7 @@ public class TestXSSFPivotTableName extends BaseTestXSSFPivotTable {
 
     @Override
     @BeforeEach
-    public void setUp(){
+    protected void setUp(){
         wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
 

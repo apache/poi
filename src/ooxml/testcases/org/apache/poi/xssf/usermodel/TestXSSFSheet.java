@@ -101,7 +101,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void existingHeaderFooter() throws IOException {
+    void existingHeaderFooter() throws IOException {
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx")) {
             XSSFOddHeader hdr;
             XSSFOddFooter ftr;
@@ -159,7 +159,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void getAllHeadersFooters() throws IOException {
+    void getAllHeadersFooters() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Sheet 1");
             assertNotNull(sheet.getOddFooter());
@@ -200,7 +200,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void autoSizeColumn() throws IOException {
+    void autoSizeColumn() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Sheet 1");
             sheet.createRow(0).createCell(13).setCellValue("test");
@@ -215,7 +215,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
 
     @Test
-    public void setCellComment() throws IOException {
+    void setCellComment() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
 
@@ -234,7 +234,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void getActiveCell() throws IOException {
+    void getActiveCell() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CellAddress R5 = new CellAddress("R5");
@@ -245,7 +245,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void createFreezePane_XSSF() throws IOException {
+    void createFreezePane_XSSF() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -265,7 +265,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void removeMergedRegion_lowlevel() throws IOException {
+    void removeMergedRegion_lowlevel() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -301,7 +301,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void setDefaultColumnStyle() throws IOException {
+    void setDefaultColumnStyle() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -328,7 +328,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
 
     @Test
-    public void groupUngroupColumn() throws IOException {
+    void groupUngroupColumn() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
 
@@ -374,7 +374,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void groupUngroupRow() throws IOException {
+    void groupUngroupRow() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
 
@@ -411,7 +411,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void setZoom() throws IOException {
+    void setZoom() throws IOException {
         try (XSSFWorkbook workBook = new XSSFWorkbook()) {
             XSSFSheet sheet1 = workBook.createSheet("new sheet");
             sheet1.setZoom(75);   // 75 percent magnification
@@ -434,7 +434,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      *  better should really review this!
      */
     @Test
-    public void setColumnGroupCollapsed() throws IOException {
+    void setColumnGroupCollapsed() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet1 = wb1.createSheet();
 
@@ -619,7 +619,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      *  better should really review this!
      */
     @Test
-    public void setRowGroupCollapsed() throws IOException {
+    void setRowGroupCollapsed() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet1 = wb1.createSheet();
 
@@ -699,7 +699,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * Get / Set column width and check the actual values of the underlying XML beans
      */
     @Test
-    public void columnWidth_lowlevel() throws IOException {
+    void columnWidth_lowlevel() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
         sheet.setColumnWidth(1, 22 * 256);
@@ -746,7 +746,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * Setting width of a column included in a column span
      */
     @Test
-    public void bug47862() throws IOException {
+    void bug47862() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47862.xlsx");
         XSSFSheet sheet = wb1.getSheetAt(0);
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
@@ -806,7 +806,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * Hiding a column included in a column span
      */
     @Test
-    public void bug47804() throws IOException {
+    void bug47804() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47804.xlsx");
         XSSFSheet sheet = wb1.getSheetAt(0);
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
@@ -877,7 +877,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void commentsTable() throws IOException {
+    void commentsTable() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet1 = wb1.createSheet();
         CommentsTable comment1 = sheet1.getCommentsTable(false);
@@ -1002,7 +1002,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void setAutoFilter() throws IOException {
+    void setAutoFilter() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("new sheet");
         sheet.setAutoFilter(CellRangeAddress.valueOf("A1:D100"));
@@ -1022,7 +1022,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void protectSheet_lowlevel() throws IOException {
+    void protectSheet_lowlevel() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         CTSheetProtection pr = sheet.getCTWorksheet().getSheetProtection();
@@ -1045,7 +1045,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void protectSheet_emptyPassword() throws IOException {
+    void protectSheet_emptyPassword() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         CTSheetProtection pr = sheet.getCTWorksheet().getSheetProtection();
@@ -1069,7 +1069,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void protectSheet_lowlevel_2013() throws IOException {
+    void protectSheet_lowlevel_2013() throws IOException {
         String password = "test";
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet xs = wb1.createSheet();
@@ -1086,7 +1086,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
 
     @Test
-    public void bug49966() throws IOException {
+    void bug49966() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("49966.xlsx");
         CalculationChain calcChain = wb1.getCalculationChain();
         assertNotNull(wb1.getCalculationChain());
@@ -1109,7 +1109,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * See bug #50829 test data tables
      */
     @Test
-    public void tables() throws IOException {
+    void tables() throws IOException {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTable.xlsx");
        assertEquals(3, wb.getNumberOfSheets());
 
@@ -1138,7 +1138,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * Test to trigger OOXML-LITE generating to include org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr
      */
     @Test
-    public void setForceFormulaRecalculation() throws IOException {
+    void setForceFormulaRecalculation() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet("Sheet 1");
 
@@ -1168,7 +1168,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void bug54607() throws IOException {
+    void bug54607() throws IOException {
         // run with the file provided in the Bug-Report
         runGetTopRow("54607.xlsx", true, 1, 0, 0);
         runGetLeftCol("54607.xlsx", true, 0, 0, 0);
@@ -1233,7 +1233,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void bug55745() throws Exception {
+    void bug55745() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55745.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
             List<XSSFTable> tables = sheet.getTables();
@@ -1243,7 +1243,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void bug55723b() throws IOException {
+    void bug55723b() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet();
 
@@ -1273,7 +1273,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     @Timeout(value = 180, unit = SECONDS)
     @Test
-    public void bug51585() throws IOException {
+    void bug51585() throws IOException {
         XSSFTestDataSamples.openSampleWorkbook("51585.xlsx").close();
     }
 
@@ -1838,7 +1838,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void setTabColor() throws IOException {
+    void setTabColor() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
@@ -1850,7 +1850,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void getTabColor() throws IOException {
+    void getTabColor() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
@@ -1863,7 +1863,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     // Test using an existing workbook saved by Excel
     @Test
-    public void tabColor() throws IOException {
+    void tabColor() throws IOException {
         try (XSSFWorkbook wb = openSampleWorkbook("SheetTabColors.xlsx")) {
             // non-colored sheets do not have a color
             assertNull(wb.getSheet("default").getTabColor());

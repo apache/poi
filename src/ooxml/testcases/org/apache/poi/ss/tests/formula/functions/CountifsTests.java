@@ -47,7 +47,7 @@ public class CountifsTests {
      * initialize a workbook
      */
     @BeforeEach
-    public void before() {
+    void before() {
         // not sure why we allow this, COUNTIFS() is only available
         // in OOXML, it was introduced with Office 2007
         workbook = new HSSFWorkbook();
@@ -57,7 +57,7 @@ public class CountifsTests {
      * Close the workbook if needed
      */
     @AfterEach
-    public void after() {
+    void after() {
         IOUtils.closeQuietly(workbook);
     }
 

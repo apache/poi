@@ -279,7 +279,7 @@ public class TestXSLFTable {
     }
 
     @Test
-    public void removeTable() throws IOException {
+    void removeTable() throws IOException {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide sl = ss.getSlides().get(0);
         XSLFTable tab = (XSLFTable)sl.getShapes().get(4);
@@ -297,7 +297,7 @@ public class TestXSLFTable {
     }
 
     @Test
-    public void checkTextHeight() throws IOException {
+    void checkTextHeight() throws IOException {
         // from bug 59686
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide sl = ppt.createSlide();
@@ -317,7 +317,7 @@ public class TestXSLFTable {
     }
 
     @Test
-    public void checkNullPointerException() throws IOException {
+    void checkNullPointerException() throws IOException {
         String file = "au.asn.aes.www_conferences_2011_presentations_Fri_20Room4Level4_20930_20Maloney.pptx";
         try (XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument(file)) {
             Dimension pgsize = ss.getPageSize();

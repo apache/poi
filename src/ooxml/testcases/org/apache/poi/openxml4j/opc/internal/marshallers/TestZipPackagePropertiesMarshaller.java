@@ -49,18 +49,18 @@ public class TestZipPackagePropertiesMarshaller {
 
 
     @Test
-    public void nonZipOutputStream() {
+    void nonZipOutputStream() {
         OutputStream notAZipOutputStream = new ByteArrayOutputStream(0);
         assertThrows(IllegalArgumentException.class, () -> marshall(notAZipOutputStream));
     }
 
     @Test
-    public void withZipOutputStream() throws Exception {
+    void withZipOutputStream() throws Exception {
         assertTrue(marshall());
     }
 
     @Test
-    public void ioException() throws Exception {
+    void ioException() {
         ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new ByteArrayOutputStream()) {
             @Override
             public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {

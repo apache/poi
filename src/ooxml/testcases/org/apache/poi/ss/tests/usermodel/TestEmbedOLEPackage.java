@@ -78,7 +78,7 @@ public class TestEmbedOLEPackage {
     }
 
     @Test
-    public void embedPDF() throws IOException {
+    void embedPDF() throws IOException {
         try (InputStream is = ssamples.openResourceAsStream("bug64512_embed.xlsx");
             XSSFWorkbook wb = new XSSFWorkbook(is)) {
             List<XSSFObjectData> oleShapes = new ArrayList<>();
@@ -146,7 +146,7 @@ public class TestEmbedOLEPackage {
     }
 
     @Test
-    public void embedXSSF() throws IOException {
+    void embedXSSF() throws IOException {
         Workbook wb1 = new XSSFWorkbook();
         addEmbeddedObjects(wb1);
 
@@ -158,7 +158,7 @@ public class TestEmbedOLEPackage {
     }
 
     @Test
-    public void embedHSSF() throws IOException {
+    void embedHSSF() throws IOException {
         assumeFalse(xslfOnly());
 
         HSSFWorkbook wb1 = new HSSFWorkbook();

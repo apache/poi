@@ -36,13 +36,13 @@ public class TestXDGFVisioExtractor {
     private XmlVisioDocument xml;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         pkg = OPCPackage.open(SAMPLES.openResourceAsStream("test_text_extraction.vsdx"));
         xml = new XmlVisioDocument(pkg);
     }
 
     @AfterEach
-    public void closeResources() throws IOException {
+    void closeResources() throws IOException {
         if(xml != null) {
             xml.close();
         }

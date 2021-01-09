@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestChangeTracking {
     @Test
-    public void detection() throws Exception {
+    void detection() throws Exception {
         try (XWPFDocument documentWithoutChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx")) {
             assertFalse(documentWithoutChangeTracking.isTrackRevisions());
 
@@ -38,7 +38,7 @@ public class TestChangeTracking {
     }
 
     @Test
-    public void activateChangeTracking() throws Exception {
+    void activateChangeTracking() throws Exception {
         try (XWPFDocument document = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx")) {
             assertFalse(document.isTrackRevisions());
 
@@ -49,7 +49,7 @@ public class TestChangeTracking {
     }
 
     @Test
-    public void integration() throws Exception {
+    void integration() throws Exception {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFParagraph p1 = doc.createParagraph();

@@ -74,7 +74,7 @@ public final class TestPOIXMLDocument {
             throw new RuntimeException("not supported");
         }
 
-        public void parse(POIXMLFactory factory) throws IOException{
+        void parse(POIXMLFactory factory) throws IOException{
             load(factory);
         }
     }
@@ -285,7 +285,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void dontParseEmbeddedDocuments() throws IOException {
+    void dontParseEmbeddedDocuments() throws IOException {
         // bug #62513
         POIDataSamples pds = POIDataSamples.getSlideShowInstance();
         try (InputStream is = pds.openResourceAsStream("bug62513.pptx");

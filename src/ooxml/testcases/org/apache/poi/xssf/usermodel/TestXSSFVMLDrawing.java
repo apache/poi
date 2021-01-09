@@ -186,7 +186,7 @@ public class TestXSSFVMLDrawing {
     }
 
     @Test
-    public void bug65061_InvalidXmlns() throws IOException, XmlException {
+    void bug65061_InvalidXmlns() throws IOException, XmlException {
         // input hasn't no <?xml... declaration - as in the sample file
         String input =
             "<xml xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\">\n" +

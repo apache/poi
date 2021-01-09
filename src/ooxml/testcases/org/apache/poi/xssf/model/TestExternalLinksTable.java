@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestExternalLinksTable {
     @Test
-    public void none() throws IOException {
+    void none() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SampleSS.xlsx")) {
             assertNotNull(wb.getExternalLinksTable());
             assertEquals(0, wb.getExternalLinksTable().size());
@@ -38,7 +38,7 @@ public final class TestExternalLinksTable {
     }
 
     @Test
-    public void basicRead() throws IOException {
+    void basicRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
             assertNotNull(wb.getExternalLinksTable());
             assertEquals(1, wb.getExternalLinksTable().size());
@@ -68,7 +68,7 @@ public final class TestExternalLinksTable {
     }
 
     @Test
-    public void basicReadWriteRead() throws IOException {
+    void basicReadWriteRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
             Name name = wb.getExternalLinksTable().get(0).getDefinedNames().get(1);
             name.setNameName("Testing");
@@ -93,7 +93,7 @@ public final class TestExternalLinksTable {
     }
 
     @Test
-    public void readWithReferencesToTwoExternalBooks() throws IOException {
+    void readWithReferencesToTwoExternalBooks() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx")) {
             assertNotNull(wb.getExternalLinksTable());
             assertEquals(2, wb.getExternalLinksTable().size());

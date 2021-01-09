@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 public class TestWorkbookProtection {
 
     @Test
-    public void workbookAndRevisionPassword() throws Exception {
+    void workbookAndRevisionPassword() throws Exception {
         String password = "test";
 
         // validate password with an actual office file (Excel 2010)
@@ -96,7 +96,7 @@ public class TestWorkbookProtection {
     }
 
     @Test
-    public void shouldReadWorkbookProtection() throws Exception {
+    void shouldReadWorkbookProtection() throws Exception {
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
             assertFalse(workbook.isStructureLocked());
             assertFalse(workbook.isWindowsLocked());
@@ -123,7 +123,7 @@ public class TestWorkbookProtection {
     }
 
     @Test
-    public void shouldWriteStructureLock() throws Exception {
+    void shouldWriteStructureLock() throws Exception {
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
             assertFalse(workbook.isStructureLocked());
 
@@ -138,7 +138,7 @@ public class TestWorkbookProtection {
     }
 
     @Test
-    public void shouldWriteWindowsLock() throws Exception {
+    void shouldWriteWindowsLock() throws Exception {
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
             assertFalse(workbook.isWindowsLocked());
 
@@ -153,7 +153,7 @@ public class TestWorkbookProtection {
     }
 
     @Test
-    public void shouldWriteRevisionLock() throws Exception {
+    void shouldWriteRevisionLock() throws Exception {
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
             assertFalse(workbook.isRevisionLocked());
 

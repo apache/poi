@@ -750,7 +750,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void getErrorCellValue_returns0_onABlankCell() {
+    void getErrorCellValue_returns0_onABlankCell() {
         Cell cell = new XSSFWorkbook().createSheet().createRow(0).createCell(0);
         assertThrows(IllegalStateException.class, cell::getErrorCellValue);
     }

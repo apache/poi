@@ -78,7 +78,7 @@ public class TestPPTX2PNG {
     // use filename instead of File object to omit full pathname in test name
     @ParameterizedTest
     @MethodSource("data")
-    public void render(String pptFile) throws Exception {
+    void render(String pptFile) throws Exception {
         assumeFalse(xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"), "ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run");
         PPTX2PNG.main(getArgs(pptFile, "null"));
         if (svgFiles.contains(pptFile)) {

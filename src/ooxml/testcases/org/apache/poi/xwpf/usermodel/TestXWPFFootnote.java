@@ -37,7 +37,7 @@ public class TestXWPFFootnote {
     private XWPFFootnote footnote;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         docOut = new XWPFDocument();
         p1Text = "First paragraph in footnote";
         p2Text = "Second paragraph in footnote";

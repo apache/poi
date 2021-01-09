@@ -39,7 +39,7 @@ public class TestSXSSFHyperlink extends BaseTestHyperlink {
 
 
     @AfterEach
-    public void tearDown(){
+    void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
 

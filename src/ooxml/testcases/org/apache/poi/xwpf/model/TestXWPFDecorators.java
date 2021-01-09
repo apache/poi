@@ -40,14 +40,14 @@ public class TestXWPFDecorators {
     private XWPFDocument comments;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         simple.close();
         hyperlink.close();
         comments.close();

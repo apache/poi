@@ -950,7 +950,7 @@ public class TestXSLFTextShape {
     }
 
     @Test
-    public void metroBlob() throws IOException, ReflectiveOperationException {
+    void metroBlob() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly);
         File f = POIDataSamples.getSlideShowInstance().getFile("bug52297.ppt");
         SlideShow<?,?> ppt = SlideShowFactory.create(f);

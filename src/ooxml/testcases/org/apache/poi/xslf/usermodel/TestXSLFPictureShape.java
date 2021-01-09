@@ -222,7 +222,7 @@ public class TestXSLFPictureShape {
     }
 
     @Test
-    public void bug58663() throws IOException {
+    void bug58663() throws IOException {
         InputStream is = _slTests.openResourceAsStream("shapes.pptx");
         XMLSlideShow ppt = new XMLSlideShow(is);
         is.close();
@@ -256,7 +256,7 @@ public class TestXSLFPictureShape {
 
 
     @Test
-    public void renderSvgImage() throws Exception {
+    void renderSvgImage() throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 

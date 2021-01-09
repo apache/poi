@@ -153,7 +153,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 
     @ParameterizedTest
 	@MethodSource("data")
-    public void processFunctionRow(String targetTestName, String targetFunctionName, int formulasRowIdx) {
+    void processFunctionRow(String targetTestName, String targetFunctionName, int formulasRowIdx) {
         Row r = sheet.getRow(formulasRowIdx);
 
         Cell expValue = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);

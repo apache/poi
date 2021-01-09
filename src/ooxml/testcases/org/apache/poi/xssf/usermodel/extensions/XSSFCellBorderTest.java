@@ -40,7 +40,7 @@ public class XSSFCellBorderTest {
     private final XSSFCellBorder empty = new XSSFCellBorder();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         assertNotNull(stylesSource);
         assertEquals(1, stylesSource.getBorders().size());
     }

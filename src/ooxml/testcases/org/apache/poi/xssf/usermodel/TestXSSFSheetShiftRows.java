@@ -361,7 +361,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Test
-    public void bug59733() throws IOException {
+    void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
         for (int r=0; r<4; r++) {
@@ -440,7 +440,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     // bug 60260: shift rows or rename a sheet containing a named range
     // that refers to formula with a unicode (non-ASCII) sheet name formula
     @Test
-    public void shiftRowsWithUnicodeNamedRange() {
+    void shiftRowsWithUnicodeNamedRange() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("unicodeSheetName.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         sheet.shiftRows(1, 2, 3);

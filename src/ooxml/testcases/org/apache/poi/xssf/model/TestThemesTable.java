@@ -162,7 +162,7 @@ public class TestThemesTable {
      * Note - Grey Row has an odd way of doing the styling...
      */
     @Test
-    public void themedAndNonThemedColours() throws IOException {
+    void themedAndNonThemedColours() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(testFileComplex)) {
             XSSFSheet sheet = wb.getSheetAt(0);
 

@@ -168,7 +168,7 @@ public class TestXSSFBReader {
     private class TestSheetHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
         private final StringBuilder sb = new StringBuilder();
 
-        public void startSheet(String sheetName) {
+        void startSheet(String sheetName) {
             sb.append("<sheet name=\"").append(sheetName).append(">");
         }
 

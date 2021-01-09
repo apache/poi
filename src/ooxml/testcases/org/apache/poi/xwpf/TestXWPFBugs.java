@@ -46,7 +46,7 @@ public class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
 
     @Test
-    public void truncatedDocx() throws Exception {
+    void truncatedDocx() throws Exception {
         try (InputStream fis = samples.openResourceAsStream("truncated62886.docx");
             OPCPackage opc = OPCPackage.open(fis);
             XWPFWordExtractor ext = new XWPFWordExtractor(opc)) {
@@ -59,7 +59,7 @@ public class TestXWPFBugs {
      * Encryption options, and no cspname section. See bug 53475
      */
     @Test
-    public void bug53475NoCSPName() throws Exception {
+    void bug53475NoCSPName() throws Exception {
         File file = samples.getFile("bug53475-password-is-solrcell.docx");
         POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
 
@@ -91,7 +91,7 @@ public class TestXWPFBugs {
      * but the key can be 128/192/256 bits
      */
     @Test
-    public void bug53475_aes256() throws Exception {
+    void bug53475_aes256() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
@@ -125,7 +125,7 @@ public class TestXWPFBugs {
 
 
     @Test
-    public void bug59058() throws IOException, XmlException {
+    void bug59058() throws IOException, XmlException {
         String[] files = {"bug57031.docx", "bug59058.docx"};
         for (String f : files) {
             ZipFile zf = new ZipFile(samples.getFile(f));

@@ -107,7 +107,7 @@ public final class TestPackage {
 	 * Test that just opening and closing the file doesn't alter the document.
 	 */
     @Test
-	public void openSave() throws IOException, InvalidFormatException {
+	void openSave() throws IOException, InvalidFormatException {
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		File targetFile = getOutputFile("TestPackageOpenSaveTMP.docx");
 
@@ -131,7 +131,7 @@ public final class TestPackage {
 	 *  the correct default content types
 	 */
     @Test
-	public void createGetsContentTypes()
+	void createGetsContentTypes()
     throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException {
 		File targetFile = getOutputFile("TestCreatePackageTMP.docx");
 
@@ -157,7 +157,7 @@ public final class TestPackage {
 	 * Test package creation.
 	 */
     @Test
-	public void createPackageAddPart() throws IOException, InvalidFormatException {
+	void createPackageAddPart() throws IOException, InvalidFormatException {
 		File targetFile = getOutputFile("TestCreatePackageTMP.docx");
 
 		File expectedFile = getSampleFile("TestCreatePackageOUTPUT.docx");
@@ -202,7 +202,7 @@ public final class TestPackage {
 	 *  have everything setup as expected
 	 */
     @Test
-	public void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
+	void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (OPCPackage pkg = OPCPackage.create(baos)) {
 
@@ -296,7 +296,7 @@ public final class TestPackage {
 	 * Test package opening.
 	 */
     @Test
-	public void openPackage() throws IOException, InvalidFormatException {
+	void openPackage() throws IOException, InvalidFormatException {
 		File targetFile = getOutputFile("TestOpenPackageTMP.docx");
 
 		File inputFile = getSampleFile("TestOpenPackageINPUT.docx");
@@ -351,7 +351,7 @@ public final class TestPackage {
 	 *  to a file
 	 */
     @Test
-	public void saveToOutputStream() throws IOException, InvalidFormatException {
+	void saveToOutputStream() throws IOException, InvalidFormatException {
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		File targetFile = getOutputFile("TestPackageOpenSaveTMP.docx");
 
@@ -378,7 +378,7 @@ public final class TestPackage {
 	 *  reading from a file
 	 */
     @Test
-	public void openFromInputStream() throws IOException, InvalidFormatException {
+	void openFromInputStream() throws IOException, InvalidFormatException {
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 
 		try (FileInputStream finp = new FileInputStream(originalFile);
@@ -402,7 +402,7 @@ public final class TestPackage {
      */
     @Test
 	@Disabled
-    public void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
+    void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		File targetFile = getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
 		File tempFile = getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
@@ -420,7 +420,7 @@ public final class TestPackage {
 	}
 
     @Test
-	public void deletePart() throws InvalidFormatException, IOException {
+	void deletePart() throws InvalidFormatException, IOException {
 		final TreeMap<PackagePartName, String> expectedValues = new TreeMap<>();
 		final TreeMap<PackagePartName, String> values = new TreeMap<>();
 
@@ -460,7 +460,7 @@ public final class TestPackage {
 	}
 
     @Test
-	public void deletePartRecursive() throws InvalidFormatException, IOException {
+	void deletePartRecursive() throws InvalidFormatException, IOException {
 		final TreeMap<PackagePartName, String> expectedValues = new TreeMap<>();
 		final TreeMap<PackagePartName, String> values = new TreeMap<>();
 
@@ -498,7 +498,7 @@ public final class TestPackage {
 	 *  write changes to it.
 	 */
     @Test
-	public void openFileThenOverwrite() throws IOException, InvalidFormatException {
+	void openFileThenOverwrite() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File origFile = getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
@@ -534,7 +534,7 @@ public final class TestPackage {
      *  to another file, then delete both
      */
     @Test
-    public void openFileThenSaveDelete() throws IOException, InvalidFormatException {
+    void openFileThenSaveDelete() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
         File origFile = getSampleFile("TestPackageCommon.docx");
@@ -556,7 +556,7 @@ public final class TestPackage {
 	}
 
     @Test
-    public void getPartsByName() throws InvalidFormatException, IOException {
+    void getPartsByName() throws InvalidFormatException, IOException {
         String filepath =  getSampleFileName("sample.docx");
 
         try (OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE)) {
@@ -582,7 +582,7 @@ public final class TestPackage {
     }
 
     @Test
-    public void getPartSize() throws IOException, InvalidFormatException {
+    void getPartSize() throws IOException, InvalidFormatException {
        String filepath =  getSampleFileName("sample.docx");
 		try (OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ)) {
 			int checked = 0;
@@ -612,7 +612,7 @@ public final class TestPackage {
     }
 
     @Test
-    public void replaceContentType() throws IOException, InvalidFormatException {
+    void replaceContentType() throws IOException, InvalidFormatException {
         try (InputStream is = openSampleStream("sample.xlsx");
         	OPCPackage p = OPCPackage.open(is)) {
 			try {
@@ -638,7 +638,7 @@ public final class TestPackage {
 		"SampleSS.ods, org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException, The supplied data appears to be in ODF, Formats like these (eg ODS",
 		"SampleSS.txt, org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException, No valid entries or contents found, not a valid OOXML"
 	})
-	public void NonOOXML_File(String file, String exClazzStr, String msg1, String msg2) throws Exception {
+	void NonOOXML_File(String file, String exClazzStr, String msg1, String msg2) throws Exception {
     	Class<? extends Exception> exClazz = (Class<? extends Exception>)Class.forName(exClazzStr);
 
 		try (InputStream stream = xlsSamples.openResourceAsStream(file)) {
@@ -659,7 +659,7 @@ public final class TestPackage {
 	 * see bug #50090 / #56865
 	 */
     @Test
-    public void zipBombCreateAndHandle()
+    void zipBombCreateAndHandle()
     throws IOException, EncryptedDocumentException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
 
@@ -777,7 +777,7 @@ public final class TestPackage {
 	}
 
     @Test
-    public void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException {
+    void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException {
 		getZipStatsAndConsume((max_size, min_ratio) -> {
 			// use values close to, but within the limits
 			ZipSecureFile.setMinInflateRatio(min_ratio - 0.002);
@@ -788,7 +788,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesRatioTooSmall() {
+	void zipBombCheckSizesRatioTooSmall() {
 		POIXMLException ex = assertThrows(
 			POIXMLException.class,
 			() -> getZipStatsAndConsume((max_size, min_ratio) -> {
@@ -800,7 +800,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesSizeTooBig() throws EncryptedDocumentException {
+	void zipBombCheckSizesSizeTooBig() throws EncryptedDocumentException {
 		POIXMLException ex = assertThrows(
 			POIXMLException.class,
 			() -> getZipStatsAndConsume((max_size, min_ratio) -> {
@@ -924,7 +924,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void unparseableCentralDirectory() throws IOException {
+	void unparseableCentralDirectory() throws IOException {
 		File f = getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
 		try (SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true)) {
 			assertNotNull(ppt);

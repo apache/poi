@@ -44,7 +44,7 @@ public class TestDecryptor {
     private static final POIDataSamples samples = POIDataSamples.getPOIFSInstance();
 
     @Test
-    public void passwordVerification() throws IOException, GeneralSecurityException {
+    void passwordVerification() throws IOException, GeneralSecurityException {
         try (InputStream is = samples.openResourceAsStream("protect.xlsx");
             POIFSFileSystem fs = new POIFSFileSystem(is)) {
             EncryptionInfo info = new EncryptionInfo(fs);
@@ -54,7 +54,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void decrypt() throws IOException, GeneralSecurityException {
+    void decrypt() throws IOException, GeneralSecurityException {
         try (InputStream is = samples.openResourceAsStream("protect.xlsx");
              POIFSFileSystem fs = new POIFSFileSystem(is)) {
             EncryptionInfo info = new EncryptionInfo(fs);
@@ -65,7 +65,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void agile() throws IOException, GeneralSecurityException {
+    void agile() throws IOException, GeneralSecurityException {
         try (InputStream is = samples.openResourceAsStream("protected_agile.docx");
             POIFSFileSystem fs = new POIFSFileSystem(is)) {
             EncryptionInfo info = new EncryptionInfo(fs);
@@ -98,7 +98,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void dataLength() throws Exception {
+    void dataLength() throws Exception {
         try (InputStream fsIs = samples.openResourceAsStream("protected_agile.docx");
             POIFSFileSystem fs = new POIFSFileSystem(fsIs)) {
             EncryptionInfo info = new EncryptionInfo(fs);
@@ -128,7 +128,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void bug57080() throws Exception {
+    void bug57080() throws Exception {
         // the test file contains a wrong ole entry size, produced by extenxls
         // the fix limits the available size and tries to read all entries
         File f = samples.getFile("extenxls_pwd123.xlsx");
@@ -163,7 +163,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void bug60320() throws IOException, GeneralSecurityException {
+    void bug60320() throws IOException, GeneralSecurityException {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 

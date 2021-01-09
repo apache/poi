@@ -113,7 +113,7 @@ public class TestOleShape {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void embedData(Api api, ObjectMetaData.Application app) throws IOException, ReflectiveOperationException {
+    void embedData(Api api, ObjectMetaData.Application app) throws IOException, ReflectiveOperationException {
         final ByteArrayInputStream pptBytes;
         try (SlideShow<?,?> ppt = createSlideShow(api)) {
             final PictureData picData = ppt.addPicture(pictureFile,  PictureType.EMF);

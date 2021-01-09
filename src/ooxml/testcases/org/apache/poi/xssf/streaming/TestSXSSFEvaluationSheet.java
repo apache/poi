@@ -32,7 +32,7 @@ public class TestSXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     private List<Workbook> workbooksToClose = new ArrayList<>();
 
     @AfterEach
-    public void closeWorkbooks() throws IOException {
+    void closeWorkbooks() throws IOException {
         for (Workbook workbook : workbooksToClose) {
             workbook.close();
         }

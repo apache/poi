@@ -29,13 +29,13 @@ public class TestXSSFOddFooter {
     private XSSFSheet sheet;
 
     @BeforeEach
-    public void before() {
+    void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
     }
 
     @AfterEach
-    public void after() throws Exception {
+    void after() throws Exception {
         wb.close();
     }
 

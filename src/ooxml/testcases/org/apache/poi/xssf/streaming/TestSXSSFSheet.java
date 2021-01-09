@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
@@ -42,7 +43,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
 
     @AfterEach
-    public void tearDown(){
+    void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
 
@@ -99,14 +100,14 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         // properties on Cells...
     }
 
+    @Disabled
     @Override
-    @Test
-    public void defaultColumnStyle() {
+    protected void defaultColumnStyle() {
         //TODO column styles are not yet supported by XSSF
     }
 
     @Test
-    public void overrideFlushedRows() throws IOException {
+    void overrideFlushedRows() throws IOException {
         try (Workbook wb = new SXSSFWorkbook(3)) {
             Sheet sheet = wb.createSheet();
 
@@ -121,7 +122,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void overrideRowsInTemplate() throws IOException {
+    void overrideRowsInTemplate() throws IOException {
         try (XSSFWorkbook template = new XSSFWorkbook()) {
             template.createSheet().createRow(1);
             try (Workbook wb = new SXSSFWorkbook(template);) {
@@ -139,7 +140,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void changeRowNum() throws IOException {
+    void changeRowNum() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(3);
         SXSSFSheet sheet = wb.createSheet();
         SXSSFRow row0 = sheet.createRow(0);

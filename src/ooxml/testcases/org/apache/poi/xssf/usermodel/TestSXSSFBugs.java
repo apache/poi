@@ -69,7 +69,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
      *  any print settings that were there before
      */
     @Test
-    public void bug49253() throws Exception {
+    void bug49253() throws Exception {
         Workbook wb1 = new SXSSFWorkbook();
         Workbook wb2 = new SXSSFWorkbook();
         CellRangeAddress cra = CellRangeAddress.valueOf("C2:D3");
@@ -122,7 +122,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug61648() throws Exception {
+    void bug61648() throws Exception {
         // works as expected
         writeWorkbook(new XSSFWorkbook(), XSSFITestDataProvider.instance);
 

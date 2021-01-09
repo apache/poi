@@ -31,14 +31,14 @@ public class TestXSSFHeaderFooterProperties {
     private XSSFHeaderFooterProperties hfProp;
 
     @BeforeEach
-    public void before() {
+    void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
         hfProp = sheet.getHeaderFooterProperties();
     }
 
     @AfterEach
-    public void after() throws Exception {
+    void after() throws Exception {
         wb.close();
     }
 

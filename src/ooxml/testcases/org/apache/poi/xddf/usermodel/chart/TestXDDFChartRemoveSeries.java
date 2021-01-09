@@ -54,7 +54,7 @@ public class TestXDDFChartRemoveSeries {
      * scatter chart.
      */
     @BeforeEach
-    public void setup() {
+    void setup() {
         final boolean bDebug = false;
         workbook = new XSSFWorkbook();
         sheet = workbook.createSheet();
@@ -99,7 +99,7 @@ public class TestXDDFChartRemoveSeries {
      * This method writes the workbook to resultDir/fileName.
      */
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         if (workbook == null) {
             System.out.println(String.format(Locale.ROOT, "%s: workbook==null", procName));
             return;

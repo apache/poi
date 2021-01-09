@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestXSLFShapeContainer {
 
-    public void verifyContainer(XSLFShapeContainer container) {
+    void verifyContainer(XSLFShapeContainer container) {
         container.clear();
         assertEquals(0, container.getShapes().size());
 

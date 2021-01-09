@@ -45,7 +45,7 @@ public final class TestXSSFChartAxis {
 	private XDDFChartAxis axis;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet();
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -55,7 +55,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@AfterEach
-	public void teardown() throws IOException {
+	void teardown() throws IOException {
 		wb.close();
 		wb = null;
 		axis = null;

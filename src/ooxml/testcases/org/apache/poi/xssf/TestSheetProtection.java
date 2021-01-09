@@ -32,13 +32,13 @@ public class TestSheetProtection {
 	private XSSFSheet sheet;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_not_protected.xlsx");
 		sheet = workbook.getSheetAt(0);
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
 		workbook.close();
 	}
 

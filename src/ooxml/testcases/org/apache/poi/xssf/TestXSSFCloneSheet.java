@@ -43,7 +43,7 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     private XSSFWorkbook wb;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         wb = new XSSFWorkbook();
         wb.createSheet(VALID_SHEET_NAME);
     }

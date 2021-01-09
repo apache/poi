@@ -19,10 +19,10 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -58,7 +57,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
 
     // write an unencrypted workbook to disk, but any temporary files are encrypted
     @Test
-    public void customZipEntrySource() throws IOException {
+    void customZipEntrySource() throws IOException {
         SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
         SXSSFSheet sheet1 = workbook.createSheet(sheetName);
         SXSSFRow row1 = sheet1.createRow(1);
@@ -79,7 +78,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
 
     // write an encrypted workbook to disk, and encrypt any temporary files as well
     @Test
-    public void customZipEntrySourceForWriteAndRead() throws IOException, GeneralSecurityException, InvalidFormatException {
+    void customZipEntrySourceForWriteAndRead() throws IOException, InvalidFormatException {
         SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
         SXSSFSheet sheet1 = workbook.createSheet(sheetName);
         SXSSFRow row1 = sheet1.createRow(1);
@@ -106,7 +105,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
     }
 
     @Test
-    public void validateTempFilesAreEncrypted() throws IOException {
+    void validateTempFilesAreEncrypted() throws IOException {
         TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource workbook = new TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource();
         SXSSFSheet sheet1 = workbook.createSheet(sheetName);
         SXSSFRow row1 = sheet1.createRow(1);

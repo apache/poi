@@ -29,7 +29,7 @@ public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventB
 	}
 
 	@AfterEach
-    public void tearDown() {
+    void tearDown() {
 	    // reset setting to not affect other tests
 	    ExtractorFactory.setAllThreadsPreferEventExtractors(null);
 	}

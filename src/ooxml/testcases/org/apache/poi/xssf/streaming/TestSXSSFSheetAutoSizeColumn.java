@@ -80,7 +80,7 @@ public class TestSXSSFSheetAutoSizeColumn {
     }
 
     @AfterEach
-    public void tearDownSheetAndWorkbook() throws IOException {
+    void tearDownSheetAndWorkbook() throws IOException {
         if (sheet != null) {
             sheet.dispose();
         }
@@ -215,7 +215,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_trackColumnForAutoSizing(boolean useMergedCells) {
+    void autoSizeColumn_trackColumnForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackColumnForAutoSizing(0);
@@ -231,7 +231,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_trackColumnsForAutoSizing(boolean useMergedCells) {
+    void autoSizeColumn_trackColumnsForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 
@@ -248,7 +248,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_untrackColumnForAutoSizing(boolean useMergedCells) {
+    void autoSizeColumn_untrackColumnForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 
@@ -265,7 +265,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_untrackColumnsForAutoSizing(boolean useMergedCells) {
+    void autoSizeColumn_untrackColumnsForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 
@@ -282,7 +282,7 @@ public class TestSXSSFSheetAutoSizeColumn {
     }
 
     @Test
-    public void autoSizeColumn_isColumnTrackedForAutoSizing() {
+    void autoSizeColumn_isColumnTrackedForAutoSizing() {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 
@@ -297,7 +297,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_trackAllColumns(boolean useMergedCells) {
+    void autoSizeColumn_trackAllColumns(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 
@@ -311,7 +311,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void autoSizeColumn_trackAllColumns_explicitUntrackColumn(boolean useMergedCells) {
+    void autoSizeColumn_trackAllColumns_explicitUntrackColumn(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
 

@@ -50,7 +50,7 @@ public class TestSecureTempZip {
      * which are streamed into POI opposed to having everything in memory
      */
     @Test
-    public void protectedTempZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
+    void protectedTempZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
         File tikaProt = XSSFTestDataSamples.getSampleFile("protected_passtika.xlsx");
         FileInputStream fis = new FileInputStream(tikaProt);
         POIFSFileSystem poifs = new POIFSFileSystem(fis);
@@ -91,7 +91,7 @@ public class TestSecureTempZip {
      * Now try with xlsb.
      */
     @Test
-    public void protectedXLSBZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
+    void protectedXLSBZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
         //The test file requires that JCE unlimited be installed.
         //If it isn't installed, skip this test.
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");

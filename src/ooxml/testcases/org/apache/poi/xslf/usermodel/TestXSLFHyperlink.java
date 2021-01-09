@@ -105,7 +105,7 @@ public class TestXSLFHyperlink {
 
 
     @Test
-    public void bug47291() throws IOException {
+    void bug47291() throws IOException {
         Rectangle2D anchor = new Rectangle2D.Double(100,100,100,100);
         XMLSlideShow ppt1 = new XMLSlideShow();
         XSLFSlide slide1 = ppt1.createSlide();

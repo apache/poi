@@ -200,7 +200,7 @@ public class TestSignatureInfo {
 
     @Disabled("This test is very sensitive, it breaks with every little change to the produced XML")
     @Test
-    public void bug61182() throws Exception {
+    void bug61182() throws Exception {
         final String pfxInput =
                 "H4sIAAAAAAAAAFXTfzzTeRwH8P2uGRmG6hKSmJh9a2HsuPy60VnHCEU6v86sieZH2Jr2qFl+s+ZHJ5tfUcfKb4uho/OjiFq1qTv5ceFyp0PqEK"+
                         "fH4+66++Pz+Dwer9fj8f7r9cRzEd4QMBTPRWxDIM14ZN47NfAWsJgL34Bx4at4Lvwdngvd9b8KqgbjQpGbMXzzgRGovytVFTBEzIXU47kQCd4U"+
@@ -287,7 +287,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void office2007prettyPrintedRels() throws Exception {
+    void office2007prettyPrintedRels() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
             SignatureInfo si = new SignatureInfo();
@@ -299,7 +299,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void getSignerUnsigned() throws Exception {
+    void getSignerUnsigned() throws Exception {
         String[] testFiles = {
                 "hello-world-unsigned.docx",
                 "hello-world-unsigned.pptx",
@@ -327,7 +327,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void getSigner() throws Exception {
+    void getSigner() throws Exception {
         String[] testFiles = {
                 "hyperlink-example-signed.docx",
                 "hello-world-signed.docx",
@@ -367,7 +367,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void getMultiSigners() throws Exception {
+    void getMultiSigners() throws Exception {
         String testFile = "hello-world-signed-twice.docx";
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
@@ -739,7 +739,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void bug58630() throws Exception {
+    void bug58630() throws Exception {
         // test deletion of sheet 0 and signing
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
         try (SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10)) {

@@ -69,7 +69,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
      * test properties of a newly constructed comment
      */
     @Test
-    public void constructor() {
+    void constructor() {
         CommentsTable sheetComments = new CommentsTable();
         assertNotNull(sheetComments.getCTComments().getCommentList());
         assertNotNull(sheetComments.getCTComments().getAuthors());
@@ -88,7 +88,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void getSetCol() {
+    void getSetCol() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         CTComment ctComment = sheetComments.newComment(CellAddress.A1);
@@ -107,7 +107,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void getSetRow() {
+    void getSetRow() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         CTComment ctComment = sheetComments.newComment(CellAddress.A1);
@@ -126,7 +126,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void setString() {
+    void setString() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sh = wb.createSheet();
         XSSFComment comment = sh.createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
@@ -177,7 +177,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void author() {
+    void author() {
         CommentsTable sheetComments = new CommentsTable();
         CTComment ctComment = sheetComments.newComment(CellAddress.A1);
 
@@ -338,7 +338,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void bug57838DeleteRowsWthCommentsBug() throws IOException {
+    void bug57838DeleteRowsWthCommentsBug() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57838.xlsx");
         Sheet sheet=wb.getSheetAt(0);
         Comment comment1 = sheet.getCellComment(new CellAddress(2, 1));

@@ -63,7 +63,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @AfterEach
-    public void tearDown(){
+    void tearDown(){
         ((SXSSFITestDataProvider)_testDataProvider).cleanup();
     }
 
@@ -93,12 +93,11 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Disabled("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
-    @Test
-    public void setSheetName() {
+    protected void setSheetName() {
     }
 
     @Test
-    public void existingWorkbook() throws IOException {
+    void existingWorkbook() throws IOException {
     	XSSFWorkbook xssfWb1 = new XSSFWorkbook();
     	xssfWb1.createSheet("S1");
         SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
@@ -119,7 +118,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void useSharedStringsTable() throws Exception {
+    void useSharedStringsTable() throws Exception {
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
         SharedStringsTable sss = wb.getSharedStringSource();
@@ -157,7 +156,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void addToExistingWorkbook() throws IOException {
+    void addToExistingWorkbook() throws IOException {
     	XSSFWorkbook xssfWb1 = new XSSFWorkbook();
     	xssfWb1.createSheet("S1");
     	Sheet sheet = xssfWb1.createSheet("S2");
@@ -231,7 +230,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void sheetdataWriter() throws IOException{
+    void sheetdataWriter() throws IOException{
         SXSSFWorkbook wb = new SXSSFWorkbook();
         SXSSFSheet sh = wb.createSheet();
         SheetDataWriter wr = sh.getSheetDataWriter();
@@ -266,7 +265,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void gzipSheetdataWriter() throws IOException {
+    void gzipSheetdataWriter() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
 
@@ -332,7 +331,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void workbookDispose() throws IOException {
+    void workbookDispose() throws IOException {
         SXSSFWorkbook wb1 = new SXSSFWorkbook();
         // the underlying writer is SheetDataWriter
         assertWorkbookDispose(wb1);
@@ -347,7 +346,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Disabled("currently writing the same sheet multiple times is not supported...")
     @Test
-    public void bug53515() throws Exception {
+    void bug53515() throws Exception {
         Workbook wb1 = new SXSSFWorkbook(10);
         populateWorkbook(wb1);
         saveTwice(wb1);
@@ -361,7 +360,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Disabled("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
             + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
     @Test
-    public void bug53515a() throws Exception {
+    void bug53515a() throws Exception {
         File out = new File("Test.xlsx");
         assertTrue(!out.exists() || out.delete());
         for (int i = 0; i < 2; i++) {
@@ -420,7 +419,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void closeDoesNotModifyWorkbook() throws IOException {
+    void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
 
@@ -487,7 +486,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Test
     @Disabled
-    public void createFromReadOnlyWorkbook() throws Exception {
+    void createFromReadOnlyWorkbook() throws Exception {
         String sheetName = "Test SXSSF";
         File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
 
@@ -534,7 +533,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
 
-    public void changeSheetNameWithSharedFormulas() {
+    void changeSheetNameWithSharedFormulas() {
         /* not implemented */
     }
 }

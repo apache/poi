@@ -35,7 +35,7 @@ public class TestXSSFDataValidationConstraint {
 
     // See bug 59719
     @Test
-    public void listLiteralsQuotesAreStripped_formulaConstructor() {
+    void listLiteralsQuotesAreStripped_formulaConstructor() {
         // literal list, using formula constructor
         String literal = "\"one, two, three\"";
         String[] expected = new String[] { "one", "two", "three" };
@@ -47,7 +47,7 @@ public class TestXSSFDataValidationConstraint {
     }
 
     @Test
-    public void listLiteralsQuotesAreStripped_arrayConstructor() {
+    void listLiteralsQuotesAreStripped_arrayConstructor() {
         // literal list, using array constructor
         String literal = "\"one, two, three\"";
         String[] expected = new String[] { "one", "two", "three" };
@@ -58,13 +58,13 @@ public class TestXSSFDataValidationConstraint {
     }
 
     @Test
-    public void listLiteralsGreaterThan255CharactersThrows() {
+    void listLiteralsGreaterThan255CharactersThrows() {
         String[] literal = IntStream.range(0, 129).mapToObj(i -> "a").toArray(String[]::new);
         assertThrows(IllegalArgumentException.class, () -> new XSSFDataValidationConstraint(literal));
     }
 
     @Test
-    public void dataValidationListLiteralTooLongFromFile() throws IOException {
+    void dataValidationListLiteralTooLongFromFile() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataValidationListTooLong.xlsx")) {
             XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
             DataValidationEvaluator dvEval = new DataValidationEvaluator(wb, fEval);
@@ -73,7 +73,7 @@ public class TestXSSFDataValidationConstraint {
     }
 
     @Test
-    public void rangeReference() {
+    void rangeReference() {
         // (unnamed range) reference list
         String reference = "A1:A5";
         DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, reference, null);
@@ -82,7 +82,7 @@ public class TestXSSFDataValidationConstraint {
     }
 
     @Test
-    public void namedRangeReference() {
+    void namedRangeReference() {
         // named range list
         String namedRange = "MyNamedRange";
         DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, namedRange, null);

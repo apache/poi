@@ -54,7 +54,7 @@ public class TestOPCCompliancePackageModel {
     }
 
     @BeforeEach
-    public void tearDown() {
+    void tearDown() {
         if (TESTFILE.exists()) {
             assertTrue(TESTFILE.delete());
         }

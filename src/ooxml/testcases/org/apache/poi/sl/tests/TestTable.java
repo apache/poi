@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 public class TestTable {
 
     @Test
-    public void colWidthRowHeight() throws IOException {
+    void colWidthRowHeight() throws IOException {
         assumeFalse(xslfOnly());
 
         // Test of table dimensions of same slideshow saved as ppt/x
@@ -93,7 +93,7 @@ public class TestTable {
     }
 
     @Test
-    public void directionHSLF() throws IOException {
+    void directionHSLF() throws IOException {
         assumeFalse(xslfOnly());
         SlideShow<?,?> ppt1 = SlideShowFactory.create(false);
         testTextDirection(ppt1);
@@ -101,7 +101,7 @@ public class TestTable {
     }
 
     @Test
-    public void directionXSLF() throws IOException {
+    void directionXSLF() throws IOException {
         SlideShow<?,?> ppt1 = new XMLSlideShow();
         testTextDirection(ppt1);
         ppt1.close();
@@ -145,7 +145,7 @@ public class TestTable {
     }
 
     @Test
-    public void tableSpan() throws IOException {
+    void tableSpan() throws IOException {
         String[] files = (xslfOnly()) ? new String[]{"bug60993.pptx"} : new String[]{"bug60993.pptx", "bug60993.ppt"};
         for (String f : files) {
             SlideShow<?,?> ppt = openSampleSlideshow(f);

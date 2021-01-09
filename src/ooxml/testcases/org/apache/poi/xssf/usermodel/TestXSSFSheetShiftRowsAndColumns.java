@@ -60,7 +60,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
      * 0 to numCols-1.
      */
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         final String procName = "TestXSSFSheetShiftRowsAndColumns.setup";
         fileName = procName+".xlsx";
 
@@ -88,7 +88,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
      * This method writes the workbook to resultDir/fileName.
      */
     @AfterEach
-    public void cleanup() throws IOException {
+    void cleanup() throws IOException {
         final String procName = "TestXSSFSheetRemoveTable.cleanup";
         if (workbook == null) {
             return;

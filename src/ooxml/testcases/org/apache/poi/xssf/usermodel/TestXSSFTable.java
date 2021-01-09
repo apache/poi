@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public final class TestXSSFTable {
 
     @Test
-    public void bug56274() throws IOException {
+    void bug56274() throws IOException {
         // read sample file
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56274.xlsx")) {
 
@@ -117,7 +117,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void findColumnIndex() throws IOException {
+    void findColumnIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
 
             XSSFTable table = wb.getTable("\\_Prime.1");
@@ -136,7 +136,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void findColumnIndexIsRelativeToTableNotSheet() throws IOException {
+    void findColumnIndexIsRelativeToTableNotSheet() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataTableCities.xlsx")) {
             XSSFTable table = wb.getTable("SmallCity");
 
@@ -150,7 +150,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getSheetName() throws IOException {
+    void getSheetName() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals("Table", table.getSheetName());
@@ -158,7 +158,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void isHasTotalsRow() throws IOException {
+    void isHasTotalsRow() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertFalse(table.getTotalsRowCount() > 0);
@@ -166,7 +166,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getStartColIndex() throws IOException {
+    void getStartColIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(0, table.getStartColIndex());
@@ -174,7 +174,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getEndColIndex() throws IOException {
+    void getEndColIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(2, table.getEndColIndex());
@@ -182,7 +182,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getStartRowIndex() throws IOException {
+    void getStartRowIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(0, table.getStartRowIndex());
@@ -190,7 +190,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getEndRowIndex() throws IOException {
+    void getEndRowIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(6, table.getEndRowIndex());
@@ -198,7 +198,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getStartCellReference() throws IOException {
+    void getStartCellReference() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(new CellReference("A1"), table.getStartCellReference());
@@ -206,7 +206,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getEndCellReference() throws IOException {
+    void getEndCellReference() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(new CellReference("C7"), table.getEndCellReference());
@@ -214,7 +214,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getEndCellReferenceFromSingleCellTable() throws IOException {
+    void getEndCellReferenceFromSingleCellTable() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SingleCellTable.xlsx")) {
             XSSFTable table = wb.getTable("Table3");
             assertEquals(new CellReference("A2"), table.getEndCellReference());
@@ -222,7 +222,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getColumnCount() throws IOException {
+    void getColumnCount() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(3, table.getColumnCount());
@@ -230,7 +230,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getAndSetDisplayName() throws IOException {
+    void getAndSetDisplayName() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals("\\_Prime.1", table.getDisplayName());
@@ -242,7 +242,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getCellReferences() throws IOException {
+    void getCellReferences() throws IOException {
         // make sure that cached start and end cell references
         // can be synchronized with the underlying CTTable
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -275,7 +275,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getRowCount() throws IOException {
+    void getRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             XSSFTable table = sh.createTable(null);

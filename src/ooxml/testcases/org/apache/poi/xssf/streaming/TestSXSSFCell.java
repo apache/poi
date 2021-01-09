@@ -95,14 +95,14 @@ public class TestSXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void getCachedFormulaResultType_throwsISE_whenNotAFormulaCell() {
+    void getCachedFormulaResultType_throwsISE_whenNotAFormulaCell() {
         SXSSFCell instance = new SXSSFCell(null, CellType.BLANK);
         assertThrows(IllegalStateException.class, instance::getCachedFormulaResultType);
     }
 
 
     @Test
-    public void setCellValue_withTooLongRichTextString_throwsIAE() {
+    void setCellValue_withTooLongRichTextString_throwsIAE() {
         Cell cell = spy(new SXSSFCell(null, CellType.BLANK));
         int length = SpreadsheetVersion.EXCEL2007.getMaxTextLength() + 1;
         String string = new String(new byte[length], StandardCharsets.UTF_8).replace("\0", "x");
@@ -111,21 +111,21 @@ public class TestSXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void getArrayFormulaRange_returnsNull() {
+    void getArrayFormulaRange_returnsNull() {
         Cell cell = new SXSSFCell(null, CellType.BLANK);
         CellRangeAddress result = cell.getArrayFormulaRange();
         assertNull(result);
     }
 
     @Test
-    public void isPartOfArrayFormulaGroup_returnsFalse() {
+    void isPartOfArrayFormulaGroup_returnsFalse() {
         Cell cell = new SXSSFCell(null, CellType.BLANK);
         boolean result = cell.isPartOfArrayFormulaGroup();
         assertFalse(result);
     }
 
     @Test
-    public void getErrorCellValue_returns0_onABlankCell() {
+    void getErrorCellValue_returns0_onABlankCell() {
         Cell cell = new SXSSFCell(null, CellType.BLANK);
         assertEquals(CellType.BLANK, cell.getCellType());
         byte result = cell.getErrorCellValue();

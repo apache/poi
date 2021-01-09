@@ -357,7 +357,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         // Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.
         // , "StructuredRefs-lots-with-lookups.xlsx"
     })
-    public void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
+    void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(sampleWorkbook)) {
             assertDoesNotThrow(() -> XSSFFormulaEvaluator.evaluateAllFormulaCells(wb));
         }
@@ -381,7 +381,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void evaluateInCellReturnsSameDataType() throws IOException {
+    void evaluateInCellReturnsSameDataType() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             wb.createSheet().createRow(0).createCell(0);
             XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();

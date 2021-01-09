@@ -105,11 +105,11 @@ public class OOXMLLiteAgent {
         Pattern includes;
         final Set<Integer> hashes = new HashSet<>();
 
-        public void setPattern(String regex) {
+        void setPattern(String regex) {
             includes = Pattern.compile(regex);
         }
 
-        public void load(String path) throws IOException {
+        void load(String path) throws IOException {
             this.logPath = Paths.get(path);
             if (Files.exists(this.logPath)) {
                 try (Stream<String> stream = Files.lines(this.logPath)) {

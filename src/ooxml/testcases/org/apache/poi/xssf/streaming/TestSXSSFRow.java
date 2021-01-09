@@ -36,7 +36,7 @@ public final class TestSXSSFRow extends BaseTestXRow {
 
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         ((SXSSFITestDataProvider) _testDataProvider).cleanup();
     }
 

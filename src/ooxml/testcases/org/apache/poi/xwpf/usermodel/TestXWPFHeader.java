@@ -256,7 +256,7 @@ public final class TestXWPFHeader {
     }
 
     @Test
-    public void bug60293() throws Exception {
+    void bug60293() throws Exception {
         //test handling of non-standard header/footer options
         try (XWPFDocument xwpf = XWPFTestDataSamples.openSampleDocument("60293.docx")) {
             assertEquals(3, xwpf.getHeaderList().size());
