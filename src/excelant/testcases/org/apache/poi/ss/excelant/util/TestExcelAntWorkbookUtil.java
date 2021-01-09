@@ -49,7 +49,7 @@ public class TestExcelAntWorkbookUtil {
 
 
 	@AfterEach
-	public void tearDown() {
+	void tearDown() {
 		fixture = null ;
 	}
 

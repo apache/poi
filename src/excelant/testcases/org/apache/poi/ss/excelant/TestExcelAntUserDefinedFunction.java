@@ -27,7 +27,7 @@ public class TestExcelAntUserDefinedFunction {
 	private ExcelAntUserDefinedFunctionTestHelper fixture ;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		fixture = new ExcelAntUserDefinedFunctionTestHelper() ;
 	}
 

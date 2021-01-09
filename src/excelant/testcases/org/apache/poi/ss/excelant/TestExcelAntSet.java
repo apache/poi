@@ -36,12 +36,12 @@ public class TestExcelAntSet {
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
     @BeforeEach
-	public void setUp() {
+	void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;
 	}
 
     @AfterEach
-	public void tearDown() {
+	void tearDown() {
 		fixture = null ;
 	}
 

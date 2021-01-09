@@ -50,7 +50,7 @@ public class TestBuildFile {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         String filename = TestBuildFile.getDataDir() + "/../src/excelant/testcases/org/apache/poi/ss/excelant/tests.xml";
         int logLevel = Project.MSG_DEBUG;
 
@@ -76,7 +76,7 @@ public class TestBuildFile {
      * test target depend on it.
      */
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (project == null) {
             /*
              * Maybe the BuildFileTest was subclassed and there is
@@ -100,21 +100,21 @@ public class TestBuildFile {
      * @param target target to run
      * @param cause  information string to reader of report
      */
-    public void expectBuildException(String target, String cause) {
+    void expectBuildException(String target, String cause) {
         expectSpecificBuildException(target, cause, null);
     }
 
     /**
      * Assert that the given substring is in the log messages.
      */
-    public void assertLogContaining(String substring) {
+    void assertLogContaining(String substring) {
         assertContains(getLog(), substring);
     }
 
     /**
      * Assert that the given substring is not in the log messages.
      */
-    public void assertLogNotContaining(String substring) {
+    void assertLogNotContaining(String substring) {
         assertNotContained(getLog(), substring);
     }
 
@@ -133,7 +133,7 @@ public class TestBuildFile {
      *
      * @param targetName target to run
      */
-    public void executeTarget(String targetName) {
+    void executeTarget(String targetName) {
         PrintStream sysOut = System.out;
         PrintStream sysErr = System.err;
         try {
@@ -159,7 +159,7 @@ public class TestBuildFile {
      * @param msg    the message value of the build exception we are waiting
      *               for set to null for any build exception to be valid
      */
-    public void expectSpecificBuildException(String target, String cause, String msg) {
+    void expectSpecificBuildException(String target, String cause, String msg) {
         try {
             executeTarget(target);
         } catch (org.apache.tools.ant.BuildException ex) {

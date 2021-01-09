@@ -34,7 +34,7 @@ public class TestExcelAntEvaluationResult {
     private String cellId = "testCell!$F$1";
 
     @BeforeEach
-	public void setUp() {
+	void setUp() {
 		fixture = new ExcelAntEvaluationResult(completedWithError,
 				                                passed,
 				                                retValue,
@@ -44,7 +44,7 @@ public class TestExcelAntEvaluationResult {
 	}
 
     @AfterEach
-	public void tearDown() {
+	void tearDown() {
 		fixture = null;
 	}
 

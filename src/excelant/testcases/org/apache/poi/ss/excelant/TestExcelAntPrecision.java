@@ -28,12 +28,12 @@ public class TestExcelAntPrecision {
 	private ExcelAntPrecision fixture ;
 
     @BeforeEach
-	public void setUp() {
+	void setUp() {
 		fixture = new ExcelAntPrecision() ;
 	}
 
     @AfterEach
-	public void tearDown() {
+	void tearDown() {
 		fixture = null ;
 	}
 

@@ -35,14 +35,14 @@ public class TestExcelAntSetDoubleCell {
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
     @BeforeEach
-	public void setUp() {
+	void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;
 		util = ExcelAntWorkbookUtilFactory.getInstance(mortgageCalculatorFileName ) ;
 		fixture.setWorkbookUtil( util ) ;
 	}
 
     @AfterEach
-	public void tearDown() {
+	void tearDown() {
 		fixture = null ;
 	}
 
