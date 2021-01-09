@@ -17,8 +17,10 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -99,17 +101,7 @@ public class TestXDDFChartRemoveSeries {
      * This method writes the workbook to resultDir/fileName.
      */
     @AfterEach
-    void cleanup() {
-        if (workbook == null) {
-            System.out.println(String.format(Locale.ROOT, "%s: workbook==null", procName));
-            return;
-        }
-
-        if (fileName == null) {
-            System.out.println(String.format(Locale.ROOT, "%s: fileName==null", procName));
-            return;
-        }
-
+    void cleanup() throws IOException {
         // Finish up
         chart.plot(chartData);
         final int index = workbook.getSheetIndex(sheet);
@@ -120,18 +112,8 @@ public class TestXDDFChartRemoveSeries {
         final File file = new File(resultDir, fileName);
         try (OutputStream fileOut = new FileOutputStream(file)) {
             workbook.write(fileOut);
-            System.out.println(
-                    String.format(Locale.ROOT, "%s: test file written to %s", procName, file.getAbsolutePath()));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            try {
-                workbook.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
+        workbook.close();
     }
 
     /**
@@ -144,11 +126,8 @@ public class TestXDDFChartRemoveSeries {
         procName = "testRemoveSeries0";
         fileName = procName + ".xlsx";
 
-        try {
-            chartData.getSeries().remove(0);
-        } catch (UnsupportedOperationException uoe) {
-            assertEquals(2, chartData.getSeriesCount());
-        }
+        assertThrows(UnsupportedOperationException.class, () -> chartData.getSeries().remove(0));
+        assertEquals(2, chartData.getSeriesCount());
     }
 
     /**
@@ -186,6 +165,10 @@ public class TestXDDFChartRemoveSeries {
     void testDontRemoveSeries() {
         procName = "testDontRemoveSeries";
         fileName = procName + ".xlsx";
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> chartData.removeSeries(2));
+        assertEquals("removeSeries(2): illegal index", e.getMessage());
+        assertEquals(2, chartData.getSeriesCount());
     }
 
 }

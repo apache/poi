@@ -41,13 +41,13 @@ public final class TestSXSSFRow extends BaseTestXRow {
     }
 
     @Override
-    @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
+    @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>")
     protected void testCellShiftingRight(){
         // Remove when SXSSFRow.shiftCellsRight() is implemented.
     }
 
     @Override
-    @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
+    @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>")
     protected void testCellShiftingLeft(){
         // Remove when SXSSFRow.shiftCellsLeft() is implemented.
     }

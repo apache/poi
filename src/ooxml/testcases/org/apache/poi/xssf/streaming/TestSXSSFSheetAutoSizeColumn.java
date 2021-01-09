@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.streaming;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -97,7 +98,8 @@ public class TestSXSSFSheetAutoSizeColumn {
         sheet.trackAllColumnsForAutoSizing();
 
         for (int i = 0; i < 10; i++) {
-            sheet.autoSizeColumn(i, useMergedCells);
+            int i2 = i;
+            assertDoesNotThrow(() -> sheet.autoSizeColumn(i2, useMergedCells));
         }
     }
 

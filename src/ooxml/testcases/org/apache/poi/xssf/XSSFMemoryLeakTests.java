@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -61,88 +62,91 @@ public class XSSFMemoryLeakTests {
 
     @Test
     void testWriteRow() throws IOException {
-        final XSSFWorkbook wb = new XSSFWorkbook();
-        final XSSFSheet sheet1 = wb.createSheet("Sheet1");
-        final XSSFRow row = sheet1.createRow(0);
-        final XSSFCell cell = row.createCell(0);
-        cell.setCellValue("hello");
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            final XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            final XSSFRow row = sheet1.createRow(0);
+            final XSSFCell cell = row.createCell(0);
+            cell.setCellValue("hello");
 
-        // Cannot check the CTCell here as it is reused now and thus
-        // not freed until we free up the Cell itself
-        //verifier.addObject(ctCell);
+            // Cannot check the CTCell here as it is reused now and thus
+            // not freed until we free up the Cell itself
+            //verifier.addObject(ctCell);
 
-        try (OutputStream out = new ByteArrayOutputStream(8192)) {
-            wb.write(out);
+            try (OutputStream out = new ByteArrayOutputStream(8192)) {
+                wb.write(out);
+            }
+
+            CTCell ctCell = cell.getCTCell();
+            assertSame(cell.getCTCell(), ctCell, "The CTCell should not be replaced");
+            assertSame(row.getCTRow().getCArray(0), ctCell, "The CTCell in the row should not be replaced");
         }
-
-        CTCell ctCell = cell.getCTCell();
-        assertSame(cell.getCTCell(), ctCell, "The CTCell should not be replaced");
-        assertSame(row.getCTRow().getCArray(0), ctCell, "The CTCell in the row should not be replaced");
-
-        wb.close();
     }
 
     @Test
     void testRemoveCellFromRow() throws IOException {
-        final XSSFWorkbook wb = new XSSFWorkbook();
-        final XSSFSheet sheet1 = wb.createSheet("Sheet1");
-        final XSSFRow rowToCheck = sheet1.createRow(0);
-        references.add(rowToCheck);
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            final XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            final XSSFRow rowToCheck = sheet1.createRow(0);
+            references.add(rowToCheck);
 
-        XSSFCell cell = rowToCheck.createCell(0);
-        cell.setCellValue("hello");
+            XSSFCell cell = rowToCheck.createCell(0);
+            cell.setCellValue("hello");
 
-        // previously the CTCell was still referenced in the CTRow, verify that it is freed
-        verifier.addObject(cell);
-        verifier.addObject(cell.getCTCell());
+            // previously the CTCell was still referenced in the CTRow, verify that it is freed
+            verifier.addObject(cell);
+            verifier.addObject(cell.getCTCell());
 
-        rowToCheck.removeCell(cell);
+            rowToCheck.removeCell(cell);
 
-        wb.close();
+            assertNull(rowToCheck.getCell(0));
+        }
     }
 
     @Test
     void testRemove2CellsFromRow() throws IOException {
-        final XSSFWorkbook wb = new XSSFWorkbook();
-        final XSSFSheet sheet1 = wb.createSheet("Sheet1");
-        final XSSFRow rowToCheck = sheet1.createRow(0);
-        references.add(rowToCheck);
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            final XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            final XSSFRow rowToCheck = sheet1.createRow(0);
+            references.add(rowToCheck);
 
-        XSSFCell cell1 = rowToCheck.createCell(0);
-        cell1.setCellValue("hello");
-        XSSFCell cell2 = rowToCheck.createCell(1);
-        cell2.setCellValue("world");
+            XSSFCell cell1 = rowToCheck.createCell(0);
+            cell1.setCellValue("hello");
+            XSSFCell cell2 = rowToCheck.createCell(1);
+            cell2.setCellValue("world");
 
-        // previously the CTCell was still referenced in the CTRow, verify that it is freed
-        verifier.addObject(cell1);
-        verifier.addObject(cell1.getCTCell());
-        verifier.addObject(cell2);
-        verifier.addObject(cell2.getCTCell());
+            // previously the CTCell was still referenced in the CTRow, verify that it is freed
+            verifier.addObject(cell1);
+            verifier.addObject(cell1.getCTCell());
+            verifier.addObject(cell2);
+            verifier.addObject(cell2.getCTCell());
 
-        rowToCheck.removeCell(cell2);
-        rowToCheck.removeCell(cell1);
+            rowToCheck.removeCell(cell2);
+            rowToCheck.removeCell(cell1);
 
-        wb.close();
+            assertNull(rowToCheck.getCell(0));
+            assertNull(rowToCheck.getCell(1));
+        }
     }
 
     @Test
     void testRemoveRowFromSheet() throws IOException {
-        final XSSFWorkbook wb1 = new XSSFWorkbook();
-        final XSSFSheet sheetToCheck = wb1.createSheet("Sheet1");
-        references.add(sheetToCheck);
-        final XSSFRow row = sheetToCheck.createRow(0);
-        final XSSFCell cell = row.createCell(0);
-        cell.setCellValue(1);
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            final XSSFSheet sheetToCheck = wb1.createSheet("Sheet1");
+            references.add(sheetToCheck);
+            final XSSFRow row = sheetToCheck.createRow(0);
+            final XSSFCell cell = row.createCell(0);
+            cell.setCellValue(1);
 
-        // ensure that the row-data is not kept somewhere in another member
-        verifier.addObject(row.getCTRow());
-        verifier.addObject(row);
-        verifier.addObject(cell.getCTCell());
-        verifier.addObject(cell);
+            // ensure that the row-data is not kept somewhere in another member
+            verifier.addObject(row.getCTRow());
+            verifier.addObject(row);
+            verifier.addObject(cell.getCTCell());
+            verifier.addObject(cell);
 
-        sheetToCheck.removeRow(row);
+            sheetToCheck.removeRow(row);
 
-        wb1.close();
+            assertNull(sheetToCheck.getRow(0));
+        }
     }
 
     @Test

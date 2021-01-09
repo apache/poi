@@ -27,14 +27,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -158,7 +162,11 @@ public class TestDecryptor {
             POIFSFileSystem pfs = new POIFSFileSystem(is)) {
             EncryptionInfo info = new EncryptionInfo(pfs);
             Decryptor dec = Decryptor.getInstance(info);
-            dec.getDataStream(pfs).close();
+            MessageDigest md = CryptoFunctions.getMessageDigest(HashAlgorithm.sha256);
+            try (InputStream is2 = dec.getDataStream(pfs)) {
+                md.update(IOUtils.toByteArray(is2));
+            }
+            assertEquals("L1vDQq2EuMSfU/FBfVQfM2zfOY5Jx9ZyVgIQhXPPVgs=", Base64.encodeBase64String(md.digest()));
         }
     }
 

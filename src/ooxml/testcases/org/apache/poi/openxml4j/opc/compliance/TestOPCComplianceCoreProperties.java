@@ -80,15 +80,10 @@ import org.junit.jupiter.api.Test;
 public final class TestOPCComplianceCoreProperties {
 
     @Test
-    void testCorePropertiesPart() {
-        OPCPackage pkg;
-        try {
-            InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-            pkg = OPCPackage.open(is);
-        } catch (InvalidFormatException | IOException e) {
-            throw new RuntimeException(e);
+    void testCorePropertiesPart() throws IOException {
+        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
+            assertDoesNotThrow(() -> OPCPackage.open(is).close());
         }
-        pkg.revert();
     }
 
     private static String extractInvalidFormatMessage(String sampleNameSuffix) throws IOException {

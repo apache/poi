@@ -196,15 +196,11 @@ public final class TestStylesTable {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             for (int i = 0; i < styles.getMaxNumberOfDataFormats(); i++) {
-                wb.getStylesSource().putNumberFormat("\"test" + i + " \"0");
+                styles.putNumberFormat("\"test" + i + " \"0");
             }
-            try {
-                wb.getStylesSource().putNumberFormat("\"anotherformat \"0");
-            } catch (final IllegalStateException e) {
-                if (!e.getMessage().startsWith("The maximum number of Data Formats was exceeded.")) {
-                    throw e;
-                }
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> styles.putNumberFormat("\"anotherformat \"0"));
+            assertTrue(e.getMessage().startsWith("The maximum number of Data Formats was exceeded."));
         }
     }
 

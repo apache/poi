@@ -27,15 +27,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
@@ -187,12 +193,7 @@ public final class TestXSSFReader {
    void test50119() throws Exception {
       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithChartSheet.xlsx")) {
           XSSFReader r = new XSSFReader(pkg);
-          XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
-
-          while (it.hasNext()) {
-              InputStream stream = it.next();
-              stream.close();
-          }
+          assertEquals("bxdf4aa1n9VLkn/4++RNhoygSelxWDM2Can1m9TLlTw=", hash(r));
       }
    }
 
@@ -330,16 +331,24 @@ public final class TestXSSFReader {
     void test64420() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("64420.xlsm"))) {
             XSSFReader reader = new XSSFReader(pkg);
-
-            Iterator<InputStream> iter = reader.getSheetsData();
-            byte[] data = new byte[4096];
-            while (iter.hasNext()) {
-                InputStream stream = iter.next();
-                assertNotNull(stream);
-                int read = IOUtils.readFully(stream, data);
-                assertTrue(read > 0);
-                stream.close();
-            }
+            assertEquals("U/j5UN7LN8wH6Gw/gsn6pCMASz+Nb1euCsFtC8tAPm0=", hash(reader));
         }
+    }
+
+    private static String hash(XSSFReader reader) throws IOException {
+        Iterable<InputStream> iter = () -> {
+            try {
+                return reader.getSheetsData();
+            } catch (IOException | InvalidFormatException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        MessageDigest md = CryptoFunctions.getMessageDigest(HashAlgorithm.sha256);
+        for (InputStream is : iter) {
+            md.update(IOUtils.toByteArray(is));
+        }
+
+        return Base64.encodeBase64String(md.digest());
     }
 }

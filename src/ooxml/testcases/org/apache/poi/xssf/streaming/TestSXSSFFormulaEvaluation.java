@@ -181,7 +181,6 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         wb.close();
     }
 
-    @Test
     @Disabled(
         "This test is disabled because it fails for SXSSF because " +
         "handling of errors in formulas is slightly different than in XSSF, " +

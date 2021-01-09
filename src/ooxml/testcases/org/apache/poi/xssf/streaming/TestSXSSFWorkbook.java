@@ -21,6 +21,7 @@ package org.apache.poi.xssf.streaming;
 
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -359,7 +360,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Disabled("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
             + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
-    @Test
     void bug53515a() throws Exception {
         File out = new File("Test.xlsx");
         assertTrue(!out.exists() || out.delete());
@@ -382,7 +382,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                     System.gc();
                 }
 
-                wb.write(outSteam);
+                    wb.write(outSteam);
                 // assertTrue(wb.dispose());
                 outSteam.close();
             } finally {
@@ -456,26 +456,25 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Test
     void testZipBombNotTriggeredOnUselessContent() throws IOException {
-        SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true);
-        SXSSFSheet s = swb.createSheet();
-        char[] useless = new char[32767];
-        Arrays.fill(useless, ' ');
+        try (SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true)) {
+            SXSSFSheet s = swb.createSheet();
+            char[] useless = new char[32767];
+            Arrays.fill(useless, ' ');
 
-        for (int row=0; row<1; row++) {
-            Row r = s.createRow(row);
-            for (int col=0; col<10; col++) {
-                char[] prefix = Integer.toHexString(row * 1000 + col).toCharArray();
-                Arrays.fill(useless, 0, 10, ' ');
-                System.arraycopy(prefix, 0, useless, 0, prefix.length);
-                String ul = new String(useless);
-                r.createCell(col, CellType.STRING).setCellValue(ul);
+            for (int row = 0; row < 1; row++) {
+                Row r = s.createRow(row);
+                for (int col = 0; col < 10; col++) {
+                    char[] prefix = Integer.toHexString(row * 1000 + col).toCharArray();
+                    Arrays.fill(useless, 0, 10, ' ');
+                    System.arraycopy(prefix, 0, useless, 0, prefix.length);
+                    String ul = new String(useless);
+                    r.createCell(col, CellType.STRING).setCellValue(ul);
+                }
             }
-        }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        swb.write(bos);
-        swb.dispose();
-        swb.close();
+            assertDoesNotThrow(() -> swb.write(new NullOutputStream()));
+            swb.dispose();
+        }
     }
 
     /**

@@ -17,11 +17,15 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
+import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -34,6 +38,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -127,7 +132,6 @@ public final class TestContentTypeManager {
      * Test the addition then removal of content types in a package.
      */
     @Disabled
-    @Test
     void testContentTypeRemovalPackage() {
         // TODO
     }
@@ -145,46 +149,46 @@ public final class TestContentTypeManager {
     void bug62629CombinePictures() throws Exception {
         // this file has incorrect default content-types which caused problems in Apache POI
         // we now handle this broken file more gracefully
-        XSSFWorkbook book = XSSFTestDataSamples.openSampleWorkbook("62629_target.xlsm");
-        XSSFWorkbook b = XSSFTestDataSamples.openSampleWorkbook("62629_toMerge.xlsx");
-        for (int i = 0; i < b.getNumberOfSheets(); i++) {
-            XSSFSheet sheet = book.createSheet(b.getSheetName(i));
-            copyPictures(sheet, b.getSheetAt(i));
-        }
+        try (XSSFWorkbook targetWB = openSampleWorkbook("62629_target.xlsm");
+            XSSFWorkbook mergeWB = openSampleWorkbook("62629_toMerge.xlsx")) {
+            for (Sheet b_sheet : mergeWB) {
+                XSSFSheet sheet = targetWB.createSheet(b_sheet.getSheetName());
 
-        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(book);
-        wbBack.close();
-        book.close();
-        b.close();
-    }
+                XSSFDrawing drawingOld = (XSSFDrawing)b_sheet.createDrawingPatriarch();
+                XSSFDrawing drawingNew = sheet.createDrawingPatriarch();
+                CreationHelper helper = sheet.getWorkbook().getCreationHelper();
+                List<XSSFShape> shapes = drawingOld.getShapes();
 
-    private static void copyPictures(Sheet newSheet, Sheet sheet) {
-        Drawing drawingOld = sheet.createDrawingPatriarch();
-        Drawing drawingNew = newSheet.createDrawingPatriarch();
-        CreationHelper helper = newSheet.getWorkbook().getCreationHelper();
-        if (drawingNew instanceof XSSFDrawing) {
-            List<XSSFShape> shapes = ((XSSFDrawing) drawingOld).getShapes();
-            for (int i = 0; i < shapes.size(); i++) {
-                if (shapes.get(i) instanceof XSSFPicture) {
-                    XSSFPicture pic = (XSSFPicture) shapes.get(i);
+                for (XSSFShape shape : shapes) {
+                    assertTrue(shape instanceof XSSFPicture);
+                    XSSFPicture pic = (XSSFPicture)shape;
                     XSSFPictureData picData = pic.getPictureData();
-                    int pictureIndex = newSheet.getWorkbook().addPicture(picData.getData(), picData.getPictureType());
-                    XSSFClientAnchor anchor = null;
-                    CTTwoCellAnchor oldAnchor = ((XSSFDrawing) drawingOld).getCTDrawing().getTwoCellAnchorArray(i);
-                    if (oldAnchor != null) {
-                        anchor = (XSSFClientAnchor) helper.createClientAnchor();
-                        CTMarker markerFrom = oldAnchor.getFrom();
-                        CTMarker markerTo = oldAnchor.getTo();
-                        anchor.setDx1((int) POIXMLUnits.parseLength(markerFrom.xgetColOff()));
-                        anchor.setDx2((int) POIXMLUnits.parseLength(markerTo.xgetColOff()));
-                        anchor.setDy1((int) POIXMLUnits.parseLength(markerFrom.xgetRowOff()));
-                        anchor.setDy2((int) POIXMLUnits.parseLength(markerTo.xgetRowOff()));
-                        anchor.setCol1(markerFrom.getCol());
-                        anchor.setCol2(markerTo.getCol());
-                        anchor.setRow1(markerFrom.getRow());
-                        anchor.setRow2(markerTo.getRow());
-                    }
+                    int pictureIndex = targetWB.addPicture(picData.getData(), picData.getPictureType());
+                    ClientAnchor oldAnchor = pic.getClientAnchor();
+                    assertNotNull(oldAnchor);
+                    ClientAnchor anchor = helper.createClientAnchor();
+                    anchor.setAnchorType(oldAnchor.getAnchorType());
+                    anchor.setDx1(oldAnchor.getDx1());
+                    anchor.setDx2(oldAnchor.getDx2());
+                    anchor.setDy1(oldAnchor.getDy1());
+                    anchor.setDy2(oldAnchor.getDy2());
+                    anchor.setCol1(oldAnchor.getCol1());
+                    anchor.setCol2(oldAnchor.getCol2());
+                    anchor.setRow1(oldAnchor.getRow1());
+                    anchor.setRow2(oldAnchor.getRow2());
                     drawingNew.createPicture(anchor, pictureIndex);
+                }
+            }
+
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(targetWB)) {
+                for (XSSFWorkbook wb : Arrays.asList(targetWB, mergeWB)) {
+                    for (Sheet sheet : wb) {
+                        XSSFSheet backSheet = wbBack.getSheet(sheet.getSheetName());
+                        assertNotNull(backSheet);
+                        XSSFDrawing origPat = (XSSFDrawing)sheet.createDrawingPatriarch();
+                        XSSFDrawing backPat = backSheet.createDrawingPatriarch();
+                        assertEquals(origPat.getShapes().size(), backPat.getShapes().size());
+                    }
                 }
             }
         }
