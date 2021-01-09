@@ -37,7 +37,7 @@ public class TestExcelAntWorkbookUtilFactory {
 	 * instance of the ExcelAntWorkbookUtil class.
 	 */
     @Test
-	public void testGetNewWorkbookUtilInstance() {
+	void testGetNewWorkbookUtilInstance() {
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
 				                              mortgageCalculatorWorkbookFile) ;
 
@@ -51,7 +51,7 @@ public class TestExcelAntWorkbookUtilFactory {
 	 * the same resource, are passed in.
 	 */
     @Test
-	public void testVerifyEquivalence() {
+	void testVerifyEquivalence() {
 		String sameFileName = TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(

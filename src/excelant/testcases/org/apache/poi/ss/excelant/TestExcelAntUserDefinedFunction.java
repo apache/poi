@@ -32,7 +32,7 @@ public class TestExcelAntUserDefinedFunction {
 	}
 
 	@Test
-	public void testSetClassName() {
+	void testSetClassName() {
 		String className = "simple.class.name" ;
 
 		fixture.setClassName( className ) ;
@@ -43,7 +43,7 @@ public class TestExcelAntUserDefinedFunction {
 	}
 
 	@Test
-	public void testSetFunction() {
+	void testSetFunction() {
 		String functionAlias = "alias" ;
 
 		fixture.setFunctionAlias( functionAlias ) ;

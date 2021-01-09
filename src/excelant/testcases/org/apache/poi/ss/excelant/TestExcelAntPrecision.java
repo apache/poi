@@ -38,7 +38,7 @@ public class TestExcelAntPrecision {
 	}
 
 	@Test
-	public void testVerifyPrecision() {
+	void testVerifyPrecision() {
 
 		double value = 1.0E-1 ;
 

@@ -46,7 +46,7 @@ public class TestExcelAntSet {
 	}
 
 	@Test
-	public void testSetter() {
+	void testSetter() {
 		String cell = "simpleCellRef!$F$1" ;
 
 		fixture.setCell( cell ) ;
@@ -58,7 +58,7 @@ public class TestExcelAntSet {
 	}
 
 	@Test
-	public void testSetWorkbookUtil() {
+	void testSetWorkbookUtil() {
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
 				                                 mortgageCalculatorFileName ) ;
 

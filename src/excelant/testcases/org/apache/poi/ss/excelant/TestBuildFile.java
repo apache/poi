@@ -272,33 +272,33 @@ public class TestBuildFile {
     }
 
     @Test
-    public void testMissingFilename() {
+    void testMissingFilename() {
         expectSpecificBuildException("test-nofile", "required argument not specified",
                                      "fileName attribute must be set!");
     }
 
     @Test
-    public void testFileNotFound() {
+    void testFileNotFound() {
         expectSpecificBuildException("test-filenotfound", "required argument not specified",
                                      "Cannot load file invalid.xls. Make sure the path and file permissions are correct.");
     }
 
     @Test
-    public void testEvaluate() {
+    void testEvaluate() {
         executeTarget("test-evaluate");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
     }
 
     @Test
-    public void testEvaluateNoDetails() {
+    void testEvaluateNoDetails() {
         executeTarget("test-evaluate-nodetails");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogNotContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
     }
 
     @Test
-    public void testPrecision() {
+    void testPrecision() {
         executeTarget("test-precision");
 
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
@@ -312,46 +312,46 @@ public class TestBuildFile {
     }
 
     @Test
-    public void testPrecisionFail() {
+    void testPrecisionFail() {
         expectSpecificBuildException("test-precision-fails", "precision not matched",
                                      "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
     }
 
     @Test
-    public void testPassOnError() {
+    void testPassOnError() {
         executeTarget("test-passonerror");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Test named failonerror failed because 1 of 0 evaluations failed to evaluate correctly.");
     }
 
     @Test
-    public void testFailOnError() {
+    void testFailOnError() {
         expectBuildException("test-failonerror", "fail on error");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
     }
 
     @Test
-    public void testFailOnErrorNoDetails() {
+    void testFailOnErrorNoDetails() {
         expectBuildException("test-failonerror-nodetails", "fail on error");
         assertLogNotContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
     }
 
     @Test
-    public void testUdf() {
+    void testUdf() {
         executeTarget("test-udf");
         assertLogContaining("1/1 tests passed");
     }
 
     @Test
-    public void testSetText() {
+    void testSetText() {
         executeTarget("test-settext");
         assertLogContaining("1/1 tests passed");
     }
 
     @Test
-    public void testAddHandler() {
+    void testAddHandler() {
         executeTarget("test-addhandler");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
@@ -361,14 +361,14 @@ public class TestBuildFile {
     }
 
     @Test
-    public void testAddHandlerWrongClass() {
+    void testAddHandlerWrongClass() {
         executeTarget("test-addhandler-wrongclass");
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
     }
 
     @Test
-    public void testAddHandlerFails() {
+    void testAddHandlerFails() {
         expectSpecificBuildException("test-addhandler-fails", "NullPointException", null);
     }
 

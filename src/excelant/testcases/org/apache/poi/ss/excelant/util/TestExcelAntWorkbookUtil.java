@@ -54,20 +54,20 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testStringConstructor() {
+	void testStringConstructor() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(mortgageCalculatorFileName);
 
 		assertNotNull(fixture);
 	}
 
 	@Test
-	public void testLoadNotExistingFile() {
+	void testLoadNotExistingFile() {
 		BuildException e = assertThrows(BuildException.class, () -> new ExcelAntWorkbookUtilTestHelper("notexistingFile"));
 		assertTrue(e.getMessage().contains("notexistingFile"));
 	}
 
 	@Test
-	public void testWorkbookConstructor() throws IOException {
+	void testWorkbookConstructor() throws IOException {
         File workbookFile = new File(mortgageCalculatorFileName);
         FileInputStream fis = new FileInputStream(workbookFile);
         Workbook workbook = WorkbookFactory.create(fis);
@@ -78,7 +78,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testAddFunction() {
+	void testAddFunction() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -93,7 +93,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-    public void testAddFunctionClassName() throws Exception {
+    void testAddFunctionClassName() throws Exception {
         fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -108,7 +108,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-    public void testAddFunctionInvalidClassName() throws Exception {
+    void testAddFunctionInvalidClassName() throws Exception {
         fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -123,7 +123,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-	public void testGetWorkbook() {
+	void testGetWorkbook() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -135,7 +135,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testFileName() {
+	void testFileName() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -150,7 +150,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testGetEvaluator() {
+	void testGetEvaluator() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -161,7 +161,7 @@ public class TestExcelAntWorkbookUtil {
  	}
 
 	@Test
-    public void testGetEvaluatorWithUDF() {
+    void testGetEvaluatorWithUDF() {
         fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -174,7 +174,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-	public void testGetEvaluatorXLSX() {
+	void testGetEvaluatorXLSX() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 TestBuildFile.getDataDir() + "/spreadsheet/sample.xlsx");
 
@@ -185,7 +185,7 @@ public class TestExcelAntWorkbookUtil {
  	}
 
 	@Test
-    public void testGetEvaluatorXLSXWithFunction() {
+    void testGetEvaluatorXLSXWithFunction() {
         fixture = new ExcelAntWorkbookUtilTestHelper(
                 TestBuildFile.getDataDir() + "/spreadsheet/sample.xlsx");
 
@@ -198,7 +198,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-	public void testEvaluateCell() {
+	void testEvaluateCell() {
 		String cell = "'MortgageCalculator'!B4" ;
 		double expectedValue = 790.79 ;
 		double precision = 0.1 ;
@@ -221,7 +221,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-    public void testEvaluateCellFailedPrecision() {
+    void testEvaluateCellFailedPrecision() {
         String cell = "'MortgageCalculator'!B4" ;
         double expectedValue = 790.79 ;
         double precision = 0.0000000000001 ;
@@ -244,7 +244,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-    public void testEvaluateCellWithError() {
+    void testEvaluateCellWithError() {
         String cell = "'ErrorCell'!A1" ;
         double expectedValue = 790.79 ;
         double precision = 0.1 ;
@@ -267,7 +267,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-	public void testGetSheets() {
+	void testGetSheets() {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 
@@ -278,7 +278,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testSetString() {
+	void testSetString() {
 		String cell = "'MortgageCalculator'!C14" ;
 		String cellValue = "testString" ;
 
@@ -294,7 +294,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-    public void testSetNotExistingSheet() {
+    void testSetNotExistingSheet() {
         String cell = "'NotexistingSheet'!C14" ;
 
         fixture = new ExcelAntWorkbookUtilTestHelper(mortgageCalculatorFileName);
@@ -303,7 +303,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-    public void testSetFormula() {
+    void testSetFormula() {
         String cell = "'MortgageCalculator'!C14" ;
         String cellValue = "SUM(B14:B18)" ;
 
@@ -318,7 +318,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-    public void testSetDoubleValue() {
+    void testSetDoubleValue() {
         String cell = "'MortgageCalculator'!C14" ;
         double cellValue = 1.2;
 
@@ -333,7 +333,7 @@ public class TestExcelAntWorkbookUtil {
     }
 
 	@Test
-	public void testSetDate() {
+	void testSetDate() {
 		String cell = "'MortgageCalculator'!C14" ;
 		Date cellValue = new Date();
 
@@ -348,7 +348,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testGetNonexistingString() {
+	void testGetNonexistingString() {
 		String cell = "'MortgageCalculator'!C33" ;
 
 		fixture = new ExcelAntWorkbookUtilTestHelper(
@@ -360,7 +360,7 @@ public class TestExcelAntWorkbookUtil {
 	}
 
 	@Test
-	public void testGetNonexistingDouble() {
+	void testGetNonexistingDouble() {
 		String cell = "'MortgageCalculator'!C33" ;
 
 		fixture = new ExcelAntWorkbookUtilTestHelper(

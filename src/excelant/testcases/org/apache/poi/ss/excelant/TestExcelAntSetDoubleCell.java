@@ -47,7 +47,7 @@ public class TestExcelAntSetDoubleCell {
 	}
 
 	@Test
-	public void testSetDouble() {
+	void testSetDouble() {
 		String cellId = "'Sheet3'!$A$1" ;
 		double testValue = 1.1 ;
 

@@ -49,26 +49,26 @@ public class TestExcelAntEvaluationResult {
 	}
 
     @Test
-	public void testCompletedWithErrorMessage() {
+	void testCompletedWithErrorMessage() {
 		String errMsg = fixture.getErrorMessage();
  		assertNotNull(errMsg);
  		assertEquals(errMsg, errMessage);
 	}
 
     @Test
-	public void testPassed() {
+	void testPassed() {
 		boolean passedValue = fixture.didTestPass();
 		assertEquals(passedValue, passed);
 	}
 
     @Test
-	public void testDelta() {
+	void testDelta() {
 		double deltaValue = fixture.getDelta();
 		assertEquals(deltaValue, delta, 0.0);
 	}
 
     @Test
-	public void testCellId() {
+	void testCellId() {
 		String cellIdValue = fixture.getCellName();
 		assertNotNull(cellIdValue);
 		assertEquals(cellIdValue, cellId);

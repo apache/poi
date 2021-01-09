@@ -29,4 +29,6 @@ module org.apache.poi.excelant {
     // test specific exports
     requires org.junit.jupiter.api;
     requires org.junit.jupiter.params;
+
+    opens org.apache.poi.ss.excelant.util to org.junit.platform.commons;
 }
