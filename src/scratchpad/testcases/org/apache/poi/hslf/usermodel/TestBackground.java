@@ -50,7 +50,7 @@ public final class TestBackground {
      * Default background for slide, shape and slide master.
      */
     @Test
-    public void defaults() throws IOException {
+    void defaults() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         assertEquals(HSLFFill.FILL_SOLID, ppt.getSlideMasters().get(0).getBackground().getFill().getFillType());
@@ -68,7 +68,7 @@ public final class TestBackground {
      * Read fill information from an reference ppt file
      */
     @Test
-    public void readBackground() throws IOException {
+    void readBackground() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("backgrounds.ppt");
         HSLFFill fill;
         HSLFShape shape;
@@ -101,7 +101,7 @@ public final class TestBackground {
      * Create a ppt with various fill effects
      */
     @Test
-    public void backgroundPicture() throws IOException {
+    void backgroundPicture() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HSLFSlide slide;
         HSLFFill fill;

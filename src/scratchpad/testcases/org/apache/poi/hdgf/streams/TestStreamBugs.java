@@ -40,7 +40,7 @@ public final class TestStreamBugs extends StreamTest {
 	private POIFSFileSystem filesystem;
 
 	@BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 
@@ -61,7 +61,7 @@ public final class TestStreamBugs extends StreamTest {
 	}
 
 	@SuppressWarnings("unused")
-    public void TOIMPLEMENTtestGetCertainChunks() {
+    void TOIMPLEMENTtestGetCertainChunks() {
 		int offsetA = 3708;
 		int offsetB = 3744;
 	}

@@ -69,7 +69,7 @@ public final class TestRangeProperties {
     private HWPFDocument a;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
         a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
     }

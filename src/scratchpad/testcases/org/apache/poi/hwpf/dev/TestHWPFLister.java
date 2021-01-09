@@ -41,20 +41,20 @@ public class TestHWPFLister {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         // the main-method sets these properties, we need to revert them here to not affect other tests
         System.clearProperty("org.apache.poi.hwpf.preserveBinTables");
         System.clearProperty("org.apache.poi.hwpf.preserveTextTable");
     }
 
     @Test
-    public void main() throws Exception {
+    void main() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("SampleDoc.doc");
         HWPFLister.main(new String[] { file.getAbsolutePath() });
     }
 
     @Test
-    public void mainAll() throws Exception {
+    void mainAll() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("SampleDoc.doc");
         HWPFLister.main(new String[] {
             file.getAbsolutePath(),

@@ -61,7 +61,7 @@ public class TestHemfPicture {
 /*
     @Test
     @Disabled("Only for manual tests")
-    public void paintSingle() throws Exception {
+    void paintSingle() throws Exception {
         File fileIn = new File("tmp/emfs/govdocs1/844/844795.ppt_2.emf");
 
         String[] args = {
@@ -83,7 +83,7 @@ public class TestHemfPicture {
 /*
     @Test
     @Disabled("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
-    public void paintMultiple() throws Exception {
+    void paintMultiple() throws Exception {
         Pattern fileExt = Pattern.compile("(?i)^(.+/)*(.+)\\.(emf|wmf)$");
         final byte[] buf = new byte[50_000_000];
         try (SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))
@@ -295,7 +295,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void nestedWmfEmf() throws Exception {
+    void nestedWmfEmf() throws Exception {
         try (InputStream is = sl_samples.openResourceAsStream("nested_wmf.emf")) {
             HemfPicture emf1 = new HemfPicture(is);
             List<HwmfEmbedded> embeds = new ArrayList<>();

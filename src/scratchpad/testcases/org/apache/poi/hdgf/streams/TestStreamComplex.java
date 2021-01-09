@@ -44,7 +44,7 @@ public final class TestStreamComplex extends StreamTest {
 	private PointerFactory ptrFactory;
 
 	@BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 

@@ -38,7 +38,7 @@ public final class TestDocument {
 	private POIFSFileSystem pfs;
 
 	@BeforeEach
-	public void setup() throws Exception {
+	void setup() throws Exception {
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShowImpl(pfs);
 	}

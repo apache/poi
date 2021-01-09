@@ -95,7 +95,7 @@ public final class TestHyperlink {
     }
 
     @Test
-    public void bug47291() throws IOException {
+    void bug47291() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HSLFSlide slide1 = ppt1.createSlide();
         HSLFTextRun r1 = slide1.createTextBox().setText("page1");

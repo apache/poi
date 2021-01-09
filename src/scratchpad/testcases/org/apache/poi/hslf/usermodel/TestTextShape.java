@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestTextShape {
     @Test
-    public void createAutoShape(){
+    void createAutoShape(){
         HSLFTextShape shape = new HSLFAutoShape(ShapeType.TRAPEZOID);
         assertNull(shape.getEscherTextboxWrapper());
         assertNotNull(shape.getTextParagraphs());
@@ -51,7 +51,7 @@ public final class TestTextShape {
     }
 
     @Test
-    public void createTextBox(){
+    void createTextBox(){
         HSLFTextShape shape = new HSLFTextBox();
         List<HSLFTextParagraph> paras = shape.getTextParagraphs();
         assertNotNull(paras);
@@ -71,7 +71,7 @@ public final class TestTextShape {
      *  - text in auto-shapes
      */
     @Test
-    public void read() throws IOException {
+    void read() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("text_shapes.ppt");
 
         List<String> lst1 = new ArrayList<>();
@@ -122,7 +122,7 @@ public final class TestTextShape {
     }
 
     @Test
-    public void readWrite() throws IOException {
+    void readWrite() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide =  ppt.createSlide();
 
@@ -158,7 +158,7 @@ public final class TestTextShape {
     }
 
     @Test
-    public void margins() throws IOException {
+    void margins() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("text-margins.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -201,7 +201,7 @@ public final class TestTextShape {
     }
 
     @Test
-    public void bug52599() throws IOException {
+    void bug52599() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("52599.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);

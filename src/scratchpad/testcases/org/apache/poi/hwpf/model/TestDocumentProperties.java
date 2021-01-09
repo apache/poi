@@ -32,7 +32,7 @@ public final class TestDocumentProperties {
     private HWPFDocFixture _hWPFDocFixture;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         // TODO verify the constructors
         _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
         _hWPFDocFixture.setUp();
@@ -40,7 +40,7 @@ public final class TestDocumentProperties {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() {
         _documentProperties = null;
         _hWPFDocFixture.tearDown();
         _hWPFDocFixture = null;

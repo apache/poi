@@ -62,7 +62,7 @@ public class TestDocumentEncryption {
         "Password_Protected-hello.ppt",
         "Password_Protected-np-hello.ppt"
     })
-    public void cryptoAPIDecryptionOther(String pptFile) throws Exception {
+    void cryptoAPIDecryptionOther(String pptFile) throws Exception {
         Biff8EncryptionKey.setCurrentUserPassword("hello");
         try {
             try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
@@ -75,7 +75,7 @@ public class TestDocumentEncryption {
     }
 
     @Test
-    public void cryptoAPIChangeKeySize() throws Exception {
+    void cryptoAPIChangeKeySize() throws Exception {
         String pptFile = "cryptoapi-proc2356.ppt";
         Biff8EncryptionKey.setCurrentUserPassword("crypto");
         try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
@@ -106,7 +106,7 @@ public class TestDocumentEncryption {
     }
 
     @Test
-    public void cryptoAPIEncryption() throws Exception {
+    void cryptoAPIEncryption() throws Exception {
         /* documents with multiple edits need to be normalized for encryption */
         String pptFile = "57272_corrupted_usereditatom.ppt";
         ByteArrayOutputStream encrypted = new ByteArrayOutputStream();
@@ -140,7 +140,7 @@ public class TestDocumentEncryption {
     }
 
     @Test
-    public void cryptoAPIDecryption() throws Exception {
+    void cryptoAPIDecryption() throws Exception {
         // taken from a msdn blog:
         // http://blogs.msdn.com/b/openspecification/archive/2009/05/08/dominic-salemno.aspx
         Biff8EncryptionKey.setCurrentUserPassword("crypto");

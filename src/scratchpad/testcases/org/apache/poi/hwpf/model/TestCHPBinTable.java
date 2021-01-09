@@ -74,14 +74,14 @@ public final class TestCHPBinTable {
 
   }
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     _cHPBinTable = null;
     _hWPFDocFixture.tearDown();
 

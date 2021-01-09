@@ -56,7 +56,7 @@ public final class TestPicture {
      *
      */
     @Test
-    public void multiplePictures() throws IOException {
+    void multiplePictures() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide s = ppt.createSlide();
             HSLFSlide s2 = ppt.createSlide();
@@ -91,7 +91,7 @@ public final class TestPicture {
      * was not found. The correct behaviour is to return null.
      */
     @Test
-    public void bug46122() throws IOException {
+    void bug46122() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             HSLFPictureData pd = HSLFPictureData.create(PictureType.PNG);
@@ -109,7 +109,7 @@ public final class TestPicture {
     }
 
     @Test
-    public void macImages() throws IOException {
+    void macImages() throws IOException {
         try (InputStream is = _slTests.openResourceAsStream("53446.ppt");
              HSLFSlideShowImpl hss = new HSLFSlideShowImpl(is)) {
 

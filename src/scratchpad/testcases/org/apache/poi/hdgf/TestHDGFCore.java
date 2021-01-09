@@ -37,11 +37,11 @@ public final class TestHDGFCore {
     private VisioTextExtractor textExtractor;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
     }
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (textExtractor != null) textExtractor.close();
         if (hdgf != null) hdgf.close();
     }
@@ -98,7 +98,7 @@ public final class TestHDGFCore {
      *  chunk commands.
      */
     @Test
-    public void DISABLEDtestAIOOB() throws Exception {
+    void DISABLEDtestAIOOB() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("44501.vsd"));
 
         hdgf = new HDGFDiagram(fs);

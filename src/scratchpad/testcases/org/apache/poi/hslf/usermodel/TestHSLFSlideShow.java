@@ -34,7 +34,7 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
 
     // make sure junit4 executes this test class
     @Test
-    public void dummy() {
+    void dummy() {
         assertNotNull(createSlideShow());
     }
 

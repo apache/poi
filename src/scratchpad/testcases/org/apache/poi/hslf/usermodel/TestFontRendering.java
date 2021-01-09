@@ -53,7 +53,7 @@ public class TestFontRendering {
 
     // @Disabled2("This fails on some systems because fonts are rendered slightly different")
     @Test
-    public void bug55902mixedFontWithChineseCharacters() throws IOException, FontFormatException {
+    void bug55902mixedFontWithChineseCharacters() throws IOException, FontFormatException {
         // font files need to be downloaded first via
         // ant test-scratchpad-download-resources
         String[][] fontFiles = {

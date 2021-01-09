@@ -56,7 +56,7 @@ public class TestHwmfParsing {
         /* Bug 65063 */
         "empty-polygon-close.wmf, 272"
     })
-    public void parse(String file, int recordCnt) throws IOException {
+    void parse(String file, int recordCnt) throws IOException {
         try (InputStream fis = samples.openResourceAsStream(file)) {
             HwmfPicture wmf = new HwmfPicture(fis);
             List<HwmfRecord> records = wmf.getRecords();

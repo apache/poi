@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestRasterOp {
     @Test
-    public void checkTertiaryCalcCmd() {
+    void checkTertiaryCalcCmd() {
         for (HwmfTernaryRasterOp op : HwmfTernaryRasterOp.values()) {
             String cmd = op.calcCmd();
             if (HwmfTernaryRasterOp.SSPXDSXOXN == op) {

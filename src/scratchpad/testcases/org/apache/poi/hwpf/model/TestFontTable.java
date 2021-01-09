@@ -58,13 +58,13 @@ public final class TestFontTable {
   }
 
   @BeforeEach
-  public void setUp() throws IOException {
+  void setUp() throws IOException {
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
   }
 
   @AfterEach
-  public void tearDown() throws IOException  {
+  void tearDown() throws IOException  {
     _hWPFDocFixture.tearDown();
   }
 

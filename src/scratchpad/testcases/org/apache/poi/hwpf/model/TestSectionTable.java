@@ -86,7 +86,7 @@ public final class TestSectionTable {
   }
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     /*@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
@@ -94,7 +94,7 @@ public final class TestSectionTable {
   }
 
   @AfterEach
-  public void tearDown()  {
+  void tearDown()  {
     _hWPFDocFixture.tearDown();
 
     _hWPFDocFixture = null;

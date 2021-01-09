@@ -41,7 +41,7 @@ public final class Test7BitCodepage {
     * Initialize this test, load up the messages.
     */
    @BeforeEach
-   public void setup() throws IOException {
+   void setup() throws IOException {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        ascii_cp1251_lcid1049 = new MAPIMessage(samples.openResourceAsStream("ASCII_CP1251_LCID1049.msg"));
        ascii_utf_8_cp1252_lcid1031  = new MAPIMessage(samples.openResourceAsStream("ASCII_UTF-8_CP1252_LCID1031.msg"));

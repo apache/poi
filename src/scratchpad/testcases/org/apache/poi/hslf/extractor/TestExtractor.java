@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.BitSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -470,16 +470,33 @@ public final class TestExtractor {
     }
 
     @Test
-    public void glyphCounting() throws IOException {
+    void glyphCounting() throws IOException {
         String[] expected = {
             "Times New Roman", "\t\n ,-./01234679:ABDEFGILMNOPRSTVWabcdefghijklmnoprstuvwxyz\u00F3\u201C\u201D",
             "Arial", " Lacdilnost"
         };
+
+        StringBuilder sb = new StringBuilder();
+
         try (SlideShowExtractor<?,?> ppt = openExtractor("45543.ppt")) {
             for (int i=0; i<expected.length; i+=2) {
-                BitSet l = ppt.getCodepoints(expected[i], null, null);
-                String s = l.stream().mapToObj(Character::toChars).map(String::valueOf).collect(Collectors.joining());
-                assertEquals(expected[i+1], s);
+                final String font = expected[i];
+                final String cps = expected[i+1];
+
+                sb.setLength(0);
+
+                BitSet l1 = ppt.getCodepoints(font, null, null);
+                l1.stream().mapToObj(Character::toChars).forEach(sb::append);
+                assertEquals(cps, sb.toString());
+
+                sb.setLength(0);
+
+                SparseBitSet l2 = ppt.getCodepointsInSparseBitSet(font, null, null);
+                int cp = 0;
+                while ((cp = l2.nextSetBit(cp+1)) != -1) {
+                    sb.append(Character.toChars(cp));
+                }
+                assertEquals(cps, sb.toString());
             }
         }
     }

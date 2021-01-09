@@ -65,7 +65,7 @@ public final class TestStyleSheet {
   }
 
   @BeforeEach
-  public void setUp() throws IOException {
+  void setUp() throws IOException {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
@@ -78,7 +78,7 @@ public final class TestStyleSheet {
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     _styleSheet = null;
     _hWPFDocFixture.tearDown();
 

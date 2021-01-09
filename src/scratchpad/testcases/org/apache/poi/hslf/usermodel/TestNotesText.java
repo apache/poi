@@ -32,7 +32,7 @@ public final class TestNotesText {
 	private HSLFSlideShow ss;
 
 	@BeforeEach
-	public void setup() throws Exception {
+	void setup() throws Exception {
 		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);

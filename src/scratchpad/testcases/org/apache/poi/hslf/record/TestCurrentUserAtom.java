@@ -44,7 +44,7 @@ public final class TestCurrentUserAtom {
 	private static final String encFile = "Password_Protected-hello.ppt";
 
 	@Test
-	public void readNormal() throws Exception {
+	void readNormal() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 
 		CurrentUserAtom cu = new CurrentUserAtom(fs.getRoot());
@@ -66,7 +66,7 @@ public final class TestCurrentUserAtom {
 	}
 
 	@Test
-	public void readEnc() throws Exception {
+	void readEnc() throws Exception {
         try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile))) {
             new CurrentUserAtom(fs.getRoot());
 			assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(fs).close());
@@ -74,7 +74,7 @@ public final class TestCurrentUserAtom {
 	}
 
 	@Test
-	public void writeNormal() throws Exception {
+	void writeNormal() throws Exception {
 		// Get raw contents from a known file
 		byte[] contents;
 		try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile))) {

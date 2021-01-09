@@ -63,7 +63,7 @@ public final class TestCruddyExtractor {
 	};
 
 	@BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
 		te = new QuickButCruddyTextExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
     }
 

@@ -75,7 +75,7 @@ public abstract class BasePPTIteratingTest {
     private final PrintStream save = System.out;
 
     @BeforeEach
-    public void setUpBase() throws UnsupportedEncodingException {
+    void setUpBase() throws UnsupportedEncodingException {
         // set a higher max allocation limit as some test-files require more
         IOUtils.setByteArrayMaxOverride(5*1024*1024);
 
@@ -84,7 +84,7 @@ public abstract class BasePPTIteratingTest {
     }
 
     @AfterEach
-    public void tearDownBase() {
+    void tearDownBase() {
         System.setOut(save);
 
         // reset

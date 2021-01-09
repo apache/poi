@@ -42,7 +42,7 @@ public final class TestTxMasterStyleAtom {
     private HSLFSlideShow _ppt;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         _ppt = new HSLFSlideShow();
     }
 

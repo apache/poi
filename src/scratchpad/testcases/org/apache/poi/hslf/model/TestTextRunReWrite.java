@@ -48,7 +48,7 @@ public final class TestTextRunReWrite {
 	 * Load up a test PPT file with rich data
 	 */
 	@BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		String filename = "Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
 		ss = new HSLFSlideShow(slTests.openResourceAsStream(filename));

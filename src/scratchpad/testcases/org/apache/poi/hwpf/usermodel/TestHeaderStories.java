@@ -41,7 +41,7 @@ public final class TestHeaderStories {
 	private HWPFDocument withFields;
 
 	@BeforeEach
-    public void setUp() {
+    void setUp() {
 
 		none = openSampleFile("NoHeadFoot.doc");
 		header = openSampleFile("ThreeColHead.doc");

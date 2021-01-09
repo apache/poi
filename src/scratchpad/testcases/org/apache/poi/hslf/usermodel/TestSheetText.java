@@ -35,12 +35,12 @@ public final class TestSheetText {
 	private HSLFSlideShow ss;
 
 	@BeforeEach
-	public void init() throws IOException {
+	void init() throws IOException {
 		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
 	    ss.close();
 	}
 

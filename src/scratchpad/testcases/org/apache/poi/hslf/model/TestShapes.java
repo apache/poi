@@ -69,7 +69,7 @@ public final class TestShapes {
     private HSLFSlideShow pptB;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         try (InputStream is1 = _slTests.openResourceAsStream("empty.ppt");
              InputStream is2 = _slTests.openResourceAsStream("empty_textbox.ppt")) {
             ppt = new HSLFSlideShow(is1);
@@ -78,7 +78,7 @@ public final class TestShapes {
     }
 
     @Test
-    public void graphics() throws IOException {
+    void graphics() throws IOException {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFLine line = new HSLFLine();
@@ -124,7 +124,7 @@ public final class TestShapes {
      * Verify that we can read TextBox shapes
      */
     @Test
-    public void textBoxRead() throws IOException {
+    void textBoxRead() throws IOException {
         ppt = new HSLFSlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
         HSLFSlide sl = ppt.getSlides().get(0);
         for (HSLFShape sh : sl.getShapes()) {
@@ -211,7 +211,7 @@ public final class TestShapes {
      * and set some of the style attributes
      */
     @Test
-    public void textBoxWriteBytes() throws IOException {
+    void textBoxWriteBytes() throws IOException {
         ppt = new HSLFSlideShow();
         HSLFSlide sl = ppt.createSlide();
         HSLFTextRun rt;
@@ -269,7 +269,7 @@ public final class TestShapes {
      * Test with an empty text box
      */
     @Test
-    public void emptyTextBox() {
+    void emptyTextBox() {
     	assertEquals(2, pptB.getSlides().size());
     	HSLFSlide s1 = pptB.getSlides().get(0);
     	HSLFSlide s2 = pptB.getSlides().get(1);
@@ -284,7 +284,7 @@ public final class TestShapes {
      * it must be the same as returned by Slide.getTextRuns().
      */
     @Test
-    public void textBoxSet() throws IOException {
+    void textBoxSet() throws IOException {
         textBoxSet("with_textbox.ppt");
         textBoxSet("basic_test_ppt_file.ppt");
         textBoxSet("next_test_ppt_file.ppt");
@@ -326,7 +326,7 @@ public final class TestShapes {
      * Test adding shapes to <code>ShapeGroup</code>
      */
     @Test
-    public void shapeGroup() throws IOException {
+    void shapeGroup() throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow();
 
         HSLFSlide slide = ss.createSlide();
@@ -381,7 +381,7 @@ public final class TestShapes {
      * Test functionality of Sheet.removeShape(Shape shape)
      */
     @Test
-    public void removeShapes() throws IOException {
+    void removeShapes() throws IOException {
         String file = "with_textbox.ppt";
         HSLFSlideShow ss = new HSLFSlideShow(_slTests.openResourceAsStream(file));
         HSLFSlide sl = ss.getSlides().get(0);
@@ -408,7 +408,7 @@ public final class TestShapes {
     }
 
     @Test
-    public void lineWidth() {
+    void lineWidth() {
         HSLFSimpleShape sh = new HSLFAutoShape(ShapeType.RT_TRIANGLE);
 
         AbstractEscherOptRecord opt = sh.getEscherOptRecord();
@@ -423,7 +423,7 @@ public final class TestShapes {
     }
 
     @Test
-    public void shapeId() throws IOException {
+    void shapeId() throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow();
         HSLFSlide slide = ss.createSlide();
 
@@ -473,7 +473,7 @@ public final class TestShapes {
     }
 
     @Test
-    public void lineColor() throws IOException {
+    void lineColor() throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow(_slTests.openResourceAsStream("51731.ppt"));
         List<HSLFShape> shape = ss.getSlides().get(0).getShapes();
 

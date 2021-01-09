@@ -97,7 +97,7 @@ public final class TestBugs {
      * Bug 41384: Array index wrong in record creation
      */
     @Test
-    public void bug41384() throws IOException {
+    void bug41384() throws IOException {
         try (HSLFSlideShow ppt = open("41384.ppt")) {
             assertEquals(1, ppt.getSlides().size());
 
@@ -113,7 +113,7 @@ public final class TestBugs {
      * when the RichTextRun comes from a Notes model object
      */
     @Test
-    public void bug42474_1() throws IOException {
+    void bug42474_1() throws IOException {
         try (HSLFSlideShow ppt = open("42474-1.ppt")) {
             assertEquals(2, ppt.getSlides().size());
 
@@ -139,7 +139,7 @@ public final class TestBugs {
      * Second fix from Bug 42474: Incorrect matching of notes to slides
      */
     @Test
-    public void bug42474_2() throws IOException {
+    void bug42474_2() throws IOException {
         try (HSLFSlideShow ppt = open("42474-2.ppt")) {
 
             //map slide number and starting phrase of its notes
@@ -168,7 +168,7 @@ public final class TestBugs {
      * Bug 42485: All TextBoxes inside ShapeGroups have null TextRuns
      */
     @Test
-    public void bug42485 () throws IOException {
+    void bug42485 () throws IOException {
         try (HSLFSlideShow ppt = open("42485.ppt")) {
             for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
                 if (shape instanceof HSLFGroupShape) {
@@ -188,7 +188,7 @@ public final class TestBugs {
      * Bug 42484: NullPointerException from ShapeGroup.getAnchor()
      */
     @Test
-    public void bug42484 () throws IOException {
+    void bug42484 () throws IOException {
         try (HSLFSlideShow ppt = open("42485.ppt")) {
             for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
                 if (shape instanceof HSLFGroupShape) {
@@ -206,7 +206,7 @@ public final class TestBugs {
      * Bug 41381: Exception from Slide.getMasterSheet() on a seemingly valid PPT file
      */
     @Test
-    public void bug41381() throws IOException {
+    void bug41381() throws IOException {
         try (HSLFSlideShow ppt = open("alterman_security.ppt")) {
             assertEquals(1, ppt.getSlideMasters().size());
             assertEquals(1, ppt.getTitleMasters().size());
@@ -225,7 +225,7 @@ public final class TestBugs {
      */
     @SuppressWarnings("unused")
     @Test
-    public void bug42486 () throws IOException {
+    void bug42486 () throws IOException {
         try (HSLFSlideShow ppt = open("42486.ppt")) {
             for (HSLFSlide slide : ppt.getSlides()) {
                 List<HSLFShape> shape = slide.getShapes();
@@ -237,7 +237,7 @@ public final class TestBugs {
      * Bug 42524:  NPE in Shape.getShapeType()
      */
     @Test
-    public void bug42524 () throws IOException {
+    void bug42524 () throws IOException {
         try (HSLFSlideShow ppt = open("42486.ppt")) {
             //walk down the tree and see if there were no errors while reading
             for (HSLFSlide slide : ppt.getSlides()) {
@@ -259,7 +259,7 @@ public final class TestBugs {
      */
     @SuppressWarnings("unused")
     @Test
-    public void bug42520 () throws IOException {
+    void bug42520 () throws IOException {
         try (HSLFSlideShow ppt = open("42520.ppt")) {
 
             //test case from the bug report
@@ -288,7 +288,7 @@ public final class TestBugs {
      * ( also fixed followup: getTextRuns() returns no text )
      */
     @Test
-    public void bug38256 () throws IOException {
+    void bug38256 () throws IOException {
         try (HSLFSlideShow ppt = open("38256.ppt")) {
             List<HSLFSlide> slide = ppt.getSlides();
             assertEquals(1, slide.size());
@@ -313,7 +313,7 @@ public final class TestBugs {
      * ( also fixed followup: getTextRuns() returns no text )
      */
     @Test
-    public void bug43781() throws IOException {
+    void bug43781() throws IOException {
         try (HSLFSlideShow ppt = open("43781.ppt")) {
             // Check the first slide
             HSLFSlide slide = ppt.getSlides().get(0);
@@ -348,7 +348,7 @@ public final class TestBugs {
      * Bug 44296: HSLF Not Extracting Slide Background Image
      */
     @Test
-    public void bug44296  () throws IOException {
+    void bug44296  () throws IOException {
         try (HSLFSlideShow ppt = open("44296.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(0);
 
@@ -368,7 +368,7 @@ public final class TestBugs {
      * type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
      */
     @Test
-    public void bug44770() throws IOException {
+    void bug44770() throws IOException {
         try (HSLFSlideShow ppt = open("44770.ppt")) {
             assertNotNull(ppt.getSlides().get(0));
         }
@@ -378,7 +378,7 @@ public final class TestBugs {
      * Bug 41071: Will not extract text from Powerpoint TextBoxes
      */
     @Test
-    public void bug41071() throws IOException {
+    void bug41071() throws IOException {
         try (HSLFSlideShow ppt = open("41071.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(0);
             List<HSLFShape> sh = slide.getShapes();
@@ -397,7 +397,7 @@ public final class TestBugs {
      * PowerPoint 95 files should throw a more helpful exception
      */
     @Test
-    public void bug41711() throws IOException {
+    void bug41711() throws IOException {
     	// New file is fine
         open("SampleShow.ppt").close();
 
@@ -409,7 +409,7 @@ public final class TestBugs {
      * Changing text from Ascii to Unicode
      */
     @Test
-    public void bug49648() throws IOException {
+    void bug49648() throws IOException {
         try (HSLFSlideShow ppt = open("49648.ppt")) {
             for (HSLFSlide slide : ppt.getSlides()) {
                 for (List<HSLFTextParagraph> run : slide.getTextParagraphs()) {
@@ -425,7 +425,7 @@ public final class TestBugs {
      * Bug 41246: AIOOB with illegal note references
      */
     @Test
-    public void bug41246a() throws IOException {
+    void bug41246a() throws IOException {
         try (HSLFSlideShow ppt = open("41246-1.ppt")) {
             try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
                 assertNotNull(ppt2.getSlides().get(0));
@@ -434,7 +434,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug41246b() throws IOException {
+    void bug41246b() throws IOException {
         try (HSLFSlideShow ppt = open("41246-2.ppt")) {
             try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
                 assertNotNull(ppt2.getSlides().get(0));
@@ -446,7 +446,7 @@ public final class TestBugs {
      * Bug 45776: Fix corrupt file problem using TextRun.setText
      */
     @Test
-    public void bug45776() throws IOException {
+    void bug45776() throws IOException {
         DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ROOT);
         try (HSLFSlideShow ppt = open("45776.ppt")) {
 
@@ -476,7 +476,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug55732() throws IOException {
+    void bug55732() throws IOException {
         try (HSLFSlideShow ppt = open("bug55732.ppt")) {
             /* Iterate over slides and extract text */
             for (HSLFSlide slide : ppt.getSlides()) {
@@ -487,7 +487,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug56260() throws IOException {
+    void bug56260() throws IOException {
         try (HSLFSlideShow ppt = open("56260.ppt")) {
             List<HSLFSlide> _slides = ppt.getSlides();
             assertEquals(13, _slides.size());
@@ -524,7 +524,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug37625() throws IOException {
+    void bug37625() throws IOException {
         try (HSLFSlideShow ppt1 = open("37625.ppt");
              HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
             assertEquals(29, ppt1.getSlides().size());
@@ -534,7 +534,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug57272() throws IOException {
+    void bug57272() throws IOException {
         try (HSLFSlideShow ppt1 = open("57272_corrupted_usereditatom.ppt");
              HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
             assertEquals(6, ppt1.getSlides().size());
@@ -544,7 +544,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug49541() throws IOException {
+    void bug49541() throws IOException {
         try (HSLFSlideShow ppt = open("49541_symbol_map.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(0);
             HSLFGroupShape sg = (HSLFGroupShape) slide.getShapes().get(0);
@@ -555,7 +555,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug47261() throws IOException {
+    void bug47261() throws IOException {
         try (HSLFSlideShow ppt = open("bug47261.ppt")) {
             ppt.removeSlide(0);
             ppt.createSlide();
@@ -564,7 +564,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug56240() throws IOException {
+    void bug56240() throws IOException {
         try (HSLFSlideShow ppt = open("bug56240.ppt")) {
             int slideCnt = ppt.getSlides().size();
             assertEquals(105, slideCnt);
@@ -573,7 +573,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug46441() throws IOException {
+    void bug46441() throws IOException {
         try (HSLFSlideShow ppt = open("bug46441.ppt")) {
             HSLFAutoShape as = (HSLFAutoShape) ppt.getSlides().get(0).getShapes().get(0);
             AbstractEscherOptRecord opt = as.getEscherOptRecord();
@@ -601,12 +601,12 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug58516() throws IOException {
+    void bug58516() throws IOException {
         open("bug58516.ppt").close();
     }
 
     @Test
-    public void bug45124() throws IOException {
+    void bug45124() throws IOException {
         try (HSLFSlideShow ppt = open("bug45124.ppt")) {
             Slide<?, ?> slide1 = ppt.getSlides().get(1);
 
@@ -638,7 +638,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug45088() throws IOException {
+    void bug45088() throws IOException {
         String template = "[SYSDATE]";
         String textExp = "REPLACED_DATE_WITH_A_LONG_ONE";
 
@@ -667,7 +667,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug45908() throws IOException {
+    void bug45908() throws IOException {
         try (HSLFSlideShow ppt1 = open("bug45908.ppt")) {
 
             HSLFSlide slide = ppt1.getSlides().get(0);
@@ -740,7 +740,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug47904() throws IOException {
+    void bug47904() throws IOException {
         try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
             HSLFSlideMaster sm = ppt1.getSlideMasters().get(0);
             HSLFAutoShape as = (HSLFAutoShape) sm.getPlaceholder(Placeholder.TITLE);
@@ -772,7 +772,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug58718() throws IOException {
+    void bug58718() throws IOException {
         String[] files = {"bug58718_008524.ppt", "bug58718_008558.ppt", "bug58718_349008.ppt", "bug58718_008495.ppt",};
         for (String f : files) {
             File sample = HSLFTestDataSamples.getSampleFile(f);
@@ -783,7 +783,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug58733() throws IOException {
+    void bug58733() throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile("bug58733_671884.ppt");
         try (SlideShowExtractor<?,?> ex = new SlideShowExtractor<>(SlideShowFactory.create(sample))) {
             assertNotNull(ex.getText());
@@ -791,7 +791,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug58159() throws IOException {
+    void bug58159() throws IOException {
         try (HSLFSlideShow ppt = open("bug58159_headers-and-footers.ppt")) {
             HeadersFooters hf = ppt.getSlideHeadersFooters();
             assertNull(hf.getHeaderText());
@@ -816,7 +816,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug55030() throws IOException {
+    void bug55030() throws IOException {
         try (HSLFSlideShow ppt = open("bug55030.ppt")) {
             String expFamily = "\u96b6\u4e66";
 
@@ -833,7 +833,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug59056() throws IOException {
+    void bug59056() throws IOException {
         try (HSLFSlideShow ppt = open("54541_cropped_bitmap.ppt")) {
             for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
                 BufferedImage img = new BufferedImage(500, 300, BufferedImage.TYPE_INT_ARGB);
@@ -857,7 +857,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug55983() throws IOException {
+    void bug55983() throws IOException {
         try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
             HSLFSlide sl = ppt1.createSlide();
             assertNotNull(sl.getBackground());
@@ -894,7 +894,7 @@ public final class TestBugs {
     }
 
     @Test
-    public void bug59302() throws IOException {
+    void bug59302() throws IOException {
         //add extraction from PPT
         Map<String, String> macros = getMacrosFromHSLF("59302.ppt");
         assertNotNull(macros, "couldn't find macros");
@@ -939,7 +939,7 @@ public final class TestBugs {
      * Bug 60294: Add "unknown" ShapeType for 4095
      */
     @Test
-    public void bug60294() throws IOException {
+    void bug60294() throws IOException {
         try (HSLFSlideShow ppt = open("60294.ppt")) {
             List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
             assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());

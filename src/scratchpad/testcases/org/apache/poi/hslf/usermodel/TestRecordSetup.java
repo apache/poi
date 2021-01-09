@@ -38,7 +38,7 @@ public final class TestRecordSetup {
 	private HSLFSlideShowImpl hss;
 
 	@BeforeEach
-	public void init() throws Exception {
+	void init() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);

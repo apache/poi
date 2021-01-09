@@ -53,7 +53,7 @@ public final class TestReWrite {
     private POIFSFileSystem pfsC;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
 
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
@@ -73,7 +73,7 @@ public final class TestReWrite {
         assertWritesOutTheSame(hssB, pfsB);
     }
 
-    public void assertWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
+    void assertWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
         // Write out to a byte array, and to a temp file
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         hss.write(baos);
@@ -156,7 +156,7 @@ public final class TestReWrite {
         //assertSlideShowWritesOutTheSame(hssB, pfsB);
     }
 
-    public void assertSlideShowWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws IOException {
+    void assertSlideShowWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws IOException {
         // Create a slideshow covering it
         @SuppressWarnings("resource")
         HSLFSlideShow ss = new HSLFSlideShow(hss);

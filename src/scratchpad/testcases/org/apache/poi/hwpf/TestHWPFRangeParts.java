@@ -95,7 +95,7 @@ public final class TestHWPFRangeParts {
 	private HWPFDocument docUnicode;
 
 	@BeforeEach
-    public void setUp() {
+    void setUp() {
 		docUnicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 	}

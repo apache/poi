@@ -37,7 +37,7 @@ public final class TestMessageSubmissionChunkY2KRead {
      * Initialise this test, load up the three test messages.
      */
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         mapiMessage1979 = new MAPIMessage(samples.openResourceAsStream("message_1979.msg"));
         mapiMessage1980 = new MAPIMessage(samples.openResourceAsStream("message_1980.msg"));

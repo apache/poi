@@ -32,18 +32,18 @@ import org.junit.jupiter.api.Test;
 
 public class TestHMEFDumper {
     @Test
-    public void noArguments() {
+    void noArguments() {
         assertThrows(IllegalArgumentException.class, TestHMEFDumper::doMain);
     }
 
     @Test
-    public void main() throws Exception {
+    void main() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
         doMain(file.getAbsolutePath());
     }
 
     @Test
-    public void mainFull() throws Exception {
+    void mainFull() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
         doMain("--full", file.getAbsolutePath());
     }

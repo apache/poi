@@ -28,7 +28,7 @@ public abstract class HWPFTestCase {
     protected HWPFDocFixture _hWPFDocFixture;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         /** @todo verify the constructors */
         _hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
 
@@ -40,7 +40,7 @@ public abstract class HWPFTestCase {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (_hWPFDocFixture != null) {
             _hWPFDocFixture.tearDown();
         }

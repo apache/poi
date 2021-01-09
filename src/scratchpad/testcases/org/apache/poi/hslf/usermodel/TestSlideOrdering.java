@@ -37,13 +37,13 @@ public final class TestSlideOrdering {
 	private HSLFSlideShow ssB;
 
 	@BeforeEach
-	public void init() throws IOException {
+	void init() throws IOException {
 		ssA = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 		ssB = HSLFTestDataSamples.getSlideShow("incorrect_slide_order.ppt");
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
 	    ssA.close();
 	    ssB.close();
 	}

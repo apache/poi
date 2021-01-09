@@ -38,7 +38,7 @@ public final class TestTextPieceTable {
     private HWPFDocFixture _hWPFDocFixture;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         System.setProperty("org.apache.poi.hwpf.preserveTextTable",
                 Boolean.TRUE.toString());
 
@@ -48,7 +48,7 @@ public final class TestTextPieceTable {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         _hWPFDocFixture.tearDown();
         _hWPFDocFixture = null;
 

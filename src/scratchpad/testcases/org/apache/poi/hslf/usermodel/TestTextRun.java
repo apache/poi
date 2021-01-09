@@ -48,7 +48,7 @@ public final class TestTextRun {
 	private HSLFSlideShow ssRich;
 
 	@BeforeEach
-	public void setUp() throws IOException {
+	void setUp() throws IOException {
 		// Basic (non rich) test file
 		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
@@ -57,7 +57,7 @@ public final class TestTextRun {
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
 	    ssRich.close();
 	    ss.close();
 	}

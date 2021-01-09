@@ -36,7 +36,7 @@ public final class TestSlideChangeNotes {
 	private HSLFSlideShow ss;
 
 	@BeforeEach
-	public void init() throws Exception {
+	void init() throws Exception {
         POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);

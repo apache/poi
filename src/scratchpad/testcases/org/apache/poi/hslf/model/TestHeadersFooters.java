@@ -235,7 +235,7 @@ public final class TestHeadersFooters
         ppt1.close();
     }
     @Test
-    public void bug58144a() throws IOException {
+    void bug58144a() throws IOException {
         try (InputStream is = _slTests.openResourceAsStream("bug58144-headers-footers-2003.ppt");
              SlideShow<?,?> ppt = new HSLFSlideShow(is)) {
             HSLFSlide sl = (HSLFSlide) ppt.getSlides().get(0);
@@ -249,7 +249,7 @@ public final class TestHeadersFooters
     }
 
     @Test
-    public void bug58144b() throws IOException {
+    void bug58144b() throws IOException {
         try (InputStream is = _slTests.openResourceAsStream("bug58144-headers-footers-2007.ppt");
              SlideShow<?,?> ppt = new HSLFSlideShow(is)) {
             Slide<?, ?> sl = ppt.getSlides().get(0);

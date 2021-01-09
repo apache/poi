@@ -57,12 +57,12 @@ public final class TestDifferentRoutes {
 	private HWPFDocument doc;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}
 
 	@AfterEach
-	public void tearDown() throws IOException {
+	void tearDown() throws IOException {
 		doc.close();
 	}
 

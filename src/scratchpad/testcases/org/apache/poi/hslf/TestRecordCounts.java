@@ -40,7 +40,7 @@ public final class TestRecordCounts {
 	private HSLFSlideShowImpl ss;
 
 	@BeforeEach
-	public void setup() throws Exception {
+	void setup() throws Exception {
 		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 	}
 

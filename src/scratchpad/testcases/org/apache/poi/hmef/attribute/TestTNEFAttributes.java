@@ -41,7 +41,7 @@ public final class TestTNEFAttributes {
     private HMEFMessage quick;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("quick-winmail.dat")) {
             quick = new HMEFMessage(is);
         }

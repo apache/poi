@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestTable {
     @Test
-    public void moveTable() throws IOException {
+    void moveTable() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
         int rows = 3, cols = 5;

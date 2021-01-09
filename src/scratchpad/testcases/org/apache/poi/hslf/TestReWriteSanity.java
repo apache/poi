@@ -50,14 +50,14 @@ public final class TestReWriteSanity {
     private POIFSFileSystem pfs;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
         pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
         ss = new HSLFSlideShowImpl(pfs);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         pfs.close();
         ss.close();
     }

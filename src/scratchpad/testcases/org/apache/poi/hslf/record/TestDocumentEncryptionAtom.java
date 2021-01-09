@@ -89,7 +89,7 @@ public final class TestDocumentEncryptionAtom {
 	};
 
 	@Test
-    public void recordType() throws IOException {
+    void recordType() throws IOException {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals(12052l, dea1.getRecordType());
 
@@ -101,7 +101,7 @@ public final class TestDocumentEncryptionAtom {
 	}
 
 	@Test
-    public void encryptionTypeName() throws IOException {
+    void encryptionTypeName() throws IOException {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals("Microsoft Base Cryptographic Provider v1.0", dea1.getEncryptionProviderName());
 

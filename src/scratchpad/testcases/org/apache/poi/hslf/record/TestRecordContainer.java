@@ -40,7 +40,7 @@ public final class TestRecordContainer {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         // Find a real RecordContainer record
         InputStream is = slTests.openResourceAsStream("basic_test_ppt_file.ppt");
         hss = new HSLFSlideShowImpl(is);
@@ -56,7 +56,7 @@ public final class TestRecordContainer {
     }
 
     @AfterEach
-    public void closeResources() throws IOException {
+    void closeResources() throws IOException {
         hss.close();
     }
 

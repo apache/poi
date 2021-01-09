@@ -38,7 +38,7 @@ public final class TestBlankFileRead {
      * Initialize this test, load up the blank.msg mapi message.
      */
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         mapiMessage = new MAPIMessage(samples.openResourceAsStream("blank.msg"));
     }

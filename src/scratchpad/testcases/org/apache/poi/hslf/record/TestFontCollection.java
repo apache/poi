@@ -94,7 +94,7 @@ public final class TestFontCollection {
     }
 
     @Test
-    public void bug61881() throws IOException {
+    void bug61881() throws IOException {
         try (InputStream is = _slTests.openResourceAsStream("bug61881.ppt")) {
             try (HSLFSlideShow ppt = new HSLFSlideShow(is)) {
                 assertEquals("?imes New Roman",ppt.getFont(3).getTypeface());

@@ -44,7 +44,7 @@ public final class TestFileInformationBlock {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         /** @todo verify the constructors */
         _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
         _hWPFDocFixture.setUp();
@@ -52,7 +52,7 @@ public final class TestFileInformationBlock {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         _fileInformationBlock = null;
         _hWPFDocFixture.tearDown();
         _hWPFDocFixture = null;

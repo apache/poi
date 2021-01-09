@@ -38,7 +38,7 @@ public final class TestOutlook30FileRead {
      * Initialize this test, load up the blank.msg mapi message.
      */
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
     }

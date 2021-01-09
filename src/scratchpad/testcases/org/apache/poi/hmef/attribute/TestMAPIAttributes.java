@@ -39,7 +39,7 @@ public final class TestMAPIAttributes {
     private HMEFMessage quick;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         try (InputStream stream = _samples.openResourceAsStream("quick-winmail.dat")) {
             quick = new HMEFMessage(stream);
         }

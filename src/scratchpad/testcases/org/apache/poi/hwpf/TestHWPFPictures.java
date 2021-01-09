@@ -50,7 +50,7 @@ public final class TestHWPFPictures {
 	private String imgDFile;
 
 	@BeforeEach
-    public void setUp() {
+    void setUp() {
 		docAFile = "testPictures.doc";
 		docBFile = "two_images.doc";
 		docCFile = "vector_image.doc";

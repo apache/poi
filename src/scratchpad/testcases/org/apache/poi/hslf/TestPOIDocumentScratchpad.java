@@ -56,7 +56,7 @@ public final class TestPOIDocumentScratchpad {
 	 *  a Word Document for our testing
 	 */
 	@BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
 		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
 		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}

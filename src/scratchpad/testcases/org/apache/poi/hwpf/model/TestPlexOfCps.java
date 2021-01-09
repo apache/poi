@@ -60,7 +60,7 @@ public final class TestPlexOfCps {
   }
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
@@ -68,7 +68,7 @@ public final class TestPlexOfCps {
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     _plexOfCps = null;
     _hWPFDocFixture.tearDown();
 

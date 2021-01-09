@@ -69,7 +69,7 @@ public class TestBugs {
     }
 
     @Test
-    public void bug63955() throws IOException {
+    void bug63955() throws IOException {
         HMEFMessage tnefDat = openSample("bug63955-winmail.dat");
         List<MAPIAttribute> atts = tnefDat.getMessageMAPIAttributes();
         assertEquals(96, atts.size());

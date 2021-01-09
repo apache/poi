@@ -47,7 +47,7 @@ public final class TestReOrderingSlides {
 	 * Create/open the slideshows
 	 */
 	@BeforeEach
-	public void setUp() throws Exception {
+	void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 		hss_one = new HSLFSlideShowImpl(slTests.openResourceAsStream("Single_Coloured_Page.ppt"));

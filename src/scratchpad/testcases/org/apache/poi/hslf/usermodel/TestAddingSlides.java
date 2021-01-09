@@ -53,14 +53,14 @@ public final class TestAddingSlides {
      * Create/open the slideshows
      */
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         ss_empty = new HSLFSlideShow();
         ss_one = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
         ss_two = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         ss_two.close();
         ss_one.close();
         ss_empty.close();

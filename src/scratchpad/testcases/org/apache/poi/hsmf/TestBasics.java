@@ -50,7 +50,7 @@ public final class TestBasics {
     * Initialize this test, load up the blank.msg mapi message.
     */
    @BeforeEach
-   public void setup() throws IOException {
+   void setup() throws IOException {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        simple = new MAPIMessage(samples.openResourceAsStream("simple_test_msg.msg"));
        quick  = new MAPIMessage(samples.openResourceAsStream("quick.msg"));

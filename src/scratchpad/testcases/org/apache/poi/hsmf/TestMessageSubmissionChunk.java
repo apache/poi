@@ -37,7 +37,7 @@ public final class TestMessageSubmissionChunk {
      * Initialise this test, load up the test messages.
      */
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.mapiMessageExtraHyphenSubmissionChunk = new MAPIMessage(samples.openResourceAsStream("message_extra_hyphen_submission_chunk.msg"));
         this.mapiMessageNormalSubmissionChunk = new MAPIMessage(samples.openResourceAsStream("message_normal_submission_chunk.msg"));
