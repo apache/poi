@@ -85,7 +85,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testCTTableStyleInfo() throws IOException {
+    void testCTTableStyleInfo() throws IOException {
         XSSFWorkbook outputWorkbook = new XSSFWorkbook();
         XSSFSheet sheet = outputWorkbook.createSheet();
 
@@ -298,7 +298,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testGetDataRowCount() throws IOException {
+    void testGetDataRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             AreaReference tableArea = new AreaReference("B2:B6", wb.getSpreadsheetVersion());
@@ -317,7 +317,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testSetDataRowCount() throws IOException {
+    void testSetDataRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
 
@@ -346,7 +346,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testCreateTableIds() throws IOException {
+    void testCreateTableIds() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -380,7 +380,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testSetArea() throws IOException {
+    void testSetArea() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
 
@@ -414,7 +414,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testCreateColumn() throws IOException {
+    void testCreateColumn() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
 
@@ -449,7 +449,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testCreateColumnInvalidIndex() throws IOException {
+    void testCreateColumnInvalidIndex() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             AreaReference tableArea = new AreaReference("D2:D3", wb.getSpreadsheetVersion());
@@ -463,7 +463,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testDifferentHeaderTypes() throws IOException {
+    void testDifferentHeaderTypes() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TablesWithDifferentHeaders.xlsx")) {
             assertEquals(3, wb.getNumberOfSheets());
             XSSFSheet s;
@@ -498,7 +498,7 @@ public final class TestXSSFTable {
      * See https://stackoverflow.com/questions/44407111/apache-poi-cant-format-filled-cells-as-numeric
      */
     @Test
-    public void testNumericCellsInTable() throws IOException {
+    void testNumericCellsInTable() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s = wb.createSheet();
 
@@ -549,7 +549,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testSetDisplayName() throws IOException {
+    void testSetDisplayName() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -564,7 +564,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testSetDisplayNameNull() throws IOException {
+    void testSetDisplayNameNull() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -577,7 +577,7 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void testSetDisplayNameEmpty() throws IOException {
+    void testSetDisplayNameEmpty() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -593,7 +593,7 @@ public final class TestXSSFTable {
      * Delete table2, and create a named range in sheet0; it should automatically be assigned the name "Table4"
      */
     @Test
-    public void testBug63401And62906() throws IOException {
+    void testBug63401And62906() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet0 = workbook.createSheet();
             XSSFTable table = addTable(sheet0, 3, 0, 2, 2);

@@ -49,7 +49,7 @@ public class TestXSSFExcelExtractor {
 	 * Get text out of the simple file
 	 */
 	@Test
-	public void testGetSimpleText() throws IOException {
+	void testGetSimpleText() throws IOException {
 		// a very simple file
 		XSSFExcelExtractor extractor = getExtractor("sample.xlsx");
 
@@ -109,7 +109,7 @@ public class TestXSSFExcelExtractor {
 	}
 
 	@Test
-	public void testGetComplexText() throws IOException {
+	void testGetComplexText() throws IOException {
 		// A fairly complex file
 		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
 
@@ -131,7 +131,7 @@ public class TestXSSFExcelExtractor {
 	 *  the same file, just saved as xls and xlsx
 	 */
 	@Test
-	public void testComparedToOLE2() throws IOException {
+	void testComparedToOLE2() throws IOException {
 		// A fairly simple file - ooxml
 		XSSFExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
@@ -160,7 +160,7 @@ public class TestXSSFExcelExtractor {
 	 * From bug #45540
 	 */
 	@Test
-	public void testHeaderFooter() throws IOException {
+	void testHeaderFooter() throws IOException {
 		String[] files = new String[] {
 			"45540_classic_Header.xlsx", "45540_form_Header.xlsx",
 			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
@@ -180,7 +180,7 @@ public class TestXSSFExcelExtractor {
 	 * From bug #45544
 	 */
 	@Test
-	public void testComments() throws IOException {
+	void testComments() throws IOException {
 		XSSFExcelExtractor extractor = getExtractor("45544.xlsx");
 		String text = extractor.getText();
 
@@ -198,7 +198,7 @@ public class TestXSSFExcelExtractor {
 	}
 
 	@Test
-	public void testInlineStrings() throws IOException {
+	void testInlineStrings() throws IOException {
       XSSFExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
       extractor.setFormulasNotResults(true);
       String text = extractor.getText();
@@ -226,7 +226,7 @@ public class TestXSSFExcelExtractor {
 	 * Simple test for text box text
 	 */
 	@Test
-	public void testTextBoxes() throws IOException {
+	void testTextBoxes() throws IOException {
         try (XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx")) {
             extractor.setFormulasNotResults(true);
             String text = extractor.getText();
@@ -237,7 +237,7 @@ public class TestXSSFExcelExtractor {
 	}
 
 	@Test
-	public void testPhoneticRuns() throws Exception {
+	void testPhoneticRuns() throws Exception {
         try (XSSFExcelExtractor extractor = getExtractor("51519.xlsx")) {
             String text = extractor.getText();
             assertContains(text, "\u8C4A\u7530");

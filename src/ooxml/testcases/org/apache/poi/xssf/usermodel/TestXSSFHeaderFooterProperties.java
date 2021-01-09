@@ -43,14 +43,14 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testGetAlignWithMargins() {
+    void testGetAlignWithMargins() {
         assertFalse(hfProp.getAlignWithMargins());
         hfProp.setAlignWithMargins(true);
         assertTrue(hfProp.getAlignWithMargins());
     }
 
     @Test
-    public void testGetDifferentFirst() {
+    void testGetDifferentFirst() {
         assertFalse(hfProp.getDifferentFirst());
         hfProp.setDifferentFirst(true);
         assertTrue(hfProp.getDifferentFirst());
@@ -59,7 +59,7 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testGetDifferentOddEven() {
+    void testGetDifferentOddEven() {
         assertFalse(hfProp.getDifferentOddEven());
         hfProp.setDifferentOddEven(true);
         assertTrue(hfProp.getDifferentOddEven());
@@ -68,14 +68,14 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testGetScaleWithDoc() {
+    void testGetScaleWithDoc() {
         assertFalse(hfProp.getScaleWithDoc());
         hfProp.setScaleWithDoc(true);
         assertTrue(hfProp.getScaleWithDoc());
     }
 
     @Test
-    public void testRemoveAlignWithMargins() {
+    void testRemoveAlignWithMargins() {
         hfProp.setAlignWithMargins(true);
         assertTrue(hfProp.getHeaderFooter().isSetAlignWithMargins());
         hfProp.removeAlignWithMargins();
@@ -83,7 +83,7 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testRemoveDifferentFirst() {
+    void testRemoveDifferentFirst() {
         hfProp.setDifferentFirst(true);
         assertTrue(hfProp.getHeaderFooter().isSetDifferentFirst());
         hfProp.removeDifferentFirst();
@@ -91,7 +91,7 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testRemoveDifferentOddEven() {
+    void testRemoveDifferentOddEven() {
         hfProp.setDifferentOddEven(true);
         assertTrue(hfProp.getHeaderFooter().isSetDifferentOddEven());
         hfProp.removeDifferentOddEven();
@@ -99,7 +99,7 @@ public class TestXSSFHeaderFooterProperties {
     }
 
     @Test
-    public void testRemoveScaleWithDoc() {
+    void testRemoveScaleWithDoc() {
         hfProp.setScaleWithDoc(true);
         assertTrue(hfProp.getHeaderFooter().isSetScaleWithDoc());
         hfProp.removeScaleWithDoc();

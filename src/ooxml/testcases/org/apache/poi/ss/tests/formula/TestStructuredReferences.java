@@ -48,7 +48,7 @@ public class TestStructuredReferences {
      * Test the regular expression used in INDIRECT() evaluation to recognize structured references
      */
     @Test
-    public void testTableExpressionSyntax() {
+    void testTableExpressionSyntax() {
         assertTrue(Table.isStructuredReference.matcher("abc[col1]").matches(), "Valid structured reference syntax didn't match expression");
         assertTrue(Table.isStructuredReference.matcher("_abc[col1]").matches(), "Valid structured reference syntax didn't match expression");
         assertTrue(Table.isStructuredReference.matcher("_[col1]").matches(), "Valid structured reference syntax didn't match expression");
@@ -62,7 +62,7 @@ public class TestStructuredReferences {
     }
 
     @Test
-    public void testTableFormulas() throws Exception {
+    void testTableFormulas() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
 
             final FormulaEvaluator eval = new XSSFFormulaEvaluator(wb);

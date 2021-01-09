@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestEmbedded {
 	@Test
-	public void testExcel() throws Exception {
+	void testExcel() throws Exception {
 		POIXMLDocument doc = new XSSFWorkbook(
                 POIDataSamples.getSpreadSheetInstance().openResourceAsStream("ExcelWithAttachments.xlsm")
         );
@@ -45,7 +45,7 @@ public class TestEmbedded {
 	}
 
 	@Test
-	public void testWord() throws Exception {
+	void testWord() throws Exception {
 		POIXMLDocument doc = new XWPFDocument(
                 POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx")
         );
@@ -53,7 +53,7 @@ public class TestEmbedded {
 	}
 
 	@Test
-	public void testPowerPoint() throws Exception {
+	void testPowerPoint() throws Exception {
 		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(
                 POIDataSamples.getSlideShowInstance().openResourceAsStream("PPTWithAttachments.pptm"))
         );

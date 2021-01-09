@@ -58,19 +58,19 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
     }
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         testRead("WithConditionalFormatting.xlsx");
     }
 
     @Test
-    public void testReadOffice2007() throws IOException {
+    void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
     }
 
     private final static java.awt.Color PEAK_ORANGE = new java.awt.Color(255, 239, 221);
 
     @Test
-    public void testFontFormattingColor() {
+    void testFontFormattingColor() {
         XSSFWorkbook wb = XSSFITestDataProvider.instance.createWorkbook();
         final Sheet sheet = wb.createSheet();
 

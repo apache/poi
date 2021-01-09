@@ -55,7 +55,7 @@ public class TestXWPFEndnote {
     }
 
     @Test
-    public void testAddParagraphsToFootnote() throws IOException {
+    void testAddParagraphsToFootnote() throws IOException {
 
         // Add a run to the first paragraph:
 
@@ -99,7 +99,7 @@ public class TestXWPFEndnote {
     }
 
     @Test
-    public void testAddTableToFootnote() throws IOException {
+    void testAddTableToFootnote() throws IOException {
         XWPFTable table = endnote.createTable();
         assertNotNull(table);
 
@@ -128,7 +128,7 @@ public class TestXWPFEndnote {
     }
 
     @Test
-    public void testRemoveEndnote() {
+    void testRemoveEndnote() {
         // NOTE: XWPFDocument.removeEndnote() delegates directly to
         //       XWPFEndnotes.
         docOut.createEndnote();
@@ -140,7 +140,7 @@ public class TestXWPFEndnote {
     }
 
     @Test
-    public void testAddFootnoteRefToParagraph() {
+    void testAddFootnoteRefToParagraph() {
         XWPFParagraph p = docOut.createParagraph();
         List<XWPFRun> runs = p.getRuns();
         assertEquals(0, runs.size(), "Expected no runs in new paragraph");

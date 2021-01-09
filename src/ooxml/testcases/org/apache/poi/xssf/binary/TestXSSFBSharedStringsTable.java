@@ -31,7 +31,7 @@ public class TestXSSFBSharedStringsTable {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsb"))) {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.bin"));
             assertEquals(1, parts.size());

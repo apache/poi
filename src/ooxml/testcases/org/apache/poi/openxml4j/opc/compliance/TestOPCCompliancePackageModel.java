@@ -66,7 +66,7 @@ public class TestOPCCompliancePackageModel {
      * [M1.11]
      */
     @Test
-    public void testPartNameDerivationAdditionFailure() throws InvalidFormatException, IOException {
+    void testPartNameDerivationAdditionFailure() throws InvalidFormatException, IOException {
         try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
             PackagePartName name = PackagingURIHelper.createPartName("/word/document.xml");
             PackagePartName nameDerived = PackagingURIHelper.createPartName("/word/document.xml/image1.gif");
@@ -85,7 +85,7 @@ public class TestOPCCompliancePackageModel {
      * [M1.11]
      */
     @Test
-    public void testPartNameDerivationReadingFailure() {
+    void testPartNameDerivationReadingFailure() {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
         assertThrows(InvalidFormatException.class, () ->
             OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)),
@@ -100,7 +100,7 @@ public class TestOPCCompliancePackageModel {
      * part names.
      */
     @Test
-    public void testAddPackageAlreadyAddFailure() throws Exception {
+    void testAddPackageAlreadyAddFailure() throws Exception {
         try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
             PackagePartName name1 = PackagingURIHelper.createPartName("/word/document.xml");
             PackagePartName name2 = PackagingURIHelper.createPartName("/word/document.xml");
@@ -120,7 +120,7 @@ public class TestOPCCompliancePackageModel {
      * part names.
      */
     @Test
-    public void testAddPackageAlreadyAddFailure2() throws Exception {
+    void testAddPackageAlreadyAddFailure2() throws Exception {
         try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
             PackagePartName partName = PackagingURIHelper.createPartName("/word/document.xml");
             pkg.createPart(partName, ContentTypes.XML);
@@ -141,7 +141,7 @@ public class TestOPCCompliancePackageModel {
      * relationship as invalid.
      */
     @Test
-    public void testAddRelationshipRelationshipsPartFailure() throws IOException, InvalidFormatException {
+    void testAddRelationshipRelationshipsPartFailure() throws IOException, InvalidFormatException {
         try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
             PackagePartName name1 = PackagingURIHelper.createPartName("/test/_rels/document.xml.rels");
 

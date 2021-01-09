@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 public class TestXSSFCellFill {
 
     @Test
-    public void testGetFillBackgroundColor() {
+    void testGetFillBackgroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
@@ -51,7 +51,7 @@ public class TestXSSFCellFill {
     }
 
     @Test
-    public void testGetFillForegroundColor() {
+    void testGetFillForegroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
@@ -62,7 +62,7 @@ public class TestXSSFCellFill {
     }
 
     @Test
-    public void testGetSetPatternType() {
+    void testGetSetPatternType() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
@@ -73,7 +73,7 @@ public class TestXSSFCellFill {
     }
 
     @Test
-    public void testGetNotModifies() {
+    void testGetNotModifies() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
@@ -84,7 +84,7 @@ public class TestXSSFCellFill {
     }
 
     @Test
-    public void testColorFromTheme() throws IOException {
+    void testColorFromTheme() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx")) {
             XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
             //color RGB will be extracted from theme
@@ -106,7 +106,7 @@ public class TestXSSFCellFill {
     }
 
     @Test
-    public void testFillWithoutColors() throws IOException {
+    void testFillWithoutColors() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FillWithoutColor.xlsx")) {
             XSSFCell cellWithFill = wb.getSheetAt(0).getRow(5).getCell(1);
             XSSFCellStyle style = cellWithFill.getCellStyle();

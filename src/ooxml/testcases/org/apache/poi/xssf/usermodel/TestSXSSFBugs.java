@@ -178,7 +178,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     @Disabled("takes too long for the normal test run")
-    public void test62872() throws Exception {
+    void test62872() throws Exception {
         final int COLUMN_COUNT = 300;
         final int ROW_COUNT = 600000;
         final int TEN_MINUTES = 1000*60*10;
@@ -217,7 +217,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test63960() throws Exception {
+    void test63960() throws Exception {
         try (Workbook workbook = new SXSSFWorkbook(100)) {
             Sheet sheet = workbook.createSheet("RawData");
 
@@ -244,7 +244,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64595() throws Exception {
+    void test64595() throws Exception {
         try (Workbook workbook = new SXSSFWorkbook(100)) {
             Sheet sheet = workbook.createSheet("RawData");
             Row row = sheet.createRow(0);

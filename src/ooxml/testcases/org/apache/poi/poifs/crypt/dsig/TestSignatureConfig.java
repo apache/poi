@@ -29,7 +29,7 @@ public class TestSignatureConfig {
 
     @Test
     @Disabled("failing in automated builds, due to issues loading security classes")
-    public void testDigestAlgo() throws Exception {
+    void testDigestAlgo() throws Exception {
         SignatureConfig sc = new SignatureConfig();
         assertEquals(HashAlgorithm.sha256, sc.getDigestAlgo());
         sc.setDigestAlgo(HashAlgorithm.sha1);
@@ -37,7 +37,7 @@ public class TestSignatureConfig {
     }
 
     @Test
-    public void testHashOids() throws IOException {
+    void testHashOids() throws IOException {
         final String[][] checks = {
             { "sha1", "MCEwCQYFKw4DAhoFAAQU" },
             { "sha224", "MC0wDQYJYIZIAWUDBAIEBQAEHA==" },

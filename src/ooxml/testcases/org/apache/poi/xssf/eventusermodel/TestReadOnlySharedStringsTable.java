@@ -41,7 +41,7 @@ public final class TestReadOnlySharedStringsTable {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testParse() throws Exception {
+    void testParse() throws Exception {
 		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
@@ -64,7 +64,7 @@ public final class TestReadOnlySharedStringsTable {
 
 	//51519
     @Test
-	public void testPhoneticRuns() throws Exception {
+	void testPhoneticRuns() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"))) {
             List < PackagePart > parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
@@ -85,7 +85,7 @@ public final class TestReadOnlySharedStringsTable {
     }
 
     @Test
-    public void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
+    void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"));
         OPCPackage pkg = wb.getPackage();
         assertEmptySST(pkg);
@@ -93,7 +93,7 @@ public final class TestReadOnlySharedStringsTable {
     }
 
     @Test
-    public void testEmptySSTOnPackageDirect() throws Exception {
+    void testEmptySSTOnPackageDirect() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"))) {
             assertEmptySST(pkg);
         }

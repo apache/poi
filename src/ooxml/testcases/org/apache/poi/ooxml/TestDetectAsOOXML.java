@@ -42,7 +42,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 @SuppressWarnings("deprecation")
 public class TestDetectAsOOXML {
     @Test
-	public void testOpensProperly() throws IOException, InvalidFormatException {
+	void testOpensProperly() throws IOException, InvalidFormatException {
     	try (InputStream is = openSampleFileStream("sample.xlsx");
 			 OPCPackage pkg = OPCPackage.open(is)) {
     		assertNotNull(pkg);
@@ -51,7 +51,7 @@ public class TestDetectAsOOXML {
 
     @ParameterizedTest
 	@CsvSource({"SampleSS.xlsx, OOXML", "SampleSS.xls, OLE2", "SampleSS.txt, UNKNOWN"})
-	public void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
+	void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
 		try (InputStream is = FileMagic.prepareToCheckMagic(openSampleFileStream(file))) {
 			FileMagic act = FileMagic.valueOf(is);
 
@@ -63,7 +63,7 @@ public class TestDetectAsOOXML {
 	}
 
     @Test
-    public void testFileCorruption() throws Exception {
+    void testFileCorruption() throws Exception {
 	    // create test InputStream
 	    byte[] testData = { 1, 2, 3 };
         ByteArrayInputStream testInput = new ByteArrayInputStream(testData);

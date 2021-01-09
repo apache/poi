@@ -45,7 +45,7 @@ public abstract class BaseTestXCell extends BaseTestCell {
     }
 
     @Test
-    public void testXmlEncoding() throws IOException {
+    void testXmlEncoding() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sh = wb1.createSheet();
         Row row = sh.createRow(0);

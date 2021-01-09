@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestXWPFSmartTag {
     @Test
-    public void testSmartTags() throws IOException {
+    void testSmartTags() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("smarttag-snippet.docx")) {
             XWPFParagraph p = doc.getParagraphArray(0);
             assertContains(p.getText(), "Carnegie Mellon University School of Computer Science");

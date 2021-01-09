@@ -61,7 +61,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testGetHeaderFooter() {
+    void testGetHeaderFooter() {
         CTHeaderFooter ctHf;
         ctHf = hO.getHeaderFooter();
         assertNotNull(ctHf);
@@ -78,7 +78,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testGetValue() {
+    void testGetValue() {
         assertEquals("", hO.getValue());
         assertEquals("", hE.getValue());
         assertEquals("", hF.getValue());
@@ -112,15 +112,15 @@ public class TestXSSFHeaderFooter {
     }
 
     @Disabled("Test not yet created")
-    public void testAreFieldsStripped() {
+    void testAreFieldsStripped() {
     }
 
     @Disabled("Test not yet created")
-    public void testSetAreFieldsStripped() {
+    void testSetAreFieldsStripped() {
     }
 
     @Test
-    public void testStripFields() {
+    void testStripFields() {
         String simple = "I am a test header";
         String withPage = "I am a&P test header";
         String withLots = "I&A am&N a&P test&T header&U";
@@ -157,7 +157,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testGetCenter() {
+    void testGetCenter() {
         assertEquals("", hO.getCenter());
         assertEquals("", hE.getCenter());
         assertEquals("", hF.getCenter());
@@ -179,7 +179,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testGetLeft() {
+    void testGetLeft() {
         assertEquals("", hO.getLeft());
         assertEquals("", hE.getLeft());
         assertEquals("", hF.getLeft());
@@ -201,7 +201,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testGetRight() {
+    void testGetRight() {
         assertEquals("", hO.getValue());
         assertEquals("", hE.getValue());
         assertEquals("", hF.getValue());
@@ -223,7 +223,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testSetCenter() {
+    void testSetCenter() {
         assertEquals("", hO.getValue());
         assertEquals("", hE.getValue());
         assertEquals("", hF.getValue());
@@ -245,7 +245,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testSetLeft() {
+    void testSetLeft() {
         assertEquals("", hO.getValue());
         assertEquals("", hE.getValue());
         assertEquals("", hF.getValue());
@@ -267,7 +267,7 @@ public class TestXSSFHeaderFooter {
     }
 
     @Test
-    public void testSetRight() {
+    void testSetRight() {
         assertEquals("", hO.getValue());
         assertEquals("", hE.getValue());
         assertEquals("", hF.getValue());
@@ -291,7 +291,7 @@ public class TestXSSFHeaderFooter {
 
 
     @Test
-    public void testGetSetCenterLeftRight() {
+    void testGetSetCenterLeftRight() {
 
         assertEquals("", fO.getCenter());
         fO.setCenter("My first center section");

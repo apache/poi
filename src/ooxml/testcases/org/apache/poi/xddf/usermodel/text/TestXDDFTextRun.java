@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 public class TestXDDFTextRun {
 
     @Test
-    public void testTextRunPropertiesInSlide() throws IOException {
+    void testTextRunPropertiesInSlide() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
             XSLFTextShape sh = slide.createAutoShape();
@@ -87,7 +87,7 @@ public class TestXDDFTextRun {
     }
 
     @Test
-    public void testTextRunPropertiesInSheet() throws IOException {
+    void testTextRunPropertiesInSheet() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -139,7 +139,7 @@ public class TestXDDFTextRun {
     }
 
     @Test
-    public void testDefaultRunProperties() throws IOException {
+    void testDefaultRunProperties() throws IOException {
         // bug #63290
         POIDataSamples pds = POIDataSamples.getSlideShowInstance();
         try (InputStream is = pds.openResourceAsStream("bug63290.pptx");

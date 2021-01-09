@@ -48,7 +48,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         super(SXSSFITestDataProvider.instance);
     }
 
-    public void testSharedFormulas() throws IOException {
+    void testSharedFormulas() throws IOException {
         /* not implemented */
     }
 
@@ -58,7 +58,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
      *  non-active sheets will fail
      */
     @Test
-    public void testEvaluateAllFails() throws IOException {
+    void testEvaluateAllFails() throws IOException {
         try (SXSSFWorkbook wb = new SXSSFWorkbook(5)) {
             SXSSFSheet s = wb.createSheet();
 
@@ -95,7 +95,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
     }
 
     @Test
-    public void testEvaluateRefOutsideWindowFails() throws IOException {
+    void testEvaluateRefOutsideWindowFails() throws IOException {
         try (SXSSFWorkbook wb = new SXSSFWorkbook(5)) {
             SXSSFSheet s = wb.createSheet();
 
@@ -123,7 +123,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
      *  then evaluation works
      */
     @Test
-    public void testEvaluateAllInWindow() throws IOException {
+    void testEvaluateAllInWindow() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
         s.createRow(0).createCell(0).setCellFormula("1+2");
@@ -141,7 +141,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
     }
 
     @Test
-    public void testEvaluateRefInsideWindow() throws IOException {
+    void testEvaluateRefInsideWindow() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
 
@@ -161,7 +161,7 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
     }
 
     @Test
-    public void testEvaluateSimple() throws IOException {
+    void testEvaluateSimple() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
 
@@ -187,6 +187,6 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         "handling of errors in formulas is slightly different than in XSSF, " +
         "but this proved to be non-trivial to solve..."
     )
-    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
+    void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
     }
 }

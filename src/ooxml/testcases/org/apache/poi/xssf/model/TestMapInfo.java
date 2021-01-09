@@ -35,7 +35,7 @@ import org.w3c.dom.Node;
  */
 public final class TestMapInfo {
     @Test
-    public void testMapInfoExists() throws IOException {
+    void testMapInfoExists() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx")) {
 
             MapInfo mapInfo = null;

@@ -72,7 +72,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testWorkbookExtendedProperties() throws Exception {
+    void testWorkbookExtendedProperties() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         POIXMLProperties props = workbook.getProperties();
         assertNotNull(props);
@@ -114,7 +114,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testWorkbookExtendedPropertiesGettersSetters() throws Exception {
+    void testWorkbookExtendedPropertiesGettersSetters() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         POIXMLProperties props = workbook.getProperties();
         assertNotNull(props);
@@ -154,7 +154,7 @@ public final class TestPOIXMLProperties {
      * Test usermodel API for setting custom properties
      */
     @Test
-    public void testCustomProperties() throws Exception {
+    void testCustomProperties() throws Exception {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
 
             POIXMLProperties.CustomProperties customProps = wb1.getProperties().getCustomProperties();
@@ -200,7 +200,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testDocumentProperties() {
+    void testDocumentProperties() {
         String category = _coreProperties.getCategory();
         assertEquals("test", category);
         String contentStatus = "Draft";
@@ -218,7 +218,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testTransitiveSetters() throws IOException {
+    void testTransitiveSetters() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         CoreProperties cp = doc.getProperties().getCoreProperties();
 
@@ -236,7 +236,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testGetSetRevision() {
+    void testGetSetRevision() {
         String revision = _coreProperties.getRevision();
         assertTrue(Integer.parseInt(revision) > 1, "Revision number is 1");
         _coreProperties.setRevision("20");
@@ -246,7 +246,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testLastModifiedByUserProperty() {
+    void testLastModifiedByUserProperty() {
         String lastModifiedByUser = _coreProperties.getLastModifiedByUser();
         assertEquals("Paolo Mottadelli", lastModifiedByUser);
         _coreProperties.setLastModifiedByUser("Test User");
@@ -268,7 +268,7 @@ public final class TestPOIXMLProperties {
 
     @Disabled("Fails to add some of the thumbnails, needs more investigation")
     @Test
-    public void testThumbnails() throws Exception {
+    void testThumbnails() throws Exception {
         POIXMLProperties noThumbProps = sampleNoThumb.getProperties();
 
         assertNotNull(_props.getThumbnailPart());
@@ -308,7 +308,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testAddProperty() throws IOException {
+    void testAddProperty() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx")) {
             POIXMLProperties.CustomProperties cps = doc.getProperties().getCustomProperties();
             assertEquals(1, cps.getLastPid());
@@ -320,7 +320,7 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testBug60977() throws IOException {
+    void testBug60977() throws IOException {
 
         try (final XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet("sheet");

@@ -119,7 +119,7 @@ public class TestEmbeddedExtractor {
 
 
     @Test
-    public void testNPE() throws IOException {
+    void testNPE() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("angelo.edu_content_files_19555-nsse-2011-multiyear-benchmark.xls");
         EmbeddedExtractor ee = new EmbeddedExtractor();
 

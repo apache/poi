@@ -111,7 +111,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testNewChart() throws IOException {
+    void testNewChart() throws IOException {
         XSSFWorkbook wb = createWorkbookWithChart();
         XSSFChart chart = getChartFromWorkbook(wb, "linechart");
         assertNotNull(chart);
@@ -133,7 +133,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testExistingChartWithTitle() throws IOException {
+    void testExistingChartWithTitle() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -150,7 +150,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testExistingChartNoTitle() throws IOException {
+    void testExistingChartNoTitle() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -165,7 +165,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testExistingChartWithFormulaTitle() throws IOException {
+    void testExistingChartWithFormulaTitle() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitleFormula.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -179,7 +179,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testRemovingFromExistingChartNoTitle() throws IOException {
+    void testRemovingFromExistingChartNoTitle() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -192,7 +192,7 @@ public class TestXSSFChartTitle {
     }
 
     @Test
-    public void testRemovingFromExistingChartWithTitle() throws IOException {
+    void testRemovingFromExistingChartWithTitle() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);

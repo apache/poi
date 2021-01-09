@@ -55,7 +55,7 @@ public final class TestXSSFReader {
     private static final POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testGetBits() throws Exception {
+    void testGetBits() throws Exception {
 		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -70,7 +70,7 @@ public final class TestXSSFReader {
 	}
 
     @Test
-	public void testStyles() throws Exception {
+	void testStyles() throws Exception {
 		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -88,7 +88,7 @@ public final class TestXSSFReader {
 	}
 
     @Test
-	public void testStrings() throws Exception {
+	void testStrings() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -99,7 +99,7 @@ public final class TestXSSFReader {
 	}
 
     @Test
-	public void testSheets() throws Exception {
+	void testSheets() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -133,7 +133,7 @@ public final class TestXSSFReader {
 	 * (as they are defined in the workbook.xml)
 	 */
     @Test
-	public void testOrderOfSheets() throws Exception {
+	void testOrderOfSheets() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -155,7 +155,7 @@ public final class TestXSSFReader {
 	}
 
     @Test
-	public void testComments() throws Exception {
+	void testComments() throws Exception {
       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("comments.xlsx")) {
           XSSFReader r = new XSSFReader(pkg);
           XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
@@ -184,7 +184,7 @@ public final class TestXSSFReader {
     *  XSSFReader method
     */
    @Test
-   public void test50119() throws Exception {
+   void test50119() throws Exception {
       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithChartSheet.xlsx")) {
           XSSFReader r = new XSSFReader(pkg);
           XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
@@ -200,7 +200,7 @@ public final class TestXSSFReader {
      * Test text extraction from text box using getShapes()
      */
     @Test
-    public void testShapes() throws Exception {
+    void testShapes() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
             XSSFReader r = new XSSFReader(pkg);
             XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
@@ -230,7 +230,7 @@ public final class TestXSSFReader {
     }
 
     @Test
-    public void testBug57914() throws Exception {
+    void testBug57914() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("57914.xlsx")) {
             // for now expect this to fail, when we fix 57699, this one should fail so we know we should adjust
             // this test as well
@@ -253,7 +253,7 @@ public final class TestXSSFReader {
     *  the openpyxl library
     */
    @Test
-   public void test58747() throws Exception {
+   void test58747() throws Exception {
        try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("58747.xlsx")) {
            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
            assertNotNull(strings);
@@ -275,7 +275,7 @@ public final class TestXSSFReader {
      * 60825
      */
     @Test
-    public void testSheetWithNoRelationshipId() throws Exception {
+    void testSheetWithNoRelationshipId() throws Exception {
         try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("60825.xlsx")) {
             ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
             assertNotNull(strings);
@@ -302,7 +302,7 @@ public final class TestXSSFReader {
      * &lt;sheet name="Sheet6" sheetId="4" r:id="rId6"/&gt;
      */
     @Test
-    public void test61034() throws Exception {
+    void test61034() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx")) {
             XSSFReader reader = new XSSFReader(pkg);
             XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
@@ -319,7 +319,7 @@ public final class TestXSSFReader {
 
     @Test
     @Disabled("until we fix issue https://bz.apache.org/bugzilla/show_bug.cgi?id=61701")
-    public void test61701() throws Exception {
+    void test61701() throws Exception {
         try(Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("simple-table-named-range.xlsx")) {
             Name name = workbook.getName("total");
             System.out.println("workbook.getName(\"total\").getSheetName() returned: " + name.getSheetName());
@@ -327,7 +327,7 @@ public final class TestXSSFReader {
     }
 
     @Test
-    public void test64420() throws Exception {
+    void test64420() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("64420.xlsm"))) {
             XSSFReader reader = new XSSFReader(pkg);
 

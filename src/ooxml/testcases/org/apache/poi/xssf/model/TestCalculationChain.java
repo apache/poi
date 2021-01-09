@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 public final class TestCalculationChain {
 
     @Test
-    public void test46535() throws IOException {
+    void test46535() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46535.xlsx")) {
 
             CalculationChain chain = wb.getCalculationChain();

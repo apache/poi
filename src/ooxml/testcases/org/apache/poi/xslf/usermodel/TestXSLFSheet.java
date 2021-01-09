@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFSheet {
 
     @Test
-    public void testCreateShapes() throws IOException {
+    void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());

@@ -49,7 +49,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testAddValidations() throws Exception {
+    void testAddValidations() throws Exception {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("DataValidations-49244.xlsx");
         XSSFSheet sheet = wb1.getSheetAt(0);
         List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
@@ -255,7 +255,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void test53965() throws Exception {
+    void test53965() throws Exception {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             List<XSSFDataValidation> lst = sheet.getDataValidations();    //<-- works
@@ -277,7 +277,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testDefaultErrorStyle() throws IOException {
+    void testDefaultErrorStyle() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -290,7 +290,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testSetErrorStyles() throws IOException {
+    void testSetErrorStyles() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -316,7 +316,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testDefaultAllowBlank() throws IOException {
+    void testDefaultAllowBlank() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -329,7 +329,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testSetAllowBlankToFalse() throws IOException {
+    void testSetAllowBlankToFalse() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -344,7 +344,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testSetAllowBlankToTrue() throws IOException {
+    void testSetAllowBlankToTrue() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -370,7 +370,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void testTableBasedValidationList() throws IOException {
+    void testTableBasedValidationList() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("dataValidationTableRange.xlsx")) {
             XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
             DataValidationEvaluator dve = new DataValidationEvaluator(wb, fEval);

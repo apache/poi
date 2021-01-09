@@ -42,7 +42,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 public class TestXSLFTextRun {
 
     @Test
-    public void testRunProperties() throws IOException {
+    void testRunProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -87,7 +87,7 @@ public class TestXSLFTextRun {
     }
 
     @Test
-    public void testUnicodeSurrogates() throws Exception {
+    void testUnicodeSurrogates() throws Exception {
         final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
                 + "\uD835\uDF4F\uD835\uDF50\uD835\uDF51\uD835\uDF52\uD835\uDF53\uD835\uDF54\uD835"
                 + "\uDF55\uD835\uDF56\uD835\uDF57\uD835\uDF58\uD835\uDF59\uD835\uDF5A\uD835\uDF5B"
@@ -109,7 +109,7 @@ public class TestXSLFTextRun {
     }
 
     @Test
-    public void testCopyNullFontSize() throws IOException {
+    void testCopyNullFontSize() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
             XSLFTextShape sh = slide.createAutoShape();
@@ -125,7 +125,7 @@ public class TestXSLFTextRun {
     }
 
     @Test
-    public void testDefaultRunProperties() throws IOException {
+    void testDefaultRunProperties() throws IOException {
         // bug #63290
         POIDataSamples pds = POIDataSamples.getSlideShowInstance();
         try (InputStream is = pds.openResourceAsStream("bug63290.pptx");

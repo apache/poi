@@ -153,7 +153,7 @@ public class TestDecryptor {
     }
 
     @Test
-    public void test58616() throws IOException, GeneralSecurityException {
+    void test58616() throws IOException, GeneralSecurityException {
         try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("58616.xlsx");
             POIFSFileSystem pfs = new POIFSFileSystem(is)) {
             EncryptionInfo info = new EncryptionInfo(pfs);

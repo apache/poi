@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public class TestDocumentProtection {
 
     @Test
-    public void testShouldReadEnforcementProperties() throws IOException {
+    void testShouldReadEnforcementProperties() throws IOException {
 
         XWPFDocument documentWithoutDocumentProtectionTag = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(documentWithoutDocumentProtectionTag.isEnforcedReadonlyProtection());
@@ -82,7 +82,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testShouldEnforceForReadOnly() throws IOException {
+    void testShouldEnforceForReadOnly() throws IOException {
         //		XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedReadonlyProtection());
@@ -94,7 +94,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testShouldEnforceForFillingForms() throws IOException {
+    void testShouldEnforceForFillingForms() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedFillingFormsProtection());
 
@@ -105,7 +105,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testShouldEnforceForComments() throws IOException {
+    void testShouldEnforceForComments() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedCommentsProtection());
 
@@ -116,7 +116,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testShouldEnforceForTrackedChanges() throws IOException {
+    void testShouldEnforceForTrackedChanges() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedTrackedChangesProtection());
 
@@ -127,7 +127,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testShouldUnsetEnforcement() throws IOException {
+    void testShouldUnsetEnforcement() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_readonly_no_password.docx");
         assertTrue(document.isEnforcedReadonlyProtection());
 
@@ -138,7 +138,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testIntegration() throws IOException {
+    void testIntegration() throws IOException {
         XWPFDocument doc1 = new XWPFDocument();
 
         XWPFParagraph p1 = doc1.createParagraph();
@@ -163,7 +163,7 @@ public class TestDocumentProtection {
     }
 
     @Test
-    public void testUpdateFields() throws IOException {
+    void testUpdateFields() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         assertFalse(doc.isEnforcedUpdateFields());
         doc.enforceUpdateFields();

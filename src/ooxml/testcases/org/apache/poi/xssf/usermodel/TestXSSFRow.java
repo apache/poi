@@ -44,7 +44,7 @@ public final class TestXSSFRow extends BaseTestXRow {
     }
 
     @Test
-    public void testCopyRowFrom() throws IOException {
+    void testCopyRowFrom() throws IOException {
         final XSSFWorkbook workbook = new XSSFWorkbook();
         final XSSFSheet sheet = workbook.createSheet("test");
         final XSSFRow srcRow = sheet.createRow(0);
@@ -59,7 +59,7 @@ public final class TestXSSFRow extends BaseTestXRow {
     }
 
     @Test
-    public void testCopyRowFromExternalSheet() throws IOException {
+    void testCopyRowFromExternalSheet() throws IOException {
         final XSSFWorkbook workbook = new XSSFWorkbook();
         final Sheet srcSheet = workbook.createSheet("src");
         final XSSFSheet destSheet = workbook.createSheet("dest");
@@ -154,7 +154,7 @@ public final class TestXSSFRow extends BaseTestXRow {
     }
 
     @Test
-    public void testCopyRowOverwritesExistingRow() throws IOException {
+    void testCopyRowOverwritesExistingRow() throws IOException {
         final XSSFWorkbook workbook = new XSSFWorkbook();
         final XSSFSheet sheet1 = workbook.createSheet("Sheet1");
         final Sheet sheet2 = workbook.createSheet("Sheet2");
@@ -197,7 +197,7 @@ public final class TestXSSFRow extends BaseTestXRow {
     }
 
     @Test
-    public void testMultipleEditWriteCycles() {
+    void testMultipleEditWriteCycles() {
         final XSSFWorkbook wb1 = new XSSFWorkbook();
         final XSSFSheet sheet1 = wb1.createSheet("Sheet1");
         XSSFRow srcRow = sheet1.createRow(0);

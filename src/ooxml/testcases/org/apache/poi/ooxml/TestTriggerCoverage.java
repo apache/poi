@@ -85,7 +85,7 @@ public class TestTriggerCoverage {
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testFile(File file) throws Exception {
+    void testFile(File file) throws Exception {
         try (InputStream stream = new FileInputStream(file)) {
             if (file.getName().endsWith(".docx")) {
                 try (XWPFDocument doc = new XWPFDocument(stream)) {

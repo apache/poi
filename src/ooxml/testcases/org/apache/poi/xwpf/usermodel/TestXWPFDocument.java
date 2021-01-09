@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 public final class TestXWPFDocument {
 
     @Test
-    public void testContainsMainContentType() throws Exception {
+    void testContainsMainContentType() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         OPCPackage pack = doc.getPackage();
 
@@ -71,7 +71,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testOpen() throws Exception {
+    void testOpen() throws Exception {
         // Simple file
         try (XWPFDocument xml1 = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
             // Check it has key parts
@@ -89,7 +89,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testMetadataBasics() throws IOException {
+    void testMetadataBasics() throws IOException {
         try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
             assertNotNull(xml.getProperties().getCoreProperties());
             assertNotNull(xml.getProperties().getExtendedProperties());
@@ -104,7 +104,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testMetadataComplex() throws IOException {
+    void testMetadataComplex() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
         assertNotNull(xml.getProperties().getCoreProperties());
         assertNotNull(xml.getProperties().getExtendedProperties());
@@ -121,7 +121,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testWorkbookProperties() throws Exception {
+    void testWorkbookProperties() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         POIXMLProperties props = doc.getProperties();
         assertNotNull(props);
@@ -130,7 +130,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testAddParagraph() throws IOException {
+    void testAddParagraph() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertEquals(3, doc.getParagraphs().size());
 
@@ -152,7 +152,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testAddPicture() throws IOException, InvalidFormatException {
+    void testAddPicture() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
         String relationId = doc.addPictureData(jpeg, Document.PICTURE_TYPE_JPEG);
@@ -168,7 +168,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testAllPictureFormats() throws IOException, InvalidFormatException {
+    void testAllPictureFormats() throws IOException, InvalidFormatException {
         XWPFDocument doc = new XWPFDocument();
 
         doc.addPictureData(new byte[10], Document.PICTURE_TYPE_EMF);
@@ -192,7 +192,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testAddHyperlink() throws IOException {
+    void testAddHyperlink() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
             XWPFParagraph p = doc.createParagraph();
             XWPFHyperlinkRun h = p.createHyperlinkRun("https://poi.apache.org/");
@@ -212,7 +212,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testRemoveBodyElement() throws IOException {
+    void testRemoveBodyElement() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
             assertEquals(3, doc.getParagraphs().size());
             assertEquals(3, doc.getBodyElements().size());
@@ -275,7 +275,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testRegisterPackagePictureData() throws IOException, InvalidFormatException {
+    void testRegisterPackagePictureData() throws IOException, InvalidFormatException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
             /* manually assemble a new image package part*/
             OPCPackage opcPkg = doc.getPackage();
@@ -306,7 +306,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testFindPackagePictureData() throws IOException {
+    void testFindPackagePictureData() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
             byte[] nature1 = XWPFTestDataSamples.getImage("nature1.gif");
             XWPFPictureData part = doc.findPackagePictureData(nature1, Document.PICTURE_TYPE_GIF);
@@ -318,7 +318,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testGetAllPictures() throws IOException {
+    void testGetAllPictures() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
             List<XWPFPictureData> allPictures = doc.getAllPictures();
             List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
@@ -336,7 +336,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testGetAllPackagePictures() throws IOException {
+    void testGetAllPackagePictures() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
             List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
 
@@ -350,7 +350,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testPictureHandlingSimpleFile() throws IOException, InvalidFormatException {
+    void testPictureHandlingSimpleFile() throws IOException, InvalidFormatException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
             assertEquals(1, doc.getAllPackagePictures().size());
             byte[] newPic = XWPFTestDataSamples.getImage("abstract4.jpg");
@@ -365,7 +365,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testPictureHandlingHeaderDocumentImages() throws IOException {
+    void testPictureHandlingHeaderDocumentImages() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_2.docx")) {
             assertEquals(1, doc.getAllPictures().size());
             assertEquals(1, doc.getAllPackagePictures().size());
@@ -375,7 +375,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testPictureHandlingComplex() throws IOException, InvalidFormatException {
+    void testPictureHandlingComplex() throws IOException, InvalidFormatException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
             XWPFHeader xwpfHeader = doc.getHeaderArray(0);
 
@@ -394,7 +394,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testZeroLengthLibreOfficeDocumentWithWaterMarkHeader() throws IOException {
+    void testZeroLengthLibreOfficeDocumentWithWaterMarkHeader() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("zero-length.docx")) {
             POIXMLProperties properties = doc.getProperties();
 
@@ -412,7 +412,7 @@ public final class TestXWPFDocument {
     }
 
     @Test
-    public void testSettings() throws IOException {
+    void testSettings() throws IOException {
         XWPFSettings settings = new XWPFSettings();
         assertEquals(100, settings.getZoomPercent());
         settings.setZoomPercent(50);
@@ -455,7 +455,7 @@ public final class TestXWPFDocument {
     }
 
 	@Test
-	public void testEnforcedWith() throws IOException {
+	void testEnforcedWith() throws IOException {
         try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx")) {
             assertTrue(docx.isEnforcedProtection());
         }
@@ -463,7 +463,7 @@ public final class TestXWPFDocument {
 
 	@Test
 	@Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
-	public void testWriteFromReadOnlyOPC() throws Exception {
+	void testWriteFromReadOnlyOPC() throws Exception {
 	    OPCPackage opc = OPCPackage.open(
 	            POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
 	            PackageAccess.READ

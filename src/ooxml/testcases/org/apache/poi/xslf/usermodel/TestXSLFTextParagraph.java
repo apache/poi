@@ -65,7 +65,7 @@ public class TestXSLFTextParagraph {
     }
 
     @Test
-    public void testWrappingWidth() throws IOException {
+    void testWrappingWidth() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -158,7 +158,7 @@ public class TestXSLFTextParagraph {
      * This test requires that the Arial font is available and will run only on windows
      */
     @Test
-    public void testBreakLines() throws IOException {
+    void testBreakLines() throws IOException {
         String os = System.getProperty("os.name");
         assumeTrue((os != null && os.contains("Windows")), "Skipping testBreakLines(), it is executed only on Windows machines");
 
@@ -250,7 +250,7 @@ public class TestXSLFTextParagraph {
     }
 
     @Test
-    public void testThemeInheritance() throws IOException {
+    void testThemeInheritance() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("prProps.pptx");
         List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
         XSLFTextShape sh1 = (XSLFTextShape)shapes.get(0);
@@ -266,7 +266,7 @@ public class TestXSLFTextParagraph {
     }
 
     @Test
-    public void testParagraphProperties() throws IOException {
+    void testParagraphProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -365,7 +365,7 @@ public class TestXSLFTextParagraph {
     }
 
     @Test
-    public void testLineBreak() throws IOException {
+    void testLineBreak() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
             XSLFTextShape sh = slide.createAutoShape();

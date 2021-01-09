@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestXDDFChartLegend {
     @Test
-	public void testLegendPositionAccessMethods() throws IOException {
+	void testLegendPositionAccessMethods() throws IOException {
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet();
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -52,7 +52,7 @@ public final class TestXDDFChartLegend {
 	}
 
     @Test
-    public void test_setOverlay_defaultChartLegend_expectOverlayInitialValueSetToFalse() throws IOException {
+    void test_setOverlay_defaultChartLegend_expectOverlayInitialValueSetToFalse() throws IOException {
         // Arrange
     	XSSFWorkbook wb = new XSSFWorkbook();
     	XSSFSheet sheet = wb.createSheet();
@@ -70,7 +70,7 @@ public final class TestXDDFChartLegend {
     }
 
     @Test
-    public void test_setOverlay_chartLegendSetToTrue_expectOverlayInitialValueSetToTrue() throws IOException {
+    void test_setOverlay_chartLegendSetToTrue_expectOverlayInitialValueSetToTrue() throws IOException {
         // Arrange
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();

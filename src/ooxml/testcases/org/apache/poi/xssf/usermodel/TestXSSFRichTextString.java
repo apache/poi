@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 public final class TestXSSFRichTextString {
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
         assertFalse(rt.hasFormatting());
@@ -65,7 +65,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         XSSFRichTextString rt = new XSSFRichTextString();
         assertEquals(0, rt.getIndexOfFormattingRun(9999));
         assertEquals(-1, rt.getLengthOfFormattingRun(9999));
@@ -73,7 +73,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFont() {
+    void testApplyFont() {
         XSSFRichTextString rt = new XSSFRichTextString();
         rt.append("123");
         rt.append("4567");
@@ -110,7 +110,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFontIndex() {
+    void testApplyFontIndex() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         rt.applyFont(0, 10, (short)1);
 
@@ -120,7 +120,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFontWithStyles() {
+    void testApplyFontWithStyles() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
 
         StylesTable tbl = new StylesTable();
@@ -133,7 +133,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFontException() {
+    void testApplyFontException() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
 
         rt.applyFont(0, 0, (short)1);
@@ -149,7 +149,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testClearFormatting() {
+    void testClearFormatting() {
 
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
@@ -178,7 +178,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testGetFonts() {
+    void testGetFonts() {
 
         XSSFRichTextString rt = new XSSFRichTextString();
 
@@ -206,7 +206,7 @@ public final class TestXSSFRichTextString {
      * if a string has leading or trailing white spaces
      */
     @Test
-    public void testPreserveSpaces() {
+    void testPreserveSpaces() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache");
         CTRst ct = rt.getCTRst();
         STXstring xs = ct.xgetT();
@@ -226,7 +226,7 @@ public final class TestXSSFRichTextString {
      * test that unicode representation_ xHHHH_ is properly processed
      */
     @Test
-    public void testUtfDecode() {
+    void testUtfDecode() {
         CTRst st = CTRst.Factory.newInstance();
         st.setT("abc_x000D_2ef_x000D_");
         XSSFRichTextString rt = new XSSFRichTextString(st);
@@ -241,7 +241,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFont_lowlevel(){
+    void testApplyFont_lowlevel(){
         CTRst st = CTRst.Factory.newInstance();
         String text = "Apache Software Foundation";
         XSSFRichTextString str = new XSSFRichTextString(text);
@@ -356,7 +356,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testApplyFont_usermodel(){
+    void testApplyFont_usermodel(){
         String text = "Apache Software Foundation";
         XSSFRichTextString str = new XSSFRichTextString(text);
         XSSFFont font1 = new XSSFFont();
@@ -384,7 +384,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testLineBreaks_bug48877() {
+    void testLineBreaks_bug48877() {
 
         XSSFFont font = new XSSFFont();
         font.setBold(true);
@@ -444,7 +444,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testBug56511() throws IOException {
+    void testBug56511() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx")) {
             for (Sheet sheet : wb) {
                 int lastRow = sheet.getLastRowNum();
@@ -475,7 +475,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testBug56511_values() throws IOException {
+    void testBug56511_values() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx")) {
             Sheet sheet = wb.getSheetAt(0);
             Row row = sheet.getRow(0);
@@ -515,7 +515,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertNotNull(rt.toString());
 
@@ -524,7 +524,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void test59008Font() {
+    void test59008Font() {
         XSSFFont font = new XSSFFont(CTFont.Factory.newInstance());
 
         XSSFRichTextString rts = new XSSFRichTextString();
@@ -541,14 +541,14 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void test60289UtfDecode() throws IOException {
+    void test60289UtfDecode() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60289.xlsx");
         assertEquals("Rich Text\r\nTest", wb.getSheetAt(0).getRow(1).getCell(1).getRichStringCellValue().getString());
         wb.close();
     }
 
     @Test
-    public void testUtfDecode_withApplyFont() {
+    void testUtfDecode_withApplyFont() {
         XSSFFont font = new XSSFFont();
         font.setBold(true);
         font.setFontHeightInPoints((short) 14);
@@ -561,7 +561,7 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
-    public void testUtfLength() {
+    void testUtfLength() {
         assertEquals(0, XSSFRichTextString.utfLength(null));
         assertEquals(0, XSSFRichTextString.utfLength(""));
 

@@ -46,7 +46,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
     // Test methods common with HSSF are in superclass
     // Local methods here test XSSF-specific details of updating array formulas
     @Test
-    public void testXSSFSetArrayFormula_singleCell() throws IOException {
+    void testXSSFSetArrayFormula_singleCell() throws IOException {
         CellRange<XSSFCell> cells;
 
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -69,7 +69,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
     }
 
     @Test
-    public void testXSSFSetArrayFormula_multiCell() throws IOException {
+    void testXSSFSetArrayFormula_multiCell() throws IOException {
         CellRange<XSSFCell> cells;
 
         String formula2 = "456";

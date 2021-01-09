@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 public class TestXSLFTable {
 
     @Test
-    public void testResize() throws Exception {
+    void testResize() throws Exception {
         String[][] data = getDummyData(20);
         final int maxHeight = 400;
 
@@ -159,7 +159,7 @@ public class TestXSLFTable {
 
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide = ppt.getSlides().get(3);
@@ -201,7 +201,7 @@ public class TestXSLFTable {
     }
 
     @Test
-    public void testCreate() throws IOException {
+    void testCreate() throws IOException {
         XMLSlideShow ppt1 = new XMLSlideShow();
         XSLFSlide slide = ppt1.createSlide();
 

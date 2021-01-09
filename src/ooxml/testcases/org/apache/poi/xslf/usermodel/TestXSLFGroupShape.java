@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFGroupShape {
 
     @Test
-    public void testCreateShapes() throws Exception {
+    void testCreateShapes() throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 
@@ -87,7 +87,7 @@ public class TestXSLFGroupShape {
     }
 
     @Test
-    public void testRemoveShapes() throws Exception {
+    void testRemoveShapes() throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 

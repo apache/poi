@@ -66,7 +66,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  */
 public final class TestUnfixedBugs {
     @Test
-    public void test54071() throws Exception {
+    void test54071() throws Exception {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54071.xlsx");
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -95,7 +95,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void test54071Simple() {
+    void test54071Simple() {
         double value1 = 41224.999988425923;
         double value2 = 41224.999988368058;
 
@@ -136,7 +136,7 @@ public final class TestUnfixedBugs {
     // When this is fixed, the test case should go to BaseTestXCell with
     // adjustments to use _testDataProvider to also verify this for XSSF
     @Test
-    public void testBug57294() throws IOException {
+    void testBug57294() throws IOException {
         Workbook wb = SXSSFITestDataProvider.instance.createWorkbook();
 
         Sheet sheet = wb.createSheet();
@@ -167,7 +167,7 @@ public final class TestUnfixedBugs {
     // This test will run green, but the resulting file is formatted incorrectly,
     // see the bug at https://bz.apache.org/bugzilla/show_bug.cgi?id=55752
     @Test
-    public void testBug55752() throws IOException {
+    void testBug55752() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("test");
 
@@ -223,7 +223,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void test57423() throws IOException {
+    void test57423() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57423.xlsx");
 
         Sheet testSheet = wb.getSheetAt(0);
@@ -347,7 +347,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testBug60355() throws IOException {
+    void testBug60355() throws IOException {
         try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("HsGetVal.xlsx")){
 
             Sheet sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
@@ -396,7 +396,7 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testBug64759() throws IOException {
+    void testBug64759() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64759.xlsx")) {
             Sheet cloned = wb.cloneSheet(0);
             assertNotNull(cloned);

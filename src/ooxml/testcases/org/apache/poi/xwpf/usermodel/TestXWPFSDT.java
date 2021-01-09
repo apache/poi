@@ -34,7 +34,7 @@ public final class TestXWPFSDT {
      * Test text extraction from nested SDTs
      */
     @Test
-    public void testNestedSDTs() throws Exception {
+    void testNestedSDTs() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug64561.docx")) {
             XWPFAbstractSDT sdt = extractAllSDTs(doc).get(0);
             assertEquals("Subject", sdt.getContent().getText(), "extracted text");
@@ -45,7 +45,7 @@ public final class TestXWPFSDT {
      * Test simple tag and title extraction from SDT
      */
     @Test
-    public void testTagTitle() throws Exception {
+    void testTagTitle() throws Exception {
         try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
             String tag = null;
             String title = null;
@@ -66,7 +66,7 @@ public final class TestXWPFSDT {
     }
 
     @Test
-    public void testGetSDTs() throws Exception {
+    void testGetSDTs() throws Exception {
         String[] contents = new String[]{
                 "header_rich_text",
                 "Rich_text",
@@ -99,7 +99,7 @@ public final class TestXWPFSDT {
      * POI-54771 and TIKA-1317
      */
     @Test
-    public void testSDTAsCell() throws Exception {
+    void testSDTAsCell() throws Exception {
         //Bug54771a.docx and Bug54771b.docx test slightly
         //different recursion patterns. Keep both!
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx")) {
@@ -128,7 +128,7 @@ public final class TestXWPFSDT {
      * POI-55142 and Tika 1130
      */
     @Test
-    public void testNewLinesBetweenRuns() throws Exception {
+    void testNewLinesBetweenRuns() throws Exception {
         try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug55142.docx")) {
             List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
             List<String> targs = new ArrayList<>();
@@ -152,7 +152,7 @@ public final class TestXWPFSDT {
     }
 
     @Test
-    public void test60341() throws IOException {
+    void test60341() throws IOException {
         //handle sdtbody without an sdtpr
         try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug60341.docx")) {
             List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
@@ -163,7 +163,7 @@ public final class TestXWPFSDT {
     }
 
     @Test
-    public void test62859() throws IOException {
+    void test62859() throws IOException {
         //this doesn't test the exact code path for this issue, but
         //it does test for a related issue, and the fix fixes both.
         //We should try to add the actual triggering document

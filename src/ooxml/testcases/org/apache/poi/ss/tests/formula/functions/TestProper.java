@@ -40,7 +40,7 @@ public final class TestProper {
     private FormulaEvaluator evaluator;
 
     @Test
-    public void testValidHSSF() {
+    void testValidHSSF() {
         HSSFWorkbook wb = new HSSFWorkbook();
         evaluator = new HSSFFormulaEvaluator(wb);
 
@@ -48,7 +48,7 @@ public final class TestProper {
     }
 
     @Test
-    public void testValidXSSF() {
+    void testValidXSSF() {
         XSSFWorkbook wb = new XSSFWorkbook();
         evaluator = new XSSFFormulaEvaluator(wb);
 
@@ -99,7 +99,7 @@ public final class TestProper {
     }
 
     @Test
-    public void test() {
+    void test() {
         checkProper("", "");
         checkProper("a", "A");
         checkProper("abc", "Abc");
@@ -118,7 +118,7 @@ public final class TestProper {
     }
 
     @Test
-    public void testMicroBenchmark() {
+    void testMicroBenchmark() {
         ValueEval strArg = new StringEval("some longer text that needs a number of replacements to check for runtime of different implementations");
         // long start = System.currentTimeMillis();
         for(int i = 0;i < 300000;i++) {

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFTableStyles {
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         XSLFTableStyles tblStyles = ppt.getTableStyles();
         assertNotNull(tblStyles);

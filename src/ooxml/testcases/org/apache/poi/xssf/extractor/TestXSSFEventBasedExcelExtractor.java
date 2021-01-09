@@ -48,7 +48,7 @@ public class TestXSSFEventBasedExcelExtractor {
 	 * Get text out of the simple file
 	 */
 	@Test
-	public void testGetSimpleText() throws Exception {
+	void testGetSimpleText() throws Exception {
 		// a very simple file
 	   XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsx");
 		extractor.getText();
@@ -109,7 +109,7 @@ public class TestXSSFEventBasedExcelExtractor {
 	}
 
     @Test
-	public void testGetComplexText() throws Exception {
+	void testGetComplexText() throws Exception {
 		// A fairly complex file
 	   XSSFEventBasedExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
 		extractor.getText();
@@ -127,7 +127,7 @@ public class TestXSSFEventBasedExcelExtractor {
 	}
 
     @Test
-    public void testInlineStrings() throws Exception {
+    void testInlineStrings() throws Exception {
       XSSFEventBasedExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
       extractor.setFormulasNotResults(true);
       String text = extractor.getText();
@@ -157,7 +157,7 @@ public class TestXSSFEventBasedExcelExtractor {
 	 *  the same file, just saved as xls and xlsx
 	 */
     @Test
-    public void testComparedToOLE2() throws Exception {
+    void testComparedToOLE2() throws Exception {
 		// A fairly simple file - ooxml
 	   XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
@@ -180,7 +180,7 @@ public class TestXSSFEventBasedExcelExtractor {
 
 	 /** Test text extraction from text box using getShapes() */
     @Test
-    public void testShapes() throws Exception{
+    void testShapes() throws Exception{
 
         try (XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsx")) {
             String text = ooxmlExtractor.getText();
@@ -195,7 +195,7 @@ public class TestXSSFEventBasedExcelExtractor {
      * non-event-based XSSFExcelExtractor.
      */
     @Test
-    public void testUnstyledNumbersComparedToNonEventBasedExtractor()
+    void testUnstyledNumbersComparedToNonEventBasedExtractor()
             throws Exception {
 
         String expectedOutput = "Sheet1\n99.99\n";
@@ -216,7 +216,7 @@ public class TestXSSFEventBasedExcelExtractor {
      * non-event-based XSSFExcelExtractor.
      */
     @Test
-    public void testHeadersAndFootersComparedToNonEventBasedExtractor()
+    void testHeadersAndFootersComparedToNonEventBasedExtractor()
         throws Exception {
 
         String expectedOutputWithHeadersAndFooters =
@@ -254,7 +254,7 @@ public class TestXSSFEventBasedExcelExtractor {
       * XSSFExcelExtractor.
       */
     @Test
-    public void testCommentsComparedToNonEventBasedExtractor()
+    void testCommentsComparedToNonEventBasedExtractor()
         throws Exception {
 
         String expectedOutputWithoutComments =
@@ -303,7 +303,7 @@ public class TestXSSFEventBasedExcelExtractor {
     }
 
     @Test
-    public void testFile56278_normal() throws Exception {
+    void testFile56278_normal() throws Exception {
         // first with normal Text Extractor
         try (POIXMLTextExtractor extractor = new XSSFExcelExtractor(
                 XSSFTestDataSamples.openSampleWorkbook("56278.xlsx"))) {
@@ -312,7 +312,7 @@ public class TestXSSFEventBasedExcelExtractor {
     }
 
     @Test
-    public void testFile56278_event() throws Exception {
+    void testFile56278_event() throws Exception {
         // then with event based one
         try (POIXMLTextExtractor extractor = getExtractor("56278.xlsx")) {
             assertNotNull(extractor.getText());
@@ -320,7 +320,7 @@ public class TestXSSFEventBasedExcelExtractor {
     }
 
     @Test
-	public void test59021() throws Exception {
+	void test59021() throws Exception {
 		XSSFEventBasedExcelExtractor ex =
 				new XSSFEventBasedExcelExtractor(
 						XSSFTestDataSamples.openSamplePackage("59021.xlsx"));
@@ -331,7 +331,7 @@ public class TestXSSFEventBasedExcelExtractor {
 	}
 
 	@Test
-	public void test51519() throws Exception {
+	void test51519() throws Exception {
     	//default behavior: include phonetic runs
 		XSSFEventBasedExcelExtractor ex =
 				new XSSFEventBasedExcelExtractor(

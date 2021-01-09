@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestXSSFCategoryAxis {
 	@Test
-	public void testAccessMethods() throws Exception {
+	void testAccessMethods() throws Exception {
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
 			XSSFSheet sheet = wb.createSheet();
 			XSSFDrawing drawing = sheet.createDrawingPatriarch();

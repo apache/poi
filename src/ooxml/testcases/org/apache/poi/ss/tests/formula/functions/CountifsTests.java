@@ -65,7 +65,7 @@ public class CountifsTests {
      * Basic call
      */
     @Test
-    public void testCallFunction() {
+    void testCallFunction() {
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
         Cell cellA1 = row1.createCell(0, CellType.FORMULA);
@@ -88,7 +88,7 @@ public class CountifsTests {
      * Test argument count check
      */
     @Test
-    public void testCallFunction_invalidArgs() {
+    void testCallFunction_invalidArgs() {
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
         Cell cellA1 = row1.createCell(0, CellType.FORMULA);
@@ -110,7 +110,7 @@ public class CountifsTests {
      * the bug returned the wrong count, this verifies the fix
      */
     @Test
-    public void testBug56822() {
+    void testBug56822() {
         workbook = XSSFTestDataSamples.openSampleWorkbook("56822-Countifs.xlsx");
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         Cell cell = SheetUtil.getCell(workbook.getSheetAt(0), 0, 3);

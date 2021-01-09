@@ -195,7 +195,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void testBug58175() throws IOException {
+    void testBug58175() throws IOException {
         try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -264,7 +264,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
     @Disabled("Used for manual testing with opening the resulting Workbook in Excel")
     @Test
-    public void testBug58175a() throws IOException {
+    void testBug58175a() throws IOException {
         try (Workbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -305,7 +305,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
-    public void testBug55814() throws IOException {
+    void testBug55814() throws IOException {
 		try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55814.xlsx")) {
 
             int oldsheetIndex = wb.getSheetIndex("example");

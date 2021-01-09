@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 public class TestXWPFTableRow {
 
     @Test
-    public void testCreateRow() throws IOException {
+    void testCreateRow() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
         XWPFTableRow tr = table.createRow();
@@ -40,7 +40,7 @@ public class TestXWPFTableRow {
     }
 
     @Test
-    public void testSetGetCantSplitRow() throws IOException {
+    void testSetGetCantSplitRow() throws IOException {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
@@ -66,7 +66,7 @@ public class TestXWPFTableRow {
     }
 
     @Test
-    public void testSetGetRepeatHeader() throws IOException {
+    void testSetGetRepeatHeader() throws IOException {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(3, 1);
@@ -102,7 +102,7 @@ public class TestXWPFTableRow {
     // Test that validates the table header value can be parsed from a document
     // generated in Word
     @Test
-    public void testIsRepeatHeader() throws Exception {
+    void testIsRepeatHeader() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("Bug60337.docx")) {
             XWPFTable table = doc.getTables().get(0);
@@ -124,7 +124,7 @@ public class TestXWPFTableRow {
     // Test that validates the table header value can be parsed from a document
     // generated in Word
     @Test
-    public void testIsCantSplit() throws Exception {
+    void testIsCantSplit() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("Bug60337.docx")) {
             XWPFTable table = doc.getTables().get(0);
@@ -143,7 +143,7 @@ public class TestXWPFTableRow {
     }
 
     @Test
-    public void testRemoveCell() throws IOException {
+    void testRemoveCell() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTableRow tr = doc.createTable(1, 1).createRow();
 
@@ -157,7 +157,7 @@ public class TestXWPFTableRow {
     }
 
     @Test
-    public void testGetSetHeightRule() throws IOException {
+    void testGetSetHeightRule() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTableRow tr = doc.createTable(1, 1).createRow();
         assertEquals(TableRowHeightRule.AUTO, tr.getHeightRule());
@@ -171,7 +171,7 @@ public class TestXWPFTableRow {
     }
 
     @Test
-    public void testBug62174() throws IOException {
+    void testBug62174() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("Bug60337.docx")) {
             XWPFTable table = doc.getTables().get(0);

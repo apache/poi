@@ -85,7 +85,7 @@ public class TestCellFormatPart {
     }
 
     @Test
-    public void testGeneralFormat() throws IOException {
+    void testGeneralFormat() throws IOException {
         runFormatTests("GeneralFormatTests.xlsx", cell -> {
             assertNotNull(cell);
             switch (CellFormat.ultimateType(cell)) {
@@ -100,12 +100,12 @@ public class TestCellFormatPart {
     }
 
     @Test
-    public void testNumberFormat() throws IOException {
+    void testNumberFormat() throws IOException {
         runFormatTests("NumberFormatTests.xlsx", Cell::getNumericCellValue);
     }
 
     @Test
-    public void testNumberApproxFormat() throws IOException {
+    void testNumberApproxFormat() throws IOException {
         runFormatTests("NumberFormatApproxTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -125,7 +125,7 @@ public class TestCellFormatPart {
     }
 
     @Test
-    public void testDateFormat() throws IOException {
+    void testDateFormat() throws IOException {
         TimeZone tz = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
@@ -136,19 +136,19 @@ public class TestCellFormatPart {
     }
 
     @Test
-    public void testElapsedFormat() throws IOException {
+    void testElapsedFormat() throws IOException {
         runFormatTests("ElapsedFormatTests.xlsx", Cell::getNumericCellValue);
     }
 
     @Test
-    public void testTextFormat() throws IOException {
+    void testTextFormat() throws IOException {
         runFormatTests("TextFormatTests.xlsx", cell ->
             (CellFormat.ultimateType(cell) == CellType.BOOLEAN) ? cell.getBooleanCellValue() : cell.getStringCellValue()
         );
     }
 
     @Test
-    public void testConditions() throws IOException {
+    void testConditions() throws IOException {
         runFormatTests("FormatConditionTests.xlsx", Cell::getNumericCellValue);
     }
 

@@ -36,7 +36,7 @@ public class TestSXSSFDataValidation extends BaseTestDataValidation {
     }
 
     @Test
-    public void test53965() throws Exception {
+    void test53965() throws Exception {
         try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             List<? extends DataValidation> lst = sheet.getDataValidations();    //<-- works

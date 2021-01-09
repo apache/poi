@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 public class TestVlookup {
 
     @Test
-    public void testFullColumnAreaRef61841() throws IOException {
+    void testFullColumnAreaRef61841() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx")) {
             FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
             feval.evaluateAll();

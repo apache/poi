@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRgbColor;
 public final class TestXSSFColor {
 
    @Test
-   public void testIndexedColour() throws Exception {
+   void testIndexedColour() throws Exception {
       try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx")) {
          // Check the CTColor is as expected
          XSSFColor indexed = wb.getCellStyleAt(1).getFillBackgroundXSSFColor();
@@ -77,7 +77,7 @@ public final class TestXSSFColor {
    }
 
    @Test
-   public void testRGBColour() throws IOException {
+   void testRGBColour() throws IOException {
       try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50299.xlsx")) {
 
          // Check the CTColor is as expected
@@ -134,7 +134,7 @@ public final class TestXSSFColor {
    }
 
    @Test
-   public void testARGBColour() throws IOException {
+   void testARGBColour() throws IOException {
       try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx")) {
 
          // Check the CTColor is as expected
@@ -183,7 +183,7 @@ public final class TestXSSFColor {
    }
 
    @Test
-   public void testCustomIndexedColour() throws Exception {
+   void testCustomIndexedColour() throws Exception {
        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("customIndexedColors.xlsx")) {
           XSSFCell cell = wb.getSheetAt(1).getRow(0).getCell(0);
           XSSFColor color = cell.getCellStyle().getFillForegroundColorColor();

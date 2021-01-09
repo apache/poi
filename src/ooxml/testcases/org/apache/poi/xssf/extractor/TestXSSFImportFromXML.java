@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
 public class TestXSSFImportFromXML {
 
     @Test
-    public void testImportFromXML() throws IOException, XPathExpressionException, SAXException{
+    void testImportFromXML() throws IOException, XPathExpressionException, SAXException{
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx")) {
             String name = "name";
             String teacher = "teacher";
@@ -89,7 +89,7 @@ public class TestXSSFImportFromXML {
 
     @Timeout(value = 60, unit = SECONDS)
     @Test
-    public void testMultiTable() throws IOException, XPathExpressionException, SAXException{
+    void testMultiTable() throws IOException, XPathExpressionException, SAXException{
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             String cellC6 = "c6";
             String cellC7 = "c7";
@@ -139,7 +139,7 @@ public class TestXSSFImportFromXML {
 
 
     @Test
-    public void testSingleAttributeCellWithNamespace() throws IOException, XPathExpressionException, SAXException{
+    void testSingleAttributeCellWithNamespace() throws IOException, XPathExpressionException, SAXException{
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
             int id = 1;
             String displayName = "dispName";
@@ -166,7 +166,7 @@ public class TestXSSFImportFromXML {
     }
 
     @Test
-    public void testOptionalFields_Bugzilla_55864() throws IOException, XPathExpressionException, SAXException {
+    void testOptionalFields_Bugzilla_55864() throws IOException, XPathExpressionException, SAXException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55864.xlsx")) {
             String testXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
                     "<PersonInfoRoot>" +
@@ -204,7 +204,7 @@ public class TestXSSFImportFromXML {
     }
 
     @Test
-    public void testOptionalFields_Bugzilla_57890() throws IOException, ParseException, XPathExpressionException, SAXException {
+    void testOptionalFields_Bugzilla_57890() throws IOException, ParseException, XPathExpressionException, SAXException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57890.xlsx");
 
         String testXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<TestInfoRoot>"

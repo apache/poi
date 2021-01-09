@@ -64,18 +64,18 @@ public class TestDrawPictureShape {
     }
 
     @Test
-    public void testResizeHSLF() throws IOException {
+    void testResizeHSLF() throws IOException {
         assumeFalse(xslfOnly);
         testResize("pictures.ppt");
     }
 
     @Test
-    public void testResizeXSLF() throws IOException {
+    void testResizeXSLF() throws IOException {
         testResize("shapes.pptx");
     }
 
 
-    public void testResize(String file) throws IOException {
+    void testResize(String file) throws IOException {
         SlideShow<?,?> ss = openSampleDocument(file);
 
         Slide<?,?> slide = ss.getSlides().get(0);

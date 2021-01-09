@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestXSSFChart {
     @Test
-    public void testGetAccessors() throws IOException {
+    void testGetAccessors() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
             XSSFSheet s1 = wb.getSheetAt(0);
             XSSFSheet s2 = wb.getSheetAt(1);
@@ -43,7 +43,7 @@ public final class TestXSSFChart {
     }
 
     @Test
-    public void testGetCharts() throws Exception {
+    void testGetCharts() throws Exception {
        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
            XSSFSheet s1 = wb.getSheetAt(0);
            XSSFSheet s2 = wb.getSheetAt(1);
@@ -72,7 +72,7 @@ public final class TestXSSFChart {
     }
 
     @Test
-	public void testAddChartsToNewWorkbook() throws Exception {
+	void testAddChartsToNewWorkbook() throws Exception {
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s1 = wb.createSheet();
             XSSFDrawing d1 = s1.createDrawingPatriarch();

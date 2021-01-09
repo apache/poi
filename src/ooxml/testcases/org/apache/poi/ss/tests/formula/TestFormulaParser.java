@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 public class TestFormulaParser {
 
     @Test
-    public void testHSSFFailsForOver65536() {
+    void testHSSFFailsForOver65536() {
         FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(new HSSFWorkbook());
         assertThrows(FormulaParseException.class, () ->
             FormulaParser.parse("Sheet1!1:65537", workbook, FormulaType.CELL, 0));
@@ -73,17 +73,17 @@ public class TestFormulaParser {
     }
 
     @Test
-    public void testHSSFPassCase() {
+    void testHSSFPassCase() {
         checkHSSFFormula("Sheet1!1:65536");
     }
 
     @Test
-    public void testXSSFWorksForOver65536() {
+    void testXSSFWorksForOver65536() {
         checkXSSFFormula("Sheet1!1:65537");
     }
 
     @Test
-    public void testXSSFFailCase() {
+    void testXSSFFailCase() {
         FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(new XSSFWorkbook());
         assertThrows(FormulaParseException.class, () ->
             FormulaParser.parse("Sheet1!1:1048577", workbook, FormulaType.CELL, 0), "one more than max rows");
@@ -91,7 +91,7 @@ public class TestFormulaParser {
 
     // copied from org.apache.poi.hssf.model.TestFormulaParser
     @Test
-    public void testMacroFunction() throws Exception {
+    void testMacroFunction() throws Exception {
         // testNames.xlsm contains a VB function called 'myFunc'
         final String testFile = "testNames.xlsm";
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
@@ -144,7 +144,7 @@ public class TestFormulaParser {
     }
 
     @Test
-    public void testParserErrors() throws Exception {
+    void testParserErrors() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testNames.xlsm")) {
             XSSFEvaluationWorkbook workbook = XSSFEvaluationWorkbook.create(wb);
 
@@ -172,7 +172,7 @@ public class TestFormulaParser {
 
     // trivial case for bug 60219: FormulaParser can't parse external references when sheet name is quoted
     @Test
-    public void testParseExternalReferencesWithUnquotedSheetName() throws Exception {
+    void testParseExternalReferencesWithUnquotedSheetName() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs = FormulaParser.parse("[1]Sheet1!A1", fpwb, FormulaType.CELL, -1);
@@ -189,7 +189,7 @@ public class TestFormulaParser {
 
     // bug 60219: FormulaParser can't parse external references when sheet name is quoted
     @Test
-    public void testParseExternalReferencesWithQuotedSheetName() throws Exception {
+    void testParseExternalReferencesWithQuotedSheetName() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs = FormulaParser.parse("'[1]Sheet 1'!A1", fpwb, FormulaType.CELL, -1);
@@ -206,7 +206,7 @@ public class TestFormulaParser {
 
     // bug 60260
     @Test
-    public void testUnicodeSheetName() {
+    void testUnicodeSheetName() {
         checkFormula("'Sheet\u30FB1'!A1:A6");
     }
 }

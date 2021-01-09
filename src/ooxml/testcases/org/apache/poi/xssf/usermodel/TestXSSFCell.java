@@ -74,7 +74,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Shared String Table
      */
     @Test
-    public void test47026_1() throws IOException {
+    void test47026_1() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -84,7 +84,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void test47026_2() throws IOException {
+    void test47026_2() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -102,7 +102,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * instead of using the shared string table. See bug 47206
      */
     @Test
-    public void testInlineString() throws IOException {
+    void testInlineString() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("xlsx-jdbc.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row = sheet.getRow(1);
@@ -128,7 +128,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
      */
     @Test
-    public void test47278() throws IOException {
+    void test47278() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -159,7 +159,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testFormulaString() throws IOException {
+    void testFormulaString() throws IOException {
         try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.createWorkbook()) {
             XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
@@ -218,7 +218,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Bug 47889: problems when calling XSSFCell.getStringCellValue() on a workbook created in Gnumeric
      */
     @Test
-    public void test47889() throws IOException {
+    void test47889() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("47889.xlsx");
         XSSFSheet sh = wb.getSheetAt(0);
 
@@ -245,7 +245,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testMissingRAttribute() throws IOException {
+    void testMissingRAttribute() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -300,7 +300,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testMissingRAttributeBug54288() throws IOException {
+    void testMissingRAttributeBug54288() throws IOException {
         // workbook with cells missing the R attribute
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288.xlsx");
         // same workbook re-saved in Excel 2010, the R attribute is updated for every cell with the right value.
@@ -343,7 +343,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void test56170() throws IOException {
+    void test56170() throws IOException {
         final Workbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
         final XSSFSheet sheet = (XSSFSheet) wb1.getSheetAt(0);
 
@@ -400,7 +400,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void test56170Reproduce() throws IOException {
+    void test56170Reproduce() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             final Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -442,7 +442,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testBug56644ReturnNull() throws IOException {
+    void testBug56644ReturnNull() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Sheet sheet = wb.getSheet("samplelist");
@@ -452,7 +452,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testBug56644ReturnBlank() throws IOException {
+    void testBug56644ReturnBlank() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.RETURN_NULL_AND_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
@@ -462,7 +462,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testBug56644CreateBlank() throws IOException {
+    void testBug56644CreateBlank() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
@@ -472,7 +472,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testEncodingBelowAscii() throws IOException {
+    void testEncodingBelowAscii() throws IOException {
         StringBuilder sb = new StringBuilder();
         // test all possible characters
         for(int i = 0; i < Character.MAX_VALUE; i++) {
@@ -681,7 +681,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Bug 61869: updating a shared formula produces an unreadable file
      */
     @Test
-    public void test61869() throws Exception {
+    void test61869() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61869.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
             XSSFCell c2 = sheet.getRow(1).getCell(2);
@@ -708,7 +708,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testBug58106RemoveSharedFormula() throws Exception {
+    void testBug58106RemoveSharedFormula() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58106.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
             XSSFRow row = sheet.getRow(12);

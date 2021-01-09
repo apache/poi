@@ -43,7 +43,7 @@ public final class TestSheetDataWriter {
             + "\uD835\uDF76\uD835\uDF77\uD835\uDF78\uD835\uDF79\uD835\uDF7A";
 
     @Test
-	public void testReplaceWithQuestionMark() {
+	void testReplaceWithQuestionMark() {
         for(int i = 0; i < unicodeSurrogates.length(); i++) {
             assertFalse(SheetDataWriter.replaceWithQuestionMark(unicodeSurrogates.charAt(i)));
         }
@@ -55,7 +55,7 @@ public final class TestSheetDataWriter {
 	}
 
     @Test
-    public void testWriteUnicodeSurrogates() throws IOException {
+    void testWriteUnicodeSurrogates() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();
         try {
             writer.outputEscapedString(unicodeSurrogates);
@@ -70,7 +70,7 @@ public final class TestSheetDataWriter {
         }
     }
     @Test
-    public void testWriteNewLines() throws IOException {
+    void testWriteNewLines() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();
         try {
             writer.outputEscapedString("\r\n");

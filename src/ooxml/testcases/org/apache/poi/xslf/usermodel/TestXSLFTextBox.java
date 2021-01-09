@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 public class TestXSLFTextBox {
 
     @Test
-    public void testPlaceholder() throws IOException {
+    void testPlaceholder() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -50,7 +50,7 @@ public class TestXSLFTextBox {
      * text box inherits default text proeprties from presentation.xml
      */
     @Test
-    public void testDefaultTextStyle() throws IOException {
+    void testDefaultTextStyle() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 

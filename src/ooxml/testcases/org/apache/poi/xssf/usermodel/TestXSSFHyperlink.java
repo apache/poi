@@ -39,7 +39,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testLoadExisting() throws IOException {
+    void testLoadExisting() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
             assertEquals(3, workbook.getNumberOfSheets());
 
@@ -52,7 +52,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -97,7 +97,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testInvalidURLs() throws IOException {
+    void testInvalidURLs() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFCreationHelper createHelper = workbook.getCreationHelper();
 
@@ -114,7 +114,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testLoadSave() throws IOException {
+    void testLoadSave() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
             CreationHelper createHelper = workbook.getCreationHelper();
             assertEquals(3, workbook.getNumberOfSheets());
@@ -224,7 +224,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void test52716() throws IOException {
+    void test52716() throws IOException {
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("52716.xlsx")) {
             XSSFSheet sh1 = wb1.getSheetAt(0);
 
@@ -245,7 +245,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void test53734() throws IOException {
+    void test53734() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53734.xlsx")) {
             Hyperlink link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
             assertEquals("javascript:///", link.getAddress());
@@ -258,7 +258,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void test53282() throws IOException {
+    void test53282() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53282.xlsx")) {
             Hyperlink link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
             assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
@@ -276,7 +276,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testCopyHSSFHyperlink() throws IOException {
+    void testCopyHSSFHyperlink() throws IOException {
         HSSFWorkbook hssfworkbook = new HSSFWorkbook();
         HSSFHyperlink hlink = hssfworkbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
         hlink.setAddress("http://poi.apache.org/");
@@ -299,7 +299,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
      * URLs with a hash mark (#) are still URL hyperlinks, not document links
      */
     @Test
-    public void testURLsWithHashMark() throws IOException {
+    void testURLsWithHashMark() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59775.xlsx");
         XSSFSheet sh = wb.getSheetAt(0);
         CellAddress A2 = new CellAddress("A2");
@@ -331,7 +331,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
 
         CreationHelper createHelper = wb.getCreationHelper();

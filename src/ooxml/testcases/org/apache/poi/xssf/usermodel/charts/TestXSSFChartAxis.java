@@ -62,7 +62,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testLogBaseIllegalArgument() {
+	void testLogBaseIllegalArgument() {
 		IllegalArgumentException iae = null;
 		try {
 			axis.setLogBase(0.0);
@@ -81,20 +81,20 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testLogBaseLegalArgument() {
+	void testLogBaseLegalArgument() {
 		axis.setLogBase(Math.E);
 		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
 	}
 
 	@Test
-	public void testNumberFormat() {
+	void testNumberFormat() {
 		final String numberFormat = "General";
 		axis.setNumberFormat(numberFormat);
 		assertEquals(numberFormat, axis.getNumberFormat());
 	}
 
 	@Test
-	public void testMaxAndMinAccessMethods() {
+	void testMaxAndMinAccessMethods() {
 		final double newValue = 10.0;
 
 		axis.setMinimum(newValue);
@@ -105,7 +105,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testVisibleAccessMethods() {
+	void testVisibleAccessMethods() {
 		axis.setVisible(true);
 		assertTrue(axis.isVisible());
 
@@ -114,7 +114,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testMajorTickMarkAccessMethods() {
+	void testMajorTickMarkAccessMethods() {
 		axis.setMajorTickMark(AxisTickMark.NONE);
 		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
 
@@ -129,7 +129,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testMinorTickMarkAccessMethods() {
+	void testMinorTickMarkAccessMethods() {
 		axis.setMinorTickMark(AxisTickMark.NONE);
 		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
 
@@ -144,7 +144,7 @@ public final class TestXSSFChartAxis {
 	}
 
 	@Test
-	public void testGetChartAxisBug57362() throws IOException {
+	void testGetChartAxisBug57362() throws IOException {
 	  //Load existing excel with some chart on it having primary and secondary axis.
 	    try (final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx")) {
 			final XSSFSheet sh = workbook.getSheetAt(0);

@@ -56,7 +56,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBl
 public class TestXSSFVMLDrawing {
 
     @Test
-    public void testNew() throws IOException, XmlException {
+    void testNew() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         List<XmlObject> items = vml.getItems();
         assertEquals(2, items.size());
@@ -116,7 +116,7 @@ public class TestXSSFVMLDrawing {
     }
 
     @Test
-    public void testFindCommentShape() throws IOException, XmlException {
+    void testFindCommentShape() throws IOException, XmlException {
 
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         try (InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml")) {
@@ -152,7 +152,7 @@ public class TestXSSFVMLDrawing {
     }
 
     @Test
-    public void testRemoveCommentShape() throws IOException, XmlException {
+    void testRemoveCommentShape() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         try (InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml")) {
             vml.read(stream);
@@ -167,7 +167,7 @@ public class TestXSSFVMLDrawing {
     }
 
     @Test
-    public void testEvilUnclosedBRFixing() throws IOException, XmlException {
+    void testEvilUnclosedBRFixing() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         try (InputStream stream = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("bug-60626.vml")) {
             vml.read(stream);

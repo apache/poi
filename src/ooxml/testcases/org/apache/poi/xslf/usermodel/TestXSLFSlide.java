@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFSlide {
 
     @Test
-    public void testReadShapes() throws IOException {
+    void testReadShapes() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         List<XSLFSlide> slides = ppt.getSlides();
 
@@ -107,7 +107,7 @@ public class TestXSLFSlide {
     }
 
     @Test
-    public void testCreateSlide() throws IOException {
+    void testCreateSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -122,7 +122,7 @@ public class TestXSLFSlide {
     }
 
     @Test
-    public void testImportContent() throws IOException {
+    void testImportContent() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
 
         XMLSlideShow  src = XSLFTestDataSamples.openSampleDocument("themes.pptx");
@@ -180,7 +180,7 @@ public class TestXSLFSlide {
     }
 
     @Test
-    public void testMergeSlides() throws IOException {
+    void testMergeSlides() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         String[] pptx = {"shapes.pptx", "themes.pptx", "layouts.pptx", "backgrounds.pptx"};
 
@@ -197,7 +197,7 @@ public class TestXSLFSlide {
     }
 
     @Test
-    public void testCreateChart() throws IOException {
+    void testCreateChart() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFChart chart = ppt.createChart();

@@ -395,7 +395,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testSignSpreadsheet() throws Exception {
+    void testSignSpreadsheet() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
             sign(pkg);
@@ -412,7 +412,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testManipulation() throws Exception {
+    void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
@@ -439,7 +439,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testSignSpreadsheetWithSignatureInfo() throws Exception {
+    void testSignSpreadsheetWithSignatureInfo() throws Exception {
         initKeyPair();
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
@@ -462,7 +462,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testSignEnvelopingDocument() throws Exception {
+    void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
         ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
@@ -662,7 +662,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testCertChain() throws Exception {
+    void testCertChain() throws Exception {
         final boolean isIBM = System.getProperty("java.vendor").contains("IBM");
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");
@@ -711,7 +711,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testNonSha1() throws Exception {
+    void testNonSha1() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         initKeyPair();
 
@@ -764,7 +764,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testMultiSign() throws Exception {
+    void testMultiSign() throws Exception {
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         cal.clear();
         cal.setTimeZone(LocaleUtil.TIMEZONE_UTC);
@@ -846,7 +846,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testRetrieveCertificate() throws InvalidFormatException, IOException {
+    void testRetrieveCertificate() throws InvalidFormatException, IOException {
         SignatureConfig sic = new SignatureConfig();
         final File file = testdata.getFile("PPT2016withComment.pptx");
         try (final OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
@@ -871,7 +871,7 @@ public class TestSignatureInfo {
     }
 
     @Test
-    public void testSignatureImage() throws Exception {
+    void testSignatureImage() throws Exception {
         initKeyPair();
 
         List<Supplier<SignatureLine>> lines = Arrays.asList(XSSFSignatureLine::new, XWPFSignatureLine::new);

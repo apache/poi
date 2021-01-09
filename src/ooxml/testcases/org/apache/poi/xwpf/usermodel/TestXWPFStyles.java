@@ -39,7 +39,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
 public final class TestXWPFStyles {
     @Test
-    public void testGetUsedStyles() throws IOException {
+    void testGetUsedStyles() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx")) {
             List<XWPFStyle> testUsedStyleList = new ArrayList<>();
             XWPFStyles styles = sampleDoc.getStyles();
@@ -56,7 +56,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testAddStylesToDocument() throws IOException {
+    void testAddStylesToDocument() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
 
@@ -80,7 +80,7 @@ public final class TestXWPFStyles {
      * both regular and glossary styles without error
      */
     @Test
-    public void test52449() throws Exception {
+    void test52449() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52449.docx")) {
             XWPFStyles styles = doc.getStyles();
             assertNotNull(styles);
@@ -98,7 +98,7 @@ public final class TestXWPFStyles {
      */
     @SuppressWarnings("resource")
     @Test
-    public void testLanguages() {
+    void testLanguages() {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
         styles.setEastAsia("Chinese");
@@ -110,7 +110,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testType() {
+    void testType() {
         CTStyle ctStyle = CTStyle.Factory.newInstance();
         XWPFStyle style = new XWPFStyle(ctStyle);
 
@@ -119,7 +119,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testLatentStyles() {
+    void testLatentStyles() {
         CTLatentStyles latentStyles = CTLatentStyles.Factory.newInstance();
         CTLsdException ex = latentStyles.addNewLsdException();
         ex.setName("ex1");
@@ -129,7 +129,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testSetStyles_Bug57254() throws IOException {
+    void testSetStyles_Bug57254() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
 
@@ -149,7 +149,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testEasyAccessToStyles() throws IOException {
+    void testEasyAccessToStyles() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
             XWPFStyles styles = doc.getStyles();
             assertNotNull(styles);
@@ -209,7 +209,7 @@ public final class TestXWPFStyles {
 
     // Bug 60329: style with missing StyleID throws NPE
     @Test
-    public void testMissingStyleId() throws IOException {
+    void testMissingStyleId() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60329.docx")) {
             XWPFStyles styles = doc.getStyles();
             // Styles exist in the test document in this order, EmptyCellLayoutStyle
@@ -226,7 +226,7 @@ public final class TestXWPFStyles {
     }
 
     @Test
-    public void testGetStyleByName() throws IOException {
+    void testGetStyleByName() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
             XWPFStyles styles = doc.getStyles();
             assertNotNull(styles);

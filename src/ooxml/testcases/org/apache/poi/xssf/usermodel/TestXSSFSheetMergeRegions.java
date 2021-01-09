@@ -32,7 +32,7 @@ public class TestXSSFSheetMergeRegions {
     private static final POILogger LOG = POILogFactory.getLogger(TestXSSFSheetMergeRegions.class);
 
     @Test
-    public void testMergeRegionsSpeed() throws IOException {
+    void testMergeRegionsSpeed() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57893-many-merges.xlsx")) {
             long millis = Long.MAX_VALUE;
 

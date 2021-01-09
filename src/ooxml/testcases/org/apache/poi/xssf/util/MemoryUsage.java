@@ -157,7 +157,7 @@ public class MemoryUsage {
      * @see #testXmlAttached()
      */
     @Test
-    public void testXmlDetached() {
+    void testXmlDetached() {
         System.out.println();
         System.out.println("Testing detached");
 
@@ -186,7 +186,7 @@ public class MemoryUsage {
      * @see #testXmlAttached()
      */
     @Test
-    public void testXmlAttached() {
+    void testXmlAttached() {
         System.out.println();
         System.out.println("Testing attached");
         printMemoryUsage("before");
@@ -212,22 +212,22 @@ public class MemoryUsage {
     }
 
     @Test
-    public void testMixedHSSF() {
+    void testMixedHSSF() {
         mixedSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
     }
 
     @Test
-    public void testMixedXSSF() {
+    void testMixedXSSF() {
         mixedSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
     }
 
     @Test
-    public void testNumberHSSF() {
+    void testNumberHSSF() {
         numberSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
     }
 
     @Test
-    public void testNumberXSSF() {
+    void testNumberXSSF() {
         numberSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
     }
 }

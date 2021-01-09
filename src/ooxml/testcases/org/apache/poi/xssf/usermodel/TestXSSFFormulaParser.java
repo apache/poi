@@ -407,7 +407,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void test58648Single() throws IOException {
+    void test58648Single() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             Ptg[] ptgs;
@@ -420,7 +420,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void test58648Basic() throws IOException {
+    void test58648Basic() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -463,7 +463,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void test58648FormulaParsing() throws IOException {
+    void test58648FormulaParsing() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58648.xlsx");
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -494,7 +494,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void testWhitespaceInFormula() throws IOException {
+    void testWhitespaceInFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -536,7 +536,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void testWhitespaceInComplexFormula() throws IOException {
+    void testWhitespaceInComplexFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;

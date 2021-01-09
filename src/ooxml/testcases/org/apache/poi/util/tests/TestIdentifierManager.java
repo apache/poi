@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestIdentifierManager {
     @Test
-    public void testBasic()
+    void testBasic()
     {
         IdentifierManager manager = new IdentifierManager(0L,100L);
         assertEquals(101L,manager.getRemainingIdentifiers());
@@ -39,7 +39,7 @@ public class TestIdentifierManager {
     }
 
     @Test
-    public void testLongLimits() {
+    void testLongLimits() {
         long min = IdentifierManager.MIN_ID;
         long max = IdentifierManager.MAX_ID;
         IdentifierManager manager = new IdentifierManager(min,max);
@@ -53,7 +53,7 @@ public class TestIdentifierManager {
     }
 
     @Test
-    public void testReserve() {
+    void testReserve() {
         IdentifierManager manager1 = new IdentifierManager(10L, 30L);
         assertEquals(12L, manager1.reserve(12L));
         long reserve = manager1.reserve(12L);
@@ -73,7 +73,7 @@ public class TestIdentifierManager {
     }
 
     @Test
-    public void testReserveNew() {
+    void testReserveNew() {
         IdentifierManager manager = new IdentifierManager(10L,12L);
         assertSame(10L,manager.reserveNew());
         assertSame(11L,manager.reserveNew());
@@ -82,7 +82,7 @@ public class TestIdentifierManager {
     }
 
     @Test
-    public void testRelease() {
+    void testRelease() {
         IdentifierManager manager = new IdentifierManager(10L,20L);
         assertEquals(10L,manager.reserve(10L));
         assertEquals(11L,manager.reserve(11L));

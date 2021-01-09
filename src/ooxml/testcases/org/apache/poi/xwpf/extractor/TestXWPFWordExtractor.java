@@ -44,7 +44,7 @@ public class TestXWPFWordExtractor {
      * Get text out of the simple file
      */
     @Test
-    public void testGetSimpleText() throws IOException {
+    void testGetSimpleText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -69,7 +69,7 @@ public class TestXWPFWordExtractor {
      * Tests getting the text out of a complex file
      */
     @Test
-    public void testGetComplexText() throws IOException {
+    void testGetComplexText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -96,7 +96,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testGetWithHyperlinks() throws IOException {
+    void testGetWithHyperlinks() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -123,7 +123,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testHeadersFooters() throws IOException {
+    void testHeadersFooters() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ThreeColHeadFoot.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -172,7 +172,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testFootnotes() throws IOException {
+    void testFootnotes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
@@ -183,7 +183,7 @@ public class TestXWPFWordExtractor {
 
 
     @Test
-    public void testTableFootnotes() throws IOException {
+    void testTableFootnotes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -192,7 +192,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testFormFootnotes() throws IOException {
+    void testFormFootnotes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("form_footnotes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -203,7 +203,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testEndnotes() throws IOException {
+    void testEndnotes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
@@ -213,7 +213,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testInsertedDeletedText() throws IOException {
+    void testInsertedDeletedText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -223,7 +223,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testParagraphHeader() throws IOException {
+    void testParagraphHeader() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -238,7 +238,7 @@ public class TestXWPFWordExtractor {
      * (macro enabled) docx files (bug #45690)
      */
     @Test
-    public void testDOCMFiles() throws IOException {
+    void testDOCMFiles() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -254,7 +254,7 @@ public class TestXWPFWordExtractor {
      * we're extracting (bug #49189)
      */
     @Test
-    public void testDocTabs() throws IOException {
+    void testDocTabs() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -273,7 +273,7 @@ public class TestXWPFWordExtractor {
      * w:instrText tag (spec sec. 17.16.23)
      */
     @Test
-    public void testNoFieldCodes() throws IOException {
+    void testNoFieldCodes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FieldCodes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
@@ -288,7 +288,7 @@ public class TestXWPFWordExtractor {
      * with the fldSimple element (spec sec. 17.16.19)
      */
     @Test
-    public void testFldSimpleContent() throws IOException {
+    void testFldSimpleContent() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
@@ -302,7 +302,7 @@ public class TestXWPFWordExtractor {
      * NoClassDefFoundError for CTAnchor in XWPFRun
      */
     @Test
-    public void testDrawings() throws IOException {
+    void testDrawings() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("drawing.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
@@ -314,7 +314,7 @@ public class TestXWPFWordExtractor {
      * Test for basic extraction of SDT content
      */
     @Test
-    public void testSimpleControlContent() throws IOException {
+    void testSimpleControlContent() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
              XWPFWordExtractor ex = new XWPFWordExtractor(doc)) {
             String[] targs = new String[]{
@@ -382,7 +382,7 @@ public class TestXWPFWordExtractor {
      * No Header or Footer in document
      */
     @Test
-    public void testBug55733() throws Exception {
+    void testBug55733() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55733.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -392,7 +392,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testCheckboxes() throws IOException {
+    void testCheckboxes() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
@@ -405,7 +405,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testMultipleBodyBug() throws IOException {
+    void testMultipleBodyBug() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("MultipleBodyBug.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             assertEquals("START BODY 1 The quick, brown fox jumps over a lazy dog. END BODY 1.\n"
@@ -416,7 +416,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testPhonetic() throws IOException {
+    void testPhonetic() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61470.docx")) {
             try (XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
                 //expect: baseText (phoneticText)
@@ -430,7 +430,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testCTPictureBase() throws IOException {
+    void testCTPictureBase() throws IOException {
         //This forces ctpicturebase to be included in the poi-ooxml-lite jar
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61991.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
@@ -440,7 +440,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testGlossary() throws IOException {
+    void testGlossary() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316.dotx")) {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
             String txt = extractor.getText();
@@ -452,7 +452,7 @@ public class TestXWPFWordExtractor {
     }
 
     @Test
-    public void testPartsInTemplate() throws IOException {
+    void testPartsInTemplate() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316b.dotx")) {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
             String txt = extractor.getText();

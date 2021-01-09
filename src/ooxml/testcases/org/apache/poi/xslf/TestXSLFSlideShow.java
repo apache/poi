@@ -57,7 +57,7 @@ public class TestXSLFSlideShow {
 	}
 
     @Test
-	public void testContainsMainContentType() throws Exception {
+	void testContainsMainContentType() throws Exception {
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
 			if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
@@ -68,7 +68,7 @@ public class TestXSLFSlideShow {
 	}
 
     @Test
-	public void testOpen() throws IOException, OpenXML4JException, XmlException {
+	void testOpen() throws IOException, OpenXML4JException, XmlException {
 		// With the finalized uri, should be fine
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		// Check the core
@@ -82,7 +82,7 @@ public class TestXSLFSlideShow {
 	}
 
     @Test
-	public void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
+	void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 
 		// Should have 1 master
@@ -119,7 +119,7 @@ public class TestXSLFSlideShow {
 	}
 
     @Test
-	public void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
+	void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 
 		assertNotNull(xml.getProperties().getCoreProperties());
@@ -138,7 +138,7 @@ public class TestXSLFSlideShow {
 	}
 
     @Test
-    public void testMasterBackground() throws IOException {
+    void testMasterBackground() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFBackground b = ppt.getSlideMasters().get(0).getBackground();
         b.setFillColor(Color.RED);

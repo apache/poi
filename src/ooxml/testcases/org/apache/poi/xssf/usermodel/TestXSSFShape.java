@@ -32,14 +32,14 @@ import org.junit.jupiter.api.Test;
 public final class TestXSSFShape {
 
     @Test
-    public void test58325_one() throws IOException {
+    void test58325_one() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58325_lt.xlsx")) {
             check58325(wb, 1);
         }
     }
 
     @Test
-    public void test58325_three() throws IOException {
+    void test58325_three() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58325_db.xlsx")) {
             check58325(wb, 3);
         }

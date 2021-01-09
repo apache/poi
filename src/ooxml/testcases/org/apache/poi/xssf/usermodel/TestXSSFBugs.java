@@ -1601,7 +1601,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void testBug53798XLSX() throws IOException {
+    void testBug53798XLSX() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx")) {
             File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
             bug53798Work(wb, xlsOutput);
@@ -1610,7 +1610,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Disabled("Shifting rows is not yet implemented in SXSSFSheet")
     @Test
-    public void testBug53798XLSXStream() throws IOException {
+    void testBug53798XLSXStream() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx")) {
             File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
             SXSSFWorkbook wb2 = new SXSSFWorkbook(wb);
@@ -1620,7 +1620,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug53798XLS() throws IOException {
+    void testBug53798XLS() throws IOException {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xls");
         File xlsOutput = TempFile.createTempFile("testBug53798", ".xls");
         bug53798Work(wb, xlsOutput);
@@ -1631,7 +1631,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * SUMIF was throwing a NPE on some formulas
      */
     @Test
-    public void testBug56420SumIfNPE() throws IOException {
+    void testBug56420SumIfNPE() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56420.xlsx")) {
 
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -1793,28 +1793,28 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug56688_1() throws IOException {
+    void testBug56688_1() throws IOException {
         XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_1.xlsx");
         checkValue(excel, "-1.0");  /* Not 0.0 because POI sees date "0" minus one month as invalid date, which is -1! */
         excel.close();
     }
 
     @Test
-    public void testBug56688_2() throws IOException {
+    void testBug56688_2() throws IOException {
         XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_2.xlsx");
         checkValue(excel, "#VALUE!");
         excel.close();
     }
 
     @Test
-    public void testBug56688_3() throws IOException {
+    void testBug56688_3() throws IOException {
         XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_3.xlsx");
         checkValue(excel, "#VALUE!");
         excel.close();
     }
 
     @Test
-    public void testBug56688_4() throws IOException {
+    void testBug56688_4() throws IOException {
         XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_4.xlsx");
 
         Calendar calendar = LocaleUtil.getLocaleCalendar();
@@ -1831,7 +1831,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * to be able to change it
      */
     @Test
-    public void testBug56527() throws IOException {
+    void testBug56527() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFCreationHelper creationHelper = wb.getCreationHelper();
@@ -1911,7 +1911,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test54764WithSAXHelper() throws Exception {
+    void test54764WithSAXHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
         try (ZipFile zip = new ZipFile(testFile)) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
@@ -1924,7 +1924,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test54764WithDocumentHelper() throws Exception {
+    void test54764WithDocumentHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
         try (ZipFile zip = new ZipFile(testFile)) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
@@ -1983,7 +1983,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug57196() throws IOException {
+    void testBug57196() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57196.xlsx")) {
             Sheet sheet = wb.getSheet("Feuil1");
             Row mod = sheet.getRow(1);
@@ -1996,7 +1996,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57196_Detail() throws IOException {
+    void test57196_Detail() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("Sheet1");
         XSSFRow row = sheet.createRow(0);
@@ -2010,7 +2010,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57196_Detail2() throws IOException {
+    void test57196_Detail2() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("Sheet1");
         XSSFRow row = sheet.createRow(0);
@@ -2024,7 +2024,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57196_WorkbookEvaluator() throws IOException {
+    void test57196_WorkbookEvaluator() throws IOException {
         String previousLogger = System.getProperty("org.apache.poi.util.POILogger");
         //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
         //System.setProperty("poi.log.level", "3");
@@ -2179,7 +2179,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void test57165() throws IOException {
+    void test57165() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx")) {
             removeAllSheetsBut(3, wb);
             wb.cloneSheet(0); // Throws exception here
@@ -2192,7 +2192,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57165_create() throws IOException {
+    void test57165_create() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx")) {
             removeAllSheetsBut(3, wb);
             wb.createSheet("newsheet"); // Throws exception here
@@ -2235,7 +2235,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * [  0][  2][  4]
      */
     @Test
-    public void testBug56820_Formula1() throws IOException {
+    void testBug56820_Formula1() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet sh = wb.createSheet();
@@ -2262,7 +2262,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * [  4] <- formula
      */
     @Test
-    public void testBug56820_Formula2() throws IOException {
+    void testBug56820_Formula2() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet sh = wb.createSheet();
@@ -2282,7 +2282,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test56467() throws IOException {
+    void test56467() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("picture.xlsx")) {
             Sheet orig = wb.getSheetAt(0);
             assertNotNull(orig);
@@ -2305,7 +2305,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     @Disabled("XMLBeans namespace mis-match on ooxml-strict files")
-    public void test57699() throws IOException {
+    void test57699() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx")) {
             assertEquals(3, wb.getNumberOfSheets());
             // TODO Check sheet contents
@@ -2320,7 +2320,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug56295_MergeXlslsWithStyles() throws IOException {
+    void testBug56295_MergeXlslsWithStyles() throws IOException {
         XSSFWorkbook xlsToAppendWorkbook = XSSFTestDataSamples.openSampleWorkbook("56295.xlsx");
         XSSFSheet sheet = xlsToAppendWorkbook.getSheetAt(0);
         XSSFRow srcRow = sheet.getRow(0);
@@ -2370,7 +2370,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Excel treats this as not-bulleted, so now do we
      */
     @Test
-    public void testBug57826() throws IOException {
+    void testBug57826() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57826.xlsx");
 
         assertTrue(workbook.getNumberOfSheets() >= 1, "no sheets in workbook");
@@ -2468,7 +2468,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void test56574() throws IOException {
+    void test56574() throws IOException {
         runTest56574(false);
         runTest56574(true);
     }
@@ -2566,7 +2566,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test48962() throws IOException {
+    void test48962() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48962.xlsx")) {
             Sheet sh = wb.getSheetAt(0);
             Row row = sh.getRow(1);
@@ -2591,7 +2591,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test50755_workday_formula_example() throws IOException {
+    void test50755_workday_formula_example() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50755_workday_formula_example.xlsx")) {
             Sheet sheet = wb.getSheet("Sheet1");
             for (Row aRow : sheet) {
@@ -2608,7 +2608,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test51626() throws IOException {
+    void test51626() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51626.xlsx");
         assertNotNull(wb);
         wb.close();
@@ -2629,7 +2629,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test51451() throws IOException {
+    void test51451() throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sh = wb.createSheet();
 
@@ -2651,7 +2651,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test53105() throws IOException {
+    void test53105() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53105.xlsx")) {
             assertNotNull(wb);
 
@@ -2668,7 +2668,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void test58315() throws IOException {
+    void test58315() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58315.xlsx")) {
             Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
             assertNotNull(cell);
@@ -2687,7 +2687,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test55406() throws IOException {
+    void test55406() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55406_Conditional_formatting_sample.xlsx")) {
             Sheet sheet = wb.getSheetAt(0);
             Cell cellA1 = sheet.getRow(0).getCell(0);
@@ -2714,7 +2714,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test51998() throws IOException {
+    void test51998() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51998.xlsx");
 
         Set<String> sheetNames = new HashSet<>();
@@ -2743,7 +2743,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test58731() throws IOException {
+    void test58731() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx")) {
             Sheet sheet = wb.createSheet("Java Books");
 
@@ -2785,7 +2785,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * ! Rule: Package require content types when retrieving a part from a package. [M.1.14]
      */
     @Test
-    public void test58760() throws IOException {
+    void test58760() throws IOException {
         Workbook wb1 = XSSFTestDataSamples.openSampleWorkbook("58760.xlsx");
         assertEquals(1, wb1.getNumberOfSheets());
         assertEquals("Sheet1", wb1.getSheetName(0));
@@ -2797,7 +2797,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57236() throws IOException {
+    void test57236() throws IOException {
         // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
 
         /*
@@ -2852,13 +2852,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Disabled("Creates files for checking results manually, actual values are tested in Test*CellStyle")
     @Test
-    public void test58043() throws IOException {
+    void test58043() throws IOException {
         saveRotatedTextExample(new HSSFWorkbook(), TempFile.createTempFile("rotated", ".xls"));
         saveRotatedTextExample(new XSSFWorkbook(), TempFile.createTempFile("rotated", ".xlsx"));
     }
 
     @Test
-    public void test59132() throws IOException {
+    void test59132() throws IOException {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("59132.xlsx");
         Sheet worksheet = workbook.getSheet("sheet1");
 
@@ -2909,7 +2909,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Disabled("bug 59442")
     @Test
-    public void testSetRGBBackgroundColor() throws IOException {
+    void testSetRGBBackgroundColor() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
 
@@ -2953,7 +2953,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Disabled("currently fails on POI 3.15 beta 2")
     @Test
-    public void test55273() throws IOException {
+    void test55273() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("ExcelTables.xlsx")) {
             Sheet sheet = wb.getSheet("ExcelTable");
 
@@ -2971,7 +2971,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57523() throws IOException {
+    void test57523() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57523.xlsx")) {
             Sheet sheet = wb.getSheet("Attribute Master");
             Row row = sheet.getRow(15);
@@ -3005,7 +3005,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testWorkdayFunction() throws IOException {
+    void testWorkdayFunction() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("59106.xlsx")) {
             XSSFSheet sheet = workbook.getSheet("Test");
             Row row = sheet.getRow(1);
@@ -3020,7 +3020,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     // This bug is currently open. When this bug is fixed, it should not throw an AssertionError
     @Test
-    public void test55076_collapseColumnGroups() throws Exception {
+    void test55076_collapseColumnGroups() throws Exception {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -3103,7 +3103,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test53611() throws IOException {
+    void test53611() throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(1);
@@ -3126,7 +3126,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61798() throws IOException {
+    void test61798() throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(1);
@@ -3220,7 +3220,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61652() throws IOException {
+    void test61652() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61652.xlsx")) {
             Sheet sheet = wb.getSheet("IRPPCalc");
             Row row = sheet.getRow(11);
@@ -3239,7 +3239,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61543() throws IOException {
+    void test61543() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFTable table1 = sheet.createTable(null);
@@ -3262,7 +3262,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  errors like ArrayIndexOutOfBoundsException: -32765
      */
     @Test
-    public void test62108() throws IOException {
+    void test62108() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFRow row = sheet.createRow(0);
@@ -3302,14 +3302,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test61905xlsx() throws IOException {
+    void test61905xlsx() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             checkActiveSheet(wb, XSSFITestDataProvider.instance);
         }
     }
 
     @Test
-    public void test61905xls() throws IOException {
+    void test61905xls() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             checkActiveSheet(wb, HSSFITestDataProvider.instance);
         }
@@ -3327,7 +3327,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug54084Unicode() throws IOException {
+    void testBug54084Unicode() throws IOException {
         // sample XLSX with the same text-contents as the text-file above
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx")) {
 
@@ -3451,7 +3451,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug63509() throws IOException {
+    void testBug63509() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
             XSSFSheet sheet = workbook.createSheet("sheet1");
@@ -3476,13 +3476,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64045() {
+    void test64045() {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         assertThrows(POIXMLException.class, () -> new XSSFWorkbook(file), "Should catch exception as the file is corrupted");
     }
 
     @Test
-    public void test58896WithFile() throws IOException {
+    void test58896WithFile() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58896.xlsx")) {
             Sheet sheet = wb.getSheetAt(0);
             Instant start = Instant.now();
@@ -3505,7 +3505,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug63845() throws IOException {
+    void testBug63845() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -3537,7 +3537,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug63845_2() throws IOException {
+    void testBug63845_2() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("test");
             Row row = sheet.createRow(0);
@@ -3560,7 +3560,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug64508() throws IOException {
+    void testBug64508() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64508.xlsx")) {
             int activeSheet = wb.getActiveSheetIndex();
             Sheet sheet1 = wb.getSheetAt(activeSheet);
@@ -3573,7 +3573,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void testBug64667() throws IOException {
+    void testBug64667() throws IOException {
         //test that an NPE isn't thrown on opening
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64667.xlsx")) {
             int activeSheet = wb.getActiveSheetIndex();
@@ -3585,7 +3585,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void testXLSXinPPT() throws Exception {
+    void testXLSXinPPT() throws Exception {
         assumeFalse(Boolean.getBoolean("scratchpad.ignore"));
 
         try (SlideShow<?,?> ppt = SlideShowFactory.create(
@@ -3630,7 +3630,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64986() {
+    void test64986() {
         XSSFWorkbook w = new XSSFWorkbook();
         XSSFSheet s = w.createSheet();
         XSSFRow r = s.createRow(0);
@@ -3654,7 +3654,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64750() throws IOException {
+    void test64750() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64750.xlsx")) {
             Sheet sheet = wb.getSheet("Sheet1");
             assertEquals(1, sheet.getDataValidations().size());
@@ -3662,14 +3662,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64450() throws IOException {
+    void test64450() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64450.xlsx")) {
             assertNotNull(wb);
         }
     }
 
     @Test
-    public void test64494() throws IOException {
+    void test64494() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             CellStyle styleRight = wb.createCellStyle();
             CellStyle styleLeft = wb.createCellStyle();

@@ -29,7 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 public class TestXDDFTextBodyProperties {
 
     @Test
-    public void testProperties() throws IOException {
+    void testProperties() throws IOException {
         XDDFTextBody text = new XDDFTextBody(null);
         text.initialize();
         XDDFBodyProperties body = text.getBodyProperties();

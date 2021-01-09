@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestNecessaryOOXMLClasses {
 
     @Test
-    public void testProblemClasses() {
+    void testProblemClasses() {
         List<Supplier<XmlObject>> sup = Arrays.asList(
             org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderSize.Factory::newInstance,
             org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter.Factory::newInstance

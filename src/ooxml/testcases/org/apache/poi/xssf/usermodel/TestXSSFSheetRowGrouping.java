@@ -35,7 +35,7 @@ public final class TestXSSFSheetRowGrouping {
     private static final int GROUP_SIZE = 5;
 
     @Test
-    public void test55640() {
+    void test55640() {
         //long startTime = System.currentTimeMillis();
         Workbook wb = new XSSFWorkbook();
         fillData(wb);
@@ -90,7 +90,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     @Test
-    public void test55640reduce1() {
+    void test55640reduce1() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
         sheet.setRowSumsBelow(false);
@@ -119,7 +119,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     @Test
-    public void test55640_VerifyCases() {
+    void test55640_VerifyCases() {
         // NOTE: This is currently based on current behavior of POI, somehow
         // what POI returns in the calls to collapsed/hidden is not fully matching
         // the examples in the spec or I did not fully understand how POI stores the data internally...
@@ -232,7 +232,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     @Test
-    public void test55640_VerifyCasesSpec() {
+    void test55640_VerifyCasesSpec() {
         // NOTE: This is currently based on current behavior of POI, somehow
         // what POI returns in the calls to collapsed/hidden is not fully matching
         // the examples in the spec or I did not fully understand how POI stores the data internally...
@@ -330,7 +330,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     @Test
-    public void test55640working() {
+    void test55640working() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
 
@@ -346,7 +346,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     @Test
-    public void testGroupingTest() throws IOException {
+    void testGroupingTest() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GroupTest.xlsx")) {
 
             assertEquals(31, wb.getSheetAt(0).getLastRowNum());

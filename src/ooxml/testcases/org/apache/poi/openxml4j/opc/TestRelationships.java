@@ -53,7 +53,7 @@ public class TestRelationships {
      * really look also for not yet loaded parts.
      */
     @Test
-    public void testLoadRelationships() throws Exception {
+    void testLoadRelationships() throws Exception {
         InputStream is = openSampleStream("sample.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             logger.log(POILogger.DEBUG, "1: " + pkg);
@@ -76,7 +76,7 @@ public class TestRelationships {
      *  type, then grab from within there by id
      */
     @Test
-    public void testFetchFromCollection() throws Exception {
+    void testFetchFromCollection() throws Exception {
         InputStream is = openSampleStream("ExcelWithHyperlinks.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             PackagePart sheet = pkg.getPart(
@@ -119,7 +119,7 @@ public class TestRelationships {
      *  external hyperlinks. Check we can load these ok.
      */
     @Test
-    public void testLoadExcelHyperlinkRelations() throws Exception {
+    void testLoadExcelHyperlinkRelations() throws Exception {
         InputStream is = openSampleStream("ExcelWithHyperlinks.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             PackagePart sheet = pkg.getPart(
@@ -155,7 +155,7 @@ public class TestRelationships {
      *  then still read them later
      */
     @Test
-    public void testCreateExcelHyperlinkRelations() throws Exception {
+    void testCreateExcelHyperlinkRelations() throws Exception {
     	String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
 	    OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 	    PackagePart sheet = pkg.getPart(
@@ -227,7 +227,7 @@ public class TestRelationships {
     }
 
     @Test
-    public void testCreateRelationsFromScratch() throws Exception {
+    void testCreateRelationsFromScratch() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OPCPackage pkg = OPCPackage.create(baos);
 
@@ -296,7 +296,7 @@ public class TestRelationships {
     }
 
     @Test
-    public void testTargetWithSpecialChars() throws Exception{
+    void testTargetWithSpecialChars() throws Exception{
         OPCPackage pkg;
 
         String filepath = OpenXML4JTestDataSamples.getSampleFileName("50154.xlsx");
@@ -358,7 +358,7 @@ public class TestRelationships {
     }
 
    @Test
-   public void testSelfRelations_bug51187() throws Exception {
+   void testSelfRelations_bug51187() throws Exception {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PackageRelationship rel1;
     	try (OPCPackage pkg = OPCPackage.create(baos)) {
@@ -394,7 +394,7 @@ public class TestRelationships {
     }
 
     @Test
-    public void testTrailingSpacesInURI_53282() throws Exception {
+    void testTrailingSpacesInURI_53282() throws Exception {
         try (InputStream is = openSampleStream("53282.xlsx");
             OPCPackage pkg1 = OPCPackage.open(is)) {
 
@@ -423,7 +423,7 @@ public class TestRelationships {
     }
 
     @Test
-    public void testEntitiesInRels_56164() throws Exception {
+    void testEntitiesInRels_56164() throws Exception {
         try (InputStream is = openSampleStream("PackageRelsHasEntities.ooxml");
             OPCPackage p = OPCPackage.open(is)) {
 

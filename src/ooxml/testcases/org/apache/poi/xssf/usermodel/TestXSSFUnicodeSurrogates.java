@@ -43,7 +43,7 @@ public class TestXSSFUnicodeSurrogates {
         "\uD835\uDF77\uD835\uDF78\uD835\uDF79\uD835\uDF7A";
 
     @Test
-    public void testWriteUnicodeSurrogates() throws IOException {
+    void testWriteUnicodeSurrogates() throws IOException {
         String sheetName = "Sheet1";
         File tf = TempFile.createTempFile("poi-xmlbeans-test", ".xlsx");
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

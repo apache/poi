@@ -37,7 +37,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
     }
 
     @Test
-    public void testOK() throws IOException {
+    void testOK() throws IOException {
         byte[] ok = getBytes("<p><div>Hello There!</div> <div>Tags!</div></p>");
 
         EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(ok);
@@ -47,7 +47,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
     }
 
     @Test
-    public void testProblem() throws IOException {
+    void testProblem() throws IOException {
         byte[] orig = getBytes("<p><div>Hello<br>There!</div> <div>Tags!</div></p>");
         byte[] fixed = getBytes("<p><div>Hello<br/>There!</div> <div>Tags!</div></p>");
 
@@ -61,7 +61,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
      * Checks that we can copy with br tags around the buffer boundaries
      */
     @Test
-    public void testBufferSize() throws IOException {
+    void testBufferSize() throws IOException {
         byte[] orig = getBytes("<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>");
         byte[] fixed = getBytes("<p><div>Hello<br/> <br/>There!</div> <div>Tags!<br/><br/></div></p>");
 

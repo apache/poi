@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestEncryptionInfo {
     @Test
-    public void testEncryptionInfo() throws IOException {
+    void testEncryptionInfo() throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);
@@ -49,7 +49,7 @@ public class TestEncryptionInfo {
     }
 
     @Test
-    public void testEncryptionInfoSHA512() throws Exception {
+    void testEncryptionInfoSHA512() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_sha512.xlsx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);

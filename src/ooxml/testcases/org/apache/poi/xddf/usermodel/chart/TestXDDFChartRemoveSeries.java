@@ -140,7 +140,7 @@ public class TestXDDFChartRemoveSeries {
      * This used to corrupt the workbook but the returned <code>List</code> is unmodifiable.
      */
     @Test
-    public void testRemoveSeries0() {
+    void testRemoveSeries0() {
         procName = "testRemoveSeries0";
         fileName = procName + ".xlsx";
 
@@ -157,7 +157,7 @@ public class TestXDDFChartRemoveSeries {
      * This will not corrupt the workbook.
      */
     @Test
-    public void testBugFixRemoveSeries0() {
+    void testBugFixRemoveSeries0() {
         procName = "testBugFixRemoveSeries0";
         fileName = procName + ".xlsx";
 
@@ -171,7 +171,7 @@ public class TestXDDFChartRemoveSeries {
      * This will not corrupt the workbook.
      */
     @Test
-    public void testBugFixRemoveSeries1() {
+    void testBugFixRemoveSeries1() {
         procName = "testBugFixRemoveSeries1";
         fileName = procName + ".xlsx";
 
@@ -183,7 +183,7 @@ public class TestXDDFChartRemoveSeries {
      * Do not remove any series from the chart.
      */
     @Test
-    public void testDontRemoveSeries() {
+    void testDontRemoveSeries() {
         procName = "testDontRemoveSeries";
         fileName = procName + ".xlsx";
     }

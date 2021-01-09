@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestXSSFOffset {
 
     @Test
-    public void testOffsetWithEmpty23Arguments() throws IOException {
+    void testOffsetWithEmpty23Arguments() throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
             cell.setCellFormula("OFFSET(B1,,)");

@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 public class TestXWPFEndnotes {
 
     @Test
-    public void testCreateEndnotes() throws IOException{
+    void testCreateEndnotes() throws IOException{
         try (XWPFDocument docOut = new XWPFDocument()) {
             XWPFEndnotes footnotes = docOut.createEndnotes();
             assertNotNull(footnotes);
@@ -42,7 +42,7 @@ public class TestXWPFEndnotes {
     }
 
     @Test
-    public void testAddEndnotesToDocument() throws IOException {
+    void testAddEndnotesToDocument() throws IOException {
         try (XWPFDocument docOut = new XWPFDocument()) {
             // NOTE: XWPFDocument.createEndnote() delegates directly
             //       to XWPFFootnotes.createEndnote() so this tests

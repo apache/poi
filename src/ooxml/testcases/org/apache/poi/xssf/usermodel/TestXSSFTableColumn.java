@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public final class TestXSSFTableColumn {
 
     @Test
-    public void testGetColumnName() throws IOException {
+    void testGetColumnName() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");
@@ -46,7 +46,7 @@ public final class TestXSSFTableColumn {
     }
 
     @Test
-    public void testGetColumnIndex() throws IOException {
+    void testGetColumnIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");
@@ -62,7 +62,7 @@ public final class TestXSSFTableColumn {
     }
 
     @Test
-    public void testGetXmlColumnPrs() throws IOException {
+    void testGetXmlColumnPrs() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");

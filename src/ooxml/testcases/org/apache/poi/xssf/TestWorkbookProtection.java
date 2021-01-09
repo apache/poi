@@ -169,7 +169,7 @@ public class TestWorkbookProtection {
 
     @SuppressWarnings("resource")
     @Test
-    public void testHashPassword() throws Exception {
+    void testHashPassword() throws Exception {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             wb.lockRevision();
             wb.setRevisionsPassword("test", HashAlgorithm.sha1);
@@ -184,7 +184,7 @@ public class TestWorkbookProtection {
 
     @SuppressWarnings("resource")
     @Test
-    public void testIntegration() throws Exception {
+    void testIntegration() throws Exception {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             wb.createSheet("Testing purpose sheet");
             assertFalse(wb.isRevisionLocked());
@@ -201,7 +201,7 @@ public class TestWorkbookProtection {
     }
 
     @Test
-    public void testEncryptDecrypt() throws Exception {
+    void testEncryptDecrypt() throws Exception {
         final String password = "abc123";
         final String sheetName = "TestSheet1";
         final String cellValue = "customZipEntrySource";

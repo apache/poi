@@ -40,7 +40,7 @@ public class TestXSSFEvenFooter {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFEvenFooter footer = (XSSFEvenFooter) sheet.getEvenFooter();
         assertNotNull(footer);
         assertNull(footer.getText());

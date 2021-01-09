@@ -85,7 +85,7 @@ public final class TestListParts {
 	 * List all parts of a package.
 	 */
 	@Test
-	public void testListParts() throws InvalidFormatException, IOException {
+	void testListParts() throws InvalidFormatException, IOException {
 		try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
 			 OPCPackage p = OPCPackage.open(is)) {
 

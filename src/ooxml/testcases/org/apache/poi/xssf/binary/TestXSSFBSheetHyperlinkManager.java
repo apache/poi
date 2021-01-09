@@ -33,7 +33,7 @@ public class TestXSSFBSheetHyperlinkManager {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("hyperlink.xlsb"))) {
             XSSFBReader reader = new XSSFBReader(pkg);
             XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) reader.getSheetsData();

@@ -35,7 +35,7 @@ public final class TestPackageThumbnail {
 	 * Test package addThumbnail() method.
 	 */
 	@Test
-	public void testSetProperties() throws Exception {
+	void testSetProperties() throws Exception {
 		String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageThumbnail.docx");
 
 		String imagePath = OpenXML4JTestDataSamples.getSampleFileName("thumbnail.jpg");

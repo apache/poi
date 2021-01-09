@@ -75,7 +75,7 @@ public class TestAgileEncryptionParameters {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testAgileEncryptionModes(CipherAlgorithm ca, HashAlgorithm ha, ChainingMode cm) throws Exception {
+    void testAgileEncryptionModes(CipherAlgorithm ca, HashAlgorithm ha, ChainingMode cm) throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength(ca.jceId);
         assumeTrue(maxKeyLen >= ca.defaultKeySize, "Please install JCE Unlimited Strength Jurisdiction Policy files");
 

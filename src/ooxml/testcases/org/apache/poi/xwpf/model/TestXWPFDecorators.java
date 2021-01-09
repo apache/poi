@@ -54,7 +54,7 @@ public class TestXWPFDecorators {
     }
 
     @Test
-    public void testHyperlink() {
+    void testHyperlink() {
         XWPFParagraph ps;
         XWPFParagraph ph;
         assertEquals(7, simple.getParagraphs().size());
@@ -81,7 +81,7 @@ public class TestXWPFDecorators {
     }
 
     @Test
-    public void testComments() {
+    void testComments() {
         int numComments = 0;
         for (XWPFParagraph p : comments.getParagraphs()) {
             XWPFCommentsDecorator d = new XWPFCommentsDecorator(p, null);

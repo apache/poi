@@ -50,7 +50,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -85,7 +85,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testNew() throws IOException {
+    void testNew() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         //multiple calls of createDrawingPatriarch should return the same instance of XSSFDrawing
@@ -163,7 +163,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testMultipleDrawings() throws IOException{
+    void testMultipleDrawings() throws IOException{
         XSSFWorkbook wb = new XSSFWorkbook();
         for (int i = 0; i < 3; i++) {
             XSSFSheet sheet = wb.createSheet();
@@ -178,7 +178,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testClone() throws Exception{
+    void testClone() throws Exception{
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet1 = wb.getSheetAt(0);
 
@@ -220,7 +220,7 @@ public class TestXSSFDrawing {
      * See Bugzilla 52219.
      */
     @Test
-    public void testRichText() throws IOException {
+    void testRichText() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -256,7 +256,7 @@ public class TestXSSFDrawing {
      *  test that anchor is not null when reading shapes from existing drawings
      */
     @Test
-    public void testReadAnchors() throws IOException {
+    void testReadAnchors() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -294,7 +294,7 @@ public class TestXSSFDrawing {
      * See Bugzilla 54969.
      */
     @Test
-    public void testRichTextFontAndColor() throws IOException {
+    void testRichTextFontAndColor() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -325,7 +325,7 @@ public class TestXSSFDrawing {
      * Test setText single paragraph to ensure backwards compatibility
      */
     @Test
-    public void testSetTextSingleParagraph() throws IOException {
+    void testSetTextSingleParagraph() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -361,7 +361,7 @@ public class TestXSSFDrawing {
      * Test addNewTextParagraph
      */
     @Test
-    public void testAddNewTextParagraph() throws IOException {
+    void testAddNewTextParagraph() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -386,7 +386,7 @@ public class TestXSSFDrawing {
      * Test addNewTextParagraph using RichTextString
      */
     @Test
-    public void testAddNewTextParagraphWithRTS() throws IOException {
+    void testAddNewTextParagraphWithRTS() throws IOException {
     	XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -459,7 +459,7 @@ public class TestXSSFDrawing {
      * Test add multiple paragraphs and retrieve text
      */
     @Test
-    public void testAddMultipleParagraphs() throws IOException {
+    void testAddMultipleParagraphs() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -487,7 +487,7 @@ public class TestXSSFDrawing {
      * Test setting the text, then adding multiple paragraphs and retrieve text
      */
     @Test
-    public void testSetAddMultipleParagraphs() throws IOException {
+    void testSetAddMultipleParagraphs() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -514,7 +514,7 @@ public class TestXSSFDrawing {
      * Test reading text from a textbox in an existing file
      */
     @Test
-    public void testReadTextBox() throws IOException {
+    void testReadTextBox() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -549,7 +549,7 @@ public class TestXSSFDrawing {
      * Test reading multiple paragraphs from a textbox in an existing file
      */
     @Test
-    public void testReadTextBoxParagraphs() throws IOException {
+    void testReadTextBoxParagraphs() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTextBox.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -611,7 +611,7 @@ public class TestXSSFDrawing {
      * Test adding and reading back paragraphs as bullet points
      */
     @Test
-    public void testAddBulletParagraphs() throws IOException {
+    void testAddBulletParagraphs() throws IOException {
 
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
@@ -724,7 +724,7 @@ public class TestXSSFDrawing {
      * Test reading bullet numbering from a textbox in an existing file
      */
     @Test
-    public void testReadTextBox2() throws IOException {
+    void testReadTextBox2() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTextBox2.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -748,7 +748,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testXSSFSimpleShapeCausesNPE56514() throws IOException {
+    void testXSSFSimpleShapeCausesNPE56514() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56514.xlsx");
         XSSFSheet sheet = wb1.getSheetAt(0);
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -766,7 +766,7 @@ public class TestXSSFDrawing {
         }
 
     @Test
-    public void testXSSFSAddPicture() throws Exception {
+    void testXSSFSAddPicture() throws Exception {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         //multiple calls of createDrawingPatriarch should return the same instance of XSSFDrawing
@@ -831,7 +831,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testBug56835CellComment() throws IOException {
+    void testBug56835CellComment() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -847,7 +847,7 @@ public class TestXSSFDrawing {
     }
 
     @Test
-    public void testGroupShape() throws Exception {
+    void testGroupShape() throws Exception {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();

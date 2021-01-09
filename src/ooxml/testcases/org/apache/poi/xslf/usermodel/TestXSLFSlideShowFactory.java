@@ -47,7 +47,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
             "The unit test needs to be updated by deleting the expected exception code. Status and close any related bugs.";
 
     @Test
-    public void testFactoryFromFile() {
+    void testFactoryFromFile() {
         // Remove thrown.* when bug 58779 is resolved
         // In the mean time, this function will modify SampleShow.pptx on disk.
         AssertionError ex = assertThrows(AssertionError.class, () -> testFactoryFromFile(filename),
@@ -56,12 +56,12 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     }
 
     @Test
-    public void testFactoryFromStream() throws Exception {
+    void testFactoryFromStream() throws Exception {
         testFactoryFromStream(filename);
     }
 
     @Test
-    public void testFactoryFromNative()  {
+    void testFactoryFromNative()  {
         // Remove thrown.* when unit test for XSLF SlideShowFactory.create(OPCPackage) is implemented
         UnsupportedOperationException ex = assertThrows(UnsupportedOperationException.class,
             () -> testFactoryFromNative(filename), removeExpectedExceptionMsg
@@ -70,19 +70,19 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     }
 
     @Test
-    public void testFactoryFromProtectedFile() throws Exception {
+    void testFactoryFromProtectedFile() throws Exception {
         File pFile = createProtected();
         testFactoryFromProtectedFile(pFile.getAbsolutePath(), password);
     }
 
     @Test
-    public void testFactoryFromProtectedStream() throws Exception {
+    void testFactoryFromProtectedStream() throws Exception {
         File pFile = createProtected();
         testFactoryFromProtectedStream(pFile.getAbsolutePath(), password);
     }
 
     @Test
-    public void testFactoryFromProtectedNative() throws Exception {
+    void testFactoryFromProtectedNative() throws Exception {
         File pFile = createProtected();
         testFactoryFromProtectedNative(pFile.getAbsolutePath(), password);
     }

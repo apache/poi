@@ -41,7 +41,7 @@ public class TestTableStyles {
      * Test that a built-in style is initialized properly
      */
     @Test
-    public void testBuiltinStyleInit() {
+    void testBuiltinStyleInit() {
         TableStyle style = XSSFBuiltinTableStyle.TableStyleMedium2.getStyle();
         assertNotNull(style, "no style found for Medium2");
         assertNull(style.getStyle(TableStyleType.blankRow), "Should not have style info for blankRow");
@@ -56,7 +56,7 @@ public class TestTableStyles {
     }
 
     @Test
-    public void testCustomStyle() throws Exception {
+    void testCustomStyle() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("tableStyle.xlsx")) {
             Table table = wb.getTable("Table1");
             assertNotNull(table, "missing table");

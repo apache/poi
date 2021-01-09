@@ -49,20 +49,20 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     }
 
     @Test
-    public void testCloneSheetIntStringValidName() {
+    void testCloneSheetIntStringValidName() {
         XSSFSheet cloned = wb.cloneSheet(0, OTHER_SHEET_NAME);
         assertEquals(OTHER_SHEET_NAME, cloned.getSheetName());
         assertEquals(2, wb.getNumberOfSheets());
     }
 
     @Test
-    public void testCloneSheetIntStringInvalidName() {
+    void testCloneSheetIntStringInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> wb.cloneSheet(0, VALID_SHEET_NAME));
         assertEquals(1, wb.getNumberOfSheets());
     }
 
     @Test
-    public void test60512() throws IOException {
+    void test60512() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60512.xlsm");
 
         assertEquals(1, wb.getNumberOfSheets());
@@ -79,7 +79,7 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     }
 
     @Test
-    public void test61605() throws IOException {
+    void test61605() throws IOException {
         try (Workbook template_wb = XSSFTestDataSamples.openSampleWorkbook("61605.xlsx")) {
             Sheet template_sh = template_wb.getSheetAt(0);
             assertNotNull(template_sh);

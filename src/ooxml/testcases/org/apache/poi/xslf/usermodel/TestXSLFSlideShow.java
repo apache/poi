@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestXSLFSlideShow {
     @Test
-    public void testCreateSlide() throws IOException {
+    void testCreateSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -62,7 +62,7 @@ public class TestXSLFSlideShow {
     }
 
     @Test
-    public void testRemoveSlide() throws IOException {
+    void testRemoveSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -87,7 +87,7 @@ public class TestXSLFSlideShow {
     }
 
     @Test
-    public void testDimension() throws IOException {
+    void testDimension() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         Dimension sz = ppt.getPageSize();
         assertEquals(720, sz.width);
@@ -100,7 +100,7 @@ public class TestXSLFSlideShow {
     }
 
     @Test
-    public void testSlideMasters() throws IOException {
+    void testSlideMasters() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         List<XSLFSlideMaster> masters = ppt.getSlideMasters();
         assertEquals(1, masters.size());
@@ -111,7 +111,7 @@ public class TestXSLFSlideShow {
     }
 
     @Test
-    public void testSlideLayout() throws IOException {
+    void testSlideLayout() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         List<XSLFSlideMaster> masters = ppt.getSlideMasters();
         assertEquals(1, masters.size());
@@ -125,7 +125,7 @@ public class TestXSLFSlideShow {
     }
 
     @Test
-    public void testSlideLayoutNames() throws IOException {
+    void testSlideLayoutNames() throws IOException {
         final String[] names = {
                 "Blank", "Title Only", "Section Header", "Picture with Caption", "Title and Content"
                 , "Title Slide", "Title and Vertical Text", "Vertical Title and Text", "Comparison"

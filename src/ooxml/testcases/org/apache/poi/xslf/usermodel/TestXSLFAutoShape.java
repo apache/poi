@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 public class TestXSLFAutoShape {
     @Test
-    public void testTextBodyProperies() throws IOException {
+    void testTextBodyProperies() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -113,7 +113,7 @@ public class TestXSLFAutoShape {
     }
 
     @Test
-    public void testTextParagraph() throws IOException {
+    void testTextParagraph() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());
@@ -216,7 +216,7 @@ public class TestXSLFAutoShape {
     }
 
     @Test
-    public void testTextRun() throws IOException {
+    void testTextRun() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -290,7 +290,7 @@ public class TestXSLFAutoShape {
     }
 
     @Test
-    public void testShapeType() throws IOException {
+    void testShapeType() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 

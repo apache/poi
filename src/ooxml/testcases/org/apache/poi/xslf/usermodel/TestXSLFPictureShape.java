@@ -49,7 +49,7 @@ public class TestXSLFPictureShape {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         XMLSlideShow ppt1 = new XMLSlideShow();
         assertEquals(0, ppt1.getPictureData().size());
         byte[] data1 = new byte[100];
@@ -86,7 +86,7 @@ public class TestXSLFPictureShape {
     }
 
     @Test
-    public void testCreateMultiplePictures() throws Exception {
+    void testCreateMultiplePictures() throws Exception {
         XMLSlideShow ppt1 = new XMLSlideShow();
         XSLFSlide slide1 = ppt1.createSlide();
         XSLFGroupShape group1 = slide1.createGroup();
@@ -139,7 +139,7 @@ public class TestXSLFPictureShape {
     }
 
     @Test
-    public void testImageCaching() throws Exception {
+    void testImageCaching() throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
         byte[] img1 = new byte[]{1,2,3};
         byte[] img2 = new byte[]{3,4,5};
@@ -160,7 +160,7 @@ public class TestXSLFPictureShape {
     }
 
     @Test
-    public void testMerge() throws Exception {
+    void testMerge() throws Exception {
         XMLSlideShow ppt1 = new XMLSlideShow();
         byte[] data1 = new byte[100];
         XSLFPictureData pdata1 = ppt1.addPicture(data1, PictureType.JPEG);
@@ -241,7 +241,7 @@ public class TestXSLFPictureShape {
     }
 
     @Test
-    public void testTiffImageBug59742() throws Exception {
+    void testTiffImageBug59742() throws Exception {
         XMLSlideShow slideShow = new XMLSlideShow();
         final InputStream tiffStream = _slTests.openResourceAsStream("testtiff.tif");
         final byte[] pictureData = IOUtils.toByteArray(tiffStream);

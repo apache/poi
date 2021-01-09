@@ -1308,7 +1308,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreateTwoPivotTablesInOneSheet() throws IOException {
+    void testCreateTwoPivotTablesInOneSheet() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -1326,7 +1326,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreateTwoPivotTablesInTwoSheets() throws IOException {
+    void testCreateTwoPivotTablesInTwoSheets() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -1345,7 +1345,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreatePivotTable() throws IOException {
+    void testCreatePivotTable() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -1358,7 +1358,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreatePivotTableInOtherSheetThanDataSheet() throws IOException {
+    void testCreatePivotTableInOtherSheetThanDataSheet() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet1 = wb.getSheetAt(0);
         XSSFSheet sheet2 = wb.createSheet();
@@ -1374,7 +1374,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreatePivotTableInOtherSheetThanDataSheetUsingAreaReference() throws IOException {
+    void testCreatePivotTableInOtherSheetThanDataSheetUsingAreaReference() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFSheet sheet2 = wb.createSheet("TEST");
@@ -1387,7 +1387,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCreatePivotTableWithConflictingDataSheets() throws IOException {
+    void testCreatePivotTableWithConflictingDataSheets() throws IOException {
         try (XSSFWorkbook wb = setupSheet()) {
             XSSFSheet sheet = wb.getSheetAt(0);
             XSSFSheet sheet2 = wb.createSheet("TEST");
@@ -1399,7 +1399,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testReadFails() throws IOException {
+    void testReadFails() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -1415,7 +1415,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * Feel free to relocated or delete this unit test if it doesn't belong here.
      */
     @Test
-    public void testCreateComment() throws IOException {
+    void testCreateComment() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
         XSSFSheet sheet = wb.createSheet();
@@ -1761,17 +1761,17 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testCopyOneRow() throws IOException {
+    void testCopyOneRow() throws IOException {
         testCopyOneRow("XSSFSheet.copyRows.xlsx");
     }
 
     @Test
-    public void testCopyMultipleRows() throws IOException {
+    void testCopyMultipleRows() throws IOException {
         testCopyMultipleRows("XSSFSheet.copyRows.xlsx");
     }
 
     @Test
-    public void testIgnoredErrors() throws IOException {
+    void testIgnoredErrors() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
@@ -1790,7 +1790,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testIgnoredErrorsMultipleTypes() throws IOException {
+    void testIgnoredErrorsMultipleTypes() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
@@ -1812,7 +1812,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testIgnoredErrorsMultipleCalls() throws IOException {
+    void testIgnoredErrorsMultipleCalls() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
@@ -1888,7 +1888,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * See bug #52425
      */
     @Test
-    public void testInsertCommentsToClonedSheet() throws IOException {
+    void testInsertCommentsToClonedSheet() throws IOException {
     	Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx");
 		CreationHelper helper = wb.getCreationHelper();
 		Sheet sheet2 = wb.createSheet("Sheet 2");
@@ -1932,7 +1932,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     // bug 59687:  XSSFSheet.RemoveRow doesn't handle row gaps properly when removing row comments
     @Test
-    public void testRemoveRowWithCommentAndGapAbove() throws IOException {
+    void testRemoveRowWithCommentAndGapAbove() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("59687.xlsx")) {
             final Sheet sheet = wb.getSheetAt(0);
 
@@ -1949,7 +1949,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testGetHeaderFooterProperties() throws IOException {
+    void testGetHeaderFooterProperties() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
 
@@ -1959,7 +1959,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testSheetForceFormulaRecalculationDefaultValues() throws IOException {
+    void testSheetForceFormulaRecalculationDefaultValues() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
             for (Sheet s : wb) {
                 assertEquals(wb.getForceFormulaRecalculation(),s.getForceFormulaRecalculation());
@@ -1968,7 +1968,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testWorkbookSetForceFormulaRecalculation() throws IOException {
+    void testWorkbookSetForceFormulaRecalculation() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
             wb.setForceFormulaRecalculation(true);
             assertTrue(wb.getForceFormulaRecalculation());
@@ -1976,7 +1976,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void testNotCascadeWorkbookSetForceFormulaRecalculation() throws IOException {
+    void testNotCascadeWorkbookSetForceFormulaRecalculation() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")) {
             // set all sheets to force recalculation
             for (Sheet s : wb) {

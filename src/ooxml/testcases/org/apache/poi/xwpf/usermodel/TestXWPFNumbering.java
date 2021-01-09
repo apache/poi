@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 public class TestXWPFNumbering {
 
     @Test
-    public void testCompareAbstractNum() throws IOException {
+    void testCompareAbstractNum() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             XWPFNumbering numbering = doc.getNumbering();
             BigInteger numId = BigInteger.valueOf(1);
@@ -47,7 +47,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testAddNumberingToDoc() throws IOException {
+    void testAddNumberingToDoc() throws IOException {
         BigInteger abstractNumId = BigInteger.valueOf(1);
         BigInteger numId = BigInteger.valueOf(1);
 
@@ -66,7 +66,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testAddAbstractNumIfAbstractNumNotEqualNull() throws IOException {
+    void testAddAbstractNumIfAbstractNumNotEqualNull() throws IOException {
         BigInteger abstractNumId = BigInteger.valueOf(1);
         XWPFDocument docOut = new XWPFDocument();
         XWPFNumbering numbering = docOut.createNumbering();
@@ -87,7 +87,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testAddAbstractNumIfAbstractNumEqualNull() throws IOException {
+    void testAddAbstractNumIfAbstractNumEqualNull() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFNumbering numbering = docOut.createNumbering();
 
@@ -105,7 +105,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testGetNumIlvl() throws IOException {
+    void testGetNumIlvl() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             BigInteger numIlvl = BigInteger.valueOf(0);
             assertEquals(numIlvl, doc.getParagraphs().get(0).getNumIlvl());
@@ -115,7 +115,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testGetNumFmt() throws IOException {
+    void testGetNumFmt() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             assertEquals("bullet", doc.getParagraphs().get(0).getNumFmt());
             assertEquals("bullet", doc.getParagraphs().get(1).getNumFmt());
@@ -128,7 +128,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testLvlText() throws IOException {
+    void testLvlText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
 
             assertEquals("%1.%2.%3.", doc.getParagraphs().get(12).getNumLevelText());
@@ -143,7 +143,7 @@ public class TestXWPFNumbering {
     }
 
     @Test
-    public void testOverrideList() throws IOException {
+    void testOverrideList() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWOverrides.docx")) {
             XWPFParagraph p = doc.getParagraphs().get(4);
             XWPFNumbering numbering = doc.getNumbering();

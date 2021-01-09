@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 public class TestNecessaryOOXMLClasses {
 
     @Test
-    public void testProblemClasses() {
+    void testProblemClasses() {
         CTRow row = CTRow.Factory.newInstance();
         CTSheetData sheetData = CTSheetData.Factory.newInstance();
         // need to get the inner class that implements the row list class loaded

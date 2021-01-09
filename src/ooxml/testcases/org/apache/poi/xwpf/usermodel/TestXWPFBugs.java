@@ -126,7 +126,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void test56392() throws IOException {
+    void test56392() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx")) {
             assertNotNull(doc);
         }
@@ -136,7 +136,7 @@ public class TestXWPFBugs {
      * Removing a run needs to remove it from both Runs and IRuns
      */
     @Test
-    public void test57829() throws IOException {
+    void test57829() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
             assertNotNull(doc);
             assertEquals(3, doc.getParagraphs().size());
@@ -152,7 +152,7 @@ public class TestXWPFBugs {
    * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
    */
   @Test
-  public void test58618() throws IOException {
+  void test58618() throws IOException {
       try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx")) {
           XWPFParagraph para = (XWPFParagraph) doc.getBodyElements().get(0);
           assertNotNull(para);
@@ -166,7 +166,7 @@ public class TestXWPFBugs {
   }
 
     @Test
-    public void test59378() throws IOException {
+    void test59378() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx")) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             doc.write(out);
@@ -181,7 +181,7 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void test63788() throws IOException {
+    void test63788() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFNumbering numbering = doc.createNumbering();

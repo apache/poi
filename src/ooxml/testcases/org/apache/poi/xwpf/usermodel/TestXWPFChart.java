@@ -41,7 +41,7 @@ public class TestXWPFChart {
      * test method to check charts are not null
      */
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx")) {
             List<XWPFChart> charts = sampleDoc.getCharts();
             assertNotNull(charts);
@@ -63,7 +63,7 @@ public class TestXWPFChart {
      * test method to add chart title and check whether it's set
      */
     @Test
-    public void testChartTitle() throws IOException {
+    void testChartTitle() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx")) {
             List<XWPFChart> charts = sampleDoc.getCharts();
             XWPFChart chart = charts.get(0);
@@ -85,7 +85,7 @@ public class TestXWPFChart {
      * test method to check relationship
      */
     @Test
-    public void testChartRelation() throws IOException {
+    void testChartRelation() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx")) {
             List<XWPFChart> charts = sampleDoc.getCharts();
             XWPFChart chart = charts.get(0);
@@ -99,7 +99,7 @@ public class TestXWPFChart {
      * test method to check adding chart in document
      */
     @Test
-    public void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
+    void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
         try (XWPFDocument document = new XWPFDocument()) {
 
             XWPFChart chart = document.createChart();

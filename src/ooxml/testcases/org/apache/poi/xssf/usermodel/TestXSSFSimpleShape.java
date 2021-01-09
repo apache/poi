@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestXSSFSimpleShape {
     @Test
-    public void testXSSFTextParagraph() throws IOException {
+    void testXSSFTextParagraph() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();

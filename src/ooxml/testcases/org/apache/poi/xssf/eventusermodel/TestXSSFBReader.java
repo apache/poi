@@ -39,7 +39,7 @@ public class TestXSSFBReader {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         List<String> sheetTexts = getSheets("testVarious.xlsb");
 
         assertEquals(1, sheetTexts.size());
@@ -94,7 +94,7 @@ public class TestXSSFBReader {
     }
 
     @Test
-    public void testComments() throws Exception {
+    void testComments() throws Exception {
         List<String> sheetTexts = getSheets("comments.xlsb");
         String xsxml = sheetTexts.get(0);
         assertContains(xsxml,
@@ -119,7 +119,7 @@ public class TestXSSFBReader {
     }
 
     @Test
-    public void testAbsPath() throws Exception {
+    void testAbsPath() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("testVarious.xlsb"))) {
             XSSFBReader r = new XSSFBReader(pkg);
             assertEquals("C:\\Users\\tallison\\Desktop\\working\\xlsb\\", r.getAbsPathMetadata());
@@ -158,7 +158,7 @@ public class TestXSSFBReader {
     }
 
     @Test
-    public void testDate() throws Exception {
+    void testDate() throws Exception {
         List<String> sheets = getSheets("date.xlsb");
         assertEquals(1, sheets.size());
         assertContains(sheets.get(0), "1/12/13");

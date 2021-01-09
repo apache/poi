@@ -50,7 +50,7 @@ public class TestXSLFShapeContainer {
     }
 
     @Test
-    public void testSheet() throws IOException {
+    void testSheet() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSheet sheet = ppt.createSlide();
         verifyContainer(sheet);

@@ -48,7 +48,7 @@ import java.util.List;
 public class TestXWPFTableCell {
 
     @Test
-    public void testSetGetVertAlignment() {
+    void testSetGetVertAlignment() {
         // instantiate the following classes so they'll get picked up by
         // the XmlBean process and added to the jar file. they are required
         // for the following XWPFTableCell methods.
@@ -77,7 +77,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testSetGetColor() {
+    void testSetGetColor() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -97,7 +97,7 @@ public class TestXWPFTableCell {
      * ensure that CTHMerge and CTTcBorders go in poi-ooxml.jar
      */
     @Test
-    public void test54099() {
+    void test54099() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
@@ -116,7 +116,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testCellVerticalAlign() throws Exception{
+    void testCellVerticalAlign() throws Exception{
         try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("59030.docx")) {
             List<XWPFTable> tables = docx.getTables();
             assertEquals(1, tables.size());
@@ -136,7 +136,7 @@ public class TestXWPFTableCell {
     // This is not a very useful test as written. It is not worth the execution time for a unit test
     @Disabled
     @Test
-    public void testCellVerticalAlignShouldNotThrowNPE() throws Exception {
+    void testCellVerticalAlignShouldNotThrowNPE() throws Exception {
         XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");
         List<XWPFTable> tables = docx.getTables();
         for (XWPFTable table : tables) {
@@ -152,7 +152,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testCellGetSetWidth() throws Exception {
+    void testCellGetSetWidth() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable();
         XWPFTableRow tr = table.createRow();
@@ -166,7 +166,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testAddParagraph() throws Exception {
+    void testAddParagraph() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable();
         XWPFTableRow tr = table.createRow();
@@ -186,7 +186,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testRemoveParagraph() throws Exception {
+    void testRemoveParagraph() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable();
         XWPFTableRow tr = table.createRow();
@@ -219,7 +219,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testRemoveTable() throws Exception {
+    void testRemoveTable() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable();
         XWPFTableRow tr = table.createRow();
@@ -249,7 +249,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testBug63624() throws Exception {
+    void testBug63624() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
         XWPFTableRow row = table.getRow(0);
@@ -263,7 +263,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void test63624() {
+    void test63624() {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
         XWPFTableRow row = table.getRow(0);

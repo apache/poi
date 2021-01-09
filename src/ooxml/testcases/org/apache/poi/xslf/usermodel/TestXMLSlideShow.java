@@ -56,7 +56,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
     }
 
     @Test
-    public void testContainsMainContentType() throws Exception {
+    void testContainsMainContentType() throws Exception {
         boolean found = false;
         for (PackagePart part : pack.getParts()) {
             if (part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
@@ -67,7 +67,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
     }
 
     @Test
-    public void testOpen() throws Exception {
+    void testOpen() throws Exception {
         // With the finalised uri, should be fine
         XMLSlideShow xml = new XMLSlideShow(pack);
         // Check the core
@@ -82,7 +82,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSlideBasics() throws IOException {
+    void testSlideBasics() throws IOException {
         XMLSlideShow xml = new XMLSlideShow(pack);
 
         // Should have 1 master
@@ -126,7 +126,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
     }
 
     @Test
-    public void testMetadataBasics() throws IOException {
+    void testMetadataBasics() throws IOException {
         XMLSlideShow xml = new XMLSlideShow(pack);
 
         assertNotNull(xml.getProperties().getCoreProperties());
@@ -143,7 +143,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParag
     }
 
     @Test
-    public void testComments() throws Exception {
+    void testComments() throws Exception {
         // Default sample file has none
         XMLSlideShow xml = new XMLSlideShow(pack);
 

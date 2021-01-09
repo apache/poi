@@ -46,7 +46,7 @@ public class TestXSLFPowerPointExtractor {
 	 * Get text out of the simple file
 	 */
     @Test
-    public void testGetSimpleText() throws IOException {
+    void testGetSimpleText() throws IOException {
         try (XMLSlideShow xmlA = openPPTX("sample.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xmlA)) {
 
@@ -158,7 +158,7 @@ public class TestXSLFPowerPointExtractor {
 	}
 
     @Test
-    public void testGetComments() throws IOException {
+    void testGetComments() throws IOException {
         try (XMLSlideShow xml = openPPTX("45545_Comment.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             extractor.setCommentsByDefault(true);
@@ -176,7 +176,7 @@ public class TestXSLFPowerPointExtractor {
     }
 
     @Test
-	public void testGetMasterText() throws Exception {
+	void testGetMasterText() throws Exception {
 	    try (XMLSlideShow xml = openPPTX("WithMaster.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             extractor.setSlidesByDefault(true);
@@ -213,7 +213,7 @@ public class TestXSLFPowerPointExtractor {
 	}
 
 	@Test
-	public void testTable() throws Exception {
+	void testTable() throws Exception {
         try (XMLSlideShow xml = openPPTX("present1.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
 
@@ -231,7 +231,7 @@ public class TestXSLFPowerPointExtractor {
      *  well as from the normal file
      */
     @Test
-    public void testDifferentSubformats() throws Exception {
+    void testDifferentSubformats() throws Exception {
         String[] extensions = new String[] {
             "pptx", "pptm", "ppsm", "ppsx", "thmx",
             // "xps" - Doesn't have a core document
@@ -260,7 +260,7 @@ public class TestXSLFPowerPointExtractor {
     }
 
     @Test
-    public void test45541() throws IOException {
+    void test45541() throws IOException {
         // extract text from a powerpoint that has a header in the notes-element
         final File headerFile = slTests.getFile("45541_Header.pptx");
         //noinspection rawtypes

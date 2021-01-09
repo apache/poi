@@ -39,7 +39,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
     //TODO combine testRepeatingRowsAndColums() for HSSF and XSSF
     @Test
-    public void testRepeatingRowsAndColums() throws Exception {
+    void testRepeatingRowsAndColums() throws Exception {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
         XSSFWorkbook wb = new XSSFWorkbook();
@@ -100,7 +100,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
     }
 
     @Test
-    public void testSetNameName() throws Exception {
+    void testSetNameName() throws Exception {
         // Test that renaming named ranges doesn't break our new named range map
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet("First Sheet");
@@ -135,7 +135,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
     //github-55
     @Test
-    public void testSetNameNameCellAddress() throws IOException {
+    void testSetNameNameCellAddress() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet("First Sheet");
         XSSFName name = wb.createName();

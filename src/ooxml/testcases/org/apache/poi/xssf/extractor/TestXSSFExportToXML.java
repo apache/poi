@@ -56,7 +56,7 @@ import org.xml.sax.SAXParseException;
 public final class TestXSSFExportToXML {
 
     @Test
-    public void testExportToXML() throws Exception {
+    void testExportToXML() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx")) {
 
             boolean found = false;
@@ -103,7 +103,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testExportToXMLInverseOrder() throws Exception {
+    void testExportToXMLInverseOrder() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXmlMappings-inverse-order.xlsx")) {
 
@@ -151,7 +151,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testXPathOrdering() throws IOException {
+    void testXPathOrdering() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXmlMappings-inverse-order.xlsx")) {
 
@@ -175,7 +175,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testMultiTable() throws Exception {
+    void testMultiTable() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
 
@@ -220,7 +220,7 @@ public final class TestXSSFExportToXML {
 
     @Test
     @Disabled(value="Fails, but I don't know if it is ok or not...")
-    public void testExportToXMLSingleAttributeNamespace() throws Exception {
+    void testExportToXMLSingleAttributeNamespace() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
 
             for (XSSFMap map : wb.getCustomXMLMappings()) {
@@ -233,7 +233,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void test55850ComplexXmlExport() throws Exception {
+    void test55850ComplexXmlExport() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55850.xlsx")) {
 
             boolean found = false;
@@ -277,7 +277,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testFormulaCells_Bugzilla_55927() throws Exception {
+    void testFormulaCells_Bugzilla_55927() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55927.xlsx")) {
 
             boolean found = false;
@@ -312,7 +312,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testFormulaCells_Bugzilla_55926() throws Exception {
+    void testFormulaCells_Bugzilla_55926() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55926.xlsx")) {
 
             boolean found = false;
@@ -351,7 +351,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testXmlExportIgnoresEmptyCells_Bugzilla_55924() throws Exception {
+    void testXmlExportIgnoresEmptyCells_Bugzilla_55924() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55924.xlsx")) {
 
             boolean found = false;
@@ -387,7 +387,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testXmlExportSchemaWithXSAllTag_Bugzilla_56169() throws Exception {
+    void testXmlExportSchemaWithXSAllTag_Bugzilla_56169() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56169.xlsx")) {
 
             for (XSSFMap map : wb.getCustomXMLMappings()) {
@@ -424,7 +424,7 @@ public final class TestXSSFExportToXML {
 
     @SuppressWarnings("EqualsWithItself")
     @Test
-    public void testXmlExportCompare_Bug_55923() throws Exception {
+    void testXmlExportCompare_Bug_55923() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx")) {
 
             boolean found = false;
@@ -455,7 +455,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testXmlExportSchemaOrderingBug_Bugzilla_55923() throws Exception {
+    void testXmlExportSchemaOrderingBug_Bugzilla_55923() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx")) {
 
             boolean found = false;
@@ -509,7 +509,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testExportDataTypes() throws Exception {
+    void testExportDataTypes() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx")) {
 
             Sheet sheet = wb.getSheetAt(0);
@@ -565,7 +565,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testValidateFalse() throws Exception {
+    void testValidateFalse() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx")) {
             boolean found = false;
             for (POIXMLDocumentPart p : wb.getRelations()) {
@@ -596,7 +596,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testRefElementsInXmlSchema_Bugzilla_56730() throws Exception {
+    void testRefElementsInXmlSchema_Bugzilla_56730() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56730.xlsx")) {
 
             boolean found = false;
@@ -631,7 +631,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testBug59026() throws Exception {
+    void testBug59026() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59026.xlsx")) {
             Collection<XSSFMap> mappings = wb.getCustomXMLMappings();
             assertTrue(mappings.size() > 0);
@@ -646,7 +646,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testExportTableWithNonMappedColumn_Bugzilla_61281() throws Exception {
+    void testExportTableWithNonMappedColumn_Bugzilla_61281() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61281.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
@@ -660,7 +660,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    public void testXXEInSchema() throws Exception {
+    void testXXEInSchema() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("xxe_in_schema.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);

@@ -61,7 +61,7 @@ public class TestXSLFTableRow {
     }
 
     @Test
-    public void testHeight() {
+    void testHeight() {
         final double h = 10.0;
         row.setHeight(h);
         assertEquals(h, row.getHeight(), 1e-16);
@@ -76,7 +76,7 @@ public class TestXSLFTableRow {
     }
 
     @Test
-    public void testIterator() {
+    void testIterator() {
         int i = 0;
         for (XSLFTableCell cell : row) {
             i++;

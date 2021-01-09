@@ -34,7 +34,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 public final class TestXWPFHeader {
 
     @Test
-    public void testSimpleHeader() throws IOException {
+    void testSimpleHeader() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerFooter.docx")) {
 
             XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
@@ -47,7 +47,7 @@ public final class TestXWPFHeader {
     }
 
     @Test
-    public void testImageInHeader() throws IOException {
+    void testImageInHeader() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx")) {
 
             XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
@@ -60,7 +60,7 @@ public final class TestXWPFHeader {
     }
 
     @Test
-    public void testSetHeader() throws IOException {
+    void testSetHeader() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
             // no header is set (yet)
             XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
@@ -181,7 +181,7 @@ public final class TestXWPFHeader {
     }
 
     @Test
-    public void testSetWatermark() throws IOException {
+    void testSetWatermark() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
 
             // No header is set (yet)
@@ -206,7 +206,7 @@ public final class TestXWPFHeader {
         }
     }
 
-    public void testSetWatermarkOnEmptyDoc() throws IOException {
+    void testSetWatermarkOnEmptyDoc() throws IOException {
         try (XWPFDocument sampleDoc = new XWPFDocument()) {
 
             // No header is set (yet)
@@ -233,25 +233,25 @@ public final class TestXWPFHeader {
 
     @Disabled
     @Test
-    public void testAddPictureData() {
+    void testAddPictureData() {
         // TODO
     }
 
     @Disabled
     @Test
-    public void testGetAllPictures() {
+    void testGetAllPictures() {
         // TODO
     }
 
     @Disabled
     @Test
-    public void testGetAllPackagePictures() {
+    void testGetAllPackagePictures() {
         // TODO
     }
 
     @Disabled
     @Test
-    public void testGetPictureDataById() {
+    void testGetPictureDataById() {
         // TODO
     }
 

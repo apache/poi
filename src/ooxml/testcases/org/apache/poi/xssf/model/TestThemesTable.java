@@ -68,7 +68,7 @@ public class TestThemesTable {
     };
 
     @Test
-    public void testThemesTableColors() throws Exception {
+    void testThemesTableColors() throws Exception {
         // Load our two test workbooks
         String testFileSimple = "Themes.xlsx";
         XSSFWorkbook simple = XSSFTestDataSamples.openSampleWorkbook(testFileSimple);
@@ -247,7 +247,7 @@ public class TestThemesTable {
 
     @Test
     @SuppressWarnings("resource")
-    public void testAddNew() {
+    void testAddNew() {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
         assertNull(wb.getTheme());

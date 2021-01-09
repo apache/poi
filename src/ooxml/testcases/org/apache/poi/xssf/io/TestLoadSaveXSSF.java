@@ -36,7 +36,7 @@ public class TestLoadSaveXSSF {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testLoadSample() throws Exception {
+    void testLoadSample() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("sample.xlsx"))) {
             assertEquals(3, workbook.getNumberOfSheets());
             assertEquals("Sheet1", workbook.getSheetName(0));
@@ -51,7 +51,7 @@ public class TestLoadSaveXSSF {
     }
 
     @Test
-    public void testLoadStyles() throws Exception {
+    void testLoadStyles() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("styles.xlsx"))) {
             Sheet sheet = workbook.getSheetAt(0);
             Row row = sheet.getRow(0);
@@ -62,7 +62,7 @@ public class TestLoadSaveXSSF {
     }
 
     @Test
-    public void testLoadPictures() throws Exception {
+    void testLoadPictures() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("picture.xlsx"))) {
             List<XSSFPictureData> pictures = workbook.getAllPictures();
             assertEquals(1, pictures.size());

@@ -711,7 +711,7 @@ public final class TestPackage {
     }
 
 	@Test
-	public void testZipEntityExpansionTerminates() {
+	void testZipEntityExpansionTerminates() {
 		IllegalStateException ex = assertThrows(
 			IllegalStateException.class,
 			() -> openXmlBombFile("poc-shared-strings.xlsx")
@@ -720,7 +720,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void testZipEntityExpansionSharedStringTableEvents() {
+	void testZipEntityExpansionSharedStringTableEvents() {
 		boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
 		ExtractorFactory.setThreadPrefersEventExtractors(true);
 		try {
@@ -736,7 +736,7 @@ public final class TestPackage {
 
 
 	@Test
-	public void testZipEntityExpansionExceedsMemory() {
+	void testZipEntityExpansionExceedsMemory() {
 		IOException ex = assertThrows(
 			IOException.class,
 			() -> openXmlBombFile("poc-xmlbomb.xlsx")
@@ -746,7 +746,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void testZipEntityExpansionExceedsMemory2() {
+	void testZipEntityExpansionExceedsMemory2() {
 		IOException ex = assertThrows(
 			IOException.class,
 			() -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
@@ -845,7 +845,7 @@ public final class TestPackage {
 	}
 
     @Test
-    public void testConstructors() throws IOException {
+    void testConstructors() throws IOException {
         // verify the various ways to construct a ZipSecureFile
         File file = getSampleFile("sample.xlsx");
         try (ZipSecureFile zipFile = new ZipSecureFile(file)) {
@@ -858,7 +858,7 @@ public final class TestPackage {
     }
 
     @Test
-    public void testMaxTextSize() {
+    void testMaxTextSize() {
         long before = ZipSecureFile.getMaxTextSize();
         try {
             ZipSecureFile.setMaxTextSize(12345);
@@ -870,7 +870,7 @@ public final class TestPackage {
 
     // bug 60128
     @Test
-    public void testCorruptFile() {
+    void testCorruptFile() {
         File file = getSampleFile("invalid.xlsx");
         assertThrows(NotOfficeXmlFileException.class, () -> OPCPackage.open(file, PackageAccess.READ));
     }
@@ -881,7 +881,7 @@ public final class TestPackage {
 
 	// bug 61381
     @Test
-    public void testTooShortFilterStreams() throws IOException {
+    void testTooShortFilterStreams() throws IOException {
 		for (String file : new String[]{"sample.xlsx","SampleSS.xls"}) {
 			for (CountingStream cs : new CountingStream[]{PushbackInputStream::new, BufferedInputStream::new}) {
 				try (InputStream is = cs.create(xlsSamples.openResourceAsStream(file), 2);
@@ -893,7 +893,7 @@ public final class TestPackage {
     }
 
 	@Test
-	public void testBug56479() throws Exception {
+	void testBug56479() throws Exception {
 		try (InputStream is = openSampleStream("dcterms_bug_56479.zip");
 			OPCPackage p = OPCPackage.open(is)) {
 
@@ -933,7 +933,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void testClosingStreamOnException() throws IOException {
+	void testClosingStreamOnException() throws IOException {
 		File tmp = File.createTempFile("poi-test-truncated-zip", "");
 
 		// create a corrupted zip file by truncating a valid zip file to the first 100 bytes
@@ -959,34 +959,34 @@ public final class TestPackage {
 	 * See bug #60128 for more
 	 */
 	@Test
-	public void testTidyStreamOnInvalidFile1() throws Exception {
+	void testTidyStreamOnInvalidFile1() throws Exception {
 		openInvalidFile("SampleSS.ods", false);
 	}
 
 	@Test
-	public void testTidyStreamOnInvalidFile2() throws Exception {
+	void testTidyStreamOnInvalidFile2() throws Exception {
 		openInvalidFile("SampleSS.ods", true);
 	}
 
 	@Test
-	public void testTidyStreamOnInvalidFile3() throws Exception {
+	void testTidyStreamOnInvalidFile3() throws Exception {
 		openInvalidFile("SampleSS.txt", false);
 	}
 
 	@Test
-	public void testTidyStreamOnInvalidFile4() throws Exception {
+	void testTidyStreamOnInvalidFile4() throws Exception {
 		openInvalidFile("SampleSS.txt", true);
 	}
 
 	@Test
-	public void testBug62592() throws Exception {
+	void testBug62592() throws Exception {
 		try (InputStream is = openSampleStream("62592.thmx")) {
 			assertThrows(InvalidFormatException.class, () -> OPCPackage.open(is));
 		}
 	}
 
 	@Test
-	public void testBug62592SequentialCallsToGetParts() throws Exception {
+	void testBug62592SequentialCallsToGetParts() throws Exception {
 		//make absolutely certain that sequential calls don't throw InvalidFormatExceptions
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		try (OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ)) {
@@ -996,7 +996,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void testDoNotCloseStream() throws IOException {
+	void testDoNotCloseStream() throws IOException {
 		// up to JDK 10 we did use Mockito here, but OutputStream is
 		// an abstract class and fails mocking with some changes in JDK 11
 		// so we use a simple empty output stream implementation instead
@@ -1047,7 +1047,7 @@ public final class TestPackage {
 
 	@SuppressWarnings("UnstableApiUsage")
 	@Test
-	public void testBug63029() throws Exception {
+	void testBug63029() throws Exception {
 		File testFile = getSampleFile("sample.docx");
 		File tmpFile = getOutputFile("Bug63029.docx");
 		Files.copy(testFile, tmpFile);

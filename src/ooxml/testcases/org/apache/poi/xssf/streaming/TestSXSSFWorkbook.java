@@ -456,7 +456,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      * so we use shared strings
      */
     @Test
-    public void testZipBombNotTriggeredOnUselessContent() throws IOException {
+    void testZipBombNotTriggeredOnUselessContent() throws IOException {
         SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true);
         SXSSFSheet s = swb.createSheet();
         char[] useless = new char[32767];
@@ -520,7 +520,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
 
     @Test
-    public void test56557() throws IOException {
+    void test56557() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
 
         // Using streaming XSSFWorkbook makes the output file invalid

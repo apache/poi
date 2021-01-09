@@ -558,7 +558,7 @@ public class TestXSLFBugs {
      * that image10.foo isn't between image1.foo and image2.foo
      */
     @Test
-    public void test57552() throws Exception {
+    void test57552() throws Exception {
         XMLSlideShow ss = new XMLSlideShow();
         for (String s : new String[]{"Slide1", "Slide2"}) {
             ss.createSlide().createTextBox().setText(s);
@@ -888,7 +888,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void test60810() throws IOException {
+    void test60810() throws IOException {
         XMLSlideShow ppt = openSampleDocument("60810.pptx");
         for (XSLFSlide slide : ppt.getSlides()) {
             XSLFNotes notesSlide = ppt.getNotesSlide(slide);
@@ -899,7 +899,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void test60042() throws IOException {
+    void test60042() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("60042.pptx")) {
             ppt.removeSlide(0);
             ppt.createSlide();
@@ -908,7 +908,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void test61515() throws IOException {
+    void test61515() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("61515.pptx")) {
             ppt.removeSlide(0);
             assertEquals(1, ppt.createSlide().getRelations().size());
@@ -921,7 +921,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void testAptia() throws IOException {
+    void testAptia() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("aptia.pptx");
              XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());
@@ -930,7 +930,7 @@ public class TestXSLFBugs {
 
     @Disabled
     @Test
-    public void testDivinoRevelado() throws IOException {
+    void testDivinoRevelado() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("Divino_Revelado.pptx");
              XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());

@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 public class TestXWPFTable {
 
     @Test
-    public void testConstructor() throws IOException {
+    void testConstructor() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
             XWPFTable xtab = new XWPFTable(ctTable, doc);
@@ -65,7 +65,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testTblGrid() throws IOException {
+    void testTblGrid() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
             CTTblGrid cttblgrid = ctTable.addNewTblGrid();
@@ -80,7 +80,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testGetText() throws IOException {
+    void testGetText() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl table = CTTbl.Factory.newInstance();
             CTRow row = table.addNewTr();
@@ -96,7 +96,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testCreateRow() throws IOException {
+    void testCreateRow() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             CTTbl table = CTTbl.Factory.newInstance();
@@ -128,7 +128,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetWidth() throws IOException {
+    void testSetGetWidth() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFTable xtab = doc.createTable();
@@ -191,7 +191,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetHeight() throws IOException {
+    void testSetGetHeight() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             CTTbl table = CTTbl.Factory.newInstance();
@@ -204,7 +204,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetMargins() throws IOException {
+    void testSetGetMargins() throws IOException {
         // instantiate the following class so it'll get picked up by
         // the XmlBean process and added to the jar file. it's required
         // for the following XWPFTable methods.
@@ -229,7 +229,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetHBorders() throws IOException {
+    void testSetGetHBorders() throws IOException {
         // instantiate the following classes so they'll get picked up by
         // the XmlBean process and added to the jar file. they are required
         // for the following XWPFTable methods.
@@ -298,7 +298,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetVBorders() throws IOException {
+    void testSetGetVBorders() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -364,7 +364,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetTopBorders() throws IOException {
+    void testSetGetTopBorders() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -403,7 +403,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetBottomBorders() throws IOException {
+    void testSetGetBottomBorders() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -442,7 +442,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetLeftBorders() throws IOException {
+    void testSetGetLeftBorders() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -481,7 +481,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetRightBorders() throws IOException {
+    void testSetGetRightBorders() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -520,7 +520,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetRowBandSize() throws IOException {
+    void testSetGetRowBandSize() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
             XWPFTable table = new XWPFTable(ctTable, doc);
@@ -531,7 +531,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetColBandSize() throws IOException {
+    void testSetGetColBandSize() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
             XWPFTable table = new XWPFTable(ctTable, doc);
@@ -542,7 +542,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testCreateTable() throws Exception {
+    void testCreateTable() throws Exception {
         // open an empty document
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
 
@@ -577,7 +577,7 @@ public class TestXWPFTable {
     }
 
     @Test
-    public void testSetGetTableAlignment() throws IOException {
+    void testSetGetTableAlignment() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFTable tbl = doc.createTable(1, 1);
             tbl.setTableAlignment(TableRowAlign.LEFT);

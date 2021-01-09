@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestXWPFComment {
     @Test
-    public void testText() throws IOException {
+    void testText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("comment.docx")) {
             assertEquals(1, doc.getComments().length);
             XWPFComment comment = doc.getComments()[0];

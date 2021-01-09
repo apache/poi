@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
 public class TestNecessaryOOXMLClasses {
 
     @Test
-    public void testProblemClasses() {
+    void testProblemClasses() {
         CTTblLayoutType ctTblLayoutType = CTTblLayoutType.Factory.newInstance();
         assertNotNull(ctTblLayoutType);
         STTblLayoutType stTblLayoutType = STTblLayoutType.Factory.newInstance();

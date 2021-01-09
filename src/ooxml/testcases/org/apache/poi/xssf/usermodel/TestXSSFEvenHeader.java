@@ -40,7 +40,7 @@ public class TestXSSFEvenHeader {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFEvenHeader header = (XSSFEvenHeader) sheet.getEvenHeader();
         assertNotNull(header);
         assertNull(header.getText());

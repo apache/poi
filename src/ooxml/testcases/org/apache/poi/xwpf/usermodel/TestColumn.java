@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestColumn {
     @Test
-    public void testAddNewColWithCorrectAmountOfColumns() throws IOException {
+    void testAddNewColWithCorrectAmountOfColumns() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(2, 4);
         table.addNewCol();
@@ -37,7 +37,7 @@ public class TestColumn {
     }
 
     @Test
-    public void testAddNewColWithEmptyTable() throws IOException {
+    void testAddNewColWithEmptyTable() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(0, 0);
         table.removeRow(0);
@@ -50,7 +50,7 @@ public class TestColumn {
     }
 
     @Test
-    public void testAddNewColWithDocx() throws Exception {
+    void testAddNewColWithDocx() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("TestTableColumns.docx")) {
             XWPFTable table = doc.getTables().get(0);
@@ -64,7 +64,7 @@ public class TestColumn {
     }
 
     @Test
-    public void testAddNewColWhenRowsHaveDifferentNumbersOfColumnsWithDocx() throws Exception {
+    void testAddNewColWhenRowsHaveDifferentNumbersOfColumnsWithDocx() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("TestTableColumns.docx")) {
             XWPFTable table = doc.getTables().get(1);

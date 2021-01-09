@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 public class TestXSLFShape {
 
     @Test
-    public void testReadTextShapes() throws IOException {
+    void testReadTextShapes() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         List<XSLFSlide> slides = ppt.getSlides();
 
@@ -84,7 +84,7 @@ public class TestXSLFShape {
     }
 
     @Test
-    public void testProblemFile() throws IOException {
+    void testProblemFile() throws IOException {
         try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("ececapstonespring2012.pptx")) {
             List<XSLFSlide> slides = ppt.getSlides();
             assertEquals(24, slides.size());
@@ -92,7 +92,7 @@ public class TestXSLFShape {
     }
 
     @Test
-    public void testCreateShapes() throws IOException {
+    void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());

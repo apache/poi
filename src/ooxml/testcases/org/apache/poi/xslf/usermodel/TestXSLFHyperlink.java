@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSLFHyperlink {
 
     @Test
-    public void testRead() throws IOException{
+    void testRead() throws IOException{
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide = ppt.getSlides().get(4);
@@ -61,7 +61,7 @@ public class TestXSLFHyperlink {
     }
 
     @Test
-    public void testCreate() throws IOException, InvalidFormatException  {
+    void testCreate() throws IOException, InvalidFormatException  {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();
         XSLFSlide slide2 = ppt.createSlide();

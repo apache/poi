@@ -51,7 +51,7 @@ public final class TestContentType {
      */
     @ParameterizedTest
     @ValueSource(strings = {"text/xml", "application/pgp-key", "application/vnd.hp-PCLXL", "application/vnd.lotus-1-2-3"})
-    public void testContentTypeValidation(String contentType) throws InvalidFormatException {
+    void testContentTypeValidation(String contentType) throws InvalidFormatException {
         assertDoesNotThrow(() -> new ContentType(contentType));
     }
 
@@ -78,7 +78,7 @@ public final class TestContentType {
         "text[/xml", "text]/xml", "text?/xml", "tex=t/xml",
         "te{xt/xml", "tex}t/xml", "te xt/xml",
         "text\u0009/xml", "text xml", " text/xml "})
-    public void testContentTypeValidationFailure(String contentType) {
+    void testContentTypeValidationFailure(String contentType) {
         assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
             "Must have fail for content type: '" + contentType + "' !");
     }
@@ -94,7 +94,7 @@ public final class TestContentType {
         "text/xml;a=b;c=d", "text/xml;key1=param1;key2=param2",
         "application/pgp-key;version=\"2\"",
         "application/x-resqml+xml;version=2.0;type=obj_global2dCrs"})
-    public void testContentTypeParam(String contentType) {
+    void testContentTypeParam(String contentType) {
         assertDoesNotThrow(() -> new ContentType(contentType));
     }
 
@@ -108,7 +108,7 @@ public final class TestContentType {
         "mail/toto;titi = tata", // spaces not allowed
         "text/\u0080" // characters above ASCII are not allowed
     })
-    public void testContentTypeParameterFailure(String contentType) {
+    void testContentTypeParameterFailure(String contentType) {
         assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
             "Must have fail for content type: '" + contentType + "' !");
     }
@@ -120,7 +120,7 @@ public final class TestContentType {
      */
     @ParameterizedTest
     @ValueSource(strings = {"text/xml(comment)"})
-    public void testContentTypeCommentFailure(String contentType) {
+    void testContentTypeCommentFailure(String contentType) {
         assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
             "Must have fail for content type: '" + contentType + "' !");
     }
@@ -131,7 +131,7 @@ public final class TestContentType {
      * (expected = InvalidFormatException.class)
      */
     @Test
-    public void testFileWithContentTypeEntities() throws Exception {
+    void testFileWithContentTypeEntities() throws Exception {
         try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasEntities.ooxml")) {
             if (isOldXercesActive()) {
                 OPCPackage.open(is);
@@ -146,7 +146,7 @@ public final class TestContentType {
      * parameters on a content type
      */
     @Test
-    public void testFileWithContentTypeParams() throws Exception {
+    void testFileWithContentTypeParams() throws Exception {
         try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasParameters.ooxml");
              OPCPackage p = OPCPackage.open(is)) {
 

@@ -91,7 +91,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void test_EmptySheet_NoException(boolean useMergedCells) {
+    void test_EmptySheet_NoException(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
@@ -103,7 +103,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void test_WindowSizeDefault_AllRowsFitIntoWindowSize(boolean useMergedCells) {
+    void test_WindowSizeDefault_AllRowsFitIntoWindowSize(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
@@ -121,7 +121,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void test_WindowSizeEqualsOne_ConsiderFlushedRows(boolean useMergedCells) {
+    void test_WindowSizeEqualsOne_ConsiderFlushedRows(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
@@ -139,7 +139,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void test_WindowSizeEqualsOne_lastRowIsNotWidest(boolean useMergedCells) {
+    void test_WindowSizeEqualsOne_lastRowIsNotWidest(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
@@ -157,7 +157,7 @@ public class TestSXSSFSheetAutoSizeColumn {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void test_WindowSizeEqualsOne_lastRowIsWidest(boolean useMergedCells) {
+    void test_WindowSizeEqualsOne_lastRowIsWidest(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
@@ -176,7 +176,7 @@ public class TestSXSSFSheetAutoSizeColumn {
     // fails only for useMergedCell=true
     @ParameterizedTest
     @MethodSource("data")
-    public void test_WindowSizeEqualsOne_flushedRowHasMergedCell(boolean useMergedCells) {
+    void test_WindowSizeEqualsOne_flushedRowHasMergedCell(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();

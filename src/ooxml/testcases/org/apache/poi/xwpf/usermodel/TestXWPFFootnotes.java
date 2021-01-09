@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TestXWPFFootnotes {
     @Test
-    public void testCreateFootnotes() throws IOException{
+    void testCreateFootnotes() throws IOException{
         try (XWPFDocument docOut = new XWPFDocument()) {
 
             XWPFAbstractFootnotesEndnotes footnotes = docOut.createFootnotes();
@@ -45,7 +45,7 @@ public class TestXWPFFootnotes {
     }
 
     @Test
-    public void testAddFootnotesToDocument() throws IOException {
+    void testAddFootnotesToDocument() throws IOException {
         try (XWPFDocument docOut = new XWPFDocument()) {
 
             // NOTE: XWPFDocument.createFootnote() delegates directly
@@ -67,7 +67,7 @@ public class TestXWPFFootnotes {
      * Bug 55066 - avoid double loading the footnotes
      */
     @Test
-    public void testLoadFootnotesOnce() throws IOException {
+    void testLoadFootnotesOnce() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
             List<XWPFFootnote> footnotes = doc.getFootnotes();
             int hits = 0;

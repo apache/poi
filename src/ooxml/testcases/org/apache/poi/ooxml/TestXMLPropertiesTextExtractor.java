@@ -35,7 +35,7 @@ public final class TestXMLPropertiesTextExtractor {
     private static final POIDataSamples _slSamples = POIDataSamples.getSlideShowInstance();
 
 	@Test
-	public void testGetFromMainExtractor() throws Exception {
+	void testGetFromMainExtractor() throws Exception {
 		OPCPackage pkg = PackageHelper.open(_ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm"));
 
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -59,7 +59,7 @@ public final class TestXMLPropertiesTextExtractor {
 	}
 
 	@Test
-	public void testCore() throws Exception {
+	void testCore() throws Exception {
 		OPCPackage pkg = PackageHelper.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
 		);
@@ -79,7 +79,7 @@ public final class TestXMLPropertiesTextExtractor {
 	}
 
 	@Test
-	public void testExtended() throws Exception {
+	void testExtended() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
 		);
@@ -101,7 +101,7 @@ public final class TestXMLPropertiesTextExtractor {
 	}
 
 	@Test
-	public void testCustom() throws Exception {
+	void testCustom() throws Exception {
       OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
       );
@@ -125,7 +125,7 @@ public final class TestXMLPropertiesTextExtractor {
 	 *  dates can be null
 	 */
 	@Test
-	public void testWithSomeNulls() throws Exception {
+	void testWithSomeNulls() throws Exception {
       OPCPackage pkg = OPCPackage.open(
             _slSamples.openResourceAsStream("49386-null_dates.pptx")
       );

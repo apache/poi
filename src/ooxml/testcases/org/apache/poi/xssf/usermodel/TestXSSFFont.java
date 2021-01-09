@@ -63,13 +63,13 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testConstructor() {
+	void testConstructor() {
 		XSSFFont xssfFont=new XSSFFont();
 		assertNotNull(xssfFont.getCTFont());
 	}
 
 	@Test
-	public void testBold() {
+	void testBold() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewB();
 		bool.setVal(false);
@@ -85,7 +85,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testCharSetWithDeprecatedFontCharset() throws IOException {
+	void testCharSetWithDeprecatedFontCharset() throws IOException {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty prop=ctFont.addNewCharset();
 		prop.setVal(org.apache.poi.ss.usermodel.FontCharset.ANSI.getValue());
@@ -130,7 +130,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testCharSet() throws IOException {
+	void testCharSet() throws IOException {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty prop=ctFont.addNewCharset();
 		prop.setVal(FontCharset.ANSI.getNativeId());
@@ -174,7 +174,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testFontName() {
+	void testFontName() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontName fname=ctFont.addNewName();
 		fname.setVal("Arial");
@@ -188,7 +188,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testItalic() {
+	void testItalic() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewI();
 		bool.setVal(false);
@@ -204,7 +204,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testStrikeout() {
+	void testStrikeout() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewStrike();
 		bool.setVal(false);
@@ -220,7 +220,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testFontHeight() {
+	void testFontHeight() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(11);
@@ -234,7 +234,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testFontHeightInPoint() {
+	void testFontHeightInPoint() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
 		size.setVal(14);
@@ -248,7 +248,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testUnderline() {
+	void testUnderline() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTUnderlineProperty underlinePropr=ctFont.addNewU();
 		underlinePropr.setVal(STUnderlineValues.SINGLE);
@@ -267,7 +267,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testColor() {
+	void testColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
 		color.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
@@ -281,7 +281,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testRgbColor() {
+	void testRgbColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
 
@@ -307,7 +307,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testThemeColor() {
+	void testThemeColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
 		color.setTheme(1);
@@ -321,7 +321,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testFamily() {
+	void testFamily() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontFamily family=ctFont.addNewFamily();
 		family.setVal(FontFamily.MODERN.getValue());
@@ -332,7 +332,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testScheme() {
+	void testScheme() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontScheme scheme=ctFont.addNewScheme();
 		scheme.setVal(STFontScheme.MAJOR);
@@ -346,7 +346,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testTypeOffset() {
+	void testTypeOffset() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTVerticalAlignFontProperty valign=ctFont.addNewVertAlign();
 		valign.setVal(STVerticalAlignRun.BASELINE);
@@ -361,7 +361,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 	// store test from TestSheetUtil here as it uses XSSF
 	@Test
-	public void testCanComputeWidthXSSF() throws IOException {
+	void testCanComputeWidthXSSF() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
 
 			// cannot check on result because on some machines we get back false here!
@@ -372,7 +372,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
     // store test from TestSheetUtil here as it uses XSSF
 	@Test
-	public void testCanComputeWidthInvalidFont() {
+	void testCanComputeWidthInvalidFont() {
         Font font = new XSSFFont(CTFont.Factory.newInstance());
         font.setFontName("some non existing font name");
 
@@ -384,7 +384,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	 * Test that fonts get added properly
 	 */
 	@Test
-	public void testFindFont() throws IOException {
+	void testFindFont() throws IOException {
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
 			assertEquals(1, wb.getNumberOfFonts());
 
@@ -483,7 +483,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testEquals() {
+	void testEquals() {
 		XSSFFont font = new XSSFFont();
 		XSSFFont equ = new XSSFFont();
 		XSSFFont notequ = new XSSFFont();

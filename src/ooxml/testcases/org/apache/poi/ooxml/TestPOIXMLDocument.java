@@ -177,22 +177,22 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testPPTX() throws Exception {
+    void testPPTX() throws Exception {
         assertReadWrite(POIDataSamples.getSlideShowInstance(), "PPTWithAttachments.pptm");
     }
 
     @Test
-    public void testXLSX() throws Exception {
+    void testXLSX() throws Exception {
         assertReadWrite(POIDataSamples.getSpreadSheetInstance(), "ExcelWithAttachments.xlsm");
     }
 
     @Test
-    public void testDOCX() throws Exception {
+    void testDOCX() throws Exception {
         assertReadWrite(POIDataSamples.getDocumentInstance(), "WordWithAttachments.docx");
     }
 
     @Test
-    public void testRelationOrder() throws Exception {
+    void testRelationOrder() throws Exception {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
         try (InputStream is = pds.openResourceAsStream("WordWithAttachments.docx");
             OPCPackage pkg = PackageHelper.open(is);
@@ -207,7 +207,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testGetNextPartNumber() throws Exception {
+    void testGetNextPartNumber() throws Exception {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
         try (InputStream is = pds.openResourceAsStream("WordWithAttachments.docx");
             OPCPackage pkg = PackageHelper.open(is);
@@ -237,7 +237,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testCommitNullPart() throws IOException {
+    void testCommitNullPart() throws IOException {
         POIXMLDocumentPart part = new POIXMLDocumentPart();
         part.prepareForCommit();
         part.commit();
@@ -253,7 +253,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testVSDX() throws Exception {
+    void testVSDX() throws Exception {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
         try (InputStream is = pds.openResourceAsStream("test.vsdx");
              OPCPackage open = PackageHelper.open(is);
@@ -264,7 +264,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testVSDXPart() throws IOException {
+    void testVSDXPart() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
         try (InputStream is = pds.openResourceAsStream("test.vsdx");
             OPCPackage open = PackageHelper.open(is)) {
@@ -277,7 +277,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testInvalidCoreRel() throws IOException {
+    void testInvalidCoreRel() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
         try (OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"))) {
             assertThrows(POIXMLException.class, () -> new POIXMLDocumentPart(open, "somethingillegal"));
@@ -297,7 +297,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testOSGIClassLoading() throws IOException {
+    void testOSGIClassLoading() throws IOException {
         byte[] data;
         try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx")) {
             data = IOUtils.toByteArray(is);

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestXSLFFreeformShape {
 
     @Test
-    public void testSetPath() throws IOException {
+    void testSetPath() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFFreeformShape shape1 = slide.createFreeform();
@@ -63,7 +63,7 @@ public class TestXSLFFreeformShape {
     }
 
     @Test
-    public void testZeroWidth() throws IOException {
+    void testZeroWidth() throws IOException {
         // see #61633
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();

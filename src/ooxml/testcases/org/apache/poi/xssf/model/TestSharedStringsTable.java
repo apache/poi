@@ -45,7 +45,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
  */
 public final class TestSharedStringsTable {
     @Test
-    public void testCreateNew() {
+    void testCreateNew() {
         SharedStringsTable sst = new SharedStringsTable();
 
         CTRst st;
@@ -115,7 +115,7 @@ public final class TestSharedStringsTable {
     }
 
     @Test
-    public void testCreateUsingRichTextStrings() {
+    void testCreateUsingRichTextStrings() {
         SharedStringsTable sst = new SharedStringsTable();
 
         // Check defaults
@@ -182,7 +182,7 @@ public final class TestSharedStringsTable {
     }
 
     @Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         SharedStringsTable sst1 = wb1.getSharedStringSource();
 
@@ -208,7 +208,7 @@ public final class TestSharedStringsTable {
      * A specific sequence of strings can result in broken CDATA section in sharedStrings.xml file.
      */
     @Test
-    public void testBug48936() throws IOException {
+    void testBug48936() throws IOException {
         Workbook w1 = new XSSFWorkbook();
         Sheet s = w1.createSheet();
         int i = 0;

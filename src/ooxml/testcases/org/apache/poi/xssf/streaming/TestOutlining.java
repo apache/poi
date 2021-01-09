@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestOutlining {
     @Test
-	public void testSetRowGroupCollapsed() throws IOException {
+	void testSetRowGroupCollapsed() throws IOException {
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
 		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
@@ -62,7 +62,7 @@ public final class TestOutlining {
 	}
 
     @Test
-    public void testSetRowGroupCollapsedError() throws IOException {
+    void testSetRowGroupCollapsedError() throws IOException {
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
 		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
@@ -101,7 +101,7 @@ public final class TestOutlining {
 	}
 
     @Test
-    public void testOutlineGettersHSSF() throws IOException {
+    void testOutlineGettersHSSF() throws IOException {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = hssfWorkbook.createSheet();
         hssfSheet.createRow(0);
@@ -121,7 +121,7 @@ public final class TestOutlining {
     }
 
     @Test
-    public void testOutlineGettersXSSF() throws IOException {
+    void testOutlineGettersXSSF() throws IOException {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
         XSSFSheet xssfSheet = xssfWorkbook.createSheet();
         xssfSheet.createRow(0);
@@ -141,7 +141,7 @@ public final class TestOutlining {
     }
 
     @Test
-    public void testOutlineGettersSXSSF() throws IOException {
+    void testOutlineGettersSXSSF() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         SXSSFSheet sxssfSheet = sxssfWorkbook.createSheet();
         sxssfSheet.createRow(0);
@@ -184,7 +184,7 @@ public final class TestOutlining {
     }
 
     @Test
-    public void testOutlineGettersSXSSFSetOutlineLevel() throws IOException {
+    void testOutlineGettersSXSSFSetOutlineLevel() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         SXSSFSheet sxssfSheet = sxssfWorkbook.createSheet();
         sxssfSheet.createRow(0);

@@ -43,7 +43,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** Error occurred at FormulaShifter#rowMoveAreaPtg while shift rows upward. */
     @Test
-    public void testBug54524() throws IOException {
+    void testBug54524() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54524.xlsx");
         XSSFSheet sheet = workbook.getSheetAt(0);
         sheet.shiftRows(3, 5, -1);
@@ -59,7 +59,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /**  negative row shift causes corrupted data or throws exception */
     @Test
-    public void testBug53798() throws IOException {
+    void testBug53798() throws IOException {
         // NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53798.xlsx");
 
@@ -117,7 +117,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** negative row shift causes corrupted data or throws exception */
     @Test
-    public void testBug53798a() throws IOException {
+    void testBug53798a() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53798.xlsx");
 
         Sheet testSheet    = wb.getSheetAt(0);
@@ -146,7 +146,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** Shifting rows with comment result - Unreadable content error and comment deletion */
     @Test
-    public void testBug56017() throws IOException {
+    void testBug56017() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
 
         Sheet sheet = wb.getSheetAt(0);
@@ -188,7 +188,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** Moving the active sheet and deleting the others results in a corrupted file */
     @Test
-    public void test57171() throws IOException {
+    void test57171() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
         assertEquals(5, wb.getActiveSheetIndex());
         removeAllSheetsBut(5, wb); // 5 is the active / selected sheet
@@ -206,7 +206,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /**  Cannot delete an arbitrary sheet in an XLS workbook (only the last one) */
     @Test
-    public void test57163() throws IOException {
+    void test57163() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
         assertEquals(5, wb.getActiveSheetIndex());
         wb.removeSheetAt(0);
@@ -216,7 +216,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Test
-    public void testSetSheetOrderAndAdjustActiveSheet() throws IOException {
+    void testSetSheetOrderAndAdjustActiveSheet() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
 
         assertEquals(5, wb.getActiveSheetIndex());
@@ -266,7 +266,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Test
-    public void testRemoveSheetAndAdjustActiveSheet() throws IOException {
+    void testRemoveSheetAndAdjustActiveSheet() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
 
         assertEquals(5, wb.getActiveSheetIndex());
@@ -306,7 +306,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** Failed to clone a sheet from an Excel 2010 */
     @Test
-    public void test57165() throws IOException {
+    void test57165() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
         assertEquals(5, wb.getActiveSheetIndex());
         removeAllSheetsBut(3, wb);
@@ -334,7 +334,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     /** Shifting rows with cell comments only shifts comments from first such cell. Other cell comments not shifted */
     @Test
-    public void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
+    void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -389,7 +389,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
-    public void testSharedFormulas() throws Exception {
+    void testSharedFormulas() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
@@ -414,7 +414,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
-    public void testShiftSharedFormulas() throws Exception {
+    void testShiftSharedFormulas() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
@@ -448,7 +448,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Test
-    public void test60384() throws IOException {
+    void test60384() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60384.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -479,7 +479,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     }
 
     @Test
-    public void test60709() throws IOException {
+    void test60709() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60709.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
 

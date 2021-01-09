@@ -38,7 +38,7 @@ public final class TestFileHelper {
 	 * {@link File#getName()} instead of {@link FileHelper#getFilename(File)
 	 */
     @Test
-	public void testGetDirectory() {
+	void testGetDirectory() {
 		TreeMap<String, String> expectedValue = new TreeMap<>();
 		expectedValue.put("/dir1/test.doc", "/dir1");
 		expectedValue.put("/dir1/dir2/test.doc.xml", "/dir1/dir2");

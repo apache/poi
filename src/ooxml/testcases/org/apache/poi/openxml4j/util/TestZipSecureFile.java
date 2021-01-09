@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestZipSecureFile {
     @Test
-    public void testThresholdInputStream() throws Exception {
+    void testThresholdInputStream() throws Exception {
         // This fails in Java 10 because our reflection injection of the ThresholdInputStream causes a
         // ClassCastException in ZipFile now
         // The relevant change in the JDK is http://hg.openjdk.java.net/jdk/jdk10/rev/85ea7e83af30#l5.66

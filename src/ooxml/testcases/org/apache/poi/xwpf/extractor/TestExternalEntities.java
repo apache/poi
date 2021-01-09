@@ -32,7 +32,7 @@ public class TestExternalEntities {
      * Get text out of the simple file
      */
     @Test
-    public void testFile() throws IOException {
+    void testFile() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 

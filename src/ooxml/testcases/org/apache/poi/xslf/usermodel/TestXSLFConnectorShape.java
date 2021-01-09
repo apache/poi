@@ -41,7 +41,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 public class TestXSLFConnectorShape {
 
     @Test
-    public void testLineDecorations() throws IOException {
+    void testLineDecorations() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 
@@ -122,7 +122,7 @@ public class TestXSLFConnectorShape {
     }
 
     @Test
-    public void testAddConnector() throws IOException {
+    void testAddConnector() throws IOException {
         try (XMLSlideShow pptx = new XMLSlideShow()) {
             XSLFSlide slide = pptx.createSlide();
 

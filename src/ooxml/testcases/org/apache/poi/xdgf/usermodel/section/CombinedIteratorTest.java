@@ -42,7 +42,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testNullMaster() {
+    void testNullMaster() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");
@@ -54,7 +54,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testNoMatchesBaseFirst() {
+    void testNoMatchesBaseFirst() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");
@@ -71,7 +71,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testNoMatchesMasterFirst() {
+    void testNoMatchesMasterFirst() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(4L, "B4");
@@ -88,7 +88,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testInterleaved1() {
+    void testInterleaved1() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");
@@ -105,7 +105,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testInterleaved2() {
+    void testInterleaved2() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");
@@ -124,7 +124,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testAllMatching() {
+    void testAllMatching() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");
@@ -141,7 +141,7 @@ public class CombinedIteratorTest {
     }
 
     @Test
-    public void testAllMatching2() {
+    void testAllMatching2() {
 
         SortedMap<Long, String> base = new TreeMap<>();
         base.put(1L, "B1");

@@ -48,7 +48,7 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
      * [Bug 58778] Built-in number formats can be overridden with XSSFDataFormat.putFormat(int id, String fmt)
      */
 	@Test
-    public void test58778() throws IOException {
+    void test58778() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             Cell cell = wb1.createSheet("bug58778").createRow(0).createCell(0);
             cell.setCellValue(5.25);
@@ -77,7 +77,7 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     }
 
     @Test
-    public void testConditionalFormattingEvaluation() throws IOException {
+    void testConditionalFormattingEvaluation() throws IOException {
         try (Workbook wb = openSampleWorkbook("61060-conditional-number-formatting.xlsx")) {
 
             final DataFormatter formatter = new DataFormatter();

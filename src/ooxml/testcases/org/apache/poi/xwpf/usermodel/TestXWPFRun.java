@@ -79,7 +79,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewT().setStringValue("TEST2 STRING");
         ctRun.addNewT().setStringValue("TEST3 STRING");
@@ -102,7 +102,7 @@ public class TestXWPFRun {
      * exercise isCTOnOff(CTOnOff) through all valid permutations
      */
     @Test
-    public void testCTOnOff() {
+    void testCTOnOff() {
         CTRPr rpr = ctRun.addNewRPr();
         CTOnOff bold = rpr.addNewB();
         XWPFRun run = new XWPFRun(ctRun, irb);
@@ -129,7 +129,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetBold() {
+    void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff1.ON);
 
@@ -143,7 +143,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetItalic() {
+    void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff1.ON);
 
@@ -155,7 +155,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetStrike() {
+    void testSetGetStrike() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewStrike().setVal(STOnOff1.ON);
 
@@ -167,7 +167,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetUnderline() {
+    void testSetGetUnderline() {
         CTRPr rpr = ctRun.addNewRPr();
         XWPFRun run = new XWPFRun(ctRun, irb);
         rpr.addNewU().setVal(STUnderline.DASH);
@@ -181,7 +181,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetFontFamily() {
+    void testSetGetFontFamily() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewRFonts().setAscii("Times New Roman");
 
@@ -193,7 +193,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetFontSize() {
+    void testSetGetFontSize() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewSz().setVal(BigInteger.valueOf(14));
 
@@ -211,7 +211,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetTextForegroundBackground() {
+    void testSetGetTextForegroundBackground() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewPosition().setVal(new BigInteger("4000"));
 
@@ -223,7 +223,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetColor() {
+    void testSetGetColor() {
         XWPFRun run = new XWPFRun(ctRun, irb);
         run.setColor("0F0F0F");
         String clr = run.getColor();
@@ -231,7 +231,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testAddCarriageReturn() {
+    void testAddCarriageReturn() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewCr();
         ctRun.addNewT().setStringValue("TEST2 STRING");
@@ -251,7 +251,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testAddTabsAndLineBreaks() {
+    void testAddTabsAndLineBreaks() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewCr();
         ctRun.addNewT().setStringValue("TEST2 STRING");
@@ -273,7 +273,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testAddPageBreak() {
+    void testAddPageBreak() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewBr();
         ctRun.addNewT().setStringValue("TEST2 STRING");
@@ -295,7 +295,7 @@ public class TestXWPFRun {
      * right thing with it
      */
     @Test
-    public void testExisting() throws IOException {
+    void testExisting() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFParagraph p;
         XWPFRun run;
@@ -429,7 +429,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testPictureInHeader() throws IOException {
+    void testPictureInHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 
@@ -455,7 +455,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetLang() {
+    void testSetGetLang() {
         XWPFRun run = p.createRun();
         assertNull(run.getLang());
 
@@ -470,7 +470,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetLang2() {
+    void testSetGetLang2() {
         XWPFRun run = p.createRun();
         assertNull(run.getLang());
 
@@ -485,7 +485,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testAddPicture() throws Exception {
+    void testAddPicture() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFParagraph p = doc.getParagraphArray(2);
         XWPFRun r = p.getRuns().get(0);
@@ -512,7 +512,7 @@ public class TestXWPFRun {
      * Bugzilla #58237 - Unable to add image to word document header
      */
     @Test
-    public void testAddPictureInHeader() throws IOException, InvalidFormatException {
+    void testAddPictureInHeader() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
         XWPFParagraph p = hdr.createParagraph();
@@ -553,7 +553,7 @@ public class TestXWPFRun {
      * run mustn't NPE
      */
     @Test
-    public void testSetFontFamily_52288() throws IOException {
+    void testSetFontFamily_52288() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx");
         final Iterator<XWPFParagraph> paragraphs = doc.getParagraphsIterator();
         while (paragraphs.hasNext()) {
@@ -571,7 +571,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testBug55476() throws IOException, InvalidFormatException {
+    void testBug55476() throws IOException, InvalidFormatException {
         byte[] image = XWPFTestDataSamples.getImage("abstract1.jpg");
         XWPFDocument document = new XWPFDocument();
 
@@ -594,7 +594,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testBug58922() throws IOException {
+    void testBug58922() throws IOException {
         XWPFDocument document = new XWPFDocument();
 
         final XWPFRun run = document.createParagraph().createRun();
@@ -654,7 +654,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetters() {
+    void testSetters() {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
 
@@ -676,7 +676,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetTextScale() throws IOException {
+    void testSetGetTextScale() throws IOException {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
         assertEquals(100, run.getTextScale());
@@ -686,7 +686,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetTextHighlightColor() throws IOException {
+    void testSetGetTextHighlightColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
         assertEquals(STHighlightColor.NONE, run.getTextHightlightColor());
@@ -701,7 +701,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetVanish() throws IOException {
+    void testSetGetVanish() throws IOException {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
         assertFalse(run.isVanish());
@@ -713,7 +713,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetVerticalAlignment() throws IOException {
+    void testSetGetVerticalAlignment() throws IOException {
         XWPFDocument document = new XWPFDocument();
         XWPFRun run = document.createParagraph().createRun();
         assertEquals(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
@@ -727,7 +727,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetVAlign() {
+    void testSetGetVAlign() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
 
@@ -738,7 +738,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetEmphasisMark() throws IOException {
+    void testSetGetEmphasisMark() throws IOException {
         XWPFDocument document = new XWPFDocument();
         XWPFRun run = document.createParagraph().createRun();
         assertEquals(STEm.NONE, run.getEmphasisMark());
@@ -750,7 +750,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetUnderlineColor() throws IOException {
+    void testSetGetUnderlineColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
         XWPFRun run = document.createParagraph().createRun();
         assertEquals("auto", run.getUnderlineColor());
@@ -765,7 +765,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetUnderlineThemeColor() throws IOException {
+    void testSetGetUnderlineThemeColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
         XWPFRun run = document.createParagraph().createRun();
         assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
@@ -781,7 +781,7 @@ public class TestXWPFRun {
 
 
     @Test
-    public void testSetStyleId() throws IOException {
+    void testSetStyleId() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         final XWPFRun run = document.createParagraph().createRun();
 
@@ -797,7 +797,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testGetDepthWidth() throws IOException, InvalidFormatException {
+    void testGetDepthWidth() throws IOException, InvalidFormatException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx")) {
             XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
             XWPFParagraph p = hdr.createParagraph();
@@ -819,7 +819,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testWhitespace() throws IOException {
+    void testWhitespace() throws IOException {
         String[] text = new String[] {
                 "  The quick brown fox",
                 "\t\tjumped over the lazy dog"

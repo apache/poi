@@ -58,7 +58,7 @@ public final class TestXWPFParagraph {
      * Check that we get the right paragraph from the header
      */
     @Test
-    public void testHeaderParagraph() throws IOException {
+    void testHeaderParagraph() throws IOException {
         try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx")) {
 
             XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
@@ -77,7 +77,7 @@ public final class TestXWPFParagraph {
      * Check that we get the right paragraphs from the document
      */
     @Test
-    public void testDocumentParagraph() throws IOException {
+    void testDocumentParagraph() throws IOException {
         try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx")) {
             List<XWPFParagraph> ps = xml.getParagraphs();
             assertEquals(10, ps.size());
@@ -102,7 +102,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetBorderTop() throws IOException {
+    void testSetGetBorderTop() throws IOException {
         //new clean instance of paragraph
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
@@ -124,7 +124,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetAlignment() throws IOException {
+    void testSetGetAlignment() throws IOException {
         //new clean instance of paragraph
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
@@ -144,7 +144,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetSpacing() throws IOException {
+    void testSetGetSpacing() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -183,7 +183,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetSpacingLineRule() throws IOException {
+    void testSetGetSpacingLineRule() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -202,7 +202,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetIndentationChars() throws IOException {
+    void testSetGetIndentationChars() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -218,7 +218,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetIndentation() throws IOException {
+    void testSetGetIndentation() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -238,7 +238,7 @@ public final class TestXWPFParagraph {
         }
     }
     @Test
-    public void testSetGetVerticalAlignment() throws IOException {
+    void testSetGetVerticalAlignment() throws IOException {
         //new clean instance of paragraph
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
@@ -256,7 +256,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetWordWrap() throws IOException {
+    void testSetGetWordWrap() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -273,7 +273,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSetGetPageBreak() throws IOException {
+    void testSetGetPageBreak() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -290,7 +290,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testBookmarks() throws IOException {
+    void testBookmarks() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bookmarks.docx")) {
             XWPFParagraph paragraph = doc.getParagraphs().get(0);
             assertEquals("Sample Word Document", paragraph.getText());
@@ -305,7 +305,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testGetSetNumID() throws IOException {
+    void testGetSetNumID() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -315,7 +315,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testGetSetILvl() throws IOException {
+    void testGetSetILvl() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -325,7 +325,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testAddingRuns() throws IOException {
+    void testAddingRuns() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
 
             XWPFParagraph p = doc.getParagraphs().get(0);
@@ -343,7 +343,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testCreateNewRuns() throws IOException {
+    void testCreateNewRuns() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFParagraph p = doc.createParagraph();
@@ -364,7 +364,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testInsertNewRuns() throws IOException {
+    void testInsertNewRuns() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFParagraph p = doc.createParagraph();
@@ -384,7 +384,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testRemoveRuns() throws IOException {
+    void testRemoveRuns() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             XWPFParagraph p = doc.createParagraph();
@@ -415,7 +415,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testRemoveAndInsertRunsWithOtherIRunElement()
+    void testRemoveAndInsertRunsWithOtherIRunElement()
             throws IOException {
         XWPFDocument doc = new XWPFDocument();
 
@@ -475,7 +475,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testPictures() throws IOException {
+    void testPictures() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx")) {
             assertEquals(7, doc.getParagraphs().size());
 
@@ -550,7 +550,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testTika792() throws Exception {
+    void testTika792() throws Exception {
         //This test forces the loading of CTMoveBookmark and
         //CTMoveBookmarkImpl into ooxml-lite.
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Tika-792.docx")) {
@@ -562,7 +562,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSettersGetters() throws IOException {
+    void testSettersGetters() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -687,7 +687,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSearchTextNotFound() throws IOException {
+    void testSearchTextNotFound() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -697,7 +697,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testSearchTextFound() throws IOException {
+    void testSearchTextFound() throws IOException {
         try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx")) {
 
             List<XWPFParagraph> ps = xml.getParagraphs();
@@ -715,7 +715,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void testFieldRuns() throws IOException {
+    void testFieldRuns() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx")) {
             List<XWPFParagraph> ps = doc.getParagraphs();
             assertEquals(1, ps.size());
@@ -736,7 +736,7 @@ public final class TestXWPFParagraph {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testRuns() throws IOException {
+    void testRuns() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
 
@@ -751,7 +751,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void test58067() throws IOException {
+    void test58067() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58067.docx")) {
 
             StringBuilder str = new StringBuilder();
@@ -763,7 +763,7 @@ public final class TestXWPFParagraph {
     }
 
     @Test
-    public void test61787() throws IOException {
+    void test61787() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61787.docx")) {
 
             StringBuilder str = new StringBuilder();
@@ -782,7 +782,7 @@ public final class TestXWPFParagraph {
      * for someone else trying a similar thing
      */
     @Test
-    public void testNumberedLists() throws Exception {
+    void testNumberedLists() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ComplexNumberedLists.docx")) {
             XWPFParagraph p;
 

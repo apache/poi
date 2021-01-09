@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPackageCorePropertiesGetKeywords {
     @Test
-    public void testGetSetKeywords() throws IOException {
+    void testGetSetKeywords() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx")) {
             String keywords = doc.getProperties().getCoreProperties().getKeywords();
             assertEquals("extractor, test, rdf", keywords);

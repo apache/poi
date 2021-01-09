@@ -40,7 +40,7 @@ public class TestXSSFFirstHeader {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFFirstHeader header = (XSSFFirstHeader) sheet.getFirstHeader();
         assertNotNull(header);
         assertNull(header.getText());

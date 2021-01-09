@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public final class TestXSSFChartSheet {
 
     @Test
-    public void testXSSFFactory() throws IOException {
+    void testXSSFFactory() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx")) {
             assertEquals(4, wb.getNumberOfSheets());
 
@@ -44,7 +44,7 @@ public final class TestXSSFChartSheet {
     }
 
     @Test
-    public void testGetAccessors() throws IOException {
+    void testGetAccessors() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx")) {
             XSSFChartSheet sheet = (XSSFChartSheet) wb.getSheetAt(2);
 
@@ -69,7 +69,7 @@ public final class TestXSSFChartSheet {
     }
 
     @Test
-    public void testGetCharts() throws Exception {
+    void testGetCharts() throws Exception {
        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx")) {
 
            XSSFSheet ns = wb.getSheetAt(0);

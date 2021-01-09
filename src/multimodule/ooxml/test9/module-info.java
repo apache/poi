@@ -78,7 +78,7 @@ module org.apache.poi.ooxml {
     exports org.apache.poi.poifs.crypt.dsig.services;
     exports org.apache.poi.poifs.crypt.temp;
 
-    opens org.apache.poi.openxml4j.opc to org.apache.poi.poi;
+    opens org.apache.poi.openxml4j.opc to org.apache.poi.poi, org.junit.platform.commons;
 
 
     /* optional dependencies for xml signatures - you need to add a require entry your module-info
@@ -122,5 +122,66 @@ module org.apache.poi.ooxml {
     exports org.apache.poi.xssf.usermodel.charts to org.junit.platform.commons;
     exports org.apache.poi.xwpf to org.junit.platform.commons;
 
-
+    opens org.apache.poi.extractor.ooxml to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.opc.compliance to org.junit.platform.commons;
+    opens org.apache.poi.poifs.crypt.tests to org.junit.platform.commons;
+    opens org.apache.poi.sl.tests to org.junit.platform.commons;
+    opens org.apache.poi.sl.tests.draw to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.extractor to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.format to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.formula to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.formula.eval to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.formula.functions to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.ss.tests.util to org.junit.platform.commons;
+    opens org.apache.poi.util.tests to org.junit.platform.commons;
+    opens org.apache.poi.xslf to org.junit.platform.commons;
+    opens org.apache.poi.xslf.extractor to org.junit.platform.commons;
+    opens org.apache.poi.xssf.io to org.junit.platform.commons;
+    opens org.apache.poi.xssf.usermodel.charts to org.junit.platform.commons;
+    opens org.apache.poi.xwpf to org.junit.platform.commons;
+    opens org.apache.poi.xwpf.extractor to org.junit.platform.commons;
+    opens org.apache.poi.xwpf.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.xwpf.model to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.extractor to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.exceptions to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.usermodel.section to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.usermodel.section.geometry to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.usermodel.shape to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.usermodel.shape.exceptions to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.xml to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.util to org.junit.platform.commons;
+    opens org.apache.poi.xdgf.geom to org.junit.platform.commons;
+    opens org.apache.poi.ooxml to org.junit.platform.commons;
+    opens org.apache.poi.ooxml.dev to org.junit.platform.commons;
+    opens org.apache.poi.ooxml.extractor to org.junit.platform.commons;
+    opens org.apache.poi.ooxml.util to org.junit.platform.commons;
+    opens org.apache.poi.xddf.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.xddf.usermodel.text to org.junit.platform.commons;
+    opens org.apache.poi.xddf.usermodel.chart to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.exceptions to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.opc.internal to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.opc.internal.marshallers to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.opc.internal.unmarshallers to org.junit.platform.commons;
+    opens org.apache.poi.openxml4j.util to org.junit.platform.commons;
+    opens org.apache.poi.xssf to org.junit.platform.commons;
+    opens org.apache.poi.xssf.extractor to org.junit.platform.commons;
+    opens org.apache.poi.xssf.eventusermodel to org.junit.platform.commons;
+    opens org.apache.poi.xssf.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.xssf.usermodel.helpers to org.junit.platform.commons;
+    opens org.apache.poi.xssf.usermodel.extensions to org.junit.platform.commons;
+    opens org.apache.poi.xssf.binary to org.junit.platform.commons;
+    opens org.apache.poi.xssf.model to org.junit.platform.commons;
+    opens org.apache.poi.xssf.streaming to org.junit.platform.commons;
+    opens org.apache.poi.xssf.util to org.junit.platform.commons;
+    opens org.apache.poi.xslf.draw to org.junit.platform.commons;
+    opens org.apache.poi.xslf.usermodel to org.junit.platform.commons;
+    opens org.apache.poi.xslf.model to org.junit.platform.commons;
+    opens org.apache.poi.xslf.util to org.junit.platform.commons;
+    opens org.apache.poi.poifs.crypt.dsig to org.junit.platform.commons;
+    opens org.apache.poi.poifs.crypt.dsig.facets to org.junit.platform.commons;
+    opens org.apache.poi.poifs.crypt.dsig.services to org.junit.platform.commons;
+    opens org.apache.poi.poifs.crypt.temp to org.junit.platform.commons;
 }

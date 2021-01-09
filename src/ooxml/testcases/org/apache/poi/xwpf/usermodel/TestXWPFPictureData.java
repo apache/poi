@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class TestXWPFPictureData {
 
     @Test
-    public void testRead() throws InvalidFormatException, IOException {
+    void testRead() throws InvalidFormatException, IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx")) {
             List<XWPFPictureData> pictures = sampleDoc.getAllPictures();
 
@@ -64,7 +64,7 @@ public class TestXWPFPictureData {
     }
 
     @Test
-    public void testPictureInHeader() throws IOException {
+    void testPictureInHeader() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx")) {
             verifyOneHeaderPicture(sampleDoc);
 
@@ -74,7 +74,7 @@ public class TestXWPFPictureData {
     }
 
     @Test
-    public void testCreateHeaderPicture() throws Exception {
+    void testCreateHeaderPicture() throws Exception {
         try (XWPFDocument doc = new XWPFDocument()) {
 
             // Starts with no header
@@ -113,7 +113,7 @@ public class TestXWPFPictureData {
     }
 
     @Test
-    public void testNew() throws InvalidFormatException, IOException {
+    void testNew() throws InvalidFormatException, IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmptyDocumentWithHeaderFooter.docx")) {
             byte[] jpegData = XWPFTestDataSamples.getImage("nature1.jpg");
             assertNotNull(jpegData);
@@ -172,7 +172,7 @@ public class TestXWPFPictureData {
     }
 
     @Test
-    public void testBug51770() throws IOException {
+    void testBug51770() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug51170.docx")) {
             XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
             XWPFHeader header = policy.getDefaultHeader();

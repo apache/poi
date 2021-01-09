@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 
 public class TestXDDFChart {
     @Test
-    public void testConstruct() {
+    void testConstruct() {
         // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-lite
         XDDFChart xddfChart = newXDDFChart();
 
@@ -37,7 +37,7 @@ public class TestXDDFChart {
     }
 
     @Test
-    public void testSetExternalId() {
+    void testSetExternalId() {
         XDDFChart xddfChart = newXDDFChart();
         CTChartSpace ctChartSpace = xddfChart.getCTChartSpace();
 

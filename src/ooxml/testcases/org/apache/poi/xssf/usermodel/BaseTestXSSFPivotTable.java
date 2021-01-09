@@ -65,7 +65,7 @@ public abstract class BaseTestXSSFPivotTable {
      * and the count is increased by one.
      */
     @Test
-    public void testAddRowLabelToPivotTable() {
+    void testAddRowLabelToPivotTable() {
         int columnIndex = 0;
 
         assertEquals(0, pivotTable.getRowLabelColumns().size());
@@ -89,7 +89,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
     @Test
-    public void testAddRowLabelOutOfRangeThrowsException() {
+    void testAddRowLabelOutOfRangeThrowsException() {
         assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addRowLabel(5));
     }
 
@@ -97,7 +97,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that when creating one column label, no col fields are being created.
      */
     @Test
-    public void testAddOneColumnLabelToPivotTableDoesNotCreateColField() {
+    void testAddOneColumnLabelToPivotTableDoesNotCreateColField() {
         int columnIndex = 0;
 
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
@@ -110,7 +110,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's possible to create three column labels with different DataConsolidateFunction
      */
     @Test
-    public void testAddThreeDifferentColumnLabelsToPivotTable() {
+    void testAddThreeDifferentColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
         int columnThree = 2;
@@ -128,7 +128,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's possible to create three column labels with the same DataConsolidateFunction
      */
     @Test
-    public void testAddThreeSametColumnLabelsToPivotTable() {
+    void testAddThreeSametColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
         int columnThree = 2;
@@ -145,7 +145,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
     @Test
-    public void testAddTwoColumnLabelsToPivotTable() {
+    void testAddTwoColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
 
@@ -160,7 +160,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that a data field is created when creating a data column
      */
     @Test
-    public void testColumnLabelCreatesDataField() {
+    void testColumnLabelCreatesDataField() {
         int columnIndex = 0;
 
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
@@ -176,7 +176,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's possible to set a custom name when creating a data column
      */
     @Test
-    public void testColumnLabelSetCustomName() {
+    void testColumnLabelSetCustomName() {
         int columnIndex = 0;
 
         String customName = "Custom Name";
@@ -193,7 +193,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's possible to set the format to the data column
      */
     @Test
-    public void testColumnLabelSetDataFormat() {
+    void testColumnLabelSetDataFormat() {
         int columnIndex = 0;
 
         String format = "#,##0.0";
@@ -210,7 +210,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
     @Test
-    public void testAddColumnLabelOutOfRangeThrowsException() {
+    void testAddColumnLabelOutOfRangeThrowsException() {
         assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 5));
     }
 
@@ -219,7 +219,7 @@ public abstract class BaseTestXSSFPivotTable {
      * column index will be set to true.
      */
     @Test
-    public void testAddDataColumn() {
+    void testAddDataColumn() {
         int columnIndex = 0;
         boolean isDataField = true;
 
@@ -232,7 +232,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
     @Test
-    public void testAddDataColumnOutOfRangeThrowsException() {
+    void testAddDataColumnOutOfRangeThrowsException() {
         assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addDataColumn(5, true));
     }
 
@@ -240,7 +240,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's possible to create a new filter
      */
     @Test
-    public void testAddReportFilter() {
+    void testAddReportFilter() {
         int columnIndex = 0;
 
         pivotTable.addReportFilter(columnIndex);
@@ -255,7 +255,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
     @Test
-    public void testAddReportFilterOutOfRangeThrowsException() {
+    void testAddReportFilterOutOfRangeThrowsException() {
         assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addReportFilter(5));
     }
 
@@ -264,7 +264,7 @@ public abstract class BaseTestXSSFPivotTable {
      * first column of the referenced area is not index 0.
      */
     @Test
-    public void testAddDataColumnWithOffsetData() {
+    void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
         assertEquals(CellType.NUMERIC, offsetOuterCell.getCellType());
 
@@ -272,7 +272,7 @@ public abstract class BaseTestXSSFPivotTable {
     }
 
     @Test
-    public void testPivotTableSheetNamesAreCaseInsensitive() {
+    void testPivotTableSheetNamesAreCaseInsensitive() {
         wb.setSheetName(0,  "original");
         wb.setSheetName(1,  "offset");
         XSSFSheet original = wb.getSheet("OriginaL");
@@ -294,7 +294,7 @@ public abstract class BaseTestXSSFPivotTable {
      * and the count is increased by one.
      */
     @Test
-    public void testAddColLabelToPivotTable() {
+    void testAddColLabelToPivotTable() {
         int columnIndex = 0;
 
         assertEquals(0, pivotTable.getColLabelColumns().size());
@@ -318,7 +318,7 @@ public abstract class BaseTestXSSFPivotTable {
      * Verify that it's not possible to create a col label outside of the referenced area.
      */
     @Test
-    public void testAddColLabelOutOfRangeThrowsException() {
+    void testAddColLabelOutOfRangeThrowsException() {
         assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addColLabel(5));
     }
 }

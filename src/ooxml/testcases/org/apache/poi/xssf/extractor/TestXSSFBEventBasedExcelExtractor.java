@@ -43,7 +43,7 @@ public class TestXSSFBEventBasedExcelExtractor {
      * Get text out of the simple file
      */
     @Test
-    public void testGetSimpleText() throws Exception {
+    void testGetSimpleText() throws Exception {
         // a very simple file
         try (XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsb")) {
             extractor.setIncludeCellComments(true);
@@ -87,7 +87,7 @@ public class TestXSSFBEventBasedExcelExtractor {
      * Test text extraction from text box using getShapes()
      */
     @Test
-    public void testShapes() throws Exception {
+    void testShapes() throws Exception {
         try (XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsb")) {
             String text = ooxmlExtractor.getText();
             assertContains(text, "Line 1");
@@ -97,7 +97,7 @@ public class TestXSSFBEventBasedExcelExtractor {
     }
 
     @Test
-    public void testBeta() throws Exception {
+    void testBeta() throws Exception {
         try (XSSFEventBasedExcelExtractor extractor = getExtractor("Simple.xlsb")) {
             extractor.setIncludeCellComments(true);
             String text = extractor.getText();
@@ -107,7 +107,7 @@ public class TestXSSFBEventBasedExcelExtractor {
     }
 
     @Test
-    public void test62815() throws Exception {
+    void test62815() throws Exception {
         //test file based on http://oss.sheetjs.com/test_files/RkNumber.xlsb
         try (XSSFEventBasedExcelExtractor extractor = getExtractor("62815.xlsb")) {
             extractor.setIncludeCellComments(true);

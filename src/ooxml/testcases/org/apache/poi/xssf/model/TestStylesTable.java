@@ -47,7 +47,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testCreateNew() {
+    void testCreateNew() {
         StylesTable st = new StylesTable();
 
         // Check defaults
@@ -58,7 +58,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testCreateSaveLoad() throws IOException {
+    void testCreateSaveLoad() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable st = wb.getStylesSource();
 
@@ -79,7 +79,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testLoadExisting() throws IOException {
+    void testLoadExisting() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
             assertNotNull(workbook.getStylesSource());
 
@@ -92,7 +92,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testLoadSaveLoad() throws IOException {
+    void testLoadSaveLoad() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
             assertNotNull(workbook.getStylesSource());
 
@@ -316,7 +316,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testLoadWithAlternateContent() throws IOException {
+    void testLoadWithAlternateContent() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx")) {
             assertNotNull(workbook.getStylesSource());
 
@@ -328,7 +328,7 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testReplaceStyle() throws IOException {
+    void testReplaceStyle() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx")) {
             assertNotNull(workbook.getStylesSource());
 

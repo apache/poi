@@ -65,7 +65,7 @@ public class TestXSLFTextShape {
     }
 
     @Test
-    public void testLayouts() throws IOException {
+    void testLayouts() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
 
         List<XSLFSlide> slide = ppt.getSlides();
@@ -663,7 +663,7 @@ public class TestXSLFTextShape {
     }
 
     @Test
-    public void testTitleStyles() throws IOException {
+    void testTitleStyles() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
 
         XSLFSlideMaster master = ppt.getSlideMasters().get(0);
@@ -746,7 +746,7 @@ public class TestXSLFTextShape {
     }
 
     @Test
-    public void testBodyStyles() throws IOException {
+    void testBodyStyles() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
 
         XSLFSlideMaster master = ppt.getSlideMasters().get(0);

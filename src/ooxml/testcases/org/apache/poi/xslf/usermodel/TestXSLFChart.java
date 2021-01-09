@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestXSLFChart {
     @Test
-    public void testFillPieChartTemplate() throws IOException {
+    void testFillPieChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");
         XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
@@ -78,7 +78,7 @@ public class TestXSLFChart {
     }
 
     @Test
-    public void testFillBarChartTemplate() throws IOException {
+    void testFillBarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bar-chart.pptx");
         XSLFSlide slide = pptx.getSlides().get(0);
         // duplicate slide and chart before applying "destructive" tests to it
@@ -103,7 +103,7 @@ public class TestXSLFChart {
     }
 
     @Test
-    public void testFillLineChartTemplate() throws IOException {
+    void testFillLineChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("line-chart.pptx");
         XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
@@ -118,7 +118,7 @@ public class TestXSLFChart {
     }
 
     @Test
-    public void testFillRadarChartTemplate() throws IOException {
+    void testFillRadarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("radar-chart.pptx");
         XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
@@ -133,7 +133,7 @@ public class TestXSLFChart {
     }
 
     @Test
-    public void testFillScatterChartTemplate() throws IOException {
+    void testFillScatterChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("scatter-chart.pptx");
         XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);

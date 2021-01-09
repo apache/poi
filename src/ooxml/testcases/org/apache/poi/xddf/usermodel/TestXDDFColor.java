@@ -41,7 +41,7 @@ public class TestXDDFColor {
     private static final String XMLNS = "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"/>";
 
     @Test
-    public void testSchemeColor() throws IOException {
+    void testSchemeColor() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFTheme theme = ppt.createSlide().getTheme();
 
@@ -72,7 +72,7 @@ public class TestXDDFColor {
     }
 
     @Test
-    public void testPreset() {
+    void testPreset() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewPrstClr().setVal(STPresetColorVal.AQUAMARINE);
         XDDFColor color = XDDFColor.forColorContainer(xml);
@@ -83,7 +83,7 @@ public class TestXDDFColor {
     }
 
     @Test
-    public void testSystemDefined() {
+    void testSystemDefined() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSystemColor sys = xml.addNewSysClr();
         sys.setVal(STSystemColorVal.CAPTION_TEXT);
@@ -99,7 +99,7 @@ public class TestXDDFColor {
     }
 
     @Test
-    public void testRgbBinary() {
+    void testRgbBinary() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSRgbColor color = xml.addNewSrgbClr();
         byte[] bs = new byte[]{-1, -1, -1};
@@ -114,7 +114,7 @@ public class TestXDDFColor {
     }
 
     @Test
-    public void testRgbPercent() {
+    void testRgbPercent() {
         CTColor xml = CTColor.Factory.newInstance();
         CTScRgbColor color = xml.addNewScrgbClr();
         color.setR(0);

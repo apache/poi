@@ -57,7 +57,7 @@ public final class TestContentTypeManager {
      * Test the properties part content parsing.
      */
     @Test
-    public void testContentType() throws Exception {
+    void testContentType() throws Exception {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
         // Retrieves core properties part
@@ -74,7 +74,7 @@ public final class TestContentTypeManager {
      * Test the addition of several default and override content types.
      */
     @Test
-    public void testContentTypeAddition() throws Exception {
+    void testContentTypeAddition() throws Exception {
         ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
         PackagePartName name1 = PackagingURIHelper.createPartName("/foo/foo.XML");
@@ -98,7 +98,7 @@ public final class TestContentTypeManager {
      * Test the addition then removal of content types.
      */
     @Test
-    public void testContentTypeRemoval() throws Exception {
+    void testContentTypeRemoval() throws Exception {
         ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
         PackagePartName name1 = PackagingURIHelper.createPartName("/foo/foo.xml");
@@ -128,7 +128,7 @@ public final class TestContentTypeManager {
      */
     @Disabled
     @Test
-    public void testContentTypeRemovalPackage() {
+    void testContentTypeRemovalPackage() {
         // TODO
     }
 

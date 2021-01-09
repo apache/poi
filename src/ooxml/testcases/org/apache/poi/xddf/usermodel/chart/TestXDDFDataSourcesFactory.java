@@ -48,7 +48,7 @@ public class TestXDDFDataSourcesFactory {
     };
 
     @Test
-    public void testNumericArrayDataSource() {
+    void testNumericArrayDataSource() {
         Double[] doubles = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
         XDDFDataSource<Double> doubleDataSource = XDDFDataSourcesFactory.fromArray(doubles, null);
         assertTrue(doubleDataSource.isNumeric());
@@ -57,7 +57,7 @@ public class TestXDDFDataSourcesFactory {
     }
 
     @Test
-    public void testStringArrayDataSource() {
+    void testStringArrayDataSource() {
         String[] strings = new String[]{"one", "two", "three", "four", "five"};
         XDDFDataSource<String> stringDataSource = XDDFDataSourcesFactory.fromArray(strings, null);
         assertFalse(stringDataSource.isNumeric());
@@ -66,7 +66,7 @@ public class TestXDDFDataSourcesFactory {
     }
 
     @Test
-    public void testNumericCellDataSource() {
+    void testNumericCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();
         CellRangeAddress numCellRange = CellRangeAddress.valueOf("A2:E2");
@@ -81,7 +81,7 @@ public class TestXDDFDataSourcesFactory {
     }
 
     @Test
-    public void testStringCellDataSource() {
+    void testStringCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, stringCells).build();
         CellRangeAddress numCellRange = CellRangeAddress.valueOf("A2:E2");
@@ -95,7 +95,7 @@ public class TestXDDFDataSourcesFactory {
     }
 
     @Test
-    public void testMixedCellDataSource() {
+    void testMixedCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, mixedCells).build();
         CellRangeAddress mixedCellRange = CellRangeAddress.valueOf("A1:F1");
@@ -114,7 +114,7 @@ public class TestXDDFDataSourcesFactory {
     }
 
     @Test
-    public void testIOBExceptionOnInvalidIndex() {
+    void testIOBExceptionOnInvalidIndex() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();
         CellRangeAddress rangeAddress = CellRangeAddress.valueOf("A2:E2");

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("test");
         XSSFRow row = sheet.createRow(0);

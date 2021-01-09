@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 public class TestNecessaryOOXMLClasses {
 
     @Test
-    public void testProblemClasses() {
+    void testProblemClasses() {
         CTXYAdjustHandle ctxyAdjustHandle = CTXYAdjustHandle.Factory.newInstance();
         assertNotNull(ctxyAdjustHandle);
         CTPolarAdjustHandle ctPolarAdjustHandle = CTPolarAdjustHandle.Factory.newInstance();

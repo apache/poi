@@ -55,7 +55,7 @@ public class TestXWPFFootnote {
     }
 
     @Test
-    public void testAddParagraphsToFootnote() throws IOException {
+    void testAddParagraphsToFootnote() throws IOException {
 
         // Add a run to the first paragraph:
 
@@ -99,7 +99,7 @@ public class TestXWPFFootnote {
     }
 
     @Test
-    public void testAddTableToFootnote() throws IOException {
+    void testAddTableToFootnote() throws IOException {
         XWPFTable table = footnote.createTable();
         assertNotNull(table);
 
@@ -127,7 +127,7 @@ public class TestXWPFFootnote {
     }
 
     @Test
-    public void testRemoveFootnote() {
+    void testRemoveFootnote() {
         // NOTE: XWPFDocument.removeFootnote() delegates directly to
         //       XWPFFootnotes.
         docOut.createFootnote();
@@ -139,7 +139,7 @@ public class TestXWPFFootnote {
     }
 
     @Test
-    public void testAddFootnoteRefToParagraph() {
+    void testAddFootnoteRefToParagraph() {
         XWPFParagraph p = docOut.createParagraph();
         List<XWPFRun> runs = p.getRuns();
         assertEquals(0, runs.size(), "Expected no runs in new paragraph");

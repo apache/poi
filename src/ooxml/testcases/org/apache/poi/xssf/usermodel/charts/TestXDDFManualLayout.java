@@ -60,7 +60,7 @@ public final class TestXDDFManualLayout {
 	 * initialization so there can be some errors (NPE, for example).
 	 */
     @Test
-    public void testAccessorMethods() {
+    void testAccessorMethods() {
 		final double newRatio = 1.1;
 		final double newCoordinate = 0.3;
 		final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
@@ -100,7 +100,7 @@ public final class TestXDDFManualLayout {
 	 * any exceptions.
 	 */
     @Test
-    public void testDefaultValues() {
+    void testDefaultValues() {
 		assertNotNull(layout.getTarget());
 		assertNotNull(layout.getXMode());
 		assertNotNull(layout.getYMode());

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestXSSFPrintSetup {
     @Test
-    public void testSetGetPaperSize() {
+    void testSetGetPaperSize() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setPaperSize(9);
@@ -52,7 +52,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetScale() {
+    void testSetGetScale() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setScale(9);
@@ -64,7 +64,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetPageStart() {
+    void testSetGetPageStart() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setFirstPageNumber(9);
@@ -76,7 +76,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetFitWidthHeight() {
+    void testSetGetFitWidthHeight() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setFitToWidth(50);
@@ -93,7 +93,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetLeftToRight() {
+    void testSetGetLeftToRight() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setPageOrder(STPageOrder.DOWN_THEN_OVER);
@@ -105,7 +105,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetOrientation() {
+    void testSetGetOrientation() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setOrientation(STOrientation.PORTRAIT);
@@ -121,7 +121,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetValidSettings() {
+    void testSetGetValidSettings() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setUsePrinterDefaults(false);
@@ -133,7 +133,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetNoColor() {
+    void testSetGetNoColor() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setBlackAndWhite(false);
@@ -145,7 +145,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetDraft() {
+    void testSetGetDraft() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setDraft(false);
@@ -157,7 +157,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetNotes() {
+    void testSetGetNotes() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setCellComments(STCellComments.NONE);
@@ -169,7 +169,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetUsePage() {
+    void testSetGetUsePage() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setUseFirstPageNumber(false);
@@ -181,7 +181,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetHVResolution() {
+    void testSetGetHVResolution() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setHorizontalDpi(120);
@@ -197,7 +197,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetHeaderFooterMargin() {
+    void testSetGetHeaderFooterMargin() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageMargins pMargins = worksheet.addNewPageMargins();
         pMargins.setHeader(1.5);
@@ -213,7 +213,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetMargins() {
+    void testSetGetMargins() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageMargins pMargins = worksheet.addNewPageMargins();
         pMargins.setTop(5.3);
@@ -237,7 +237,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetGetCopies() {
+    void testSetGetCopies() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
         pSetup.setCopies(9);
@@ -249,7 +249,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetSaveRead() throws Exception {
+    void testSetSaveRead() throws Exception {
        XSSFWorkbook wb = new XSSFWorkbook();
        XSSFSheet s1 = wb.createSheet();
         assertFalse(s1.getCTWorksheet().isSetPageSetup());
@@ -291,12 +291,12 @@ public class TestXSSFPrintSetup {
      * Then, change, save, read, check
      */
     @Test
-    public void testRoundTrip() {
+    void testRoundTrip() {
        // TODO
     }
 
     @Test
-    public void testSetLandscapeFalse() {
+    void testSetLandscapeFalse() {
         XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
 
         assertFalse(ps.getLandscape());
@@ -309,7 +309,7 @@ public class TestXSSFPrintSetup {
     }
 
     @Test
-    public void testSetLeftToRight() {
+    void testSetLeftToRight() {
         XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
 
         assertFalse(ps.getLeftToRight());

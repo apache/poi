@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 public class TestXSSFBorder {
 
 	@Test
-	public void testGetBorderStyle() {
+	void testGetBorderStyle() {
 		CTStylesheet stylesheet = CTStylesheet.Factory.newInstance();
 		CTBorder border = stylesheet.addNewBorders().addNewBorder();
 		CTBorderPr top = border.addNewTop();

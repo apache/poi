@@ -66,7 +66,7 @@ public class ConditionalFormattingEvalTest {
     }
 
     @Test
-    public void testFormattingEvaluation() {
+    void testFormattingEvaluation() {
         sheet = wb.getSheet("Products1");
 
         getRulesFor(12, 1);
@@ -142,7 +142,7 @@ public class ConditionalFormattingEvalTest {
     }
 
     @Test
-    public void testFormattingOnUndefinedCell() {
+    void testFormattingOnUndefinedCell() {
         wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_with_formula_on_second_sheet.xlsx");
         formulaEval = new XSSFFormulaEvaluator(wb);
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
@@ -154,7 +154,7 @@ public class ConditionalFormattingEvalTest {
     }
 
     @Test
-    public void testRepeatedEval() {
+    void testRepeatedEval() {
         wb = XSSFTestDataSamples.openSampleWorkbook("test_conditional_formatting.xlsx");
         formulaEval = new XSSFFormulaEvaluator(wb);
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
@@ -167,7 +167,7 @@ public class ConditionalFormattingEvalTest {
     }
 
     @Test
-    public void testCellValueIsWrongType() {
+    void testCellValueIsWrongType() {
         wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_cell_is.xlsx");
         formulaEval = new XSSFFormulaEvaluator(wb);
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
@@ -178,7 +178,7 @@ public class ConditionalFormattingEvalTest {
     }
 
     @Test
-    public void testRangeCondition() {
+    void testRangeCondition() {
         wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_multiple_ranges.xlsx");
         formulaEval = new XSSFFormulaEvaluator(wb);
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);

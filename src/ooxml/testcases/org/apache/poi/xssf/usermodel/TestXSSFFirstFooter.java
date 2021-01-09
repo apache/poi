@@ -40,7 +40,7 @@ public class TestXSSFFirstFooter {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFFirstFooter footer = (XSSFFirstFooter) sheet.getFirstFooter();
         assertNotNull(footer);
         assertNull(footer.getText());

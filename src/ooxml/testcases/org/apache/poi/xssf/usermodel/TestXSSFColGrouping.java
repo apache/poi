@@ -51,7 +51,7 @@ public class TestXSSFColGrouping {
      * POI-52186
      */
 	@Test
-    public void testNoColsWithoutWidthWhenGrouping() throws IOException {
+    void testNoColsWithoutWidthWhenGrouping() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
@@ -79,7 +79,7 @@ public class TestXSSFColGrouping {
      * POI-52186
      */
 	@Test
-	public void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
+	void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
@@ -111,7 +111,7 @@ public class TestXSSFColGrouping {
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_WRAPS
      */
 	@Test
-    public void testMergingOverlappingCols_OVERLAPS_2_WRAPS() throws IOException {
+    void testMergingOverlappingCols_OVERLAPS_2_WRAPS() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
@@ -159,7 +159,7 @@ public class TestXSSFColGrouping {
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_WRAPS
      */
 	@Test
-    public void testMergingOverlappingCols_OVERLAPS_1_WRAPS() throws IOException {
+    void testMergingOverlappingCols_OVERLAPS_1_WRAPS() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
@@ -207,7 +207,7 @@ public class TestXSSFColGrouping {
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_MINOR
      */
 	@Test
-    public void testMergingOverlappingCols_OVERLAPS_1_MINOR() throws IOException {
+    void testMergingOverlappingCols_OVERLAPS_1_MINOR() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
@@ -256,7 +256,7 @@ public class TestXSSFColGrouping {
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_MINOR
      */
 	@Test
-    public void testMergingOverlappingCols_OVERLAPS_2_MINOR() throws IOException {
+    void testMergingOverlappingCols_OVERLAPS_2_MINOR() throws IOException {
 		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 

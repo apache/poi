@@ -40,7 +40,7 @@ public class TestXSSFOddHeader {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFOddHeader header = (XSSFOddHeader) sheet.getOddHeader();
         assertNotNull(header);
         assertNull(header.getText());

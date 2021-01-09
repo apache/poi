@@ -33,7 +33,7 @@ public final class TestXWPFHeadings {
     private static final String HEADING1 = "Heading1";
 
     @Test
-    public void testSetParagraphStyle() throws IOException {
+    void testSetParagraphStyle() throws IOException {
         //new clean instance of paragraph
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("heading123.docx")) {
             XWPFParagraph p = doc.createParagraph();

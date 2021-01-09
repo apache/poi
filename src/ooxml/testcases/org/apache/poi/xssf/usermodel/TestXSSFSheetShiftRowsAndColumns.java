@@ -114,7 +114,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
      * Apply no shift.  The purpose of this is to test {@code testCellAddresses} and {@code testMergeRegion}.
      */
     @Test
-    public void testNoShift() {
+    void testNoShift() {
         final String procName = "testNoShift";
         fileName = procName+".xlsx";
 
@@ -123,7 +123,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
     }
 
     @Test
-    public void testShiftOneRowAndTestAddresses() {
+    void testShiftOneRowAndTestAddresses() {
         final String procName = "testShiftOneRowAndTestAddresses";
         fileName = procName+".xlsx";
         final int nRowsToShift = 1;
@@ -133,7 +133,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
     }
 
     @Test
-    public void testShiftOneRowAndTestMergeRegion() {
+    void testShiftOneRowAndTestMergeRegion() {
         final String procName = "testShiftOneRowAndTestMergeRegion";
         fileName = procName+".xlsx";
         final int nRowsToShift = 1;
@@ -143,7 +143,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
     }
 
     @Test
-    public void testShiftOneColumnAndTestAddresses() {
+    void testShiftOneColumnAndTestAddresses() {
         final String procName = "testShiftOneColumnAndTestAddresses";
         fileName = procName+".xlsx";
         final int nShift = 1;
@@ -153,7 +153,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
     }
 
     @Test
-    public void testShiftOneColumnAndTestMergeRegion() {
+    void testShiftOneColumnAndTestMergeRegion() {
         final String procName = "testShiftOneColumnAndTestMergeRegion";
         fileName = procName+".xlsx";
         final int nShift = 1;

@@ -60,7 +60,7 @@ public class XSSFMemoryLeakTests {
     }
 
     @Test
-    public void testWriteRow() throws IOException {
+    void testWriteRow() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFSheet sheet1 = wb.createSheet("Sheet1");
         final XSSFRow row = sheet1.createRow(0);
@@ -83,7 +83,7 @@ public class XSSFMemoryLeakTests {
     }
 
     @Test
-    public void testRemoveCellFromRow() throws IOException {
+    void testRemoveCellFromRow() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFSheet sheet1 = wb.createSheet("Sheet1");
         final XSSFRow rowToCheck = sheet1.createRow(0);
@@ -102,7 +102,7 @@ public class XSSFMemoryLeakTests {
     }
 
     @Test
-    public void testRemove2CellsFromRow() throws IOException {
+    void testRemove2CellsFromRow() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFSheet sheet1 = wb.createSheet("Sheet1");
         final XSSFRow rowToCheck = sheet1.createRow(0);
@@ -126,7 +126,7 @@ public class XSSFMemoryLeakTests {
     }
 
     @Test
-    public void testRemoveRowFromSheet() throws IOException {
+    void testRemoveRowFromSheet() throws IOException {
         final XSSFWorkbook wb1 = new XSSFWorkbook();
         final XSSFSheet sheetToCheck = wb1.createSheet("Sheet1");
         references.add(sheetToCheck);
@@ -146,14 +146,14 @@ public class XSSFMemoryLeakTests {
     }
 
     @Test
-    public void testFileLeak() {
+    void testFileLeak() {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         verifier.addObject(file);
         assertThrows(POIXMLException.class, () -> new XSSFWorkbook(file), "Should catch exception as the file is corrupted");
     }
 
     @Test
-    public void testFileLeak2() throws IOException, InvalidFormatException {
+    void testFileLeak2() throws IOException, InvalidFormatException {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         verifier.addObject(file);
         try (OPCPackage pkg = OPCPackage.open(file)) {

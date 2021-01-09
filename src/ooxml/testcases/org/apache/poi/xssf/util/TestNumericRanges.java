@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class TestNumericRanges {
 
     @Test
-    public void testGetOverlappingType() {
+    void testGetOverlappingType() {
         long[] r1 = {3, 8};
         long[] r2 = {6, 11};
         long[] r3 = {1, 5};
@@ -40,7 +40,7 @@ public class TestNumericRanges {
     }
 
     @Test
-    public void testGetOverlappingRange() {
+    void testGetOverlappingRange() {
         long[] r1 = {3, 8};
         long[] r2 = {6, 11};
         long[] r3 = {1, 5};

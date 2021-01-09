@@ -142,7 +142,7 @@ public class TestExtractorFactory {
 
     @ParameterizedTest
     @MethodSource("testFileData")
-    public void testFile(String testcase, File file, String extractor, int count) throws Exception {
+    void testFile(String testcase, File file, String extractor, int count) throws Exception {
         try (POITextExtractor ext = createExtractor(file)) {
             assertNotNull(ext);
             testExtractor(ext, testcase, extractor, count);
@@ -151,7 +151,7 @@ public class TestExtractorFactory {
 
     @ParameterizedTest
     @MethodSource("testScratchData")
-    public void testPOIFS(String testcase, File testFile, String extractor, int count) throws Exception {
+    void testPOIFS(String testcase, File testFile, String extractor, int count) throws Exception {
         // test processing of InputStream
         try (FileInputStream fis = new FileInputStream(testFile);
              POIFSFileSystem poifs = new POIFSFileSystem(fis);
@@ -163,7 +163,7 @@ public class TestExtractorFactory {
 
     @ParameterizedTest
     @MethodSource("testFileData")
-    public void testOOXML(String testcase, File testFile, String extractor, int count) throws Exception {
+    void testOOXML(String testcase, File testFile, String extractor, int count) throws Exception {
         // test processing of InputStream
         try (FileInputStream fis = new FileInputStream(testFile);
              POITextExtractor ext = createExtractor(fis)) {
@@ -174,7 +174,7 @@ public class TestExtractorFactory {
 
     @ParameterizedTest
     @MethodSource("testOOXMLData")
-    public void testPackage(String testcase, File testFile, String extractor, int count) throws Exception {
+    void testPackage(String testcase, File testFile, String extractor, int count) throws Exception {
         try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
              final POITextExtractor ext = xmlFactory.create(pkg)) {
             assertNotNull(ext);
@@ -184,13 +184,13 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testFileInvalid() {
+    void testFileInvalid() {
         IOException ex = assertThrows(IOException.class, () -> createExtractor(txt));
         assertEquals("Can't create extractor - unsupported file type: UNKNOWN", ex.getMessage());
     }
 
     @Test
-    public void testInputStreamInvalid() throws IOException {
+    void testInputStreamInvalid() throws IOException {
         try (FileInputStream fis = new FileInputStream(txt)) {
             IOException ex = assertThrows(IOException.class, () -> createExtractor(fis));
             assertTrue(ex.getMessage().contains(FileMagic.UNKNOWN.name()));
@@ -198,7 +198,7 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testPOIFSInvalid() {
+    void testPOIFSInvalid() {
         // Not really an Extractor test, but we'll leave it to test POIFS reaction anyway ...
         IOException ex = assertThrows(IOException.class, () -> new POIFSFileSystem(txt));
         assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"));
@@ -214,13 +214,13 @@ public class TestExtractorFactory {
         }
     }
     @Test
-    public void testPackageInvalid() {
+    void testPackageInvalid() {
         // Text
         assertThrows(NotOfficeXmlFileException.class, () -> OPCPackage.open(txt, PackageAccess.READ));
     }
 
     @Test
-    public void testPreferEventBased() throws Exception {
+    void testPreferEventBased() throws Exception {
         assertFalse(ExtractorFactory.getPreferEventExtractor());
         assertFalse(ExtractorFactory.getThreadPrefersEventExtractors());
         assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
@@ -300,7 +300,7 @@ public class TestExtractorFactory {
      */
     @ParameterizedTest
     @MethodSource("testEmbeddedData")
-    public void testEmbedded(String format, File file, String expected) throws Exception {
+    void testEmbedded(String format, File file, String expected) throws Exception {
         int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX = 0;
 
         try (final POIOLE2TextExtractor ext = (POIOLE2TextExtractor) createExtractor(file)) {
@@ -417,7 +417,7 @@ public class TestExtractorFactory {
         "spreadsheet/WithChartSheet.xlsx",
         "spreadsheet/chart_sheet.xlsx"
     })
-    public void testFileLeak(String file) {
+    void testFileLeak(String file) {
         // run a number of files that might fail in order to catch
         // leaked file resources when using file-leak-detector while
         // running the test
@@ -437,7 +437,7 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testGetEmbeddedFromXMLExtractor() {
+    void testGetEmbeddedFromXMLExtractor() {
         // currently not implemented
         assertThrows(IllegalStateException.class, () -> ExtractorFactory.getEmbeddedDocsTextExtractors(null));
     }
@@ -446,7 +446,7 @@ public class TestExtractorFactory {
     // When this happens, change this from @Test(expected=...) to @Test
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
     @Test
-    public void test45565() throws Exception {
+    void test45565() throws Exception {
         try (POITextExtractor extractor = ex("45565.xls")) {
             String text = extractor.getText();
             assertThrows(AssertionError.class, () -> {

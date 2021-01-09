@@ -40,7 +40,7 @@ public class TestXSSFOddFooter {
     }
 
     @Test
-    public void testSetGetText() {
+    void testSetGetText() {
         XSSFOddFooter footer = (XSSFOddFooter) sheet.getOddFooter();
         assertNotNull(footer);
         assertNull(footer.getText());

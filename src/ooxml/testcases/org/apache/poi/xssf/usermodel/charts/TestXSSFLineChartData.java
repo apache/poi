@@ -50,7 +50,7 @@ public class TestXSSFLineChartData {
     };
 
     @Test
-    public void testOneSeriePlot() throws IOException {
+    void testOneSeriePlot() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();

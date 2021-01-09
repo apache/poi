@@ -63,7 +63,7 @@ public class TestXWPFHeaderFooterPolicy {
     }
 
     @Test
-    public void testPolicy() {
+    void testPolicy() {
         XWPFHeaderFooterPolicy policy;
 
         policy = noHeader.getHeaderFooterPolicy();
@@ -145,7 +145,7 @@ public class TestXWPFHeaderFooterPolicy {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         try (XWPFDocument doc = new XWPFDocument()) {
             assertNull(doc.getHeaderFooterPolicy());
             assertEquals(0, doc.getHeaderList().size());
@@ -176,7 +176,7 @@ public class TestXWPFHeaderFooterPolicy {
     }
 
     @Test
-    public void testContents() {
+    void testContents() {
         XWPFHeaderFooterPolicy policy;
 
         // Test a few simple bits off a simple header

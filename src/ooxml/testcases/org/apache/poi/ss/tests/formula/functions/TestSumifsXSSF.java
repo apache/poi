@@ -39,7 +39,7 @@ public class TestSumifsXSSF {
      * handle null cell predicate
      */
     @Test
-    public void testBug60858() throws IOException {
+    void testBug60858() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("bug60858.xlsx")) {
             FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 

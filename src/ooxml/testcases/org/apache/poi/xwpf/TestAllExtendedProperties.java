@@ -48,7 +48,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
  */
 public final class TestAllExtendedProperties {
     @Test
-    public void testGetAllExtendedProperties() throws IOException {
+    void testGetAllExtendedProperties() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx")) {
             CTProperties ctProps = doc.getProperties().getExtendedProperties().getUnderlyingProperties();
             assertEquals("Microsoft Office Word", ctProps.getApplication());

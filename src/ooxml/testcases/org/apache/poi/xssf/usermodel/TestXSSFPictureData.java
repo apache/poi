@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestXSSFPictureData {
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         //wb.getAllPictures() should return the same instance across multiple calls
@@ -63,7 +63,7 @@ public final class TestXSSFPictureData {
     }
 
     @Test
-    public void testNew() throws IOException {
+    void testNew() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -119,7 +119,7 @@ public final class TestXSSFPictureData {
      * Bug 53568:  XSSFPicture.getPictureData() can return null.
      */
     @Test
-    public void test53568() throws IOException {
+    void test53568() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53568.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertNotNull(pictures);

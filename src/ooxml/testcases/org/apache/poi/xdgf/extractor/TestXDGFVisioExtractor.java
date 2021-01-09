@@ -50,7 +50,7 @@ public class TestXDGFVisioExtractor {
     }
 
     @Test
-    public void testGetSimpleText() throws IOException {
+    void testGetSimpleText() throws IOException {
         new XDGFVisioExtractor(xml).close();
         new XDGFVisioExtractor(pkg).close();
 
@@ -68,7 +68,7 @@ public class TestXDGFVisioExtractor {
     //the point of this is to trigger the addition of
     //some common visio classes -- ConnectsType
     @Test
-    public void testVisioConnects() throws IOException {
+    void testVisioConnects() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream("60489.vsdx");
         XmlVisioDocument document = new XmlVisioDocument(is);
         is.close();
@@ -86,7 +86,7 @@ public class TestXDGFVisioExtractor {
      *  at org.apache.poi.xdgf.usermodel.section.geometry.GeometryRowFactory.load
      */
     @Test
-    public void testPolylineTo() throws IOException {
+    void testPolylineTo() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream("60973.vsdx");
         XmlVisioDocument document = new XmlVisioDocument(is);
         is.close();

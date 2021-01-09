@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STSystemColorVal;
 public class TestXSLFColor {
 
     @Test
-    public void testGetters() {
+    void testGetters() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSRgbColor c = xml.addNewSrgbClr();
         c.setVal(new byte[]{(byte)0xFF, 0, 0});
@@ -96,7 +96,7 @@ public class TestXSLFColor {
     }
 
     @Test
-    public void testHSL() {
+    void testHSL() {
         CTColor xml = CTColor.Factory.newInstance();
         CTHslColor c = xml.addNewHslClr();
         c.setHue2(14400000);
@@ -108,7 +108,7 @@ public class TestXSLFColor {
     }
 
     @Test
-    public void testSRgb() {
+    void testSRgb() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewSrgbClr().setVal(new byte[]{ (byte)0xFF, (byte)0xFF, 0});
 
@@ -117,7 +117,7 @@ public class TestXSLFColor {
     }
 
     @Test
-    public void testSchemeColor() throws IOException {
+    void testSchemeColor() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSheet slide = ppt.createSlide();
         XSLFTheme theme = slide.getTheme();
@@ -145,7 +145,7 @@ public class TestXSLFColor {
     }
 
     @Test
-    public void testPresetColor() {
+    void testPresetColor() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewPrstClr().setVal(STPresetColorVal.AQUAMARINE);
         XSLFColor color = new XSLFColor(xml, null, null, null);
@@ -169,7 +169,7 @@ public class TestXSLFColor {
     }
 
     @Test
-    public void testSys() {
+    void testSys() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSystemColor sys = xml.addNewSysClr();
         sys.setVal(STSystemColorVal.CAPTION_TEXT);

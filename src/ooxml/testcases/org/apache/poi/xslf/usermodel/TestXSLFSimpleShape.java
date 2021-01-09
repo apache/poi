@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 public class TestXSLFSimpleShape {
 
     @Test
-    public void testLineStyles() throws IOException {
+    void testLineStyles() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 
@@ -141,7 +141,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testFill() throws IOException {
+    void testFill() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 
@@ -167,7 +167,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testDefaultProperties() throws IOException {
+    void testDefaultProperties() throws IOException {
         try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx")) {
             XSLFSlide slide6 = ppt.getSlides().get(5);
             List<XSLFShape> shapes = slide6.getShapes();
@@ -236,7 +236,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testAnchor() throws IOException {
+    void testAnchor() throws IOException {
         try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx")) {
             List<XSLFSlide> slide = ppt.getSlides();
 
@@ -270,7 +270,7 @@ public class TestXSLFSimpleShape {
 
     @SuppressWarnings({"unused", "deprecation"})
     @Test
-    public void testShadowEffects() throws IOException{
+    void testShadowEffects() throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
             CTStyleMatrix styleMatrix = slide.getTheme().getXmlObject().getThemeElements().getFmtScheme();
@@ -283,7 +283,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testValidGeometry() throws Exception {
+    void testValidGeometry() throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
 
@@ -305,7 +305,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testArrayStoreException() throws Exception {
+    void testArrayStoreException() throws Exception {
         File tmpDir = new File("build/tmp/");
 
         // fix maven build errors

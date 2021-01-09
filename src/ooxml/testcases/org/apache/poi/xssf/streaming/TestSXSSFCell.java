@@ -64,7 +64,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testPreserveSpaces() throws IOException {
+    void testPreserveSpaces() throws IOException {
         String[] samplesWithSpaces = {
                 " POI",
                 "POI ",

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class TestHeaderFooterHelper {
 
     @Test
-    public void testGetCenterLeftRightSection() {
+    void testGetCenterLeftRightSection() {
         HeaderFooterHelper helper = new HeaderFooterHelper();
 
         String headerFooter = "&CTest the center section";
@@ -42,7 +42,7 @@ public class TestHeaderFooterHelper {
     }
 
     @Test
-    public void testSetCenterLeftRightSection() {
+    void testSetCenterLeftRightSection() {
         HeaderFooterHelper helper = new HeaderFooterHelper();
         String headerFooter = "";
         headerFooter = helper.setCenterSection(headerFooter, "First added center section");

@@ -105,7 +105,7 @@ public final class TestWorkbookFactory {
     }
 
     @Test
-    public void testCreateNative() throws Exception {
+    void testCreateNative() throws Exception {
         // POIFS -> hssf
         try (Workbook wb = WorkbookFactory.create(
             new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls))
@@ -132,7 +132,7 @@ public final class TestWorkbookFactory {
     }
 
     @Test
-    public void testCreateReadOnly() throws Exception {
+    void testCreateReadOnly() throws Exception {
         // POIFS -> hssf
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xls), null, true)) {
             assertNotNull(wb);
@@ -154,7 +154,7 @@ public final class TestWorkbookFactory {
      * InputStream, then creating what's required.
      */
     @Test
-    public void testCreateGeneric() throws Exception {
+    void testCreateGeneric() throws Exception {
         // InputStream -> either
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.openSampleFileStream(xls))) {
             assertNotNull(wb);
@@ -208,7 +208,7 @@ public final class TestWorkbookFactory {
      */
     @ParameterizedTest
     @MethodSource("workbookPass")
-    public void testCreateWithPasswordFromStream(String file, String pass, boolean fails, Class<? extends Workbook> clazz) throws Exception {
+    void testCreateWithPasswordFromStream(String file, String pass, boolean fails, Class<? extends Workbook> clazz) throws Exception {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream(file)) {
             if (fails) {
                 assertThrows(EncryptedDocumentException.class, () -> WorkbookFactory.create(is, pass),
@@ -227,7 +227,7 @@ public final class TestWorkbookFactory {
      */
     @ParameterizedTest
     @MethodSource("workbookPass")
-    public void testCreateWithPasswordFromFile(String fileName, String pass, boolean fails, Class<? extends Workbook> clazz) throws Exception {
+    void testCreateWithPasswordFromFile(String fileName, String pass, boolean fails, Class<? extends Workbook> clazz) throws Exception {
         File file = HSSFTestDataSamples.getSampleFile(fileName);
         if (fails) {
             assertThrows(EncryptedDocumentException.class, () -> WorkbookFactory.create(file, pass),
@@ -245,7 +245,7 @@ public final class TestWorkbookFactory {
      * Check that a helpful exception is given on an empty input stream
      */
     @Test
-    public void testEmptyInputStream() {
+    void testEmptyInputStream() {
         InputStream emptyStream = new ByteArrayInputStream(new byte[0]);
         assertThrows(EmptyFileException.class, () -> WorkbookFactory.create(emptyStream));
     }
@@ -254,7 +254,7 @@ public final class TestWorkbookFactory {
      * Check that a helpful exception is given on an empty file
      */
     @Test
-    public void testEmptyFile() throws Exception {
+    void testEmptyFile() throws Exception {
         File emptyFile = TempFile.createTempFile("empty", ".poi");
         assertThrows(EmptyFileException.class, () -> WorkbookFactory.create(emptyFile),
             "Shouldn't be able to create for an empty file");
@@ -265,7 +265,7 @@ public final class TestWorkbookFactory {
      * Check that a helpful exception is raised on a non-existing file
      */
     @Test
-    public void testNonExistingFile() {
+    void testNonExistingFile() {
         File nonExistingFile = new File("notExistingFile");
         assertFalse(nonExistingFile.exists());
         assertThrows(FileNotFoundException.class, () -> WorkbookFactory.create(nonExistingFile, "password", true));
@@ -276,7 +276,7 @@ public final class TestWorkbookFactory {
      * to work for sub-classes of File too, eg JFileChooser
      */
     @Test
-    public void testFileSubclass() throws Exception {
+    void testFileSubclass() throws Exception {
         File normalXLS = HSSFTestDataSamples.getSampleFile(xls);
         File normalXLSX = HSSFTestDataSamples.getSampleFile(xlsx);
         File altXLS = new TestFile(normalXLS.getAbsolutePath());
@@ -307,7 +307,7 @@ public final class TestWorkbookFactory {
      * Check that the overloaded file methods which take passwords work properly
      */
     @Test
-    public void testCreateEmpty() throws Exception {
+    void testCreateEmpty() throws Exception {
         Workbook wb = WorkbookFactory.create(false);
         assertTrue(wb instanceof HSSFWorkbook);
         closeOrRevert(wb);
@@ -319,7 +319,7 @@ public final class TestWorkbookFactory {
 
     @Test
     @SuppressForbidden("test code")
-    public void testOpenManyHSSF() throws Exception {
+    void testOpenManyHSSF() throws Exception {
         final int size = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         ArrayList<Future<Boolean>> futures = new ArrayList<>(size);
@@ -332,7 +332,7 @@ public final class TestWorkbookFactory {
     }
 
     @Test
-    public void testInvalidFormatException() throws IOException {
+    void testInvalidFormatException() throws IOException {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
         try (InputStream is = POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)) {
             assertThrows(IOException.class, () -> WorkbookFactory.create(is));

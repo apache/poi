@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestXSLFTheme {
     @Test
-    public void testRead(){
+    void testRead(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("themes.pptx");
         List<XSLFSlide> slides = ppt.getSlides();
 

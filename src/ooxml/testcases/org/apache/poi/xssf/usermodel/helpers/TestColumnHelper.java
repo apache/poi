@@ -45,7 +45,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 public final class TestColumnHelper {
 
     @Test
-    public void testCleanColumns() {
+    void testCleanColumns() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
 
         CTCols cols1 = worksheet.addNewCols();
@@ -79,7 +79,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testSortColumns() {
+    void testSortColumns() {
         CTCols cols1 = CTCols.Factory.newInstance();
         CTCol col1 = cols1.addNewCol();
         col1.setMin(1);
@@ -125,7 +125,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testCloneCol() {
+    void testCloneCol() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         ColumnHelper helper = new ColumnHelper(worksheet);
 
@@ -143,7 +143,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoCols() {
+    void testAddCleanColIntoCols() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         ColumnHelper helper = new ColumnHelper(worksheet);
 
@@ -195,14 +195,14 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsExactOverlap() {
+    void testAddCleanColIntoColsExactOverlap() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 1, 1, 1);
         assertEquals(1, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, true);
     }
 
     @Test
-    public void testAddCleanColIntoColsOverlapsOverhangingBothSides() {
+    void testAddCleanColIntoColsOverlapsOverhangingBothSides() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 2, 1, 3);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -211,7 +211,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsOverlapsCompletelyNested() {
+    void testAddCleanColIntoColsOverlapsCompletelyNested() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 3, 2, 2);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
@@ -220,7 +220,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRightExactRight() {
+    void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRightExactRight() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 3);
         assertEquals(2, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -228,7 +228,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeftExactLeft() {
+    void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeftExactLeft() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 1, 3);
         assertEquals(2, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 2, true, true);
@@ -236,7 +236,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRight() {
+    void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRight() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 2);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -245,7 +245,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeft() {
+    void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeft() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 2, 3);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
@@ -288,7 +288,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testGetColumn() {
+    void testGetColumn() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
 
         CTCols cols1 = worksheet.addNewCols();
@@ -318,7 +318,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testSetColumnAttributes() {
+    void testSetColumnAttributes() {
         CTCol col = CTCol.Factory.newInstance();
         col.setWidth(12);
         col.setHidden(true);
@@ -333,7 +333,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testGetOrCreateColumn() throws IOException {
+    void testGetOrCreateColumn() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
@@ -357,7 +357,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testGetSetColDefaultStyle() throws IOException {
+    void testGetSetColDefaultStyle() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -408,7 +408,7 @@ public final class TestColumnHelper {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testColumnsCollapsed() {
+    void testColumnsCollapsed() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(0);

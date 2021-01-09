@@ -46,7 +46,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         for (XSSFCellBorder.BorderSide side : XSSFCellBorder.BorderSide.values()) {
             XSSFCellBorder border = new XSSFCellBorder();
             assertEquals(empty, border);
@@ -78,7 +78,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testConstruct() {
+    void testConstruct() {
         XSSFCellBorder border = new XSSFCellBorder((CTBorder) empty.getCTBorder().copy());
         assertEquals(empty, border);
         border.getCTBorder().setOutline(true);
@@ -97,7 +97,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testGettersSetters() {
+    void testGettersSetters() {
         assertNotNull(empty.getCTBorder());
 
         XSSFCellBorder border = new XSSFCellBorder((CTBorder) empty.getCTBorder().copy());
@@ -106,7 +106,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testSetBorderStyle() {
+    void testSetBorderStyle() {
         XSSFCellBorder border = new XSSFCellBorder();
         for (XSSFCellBorder.BorderSide side : XSSFCellBorder.BorderSide.values()) {
             assertEquals(BorderStyle.NONE, border.getBorderStyle(side));
@@ -117,7 +117,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testSetBorderColor() {
+    void testSetBorderColor() {
         XSSFCellBorder border = new XSSFCellBorder();
         XSSFColor color = new XSSFColor(stylesSource.getIndexedColors());
 
@@ -130,7 +130,7 @@ public class XSSFCellBorderTest {
     }
 
     @Test
-    public void testRegression() throws Exception {
+    void testRegression() throws Exception {
         XSSFCellStyle style = wb.createCellStyle();
         style.setBorderTop(BorderStyle.THICK);
         style.setBorderBottom(BorderStyle.THICK);

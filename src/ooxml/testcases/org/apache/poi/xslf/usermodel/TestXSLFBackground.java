@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestXSLFBackground {
     @Test
-    public void testNoFillBackground() throws IOException {
+    void testNoFillBackground() throws IOException {
         XMLSlideShow pptx = new XMLSlideShow();
         XSLFSlide slide = pptx.createSlide();
 
@@ -48,7 +48,7 @@ public class TestXSLFBackground {
     }
 
     @Test
-    public void testSolidFillBackground() throws IOException {
+    void testSolidFillBackground() throws IOException {
         XMLSlideShow pptx = new XMLSlideShow();
         XSLFSlide slide = pptx.createSlide();
 
@@ -72,7 +72,7 @@ public class TestXSLFBackground {
     }
 
     @Test
-    public void testBlipFillBackground() throws IOException {
+    void testBlipFillBackground() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pptx2svg.pptx");
         XSLFSlide slide = pptx.getSlides().get(0);
 
@@ -114,7 +114,7 @@ public class TestXSLFBackground {
     }
 
     @Test
-    public void testGradFillBackground() throws IOException {
+    void testGradFillBackground() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("themes.pptx");
         XSLFSlide slide = pptx.getSlides().get(9);
 

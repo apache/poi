@@ -744,7 +744,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testAddPivotCache() throws IOException {
+    void testAddPivotCache() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             CTWorkbook ctWb = wb.getCTWorkbook();
             CTPivotCache pivotCache = wb.addPivotCache("0");
@@ -788,7 +788,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testLoadWorkbookWithPivotTable() throws Exception {
+    void testLoadWorkbookWithPivotTable() throws Exception {
         File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -807,7 +807,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
+    void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
         File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -827,7 +827,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testSetFirstVisibleTab_57373() throws IOException {
+    void testSetFirstVisibleTab_57373() throws IOException {
 
         try (Workbook wb = new XSSFWorkbook()) {
             /*Sheet sheet1 =*/
@@ -866,7 +866,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * Tests that we can save a workbook with macros and reload it.
      */
     @Test
-    public void testSetVBAProject() throws Exception {
+    void testSetVBAProject() throws Exception {
         File file;
         final byte[] allBytes = new byte[256];
         for (int i = 0; i < 256; i++) {
@@ -907,7 +907,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testBug54399() throws IOException {
+    void testBug54399() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54399.xlsx");
 
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
@@ -985,7 +985,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testBug56957CloseWorkbook() throws Exception {
+    void testBug56957CloseWorkbook() throws Exception {
         File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
         final Date dateExp = LocaleUtil.getLocaleCalendar(2014, 10, 9).getTime();
 
@@ -1051,7 +1051,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void testCloseBeforeWrite() throws IOException {
+    void testCloseBeforeWrite() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             wb.createSheet("somesheet");
 
@@ -1102,7 +1102,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testRemoveSheet() throws IOException {
+    void testRemoveSheet() throws IOException {
         // Test removing a sheet maintains the named ranges correctly
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet("Sheet1");
@@ -1145,7 +1145,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
      * See bug #61700
      */
     @Test
-    public void testWorkbookForceFormulaRecalculation() throws Exception {
+    void testWorkbookForceFormulaRecalculation() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet().createRow(0).createCell(0).setCellFormula("B1+C1");
         workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();

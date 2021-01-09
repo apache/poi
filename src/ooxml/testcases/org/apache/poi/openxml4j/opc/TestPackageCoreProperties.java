@@ -44,7 +44,7 @@ public final class TestPackageCoreProperties {
 	 * Test package core properties getters.
 	 */
     @Test
-	public void testGetProperties() throws Exception {
+	void testGetProperties() throws Exception {
 		// Open the package
 		@SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(OpenXML4JTestDataSamples.openSampleStream("TestPackageCoreProperiesGetters.docx"));
@@ -56,7 +56,7 @@ public final class TestPackageCoreProperties {
 	 * Test package core properties setters.
 	 */
     @Test
-    public void testSetProperties() throws Exception {
+    void testSetProperties() throws Exception {
 		String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCoreProperiesSetters.docx");
 
 		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
@@ -151,7 +151,7 @@ public final class TestPackageCoreProperties {
 	}
 
 	@Test
-	public void testCoreProperties_bug51374() throws Exception {
+	void testCoreProperties_bug51374() throws Exception {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
         String strDate = "2007-05-12T08:00:00Z";
@@ -210,7 +210,7 @@ public final class TestPackageCoreProperties {
     }
 
 	@Test
-	public void testGetPropertiesLO() throws Exception {
+	void testGetPropertiesLO() throws Exception {
         // Open the package
         OPCPackage pkg1 = OPCPackage.open(OpenXML4JTestDataSamples.openSampleStream("51444.xlsx"));
         PackageProperties props1 = pkg1.getPackageProperties();
@@ -228,7 +228,7 @@ public final class TestPackageCoreProperties {
     }
 
 	@Test
-	public void testEntitiesInCoreProps_56164() throws Exception {
+	void testEntitiesInCoreProps_56164() throws Exception {
         try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("CorePropertiesHasEntities.ooxml");
         OPCPackage p = OPCPackage.open(is)) {
 
@@ -255,7 +255,7 @@ public final class TestPackageCoreProperties {
     }
 
 	@Test
-	public void testListOfCustomProperties() throws Exception {
+	void testListOfCustomProperties() throws Exception {
         File inp = POIDataSamples.getSpreadSheetInstance().getFile("ExcelWithAttachments.xlsm");
         OPCPackage pkg = OPCPackage.open(inp, PackageAccess.READ);
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -272,7 +272,7 @@ public final class TestPackageCoreProperties {
     }
 
 	@Test
-	public void testAlternateCorePropertyTimezones() throws Exception {
+	void testAlternateCorePropertyTimezones() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("OPCCompliance_CoreProperties_AlternateTimezones.docx");
         OPCPackage pkg = OPCPackage.open(is);
         PackagePropertiesPart props = (PackagePropertiesPart)pkg.getPackageProperties();

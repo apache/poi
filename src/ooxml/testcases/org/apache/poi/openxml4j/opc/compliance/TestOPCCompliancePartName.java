@@ -91,7 +91,7 @@ public final class TestOPCCompliancePartName {
      * A segment shall not contain percent-encoded unreserved characters. [M1.8]
      */
     @Test
-    public void testInvalidPartNames() {
+    void testInvalidPartNames() {
         String[] invalidNames = { "/", "/xml./doc.xml", "[Content_Types].xml", "//xml/." };
         for (String s : invalidNames) {
             URI uri = null;
@@ -109,7 +109,7 @@ public final class TestOPCCompliancePartName {
      * Test some common valid names.
      */
     @Test
-    public void testValidPartNames() throws URISyntaxException {
+    void testValidPartNames() throws URISyntaxException {
         String[] validNames = { "/xml/item1.xml", "/document.xml", "/a/%D1%86.xml" };
         for (String s : validNames) {
             assertTrue(isValidPartName(new URI(s)), "This part name SHOULD be valid: " + s);
@@ -120,7 +120,7 @@ public final class TestOPCCompliancePartName {
      * A part name shall not be empty. [M1.1]
      */
     @Test
-    public void testEmptyPartNameFailure() {
+    void testEmptyPartNameFailure() {
         assertThrows(InvalidFormatException.class, () -> createPartName(new URI("")),
             "A part name shall not be empty. [M1.1]");
     }
@@ -133,7 +133,7 @@ public final class TestOPCCompliancePartName {
      * A segment shall include at least one non-dot character. [M1.10]
      */
     @Test
-    public void testPartNameWithInvalidSegmentsFailure() throws URISyntaxException {
+    void testPartNameWithInvalidSegmentsFailure() throws URISyntaxException {
         String[] invalidNames = { "//document.xml", "//word/document.xml",
                 "/word//document.rels", "/word//rels//document.rels",
                 "/xml./doc.xml", "/document.", "/./document.xml",
@@ -148,7 +148,7 @@ public final class TestOPCCompliancePartName {
      * [M1.6].
      */
     @Test
-    public void testPartNameWithNonPCharCharacters() throws URISyntaxException {
+    void testPartNameWithNonPCharCharacters() throws URISyntaxException {
         String[] validNames = { "/doc&.xml" };
         for (String s : validNames) {
             assertTrue(isValidPartName(new URI(s)),
@@ -160,7 +160,7 @@ public final class TestOPCCompliancePartName {
      * A segment shall not contain percent-encoded unreserved characters [M1.8].
      */
     @Test
-    public void testPartNameWithUnreservedEncodedCharactersFailure() throws URISyntaxException {
+    void testPartNameWithUnreservedEncodedCharactersFailure() throws URISyntaxException {
         String[] invalidNames = { "/a/docum%65nt.xml" };
         for (String s : invalidNames) {
             assertFalse(isValidPartName(new URI(s)), "A segment shall not contain percent-encoded unreserved characters [M1.8] : " + s);
@@ -171,7 +171,7 @@ public final class TestOPCCompliancePartName {
      * A part name shall start with a forward slash ('/') character. [M1.4]
      */
     @Test
-    public void testPartNameStartsWithAForwardSlashFailure() {
+    void testPartNameStartsWithAForwardSlashFailure() {
         assertThrows(InvalidFormatException.class, () -> createPartName(new URI("document.xml")),
             "A part name shall start with a forward slash ('/') character. [M1.4]");
     }
@@ -180,7 +180,7 @@ public final class TestOPCCompliancePartName {
      * A part name shall not have a forward slash as the last character. [M1.5]
      */
     @Test
-    public void testPartNameEndsWithAForwardSlashFailure() {
+    void testPartNameEndsWithAForwardSlashFailure() {
         assertThrows(InvalidFormatException.class, () -> createPartName(new URI("/document.xml/")),
             "A part name shall not have a forward slash as the last character. [M1.5]");
     }
@@ -190,7 +190,7 @@ public final class TestOPCCompliancePartName {
      * case-insensitive ASCII strings. [M1.12]
      */
     @Test
-    public void testPartNameComparaison() throws Exception {
+    void testPartNameComparaison() throws Exception {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML", "/docProps/core.xml", "/rels/.rels" };
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {
@@ -209,7 +209,7 @@ public final class TestOPCCompliancePartName {
      * All the comparisons MUST FAIL !
      */
     @Test
-    public void testPartNameComparaisonFailure() throws Exception {
+    void testPartNameComparaisonFailure() throws Exception {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML2", "/docProp/core.xml", "/rels/rels" };
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {

@@ -51,7 +51,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testSharedFormulas_evaluateInCell() throws IOException {
+    void testSharedFormulas_evaluateInCell() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("49872.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet sheet = wb.getSheetAt(0);
@@ -81,7 +81,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * Evaluation of cell references with column indexes greater than 255. See bugzilla 50096
      */
     @Test
-    public void testEvaluateColumnGreaterThan255() throws IOException {
+    void testEvaluateColumnGreaterThan255() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("50096.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -115,7 +115,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      *  workbooks, both HSSF and XSSF ones
      */
     @Test
-    public void testReferencesToOtherWorkbooks() throws Exception {
+    void testReferencesToOtherWorkbooks() throws Exception {
         try (Workbook wb = _testDataProvider.openSampleWorkbook("ref2-56737.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet s = wb.getSheetAt(0);
@@ -232,7 +232,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * See bug #56752
      */
 //    @Disabled
-//    public void testCachedReferencesToOtherWorkbooks() {
+//    void testCachedReferencesToOtherWorkbooks() {
 //    }
 
     /**
@@ -244,7 +244,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     @ParameterizedTest
     @ValueSource(strings = {"55906-MultiSheetRefs.xls","55906-MultiSheetRefs.xlsx"})
-    public void testMultiSheetReferencesHSSFandXSSF(String sampleFileName) throws Exception {
+    void testMultiSheetReferencesHSSFandXSSF(String sampleFileName) throws Exception {
         Function<String, Workbook> fun = sampleFileName.endsWith("x")
             ? XSSFTestDataSamples::openSampleWorkbook : HSSFTestDataSamples::openSampleWorkbook;
 
@@ -309,7 +309,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     @ParameterizedTest
     @ValueSource(strings = {"55906-MultiSheetRefs.xls","55906-MultiSheetRefs.xlsx"})
-    public void testMultiSheetAreasHSSFandXSSF(String sampleFileName) throws Exception {
+    void testMultiSheetAreasHSSFandXSSF(String sampleFileName) throws Exception {
         Function<String, Workbook> fun = sampleFileName.endsWith("x")
             ? XSSFTestDataSamples::openSampleWorkbook : HSSFTestDataSamples::openSampleWorkbook;
 
@@ -364,7 +364,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void test59736() throws IOException {
+    void test59736() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59736.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
@@ -392,7 +392,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void testBug61468() throws IOException {
+    void testBug61468() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("simple-monthly-budget.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Cell cell = wb.getSheetAt(0).getRow(8).getCell(4);
@@ -405,7 +405,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
     @Test
     @Disabled("this is from an open bug/discussion over handling localization for number formats")
-    public void testBug61495() throws IOException {
+    void testBug61495() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61495-test.xlsm")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Cell cell = wb.getSheetAt(0).getRow(0).getCell(1);
@@ -425,7 +425,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * see bug 62834, handle when a shared formula range doesn't contain only formula cells
      */
     @Test
-    public void testBug62834() throws IOException {
+    void testBug62834() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("62834.xlsx")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 

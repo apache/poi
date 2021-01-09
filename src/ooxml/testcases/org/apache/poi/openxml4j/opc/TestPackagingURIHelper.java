@@ -30,7 +30,7 @@ public class TestPackagingURIHelper {
      * Test relativizePartName() method.
      */
     @Test
-    public void testRelativizeURI() throws Exception {
+    void testRelativizeURI() throws Exception {
         URI uri1 = new URI("/word/document.xml");
         URI uri2 = new URI("/word/media/image1.gif");
         URI uri3 = new URI("/word/media/image1.gif#Sheet1!A1");
@@ -79,7 +79,7 @@ public class TestPackagingURIHelper {
      * Test createPartName(String, y)
      */
     @Test
-    public void testCreatePartNameRelativeString()
+    void testCreatePartNameRelativeString()
             throws InvalidFormatException {
         PackagePartName partNameToValid = PackagingURIHelper
                 .createPartName("/word/media/image1.gif");
@@ -100,7 +100,7 @@ public class TestPackagingURIHelper {
      * Test createPartName(URI, y)
      */
     @Test
-    public void testCreatePartNameRelativeURI() throws Exception {
+    void testCreatePartNameRelativeURI() throws Exception {
         PackagePartName partNameToValid = PackagingURIHelper
                 .createPartName("/word/media/image1.gif");
 
@@ -117,7 +117,7 @@ public class TestPackagingURIHelper {
     }
 
     @Test
-    public void testCreateURIFromString() throws Exception {
+    void testCreateURIFromString() throws Exception {
         String[] href = {
                 "..\\\\\\cygwin\\home\\yegor\\.vim\\filetype.vim",
                 "..\\Program%20Files\\AGEIA%20Technologies\\v2.3.3\\NxCooking.dll",
@@ -136,7 +136,7 @@ public class TestPackagingURIHelper {
     }
 
     @Test
-    public void test53734() throws Exception {
+    void test53734() throws Exception {
         URI uri = PackagingURIHelper.toURI("javascript://");
         // POI appends a trailing slash tpo avoid "Expected authority at index 13: javascript://"
         // https://issues.apache.org/bugzilla/show_bug.cgi?id=53734

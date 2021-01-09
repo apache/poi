@@ -55,7 +55,7 @@ public class TestXSSF3DChartData {
     };
 
     @Test
-    public void testArea3D() throws IOException {
+    void testArea3D() throws IOException {
         // This test currently doesn't produce a valid area 3d chart and is only used to test accessors
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
