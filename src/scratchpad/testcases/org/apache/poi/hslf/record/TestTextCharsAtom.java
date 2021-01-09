@@ -38,25 +38,25 @@ public final class TestTextCharsAtom {
 	private final String alt_text = "This\u01A3";
 
 	@Test
-    public void testRecordType() {
+    void testRecordType() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		assertEquals(4000L, tca.getRecordType());
 	}
 
 	@Test
-	public void testTextA() {
+	void testTextA() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		assertEquals(data_text, tca.getText());
 	}
 
 	@Test
-	public void testTextB() {
+	void testTextB() {
 		TextCharsAtom tca = new TextCharsAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tca.getText());
 	}
 
 	@Test
-	public void testChangeText() throws Exception {
+	void testChangeText() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		tca.setText(alt_text);
 
@@ -66,7 +66,7 @@ public final class TestTextCharsAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tca.writeOut(baos);
@@ -74,7 +74,7 @@ public final class TestTextCharsAtom {
 	}
 
 	@Test
-	public void testCreateNew() throws Exception {
+	void testCreateNew() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom();
 		assertEquals(0, tca.getText().length());
 

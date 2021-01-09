@@ -45,7 +45,7 @@ public final class TestAnimationInfoAtom {
     };
 
     @Test
-    public void testRead() {
+    void testRead() {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         assertEquals(RecordTypes.AnimationInfoAtom.typeID, record.getRecordType());
         assertTrue(record.getFlag(AnimationInfoAtom.Automatic));
@@ -64,7 +64,7 @@ public final class TestAnimationInfoAtom {
     }
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
@@ -74,7 +74,7 @@ public final class TestAnimationInfoAtom {
     }
 
     @Test
-    public void testNewRecord() throws Exception {
+    void testNewRecord() throws Exception {
         AnimationInfoAtom record = new AnimationInfoAtom();
         record.setDimColor(0x07000000);
         record.setOrderID(2);

@@ -37,13 +37,13 @@ public final class TestColorSchemeAtom {
 	};
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 		assertEquals(2032L, csa.getRecordType());
 	}
 
 	@Test
-	public void testToRGB() {
+	void testToRGB() {
 		byte[] rgb = ColorSchemeAtom.splitRGB(3669760);
 
 		assertEquals(3,rgb.length);
@@ -53,7 +53,7 @@ public final class TestColorSchemeAtom {
 	}
 
 	@Test
-	public void testFromRGB() {
+	void testFromRGB() {
 		byte[] rgb_a = new byte[] { 0, 255-256, 55 };
 		byte[] rgb_b = new byte[] { 255-256, 127, 79 };
 
@@ -65,7 +65,7 @@ public final class TestColorSchemeAtom {
 	}
 
 	@Test
-	public void testRGBs() {
+	void testRGBs() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 
 		assertEquals( 16777215 , csa.getBackgroundColourRGB() );
@@ -79,7 +79,7 @@ public final class TestColorSchemeAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		csa.writeOut(baos);

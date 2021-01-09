@@ -52,13 +52,13 @@ public final class TestPointerFactory {
 	};
 
 	@Test
-	public void testCreateV4() {
+	void testCreateV4() {
 		PointerFactory pf = new PointerFactory(4);
 		assertThrows(IllegalArgumentException.class, () -> pf.createPointer(new byte[]{}, 0));
 	}
 
 	@Test
-	public void testCreateV5() {
+	void testCreateV5() {
 		PointerFactory pf = new PointerFactory(5);
 
         Pointer a = pf.createPointer(vp5_a, 0);
@@ -78,7 +78,7 @@ public final class TestPointerFactory {
 	}
 
 	@Test
-	public void testCreateV6() {
+	void testCreateV6() {
 		PointerFactory pf = new PointerFactory(6);
 
 		Pointer a = pf.createPointer(vp6_a, 0);
@@ -135,7 +135,7 @@ public final class TestPointerFactory {
 	}
 
 	@Test
-	public void testCreateV6FromMid() {
+	void testCreateV6FromMid() {
 		PointerFactory pf = new PointerFactory(11);
 
 		// Create a from part way down the byte stream

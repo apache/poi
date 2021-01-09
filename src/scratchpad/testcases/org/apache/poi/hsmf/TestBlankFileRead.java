@@ -47,7 +47,7 @@ public final class TestBlankFileRead {
      * Check if we can read the body of the blank message, we expect "".
      */
     @Test
-    public void testReadBody() {
+    void testReadBody() {
         assertThrows(ChunkNotFoundException.class, mapiMessage::getTextBody);
     }
 
@@ -56,7 +56,7 @@ public final class TestBlankFileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayCC() throws ChunkNotFoundException {
+    void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
@@ -67,7 +67,7 @@ public final class TestBlankFileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayTo() throws ChunkNotFoundException {
+    void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
         String expected = "";
 
@@ -78,7 +78,7 @@ public final class TestBlankFileRead {
      * Test to see if we can read the FROM Chunk.
      */
     @Test
-    public void testReadDisplayFrom() {
+    void testReadDisplayFrom() {
         assertThrows(ChunkNotFoundException.class, mapiMessage::getDisplayFrom);
     }
 
@@ -86,7 +86,7 @@ public final class TestBlankFileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayBCC() throws ChunkNotFoundException {
+    void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
@@ -98,7 +98,7 @@ public final class TestBlankFileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadSubject() throws Exception {
+    void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
         assertEquals("", obtained);
     }
@@ -108,7 +108,7 @@ public final class TestBlankFileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadConversationTopic() {
+    void testReadConversationTopic() {
         assertThrows(ChunkNotFoundException.class, mapiMessage::getConversationTopic);
     }
 }

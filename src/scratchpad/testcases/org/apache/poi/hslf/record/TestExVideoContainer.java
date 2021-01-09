@@ -51,7 +51,7 @@ public final class TestExVideoContainer {
             0x6D, 0x00, 0x70, 0x00, 0x67, 0x00};
 
     @Test
-    public void testRead() {
+    void testRead() {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
         assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
 
@@ -68,7 +68,7 @@ public final class TestExVideoContainer {
     }
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
@@ -76,7 +76,7 @@ public final class TestExVideoContainer {
     }
 
     @Test
-    public void testNewRecord() throws Exception {
+    void testNewRecord() throws Exception {
         ExVideoContainer record = new ExVideoContainer();
         record.getExMediaAtom().setObjectId(1);
         record.getPathAtom().setText("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg");

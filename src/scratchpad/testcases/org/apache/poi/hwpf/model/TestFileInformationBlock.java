@@ -30,7 +30,7 @@ public final class TestFileInformationBlock {
     private HWPFDocFixture _hWPFDocFixture;
 
     @Test
-    public void testReadWrite() throws Exception {
+    void testReadWrite() throws Exception {
         final FibBase expected = _fileInformationBlock.getFibBase();
         int size = _fileInformationBlock.getSize();
         byte[] buf = new byte[size];

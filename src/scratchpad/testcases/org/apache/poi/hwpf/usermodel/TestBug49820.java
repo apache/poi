@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public final class TestBug49820 {
 
   @Test
-  public void test() throws IOException {
+  void test() throws IOException {
     try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49820.doc")) {
 
       Range documentRange = doc.getRange();

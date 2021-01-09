@@ -36,13 +36,13 @@ public final class TestUserEditAtom {
 		5, 0, 0, 0, 1, 0, 0xF6-256, 77 };
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 		assertEquals(4085L, uea.getRecordType());
 	}
 
 	@Test
-	public void testFlags() {
+	void testFlags() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 
 		assertEquals(256, uea.getLastViewedSlideID() );
@@ -55,7 +55,7 @@ public final class TestUserEditAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		uea.writeOut(baos);

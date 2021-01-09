@@ -165,7 +165,7 @@ public final class TestShapes {
 
     @SuppressWarnings("unused")
     @Test
-    public void testParagraphs() throws IOException {
+    void testParagraphs() throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow();
         HSLFSlide slide = ss.createSlide();
         HSLFTextBox shape = new HSLFTextBox();

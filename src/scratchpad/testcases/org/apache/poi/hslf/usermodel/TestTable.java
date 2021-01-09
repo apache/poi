@@ -68,7 +68,7 @@ public class TestTable {
     }
 
     @Test
-    public void testTable() throws IOException {
+    void testTable() throws IOException {
 		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt")) {
             List<HSLFSlide> slides = ppt.getSlides();
             assertEquals(1, slides.size());
@@ -107,7 +107,7 @@ public class TestTable {
 	}
 
     @Test
-    public void testAddText() throws IOException {
+    void testAddText() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HSLFSlide slide = ppt1.createSlide();
         HSLFTable tab = slide.createTable(4, 5);

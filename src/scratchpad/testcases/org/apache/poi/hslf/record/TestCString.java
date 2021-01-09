@@ -38,7 +38,7 @@ public final class TestCString {
 		0x65, 0, 0x6E, 0, 0x74, 0, 0x73, 0 };
 
 	@Test
-    public void testRecordType() {
+    void testRecordType() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(4026L, ca.getRecordType());
 		CString cb = new CString(data_b, 0, data_a.length);
@@ -46,7 +46,7 @@ public final class TestCString {
 	}
 
 	@Test
-	public void testCount() {
+	void testCount() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(0, ca.getOptions());
 		CString cb = new CString(data_b, 0, data_a.length);
@@ -57,7 +57,7 @@ public final class TestCString {
 	}
 
 	@Test
-	public void testText() {
+	void testText() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals("Hogwarts", ca.getText());
 		CString cb = new CString(data_b, 0, data_a.length);
@@ -68,7 +68,7 @@ public final class TestCString {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
@@ -92,7 +92,7 @@ public final class TestCString {
 
 	// Turn data_a into data_b
 	@Test
-	public void testChange() throws Exception {
+	void testChange() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ca.setText("Comments");
 		ca.setOptions(0x10);

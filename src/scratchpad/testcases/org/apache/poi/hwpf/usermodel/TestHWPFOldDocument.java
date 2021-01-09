@@ -42,13 +42,13 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      * Test a simple Word 6 document
      */
     @Test
-    public void testWord6hwpf() {
+    void testWord6hwpf() {
         // Can't open as HWPFDocument
         assertThrows(OldFileFormatException.class, () -> openSampleFile("Word6.doc"));
     }
 
     @Test
-    public void testWord6hwpfOld() throws IOException {
+    void testWord6hwpfOld() throws IOException {
         // Open
         HWPFOldDocument doc = openOldSampleFile("Word6.doc");
 
@@ -66,13 +66,13 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      * Test a simple Word 2 document
      */
     @Test
-    public void testWord2hwpf() {
+    void testWord2hwpf() {
         // Can't open as HWPFDocument
         assertThrows(IllegalArgumentException.class, () -> openSampleFile("word2.doc"));
     }
 
     @Test
-    public void testWord2hwpfOld() {
+    void testWord2hwpfOld() {
         // Open
         assertThrows(RuntimeException.class, () -> openOldSampleFile("word2.doc"));
     }
@@ -81,13 +81,13 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      * Test a simple Word 95 document
      */
     @Test
-    public void testWord95hwpf() {
+    void testWord95hwpf() {
         // Can't open as HWPFDocument
         assertThrows(OldFileFormatException.class, () -> openSampleFile("Word95.doc"));
     }
 
     @Test
-    public void testWord95hwpfOld() throws IOException {
+    void testWord95hwpfOld() throws IOException {
         // Open
         HWPFOldDocument doc = openOldSampleFile("Word95.doc");
 
@@ -126,7 +126,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      * stuff.
      */
     @Test
-    public void testWord6Sections() throws IOException {
+    void testWord6Sections() throws IOException {
         HWPFOldDocument doc = openOldSampleFile("Word6_sections.doc");
 
         assertEquals(3, doc.getRange().numSections());
@@ -150,7 +150,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      * properties set on it
      */
     @Test
-    public void testWord6Sections2() throws IOException {
+    void testWord6Sections2() throws IOException {
         HWPFOldDocument doc = openOldSampleFile("Word6_sections2.doc");
 
         assertEquals(1, doc.getRange().numSections());
@@ -163,7 +163,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     }
 
     @Test
-    public void testDefaultCodePageEncoding() throws IOException {
+    void testDefaultCodePageEncoding() throws IOException {
         HWPFOldDocument doc = openOldSampleFile("Bug60942.doc");
         Word6Extractor ex = new Word6Extractor(doc);
         String txt = ex.getText();
@@ -177,7 +177,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
 
 
     @Test
-    public void testCodePageBug50955() throws IOException {
+    void testCodePageBug50955() throws IOException {
         //windows 1251
         HWPFOldDocument doc = openOldSampleFile("Bug50955.doc");
         Word6Extractor ex = new Word6Extractor(doc);
@@ -192,7 +192,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     }
 
     @Test
-    public void testCodePageBug60936() throws IOException {
+    void testCodePageBug60936() throws IOException {
         //windows 1250 -- this test file was generated with OpenOffice
         //see https://bz.apache.org/ooo/show_bug.cgi?id=12445 for the inspiration
 
@@ -209,7 +209,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     }
 
     @Test
-    public void testOldFontTableEncoding() throws IOException {
+    void testOldFontTableEncoding() throws IOException {
         HWPFOldDocument doc = openOldSampleFile("Bug51944.doc");
         OldFontTable oldFontTable = doc.getOldFontTable();
         assertEquals(5, oldFontTable.getFontNames().length);
@@ -221,7 +221,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     }
 
     @Test
-    public void testOldFontTableAltName() {
+    void testOldFontTableAltName() {
         HWPFOldDocument doc  = openOldSampleFile("Bug60942b.doc");
         OldFontTable oldFontTable = doc.getOldFontTable();
         assertEquals(5, oldFontTable.getFontNames().length);
@@ -233,7 +233,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
 
 
     @Test
-    public void test51944() throws IOException {
+    void test51944() throws IOException {
         HWPFOldDocument doc = openOldSampleFile("Bug51944.doc");
         Word6Extractor ex = new Word6Extractor(doc);
         StringBuilder sb = new StringBuilder();

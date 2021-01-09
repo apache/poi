@@ -41,7 +41,7 @@ public final class TestTextSpecInfoAtom  {
     };
 
     @Test
-    public void testRead() {
+    void testRead() {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
         assertEquals(5, run.length);
@@ -54,7 +54,7 @@ public final class TestTextSpecInfoAtom  {
     }
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         spec.writeOut(out);
@@ -62,7 +62,7 @@ public final class TestTextSpecInfoAtom  {
 	}
 
     @Test
-    public void testReset() throws Exception {
+    void testReset() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         spec.reset(32);  //length of the parent text
 

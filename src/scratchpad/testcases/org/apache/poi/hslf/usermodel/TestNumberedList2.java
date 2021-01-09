@@ -47,7 +47,7 @@ public final class TestNumberedList2 {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-	public void testNumberedList() throws IOException {
+	void testNumberedList() throws IOException {
 		try (HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers2.ppt"))) {
 			final List<HSLFSlide> slides = ppt.getSlides();
 			assertEquals(2, slides.size());

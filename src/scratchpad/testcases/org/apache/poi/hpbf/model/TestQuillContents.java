@@ -39,7 +39,7 @@ public final class TestQuillContents {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
     @Test
-    public void testBasics() throws IOException {
+    void testBasics() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
 		    _samples.openResourceAsStream("Sample.pub")
 		);
@@ -73,7 +73,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testText() throws IOException {
+	void testText() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Sample.pub")
 		);
@@ -90,7 +90,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testPLC() throws IOException {
+	void testPLC() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Simple.pub")
 		);
@@ -154,7 +154,7 @@ public final class TestQuillContents {
 
     @SuppressWarnings("unused")
     @Test
-	public void testComplexPLC() throws IOException {
+	void testComplexPLC() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Sample.pub")
 		);
@@ -258,7 +258,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testNoHyperlinks() throws IOException {
+	void testNoHyperlinks() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("SampleNewsletter.pub")
 		);
@@ -277,7 +277,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testSimpleHyperlink() throws IOException {
+	void testSimpleHyperlink() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
@@ -329,7 +329,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testManyHyperlinks() throws IOException {
+	void testManyHyperlinks() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
@@ -352,7 +352,7 @@ public final class TestQuillContents {
 	}
 
     @Test
-	public void testHyperlinkDifferentVersions() throws IOException {
+	void testHyperlinkDifferentVersions() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBitA;

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class PlfLfoTest {
     @Test
-    public void testAdd() {
+    void testAdd() {
         PlfLfo p = new PlfLfo(new byte[] {0, 0, 0, 0}, 0, 0);
         assertEquals(0, p.getLfoMac());
         p.add(new LFO(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 0), new LFOData());
@@ -36,7 +36,7 @@ public class PlfLfoTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         PlfLfo p = new PlfLfo(new byte[] {0, 0, 0, 0}, 0, 0);
         PlfLfo p2 = new PlfLfo(new byte[] {0, 0, 0, 0}, 0, 0);
         assertEquals(0, p.getLfoMac());

@@ -41,7 +41,7 @@ public final class TestSlides {
      * @throws Exception
      */
     @Test
-    public void testAddSlides1() throws Exception {
+    void testAddSlides1() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().isEmpty());
 
@@ -65,7 +65,7 @@ public final class TestSlides {
      * @throws Exception
      */
     @Test
-    public void testAddSlides2() throws Exception {
+    void testAddSlides2() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().isEmpty());
 
@@ -95,7 +95,7 @@ public final class TestSlides {
      * @throws Exception
      */
     @Test
-    public void testAddSlides3() throws Exception {
+    void testAddSlides3() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().isEmpty());
 
@@ -143,7 +143,7 @@ public final class TestSlides {
      * Add slides to ppt which already has two slides
      */
     @Test
-    public void testAddSlides2to3() throws Exception {
+    void testAddSlides2to3() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
         HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 

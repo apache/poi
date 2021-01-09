@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public class TestHemfPlusExtractor {
 
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         //test header
         EmfCommentDataPlus emfPlus = getCommentRecord("SimpleEMF_windows.emf", 0);
         List<HemfPlusRecord> records = emfPlus.getRecords();

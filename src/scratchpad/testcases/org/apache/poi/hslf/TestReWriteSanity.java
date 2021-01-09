@@ -63,7 +63,7 @@ public final class TestReWriteSanity {
     }
 
     @Test
-    public void testUserEditAtomsRight() throws Exception {
+    void testUserEditAtomsRight() throws Exception {
         // Write out to a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ss.write(baos);

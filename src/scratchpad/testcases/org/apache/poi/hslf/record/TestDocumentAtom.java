@@ -39,13 +39,13 @@ public final class TestDocumentAtom {
 		1, 0, 0, 0, 0, 0, 0, 1 };
 
 	@Test
-    public void testRecordType() {
+    void testRecordType() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(1001l, da.getRecordType());
 	}
 
 	@Test
-	public void testSizeAndZoom() {
+	void testSizeAndZoom() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(5760L, da.getSlideSizeX());
 		assertEquals(4320L, da.getSlideSizeY());
@@ -57,21 +57,21 @@ public final class TestDocumentAtom {
 	}
 
 	@Test
-	public void testMasterPersist() {
+	void testMasterPersist() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(2L, da.getNotesMasterPersist());
 		assertEquals(0L, da.getHandoutMasterPersist());
 	}
 
 	@Test
-	public void testSlideDetails() {
+	void testSlideDetails() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(1, da.getFirstSlideNum());
 		assertEquals(0, da.getSlideSizeType());
 	}
 
 	@Test
-	public void testBooleans() {
+	void testBooleans() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
         assertFalse(da.getSaveWithFonts());
         assertFalse(da.getOmitTitlePlace());
@@ -80,7 +80,7 @@ public final class TestDocumentAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		da.writeOut(baos);

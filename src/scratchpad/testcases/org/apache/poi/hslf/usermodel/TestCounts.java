@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCounts {
     @Test
-	public void testSheetsCount() throws IOException {
+	void testSheetsCount() throws IOException {
 	    HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
 		List<HSLFSlide> slides = ppt.getSlides();
@@ -54,7 +54,7 @@ public final class TestCounts {
 	}
 
     @Test
-    public void testNotesCount() throws IOException {
+    void testNotesCount() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
 		List<HSLFNotes> notes = ppt.getNotes();

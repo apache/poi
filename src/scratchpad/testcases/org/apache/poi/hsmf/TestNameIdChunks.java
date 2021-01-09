@@ -58,7 +58,7 @@ public class TestNameIdChunks {
      * The keywords property is a property identified by the name "Keywords" in the property set PS_PUBLIC_STRINGS.
      */
     @Test
-    public void testReadKeywords() {
+    void testReadKeywords() {
         long keywordsPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Keywords", 0);
         assertEquals(0x8003, keywordsPropTag);
         String[] exp = { "TODO", "Currently Important", "Currently To Do", "Test" };
@@ -71,7 +71,7 @@ public class TestNameIdChunks {
      * The current version name property is a property identified by the id 0x8554 in the property set PSETID_Common.
      */
     @Test
-    public void testCurrentVersionName() {
+    void testCurrentVersionName() {
         long testPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PSETID_COMMON.getClassID(), null, 0x8554);
         assertEquals(0x8006, testPropTag);
         String[] exp = { "16.0" };

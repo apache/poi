@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestExObjList {
     @Test
-    public void testRealFile() throws Exception {
+    void testRealFile() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShow ss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
 

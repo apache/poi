@@ -70,7 +70,7 @@ public final class TestAddingSlides {
      * Test adding a slide to an empty slideshow
      */
     @Test
-    public void testAddSlideToEmpty() throws IOException {
+    void testAddSlideToEmpty() throws IOException {
         // Doesn't have any slides
         assertEquals(0, ss_empty.getSlides().size());
 
@@ -119,7 +119,7 @@ public final class TestAddingSlides {
      * Test adding a slide to an existing slideshow
      */
     @Test
-    public void testAddSlideToExisting() throws IOException {
+    void testAddSlideToExisting() throws IOException {
         // Has one slide
         assertEquals(1, ss_one.getSlides().size());
         HSLFSlide s1 = ss_one.getSlides().get(0);
@@ -165,7 +165,7 @@ public final class TestAddingSlides {
      * Test adding a slide to an existing slideshow, with two slides already
      */
     @Test
-    public void testAddSlideToExisting2() throws IOException {
+    void testAddSlideToExisting2() throws IOException {
         // grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = ss_two.getSlideShowImpl().getRecords();
@@ -224,7 +224,7 @@ public final class TestAddingSlides {
      * Test SlideShow#removeSlide
      */
     @Test
-    public void testRemoving() throws IOException {
+    void testRemoving() throws IOException {
         HSLFSlide slide1 = ss_empty.createSlide();
         HSLFSlide slide2 = ss_empty.createSlide();
 
@@ -249,7 +249,7 @@ public final class TestAddingSlides {
     }
 
     @Test
-    public void test47261() throws IOException {
+    void test47261() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("47261.ppt");
         List<HSLFSlide> slides = ppt.getSlides();
         Document doc = ppt.getDocumentRecord();

@@ -43,7 +43,7 @@ public final class TestSlideChangeNotes {
 	}
 
 	@Test
-	public void testSetToNone() {
+	void testSetToNone() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
@@ -53,7 +53,7 @@ public final class TestSlideChangeNotes {
 	}
 
 	@Test
-	public void testSetToSomething() {
+	void testSetToSomething() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		HSLFNotes notesOne = ss.getNotes().get(1);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();

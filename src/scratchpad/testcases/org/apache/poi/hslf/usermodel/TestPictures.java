@@ -57,7 +57,7 @@ public final class TestPictures {
      * Test read/write Macintosh PICT
      */
     @Test
-    public void testPICT() throws IOException {
+    void testPICT() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -118,7 +118,7 @@ public final class TestPictures {
      * Test read/write WMF
      */
     @Test
-    public void testWMF() throws IOException {
+    void testWMF() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -178,7 +178,7 @@ public final class TestPictures {
      * Test read/write EMF
      */
     @Test
-    public void testEMF() throws IOException {
+    void testEMF() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -235,7 +235,7 @@ public final class TestPictures {
      * Test read/write PNG
      */
     @Test
-    public void testPNG() throws IOException {
+    void testPNG() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -275,7 +275,7 @@ public final class TestPictures {
      * Test read/write JPEG
      */
     @Test
-    public void testJPEG() throws IOException {
+    void testJPEG() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -316,7 +316,7 @@ public final class TestPictures {
      * Test read/write DIB
      */
     @Test
-    public void testDIB() throws IOException {
+    void testDIB() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -356,7 +356,7 @@ public final class TestPictures {
      * Read pictures in different formats from a reference slide show
      */
     @Test
-    public void testReadPictures() throws IOException {
+    void testReadPictures() throws IOException {
 
         byte[] src_bytes, ppt_bytes, b1, b2;
         HSLFPictureShape pict;
@@ -423,7 +423,7 @@ public final class TestPictures {
 	 *  crazy pictures of type 0, we do our best.
 	 */
     @Test
-	public void testZeroPictureType() throws IOException {
+	void testZeroPictureType() throws IOException {
 		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("PictureTypeZero.ppt"));
 
 		// Should still have 2 real pictures
@@ -462,7 +462,7 @@ public final class TestPictures {
     @Test
     @Disabled("requires an internet connection to a 3rd party site")
     // As of 2017-06-20, the file still exists at the specified URL and the test passes.
-	public void testZeroPictureLength() throws IOException {
+	void testZeroPictureLength() throws IOException {
         // take the data from www instead of test directory
         URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
 		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
@@ -522,7 +522,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testGetPictureName() throws IOException {
+    void testGetPictureName() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
 
@@ -532,7 +532,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testSetPictureName() throws IOException {
+    void testSetPictureName() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -554,7 +554,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testPictureIndexIsOneBased() throws IOException {
+    void testPictureIndexIsOneBased() throws IOException {
         try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt")) {
             HSLFPictureData picture = ppt.getPictureData().get(0);
             assertEquals(1, picture.getIndex());

@@ -31,7 +31,7 @@ public final class TestSoundData {
      * Read a reference sound file from disk and compare it from the data extracted from the slide show
      */
     @Test
-    public void testSounds() throws Exception {
+    void testSounds() throws Exception {
         //read the reference sound file
         byte[] ref_data = HSLFTestDataSamples.getTestDataFileContent("ringin.wav");
 

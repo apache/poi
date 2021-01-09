@@ -56,7 +56,7 @@ public final class TestSlideMaster {
      * Check we can read their attributes.
      */
     @Test
-    public void testSlideMaster() throws IOException {
+    void testSlideMaster() throws IOException {
         final HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
 
         final Environment env = ppt.getDocumentRecord().getEnvironment();
@@ -108,7 +108,7 @@ public final class TestSlideMaster {
      * Test we can read default text attributes for a title master sheet
      */
     @Test
-    public void testTitleMasterTextAttributes() throws IOException {
+    void testTitleMasterTextAttributes() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         assertEquals(1, ppt.getTitleMasters().size());
 
@@ -131,7 +131,7 @@ public final class TestSlideMaster {
      * Slide 3 has title layout and follows the TitleMaster. Verify that.
      */
     @Test
-    public void testTitleMaster() throws IOException {
+    void testTitleMaster() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         HSLFSlide slide = ppt.getSlides().get(2);
         HSLFMasterSheet masterSheet = slide.getMasterSheet();
@@ -162,7 +162,7 @@ public final class TestSlideMaster {
      * If a style attribute is not set ensure it is read from the master
      */
     @Test
-    public void testMasterAttributes() throws Exception {
+    void testMasterAttributes() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         List<HSLFSlide> slide = ppt.getSlides();
         assertEquals(3, slide.size());
@@ -211,7 +211,7 @@ public final class TestSlideMaster {
      * Check we can dynamically assign a slide master to a slide.
      */
     @Test
-    public void testChangeSlideMaster() throws IOException {
+    void testChangeSlideMaster() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         List<HSLFSlideMaster> master = ppt.getSlideMasters();
         List<HSLFSlide> slide = ppt.getSlides();
@@ -248,7 +248,7 @@ public final class TestSlideMaster {
      * (typical for the "bullted body" placeholder)
      */
     @Test
-    public void testIndentation() throws IOException {
+    void testIndentation() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         HSLFSlide slide = ppt.getSlides().get(0);
 

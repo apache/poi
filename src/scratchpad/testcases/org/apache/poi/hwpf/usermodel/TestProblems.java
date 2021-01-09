@@ -40,7 +40,7 @@ public final class TestProblems extends HWPFTestCase {
      * ListEntry passed no ListTable
      */
     @Test
-    public void testListEntryNoListTable() throws IOException {
+    void testListEntryNoListTable() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ListEntryNoListTable.doc");
 
         Range r = doc.getRange();
@@ -58,7 +58,7 @@ public final class TestProblems extends HWPFTestCase {
      * AIOOB for TableSprmUncompressor.unCompressTAPOperation
      */
     @Test
-    public void testSprmAIOOB() throws IOException {
+    void testSprmAIOOB() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("AIOOB-Tap.doc");
 
         StyleSheet styleSheet = doc.getStyleSheet();
@@ -80,7 +80,7 @@ public final class TestProblems extends HWPFTestCase {
      * #44292
      */
     @Test
-    public void testTableCellLastParagraph() throws IOException {
+    void testTableCellLastParagraph() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44292.doc");
         Range r = doc.getRange();
         assertEquals(6, r.numParagraphs());
@@ -150,7 +150,7 @@ public final class TestProblems extends HWPFTestCase {
     }
 
     @Test
-    public void testRangeDelete() throws IOException {
+    void testRangeDelete() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug28627.doc");
 
         Range range = doc.getRange();
@@ -190,13 +190,13 @@ public final class TestProblems extends HWPFTestCase {
      * With an encrypted file, we should give a suitable exception, and not OOM
      */
     @Test
-    public void testEncryptedFile() {
+    void testEncryptedFile() {
         assertThrows(EncryptedDocumentException.class, () -> HWPFTestDataSamples.openSampleFile("PasswordProtected.doc"));
 
     }
 
     @Test
-    public void testWriteProperties() throws IOException {
+    void testWriteProperties() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
         assertEquals("Nick Burch", doc.getSummaryInformation().getAuthor());
 
@@ -212,7 +212,7 @@ public final class TestProblems extends HWPFTestCase {
      * Range. Bug #45269
      */
     @Test
-    public void testReadParagraphsAfterReplaceText() throws IOException {
+    void testReadParagraphsAfterReplaceText() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45269.doc");
         Range range = doc.getRange();
 
@@ -251,7 +251,7 @@ public final class TestProblems extends HWPFTestCase {
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void testProblemHeaderStories49936() throws IOException {
+    void testProblemHeaderStories49936() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("HeaderFooterProblematic.doc");
         HeaderStories hs = new HeaderStories(doc);
 
@@ -274,7 +274,7 @@ public final class TestProblems extends HWPFTestCase {
      * Bug #45877 - problematic PAPX with no parent set
      */
     @Test
-    public void testParagraphPAPXNoParent45877() throws IOException {
+    void testParagraphPAPXNoParent45877() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45877.doc");
         assertEquals(17, doc.getRange().numParagraphs());
 
@@ -290,7 +290,7 @@ public final class TestProblems extends HWPFTestCase {
      * Bug #48245 - don't include the text from the next cell in the current one
      */
     @Test
-    public void testTableIterator() throws IOException {
+    void testTableIterator() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("simple-table2.doc");
         Range r = doc.getRange();
 

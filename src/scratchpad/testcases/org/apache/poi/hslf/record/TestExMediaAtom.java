@@ -37,7 +37,7 @@ public final class TestExMediaAtom {
 			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	@Test
-	public void testRead() {
+	void testRead() {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExMediaAtom.typeID, record.getRecordType());
 
@@ -48,7 +48,7 @@ public final class TestExMediaAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -58,7 +58,7 @@ public final class TestExMediaAtom {
 	}
 
 	@Test
-	public void testNewRecord() throws Exception {
+	void testNewRecord() throws Exception {
 		ExMediaAtom ref = new ExMediaAtom(data, 0, data.length);
 		assertEquals(0, ref.getMask()); //
 
@@ -76,7 +76,7 @@ public final class TestExMediaAtom {
 	}
 
 	@Test
-	public void testFlags() {
+	void testFlags() {
 		ExMediaAtom record = new ExMediaAtom();
 
 		//in a new record all the bits are 0

@@ -34,7 +34,7 @@ public class TestTextStyleListing extends BasePPTIteratingTest {
     }
 
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // calls System.exit(): TextStyleListing.main(new String[0]);
         assertThrows(EmptyFileException.class, () -> TextStyleListing.main(new String[]{"invalidfile"}));
     }

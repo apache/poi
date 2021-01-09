@@ -46,7 +46,7 @@ public final class TestMessageSubmissionChunkY2KRead {
 
     // 1979 is one year before our pivot year (so this is an expected "failure")
     @Test
-    public void testReadMessageDate1979() throws ChunkNotFoundException {
+    void testReadMessageDate1979() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1979.getMessageDate();
         final int year = date.get(Calendar.YEAR);
         assertEquals(2079, year);
@@ -54,7 +54,7 @@ public final class TestMessageSubmissionChunkY2KRead {
 
     // 1980 is our pivot year (so this is an expected "failure")
     @Test
-    public void testReadMessageDate1980() throws ChunkNotFoundException {
+    void testReadMessageDate1980() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1980.getMessageDate();
         final int year = date.get(Calendar.YEAR);
         assertEquals(2080, year);
@@ -62,7 +62,7 @@ public final class TestMessageSubmissionChunkY2KRead {
 
     // 1981 is one year after our pivot year (so this starts working)
     @Test
-    public void testReadMessageDate1981() throws ChunkNotFoundException {
+    void testReadMessageDate1981() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1981.getMessageDate();
         final int year = date.get(Calendar.YEAR);
         assertEquals(1981, year);

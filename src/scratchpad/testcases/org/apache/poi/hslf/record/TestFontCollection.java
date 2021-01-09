@@ -51,7 +51,7 @@ public final class TestFontCollection {
     }
 
     @Test
-    public void testFonts() {
+    void testFonts() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 1);
@@ -61,7 +61,7 @@ public final class TestFontCollection {
     }
 
     @Test
-    public void testAddFont() {
+    void testAddFont() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         HSLFFontInfo fi = fonts.addFont(HSLFFontInfoPredefined.TIMES_NEW_ROMAN);
         assertEquals((int)fi.getIndex(), 0);
@@ -85,7 +85,7 @@ public final class TestFontCollection {
     }
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         fonts.writeOut(out);

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public final class TestListTables extends HWPFTestCase {
 
     @Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         FileInformationBlock fib = _hWPFDocFixture._fib;
         byte[] tableStream = _hWPFDocFixture._tableStream;
 

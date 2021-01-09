@@ -54,7 +54,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testNone() {
+	void testNone() {
 		HeaderStories hs = new HeaderStories(none);
 
 		assertNull(hs.getPlcfHdd());
@@ -62,7 +62,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testHeader() {
+	void testHeader() {
 		HeaderStories hs = new HeaderStories(header);
 
 		assertEquals(60, hs.getRange().text().length());
@@ -107,7 +107,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testFooter() {
+	void testFooter() {
 		HeaderStories hs = new HeaderStories(footer);
 
 		assertEquals("", hs.getFirstHeader());
@@ -120,7 +120,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testHeaderFooter() {
+	void testHeaderFooter() {
 		HeaderStories hs = new HeaderStories(headerFooter);
 
 		assertEquals("", hs.getFirstHeader());
@@ -133,7 +133,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testOddEven() {
+	void testOddEven() {
 		HeaderStories hs = new HeaderStories(oddEven);
 
 		assertEquals("", hs.getFirstHeader());
@@ -156,7 +156,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testFirst() {
+	void testFirst() {
 		HeaderStories hs = new HeaderStories(diffFirst);
 
 		assertEquals("I am the header on the first page, and I\u2019m nice and simple\r\r", hs
@@ -174,7 +174,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testUnicode() {
+	void testUnicode() {
 		HeaderStories hs = new HeaderStories(unicode);
 
 		assertEquals("", hs.getFirstHeader());
@@ -188,7 +188,7 @@ public final class TestHeaderStories {
 	}
 
 	@Test
-	public void testWithFields() {
+	void testWithFields() {
 		HeaderStories hs = new HeaderStories(withFields);
 		assertFalse(hs.areFieldsStripped());
 

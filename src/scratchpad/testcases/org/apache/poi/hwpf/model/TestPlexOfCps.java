@@ -30,7 +30,7 @@ public final class TestPlexOfCps {
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test
-  public void testWriteRead() {
+  void testWriteRead() {
     _plexOfCps = new PlexOfCps(4);
 
     int last = 0;

@@ -44,7 +44,7 @@ public final class TestPictures {
 	 * two jpegs
 	 */
     @Test
-	public void testTwoImages() {
+	void testTwoImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
 		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -66,7 +66,7 @@ public final class TestPictures {
 	 * pngs and jpegs
 	 */
     @Test
-	public void testDifferentImages() {
+	void testDifferentImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testPictures.doc");
 		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -95,7 +95,7 @@ public final class TestPictures {
 	 * emf image, nice and simple
 	 */
     @Test
-	public void testEmfImage() {
+	void testEmfImage() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("vector_image.doc");
 		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -117,7 +117,7 @@ public final class TestPictures {
 	}
 
     @Test
-    public void testPicturesWithTable() {
+    void testPicturesWithTable() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 
 		List<Picture> pics = doc.getPicturesTable().getAllPictures();
@@ -125,7 +125,7 @@ public final class TestPictures {
 	}
 
     @Test
-    public void testPicturesInHeader() {
+    void testPicturesInHeader() {
 	   HWPFDocument doc = HWPFTestDataSamples.openSampleFile("header_image.doc");
 
 	   List<Picture> pics = doc.getPicturesTable().getAllPictures();
@@ -133,21 +133,21 @@ public final class TestPictures {
 	}
 
     @Test
-    public void testFastSaved() {
+    void testFastSaved() {
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("rasp.doc");
 
        doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
     @Test
-    public void testFastSaved2() {
+    void testFastSaved2() {
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("o_kurs.doc");
 
        doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
     @Test
-    public void testFastSaved3() {
+    void testFastSaved3() {
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ob_is.doc");
 
        doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
@@ -161,7 +161,7 @@ public final class TestPictures {
      * Check that we can properly read one of these
      */
     @Test
-    public void testEmbededDocumentIcon() {
+    void testEmbededDocumentIcon() {
        // This file has two embeded excel files, an embeded powerpoint
        //   file and an embeded word file, in that order
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("word_with_embeded.doc");
@@ -247,7 +247,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testEquation()
+    void testEquation()
     {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "equation.doc" );
         PicturesTable pictures = doc.getPicturesTable();
@@ -273,7 +273,7 @@ public final class TestPictures {
      *  reference the same \u0001
      */
     @Test
-    public void testFloatingPictures() {
+    void testFloatingPictures() {
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("FloatingPictures.doc");
        PicturesTable pictures = doc.getPicturesTable();
 
@@ -308,7 +308,7 @@ public final class TestPictures {
 
     @SuppressWarnings( "deprecation" )
     @Test
-    public void testCroppedPictures() {
+    void testCroppedPictures() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testCroppedPictures.doc");
         List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -339,7 +339,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testPictureDetectionWithPNG() {
+    void testPictureDetectionWithPNG() {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("PngPicture.doc");
         PicturesTable pictureTable = document.getPicturesTable();
 
@@ -351,7 +351,7 @@ public final class TestPictures {
     }
 
     @Test
-    public void testPictureWithAlternativeText() {
+    void testPictureWithAlternativeText() {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("Picture_Alternative_Text.doc");
         PicturesTable pictureTable = document.getPicturesTable();
         Picture picture = pictureTable.getAllPictures().get(0);
@@ -361,7 +361,7 @@ public final class TestPictures {
 
     @Disabled("This bug is not fixed yet")
     @Test
-    public void test58804_1() throws Exception {
+    void test58804_1() throws Exception {
         HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804_1.doc");
 
         expectImages(docA, 1);
@@ -377,7 +377,7 @@ public final class TestPictures {
 
     @Disabled("This bug is not fixed yet")
     @Test
-    public void test58804() throws Exception {
+    void test58804() throws Exception {
         HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804.doc");
 
         expectImages(docA, 7);

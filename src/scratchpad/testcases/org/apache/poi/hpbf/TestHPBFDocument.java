@@ -31,7 +31,7 @@ public final class TestHPBFDocument {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
     @Test
-	public void testOpen() throws IOException {
+	void testOpen() throws IOException {
 	    InputStream is = _samples.openResourceAsStream("Sample.pub");
 		HPBFDocument doc = new HPBFDocument(is);
 		is.close();
@@ -40,7 +40,7 @@ public final class TestHPBFDocument {
 	}
 
     @Test
-	public void testBits() throws IOException {
+	void testBits() throws IOException {
         InputStream is = _samples.openResourceAsStream("Sample.pub");
 		HPBFDocument doc = new HPBFDocument(is);
         is.close();
@@ -59,6 +59,6 @@ public final class TestHPBFDocument {
 	}
 
 	// TODO
-//	public void testWrite() throws Exception {
+//	void testWrite() throws Exception {
 //	}
 }

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestSound {
     @Test
-	public void testRealFile() throws IOException {
+	void testRealFile() throws IOException {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 		HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));

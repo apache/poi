@@ -35,7 +35,7 @@ public final class TestExOleObjAtom {
 			0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00  };
 
 	@Test
-	public void testRead() {
+	void testRead() {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
 
@@ -48,7 +48,7 @@ public final class TestExOleObjAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -56,7 +56,7 @@ public final class TestExOleObjAtom {
 	}
 
 	@Test
-	public void testNewRecord() throws Exception {
+	void testNewRecord() throws Exception {
 		ExOleObjAtom record = new ExOleObjAtom();
 		record.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
 		record.setType(ExOleObjAtom.TYPE_CONTROL);

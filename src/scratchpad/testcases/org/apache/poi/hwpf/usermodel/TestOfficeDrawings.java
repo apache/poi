@@ -34,7 +34,7 @@ public class TestOfficeDrawings {
      * Tests watermark text extraction
      */
     @Test
-    public void testWatermark() throws Exception {
+    void testWatermark() throws Exception {
         try (HWPFDocument hwpfDocument = openSampleFile("watermark.doc")) {
             OfficeDrawing drawing = hwpfDocument.getOfficeDrawingsHeaders().getOfficeDrawings().iterator().next();
             EscherContainerRecord escherContainerRecord = drawing.getOfficeArtSpContainer();

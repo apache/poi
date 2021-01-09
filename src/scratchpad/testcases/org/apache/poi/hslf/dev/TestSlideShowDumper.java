@@ -40,7 +40,7 @@ public class TestSlideShowDumper extends BasePPTIteratingTest {
     }
 
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // SlideShowDumper calls IOUtils.toByteArray(is), which would fail if a different size is defined
         IOUtils.setByteArrayMaxOverride(-1);
 

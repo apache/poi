@@ -49,7 +49,7 @@ public final class TestMAPIAttributes {
      * Test counts
      */
     @Test
-    public void testCounts() throws Exception {
+    void testCounts() throws Exception {
         // Message should have 54
         assertEquals(54, quick.getMessageMAPIAttributes().size());
 
@@ -61,7 +61,7 @@ public final class TestMAPIAttributes {
      * Test various general ones
      */
     @Test
-    public void testBasics() throws Exception {
+    void testBasics() throws Exception {
         // Try constructing two attributes
         byte[] data = new byte[]{
                 // Level one, id 36867, type 6
@@ -130,7 +130,7 @@ public final class TestMAPIAttributes {
      * Test String, Date and RTF ones
      */
     @Test
-    public void testTyped() throws Exception {
+    void testTyped() throws Exception {
         MAPIAttribute attr;
 
         // String
@@ -173,7 +173,7 @@ public final class TestMAPIAttributes {
      * Check common ones via helper accessors
      */
     @Test
-    public void testCommon() throws Exception {
+    void testCommon() throws Exception {
         assertEquals("This is a test message", quick.getSubject());
 
         assertEquals("quick.doc", quick.getAttachments().get(0).getLongFilename());

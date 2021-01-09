@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestPPDrawingTextListing extends BasePPTIteratingTest {
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // calls System.exit(): PPDrawingTextListing.main(new String[0]);
         assertThrows(EmptyFileException.class, () -> PPDrawingTextListing.main(new String[]{"invalidfile"}));
     }

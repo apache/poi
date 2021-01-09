@@ -55,7 +55,7 @@ public final class TestTextRunReWrite {
     }
 
     @Test
-	public void testWritesOutTheSameNonRich() throws IOException {
+	void testWritesOutTheSameNonRich() throws IOException {
     	// Ensure the text lengths are as we'd expect to start with
     	assertEquals(1, ss.getSlides().size());
     	assertEquals(2, ss.getSlides().get(0).getTextParagraphs().size());
@@ -117,7 +117,7 @@ public final class TestTextRunReWrite {
 	}
 
     @Test
-    public void testWritesOutTheSameRich() throws IOException {
+    void testWritesOutTheSameRich() throws IOException {
     	// Grab the first text run on the first sheet
     	List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
 

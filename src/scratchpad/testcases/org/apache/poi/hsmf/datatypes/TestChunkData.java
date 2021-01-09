@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestChunkData {
 	@Test
-	public void testChunkCreate() {
+	void testChunkCreate() {
 	   Chunk chunk;
 
 		chunk = new StringChunk(0x0200, Types.createCustom(0x001E));
@@ -57,32 +57,32 @@ public final class TestChunkData {
 	}
 
 	@Test
-	public void testTextBodyChunk() {
+	void testTextBodyChunk() {
 		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
 		assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
 	}
 
 	@Test
-	public void testDisplayToChunk() {
+	void testDisplayToChunk() {
 		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_TO.id);
 	}
 
 
 	@Test
-	public void testDisplayCCChunk() {
+	void testDisplayCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_CC.id);
 	}
 
 	@Test
-	public void testDisplayBCCChunk() {
+	void testDisplayBCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_BCC.id);
 	}
 
 	@Test
-	public void testSubjectChunk() {
+	void testSubjectChunk() {
 		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.SUBJECT.id);
 	}

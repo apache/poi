@@ -37,7 +37,7 @@ public final class TestHeadersFootersAtom {
             0x00, 0x00, 0x23, 0x00 };
 
     @Test
-    public void testRead() {
+    void testRead() {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
 
@@ -53,7 +53,7 @@ public final class TestHeadersFootersAtom {
     }
 
     @Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -61,7 +61,7 @@ public final class TestHeadersFootersAtom {
 	}
 
     @Test
-    public void testNewRecord() throws Exception {
+    void testNewRecord() throws Exception {
         HeadersFootersAtom record = new HeadersFootersAtom();
         record.setFlag(HeadersFootersAtom.fHasDate, true);
         record.setFlag(HeadersFootersAtom.fHasTodayDate, true);
@@ -73,7 +73,7 @@ public final class TestHeadersFootersAtom {
     }
 
     @Test
-    public void testFlags() {
+    void testFlags() {
         HeadersFootersAtom record = new HeadersFootersAtom();
 
         //in a new record all the bits are 0

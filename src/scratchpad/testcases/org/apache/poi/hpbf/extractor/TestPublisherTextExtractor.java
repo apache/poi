@@ -68,7 +68,7 @@ public final class TestPublisherTextExtractor {
         "0123456789abcdef0123456789abcdef0123456789abcdef\n";
 
     @Test
-    public void testBasics() throws IOException {
+    void testBasics() throws IOException {
         InputStream sample = _samples.openResourceAsStream("Sample.pub");
         HPBFDocument doc = new HPBFDocument(sample);
         PublisherTextExtractor ext = new PublisherTextExtractor(doc);
@@ -85,7 +85,7 @@ public final class TestPublisherTextExtractor {
     }
 
     @Test
-    public void testContents() throws IOException {
+    void testContents() throws IOException {
         // Check this complicated file using POIFS
         InputStream sample = _samples.openResourceAsStream("Sample.pub");
         HPBFDocument docOPOIFS = new HPBFDocument(sample);
@@ -118,7 +118,7 @@ public final class TestPublisherTextExtractor {
      * Publisher 2007. Check they all agree.
      */
     @Test
-    public void testMultipleVersions() throws Exception {
+    void testMultipleVersions() throws Exception {
         InputStream sample = _samples.openResourceAsStream("Sample.pub");
         HPBFDocument doc = new HPBFDocument(sample);
         PublisherTextExtractor ext = new PublisherTextExtractor(doc);
@@ -153,7 +153,7 @@ public final class TestPublisherTextExtractor {
      * to.
      */
     @Test
-    public void testWithHyperlinks() throws Exception {
+    void testWithHyperlinks() throws Exception {
         InputStream linkAt = _samples.openResourceAsStream("LinkAt10.pub");
         HPBFDocument doc = new HPBFDocument(linkAt);
 

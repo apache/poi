@@ -66,7 +66,7 @@ public final class TestBasics {
     * Can we always get the recipient's email?
     */
    @Test
-   public void testRecipientEmail() throws Exception {
+   void testRecipientEmail() throws Exception {
       assertEquals("travis@overwrittenstack.com", simple.getRecipientEmailAddress());
       assertEquals("kevin.roast@alfresco.org", quick.getRecipientEmailAddress());
       assertEquals("nicolas1.23456@free.fr", attachments.getRecipientEmailAddress());
@@ -86,7 +86,7 @@ public final class TestBasics {
     * Test subject
     */
    @Test
-   public void testSubject() throws Exception {
+   void testSubject() throws Exception {
       assertEquals("test message", simple.getSubject());
       assertEquals("Test the content transformer", quick.getSubject());
       assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", outlook30.getSubject());
@@ -97,7 +97,7 @@ public final class TestBasics {
     * Test message headers
     */
    @Test
-   public void testHeaders() throws Exception {
+   void testHeaders() throws Exception {
       // Simple email first
       assertEquals(26, simple.getHeaders().length);
       assertStartsWith(simple.getHeaders()[0], "Return-path:");
@@ -118,7 +118,7 @@ public final class TestBasics {
    }
 
    @Test
-   public void testBody() throws Exception {
+   void testBody() throws Exception {
       // Messages may have their bodies saved as plain text, html, and/or rtf.
       assertEquals("This is a test message.", simple.getTextBody());
       assertEquals("The quick brown fox jumps over the lazy dog\r\n", quick.getTextBody());
@@ -145,7 +145,7 @@ public final class TestBasics {
     * Test attachments
     */
    @Test
-   public void testAttachments() {
+   void testAttachments() {
       assertEquals(0, simple.getAttachmentFiles().length);
       assertEquals(0, quick.getAttachmentFiles().length);
       assertEquals(0, outlook30.getAttachmentFiles().length);
@@ -157,7 +157,7 @@ public final class TestBasics {
     * Use a file with no HTML body
     */
    @Test
-   public void testMissingChunks() throws Exception {
+   void testMissingChunks() throws Exception {
       assertFalse(attachments.isReturnNullOnMissingChunk());
       assertThrows(ChunkNotFoundException.class, attachments::getHtmlBody);
 
@@ -174,7 +174,7 @@ public final class TestBasics {
     *  missing recipient email address
     */
    @Test
-   public void testMissingAddressChunk() throws Exception {
+   void testMissingAddressChunk() throws Exception {
       assertFalse(noRecipientAddress.isReturnNullOnMissingChunk());
       assertThrows(ChunkNotFoundException.class, noRecipientAddress::getRecipientEmailAddress);
       assertThrows(ChunkNotFoundException.class, noRecipientAddress::getRecipientEmailAddressList);
@@ -198,7 +198,7 @@ public final class TestBasics {
     * Test the 7 bit detection
     */
    @Test
-   public void test7BitDetection() {
+   void test7BitDetection() {
       assertFalse(unicode.has7BitEncodingStrings());
       assertTrue(simple.has7BitEncodingStrings());
       assertTrue(chinese.has7BitEncodingStrings());
@@ -212,7 +212,7 @@ public final class TestBasics {
     *  who submitted it in bug #49441
     */
    @Test
-   public void testEncoding() throws Exception {
+   void testEncoding() throws Exception {
       assertEquals(2, cyrillic.getRecipientDetailsChunks().length);
       assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
       assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[1].getRecipientDisplayNameChunk().get7BitEncoding());

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestBookmarksTables {
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         try (HWPFDocument doc = openSampleFile( "pageref.doc" )) {
             Bookmarks bookmarks = doc.getBookmarks();
 
@@ -47,7 +47,7 @@ public class TestBookmarksTables {
     }
 
     @Test
-    public void testDeleteRange() throws IOException {
+    void testDeleteRange() throws IOException {
         try (HWPFDocument doc = openSampleFile( "pageref.doc" )) {
             Range range = new Range(27, 41, doc);
             range.delete();
@@ -57,7 +57,7 @@ public class TestBookmarksTables {
     }
 
     @Test
-    public void testReplaceTextAfter() throws IOException {
+    void testReplaceTextAfter() throws IOException {
         try (HWPFDocument doc = openSampleFile( "pageref.doc" )) {
             Bookmark bookmark = doc.getBookmarks().getBookmark(0);
             Range range = new Range(bookmark.getStart(), bookmark.getEnd(), doc);
@@ -71,7 +71,7 @@ public class TestBookmarksTables {
     }
 
     @Test
-    public void testReplaceTextBefore() throws IOException {
+    void testReplaceTextBefore() throws IOException {
         try (HWPFDocument doc = openSampleFile( "pageref.doc" )) {
             Bookmark bookmark = doc.getBookmarks().getBookmark(0);
             Range range = new Range(bookmark.getStart(), bookmark.getEnd(), doc);
@@ -85,7 +85,7 @@ public class TestBookmarksTables {
     }
 
     @Test
-    public void testUpdateText() throws IOException {
+    void testUpdateText() throws IOException {
         try (HWPFDocument doc = openSampleFile( "pageref.doc" )) {
             Bookmark bookmark = doc.getBookmarks().getBookmark(0);
             Range range = new Range(bookmark.getStart(), bookmark.getEnd(), doc);

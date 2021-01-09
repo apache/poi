@@ -36,13 +36,13 @@ public final class TestTextHeaderAtom {
 	private final byte[] body_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
 		assertEquals(3999L, tha.getRecordType());
 	}
 
 	@Test
-	public void testTypes() {
+	void testTypes() {
 		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
 		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
 		TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);
@@ -52,7 +52,7 @@ public final class TestTextHeaderAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tha.writeOut(baos);

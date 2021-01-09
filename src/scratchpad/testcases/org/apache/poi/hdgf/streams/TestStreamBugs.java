@@ -55,7 +55,7 @@ public final class TestStreamBugs extends StreamTest {
 	}
 
 	@Test
-    public void testGetTrailer() {
+    void testGetTrailer() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
 	}
@@ -67,7 +67,7 @@ public final class TestStreamBugs extends StreamTest {
 	}
 
 	@Test
-    public void testGetChildren() {
+    void testGetChildren() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		TrailerStream trailer = (TrailerStream)
 			Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
@@ -103,7 +103,7 @@ public final class TestStreamBugs extends StreamTest {
 	}
 
 	@Test
-    public void testOpen() throws IOException {
+    void testOpen() throws IOException {
 		new HDGFDiagram(filesystem).close();
 	}
 }

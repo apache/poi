@@ -32,7 +32,7 @@ public final class TestSectionTable {
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test
-  public void testReadWrite() throws Exception {
+  void testReadWrite() throws Exception {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;

@@ -54,7 +54,7 @@ public final class TestHeadersFootersContainer {
     };
 
     @Test
-    public void testReadSlideHeadersFootersContainer() {
+    void testReadSlideHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.SlideHeadersFootersContainer, record.getOptions());
@@ -74,7 +74,7 @@ public final class TestHeadersFootersContainer {
     }
 
     @Test
-	public void testWriteSlideHeadersFootersContainer() throws Exception {
+	void testWriteSlideHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -82,7 +82,7 @@ public final class TestHeadersFootersContainer {
 	}
 
     @Test
-    public void testNewSlideHeadersFootersContainer() throws Exception {
+    void testNewSlideHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
 
         assertNotNull(record.getHeadersFootersAtom());
@@ -106,7 +106,7 @@ public final class TestHeadersFootersContainer {
     }
 
     @Test
-    public void testReadNotesHeadersFootersContainer() {
+    void testReadNotesHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.NotesHeadersFootersContainer, record.getOptions());
@@ -127,7 +127,7 @@ public final class TestHeadersFootersContainer {
     }
 
     @Test
-	public void testWriteNotesHeadersFootersContainer() throws Exception {
+	void testWriteNotesHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -135,7 +135,7 @@ public final class TestHeadersFootersContainer {
 	}
 
     @Test
-    public void testNewNotesHeadersFootersContainer() throws Exception {
+    void testNewNotesHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
 
         assertNotNull(record.getHeadersFootersAtom());

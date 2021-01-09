@@ -44,7 +44,7 @@ public final class TestMessageSubmissionChunk {
     }
 
     @Test
-    public void testReadMessageDateExtraHyphenSubmissionChunk() throws ChunkNotFoundException {
+    void testReadMessageDateExtraHyphenSubmissionChunk() throws ChunkNotFoundException {
         final Calendar date = mapiMessageExtraHyphenSubmissionChunk.getMessageDate();
         assertNotNull(date);
         final int year = date.get(Calendar.YEAR);
@@ -52,7 +52,7 @@ public final class TestMessageSubmissionChunk {
     }
 
     @Test
-    public void testReadMessageDateNormalSubmissionChunk() throws ChunkNotFoundException {
+    void testReadMessageDateNormalSubmissionChunk() throws ChunkNotFoundException {
         final Calendar date = mapiMessageNormalSubmissionChunk.getMessageDate();
         assertNotNull(date);
         final int year = date.get(Calendar.YEAR);

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestSlideIdListing extends BasePPTIteratingTest {
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // calls System.exit(): SlideIdListing.main(new String[0]);
         SlideIdListing.main(new String[] {
                 HSLFTestDataSamples.getSampleFile("slide_master.ppt").getAbsolutePath()

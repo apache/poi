@@ -41,7 +41,7 @@ public final class TestMostRecentRecords {
 	}
 
 	@Test
-	public void testCount() {
+	void testCount() {
 		// Most recent core records
 		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -50,7 +50,7 @@ public final class TestMostRecentRecords {
 	}
 
 	@Test
-	public void testRightRecordTypes() {
+	void testRightRecordTypes() {
 		// Most recent core records
 		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -72,7 +72,7 @@ public final class TestMostRecentRecords {
 	}
 
 	@Test
-	public void testCorrectRecords() {
+	void testCorrectRecords() {
 		// Most recent core records
 		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 

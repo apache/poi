@@ -64,7 +64,7 @@ public final class TestStreamComplex extends StreamTest {
 	 * Test creating the trailer, but not looking for children
 	 */
 	@Test
-    public void testTrailer() {
+    void testTrailer() {
 		// Find the trailer
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 
@@ -86,7 +86,7 @@ public final class TestStreamComplex extends StreamTest {
 	}
 
 	@Test
-    public void testChunks() {
+    void testChunks() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -107,7 +107,7 @@ public final class TestStreamComplex extends StreamTest {
 	}
 
 	@Test
-    public void testStrings() {
+    void testStrings() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -124,7 +124,7 @@ public final class TestStreamComplex extends StreamTest {
 	}
 
 	@Test
-    public void testPointerToStrings() {
+    void testPointerToStrings() {
 		// The stream at 0x347f has strings
 		// The stream at 0x4312 has a pointer to 0x347f
 		// The stream at 0x44d3 has a pointer to 0x4312
@@ -169,7 +169,7 @@ public final class TestStreamComplex extends StreamTest {
 	}
 
 	@Test
-    public void testTrailerContents() {
+    void testTrailerContents() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -221,7 +221,7 @@ public final class TestStreamComplex extends StreamTest {
 	}
 
 	@Test
-    public void testChunkWithText() {
+    void testChunkWithText() {
 		// Parent ChunkStream is at 0x7194
 		// This is one of the last children of the trailer
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);

@@ -36,13 +36,13 @@ public final class TestSlidePersistAtom {
 		1, 0, 0, 0, 0, 0, 0 };
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(1011L, spa.getRecordType());
 	}
 
 	@Test
-	public void testFlags() {
+	void testFlags() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(4, spa.getRefID() );
         assertTrue(spa.getHasShapesOtherThanPlaceholders());
@@ -51,7 +51,7 @@ public final class TestSlidePersistAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		spa.writeOut(baos);

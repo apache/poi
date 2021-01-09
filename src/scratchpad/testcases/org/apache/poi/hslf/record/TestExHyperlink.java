@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestExHyperlink {
 	@Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         // From a real file
         byte[] exHyperlinkBytes = org.apache.poi.poifs.storage.RawDataUtil.decompress(
             "H4sIAAAAAAAAAONnuM6/ggEELvOzAElmMHsXvxuQzGAoAcICBisGfSDMYkhkyAbi"+
@@ -59,7 +59,7 @@ public final class TestExHyperlink {
 	}
 
 	@Test
-	public void testRealFile() throws IOException {
+	void testRealFile() throws IOException {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithLinks.ppt"));
 		HSLFSlideShow ss = new HSLFSlideShow(hss);

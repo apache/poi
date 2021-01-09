@@ -33,7 +33,7 @@ public final class TestFontTable {
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test
-  public void testReadWrite() throws IOException {
+  void testReadWrite() throws IOException {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] tableStream = _hWPFDocFixture._tableStream;
 

@@ -32,13 +32,13 @@ import org.junit.jupiter.api.Test;
 public final class TestPAPBinTable {
 
     @Test
-    public void testObIs() throws IOException {
+    void testObIs() throws IOException {
         // shall not fail with assertions on
         HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();
     }
 
     @Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         /** @todo verify the constructors */
         HWPFDocFixture _hWPFDocFixture = new HWPFDocFixture( this, HWPFDocFixture.DEFAULT_TEST_FILE );
 

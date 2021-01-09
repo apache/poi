@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestLists {
     @Test
-    public void testBasics() throws IOException {
+    void testBasics() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
            Range r = doc.getRange();
 
@@ -52,7 +52,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testUnorderedLists() throws IOException {
+    void testUnorderedLists() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
            Range r = doc.getRange();
            assertEquals(40, r.numParagraphs());
@@ -96,7 +96,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testOrderedLists() throws IOException {
+    void testOrderedLists() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
             Range r = doc.getRange();
             assertEquals(40, r.numParagraphs());
@@ -122,7 +122,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testMultiLevelLists() throws IOException {
+    void testMultiLevelLists() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
             Range r = doc.getRange();
             assertEquals(40, r.numParagraphs());
@@ -181,7 +181,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testIndentedText() throws IOException {
+    void testIndentedText() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
             Range r = doc.getRange();
 
@@ -211,7 +211,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testWriteRead() throws IOException {
+    void testWriteRead() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc");
             HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc)) {
 
@@ -228,7 +228,7 @@ public final class TestLists {
     }
 
     @Test
-    public void testSpecificNumberedOrderedListFeatures() throws IOException {
+    void testSpecificNumberedOrderedListFeatures() throws IOException {
         try (HWPFDocument doc = openSampleFile("Lists.doc")) {
 
             Range r = doc.getRange();

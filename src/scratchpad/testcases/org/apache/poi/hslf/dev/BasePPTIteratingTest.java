@@ -103,7 +103,7 @@ public abstract class BasePPTIteratingTest {
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testAllFiles(File file) throws Exception {
+    void testAllFiles(File file) throws Exception {
         String fileName = file.getName();
         Class<? extends Throwable> t = null;
         if (EXCLUDED.containsKey(fileName)) {

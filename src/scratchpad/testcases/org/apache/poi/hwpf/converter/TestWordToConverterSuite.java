@@ -67,7 +67,7 @@ public class TestWordToConverterSuite
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testFo(File child) throws Exception {
+    void testFo(File child) throws Exception {
         HWPFDocumentCore hwpfDocument = AbstractWordUtils.loadDoc( child );
 
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
@@ -87,7 +87,7 @@ public class TestWordToConverterSuite
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testHtml(File child) throws Exception {
+    void testHtml(File child) throws Exception {
         HWPFDocumentCore hwpfDocument = AbstractWordUtils.loadDoc( child );
 
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
@@ -108,7 +108,7 @@ public class TestWordToConverterSuite
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testText(File child) throws Exception {
+    void testText(File child) throws Exception {
         HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( child );
 
         WordToTextConverter wordToTextConverter = new WordToTextConverter(

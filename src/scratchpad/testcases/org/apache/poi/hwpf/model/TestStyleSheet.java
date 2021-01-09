@@ -33,7 +33,7 @@ public final class TestStyleSheet {
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test
-  public void testReadWrite() throws IOException
+  void testReadWrite() throws IOException
   {
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
@@ -50,7 +50,7 @@ public final class TestStyleSheet {
   }
 
   @Test
-  public void testReadWriteFromNonZeroOffset() throws IOException
+  void testReadWriteFromNonZeroOffset() throws IOException
   {
     HWPFFileSystem fileSys = new HWPFFileSystem();
     ByteArrayOutputStream tableOut = fileSys.getStream("1Table");

@@ -37,7 +37,7 @@ public final class TestRange {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
 
     @Test
-    public void testFieldStripping() {
+    void testFieldStripping() {
         String exp = "This is some text.";
 
         String single = "This is some \u0013Blah!\u0015text.";
@@ -63,7 +63,7 @@ public final class TestRange {
     }
 
     @Test
-    public void testBug46817() throws IOException {
+    void testBug46817() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream( "Bug46817.doc" );
         HWPFDocument hwpfDocument = new HWPFDocument( is );
         is.close();

@@ -40,13 +40,13 @@ public class TestExHyperlinkAtom {
 	};
 
 	@Test
-    public void testRecordType() {
+    void testRecordType() {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
 		assertEquals(4051L, eha.getRecordType());
 	}
 
 	@Test
-    public void testGetNumber() {
+    void testGetNumber() {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
     	ExHyperlinkAtom ehb = new ExHyperlinkAtom(data_b, 0, data_b.length);
 
@@ -55,7 +55,7 @@ public class TestExHyperlinkAtom {
     }
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eha.writeOut(baos);
@@ -64,7 +64,7 @@ public class TestExHyperlinkAtom {
 
 	// Create A from scratch
 	@Test
-	public void testCreate() throws Exception {
+	void testCreate() throws Exception {
 		ExHyperlinkAtom eha = new ExHyperlinkAtom();
 
 		// Set value
@@ -78,7 +78,7 @@ public class TestExHyperlinkAtom {
 
 	// Try to turn a into b
 	@Test
-	public void testChange() throws Exception {
+	void testChange() throws Exception {
 		ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
 
 		// Change the number

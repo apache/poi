@@ -45,7 +45,7 @@ public final class TestChunks {
 	}
 
     @Test
-	public void testChunkHeaderA() {
+	void testChunkHeaderA() {
 		ChunkHeader h = ChunkHeader.createChunkHeader(11, data_a, 0);
 
 		assertTrue(h instanceof ChunkHeaderV11);
@@ -63,7 +63,7 @@ public final class TestChunks {
 	}
 
     @Test
-    public void testChunkHeaderB() {
+    void testChunkHeaderB() {
 		ChunkHeader h = ChunkHeader.createChunkHeader(11, data_b, 0);
 
 		assertTrue(h instanceof ChunkHeaderV11);
@@ -81,7 +81,7 @@ public final class TestChunks {
 	}
 
     @Test
-    public void testOneChunk() throws Exception {
+    void testOneChunk() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 		cf.createChunk(data_a, 0);
 		cf.createChunk(data_b, 0);
@@ -114,7 +114,7 @@ public final class TestChunks {
 	}
 
     @Test
-    public void testAnotherChunk() throws Exception {
+    void testAnotherChunk() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 
 		// Go for the 2nd chunk in the stream
@@ -151,7 +151,7 @@ public final class TestChunks {
 	}
 
     @Test
-    public void testManyChunks() throws Exception {
+    void testManyChunks() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 		Chunk chunk;
 		int offset = 0;

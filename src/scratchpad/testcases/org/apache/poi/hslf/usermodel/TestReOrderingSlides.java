@@ -64,7 +64,7 @@ public final class TestReOrderingSlides {
 	 * Test that we can "re-order" a slideshow with only 1 slide on it
 	 */
 	@Test
-	public void testReOrder1() throws IOException {
+	void testReOrder1() throws IOException {
 		// Has one slide
 		assertEquals(1, ss_one.getSlides().size());
 		HSLFSlide s1 = ss_one.getSlides().get(0);
@@ -97,7 +97,7 @@ public final class TestReOrderingSlides {
 	 *  two slides in it
 	 */
     @Test
-	public void testReOrder2() throws IOException {
+	void testReOrder2() throws IOException {
 		// Has two slides
 		assertEquals(2, ss_two.getSlides().size());
 		HSLFSlide s1 = ss_two.getSlides().get(0);
@@ -138,7 +138,7 @@ public final class TestReOrderingSlides {
 	 * Test re-ordering slides in a slideshow with 2 slides on it
 	 */
     @Test
-	public void testReOrder2swap() throws IOException {
+	void testReOrder2swap() throws IOException {
 		// Has two slides
 		assertEquals(2, ss_two.getSlides().size());
 		HSLFSlide s1 = ss_two.getSlides().get(0);
@@ -180,7 +180,7 @@ public final class TestReOrderingSlides {
 	 *  three slides in it
 	 */
     @Test
-	public void testReOrder3() throws IOException {
+	void testReOrder3() throws IOException {
 		// Has three slides
 		assertEquals(3, ss_three.getSlides().size());
 		HSLFSlide s1 = ss_three.getSlides().get(0);
@@ -231,7 +231,7 @@ public final class TestReOrderingSlides {
 	 * Test re-ordering slides in a slideshow with 3 slides on it
 	 */
     @Test
-	public void testReOrder3swap() throws IOException {
+	void testReOrder3swap() throws IOException {
 		// Has three slides
 		assertEquals(3, ss_three.getSlides().size());
 		HSLFSlide s1 = ss_three.getSlides().get(0);

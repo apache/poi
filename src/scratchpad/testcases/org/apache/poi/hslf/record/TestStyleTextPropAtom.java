@@ -139,7 +139,7 @@ public final class TestStyleTextPropAtom {
     private static final int data_d_text_len = 0xA0-1;
 
     @Test
-    public void testRecordType() {
+    void testRecordType() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
@@ -150,7 +150,7 @@ public final class TestStyleTextPropAtom {
 
 
     @Test
-    public void testCharacterStyleCounts() {
+    void testCharacterStyleCounts() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -165,7 +165,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testParagraphStyleCounts() {
+    void testParagraphStyleCounts() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -181,7 +181,7 @@ public final class TestStyleTextPropAtom {
 
 
     @Test
-    public void testCharacterStyleLengths() {
+    void testCharacterStyleLengths() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -212,7 +212,7 @@ public final class TestStyleTextPropAtom {
 
 
     @Test
-    public void testCharacterPropOrdering() {
+    void testCharacterPropOrdering() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -260,7 +260,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testParagraphProps() {
+    void testParagraphProps() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -305,7 +305,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testCharacterProps() {
+    void testCharacterProps() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -377,7 +377,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testFindAddTextProp() {
+    void testFindAddTextProp() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -437,7 +437,7 @@ public final class TestStyleTextPropAtom {
      *  constructor, and setting the required properties
      */
     @Test
-    public void testCreateAFromScatch() throws Exception {
+    void testCreateAFromScatch() throws Exception {
         // Start with an empty one
         StyleTextPropAtom stpa = new StyleTextPropAtom(54);
 
@@ -475,7 +475,7 @@ public final class TestStyleTextPropAtom {
      *  constructor, and setting the required properties
      */
     @Test
-    public void testCreateBFromScatch() throws Exception {
+    void testCreateBFromScatch() throws Exception {
         // Start with an empty one
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_b_text_len);
 
@@ -645,28 +645,28 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testWriteA() throws IOException {
+    void testWriteA() throws IOException {
         doReadWrite(data_a, -1);
     }
 
     @Test
-    public void testLoadWriteA() throws IOException {
+    void testLoadWriteA() throws IOException {
         doReadWrite(data_b, data_b_text_len);
     }
 
 
     @Test
-    public void testWriteB() throws IOException {
+    void testWriteB() throws IOException {
         doReadWrite(data_b, -1);
     }
 
     @Test
-    public void testLoadWriteB() throws IOException {
+    void testLoadWriteB() throws IOException {
         doReadWrite(data_b, data_b_text_len);
     }
 
     @Test
-    public void testLoadWriteC() throws IOException {
+    void testLoadWriteC() throws IOException {
         // BitMaskTextProperties will sanitize the output
         byte[] expected = data_c.clone();
         expected[56] = 0;
@@ -675,7 +675,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testLoadWriteD() throws IOException {
+    void testLoadWriteD() throws IOException {
         doReadWrite(data_d, data_d_text_len);
     }
 
@@ -697,7 +697,7 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testNotEnoughDataProp() {
+    void testNotEnoughDataProp() {
         // We don't have enough data in the record to cover
         //  all the properties the mask says we have
         // Make sure we just do the best we can
@@ -711,7 +711,7 @@ public final class TestStyleTextPropAtom {
      * Check the test data for Bug 40143.
      */
    @Test
-   public void testBug40143() {
+   void testBug40143() {
         StyleTextPropAtom atom = new StyleTextPropAtom(data_d, 0, data_d.length);
         atom.setParentTextSize(data_d_text_len);
 
@@ -734,7 +734,7 @@ public final class TestStyleTextPropAtom {
      * Check the test data for Bug 42677.
      */
      @Test
-     public void test42677() throws IOException {
+     void test42677() throws IOException {
         int length = 18;
         byte[] data = {
             0x00, 0x00, (byte)0xA1, 0x0F, 0x28, 0x00, 0x00, 0x00,
@@ -760,7 +760,7 @@ public final class TestStyleTextPropAtom {
      * </StyleTextPropAtom>
      */
      @Test
-    public void test45815() throws IOException {
+    void test45815() throws IOException {
         int length = 19;
         byte[] data = {
                 0x00, 0x00, (byte)0xA1, 0x0F, 0x5E, 0x00, 0x00, 0x00, 0x14, 0x00,

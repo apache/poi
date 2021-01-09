@@ -41,13 +41,13 @@ public final class TestSlideAtom {
 		0, 1, 0, 0, 7, 0, 0x0C, 0x30 };
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		assertEquals(1007l, sa.getRecordType());
 	}
 
     @Test
-	public void testFlags() {
+	void testFlags() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 
 		// First 12 bytes are a SSlideLayoutAtom, checked elsewhere
@@ -63,7 +63,7 @@ public final class TestSlideAtom {
 	}
 
     @Test
-    public void testSSlideLayoutAtom() {
+    void testSSlideLayoutAtom() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		SlideAtomLayout ssla = sa.getSSlideLayoutAtom();
 
@@ -73,7 +73,7 @@ public final class TestSlideAtom {
 	}
 
     @Test
-	public void testWrite() throws IOException {
+	void testWrite() throws IOException {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		sa.writeOut(baos);
@@ -81,7 +81,7 @@ public final class TestSlideAtom {
 	}
 
     @Test
-	public void testSSSlideInfoAtom() throws IOException {
+	void testSSSlideInfoAtom() throws IOException {
 		HSLFSlideShow ss1 = new HSLFSlideShow();
 		HSLFSlide slide1 = ss1.createSlide(), slide2 = ss1.createSlide();
 		slide2.setHidden(true);

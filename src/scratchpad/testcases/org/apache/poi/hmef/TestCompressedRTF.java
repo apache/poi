@@ -47,7 +47,7 @@ public final class TestCompressedRTF {
      * then decoding has no hope...
      */
     @Test
-    public void testQuickBasics() throws Exception {
+    void testQuickBasics() throws Exception {
         HMEFMessage msg;
         try (InputStream is = _samples.openResourceAsStream("quick-winmail.dat")) {
             msg = new HMEFMessage(is);
@@ -108,7 +108,7 @@ public final class TestCompressedRTF {
      * (1 flag byte + 8 codes)
      */
     @Test
-    public void testFirstBlock() throws Exception {
+    void testFirstBlock() throws Exception {
         HMEFMessage msg;
         try (InputStream is = _samples.openResourceAsStream("quick-winmail.dat")) {
             msg = new HMEFMessage(is);
@@ -136,7 +136,7 @@ public final class TestCompressedRTF {
      * (flag + 8 codes, flag + 8 codes)
      */
     @Test
-    public void testFirstTwoBlocks() throws Exception {
+    void testFirstTwoBlocks() throws Exception {
         HMEFMessage msg;
         try (InputStream is = _samples.openResourceAsStream("quick-winmail.dat")) {
             msg = new HMEFMessage(is);
@@ -163,7 +163,7 @@ public final class TestCompressedRTF {
      * TODO Fix what looks like a padding issue
      */
     @Test
-    public void testFull() throws Exception {
+    void testFull() throws Exception {
         final HMEFMessage msg;
         try (InputStream is = _samples.openResourceAsStream("quick-winmail.dat")) {
             msg = new HMEFMessage(is);

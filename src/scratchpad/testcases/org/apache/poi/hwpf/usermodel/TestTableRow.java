@@ -29,7 +29,7 @@ public class TestTableRow {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
 
     @Test
-    public void testInnerTableCellsDetection() throws IOException {
+    void testInnerTableCellsDetection() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream( "innertable.doc" );
         HWPFDocument hwpfDocument = new HWPFDocument( is );
         is.close();
@@ -47,7 +47,7 @@ public class TestTableRow {
     }
 
     @Test
-    public void testOuterTableCellsDetection() throws IOException {
+    void testOuterTableCellsDetection() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream( "innertable.doc" );
         HWPFDocument hwpfDocument = new HWPFDocument( is );
         is.close();

@@ -45,7 +45,7 @@ public final class TestRecordCounts {
 	}
 
 	@Test
-	public void testSheetsCount() {
+	void testSheetsCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
@@ -60,7 +60,7 @@ public final class TestRecordCounts {
 	}
 
 	@Test
-	public void testNotesCount() {
+	void testNotesCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
@@ -75,7 +75,7 @@ public final class TestRecordCounts {
 	}
 
 	@Test
-	public void testSlideListWithTextCount() {
+	void testSlideListWithTextCount() {
 		// Second level
 		Record[] rt = ss.getRecords();
 		Record[] r = rt[0].getChildRecords();

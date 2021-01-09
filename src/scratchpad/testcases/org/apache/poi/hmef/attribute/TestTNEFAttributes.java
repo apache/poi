@@ -51,7 +51,7 @@ public final class TestTNEFAttributes {
      * Test counts
      */
     @Test
-    public void testCounts() throws Exception {
+    void testCounts() throws Exception {
         // The message should have 4 attributes
         assertEquals(4, quick.getMessageAttributes().size());
 
@@ -65,7 +65,7 @@ public final class TestTNEFAttributes {
      * Test the basics
      */
     @Test
-    public void testBasics() throws Exception {
+    void testBasics() throws Exception {
         // An int one
         assertEquals(
                 0x010000,
@@ -128,7 +128,7 @@ public final class TestTNEFAttributes {
      * Test string based ones
      */
     @Test
-    public void testString() throws Exception {
+    void testString() throws Exception {
         TNEFAttribute attr = quick.getAttachments().get(0).getAttribute(
                 TNEFProperty.ID_ATTACHTITLE
         );
@@ -147,7 +147,7 @@ public final class TestTNEFAttributes {
      * Test date based ones
      */
     @Test
-    public void testDate() throws Exception {
+    void testDate() throws Exception {
         TNEFAttribute attr = quick.getAttachments().get(0).getAttribute(
                 TNEFProperty.ID_ATTACHMODIFYDATE
         );
@@ -176,7 +176,7 @@ public final class TestTNEFAttributes {
      * Test a bit of mapi
      */
     @Test
-    public void testMAPI() throws Exception {
+    void testMAPI() throws Exception {
         // Message MAPI
         TNEFAttribute attr = quick.getMessageAttribute(
                 TNEFProperty.ID_MAPIPROPERTIES
@@ -211,7 +211,7 @@ public final class TestTNEFAttributes {
      * Test common ones via helpers
      */
     @Test
-    public void testCommon() throws Exception {
+    void testCommon() throws Exception {
         assertEquals("This is a test message", quick.getSubject());
         assertEquals("quick.doc", quick.getAttachments().get(0).getFilename());
     }

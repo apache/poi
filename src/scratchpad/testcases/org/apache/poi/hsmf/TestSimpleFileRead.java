@@ -46,7 +46,7 @@ public final class TestSimpleFileRead {
      *
      */
     @Test
-    public void testReadDisplayCC() throws ChunkNotFoundException {
+    void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
@@ -57,7 +57,7 @@ public final class TestSimpleFileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayTo() throws ChunkNotFoundException {
+    void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
         String expected = "travis@overwrittenstack.com";
 
@@ -68,7 +68,7 @@ public final class TestSimpleFileRead {
      * Test to see if we can read the From Chunk.
      */
     @Test
-    public void testReadDisplayFrom() throws ChunkNotFoundException {
+    void testReadDisplayFrom() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayFrom();
         String expected = "Travis Ferguson";
 
@@ -79,7 +79,7 @@ public final class TestSimpleFileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayBCC() throws ChunkNotFoundException {
+    void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
@@ -91,7 +91,7 @@ public final class TestSimpleFileRead {
      * Check if we can read the body of the blank message, we expect "".
      */
     @Test
-    public void testReadBody() throws Exception {
+    void testReadBody() throws Exception {
         String obtained = mapiMessage.getTextBody();
         String expected = "This is a test message.";
 
@@ -102,7 +102,7 @@ public final class TestSimpleFileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadSubject() throws Exception {
+    void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
         String expected = "test message";
 
@@ -113,7 +113,7 @@ public final class TestSimpleFileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadConversationTopic() throws Exception {
+    void testReadConversationTopic() throws Exception {
         String obtained = mapiMessage.getConversationTopic();
         assertEquals("test message", obtained);
     }
@@ -123,7 +123,7 @@ public final class TestSimpleFileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadMessageClass() throws Exception {
+    void testReadMessageClass() throws Exception {
         MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
         assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
     }
@@ -132,7 +132,7 @@ public final class TestSimpleFileRead {
      * Check the various message classes
      */
     @Test
-    public void testReadMessageClass2() throws Exception {
+    void testReadMessageClass2() throws Exception {
         assertEquals(
                 MAPIMessage.MESSAGE_CLASS.NOTE, mapiMessage.getMessageClassEnum());
 

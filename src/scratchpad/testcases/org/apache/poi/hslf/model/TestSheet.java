@@ -42,7 +42,7 @@ public final class TestSheet {
      * For each ppt in the test directory check that all sheets are properly initialized
      */
     @Test
-    public void testSheet() throws Exception {
+    void testSheet() throws Exception {
         String[] tests = {"SampleShow.ppt", "backgrounds.ppt", "text_shapes.ppt", "pictures.ppt"};
         for (String file : tests) {
             try {

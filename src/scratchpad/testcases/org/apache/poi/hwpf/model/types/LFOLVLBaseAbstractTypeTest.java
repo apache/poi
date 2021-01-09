@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class LFOLVLBaseAbstractTypeTest {
     @Test
-    public void testGetSize() {
+    void testGetSize() {
         assertEquals( 8, LFOLVLBaseAbstractType.getSize() );
     }
 

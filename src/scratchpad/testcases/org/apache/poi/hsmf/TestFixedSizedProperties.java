@@ -95,7 +95,7 @@ public final class TestFixedSizedProperties {
     * of our test files
     */
    @Test
-   public void testPropertiesFound() {
+   void testPropertiesFound() {
        Map<MAPIProperty,List<PropertyValue>> props;
 
        props = mapiMessageSucceeds.getMainChunks().getProperties();
@@ -109,7 +109,7 @@ public final class TestFixedSizedProperties {
     * Check we find properties of a variety of different types
     */
    @Test
-   public void testPropertyValueTypes() {
+   void testPropertyValueTypes() {
        Chunks mainChunks = mapiMessageSucceeds.getMainChunks();
 
        // Ask to have the values looked up
@@ -141,7 +141,7 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with OutlookTextExtractor.
     */
    @Test
-   public void testReadMessageDateSucceedsWithOutlookTextExtractor() throws Exception {
+   void testReadMessageDateSucceedsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageSucceeds);
       ext.setCloseFilesystem(false);
 
@@ -154,7 +154,7 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with OutlookTextExtractor.
     */
    @Test
-   public void testReadMessageDateFailsWithOutlookTextExtractor() throws Exception {
+   void testReadMessageDateFailsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageFails);
       ext.setCloseFilesystem(false);
 
@@ -167,7 +167,7 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with HSMFDump.
     */
    @Test
-   public void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
+   void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
        PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
        dump.dump(stream);
@@ -177,7 +177,7 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with HSMFDump.
     */
    @Test
-   public void testReadMessageDateFailsWithHSMFDump() throws Exception {
+   void testReadMessageDateFailsWithHSMFDump() throws Exception {
        PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
        HSMFDump dump = new HSMFDump(fsMessageFails);
        dump.dump(stream);
@@ -187,7 +187,7 @@ public final class TestFixedSizedProperties {
     * Will be based on the ClientSubmit time
     */
    @Test
-   public void testClientSubmitTime() throws Exception {
+   void testClientSubmitTime() throws Exception {
        // Check via the message date
        Calendar clientSubmitTime = mapiMessageSucceeds.getMessageDate();
        assertEquals(

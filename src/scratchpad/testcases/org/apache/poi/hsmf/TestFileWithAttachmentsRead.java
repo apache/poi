@@ -61,7 +61,7 @@ public class TestFileWithAttachmentsRead {
      * Test to see if we can retrieve attachments.
      */
     @Test
-    public void testRetrieveAttachments() {
+    void testRetrieveAttachments() {
         // Simple file
         AttachmentChunks[] attachments = twoSimpleAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
@@ -75,7 +75,7 @@ public class TestFileWithAttachmentsRead {
      * Bug 60550: Test to see if we get the correct Content-IDs of inline images`.
      */
     @Test
-    public void testReadContentIDField() throws IOException {
+    void testReadContentIDField() throws IOException {
         AttachmentChunks[] attachments = inlineImgMsgAttachments.getAttachmentFiles();
 
         AttachmentChunks attachment;
@@ -107,7 +107,7 @@ public class TestFileWithAttachmentsRead {
      * Test to see if attachments are not empty.
      */
     @Test
-    public void testReadAttachments() throws IOException {
+    void testReadAttachments() throws IOException {
         AttachmentChunks[] attachments = twoSimpleAttachments.getAttachmentFiles();
 
         // Basic checks
@@ -150,7 +150,7 @@ public class TestFileWithAttachmentsRead {
      * Test that we can handle both PDF and MSG attachments
      */
     @Test
-    public void testReadMsgAttachments() throws Exception {
+    void testReadMsgAttachments() throws Exception {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
 

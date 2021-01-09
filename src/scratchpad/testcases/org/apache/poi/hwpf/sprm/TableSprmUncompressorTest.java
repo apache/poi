@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class TableSprmUncompressorTest {
     @Test
-    public void testSprmTDefTable() {
+    void testSprmTDefTable() {
         final byte[] example = { (byte) 0x08, (byte) 0xD6, (byte) 0x2F,
                 (byte) 0x00, (byte) 0x02, (byte) 0x94, (byte) 0xFF,
                 (byte) 0x53, (byte) 0x03, (byte) 0x60, (byte) 0x13,

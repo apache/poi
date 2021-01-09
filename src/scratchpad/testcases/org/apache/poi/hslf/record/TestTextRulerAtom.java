@@ -43,7 +43,7 @@ public final class TestTextRulerAtom {
 	};
 
 	@Test
-	public void testReadRuler() {
+	void testReadRuler() {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
 		assertEquals(ruler.getNumberOfLevels(), 0);
 		assertEquals(ruler.getDefaultTabSize(), 0);
@@ -59,7 +59,7 @@ public final class TestTextRulerAtom {
 	}
 
     @Test
-	public void testWriteRuler() throws Exception {
+	void testWriteRuler() throws Exception {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ruler.writeOut(out);
@@ -69,7 +69,7 @@ public final class TestTextRulerAtom {
 	}
 
     @Test
-	public void testRead2() throws Exception {
+	void testRead2() throws Exception {
 		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
 		ruler.setParagraphIndent((short)249, (short)321);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

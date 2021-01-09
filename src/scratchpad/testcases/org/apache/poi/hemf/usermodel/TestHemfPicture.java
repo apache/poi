@@ -123,7 +123,7 @@ public class TestHemfPicture {
     }
 */
     @Test
-    public void testBasicWindows() throws Exception {
+    void testBasicWindows() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
             HemfPicture pic = new HemfPicture(is);
             HemfHeader header = pic.getHeader();
@@ -140,7 +140,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testBasicMac() throws Exception {
+    void testBasicMac() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_mac.emf")) {
             HemfPicture pic = new HemfPicture(is);
             HemfHeader header = pic.getHeader();
@@ -176,7 +176,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testMacText() throws Exception {
+    void testMacText() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_mac.emf")) {
             HemfPicture pic = new HemfPicture(is);
 
@@ -208,7 +208,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testWMFInsideEMF() throws Exception {
+    void testWMFInsideEMF() throws Exception {
 
         byte[] wmfData = null;
         try (InputStream is = ss_samples.openResourceAsStream("63327.emf")) {
@@ -237,7 +237,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testWindowsText() throws Exception {
+    void testWindowsText() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
             HemfPicture pic = new HemfPicture(is);
             double lastY = -1;
@@ -276,7 +276,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testInfiniteLoopOnFile() throws Exception {
+    void testInfiniteLoopOnFile() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             HemfPicture pic = new HemfPicture(is);
             assertThrows(RecordFormatException.class, () -> pic.forEach(r -> {}));
@@ -284,7 +284,7 @@ public class TestHemfPicture {
     }
 
     @Test
-    public void testInfiniteLoopOnByteArray() throws Exception {
+    void testInfiniteLoopOnByteArray() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(is, bos);

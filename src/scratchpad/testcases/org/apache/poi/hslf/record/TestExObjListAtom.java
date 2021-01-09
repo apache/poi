@@ -40,13 +40,13 @@ public class TestExObjListAtom {
 	};
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		BaseTestNumeric.assertDouble(1034L, eoa.getRecordType());
 	}
 
 	@Test
-	public void testGetSeed() {
+	void testGetSeed() {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
 
@@ -55,7 +55,7 @@ public class TestExObjListAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eoa.writeOut(baos);
@@ -64,7 +64,7 @@ public class TestExObjListAtom {
 
 	// Create A from scratch
 	@Test
-	public void testCreate() throws Exception {
+	void testCreate() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom();
 
 		// Set seed
@@ -78,7 +78,7 @@ public class TestExObjListAtom {
 
 	// Try to turn a into b
 	@Test
-	public void testChange() throws Exception {
+	void testChange() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 
 		// Change the number

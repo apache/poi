@@ -47,7 +47,7 @@ public final class TestRangeReplacement {
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() {
+	void testOpen() {
 		openSampleFile(illustrativeDocFile);
 	}
 
@@ -55,7 +55,7 @@ public final class TestRangeReplacement {
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
 	@Test
-	public void testDocStructure() throws IOException {
+	void testDocStructure() throws IOException {
 		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
 			Range range = daDoc.getRange();
@@ -84,7 +84,7 @@ public final class TestRangeReplacement {
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
 	@Test
-	public void testRangeReplacementOne() throws IOException {
+	void testRangeReplacementOne() throws IOException {
 		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
 			// Has one section
@@ -124,7 +124,7 @@ public final class TestRangeReplacement {
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
 	@Test
-	public void testRangeReplacementAll() throws IOException {
+	void testRangeReplacementAll() throws IOException {
 		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
 			Range range = daDoc.getRange();

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class TestNumberFormatter {
 
     @Test
-    public void testRoman() {
+    void testRoman() {
         assertEquals( "i", NumberFormatter.getNumber( 1, 2 ) );
         assertEquals( "ii", NumberFormatter.getNumber( 2, 2 ) );
         assertEquals( "iii", NumberFormatter.getNumber( 3, 2 ) );
@@ -41,7 +41,7 @@ public class TestNumberFormatter {
     }
 
     @Test
-    public void testEnglish() {
+    void testEnglish() {
         assertEquals( "a", NumberFormatter.getNumber( 1, 4 ) );
         assertEquals( "z", NumberFormatter.getNumber( 26, 4 ) );
 

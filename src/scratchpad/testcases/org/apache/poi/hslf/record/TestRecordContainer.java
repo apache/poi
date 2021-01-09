@@ -61,12 +61,12 @@ public final class TestRecordContainer {
     }
 
 	@Test
-	public void testIsAnAtom() {
+	void testIsAnAtom() {
 		assertFalse( recordContainer.isAnAtom() );
 	}
 
     @Test
-	public void testAppendChildRecord() {
+	void testAppendChildRecord() {
 		// Grab records for testing with
 		Record r = recordContainer.getChildRecords()[0];
 		Record rb = recordContainer.getChildRecords()[1];
@@ -100,7 +100,7 @@ public final class TestRecordContainer {
 	}
 
     @Test
-	public void testAddChildAfter() {
+	void testAddChildAfter() {
 		// Working with new StyleTextPropAtom
 		Record newRecord = new StyleTextPropAtom(0);
 
@@ -130,7 +130,7 @@ public final class TestRecordContainer {
 	}
 
     @Test
-	public void testAddChildBefore() {
+	void testAddChildBefore() {
 		// Working with new StyleTextPropAtom
 		Record newRecord = new StyleTextPropAtom(0);
 
@@ -171,7 +171,7 @@ public final class TestRecordContainer {
 	}
 
     @Test
-    public void testRemove() {
+    void testRemove() {
         Record[] ch = recordContainer.getChildRecords();
         Record removeRecord = recordContainer.removeChild(ch[0]);
         assertSame(ch[0], removeRecord);

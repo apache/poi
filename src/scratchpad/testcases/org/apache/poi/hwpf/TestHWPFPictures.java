@@ -70,7 +70,7 @@ public final class TestHWPFPictures {
 	 * Test just opening the files
 	 */
 	@Test
-	public void testOpen() {
+	void testOpen() {
 		HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFTestDataSamples.openSampleFile(docBFile);
 	}
@@ -79,7 +79,7 @@ public final class TestHWPFPictures {
 	 * Test that we have the right numbers of images in each file
 	 */
 	@Test
-	public void testImageCount() {
+	void testImageCount() {
 		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 
@@ -100,7 +100,7 @@ public final class TestHWPFPictures {
 	 * Test that we have the right images in at least one file
 	 */
 	@Test
-	public void testImageData() {
+	void testImageData() {
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 		PicturesTable picB = docB.getPicturesTable();
 		List<Picture> picturesB = picB.getAllPictures();
@@ -125,7 +125,7 @@ public final class TestHWPFPictures {
 	 * Test that compressed image data is correctly returned.
 	 */
 	@Test
-	public void testCompressedImageData() {
+	void testCompressedImageData() {
 		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
 		PicturesTable picC = docC.getPicturesTable();
 		List<Picture> picturesC = picC.getAllPictures();
@@ -141,7 +141,7 @@ public final class TestHWPFPictures {
 	}
 
 	@Test
-   	public void testMacImages() throws Exception {
+   	void testMacImages() throws Exception {
         HWPFDocument docC = HWPFTestDataSamples.openSampleFile("53446.doc");
    		PicturesTable picturesTable = docC.getPicturesTable();
    		List<Picture> pictures = picturesTable.getAllPictures();
@@ -170,7 +170,7 @@ public final class TestHWPFPictures {
 	 *  bug #44937
 	 */
 	@Test
-	public void testEscherDrawing() {
+	void testEscherDrawing() {
 		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
 		List<Picture> allPictures = docD.getPicturesTable().getAllPictures();
 

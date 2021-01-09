@@ -36,7 +36,7 @@ public final class TestEncryptedFile {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-	public void testLoadNonEncrypted() throws IOException {
+	void testLoadNonEncrypted() throws IOException {
         InputStream is = slTests.openResourceAsStream("basic_test_ppt_file.ppt");
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(is);
 		assertNotNull(hss);
@@ -45,21 +45,21 @@ public final class TestEncryptedFile {
 	}
 
     @Test
-	public void testLoadEncrypted1() throws IOException {
+	void testLoadEncrypted1() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-hello.ppt")) {
             assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }
     }
 
     @Test
-    public void testLoadEncrypted2() throws IOException {
+    void testLoadEncrypted2() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-np-hello.ppt")) {
             assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }
     }
 
     @Test
-    public void testLoadEncrypted3() throws IOException {
+    void testLoadEncrypted3() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-56-hello.ppt")) {
             assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }

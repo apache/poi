@@ -61,7 +61,7 @@ public class TestExcelConverterSuite
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testFo(File child) throws Exception
+    void testFo(File child) throws Exception
     {
         HSSFWorkbook workbook;
         try {
@@ -87,7 +87,7 @@ public class TestExcelConverterSuite
 
     @ParameterizedTest
     @MethodSource("files")
-    public void testHtml(File child) throws Exception
+    void testHtml(File child) throws Exception
     {
         HSSFWorkbook workbook;
         try {

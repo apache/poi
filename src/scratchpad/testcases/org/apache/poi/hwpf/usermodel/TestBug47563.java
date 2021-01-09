@@ -53,7 +53,7 @@ public class TestBug47563 {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void test(int rows, int columns) throws Exception {
+	void test(int rows, int columns) throws Exception {
 		// POI apparently can't create a document from scratch,
 		// so we need an existing empty dummy document
 		try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {

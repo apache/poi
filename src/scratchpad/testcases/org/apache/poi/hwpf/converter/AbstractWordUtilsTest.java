@@ -32,7 +32,7 @@ public class AbstractWordUtilsTest {
      * Test case for {@link AbstractWordUtils#buildTableCellEdgesArray(Table)}
      */
     @Test
-    public void testBuildTableCellEdgesArray() {
+    void testBuildTableCellEdgesArray() {
         HWPFDocument document = HWPFTestDataSamples
                 .openSampleFile( "table-merges.doc" );
         final Range range = document.getRange();

@@ -45,7 +45,7 @@ public final class TestRecordSetup {
 	}
 
 	@Test
-	public void testHandleParentAwareRecords() {
+	void testHandleParentAwareRecords() {
 		 org.apache.poi.hslf.record.Record[] records = hss.getRecords();
 		for ( org.apache.poi.hslf.record.Record record : records) {
 			ensureParentAware(record,null);

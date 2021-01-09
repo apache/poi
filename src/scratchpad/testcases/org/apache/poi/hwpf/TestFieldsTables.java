@@ -67,7 +67,7 @@ public class TestFieldsTables extends HWPFTestCase {
     }
 
     @Test
-    public void testReadFields() {
+    void testReadFields() {
         FileInformationBlock fib = _hWPFDocFixture._fib;
         byte[] tableStream = _hWPFDocFixture._tableStream;
 

@@ -70,7 +70,7 @@ public final class TestDifferentRoutes {
 	 * Test model based extraction
 	 */
 	@Test
-	public void testExtractFromModel() {
+	void testExtractFromModel() {
 		Range r = doc.getRange();
 
 		String[] text = new String[r.numParagraphs()];
@@ -86,7 +86,7 @@ public final class TestDifferentRoutes {
 	 * Test textPieces based extraction
 	 */
 	@Test
-	public void testExtractFromTextPieces() throws Exception {
+	void testExtractFromTextPieces() throws Exception {
 		String expected = StringUtil.join(p_text, "");
 		assertEquals(expected, doc.getDocumentText());
 	}

@@ -47,7 +47,7 @@ public final class TestOutlook30FileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayCC() throws ChunkNotFoundException {
+    void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
@@ -58,7 +58,7 @@ public final class TestOutlook30FileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayTo() throws ChunkNotFoundException {
+    void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
 
         assertTrue(obtained.startsWith("Bohn, Shawn"));
@@ -68,7 +68,7 @@ public final class TestOutlook30FileRead {
      * Test to see if we can read the From Chunk.
      */
     @Test
-    public void testReadDisplayFrom() throws ChunkNotFoundException {
+    void testReadDisplayFrom() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayFrom();
         String expected = "Cramer, Nick";
 
@@ -79,7 +79,7 @@ public final class TestOutlook30FileRead {
      * Test to see if we can read the CC Chunk.
      */
     @Test
-    public void testReadDisplayBCC() throws ChunkNotFoundException {
+    void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
@@ -91,7 +91,7 @@ public final class TestOutlook30FileRead {
      * Check if we can read the body of the blank message, we expect "".
      */
     @Test
-    public void testReadBody() throws Exception {
+    void testReadBody() throws Exception {
         String obtained = mapiMessage.getTextBody();
         assertTrue(obtained.startsWith("I am shutting down"));
     }
@@ -100,7 +100,7 @@ public final class TestOutlook30FileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadSubject() throws Exception {
+    void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
         String expected = "IN-SPIRE servers going down for a bit, back up around 8am";
 
@@ -111,7 +111,7 @@ public final class TestOutlook30FileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadConversationTopic() throws Exception {
+    void testReadConversationTopic() throws Exception {
         String obtained = mapiMessage.getConversationTopic();
         assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
     }
@@ -120,7 +120,7 @@ public final class TestOutlook30FileRead {
      * Check if we can read the subject line of the blank message, we expect ""
      */
     @Test
-    public void testReadMessageClass() throws Exception {
+    void testReadMessageClass() throws Exception {
         MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
         assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
     }
@@ -129,7 +129,7 @@ public final class TestOutlook30FileRead {
      * Ensure we can get the HTML and RTF versions
      */
     @Test
-    public void testReadBodyContents() throws Exception {
+    void testReadBodyContents() throws Exception {
         String html = mapiMessage.getHtmlBody();
         String rtf = mapiMessage.getRtfBody();
         assertNotNull(html);

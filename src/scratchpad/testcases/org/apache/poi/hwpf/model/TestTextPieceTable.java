@@ -57,7 +57,7 @@ public final class TestTextPieceTable {
     }
 
     @Test
-    public void testReadWrite() throws Exception {
+    void testReadWrite() throws Exception {
         FileInformationBlock fib = _hWPFDocFixture._fib;
         byte[] mainStream = _hWPFDocFixture._mainStream;
         byte[] tableStream = _hWPFDocFixture._tableStream;
@@ -88,7 +88,7 @@ public final class TestTextPieceTable {
      * Check that we do the positions correctly when working with pure-ascii
      */
     @Test
-    public void testAsciiParts() throws Exception {
+    void testAsciiParts() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples
                 .openSampleFile("ThreeColHeadFoot.doc");
         TextPieceTable tbl = doc.getTextTable();
@@ -122,7 +122,7 @@ public final class TestTextPieceTable {
      * unicode file
      */
     @Test
-    public void testUnicodeParts() throws Exception {
+    void testUnicodeParts() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples
                 .openSampleFile("HeaderFooterUnicode.doc");
         TextPieceTable tbl = doc.getTextTable();
@@ -189,7 +189,7 @@ public final class TestTextPieceTable {
     }
 
     @Test
-    public void test56549_CharIndexRange() {
+    void test56549_CharIndexRange() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 
         // there is one range from 2048 - 2387

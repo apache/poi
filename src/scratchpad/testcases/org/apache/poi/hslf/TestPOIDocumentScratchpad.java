@@ -62,7 +62,7 @@ public final class TestPOIDocumentScratchpad {
 	}
 
 	@Test
-	public void testReadProperties() {
+	void testReadProperties() {
 	    testReadPropertiesHelper(doc);
 	}
 
@@ -77,7 +77,7 @@ public final class TestPOIDocumentScratchpad {
 	}
 
 	@Test
-	public void testReadProperties2() {
+	void testReadProperties2() {
 		// Check again on the word one
 		assertNotNull(doc2.getDocumentSummaryInformation());
 		assertNotNull(doc2.getSummaryInformation());
@@ -88,7 +88,7 @@ public final class TestPOIDocumentScratchpad {
 	}
 
 	@Test
-	public void testWriteProperties() throws IOException {
+	void testWriteProperties() throws IOException {
 		// Just check we can write them back out into a filesystem
 		POIFSFileSystem outFS = new POIFSFileSystem();
 		doc.writeProperties(outFS);
@@ -100,7 +100,7 @@ public final class TestPOIDocumentScratchpad {
 	}
 
 	@Test
-    public void testWriteReadProperties() throws IOException {
+    void testWriteReadProperties() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     	// Write them out

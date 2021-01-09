@@ -47,7 +47,7 @@ public final class TestHeadersFooters
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testRead() throws IOException {
+    void testRead() throws IOException {
         InputStream is = _slTests.openResourceAsStream("headers_footers.ppt");
         HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
@@ -95,7 +95,7 @@ public final class TestHeadersFooters
      * If Headers / Footers are not set, all the getters should return <code>false</code> or <code>null</code>
      */
     @Test
-    public void testReadNoHeadersFooters() throws Exception {
+    void testReadNoHeadersFooters() throws Exception {
         InputStream is = _slTests.openResourceAsStream("basic_test_ppt_file.ppt");
         HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
@@ -135,7 +135,7 @@ public final class TestHeadersFooters
      * Test extraction of headers / footers from PPTs saved in Office 2007
      */
     @Test
-    public void testRead2007() throws IOException {
+    void testRead2007() throws IOException {
         InputStream is = _slTests.openResourceAsStream("headers_footers_2007.ppt");
         HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
@@ -199,7 +199,7 @@ public final class TestHeadersFooters
     }
 
     @Test
-    public void testCreateSlideFooters() throws IOException {
+    void testCreateSlideFooters() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HeadersFooters hdd = ppt1.getSlideHeadersFooters();
         hdd.setFootersText("My slide footer");
@@ -216,7 +216,7 @@ public final class TestHeadersFooters
     }
 
     @Test
-    public void testCreateNotesFooters() throws IOException {
+    void testCreateNotesFooters() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HeadersFooters hdd = ppt1.getNotesHeadersFooters();
         hdd.setFootersText("My notes footer");

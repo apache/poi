@@ -33,7 +33,7 @@ public final class TestRevisionMarkAuthorTable {
      * Tests that an empty file doesn't have one
      */
     @Test
-    public void testEmptyDocument() {
+    void testEmptyDocument() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
 
         RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
@@ -45,7 +45,7 @@ public final class TestRevisionMarkAuthorTable {
      * only simple entries in the table
      */
     @Test
-    public void testSimpleDocument() {
+    void testSimpleDocument() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
 
         RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
@@ -62,7 +62,7 @@ public final class TestRevisionMarkAuthorTable {
      * Several authors, one of whom has no name
      */
     @Test
-    public void testMultipleAuthors() {
+    void testMultipleAuthors() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("MarkAuthorsTable.doc");
 
         RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();

@@ -35,13 +35,13 @@ public final class TestNotesAtom {
 		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(1009L, na.getRecordType());
 	}
 
 	@Test
-	public void testFlags() {
+	void testFlags() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(0x80000000, na.getSlideID());
         assertFalse(na.getFollowMasterObjects());
@@ -50,7 +50,7 @@ public final class TestNotesAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		na.writeOut(baos);

@@ -47,12 +47,12 @@ public final class TestHDGFCore {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         hdgf = new HDGFDiagram(fs);
     }
 
     @Test
-    public void testTrailer() throws Exception {
+    void testTrailer() throws Exception {
         hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
         assertNotNull(hdgf.getTrailerStream());
@@ -80,7 +80,7 @@ public final class TestHDGFCore {
      *  break with a negative chunk length
      */
     @Test
-    public void testNegativeChunkLength() throws Exception {
+    void testNegativeChunkLength() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
 
         hdgf = new HDGFDiagram(fs);
@@ -106,7 +106,7 @@ public final class TestHDGFCore {
     }
 
     @Test
-    public void testV5() throws Exception {
+    void testV5() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
 
         hdgf = new HDGFDiagram(fs);
@@ -119,7 +119,7 @@ public final class TestHDGFCore {
     }
 
     @Test
-    public void testV6NonUtf16LE() throws Exception {
+    void testV6NonUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
 
         hdgf = new HDGFDiagram(fs);
@@ -132,7 +132,7 @@ public final class TestHDGFCore {
     }
 
     @Test
-    public void testUtf16LE() throws Exception {
+    void testUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
 
         hdgf = new HDGFDiagram(fs);

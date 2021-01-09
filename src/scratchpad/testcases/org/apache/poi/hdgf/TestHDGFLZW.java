@@ -113,7 +113,7 @@ public final class TestHDGFLZW {
     };
 
     @Test
-    public void testCounts() throws Exception {
+    void testCounts() throws Exception {
         assertEquals(339, testTrailerComp.length);
         assertEquals(632, testTrailerDecomp.length);
 
@@ -134,7 +134,7 @@ public final class TestHDGFLZW {
     }
 
     @Test
-    public void testDecompress() throws Exception {
+    void testDecompress() throws Exception {
         assertEquals(339, testTrailerComp.length);
         assertEquals(632, testTrailerDecomp.length);
 
@@ -152,7 +152,7 @@ public final class TestHDGFLZW {
      * on the best way to compress it
      */
     @Test
-    public void testCompressMini() throws Exception {
+    void testCompressMini() throws Exception {
         // first 11 bytes compressed = 12 bytes uncompressed
         byte[] sourceDecomp = Arrays.copyOf(testTrailerDecomp, 12);
 
@@ -176,7 +176,7 @@ public final class TestHDGFLZW {
      * Tests that we can do several mask pages
      */
     @Test
-    public void testCompressMidi() throws Exception {
+    void testCompressMidi() throws Exception {
         // First 12 -> 11
         // Next 32 -> 13
         byte[] sourceDecomp = Arrays.copyOf(testTrailerDecomp, 44);
@@ -196,7 +196,7 @@ public final class TestHDGFLZW {
     }
 
     @Test
-    public void testCompressFull() throws Exception {
+    void testCompressFull() throws Exception {
         assertEquals(339, testTrailerComp.length);
         assertEquals(632, testTrailerDecomp.length);
 

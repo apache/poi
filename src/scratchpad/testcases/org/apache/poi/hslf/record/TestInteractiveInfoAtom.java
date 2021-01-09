@@ -42,13 +42,13 @@ public class TestInteractiveInfoAtom {
 	};
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		assertEquals(4083L, ia.getRecordType());
 	}
 
 	@Test
-	public void testGetNumber() {
+	void testGetNumber() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
 
@@ -57,7 +57,7 @@ public class TestInteractiveInfoAtom {
 	}
 
 	@Test
-	public void testGetRest() {
+	void testGetRest() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
 
@@ -72,7 +72,7 @@ public class TestInteractiveInfoAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ia.writeOut(baos);
@@ -81,7 +81,7 @@ public class TestInteractiveInfoAtom {
 
 	// Create A from scratch
 	@Test
-	public void testCreate() throws Exception {
+	void testCreate() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom();
 
 		// Set values
@@ -98,7 +98,7 @@ public class TestInteractiveInfoAtom {
 
 	// Try to turn a into b
 	@Test
-	public void testChange() throws Exception {
+	void testChange() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 
 		// Change the number

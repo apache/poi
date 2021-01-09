@@ -44,7 +44,7 @@ public class TestSLWTListing extends BasePPTIteratingTest {
     }
 
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // calls System.exit(): SLWTListing.main(new String[0]);
         assertThrows(EmptyFileException.class, () -> SLWTListing.main(new String[]{"invalidfile"}));
     }

@@ -35,7 +35,7 @@ public final class TestWordExtractorBugs {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
 
     @Test
-    public void testProblemMetadata() throws IOException {
+    void testProblemMetadata() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream("ProblemExtracting.doc");
 		WordExtractor extractor = new WordExtractor(is);
 		is.close();
@@ -48,7 +48,7 @@ public final class TestWordExtractorBugs {
 	}
 
     @Test
-    public void testBug50688() throws Exception {
+    void testBug50688() throws Exception {
         InputStream is = SAMPLES.openResourceAsStream("parentinvguid.doc");
         WordExtractor extractor = new WordExtractor(is);
         is.close();
@@ -59,7 +59,7 @@ public final class TestWordExtractorBugs {
     }
 
     @Test
-    public void testBug60374() throws Exception {
+    void testBug60374() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"));
         final POITextExtractor extractor = ExtractorFactory.createExtractor(fs);
 

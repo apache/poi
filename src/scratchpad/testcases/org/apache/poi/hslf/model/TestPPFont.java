@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public final class TestPPFont {
 
     @Test
-    public void testCreate() throws IOException {
+    void testCreate() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         assertEquals(1, ppt.getNumberOfFonts());
         assertEquals("Arial", ppt.getFont(0).getTypeface());

@@ -57,7 +57,7 @@ public final class TestSavedByTable {
      * @throws Exception if an unexpected error occurs.
      */
     @Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         // This document is widely available on the internet as "blair.doc".
         // I tried stripping the content and saving the document but my version
         // of Word (from Office XP) strips this table out.

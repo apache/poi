@@ -54,7 +54,7 @@ public final class Test7BitCodepage {
     * Evaluate encoding and check if the subject, text body and html body is decoded correctly.
     */
    @Test
-   public void test7BitEncoding() throws Exception {
+   void test7BitEncoding() throws Exception {
        ascii_cp1251_lcid1049.guess7BitEncoding();
        ascii_cp1251_lcid1049.setReturnNullOnMissingChunk(true);
        ascii_utf_8_cp1252_lcid1031.guess7BitEncoding();

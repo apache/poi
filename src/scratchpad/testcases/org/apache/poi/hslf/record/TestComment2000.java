@@ -100,26 +100,26 @@ public final class TestComment2000 {
 	}
 
     @Test
-    public void testRecordType() {
+    void testRecordType() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals(12000L, ca.getRecordType());
 	}
 
     @Test
-    public void testAuthor() {
+    void testAuthor() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Dumbledore", ca.getAuthor());
 		assertEquals("D", ca.getAuthorInitials());
 	}
 
     @Test
-    public void testText() {
+    void testText() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Yes, they certainly are, aren't they!", ca.getText());
 	}
 
     @Test
-    public void testCommentAtom() throws Exception {
+    void testCommentAtom() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		Comment2000Atom c2a = ca.getComment2000Atom();
 
@@ -131,7 +131,7 @@ public final class TestComment2000 {
 	}
 
     @Test
-    public void testCommentAtomB() throws Exception {
+    void testCommentAtomB() throws Exception {
 		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
 		Comment2000Atom c2b = cb.getComment2000Atom();
 
@@ -143,7 +143,7 @@ public final class TestComment2000 {
 	}
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
@@ -157,7 +157,7 @@ public final class TestComment2000 {
 
 	// Change a few things
     @Test
-    public void testChange() throws Exception {
+    void testChange() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
 		Comment2000 cn = new Comment2000();
@@ -223,7 +223,7 @@ public final class TestComment2000 {
      *  A Comment2000 records with missing commentTextAtom
      */
     @Test
-    public void testBug44770() {
+    void testBug44770() {
 		byte[] data = {
             0x0F, 0x00, (byte)0xE0, 0x2E, 0x3E, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xBA, 0x0F,
             0x08, 0x00, 0x00, 0x00, 0x4E, 0x00, 0x45, 0x00, 0x53, 0x00, 0x53, 0x00, 0x20,

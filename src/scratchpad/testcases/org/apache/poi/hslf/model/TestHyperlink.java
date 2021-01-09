@@ -46,7 +46,7 @@ public final class TestHyperlink {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testTextRunHyperlinks() throws Exception {
+    void testTextRunHyperlinks() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("WithLinks.ppt"));
 
         HSLFSlide slide = ppt.getSlides().get(0);

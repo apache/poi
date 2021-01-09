@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestHMEFContentsExtractor {
     @Test
-    public void TestMain() throws IOException {
+    void testMain() throws IOException {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         File message = samples.getFile("quick-winmail.dat");
         File outputDirectory = TempFile.createTempDirectory("quick-winmail-main");
@@ -58,7 +58,7 @@ public class TestHMEFContentsExtractor {
     }
 
     @Test
-    public void TestExtractMessageBody_OutputStream() throws IOException {
+    void testExtractMessageBody_OutputStream() throws IOException {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         File winmailTNEFFile = samples.getFile("quick-winmail.dat");
         HMEFContentsExtractor extractor = new HMEFContentsExtractor(winmailTNEFFile);
@@ -72,7 +72,7 @@ public class TestHMEFContentsExtractor {
     }
 
     @Test
-    public void TestExtractMessageBody_File() throws IOException {
+    void testExtractMessageBody_File() throws IOException {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         File winmailTNEFFile = samples.getFile("quick-winmail.dat");
         HMEFContentsExtractor extractor = new HMEFContentsExtractor(winmailTNEFFile);

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public final class TestRangeSymbols {
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49908.doc");
 
         Range range = doc.getRange();
@@ -50,7 +50,7 @@ public final class TestRangeSymbols {
     }
 
     @Test
-    public void test61586() throws IOException {
+    void test61586() throws IOException {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("61586.doc");
         assertEquals("\r" +
                 "\r" +

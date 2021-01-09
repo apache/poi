@@ -60,13 +60,13 @@ public final class TestComment2000Atom {
     }
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		assertEquals(12001l, ca.getRecordType());
 	}
 
 	@Test
-    public void testGetDate() throws Exception {
+    void testGetDate() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -80,7 +80,7 @@ public final class TestComment2000Atom {
 	}
 
 	@Test
-    public void testGetNums() {
+    void testGetNums() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -91,7 +91,7 @@ public final class TestComment2000Atom {
 	}
 
 	@Test
-    public void testGetPos() {
+    void testGetPos() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -105,7 +105,7 @@ public final class TestComment2000Atom {
 	}
 
 	@Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
@@ -119,7 +119,7 @@ public final class TestComment2000Atom {
 
 	// Create A from scratch
 	@Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
 		Comment2000Atom a = new Comment2000Atom();
 
 		// Set number, x and y
@@ -144,7 +144,7 @@ public final class TestComment2000Atom {
 
 	// Try to turn a into b
 	@Test
-    public void testChange() throws Exception {
+    void testChange() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 
 		// Change the number

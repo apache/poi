@@ -68,7 +68,7 @@ public final class TestCruddyExtractor {
     }
 
 	@Test
-    public void testReadAsVector() {
+    void testReadAsVector() {
 		// Extract the text from the file as a vector
 		List<String> foundTextV = te.getTextAsVector();
 
@@ -81,7 +81,7 @@ public final class TestCruddyExtractor {
 	}
 
 	@Test
-	public void testReadAsString() {
+	void testReadAsString() {
 		// Extract the text as a String
 		String foundText = te.getTextAsString();
 

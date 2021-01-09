@@ -51,7 +51,7 @@ public final class TestPOIFSChunkParser {
    private final POIDataSamples samples = POIDataSamples.getHSMFInstance();
 
    @Test
-   public void testFindsCore() throws IOException, ChunkNotFoundException {
+   void testFindsCore() throws IOException, ChunkNotFoundException {
       POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true);
 
       // Check a few core things are present
@@ -78,7 +78,7 @@ public final class TestPOIFSChunkParser {
    }
 
    @Test
-   public void testFindsRecips() throws IOException, ChunkNotFoundException {
+   void testFindsRecips() throws IOException, ChunkNotFoundException {
       POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true);
 
       simple.getRoot().getEntry("__recip_version1.0_#00000000");
@@ -134,7 +134,7 @@ public final class TestPOIFSChunkParser {
    }
 
    @Test
-   public void testFindsMultipleRecipients() throws IOException, ChunkNotFoundException {
+   void testFindsMultipleRecipients() throws IOException, ChunkNotFoundException {
       POIFSFileSystem multiple = new POIFSFileSystem(samples.getFile("example_received_unicode.msg"), true);
 
       multiple.getRoot().getEntry("__recip_version1.0_#00000000");
@@ -227,7 +227,7 @@ public final class TestPOIFSChunkParser {
    }
 
    @Test
-   public void testFindsNameId() throws IOException {
+   void testFindsNameId() throws IOException {
       POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true);
 
       simple.getRoot().getEntry("__nameid_version1.0");
@@ -251,7 +251,7 @@ public final class TestPOIFSChunkParser {
    }
 
    @Test
-   public void testFindsAttachments() throws IOException, ChunkNotFoundException {
+   void testFindsAttachments() throws IOException, ChunkNotFoundException {
 	  POIFSFileSystem with = new POIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
       POIFSFileSystem without = new POIFSFileSystem(samples.getFile("quick.msg"), true);
       AttachmentChunks attachment;
@@ -327,7 +327,7 @@ public final class TestPOIFSChunkParser {
     *  such as "Olk10SideProps_0001"
     */
    @Test
-   public void testOlk10SideProps() throws IOException, ChunkNotFoundException {
+   void testOlk10SideProps() throws IOException, ChunkNotFoundException {
       POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("51873.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
 

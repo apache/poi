@@ -87,7 +87,7 @@ public final class TestRichTextRun {
 	 *  on a non rich text run
 	 */
     @Test
-	public void testBoldNonRich() {
+	void testBoldNonRich() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> textParas = textParass.get(0);
@@ -118,7 +118,7 @@ public final class TestRichTextRun {
 	 *  on a rich text run
 	 */
     @Test
-	public void testBoldRich() {
+	void testBoldRich() {
 		HSLFSlide slideOneR = ssRichA.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOneR.getTextParagraphs();
 		List<HSLFTextParagraph> textParas = textParass.get(1);
@@ -146,7 +146,7 @@ public final class TestRichTextRun {
 	 *  rich text runs
 	 */
     @Test
-	public void testFontSize() {
+	void testFontSize() {
 
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
@@ -211,7 +211,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testChangeWriteRead() throws IOException {
+	void testChangeWriteRead() throws IOException {
 		for(HSLFSlideShow h : new HSLFSlideShow[] { ss, ssRichA, ssRichB }) {
 			// Change
 			HSLFSlide slideOne = h.getSlides().get(0);
@@ -262,7 +262,7 @@ public final class TestRichTextRun {
 	 *  run out before the character styles do
 	 */
     @Test
-	public void testParagraphStylesShorterTheCharStyles() {
+	void testParagraphStylesShorterTheCharStyles() {
 		// Check we have the right number of sheets
 		List<HSLFSlide> slides = ssRichC.getSlides();
 		assertEquals(14, slides.size());
@@ -322,7 +322,7 @@ public final class TestRichTextRun {
 	 */
     @Test
 	@SuppressWarnings("unused")
-    public void testParagraphStylesShorterTheCharStylesWrite() throws IOException {
+    void testParagraphStylesShorterTheCharStylesWrite() throws IOException {
 		assertMatchesSLTWC(ssRichC);
 		assertMatchesFileC(ssRichC);
 
@@ -430,7 +430,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testIndentationLevel() throws Exception {
+	void testIndentationLevel() throws Exception {
 		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ParagraphStylesShorterThanCharStyles.ppt");
 		for (HSLFSlide sl : ppt.getSlides()) {
 			for (List<HSLFTextParagraph> txt : sl.getTextParagraphs()) {
@@ -445,7 +445,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testReadParagraphStyles() throws Exception {
+	void testReadParagraphStyles() throws Exception {
 		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bullets.ppt")) {
 			HSLFTextParagraph rt;
 			List<List<HSLFTextParagraph>> txt;
@@ -501,7 +501,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testSetParagraphStyles() throws IOException {
+	void testSetParagraphStyles() throws IOException {
 		HSLFSlideShow ppt1 = new HSLFSlideShow();
 
 		HSLFSlide slide = ppt1.createSlide();
@@ -553,7 +553,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testAddText() throws Exception {
+	void testAddText() throws Exception {
 		try (HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("bullets.ppt")) {
 
 			HSLFTextParagraph rt;
@@ -628,7 +628,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testChineseParagraphs() {
+	void testChineseParagraphs() {
       List<HSLFTextRun> rts;
       HSLFTextRun rt;
       List<List<HSLFTextParagraph>> txt;

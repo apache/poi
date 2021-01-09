@@ -38,7 +38,7 @@ public final class TestVisioExtractor {
 	 * Test the 3 different ways of creating one
 	 */
 	@Test
-	public void testCreation() throws IOException {
+	void testCreation() throws IOException {
 		VisioTextExtractor extractor1 = openExtractor(defFilename);
 		assertNotNull(extractor1);
 		assertNotNull(extractor1.getAllText());
@@ -71,7 +71,7 @@ public final class TestVisioExtractor {
 	}
 
     @Test
-	public void testExtraction() throws Exception {
+	void testExtraction() throws Exception {
 		VisioTextExtractor extractor = openExtractor(defFilename);
 
 		// Check the array fetch
@@ -92,7 +92,7 @@ public final class TestVisioExtractor {
 	}
 
     @Test
-	public void testProblemFiles() throws Exception {
+	void testProblemFiles() throws Exception {
 		String[] files = {
 		      "44594.vsd", "44594-2.vsd",
 		      "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",

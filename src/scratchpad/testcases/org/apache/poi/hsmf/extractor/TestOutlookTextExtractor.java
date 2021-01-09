@@ -55,7 +55,7 @@ public final class TestOutlookTextExtractor {
     }
 
     @Test
-    public void testQuick() throws Exception {
+    void testQuick() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("quick.msg"), true);
             MAPIMessage msg = new MAPIMessage(poifs);
             OutlookTextExtractor ext = new OutlookTextExtractor(msg)) {
@@ -77,7 +77,7 @@ public final class TestOutlookTextExtractor {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    void testSimple() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
             MAPIMessage msg = new MAPIMessage(poifs);
             OutlookTextExtractor ext = new OutlookTextExtractor(msg)) {
@@ -94,7 +94,7 @@ public final class TestOutlookTextExtractor {
     }
 
     @Test
-    public void testConstructors() throws Exception {
+    void testConstructors() throws Exception {
         String inp;
         try (FileInputStream fis = new FileInputStream(samples.getFile("simple_test_msg.msg"));
             OutlookTextExtractor ext = new OutlookTextExtractor(fis)) {
@@ -122,7 +122,7 @@ public final class TestOutlookTextExtractor {
      * recipients in an email we sent.
      */
     @Test
-    public void testSentWithMulipleRecipients() throws Exception {
+    void testSentWithMulipleRecipients() throws Exception {
         // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
         //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
         //   'Mike Farman' <mikef@alfresco.com>
@@ -159,7 +159,7 @@ public final class TestOutlookTextExtractor {
      * recipients in an email we received.
      */
     @Test
-    public void testReceivedWithMultipleRecipients() throws Exception {
+    void testReceivedWithMultipleRecipients() throws Exception {
         // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
         //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
         //   'Mike Farman' <mikef@alfresco.com>
@@ -195,7 +195,7 @@ public final class TestOutlookTextExtractor {
      */
     @SuppressWarnings("JavadocReference")
     @Test
-    public void testWithAttachments() throws Exception {
+    void testWithAttachments() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
              MAPIMessage msg = new MAPIMessage(poifs);
              OutlookTextExtractor ext = new OutlookTextExtractor(msg)) {
@@ -219,7 +219,7 @@ public final class TestOutlookTextExtractor {
     }
 
     @Test
-    public void testWithAttachedMessage() throws Exception {
+    void testWithAttachedMessage() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("58214_with_attachment.msg"), true);
              MAPIMessage msg = new MAPIMessage(poifs);
              OutlookTextExtractor ext = new OutlookTextExtractor(msg)) {
@@ -236,7 +236,7 @@ public final class TestOutlookTextExtractor {
     }
 
     @Test
-    public void testEncodings() throws Exception {
+    void testEncodings() throws Exception {
         try (POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("chinese-traditional.msg"), true);
              MAPIMessage msg = new MAPIMessage(poifs);
              OutlookTextExtractor ext = new OutlookTextExtractor(msg)) {

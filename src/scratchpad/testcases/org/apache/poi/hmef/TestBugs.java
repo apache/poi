@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestBugs {
     @Test
-    public void test52400ReadSimpleTNEF() throws IOException {
+    void test52400ReadSimpleTNEF() throws IOException {
         HMEFMessage tnefDat = openSample("bug52400-winmail-simple.dat");
         MAPIAttribute bodyHtml = tnefDat.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
         assertNotNull(bodyHtml);
@@ -42,7 +42,7 @@ public class TestBugs {
     }
 
     @Test
-    public void test52400ReadAttachedTNEF() throws IOException {
+    void test52400ReadAttachedTNEF() throws IOException {
         HMEFMessage tnefDat = openSample("bug52400-winmail-with-attachments.dat");
         MAPIAttribute bodyHtml = tnefDat.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
         assertNotNull(bodyHtml);

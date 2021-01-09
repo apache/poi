@@ -57,7 +57,7 @@ public final class TestSystemTimeUtils {
     }
 
 	@Test
-    public void testGetDateA() throws Exception {
+    void testGetDateA() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_a);
 
 		// Is 2006-01-24 (2nd day of week) 10:26:15.205
@@ -67,7 +67,7 @@ public final class TestSystemTimeUtils {
 	}
 
 	@Test
-	public void testGetDateB() throws Exception {
+	void testGetDateB() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_b, 8+4);
 
 		// Is 2006-01-24 (2nd day of week) 21:25:03.725
@@ -77,7 +77,7 @@ public final class TestSystemTimeUtils {
 	}
 
 	@Test
-	public void testWriteDateA() throws Exception {
+	void testWriteDateA() throws Exception {
 		byte[] out_a = new byte[data_a.length];
 		Date date = sdf.parse("2006-01-24 10:26:15.205");
 		SystemTimeUtils.storeDate(date, out_a);
@@ -88,7 +88,7 @@ public final class TestSystemTimeUtils {
 	}
 
 	@Test
-	public void testWriteDateB() throws Exception {
+	void testWriteDateB() throws Exception {
 		byte[] out_b = new byte[data_b.length];
 		// Copy over start and end, ignoring the 16 byte date field in the middle
 		System.arraycopy(data_b, 0, out_b, 0, 12);

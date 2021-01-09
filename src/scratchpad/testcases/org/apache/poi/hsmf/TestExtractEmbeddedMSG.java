@@ -76,7 +76,7 @@ public class TestExtractEmbeddedMSG {
      *
      */
     @Test
-    public void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
+    void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
         if (attachments.length == 2) {

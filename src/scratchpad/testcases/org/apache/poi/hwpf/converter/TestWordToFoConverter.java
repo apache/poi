@@ -57,7 +57,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testDocumentProperties() throws Exception
+    void testDocumentProperties() throws Exception
     {
         String result = getFoText( "documentProperties.doc" );
 
@@ -70,7 +70,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testEndnote() throws Exception
+    void testEndnote() throws Exception
     {
         String result = getFoText( "endingnote.doc" );
 
@@ -86,7 +86,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testEquation() throws Exception
+    void testEquation() throws Exception
     {
         final String sampleFileName = "equation.doc";
         String result = getFoText( sampleFileName );
@@ -95,7 +95,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testHyperlink() throws Exception
+    void testHyperlink() throws Exception
     {
         final String sampleFileName = "hyperlink.doc";
         String result = getFoText( sampleFileName );
@@ -106,7 +106,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testInnerTable() throws Exception
+    void testInnerTable() throws Exception
     {
         final String sampleFileName = "innertable.doc";
         String result = getFoText( sampleFileName );
@@ -116,7 +116,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testPageBreak() throws Exception
+    void testPageBreak() throws Exception
     {
         final String sampleFileName = "page-break.doc";
         String result = getFoText( sampleFileName );
@@ -125,7 +125,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testPageBreakBefore() throws Exception
+    void testPageBreakBefore() throws Exception
     {
         final String sampleFileName = "page-break-before.doc";
         String result = getFoText( sampleFileName );
@@ -134,7 +134,7 @@ public class TestWordToFoConverter
     }
 
     @Test
-    public void testPageref() throws Exception
+    void testPageref() throws Exception
     {
         final String sampleFileName = "pageref.doc";
         String result = getFoText( sampleFileName );

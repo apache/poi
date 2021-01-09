@@ -28,21 +28,21 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRecordTypes {
     @Test
-	public void testPPTNameLookups() {
+	void testPPTNameLookups() {
 		assertEquals("MainMaster", RecordTypes.MainMaster.name());
 		assertEquals("TextBytesAtom", RecordTypes.TextBytesAtom.name());
 		assertEquals("VBAInfo", RecordTypes.VBAInfo.name());
 	}
 
     @Test
-	public void testEscherNameLookups() {
+	void testEscherNameLookups() {
 		assertEquals("DGG_CONTAINER", EscherRecordTypes.DGG_CONTAINER.name());
 		assertEquals("CLIENT_TEXTBOX", EscherRecordTypes.CLIENT_TEXTBOX.name());
 		assertEquals("SELECTION", EscherRecordTypes.SELECTION.name());
 	}
 
     @Test
-	public void testPPTClassLookups() {
+	void testPPTClassLookups() {
 		// If this record is ever implemented, change to one that isn't!
 		// This is checking the "unhandled default" stuff works
 		assertEquals(RecordTypes.UnknownRecordPlaceholder, RecordTypes.forTypeID(-10));

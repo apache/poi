@@ -43,7 +43,7 @@ public final class TestAttachments {
      * Check the file is as we expect
      */
     @Test
-    public void testCounts() {
+    void testCounts() {
         // Should have 5 attachments
         assertEquals(5, quick.getAttachments().size());
     }
@@ -52,7 +52,7 @@ public final class TestAttachments {
      * Check some basic bits about the attachments
      */
     @Test
-    public void testBasicAttachments() {
+    void testBasicAttachments() {
         List<Attachment> attachments = quick.getAttachments();
 
         // Word first
@@ -86,7 +86,7 @@ public final class TestAttachments {
      * the right values for key things
      */
     @Test
-    public void testAttachmentDetails() {
+    void testAttachmentDetails() {
         List<Attachment> attachments = quick.getAttachments();
         assertEquals(5, attachments.size());
 
@@ -108,7 +108,7 @@ public final class TestAttachments {
      * Ensure the attachment contents come back as they should do
      */
     @Test
-    public void testAttachmentContents() throws Exception {
+    void testAttachmentContents() throws Exception {
         List<Attachment> attachments = quick.getAttachments();
 
         assertContents("quick.doc", attachments.get(0));

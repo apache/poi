@@ -45,7 +45,7 @@ public final class TestSheetText {
 	}
 
 	@Test
-	public void testSheetOne() {
+	void testSheetOne() {
 		HSLFSheet slideOne = ss.getSlides().get(0);
 
 		String[] expectText = new String[] {"This is a test title","This is a test subtitle\rThis is on page 1"};
@@ -56,7 +56,7 @@ public final class TestSheetText {
 		}
 	}
 
-	public void testSheetTwo() {
+	void testSheetTwo() {
 		HSLFSheet slideTwo = ss.getSlides().get(1);
 		String[] expectText = new String[] {"This is the title on page 2","This is page two\rIt has several blocks of text\rNone of them have formatting"};
 		assertEquals(expectText.length, slideTwo.getTextParagraphs().size());
@@ -71,7 +71,7 @@ public final class TestSheetText {
 	 *  TextProps don't have enough data.
 	 * (Make sure we don't screw up / throw an exception etc)
 	 */
-	public void testWithShortTextPropData() throws IOException {
+	void testWithShortTextPropData() throws IOException {
 		HSLFSlideShow sss = HSLFTestDataSamples.getSlideShow("iisd_report.ppt");
 
 		// Should come out with 10 slides, no notes

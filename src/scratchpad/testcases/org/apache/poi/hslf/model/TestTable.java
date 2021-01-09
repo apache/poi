@@ -51,7 +51,7 @@ public final class TestTable {
      * Test that ShapeFactory works properly and returns <code>Table</code>
      */
     @Test
-    public void testShapeFactory() throws IOException {
+    void testShapeFactory() throws IOException {
         final int noColumns, noRows;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
@@ -89,7 +89,7 @@ public final class TestTable {
      * Error constructing Table when rownum=1
      */
     @Test
-    public void test45889() throws IOException {
+    void test45889() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             List<HSLFShape> shapes;
@@ -110,7 +110,7 @@ public final class TestTable {
 
     // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
     @Test
-    public void testIllegalRowCnstruction() throws IOException {
+    void testIllegalRowCnstruction() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             assertThrows(IllegalArgumentException.class, () -> slide.createTable(0, 5));
@@ -119,7 +119,7 @@ public final class TestTable {
 
     // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
     @Test
-    public void testIllegalColConstruction() throws IOException {
+    void testIllegalColConstruction() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             assertThrows(IllegalArgumentException.class, () -> slide.createTable(5, 0));
@@ -131,7 +131,7 @@ public final class TestTable {
      * when the table is positioned with its top at -1
      */
     @Test
-    public void test57820() throws IOException {
+    void test57820() throws IOException {
         try (SlideShow<?,?> ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"))) {
 
             List<? extends Slide<?, ?>> slides = ppt.getSlides();

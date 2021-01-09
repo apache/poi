@@ -41,26 +41,26 @@ public final class TestTextBytesAtom {
 	private final String alt_text = "This is a test title";
 
 	@Test
-    public void testRecordType() {
+    void testRecordType() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		assertEquals(4008L, tba.getRecordType());
 	}
 
 	@Test
-	public void testTextA() {
+	void testTextA() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		String data_text = "This is the title on page 2";
 		assertEquals(data_text, tba.getText());
 	}
 
 	@Test
-	public void testTextB() {
+	void testTextB() {
 		TextBytesAtom tba = new TextBytesAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tba.getText());
 	}
 
 	@Test
-	public void testChangeText() throws Exception {
+	void testChangeText() throws Exception {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
 
@@ -70,7 +70,7 @@ public final class TestTextBytesAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tba.writeOut(baos);

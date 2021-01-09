@@ -65,7 +65,7 @@ public class TestHwmfParsing {
     }
 
     @Test
-    public void testInfiniteLoop() throws Exception {
+    void testInfiniteLoop() throws Exception {
         try (InputStream is = samples.openResourceAsStream("61338.wmf")) {
             assertThrows(RecordFormatException.class, () -> new HwmfPicture(is));
         }
@@ -74,7 +74,7 @@ public class TestHwmfParsing {
 
     @Test
     @Disabled("If we decide we can use common crawl file specified, we can turn this back on")
-    public void testCyrillic() throws Exception {
+    void testCyrillic() throws Exception {
         //TODO: move test file to framework and fix this
         File dir = new File("C:/somethingOrOther");
         File f = new File(dir, "ZMLH54SPLI76NQ7XMKVB7SMUJA2HTXTS-2.wmf");
@@ -101,7 +101,7 @@ public class TestHwmfParsing {
     }
 
     @Test
-    public void testShift_JIS() throws Exception {
+    void testShift_JIS() throws Exception {
         //this file derives from common crawl: see Bug 60677
         HwmfPicture wmf = null;
         try (InputStream fis = samples.openResourceAsStream("60677.wmf")) {
@@ -128,7 +128,7 @@ public class TestHwmfParsing {
     }
 
     @Test
-    public void testLengths() throws Exception {
+    void testLengths() throws Exception {
         //both substring and length rely on char, not codepoints.
         //This test confirms that the substring calls in HwmfText
         //will not truncate even beyond-bmp data.

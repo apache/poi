@@ -49,7 +49,7 @@ public final class TestOleEmbedding {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testOleEmbedding2003() throws IOException {
+    void testOleEmbedding2003() throws IOException {
         HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
         List<HSLFPictureData> pictures = slideShow.getPictureData();
@@ -78,7 +78,7 @@ public final class TestOleEmbedding {
 
 
     @Test
-    public void testOLEShape() throws IOException {
+    void testOLEShape() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
 
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -114,7 +114,7 @@ public final class TestOleEmbedding {
     }
 
     @Test
-    public void testEmbedding() throws IOException {
+    void testEmbedding() throws IOException {
     	HSLFSlideShow ppt = new HSLFSlideShow();
 
     	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");

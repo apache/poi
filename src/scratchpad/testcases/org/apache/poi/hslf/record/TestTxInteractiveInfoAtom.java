@@ -41,7 +41,7 @@ public final class TestTxInteractiveInfoAtom {
 	};
 
 	@Test
-	public void testRead() {
+	void testRead() {
 		TxInteractiveInfoAtom ia1 = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 
 		assertEquals(4063, ia1.getRecordType());
@@ -56,7 +56,7 @@ public final class TestTxInteractiveInfoAtom {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		TxInteractiveInfoAtom atom = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		atom.writeOut(baos);
@@ -65,7 +65,7 @@ public final class TestTxInteractiveInfoAtom {
 
 	// Create A from scratch
 	@Test
-	public void testCreate() throws Exception {
+	void testCreate() throws Exception {
 		TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom();
 
 		// Set values
@@ -80,7 +80,7 @@ public final class TestTxInteractiveInfoAtom {
 
 	// Try to turn a into b
 	@Test
-	public void testChange() throws Exception {
+	void testChange() throws Exception {
 		TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 
 		// Change the number

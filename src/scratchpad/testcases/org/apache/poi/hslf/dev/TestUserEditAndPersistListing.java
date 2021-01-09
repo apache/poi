@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestUserEditAndPersistListing extends BasePPTIteratingTest {
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         // calls System.exit(): UserEditAndPersistListing.main(new String[0]);
         assertThrows(EmptyFileException.class, () -> UserEditAndPersistListing.main(new String[]{"invalidfile"}));
     }

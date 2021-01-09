@@ -40,7 +40,7 @@ public final class TestMovieShape {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();

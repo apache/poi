@@ -36,7 +36,7 @@ public final class TestSetBoldItalic {
      * and set some of the style attributes
      */
     @Test
-    public void testTextBoxWrite() throws Exception {
+    void testTextBoxWrite() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide sl = ppt.createSlide();
         HSLFTextRun rt;

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class TestBug50075 {
 
   @Test
-  public void test() throws IOException {
+  void test() throws IOException {
     try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug50075.doc")) {
       Range range = doc.getRange();
       assertEquals(1, range.numParagraphs());

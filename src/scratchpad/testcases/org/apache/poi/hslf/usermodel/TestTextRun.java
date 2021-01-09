@@ -66,7 +66,7 @@ public final class TestTextRun {
 	 * Test to ensure that getting the text works correctly
 	 */
 	@Test
-	public void testGetText() {
+	void testGetText() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParas = slideOne.getTextParagraphs();
 
@@ -96,7 +96,7 @@ public final class TestTextRun {
 	 * Test to ensure changing non rich text bytes->bytes works correctly
 	 */
 	@Test
-	public void testSetText() {
+	void testSetText() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textRuns = slideOne.getTextParagraphs();
 		HSLFTextParagraph run = textRuns.get(0).get(0);
@@ -121,7 +121,7 @@ public final class TestTextRun {
 	 */
 	@SuppressWarnings("unused")
     @Test
-	public void testAdvancedSetText() {
+	void testAdvancedSetText() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<HSLFTextParagraph> paras = slideOne.getTextParagraphs().get(0);
 		HSLFTextParagraph para = paras.get(0);
@@ -196,7 +196,7 @@ public final class TestTextRun {
 	 *  set up for it
 	 */
 	@Test
-	public void testGetRichTextNonRich() {
+	void testGetRichTextNonRich() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 
@@ -219,7 +219,7 @@ public final class TestTextRun {
 	 * Tests to ensure that the rich text runs are built up correctly
 	 */
 	@Test
-	public void testGetRichText() {
+	void testGetRichText() {
 		HSLFSlide slideOne = ssRich.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 
@@ -258,7 +258,7 @@ public final class TestTextRun {
 	 *  ensuring that everything stays with the same default styling
 	 */
 	@Test
-	public void testSetTextWhereNotRich() {
+	void testSetTextWhereNotRich() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> trB = textParass.get(0);
@@ -279,7 +279,7 @@ public final class TestTextRun {
 	 *  sets everything to the same styling
 	 */
 	@Test
-	public void testSetTextWhereRich() {
+	void testSetTextWhereRich() {
 		HSLFSlide slideOne = ssRich.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> trB = textParass.get(1);
@@ -328,7 +328,7 @@ public final class TestTextRun {
 	 *  in a rich text run, that doesn't happen to actually be rich
 	 */
 	@Test
-	public void testChangeTextInRichTextRunNonRich() {
+	void testChangeTextInRichTextRunNonRich() {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textRuns = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> trB = textRuns.get(1);
@@ -354,7 +354,7 @@ public final class TestTextRun {
 	 *  correctly
 	 */
 	@Test
-	public void testChangeTextInRichTextRun() {
+	void testChangeTextInRichTextRun() {
 		HSLFSlide slideOne = ssRich.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> trB = textParass.get(1);
@@ -435,7 +435,7 @@ public final class TestTextRun {
 	 *
 	 */
 	@Test
-	public void testBug41015() throws IOException {
+	void testBug41015() throws IOException {
 		List<HSLFTextRun> rt;
 
 		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bug-41015.ppt");
@@ -465,7 +465,7 @@ public final class TestTextRun {
 	 * Test creation of TextRun objects.
 	 */
 	@Test
-	public void testAddTextRun() throws IOException {
+	void testAddTextRun() throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow();
 		HSLFSlide slide = ppt.createSlide();
 
@@ -513,7 +513,7 @@ public final class TestTextRun {
 	}
 
 	@Test
-	public void test48916() throws IOException {
+	void test48916() throws IOException {
         HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("SampleShow.ppt");
         List<HSLFSlide> slides = ppt1.getSlides();
         for(HSLFSlide slide : slides){
@@ -556,7 +556,7 @@ public final class TestTextRun {
     }
 
 	@Test
-	public void test52244() throws IOException {
+	void test52244() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("52244.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
 
@@ -573,7 +573,7 @@ public final class TestTextRun {
     }
 
 	@Test
-	public void testAppendEmpty() throws IOException {
+	void testAppendEmpty() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide s = ppt.createSlide();
         HSLFTextBox title = s.addTitle();

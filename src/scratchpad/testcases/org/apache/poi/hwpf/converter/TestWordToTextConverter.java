@@ -29,7 +29,7 @@ public class TestWordToTextConverter {
      * website as an embedded object
      */
     @Test
-    public void testBug47731() throws Exception {
+    void testBug47731() throws Exception {
         try (HWPFDocument doc = openSampleFile( "Bug47731.doc" )) {
             String foundText = WordToTextConverter.getText(doc);
 
@@ -38,7 +38,7 @@ public class TestWordToTextConverter {
     }
 
     @Test
-    public void testBug52311() throws Exception {
+    void testBug52311() throws Exception {
         try (HWPFDocument doc = openSampleFile( "Bug52311.doc" )) {
             String result = WordToTextConverter.getText(doc);
 
@@ -54,7 +54,7 @@ public class TestWordToTextConverter {
     }
 
     @Test
-    public void testBug53380_3() throws Exception {
+    void testBug53380_3() throws Exception {
         try (HWPFDocument doc = openSampleFile( "Bug53380_3.doc" )) {
             WordToTextConverter.getText(doc);
         }

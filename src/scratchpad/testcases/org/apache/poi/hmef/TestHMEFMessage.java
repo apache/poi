@@ -46,7 +46,7 @@ public final class TestHMEFMessage {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
 
     @Test
-    public void testCounts() throws Exception {
+    void testCounts() throws Exception {
         HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have 4 attributes on the message
@@ -72,7 +72,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testBasicMessageAttributes() throws Exception {
+    void testBasicMessageAttributes() throws Exception {
         HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have version, codepage, class and MAPI
@@ -103,7 +103,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testBasicMessageMAPIAttributes() throws Exception {
+    void testBasicMessageMAPIAttributes() throws Exception {
         HMEFMessage msg = openSample("quick-winmail.dat");
 
         assertEquals("This is a test message", msg.getSubject());
@@ -115,7 +115,7 @@ public final class TestHMEFMessage {
      * can be correctly extracted
      */
     @Test
-    public void testMessageContents() throws Exception {
+    void testMessageContents() throws Exception {
         HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Firstly by byte
@@ -135,7 +135,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testMessageSample1() throws Exception {
+    void testMessageSample1() throws Exception {
         HMEFMessage msg = openSample("winmail-sample1.dat");
 
         // Firstly by byte
@@ -157,7 +157,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testInvalidMessage() {
+    void testInvalidMessage() {
         InputStream str = new ByteArrayInputStream(new byte[4]);
         IllegalArgumentException ex = assertThrows(
             IllegalArgumentException.class,
@@ -167,7 +167,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testNoData() throws Exception {
+    void testNoData() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // Header
@@ -184,7 +184,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testInvalidLevel() throws Exception {
+    void testInvalidLevel() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // Header
@@ -205,7 +205,7 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testCustomProperty() throws IOException {
+    void testCustomProperty() throws IOException {
         HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have non-standard properties with IDs 0xE28 and 0xE29

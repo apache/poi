@@ -117,7 +117,7 @@ public class TestBugs{
      * Bug 33519 - HWPF fails to read a file
      */
     @Test
-    public void test33519() throws IOException {
+    void test33519() throws IOException {
         assertNotNull(getText("Bug33519.doc"));
     }
 
@@ -125,7 +125,7 @@ public class TestBugs{
      * Bug 34898 - WordExtractor doesn't read the whole string from the file
      */
     @Test
-    public void test34898() throws IOException {
+    void test34898() throws IOException {
         assertEqualsIgnoreNewline("\u30c7\u30a3\u30ec\u30af\u30c8\u30ea", getText("Bug34898.doc").trim());
     }
 
@@ -133,7 +133,7 @@ public class TestBugs{
      * [RESOLVED INVALID] 41898 - Word 2003 pictures cannot be extracted
      */
     @Test
-    public void test41898() throws IOException {
+    void test41898() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug41898.doc");
         List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -167,7 +167,7 @@ public class TestBugs{
      */
     @SuppressWarnings("deprecation")
     @Test
-    public void test44431() throws IOException {
+    void test44431() throws IOException {
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug44431.doc");
 
         WordExtractor extractor1 = new WordExtractor(doc1);
@@ -192,7 +192,7 @@ public class TestBugs{
      * Bug 44331 - HWPFDocument.write destroys fields
      */
     @Test
-    public void test44431_2() throws IOException {
+    void test44431_2() throws IOException {
         assertEqualsIgnoreNewline("File name=FieldsTest.doc\n" +
         		"\n" +
         		"\n" +
@@ -219,7 +219,7 @@ public class TestBugs{
      * Bug 45473 - HWPF cannot read file after save
      */
     @Test
-    public void test45473() throws IOException {
+    void test45473() throws IOException {
         // Fetch the current text
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug45473.doc");
         WordExtractor wordExtractor = new WordExtractor(doc1);
@@ -252,7 +252,7 @@ public class TestBugs{
      * Bug 46220 - images are not properly extracted
      */
     @Test
-    public void test46220() throws IOException {
+    void test46220() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46220.doc");
         // reference checksums as in Bugzilla
         String[] md5 = { "851be142bce6d01848e730cb6903f39e",
@@ -276,7 +276,7 @@ public class TestBugs{
      * missing
      */
     @Test
-    public void test46817() throws IOException {
+    void test46817() throws IOException {
         String text = getText("Bug46817.doc").trim();
 
         assertContains(text, "Nazwa wykonawcy");
@@ -289,7 +289,7 @@ public class TestBugs{
      * contains form elements
      */
     @Test
-    public void test47286() throws IOException {
+    void test47286() throws IOException {
         // Fetch the current text
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug47286.doc");
         WordExtractor wordExtractor = new WordExtractor(doc1);
@@ -328,7 +328,7 @@ public class TestBugs{
      * CharacterRun.replaceText()
      */
     @Test
-    public void test47287() {
+    void test47287() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47287.doc");
         String[] values = { "1-1", "1-2", "1-3", "1-4", "1-5", "1-6", "1-7",
                 "1-8", "1-9", "1-10", "1-11", "1-12", "1-13", "1-14", "1-15", };
@@ -403,7 +403,7 @@ public class TestBugs{
      * some website as an embedded object
      */
     @Test
-    public void test47731() throws Exception {
+    void test47731() throws Exception {
         String foundText = getText("Bug47731.doc");
 
         assertContains(foundText, "Soak the rice in water for three to four hours");
@@ -413,7 +413,7 @@ public class TestBugs{
      * Bug 4774 - text extracted by WordExtractor is broken
      */
     @Test
-    public void test47742() throws Exception {
+    void test47742() throws Exception {
         // (1) extract text from MS Word document via POI
         String foundText = getText("Bug47742.doc");
 
@@ -433,7 +433,7 @@ public class TestBugs{
      * Bug 47958 - Exception during Escher walk of pictures
      */
     @Test
-    public void test47958() {
+    void test47958() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47958.doc");
         doc.getPicturesTable().getAllPictures();
     }
@@ -443,7 +443,7 @@ public class TestBugs{
      * formatting)
      */
     @Test
-    public void test48065() {
+    void test48065() {
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug48065.doc");
         HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
 
@@ -458,7 +458,7 @@ public class TestBugs{
     }
 
     @Test
-    public void test49933() throws IOException {
+    void test49933() throws IOException {
         try (HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug49933.doc");
             Word6Extractor extractor = new Word6Extractor(doc)) {
             assertContains(extractor.getText(), "best.wine.jump.ru");
@@ -469,7 +469,7 @@ public class TestBugs{
      * Bug 50936 - Exception parsing MS Word 8.0 file
      */
     @Test
-    public void test50936() throws Exception {
+    void test50936() throws Exception {
         String[] filenames = {"Bug50936_1.doc", "Bug50936_2.doc", "Bug50936_3.doc"};
         for (String filename : filenames) {
             HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile(filename);
@@ -485,7 +485,7 @@ public class TestBugs{
      * release from download site )
      */
     @Test
-    public void test51604() {
+    void test51604() {
         HWPFDocument document = HWPFTestDataSamples
                 .openSampleFile("Bug51604.doc");
 
@@ -514,7 +514,7 @@ public class TestBugs{
      * release from download site )
      */
     @Test
-    public void test51604p2() {
+    void test51604p2() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug51604.doc");
 
         Range range = doc.getRange();
@@ -558,7 +558,7 @@ public class TestBugs{
      * release from download site )
      */
     @Test
-    public void test51604p3() throws Exception {
+    void test51604p3() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug51604.doc");
 
         FileInformationBlock fib = doc.getFileInformationBlock();
@@ -589,7 +589,7 @@ public class TestBugs{
      * throws a NullPointerException
      */
     @Test
-    public void test51671() throws Exception {
+    void test51671() throws Exception {
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream("empty.doc");
         try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(is)) {
@@ -605,7 +605,7 @@ public class TestBugs{
      * PapBinTable constructor is slow
      */
     @Test
-    public void test51678And51524() throws IOException {
+    void test51678And51524() throws IOException {
         // YK: the test will run only if the poi.test.remote system property is
         // set.
         // TODO: refactor into something nicer!
@@ -626,7 +626,7 @@ public class TestBugs{
      * ArrayIndexOutOfBoundsException
      */
     @Test
-    public void testBug51890() {
+    void testBug51890() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug51890.doc");
         for (Picture picture : doc.getPicturesTable().getAllPictures() )
         {
@@ -642,7 +642,7 @@ public class TestBugs{
      * corrupt document
      */
     @Test
-    public void testBug51834() {
+    void testBug51834() {
         /*
          * we don't have Java test for this file - it should be checked using
          * Microsoft BFF Validator. But check read-write-read anyway. -- sergey
@@ -656,7 +656,7 @@ public class TestBugs{
      * Bug 51944 - PAPFormattedDiskPage.getPAPX - IndexOutOfBounds
      */
     @Test
-    public void testBug51944() throws Exception {
+    void testBug51944() throws Exception {
         HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
         assertNotNull(WordToTextConverter.getText(doc));
     }
@@ -666,7 +666,7 @@ public class TestBugs{
      * with no stack trace (broken after revision 1178063)
      */
     @Test
-    public void testBug52032_1() throws Exception {
+    void testBug52032_1() throws Exception {
         assertNotNull(getText("Bug52032_1.doc"));
     }
 
@@ -675,7 +675,7 @@ public class TestBugs{
      * with no stack trace (broken after revision 1178063)
      */
     @Test
-    public void testBug52032_2() throws Exception {
+    void testBug52032_2() throws Exception {
         assertNotNull(getText("Bug52032_2.doc"));
     }
 
@@ -684,7 +684,7 @@ public class TestBugs{
      * with no stack trace (broken after revision 1178063)
      */
     @Test
-    public void testBug52032_3() throws Exception {
+    void testBug52032_3() throws Exception {
         assertNotNull(getText("Bug52032_3.doc"));
     }
 
@@ -692,7 +692,7 @@ public class TestBugs{
      * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     @Test
-    public void testBug53380_1() throws Exception {
+    void testBug53380_1() throws Exception {
         assertNotNull(getText("Bug53380_1.doc"));
     }
 
@@ -700,7 +700,7 @@ public class TestBugs{
      * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     @Test
-    public void testBug53380_2() throws Exception
+    void testBug53380_2() throws Exception
     {
         assertNotNull(getText("Bug53380_2.doc"));
     }
@@ -709,7 +709,7 @@ public class TestBugs{
      * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     @Test
-    public void testBug53380_3() throws Exception {
+    void testBug53380_3() throws Exception {
         assertNotNull(getText("Bug53380_3.doc"));
     }
 
@@ -717,7 +717,7 @@ public class TestBugs{
      * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     @Test
-    public void testBug53380_4() throws Exception {
+    void testBug53380_4() throws Exception {
         assertNotNull(getText("Bug53380_4.doc"));
     }
 
@@ -728,7 +728,7 @@ public class TestBugs{
      * Disabled pending a fix for the bug
      */
     @Test
-    public void test56880() {
+    void test56880() {
         HWPFDocument doc =
                 HWPFTestDataSamples.openSampleFile("56880.doc");
         assertEqualsIgnoreNewline("Check Request", doc.getRange().text());
@@ -738,7 +738,7 @@ public class TestBugs{
      * Bug 61268 - NegativeArraySizeException parsing word 97 document
      */
     @Test
-    public void testBug61268() throws Exception {
+    void testBug61268() throws Exception {
         assertNotNull(getText("Bug61268.doc"));
     }
 
@@ -749,7 +749,7 @@ public class TestBugs{
 
     @Test
     @SuppressWarnings("SuspiciousNameCombination")
-    public void testHWPFSections() {
+    void testHWPFSections() {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("Bug53453Section.doc");
         Range overallRange = document.getOverallRange();
         int numParas = overallRange.numParagraphs();
@@ -825,20 +825,20 @@ public class TestBugs{
     }
 
     @Test
-    public void testRegressionIn315beta2() {
+    void testRegressionIn315beta2() {
         HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("cap.stanford.edu_profiles_viewbiosketch_facultyid=4009&name=m_maciver.doc");
         assertNotNull(hwpfDocument);
     }
 
     @Test
-    public void test57603SevenRowTable() throws Exception {
+    void test57603SevenRowTable() throws Exception {
         try (HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc")) {
             assertThrows(ArrayIndexOutOfBoundsException.class, () -> HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument));
         }
     }
 
     @Test
-    public void test57843() throws IOException {
+    void test57843() throws IOException {
         File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
         try (POIFSFileSystem fs = new POIFSFileSystem(f, true)) {
             HWPFOldDocument doc = new HWPFOldDocument(fs);
@@ -848,13 +848,13 @@ public class TestBugs{
     }
 
     @Test
-    public void testCommonCrawlRegression() throws IOException {
+    void testCommonCrawlRegression() throws IOException {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("ca.kwsymphony.www_education_School_Concert_Seat_Booking_Form_2011-12.doc");
         document.close();
     }
 
     @Test
-    public void test61911() throws IOException {
+    void test61911() throws IOException {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("61911.doc");
 
         PicturesTable picturesTable = document.getPicturesTable();
@@ -866,7 +866,7 @@ public class TestBugs{
     }
 
     @Test
-    public void test61490CellCountInTable() throws Exception {
+    void test61490CellCountInTable() throws Exception {
         try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("61490.doc")){
             Range range = doc.getRange();
 
@@ -884,7 +884,7 @@ public class TestBugs{
     }
 
     @Test
-    public void test59322() throws Exception {
+    void test59322() throws Exception {
         try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("59322.doc")) {
             Document document = XMLHelper.newDocumentBuilder().newDocument();
             WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(document);
@@ -894,7 +894,7 @@ public class TestBugs{
     }
 
     @Test
-    public void test64132() throws IOException {
+    void test64132() throws IOException {
         try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("64132.doc")) {
             assertNotNull(doc);
             PicturesTable picturesTable = doc.getPicturesTable();

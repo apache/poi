@@ -52,7 +52,7 @@ public final class TestSlideOrdering {
 	 * Test the simple case - record order matches slide order
 	 */
 	@Test
-	public void testSimpleCase() {
+	void testSimpleCase() {
 		assertEquals(2, ssA.getSlides().size());
 
 		HSLFSlide s1 = ssA.getSlides().get(0);
@@ -68,7 +68,7 @@ public final class TestSlideOrdering {
 	 * Test the complex case - record order differs from slide order
 	 */
     @Test
-	public void testComplexCase() {
+	void testComplexCase() {
 		assertEquals(3, ssB.getSlides().size());
 		int i=1;
 		for (HSLFSlide s : ssB.getSlides()) {
@@ -97,7 +97,7 @@ public final class TestSlideOrdering {
 	}
 
     @Test
-	public void testTitles() throws Exception {
+	void testTitles() throws Exception {
 		assertSlideOrdering("basic_test_ppt_file.ppt", new String[] {
 				"This is a test title", "This is the title on page 2" });
 

@@ -106,7 +106,7 @@ public final class TestHWPFRangeParts {
     * TODO - Make this work with 3+ runs
     */
    @Test
-	public void testContents() {
+	void testContents() {
       HWPFDocument doc = docAscii;
       for(int run=0; run<3; run++) {
    		Range r;
@@ -153,7 +153,7 @@ public final class TestHWPFRangeParts {
 	}
 
 	@Test
-	public void testContentsUnicode() {
+	void testContentsUnicode() {
 		Range r;
 
 		// Now check the real ranges

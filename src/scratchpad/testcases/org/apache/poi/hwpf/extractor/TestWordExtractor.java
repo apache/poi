@@ -84,7 +84,7 @@ public final class TestWordExtractor {
 	 * Test paragraph based extraction
 	 */
 	@Test
-	public void testExtractFromParagraphs() throws IOException {
+	void testExtractFromParagraphs() throws IOException {
         WordExtractor extractor = openExtractor("test2.doc");
 		String[] text = extractor.getParagraphText();
 
@@ -107,7 +107,7 @@ public final class TestWordExtractor {
 	 * Test the paragraph -> flat extraction
 	 */
     @Test
-	public void testGetText() throws IOException {
+	void testGetText() throws IOException {
         WordExtractor extractor = openExtractor("test2.doc");
         assertEqualsTrim(p_text1_block, extractor.getText());
 
@@ -125,7 +125,7 @@ public final class TestWordExtractor {
 	 * Test textPieces based extraction
 	 */
     @Test
-	public void testExtractFromTextPieces() throws IOException {
+	void testExtractFromTextPieces() throws IOException {
         WordExtractor extractor = openExtractor("test2.doc");
 		String text = extractor.getTextFromPieces();
 		assertEquals(p_text1_block, text);
@@ -137,7 +137,7 @@ public final class TestWordExtractor {
 	 * Test that we can get data from two different embedded word documents
 	 */
     @Test
-	public void testExtractFromEmbeded() throws IOException {
+	void testExtractFromEmbeded() throws IOException {
 	    InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls");
 		POIFSFileSystem fs = new POIFSFileSystem(is);
 		is.close();
@@ -181,7 +181,7 @@ public final class TestWordExtractor {
 	}
 
     @Test
-	public void testWithHeader() throws IOException {
+	void testWithHeader() throws IOException {
 		// Non-unicode
 		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 		WordExtractor extractor1 = new WordExtractor(doc1);
@@ -204,7 +204,7 @@ public final class TestWordExtractor {
 	}
 
     @Test
-	public void testWithFooter() throws IOException {
+	void testWithFooter() throws IOException {
 		// Non-unicode
 		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 		WordExtractor extractor1 = new WordExtractor(doc1);
@@ -227,7 +227,7 @@ public final class TestWordExtractor {
 	}
 
     @Test
-	public void testFootnote() throws IOException {
+	void testFootnote() throws IOException {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("footnote.doc");
 		WordExtractor extractor = new WordExtractor(doc);
 
@@ -241,7 +241,7 @@ public final class TestWordExtractor {
 	}
 
     @Test
-	public void testEndnote() throws IOException {
+	void testEndnote() throws IOException {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("footnote.doc");
 		WordExtractor extractor = new WordExtractor(doc);
 
@@ -255,20 +255,20 @@ public final class TestWordExtractor {
 	}
 
     @Test
-	public void testComments() throws IOException {
+	void testComments() throws IOException {
 		WordExtractor extractor = openExtractor("footnote.doc");
 		assertExtractedContains(extractor.getCommentsText(), "TestComment");
 		extractor.close();
 	}
 
     @Test
-    public void testWord95_WordExtractor() {
+    void testWord95_WordExtractor() {
         // Too old for the default
         assertThrows(OldWordFileFormatException.class, () -> openExtractor("Word95.doc"));
     }
 
     @Test
-    public void testWord95() throws Exception {
+    void testWord95() throws Exception {
         // Can work with the special one
         InputStream is = docTests.openResourceAsStream("Word95.doc");
         Word6Extractor w6e = new Word6Extractor(is);
@@ -295,13 +295,13 @@ public final class TestWordExtractor {
     }
 
     @Test
-    public void testWord6_WordExtractor() {
+    void testWord6_WordExtractor() {
         // Too old for the default
         assertThrows(OldWordFileFormatException.class, () -> openExtractor("Word6.doc"));
     }
 
     @Test
-    public void testWord6() throws Exception {
+    void testWord6() throws Exception {
         try (InputStream is = docTests.openResourceAsStream("Word6.doc");
             Word6Extractor w6e = new Word6Extractor(is)) {
             String text = w6e.getText();
@@ -316,7 +316,7 @@ public final class TestWordExtractor {
     }
 
     @Test
-    public void testFastSaved() throws Exception {
+    void testFastSaved() throws Exception {
         WordExtractor extractor = openExtractor("rasp.doc");
 
         String text = extractor.getText();
@@ -327,7 +327,7 @@ public final class TestWordExtractor {
     }
 
     @Test
-    public void testFirstParagraphFix() throws Exception {
+    void testFirstParagraphFix() throws Exception {
         WordExtractor extractor = openExtractor("Bug48075.doc");
 
         String text = extractor.getText();
@@ -341,7 +341,7 @@ public final class TestWordExtractor {
      *  and {@link POIFSFileSystem}
      */
     @Test
-    public void testDifferentPOIFS() throws Exception {
+    void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        File file = docTests.getFile("test2.doc");
        try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
@@ -368,7 +368,7 @@ public final class TestWordExtractor {
      * ConcurrentModificationException in Tika's OfficeParser
      */
     @Test
-    public void testBug51686() throws IOException {
+    void testBug51686() throws IOException {
         InputStream is = docTests.openResourceAsStream( "Bug51686.doc" );
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
@@ -388,7 +388,7 @@ public final class TestWordExtractor {
     }
 
     @Test
-    public void testExtractorFromWord6Extractor() throws Exception {
+    void testExtractorFromWord6Extractor() throws Exception {
         try (InputStream is = POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc");
              POIFSFileSystem fs = new POIFSFileSystem(is);
              Word6Extractor wExt = new Word6Extractor(fs);

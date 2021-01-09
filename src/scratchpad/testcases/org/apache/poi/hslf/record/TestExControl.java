@@ -72,7 +72,7 @@ public final class TestExControl {
     };
 
 	@Test
-	public void testRead() {
+	void testRead() {
 		ExControl record = new ExControl(data, 0, data.length);
 		assertEquals(RecordTypes.ExControl.typeID, record.getRecordType());
 
@@ -91,7 +91,7 @@ public final class TestExControl {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		ExControl record = new ExControl(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
@@ -99,7 +99,7 @@ public final class TestExControl {
 	}
 
 	@Test
-	public void testNewRecord() throws Exception {
+	void testNewRecord() throws Exception {
 		ExControl record = new ExControl();
 		ExControlAtom ctrl = record.getExControlAtom();
 		ctrl.setSlideId(256);

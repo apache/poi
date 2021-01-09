@@ -41,13 +41,13 @@ public class TestInteractiveInfo {
 	};
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		assertEquals(4082, ii.getRecordType());
 	}
 
 	@Test
-	public void testGetChildDetails() {
+	void testGetChildDetails() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
 
@@ -55,7 +55,7 @@ public class TestInteractiveInfo {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ii.writeOut(baos);
@@ -64,7 +64,7 @@ public class TestInteractiveInfo {
 
 	// Create A from scratch
 	@Test
-	public void testCreate() throws Exception {
+	void testCreate() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo();
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
 

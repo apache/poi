@@ -47,7 +47,7 @@ public final class TestDocumentProperties {
     }
 
     @Test
-    public void testReadWrite() throws Exception  {
+    void testReadWrite() throws Exception  {
         int size = DOPAbstractType.getSize();
         byte[] buf = new byte[size];
         _documentProperties.serialize(buf, 0);

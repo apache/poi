@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public final class TestLine {
 
     @Test
-    public void testCreateLines() throws IOException {
+    void testCreateLines() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();

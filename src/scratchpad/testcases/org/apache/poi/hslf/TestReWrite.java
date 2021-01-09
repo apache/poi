@@ -68,7 +68,7 @@ public final class TestReWrite {
     }
 
     @Test
-    public void testWritesOutTheSame() throws Exception {
+    void testWritesOutTheSame() throws Exception {
         assertWritesOutTheSame(hssA, pfsA);
         assertWritesOutTheSame(hssB, pfsB);
     }
@@ -119,7 +119,7 @@ public final class TestReWrite {
     }
 
     @Test
-    public void testWithMacroStreams() throws IOException {
+    void testWithMacroStreams() throws IOException {
         // Check that they're apparently the same
         assertSlideShowWritesOutTheSame(hssC, pfsC);
 
@@ -148,7 +148,7 @@ public final class TestReWrite {
      *  doesn't change things
      */
     @Test
-    public void testSlideShowWritesOutTheSame() throws Exception {
+    void testSlideShowWritesOutTheSame() throws Exception {
         assertSlideShowWritesOutTheSame(hssA, pfsA);
 
         // Some bug in StyleTextPropAtom rewriting means this will fail
@@ -192,7 +192,7 @@ public final class TestReWrite {
     }
 
     @Test
-    public void test48593() throws IOException {
+    void test48593() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         ppt1.createSlide();
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);

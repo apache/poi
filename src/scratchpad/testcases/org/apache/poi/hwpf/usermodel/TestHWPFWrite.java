@@ -47,7 +47,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
      * Write to a stream
      */
     @Test
-    public void testWriteStream() throws IOException {
+    void testWriteStream() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
 
         Range r = doc.getRange();
@@ -68,7 +68,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
      * Write to a new file
      */
     @Test
-    public void testWriteNewFile() throws IOException {
+    void testWriteNewFile() throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
 
         Range r = doc.getRange();
@@ -95,7 +95,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
      * changing our test files!
      */
     @Test
-    public void testInPlaceWrite() throws Exception {
+    void testInPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestDocument", ".doc");
         try (InputStream inputStream = SAMPLES.openResourceAsStream("SampleDoc.doc");
@@ -126,7 +126,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
     }
 
     @Test
-    public void testInvalidInPlaceWriteInputStream() throws IOException {
+    void testInvalidInPlaceWriteInputStream() throws IOException {
         // Can't work for InputStream opened files
 
         try (InputStream is = SAMPLES.openResourceAsStream("SampleDoc.doc");
@@ -136,7 +136,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
     }
 
     @Test
-    public void testInvalidInPlaceWritePOIFS() throws Exception {
+    void testInvalidInPlaceWritePOIFS() throws Exception {
         // Can't work for Read-Only files
         try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
             HWPFDocument doc = new HWPFDocument(fs.getRoot())) {

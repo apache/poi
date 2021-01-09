@@ -54,13 +54,13 @@ public final class TestDocument {
 	}
 
 	@Test
-	public void testRecordType() {
+	void testRecordType() {
 		Document dr = getDocRecord();
 		assertEquals(1000, dr.getRecordType());
 	}
 
 	@Test
-	public void testChildRecords() {
+	void testChildRecords() {
 		Document dr = getDocRecord();
 		assertNotNull(dr.getDocumentAtom());
 
@@ -74,7 +74,7 @@ public final class TestDocument {
 	}
 
 	@Test
-	public void testEnvironment() {
+	void testEnvironment() {
 		Document dr = getDocRecord();
 		Environment env = dr.getEnvironment();
 

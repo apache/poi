@@ -27,19 +27,19 @@ import org.junit.jupiter.api.Test;
 public final class TestBug46610 {
 
 	@Test
-	public void testUtf() throws Exception {
+	void testUtf() throws Exception {
 		String text = runExtract("Bug46610_1.doc");
 		assertNotNull(text);
 	}
 
 	@Test
-	public void testUtf2() throws Exception {
+	void testUtf2() throws Exception {
 		String text = runExtract("Bug46610_2.doc");
 		assertNotNull(text);
 	}
 
 	@Test
-	public void testExtraction() throws Exception {
+	void testExtraction() throws Exception {
 		String text = runExtract("Bug46610_3.doc");
 		assertContains(text, "\u0421\u0412\u041e\u042e");
 	}

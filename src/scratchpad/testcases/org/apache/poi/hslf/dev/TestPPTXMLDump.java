@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestPPTXMLDump extends BasePPTIteratingTest {
     @Test
-    public void testMain() throws Exception {
+    void testMain() throws Exception {
         PPTXMLDump.main(new String[0]);
 
         PPTXMLDump.main(new String[]{

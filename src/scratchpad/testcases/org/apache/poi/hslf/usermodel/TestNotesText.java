@@ -39,14 +39,14 @@ public final class TestNotesText {
 	}
 
 	@Test
-	public void testNotesOne() {
+	void testNotesOne() {
 		HSLFNotes notes = ss.getNotes().get(0);
 		String[] expectText = {"These are the notes for page 1"};
 		assertArrayEquals(expectText, toStrings(notes));
 	}
 
 	@Test
-	public void testNotesTwo() {
+	void testNotesTwo() {
 		HSLFNotes notes = ss.getNotes().get(1);
 		String[] expectText = {"These are the notes on page two, again lacking formatting"};
 		assertArrayEquals(expectText, toStrings(notes));

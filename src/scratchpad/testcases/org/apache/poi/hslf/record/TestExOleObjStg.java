@@ -53,7 +53,7 @@ public final class TestExOleObjStg {
     }
 
     @Test
-    public void testRead() throws Exception {
+    void testRead() throws Exception {
         ExOleObjStg record = new ExOleObjStg(data, 0, data.length);
         assertEquals(RecordTypes.ExOleObjStg.typeID, record.getRecordType());
 
@@ -68,7 +68,7 @@ public final class TestExOleObjStg {
     }
 
     @Test
-    public void testWrite() throws Exception {
+    void testWrite() throws Exception {
         ExOleObjStg record = new ExOleObjStg(data, 0, data.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
@@ -78,7 +78,7 @@ public final class TestExOleObjStg {
     }
 
     @Test
-    public void testNewRecord() throws Exception {
+    void testNewRecord() throws Exception {
         ExOleObjStg src = new ExOleObjStg(data, 0, data.length);
         byte[] oledata = readAll(src.getData());
 

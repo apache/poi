@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestSorters {
    @Test
-   public void testAttachmentChunksSorter() {
+   void testAttachmentChunksSorter() {
       AttachmentChunks[] chunks;
 
       // Simple
@@ -63,7 +63,7 @@ public final class TestSorters {
    }
 
    @Test
-   public void testRecipientChunksSorter() {
+   void testRecipientChunksSorter() {
       RecipientChunks[] chunks;
 
       // Simple

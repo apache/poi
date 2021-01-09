@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestSlideShowRecordDumper extends BasePPTIteratingTest {
     @Test
-    public void testMain() throws IOException {
+    void testMain() throws IOException {
         SlideShowRecordDumper.main(new String[] {
                 HSLFTestDataSamples.getSampleFile("slide_master.ppt").getAbsolutePath(),
         });

@@ -48,7 +48,7 @@ public class TestSprms {
      * (0x2416)
      */
     @Test
-    public void testInnerTable() throws Exception {
+    void testInnerTable() throws Exception {
         InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "innertable.doc" );
         try (HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {
@@ -86,7 +86,7 @@ public class TestSprms {
      * Test correct processing of "sprmPJc" by uncompressor
      */
     @Test
-    public void testSprmPJc() throws IOException {
+    void testSprmPJc() throws IOException {
         try (InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "Bug49820.doc" );
         HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {

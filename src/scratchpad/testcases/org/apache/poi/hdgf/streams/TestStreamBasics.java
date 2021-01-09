@@ -56,7 +56,7 @@ public final class TestStreamBasics extends StreamTest {
 
 
 	@Test
-	public void testCompressedStream() {
+	void testCompressedStream() {
 		// Create a fake pointer
 		Pointer ptr = new TestPointer(true, 0, compressedStream.length, -1, (short)-1);
 		// Now the stream
@@ -80,7 +80,7 @@ public final class TestStreamBasics extends StreamTest {
 	}
 
 	@Test
-    public void testUncompressedStream() {
+    void testUncompressedStream() {
 		// Create a fake pointer
 		Pointer ptr = new TestPointer(false, 0, uncompressedStream.length, -1, (short)-1);
 		// Now the stream

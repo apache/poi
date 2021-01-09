@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class TestLittleEndianCP950Reader {
 
     @Test
-    public void testPersonalUseMappings() throws Exception {
+    void testPersonalUseMappings() throws Exception {
         //ftp://ftp.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WindowsBestFit/bestfit950.txt
         byte[] data = new byte[2];
         data[1] = (byte) 0xfe;

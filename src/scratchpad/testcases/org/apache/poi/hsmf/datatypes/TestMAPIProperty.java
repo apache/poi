@@ -31,14 +31,14 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestMAPIProperty {
     @Test
-   public void testGet() {
+   void testGet() {
       assertEquals(MAPIProperty.DISPLAY_NAME, MAPIProperty.get(MAPIProperty.DISPLAY_NAME.id));
       assertEquals(MAPIProperty.DISPLAY_BCC, MAPIProperty.get(MAPIProperty.DISPLAY_BCC.id));
       assertNotSame(MAPIProperty.DISPLAY_BCC, MAPIProperty.get(MAPIProperty.DISPLAY_CC.id));
    }
 
     @Test
-   public void testGetAll() {
+   void testGetAll() {
       Collection<MAPIProperty> all = MAPIProperty.getAll();
        assertTrue(all.contains(MAPIProperty.DISPLAY_NAME));
        assertTrue(all.contains(MAPIProperty.DISPLAY_CC));
@@ -51,7 +51,7 @@ public final class TestMAPIProperty {
    }
 
     @Test
-   public void testCustom() {
+   void testCustom() {
       MAPIProperty c1 = MAPIProperty.createCustom(1, Types.UNSPECIFIED, "");
       MAPIProperty c2a = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");
       MAPIProperty c2b = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");

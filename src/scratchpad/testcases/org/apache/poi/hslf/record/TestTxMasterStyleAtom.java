@@ -47,7 +47,7 @@ public final class TestTxMasterStyleAtom {
     }
 
     @Test
-    public void testDefaultStyles()  {
+    void testDefaultStyles()  {
         TxMasterStyleAtom[] txmaster = getMasterStyles();
         for (final TxMasterStyleAtom atom : txmaster) {
             final int txtype = atom.getTextType();

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestTypes {
    @Test
-   public void testTypeIds() {
+   void testTypeIds() {
       assertEquals(0x1e, Types.ASCII_STRING.getId());
       assertEquals(0x1f, Types.UNICODE_STRING.getId());
 
@@ -47,7 +47,7 @@ public final class TestTypes {
    }
 
    @Test
-   public void testTypeFormatting() {
+   void testTypeFormatting() {
       assertEquals("0000", Types.asFileEnding(0x0000));
       assertEquals("0020", Types.asFileEnding(0x0020));
       assertEquals("0102", Types.asFileEnding(0x0102));
@@ -55,7 +55,7 @@ public final class TestTypes {
    }
 
    @Test
-   public void testName() {
+   void testName() {
       assertEquals("ASCII String", Types.ASCII_STRING.getName());
       assertEquals("Boolean", Types.BOOLEAN.getName());
    }

@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public final class TestFreeform {
 
     @Test
-    public void testClosedPath() {
+    void testClosedPath() {
 
         Path2D.Double path1 = new Path2D.Double();
         path1.moveTo(100, 100);
@@ -56,7 +56,7 @@ public final class TestFreeform {
     }
 
     @Test
-    public void testLine() {
+    void testLine() {
 
         Path2D.Double path1 = new Path2D.Double(new Line2D.Double(100, 100, 200, 100));
 
@@ -68,7 +68,7 @@ public final class TestFreeform {
     }
 
     @Test
-    public void testRectangle() {
+    void testRectangle() {
 
         Path2D.Double path1 = new Path2D.Double(new Rectangle2D.Double(100, 100, 200, 50));
 
@@ -84,7 +84,7 @@ public final class TestFreeform {
      * GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
      */
     @Test
-    public void test54188() {
+    void test54188() {
 
         HSLFFreeformShape p = new HSLFFreeformShape();
         Path2D path = p.getPath();

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 public final class TestHSLFSlideShowFactory extends BaseTestSlideShowFactory {
     @Test
-    public void testFactory() throws Exception {
+    void testFactory() throws Exception {
         testFactory("pictures.ppt", "Password_Protected-hello.ppt", "hello");
     }
 }

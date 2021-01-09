@@ -45,7 +45,7 @@ public final class TestRangeInsertion {
 	 * Test just opening the files
 	 */
 	@Test
-	public void testOpen() throws IOException {
+	void testOpen() throws IOException {
 		openSampleFile(illustrativeDocFile).close();
 	}
 
@@ -53,7 +53,7 @@ public final class TestRangeInsertion {
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
 	@Test
-	public void testDocStructure() throws IOException {
+	void testDocStructure() throws IOException {
 		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
 			Range range = daDoc.getRange();
@@ -81,7 +81,7 @@ public final class TestRangeInsertion {
 	 * Test that we can insert text in our CharacterRun with Unicode text.
 	 */
 	@Test
-	public void testRangeInsertion() throws IOException {
+	void testRangeInsertion() throws IOException {
 		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
 //		if (false) { // TODO - delete or resurrect this code

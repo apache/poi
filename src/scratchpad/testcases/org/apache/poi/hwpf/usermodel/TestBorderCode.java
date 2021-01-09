@@ -34,7 +34,7 @@ public final class TestBorderCode {
     private Range range;
 
     @Test
-    public void test() {
+    void test() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49919.doc");
         range = doc.getRange();
 

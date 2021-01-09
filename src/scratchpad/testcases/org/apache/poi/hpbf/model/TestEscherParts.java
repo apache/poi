@@ -31,7 +31,7 @@ public final class TestEscherParts {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
     @Test
-	public void testBasics() throws IOException {
+	void testBasics() throws IOException {
         InputStream is = _samples.openResourceAsStream("Sample.pub");
 		HPBFDocument doc = new HPBFDocument(is);
 		is.close();
@@ -50,7 +50,7 @@ public final class TestEscherParts {
 	}
 
     @Test
-    public void testComplex() throws Exception {
+    void testComplex() throws Exception {
         InputStream is = _samples.openResourceAsStream("SampleBrochure.pub");
 		HPBFDocument doc1 = new HPBFDocument(is);
 		is.close();
