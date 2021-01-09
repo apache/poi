@@ -65,7 +65,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void createRow() throws IOException {
+    protected void createRow() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             assertEquals(0, sheet.getPhysicalNumberOfRows());
@@ -106,7 +106,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void createRowBeforeFirstRow() throws IOException {
+    void createRowBeforeFirstRow() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             final Sheet sh = workbook.createSheet();
             sh.createRow(0);
@@ -116,7 +116,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void createRowAfterLastRow() throws IOException {
+    void createRowAfterLastRow() throws IOException {
         final SpreadsheetVersion version = _testDataProvider.getSpreadsheetVersion();
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             final Sheet sh = workbook.createSheet();
@@ -127,7 +127,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void removeRow() throws IOException {
+    void removeRow() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = workbook.createSheet();
             assertEquals(0, sheet1.getPhysicalNumberOfRows());
@@ -170,7 +170,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void cloneSheet() throws IOException {
+    protected void cloneSheet() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             CreationHelper factory = workbook.getCreationHelper();
             Sheet sheet = workbook.createSheet("Test Clone");
@@ -204,7 +204,7 @@ public abstract class BaseTestSheet {
      * BUG 37416
      */
     @Test
-    public void cloneSheetMultipleTimes() throws IOException {
+    protected void cloneSheetMultipleTimes() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             CreationHelper factory = workbook.getCreationHelper();
             Sheet sheet = workbook.createSheet("Test Clone");
@@ -233,7 +233,7 @@ public abstract class BaseTestSheet {
      * Setting landscape and portrait stuff on new sheets
      */
     @Test
-    public void printSetupLandscapeNew() throws IOException {
+    void printSetupLandscapeNew() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheetL = wb1.createSheet("LandscapeS");
             Sheet sheetP = wb1.createSheet("LandscapeP");
@@ -272,7 +272,7 @@ public abstract class BaseTestSheet {
      * as this results in a corrupted workbook
      */
     @Test
-    public void addOverlappingMergedRegions() throws IOException {
+    void addOverlappingMergedRegions() throws IOException {
         try (final Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet();
 
@@ -320,7 +320,7 @@ public abstract class BaseTestSheet {
      * Bug 56345: Reject single-cell merged regions
      */
     @Test
-    public void addMergedRegionWithSingleCellShouldFail() throws IOException {
+    void addMergedRegionWithSingleCellShouldFail() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             final Sheet sheet = wb.createSheet();
@@ -339,7 +339,7 @@ public abstract class BaseTestSheet {
      *
      */
     @Test
-    public void addMerged() throws IOException {
+    void addMerged() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             assertEquals(0, sheet.getNumMergedRegions());
@@ -376,7 +376,7 @@ public abstract class BaseTestSheet {
      *
      */
     @Test
-    public void removeMerged() throws IOException {
+    void removeMerged() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
@@ -415,7 +415,7 @@ public abstract class BaseTestSheet {
      * Remove multiple merged regions
      */
     @Test
-    public void removeMergedRegions() throws IOException {
+    void removeMergedRegions() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -441,7 +441,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void shiftMerged() throws IOException {
+    protected void shiftMerged() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CreationHelper factory = wb.getCreationHelper();
             Sheet sheet = wb.createSheet();
@@ -472,7 +472,7 @@ public abstract class BaseTestSheet {
      * can be skipped (unsafe) and run in O(1).
      */
     @Test
-    public void addMergedRegionUnsafe() throws IOException {
+    void addMergedRegionUnsafe() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             CellRangeAddress region1 = CellRangeAddress.valueOf("A1:B2");
@@ -515,7 +515,7 @@ public abstract class BaseTestSheet {
      * Tests the display of gridlines, formulas, and rowcolheadings.
      */
     @Test
-    public void displayOptions() throws IOException {
+    void displayOptions() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -541,7 +541,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void columnWidth() throws IOException {
+    void columnWidth() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb1.createSheet();
 
@@ -602,7 +602,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void defaultRowHeight() throws IOException {
+    void defaultRowHeight() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             sheet.setDefaultRowHeightInPoints(15);
@@ -632,7 +632,7 @@ public abstract class BaseTestSheet {
 
     /** cell with formula becomes null on cloning a sheet*/
     @Test
-    public void bug35084() throws IOException {
+    protected void bug35084() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet("Sheet1");
             Row r = s.createRow(0);
@@ -649,7 +649,7 @@ public abstract class BaseTestSheet {
 
     /** test that new default column styles get applied */
     @Test
-    public void defaultColumnStyle() throws IOException {
+    protected void defaultColumnStyle() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellStyle style = wb.createCellStyle();
             Sheet sheet = wb.createSheet();
@@ -666,7 +666,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void outlineProperties() throws IOException {
+    void outlineProperties() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -698,7 +698,7 @@ public abstract class BaseTestSheet {
      * Test basic display and print properties
      */
     @Test
-    public void sheetProperties() throws IOException {
+    void sheetProperties() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -799,7 +799,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void rowBreaks() throws IOException {
+    void rowBreaks() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             //Sheet#getRowBreaks() returns an empty array if no row breaks are defined
@@ -829,7 +829,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void columnBreaks() throws IOException {
+    void columnBreaks() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             assertNotNull(sheet.getColumnBreaks());
@@ -858,7 +858,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getFirstLastRowNum() throws IOException {
+    void getFirstLastRowNum() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet 1");
             sheet.createRow(9);
@@ -870,7 +870,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getFooter() throws IOException {
+    void getFooter() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet 1");
             assertNotNull(sheet.getFooter());
@@ -880,7 +880,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getSetColumnHidden() throws IOException {
+    void getSetColumnHidden() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet 1");
             sheet.setColumnHidden(2, true);
@@ -889,7 +889,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void protectSheet() throws IOException {
+    void protectSheet() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             assertFalse(sheet.getProtect());
@@ -901,7 +901,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void createFreezePane() throws IOException {
+    void createFreezePane() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             // create a workbook
             Sheet sheet = wb.createSheet();
@@ -953,7 +953,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void getRepeatingRowsAndColumns() throws IOException {
+    void getRepeatingRowsAndColumns() throws IOException {
         try (Workbook wb = _testDataProvider.openSampleWorkbook(
             "RepeatingRowsCols."
             + _testDataProvider.getStandardFileNameExtension())) {
@@ -967,7 +967,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void setRepeatingRowsAndColumnsBug47294() throws IOException {
+    void setRepeatingRowsAndColumnsBug47294() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet();
             sheet1.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
@@ -981,7 +981,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void setRepeatingRowsAndColumns() throws IOException {
+    void setRepeatingRowsAndColumns() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb1.createSheet("Sheet1");
             Sheet sheet2 = wb1.createSheet("Sheet2");
@@ -1033,7 +1033,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void baseZoom() throws IOException {
+    void baseZoom() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1044,7 +1044,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void baseShowInPane() throws IOException {
+    void baseShowInPane() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             sheet.showInPane(2, 3);
@@ -1052,7 +1052,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void bug55723() throws IOException {
+    void bug55723() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1069,7 +1069,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void bug55723_Rows() throws IOException {
+    void bug55723_Rows() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1080,7 +1080,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void bug55723d_RowsOver65k() throws IOException {
+    void bug55723d_RowsOver65k() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1094,7 +1094,7 @@ public abstract class BaseTestSheet {
      * XSSFSheet autoSizeColumn() on empty RichTextString fails
      */
     @Test
-    public void bug48325() throws IOException {
+    void bug48325() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Test");
             trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -1115,7 +1115,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getCellComment() throws IOException {
+    protected void getCellComment() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             Drawing<?> dg = sheet.createDrawingPatriarch();
@@ -1133,7 +1133,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getCellComments() throws IOException {
+    void getCellComments() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet("TEST");
 
@@ -1185,7 +1185,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void getHyperlink() throws IOException {
+    void getHyperlink() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
             hyperlink.setAddress("https://poi.apache.org/");
@@ -1206,7 +1206,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void removeAllHyperlinks() throws IOException {
+    void removeAllHyperlinks() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
             hyperlink.setAddress("https://poi.apache.org/");
@@ -1234,7 +1234,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void newMergedRegionAt() throws IOException {
+    void newMergedRegionAt() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
@@ -1247,7 +1247,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void showInPaneManyRowsBug55248() throws IOException {
+    void showInPaneManyRowsBug55248() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet("Sheet 1");
 
@@ -1301,7 +1301,7 @@ public abstract class BaseTestSheet {
      * Tests that the setAsActiveCell and getActiveCell function pairs work together
      */
     @Test
-    public void setActiveCell() throws IOException {
+    void setActiveCell() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
             CellAddress B42 = new CellAddress("B42");
@@ -1322,7 +1322,7 @@ public abstract class BaseTestSheet {
 
 
     @Test
-    public void autoSizeDate() throws IOException {
+    void autoSizeDate() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet("Sheet1");
             Row r = s.createRow(0);

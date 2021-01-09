@@ -342,7 +342,7 @@ public final class TestCellReference {
      * bug 59684: separateRefParts fails on entire-column references
      */
     @Test
-    public void entireColumnReferences() {
+    void entireColumnReferences() {
         CellReference ref = new CellReference("HOME!$169");
         assertEquals("HOME", ref.getSheetName());
         assertEquals(168, ref.getRow());
@@ -352,7 +352,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void getSheetName() {
+    void getSheetName() {
         assertNull(new CellReference("A5").getSheetName());
         assertNull(new CellReference(null, 0, 0, false, false).getSheetName());
         // FIXME: CellReference is inconsistent
@@ -380,7 +380,7 @@ public final class TestCellReference {
     }
 
     @Test
-    public void isRowWithinRange() {
+    void isRowWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;
         assertFalse(CellReference.isRowWithinRange("0", ss), "1 before first row");
         assertTrue(CellReference.isRowWithinRange("1", ss), "first row");
@@ -395,19 +395,19 @@ public final class TestCellReference {
     }
 
     @Test
-    public void isRowWithinRangeNonInteger_BigNumber() {
+    void isRowWithinRangeNonInteger_BigNumber() {
         String rowNum = "4000000000";
         assertFalse(CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007));
     }
 
     @Test
-    public void isRowWithinRangeNonInteger_Alpha() {
+    void isRowWithinRangeNonInteger_Alpha() {
         String rowNum = "NotANumber";
         assertThrows(NumberFormatException.class, () -> CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007));
     }
 
     @Test
-    public void isColWithinRange() {
+    void isColWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;
         assertTrue(CellReference.isColumnWithinRange("", ss), "(empty)");
         assertTrue(CellReference.isColumnWithinRange("A", ss), "first column (A)");
@@ -416,17 +416,17 @@ public final class TestCellReference {
     }
 
     @Test
-    public void unquotedSheetName() {
+    void unquotedSheetName() {
         assertThrows(IllegalArgumentException.class, () -> new CellReference("'Sheet 1!A5"));
     }
 
     @Test
-    public void mismatchedQuotesSheetName() {
+    void mismatchedQuotesSheetName() {
         assertThrows(IllegalArgumentException.class, () -> new CellReference("Sheet 1!A5"));
     }
 
     @Test
-    public void escapedSheetName() {
+    void escapedSheetName() {
         String escapedName = "'Don''t Touch'!A5";
         String unescapedName = "'Don't Touch'!A5";
         new CellReference(escapedName);
@@ -435,22 +435,22 @@ public final class TestCellReference {
     }
 
     @Test
-    public void negativeRow() {
+    void negativeRow() {
         assertThrows(IllegalArgumentException.class, () -> new CellReference("sheet", -2, 0, false, false));
     }
 
     @Test
-    public void negativeColumn() {
+    void negativeColumn() {
         assertThrows(IllegalArgumentException.class, () -> new CellReference("sheet", 0, -2, false, false));
     }
 
     @Test
-    public void classifyEmptyStringCellReference() {
+    void classifyEmptyStringCellReference() {
         assertThrows(IllegalArgumentException.class, () -> CellReference.classifyCellReference("", SpreadsheetVersion.EXCEL2007));
     }
 
     @Test
-    public void classifyInvalidFirstCharCellReference() {
+    void classifyInvalidFirstCharCellReference() {
         assertThrows(IllegalArgumentException.class, () -> CellReference.classifyCellReference("!A5", SpreadsheetVersion.EXCEL2007));
     }
 

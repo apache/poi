@@ -44,35 +44,20 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPropertyTable {
 
-	private static class MyPOIFSStream extends POIFSStream {
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		MyPOIFSStream() {
-			super(null);
-		}
-
-		public void write(byte[] b, int off, int len) {
-			bos.write(b, off, len);
-		}
-
-		@Override
-		public OutputStream getOutputStream() {
-			return bos;
-		}
-	}
-
 	private static void confirmBlockEncoding(String expectedDataStr, PropertyTable table) throws IOException {
-
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		byte[] expectedData = RawDataUtil.decompress(expectedDataStr);
-		MyPOIFSStream stream = new MyPOIFSStream();
-		try {
-			table.write(stream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		byte[] output = stream.bos.toByteArray();
 
-		assertArrayEquals(expectedData, output);
+		POIFSStream stream = new POIFSStream(null) {
+			@Override
+			public OutputStream getOutputStream() {
+				return bos;
+			}
+		};
+
+		table.write(stream);
+
+		assertArrayEquals(expectedData, bos.toByteArray());
 	}
 
 	/**
@@ -93,7 +78,7 @@ public final class TestPropertyTable {
 	void testWriterPropertyTable() throws IOException {
 
 		// create the PropertyTable
-	   HeaderBlock   headerBlock = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+	   	HeaderBlock   headerBlock = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		PropertyTable table = new PropertyTable(headerBlock);
 
 		// create three DocumentProperty instances and add them to the

@@ -50,13 +50,13 @@ public final class TestPOIDocumentMain {
      * Set things up, two spreadsheets for our testing
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         doc = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         doc2 = HSSFTestDataSamples.openSampleWorkbook("StringFormulas.xls");
     }
 
     @Test
-    public void readProperties() {
+    void readProperties() {
         readPropertiesHelper(doc);
     }
 
@@ -71,7 +71,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void readProperties2() {
+    void readProperties2() {
         // Check again on the word one
         assertNotNull(doc2.getDocumentSummaryInformation());
         assertNotNull(doc2.getSummaryInformation());
@@ -82,7 +82,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void writeProperties() throws IOException {
+    void writeProperties() throws IOException {
         // Just check we can write them back out into a filesystem
         POIFSFileSystem outFS = new POIFSFileSystem();
         doc.readProperties();
@@ -98,7 +98,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void WriteReadProperties() throws IOException {
+    void WriteReadProperties() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // Write them out
@@ -121,7 +121,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void createNewProperties() throws IOException {
+    void createNewProperties() throws IOException {
         POIDocument doc = new HSSFWorkbook();
 
         // New document won't have them
@@ -149,7 +149,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void createNewPropertiesOnExistingFile() throws IOException {
+    void createNewPropertiesOnExistingFile() throws IOException {
         POIDocument doc = new HSSFWorkbook();
 
         // New document won't have them

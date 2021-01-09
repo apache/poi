@@ -54,10 +54,9 @@ public class TestHSSFDateUtil {
     /**
      * Test that against a real, test file, we still do everything
      *  correctly
-     * @throws IOException
      */
     @Test
-    public void onARealFile() throws IOException {
+    void onARealFile() throws IOException {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);

@@ -42,7 +42,7 @@ public class TestMultiOperandNumericFunction {
     }
 
     @Test
-    public void missingArgEvalsAreCountedAsZeroIfPolicyIsCoerce() {
+    void missingArgEvalsAreCountedAsZeroIfPolicyIsCoerce() {
         MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.COERCE);
         ValueEval result = instance.evaluate(new ValueEval[]{MissingArgEval.instance}, 0, 0);
         assertTrue(result instanceof NumberEval);
@@ -50,7 +50,7 @@ public class TestMultiOperandNumericFunction {
     }
 
     @Test
-    public void missingArgEvalsAreSkippedIfZeroIfPolicyIsSkipped() {
+    void missingArgEvalsAreSkippedIfZeroIfPolicyIsSkipped() {
         MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.SKIP);
         ValueEval result = instance.evaluate(new ValueEval[]{new NumberEval(1), MissingArgEval.instance}, 0, 0);
         assertTrue(result instanceof NumberEval);

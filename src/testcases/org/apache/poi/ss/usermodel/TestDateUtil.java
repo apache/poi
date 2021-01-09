@@ -65,7 +65,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getJavaDate_InvalidValue() {
+    void getJavaDate_InvalidValue() {
         final double dateValue = -1;
         final TimeZone tz = LocaleUtil.getUserTimeZone();
         final boolean use1904windowing = false;
@@ -79,7 +79,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getJavaDate_ValidValue() {
+    void getJavaDate_ValidValue() {
         final double dateValue = 0;
         final TimeZone tz = LocaleUtil.getUserTimeZone();
         final boolean use1904windowing = false;
@@ -96,7 +96,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getJavaCalendar_InvalidValue() {
+    void getJavaCalendar_InvalidValue() {
         final double dateValue = -1;
         final TimeZone tz = LocaleUtil.getUserTimeZone();
         final boolean use1904windowing = false;
@@ -109,7 +109,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getJavaCalendar_ValidValue() {
+    void getJavaCalendar_ValidValue() {
         final double dateValue = 0;
         final TimeZone tz = LocaleUtil.getUserTimeZone();
         final boolean use1904windowing = false;
@@ -130,7 +130,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getLocalDateTime_InvalidValue() {
+    void getLocalDateTime_InvalidValue() {
         final double dateValue = -1;
         final boolean use1904windowing = false;
         final boolean roundSeconds = false;
@@ -141,7 +141,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void getLocalDateTime_ValidValue() {
+    void getLocalDateTime_ValidValue() {
         final double dateValue = 0;
         final boolean use1904windowing = false;
         final boolean roundSeconds = false;
@@ -155,7 +155,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void isADateFormat() {
+    void isADateFormat() {
         // Cell content 2016-12-8 as an example
         // Cell show "12/8/2016"
         assertTrue(DateUtil.isADateFormat(14, "m/d/yy"));
@@ -187,7 +187,7 @@ public class TestDateUtil {
      * Checks the date conversion functions in the DateUtil class.
      */
     @Test
-    public void dateConversion() {
+    void dateConversion() {
 
         // Iterating over the hours exposes any rounding issues.
         Calendar cal = LocaleUtil.getLocaleCalendar(2002,JANUARY,1,0,1,1);
@@ -232,7 +232,7 @@ public class TestDateUtil {
      * Daylight Saving Time starts.
      */
     @Test
-    public void excelConversionOnDSTStart() {
+    void excelConversionOnDSTStart() {
         Calendar cal = LocaleUtil.getLocaleCalendar(2004,MARCH,28,0,0,0);
         for (int hour = 0; hour < 24; hour++) {
 
@@ -270,7 +270,7 @@ public class TestDateUtil {
      * Daylight Saving Time starts.
      */
     @Test
-    public void javaConversionOnDSTStart() {
+    void javaConversionOnDSTStart() {
         Calendar cal = LocaleUtil.getLocaleCalendar(2004,MARCH,28,0,0,0);
         double excelDate = DateUtil.getExcelDate(cal.getTime(), false);
         double oneHour = 1.0 / 24;
@@ -303,7 +303,7 @@ public class TestDateUtil {
      * Daylight Saving Time ends.
      */
     @Test
-    public void excelConversionOnDSTEnd() {
+    void excelConversionOnDSTEnd() {
         Calendar cal = LocaleUtil.getLocaleCalendar(2004,OCTOBER,31,0,0,0);
         for (int hour = 0; hour < 24; hour++) {
             cal.set(Calendar.HOUR_OF_DAY, hour);
@@ -332,7 +332,7 @@ public class TestDateUtil {
      * Daylight Saving Time ends.
      */
     @Test
-    public void javaConversionOnDSTEnd() {
+    void javaConversionOnDSTEnd() {
         Calendar cal = LocaleUtil.getLocaleCalendar(2004,OCTOBER,31,0,0,0);
         double excelDate = DateUtil.getExcelDate(cal.getTime(), false);
         double oneHour = 1.0 / 24;
@@ -354,7 +354,7 @@ public class TestDateUtil {
      * Tests that we deal with time-zones properly
      */
     @Test
-    public void calendarConversion() {
+    void calendarConversion() {
         TimeZone userTZ = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
@@ -400,7 +400,7 @@ public class TestDateUtil {
      * Tests that we correctly detect date formats as such
      */
     @Test
-    public void identifyDateFormats() {
+    void identifyDateFormats() {
         // First up, try with a few built in date formats
         short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
         for (short builtin : builtins) {
@@ -492,7 +492,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void excelDateBorderCases() throws ParseException {
+    void excelDateBorderCases() throws ParseException {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
         df.setTimeZone(LocaleUtil.getUserTimeZone());
 
@@ -511,7 +511,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void dateBug_2Excel() {
+    void dateBug_2Excel() {
         assertEquals(59.0, DateUtil.getExcelDate(createDate(1900, FEBRUARY, 28), false), 0.00001);
         assertEquals(61.0, DateUtil.getExcelDate(createDate(1900, MARCH, 1), false), 0.00001);
 
@@ -531,7 +531,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void dateBug_2Java() {
+    void dateBug_2Java() {
         assertEquals(createDate(1900, FEBRUARY, 28), DateUtil.getJavaDate(59.0, false));
         assertEquals(createDate(1900, MARCH, 1), DateUtil.getJavaDate(61.0, false));
 
@@ -551,7 +551,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void date1904() {
+    void date1904() {
         assertEquals(createDate(1904, JANUARY, 2), DateUtil.getJavaDate(1.0, true));
         assertEquals(createDate(1904, JANUARY, 1), DateUtil.getJavaDate(0.0, true));
         assertEquals(0.0, DateUtil.getExcelDate(createDate(1904, JANUARY, 1), true), 0.00001);
@@ -597,7 +597,7 @@ public class TestDateUtil {
      * Check if DateUtil.getAbsoluteDay works as advertised.
      */
     @Test
-    public void absoluteDay() {
+    void absoluteDay() {
         // 1 Jan 1900 is 1 day after 31 Dec 1899
         Calendar cal = LocaleUtil.getLocaleCalendar(1900,JANUARY,1,0,0,0);
         assertEquals(1, DateUtil.absoluteDay(cal, false), "Checking absolute day (1 Jan 1900)");
@@ -610,7 +610,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void absoluteDayYearTooLow() {
+    void absoluteDayYearTooLow() {
         Calendar cal = LocaleUtil.getLocaleCalendar(1899,JANUARY,1,0,0,0);
         assertThrows(IllegalArgumentException.class, () -> DateUtil.absoluteDay(cal, false));
 
@@ -623,7 +623,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void convertTime() {
+    void convertTime() {
 
         final double delta = 1E-7; // a couple of digits more accuracy than strictly required
         assertEquals(0.5, DateUtil.convertTime("12:00"), delta);
@@ -633,7 +633,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void parseDate() {
+    void parseDate() {
         assertEquals(createDate(2008, AUGUST, 3), DateUtil.parseYYYYMMDDDate("2008/08/03"));
         assertEquals(createDate(1994, MAY, 1), DateUtil.parseYYYYMMDDDate("1994/05/01"));
     }
@@ -642,7 +642,7 @@ public class TestDateUtil {
      * Ensure that date values *with* a fractional portion get the right time of day
      */
     @Test
-    public void convertDateTime() {
+    void convertDateTime() {
         // Excel day 30000 is date 18-Feb-1982
         // 0.7 corresponds to time 16:48:00
         Date actual = DateUtil.getJavaDate(30000.7);
@@ -660,7 +660,7 @@ public class TestDateUtil {
      *  Setting Cell's value to Jan 1, 1900 without a time doesn't return the same value set to
      */
     @Test
-    public void bug19172() throws IOException {
+    void bug19172() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             HSSFCell cell = sheet.createRow(0).createCell(0);
@@ -683,7 +683,7 @@ public class TestDateUtil {
      * that's formatted as ".0000"
      */
     @Test
-    public void bug54557() {
+    void bug54557() {
         final String format = ".0000";
         boolean isDateFormat = DateUtil.isADateFormat(165, format);
 
@@ -691,7 +691,7 @@ public class TestDateUtil {
     }
 
     @Test
-    public void bug56269() {
+    void bug56269() {
         double excelFraction = 41642.45833321759d;
         Calendar calNoRound = DateUtil.getJavaCalendar(excelFraction, false);
         assertEquals(10, calNoRound.get(Calendar.HOUR));

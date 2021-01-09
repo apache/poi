@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestBinaryRC4 {
     @Test
-    public void createKeyDigest() {
+    void createKeyDigest() {
         byte[] docIdData = readFromString("17 F6 D1 6B 09 B1 5F 7B 4C 9D 03 B4 81 B5 B4 4A");
         byte[] expResult = readFromString("C2 D9 56 B2 6B");
 

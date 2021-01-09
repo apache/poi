@@ -191,7 +191,7 @@ public class SanityChecker {
         checkRecordOrder(records, sheetRecords);
     }
 
-    public void checkHSSFWorkbook(HSSFWorkbook wb) {
+    void checkHSSFWorkbook(HSSFWorkbook wb) {
         checkWorkbookRecords(wb.getWorkbook());
         for (int i = 0; i < wb.getNumberOfSheets(); i++)
             checkSheetRecords(wb.getSheetAt(i).getSheet());

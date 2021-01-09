@@ -43,7 +43,7 @@ public abstract class BaseTestSheetShiftColumns {
     protected ITestDataProvider _testDataProvider;
 
     @BeforeEach
-    public void init() {
+    void init() {
         int rowIndex = 0;
         sheet1 = workbook.createSheet("sheet1");
         Row row = sheet1.createRow(rowIndex++);
@@ -257,7 +257,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void shiftMergedColumnsToMergedColumnsRight() throws IOException {
+    protected void shiftMergedColumnsToMergedColumnsRight() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
 
@@ -279,7 +279,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public void shiftMergedColumnsToMergedColumnsLeft() throws IOException {
+    protected void shiftMergedColumnsToMergedColumnsLeft() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         populateSheetCells(sheet);

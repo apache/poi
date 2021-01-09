@@ -33,7 +33,7 @@ public class TestHSSFRangeCopier extends BaseTestRangeCopier {
     }
 
     @BeforeEach
-    public void init() {
+    void init() {
         workbook = HSSFTestDataSamples.openSampleWorkbook("tile-range-test.xls");
         initSheets();
         rangeCopier = new HSSFRangeCopier(sheet1, sheet1);

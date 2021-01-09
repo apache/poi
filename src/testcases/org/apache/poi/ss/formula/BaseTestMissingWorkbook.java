@@ -55,7 +55,7 @@ public abstract class BaseTestMissingWorkbook {
     }
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	protected void setUp() throws Exception {
 		mainWorkbook = HSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
 		sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
 
@@ -64,7 +64,7 @@ public abstract class BaseTestMissingWorkbook {
 	}
 
 	@AfterEach
-	public void tearDown() throws Exception {
+	void tearDown() throws Exception {
 		if(mainWorkbook != null) {
 			mainWorkbook.close();
 		}

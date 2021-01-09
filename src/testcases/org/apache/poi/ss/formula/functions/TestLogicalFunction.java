@@ -45,7 +45,7 @@ public class TestLogicalFunction {
     private Cell cell2;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             buildWorkbook(wb);
         }

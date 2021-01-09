@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public final class TestIndexedColors {
 
     @Test
-    public void fromInt() {
+    void fromInt() {
         int[] illegalIndices = { -1, 65 };
         for (int index : illegalIndices) {
             assertThrows(IllegalArgumentException.class, () -> IndexedColors.fromInt(index));
@@ -39,12 +39,12 @@ public final class TestIndexedColors {
     }
 
     @Test
-    public void getIndex() {
+    void getIndex() {
         assertEquals(51, IndexedColors.GOLD.getIndex());
     }
 
     @Test
-    public void index() {
+    void index() {
         assertEquals(51, IndexedColors.GOLD.index);
     }
 }

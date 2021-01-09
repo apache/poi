@@ -53,7 +53,7 @@ public final class TestMetaDataIPI {
 	private SummaryInformation si;
 
 	@AfterEach
-	public void tearDown() throws Exception {
+	void tearDown() throws Exception {
 	    poifs.close();
 	}
 
@@ -62,7 +62,7 @@ public final class TestMetaDataIPI {
 	 * SummaryInformation to reasonable values
 	 */
 	@BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         poifs = new POIFSFileSystem();
         dsi = PropertySetFactory.newDocumentSummaryInformation();
         si = PropertySetFactory.newSummaryInformation();

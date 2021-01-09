@@ -143,7 +143,7 @@ public abstract class BaseTestBugzillaIssues {
      * Merged regions were being removed from the parent in cloned sheets
      */
     @Test
-    public void bug22720() throws IOException {
+    protected void bug22720() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("TEST");
             Sheet template = wb.getSheetAt(0);
@@ -276,7 +276,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug18800() throws IOException {
+    protected void bug18800() throws IOException {
        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
            wb1.createSheet("TEST");
            Sheet sheet = wb1.cloneSheet(0);
@@ -307,7 +307,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug43093() throws IOException {
+    void bug43093() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             addNewSheetWithCellsA1toD4(wb, 1);
@@ -329,7 +329,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug46729_testMaxFunctionArguments() throws IOException {
+    protected void bug46729_testMaxFunctionArguments() throws IOException {
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
@@ -524,7 +524,7 @@ public abstract class BaseTestBugzillaIssues {
      * CreateFreezePane column/row order check
      */
     @Test
-    public void bug49381() throws IOException {
+    void bug49381() throws IOException {
        try (Workbook wb = _testDataProvider.createWorkbook()) {
            int colSplit = 1;
            int rowSplit = 2;
@@ -578,7 +578,7 @@ public abstract class BaseTestBugzillaIssues {
      * open resulting file in excel, and check that there is a link to Google
      */
     @Test
-    public void bug15353() throws IOException {
+    void bug15353() throws IOException {
         String hyperlinkF = "HYPERLINK(\"http://google.com\",\"Google\")";
 
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
@@ -604,7 +604,7 @@ public abstract class BaseTestBugzillaIssues {
      * HLookup and VLookup with optional arguments
      */
     @Test
-    public void bug51024() throws IOException {
+    void bug51024() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r1 = s.createRow(0);
@@ -640,7 +640,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void stackoverflow23114397() throws IOException {
+    void stackoverflow23114397() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             DataFormat format = wb.getCreationHelper().createDataFormat();
 
@@ -709,7 +709,7 @@ public abstract class BaseTestBugzillaIssues {
      * =ISNUMBER(SEARCH("AM",A1)) evaluation
      */
     @Test
-    public void stackoverflow26437323() throws IOException {
+    void stackoverflow26437323() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r1 = s.createRow(0);
@@ -866,7 +866,7 @@ public abstract class BaseTestBugzillaIssues {
      */
     @Disabled("Fix this to evaluate for XSSF, Fix this to work at all for HSSF")
     @Test
-    public void bug46670() throws IOException {
+    void bug46670() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet s = wb1.createSheet();
             Row r1 = s.createRow(0);
@@ -981,7 +981,7 @@ public abstract class BaseTestBugzillaIssues {
      *  that it now is again
      */
     @Test
-    public void bug48718() throws IOException {
+    void bug48718() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             int startingFonts = wb instanceof HSSFWorkbook ? 4 : 1;
 
@@ -1004,7 +1004,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug57430() throws IOException {
+    void bug57430() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet1");
 
@@ -1015,7 +1015,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug56981() throws IOException {
+    void bug56981() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellStyle vertTop = wb.createCellStyle();
             vertTop.setVerticalAlignment(VerticalAlignment.TOP);
@@ -1098,7 +1098,7 @@ public abstract class BaseTestBugzillaIssues {
      *  kind of value from a Formula cell
      */
     @Test
-    public void bug47815() throws IOException {
+    protected void bug47815() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -1186,7 +1186,7 @@ public abstract class BaseTestBugzillaIssues {
      *  Mid in it, can give #VALUE in Excel
      */
     @Test
-    public void bug55747() throws IOException {
+    void bug55747() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             FormulaEvaluator ev = wb1.getCreationHelper().createFormulaEvaluator();
             Sheet s = wb1.createSheet();
@@ -1249,7 +1249,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug58260() throws IOException {
+    void bug58260() throws IOException {
         //Create workbook and worksheet
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             //Sheet worksheet = wb.createSheet("sample");
@@ -1443,7 +1443,7 @@ public abstract class BaseTestBugzillaIssues {
 
     @Disabled("bug 59393")
     @Test
-    public void bug59393_commentsCanHaveSameAnchor() throws IOException {
+    void bug59393_commentsCanHaveSameAnchor() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             Sheet sheet = wb.createSheet();
@@ -1486,7 +1486,7 @@ public abstract class BaseTestBugzillaIssues {
 
 
     @Test
-    public void bug57798() throws Exception {
+    protected void bug57798() throws Exception {
         String fileName = "57798." + _testDataProvider.getStandardFileNameExtension();
         try (Workbook workbook = _testDataProvider.openSampleWorkbook(fileName)) {
 
@@ -1615,7 +1615,7 @@ public abstract class BaseTestBugzillaIssues {
 
     // bug 60197: setSheetOrder should update sheet-scoped named ranges to maintain references to the sheets before the re-order
     @Test
-    public void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
+    protected void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet("Sheet1");
             Sheet sheet2 = wb.createSheet("Sheet2");

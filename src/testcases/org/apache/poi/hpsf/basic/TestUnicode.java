@@ -56,7 +56,7 @@ public class TestUnicode {
      * @exception IOException if any other I/O exception occurs
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         POIDataSamples samples = POIDataSamples.getHPSFInstance();
         data = samples.getFile(POI_FS);
     }

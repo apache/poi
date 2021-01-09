@@ -172,7 +172,7 @@ public final class TestHPSFBugs {
    }
 
     @Test
-    public void bug62451() throws IOException {
+    void bug62451() throws IOException {
         final long millis = 920355314183864L;
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             wb.createSheet().createRow(0).createCell(0).setCellValue("foo");

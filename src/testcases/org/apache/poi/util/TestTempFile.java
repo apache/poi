@@ -37,7 +37,7 @@ public class TestTempFile {
     private File tempDir;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         previousTempDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
         if(previousTempDir != null) {
             assertTrue(new File(previousTempDir).exists() || new File(previousTempDir).mkdirs(),
@@ -52,7 +52,7 @@ public class TestTempFile {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         if(tempDir != null) {
             String[] files = tempDir.list();
             assertNotNull(files);
@@ -104,7 +104,7 @@ public class TestTempFile {
     }
 
     @Test
-    public void createTempFileWithDefaultSuffix() throws IOException {
+    void createTempFileWithDefaultSuffix() throws IOException {
         File tempFile = TempFile.createTempFile("test", null);
         assertTrue(tempFile.getName().endsWith(".tmp"));
     }

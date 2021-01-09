@@ -78,7 +78,7 @@ public final class TestClassID {
     }
 
     @Test
-    public void checkUUIDConversion() {
+    void checkUUIDConversion() {
         String exp = "EABCECDB-CC1C-4A6F-B4E3-7F888A5ADFC8";
         ClassID clsId = ClassIDPredefined.EXCEL_V14_ODS.getClassID();
         assertEquals(exp, clsId.toUUIDString());

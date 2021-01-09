@@ -46,7 +46,7 @@ public final class TestTime {
 	private HSSFCellStyle style;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("new sheet");
 		style = wb.createCellStyle();

@@ -55,7 +55,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setCellStyleProperty() throws IOException {
+    void setCellStyleProperty() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -76,7 +76,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setCellStylePropertyWithInvalidValue() throws IOException {
+    void setCellStylePropertyWithInvalidValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -88,7 +88,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    public void setCellStylePropertyBorderWithShortAndEnum() throws IOException {
+    void setCellStylePropertyBorderWithShortAndEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -105,7 +105,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setCellStyleProperties() throws IOException {
+    void setCellStyleProperties() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -133,7 +133,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void getRow() throws IOException {
+    void getRow() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row1 = sh.createRow(0);
@@ -149,7 +149,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void getCell() throws IOException {
+    void getCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row = sh.createRow(0);
@@ -166,7 +166,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void createCell() throws IOException {
+    void createCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row = sh.createRow(0);
@@ -205,7 +205,7 @@ public abstract class BaseTestCellUtil {
     @Deprecated
     @SuppressWarnings("deprecated")
     @Test
-    public void setAlignment() throws IOException {
+    void setAlignment() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
@@ -233,7 +233,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setAlignmentEnum() throws IOException {
+    void setAlignmentEnum() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
@@ -261,7 +261,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setVerticalAlignmentEnum() throws IOException {
+    void setVerticalAlignmentEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row = sh.createRow(0);
@@ -288,7 +288,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setFont() throws IOException {
+    void setFont() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             Row row = sh.createRow(0);
@@ -320,7 +320,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    public void setFontFromDifferentWorkbook() throws IOException {
+    void setFontFromDifferentWorkbook() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook();
             Workbook wb2 = _testDataProvider.createWorkbook()) {
             Font font1 = wb1.createFont();
@@ -344,7 +344,7 @@ public abstract class BaseTestCellUtil {
      * @since POI 3.15 beta 3
      */
     @Test
-    public void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
+    void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);
             Map<String, Object> properties = new HashMap<>();
@@ -365,7 +365,7 @@ public abstract class BaseTestCellUtil {
      * @since POI 4.1.0
      */
     @Test
-    public void setFontShouldNotCreateDuplicateStyle() throws IOException {
+    void setFontShouldNotCreateDuplicateStyle() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell c = wb1.createSheet().createRow(1).createCell(1);
         Font f = wb1.createFont();

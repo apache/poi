@@ -67,43 +67,43 @@ public final class TestCellReference {
     }
 
     @Test
-    public void  testAbsRef2(){
+    void  testAbsRef2(){
         CellReference cf = new CellReference(4,1,true,true);
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
 
     @Test
-    public void  testAbsRef3(){
+    void  testAbsRef3(){
         CellReference cf = new CellReference("B$5");
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
 
     @Test
-    public void  testAbsRef4(){
+    void  testAbsRef4(){
         CellReference cf = new CellReference(4,1,true,false);
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
 
     @Test
-    public void  testAbsRef5(){
+    void  testAbsRef5(){
         CellReference cf = new CellReference("$B5");
         confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
 
     @Test
-    public void  testAbsRef6(){
+    void  testAbsRef6(){
         CellReference cf = new CellReference(4,1,false,true);
         confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
 
     @Test
-    public void  testAbsRef7(){
+    void  testAbsRef7(){
         CellReference cf = new CellReference("B5");
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }
 
     @Test
-    public void  testAbsRef8(){
+    void  testAbsRef8(){
         CellReference cf = new CellReference(4,1,false,false);
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }

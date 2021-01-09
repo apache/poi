@@ -334,7 +334,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    public void evaluateInCellReturnsSameCell() throws IOException {
+    void evaluateInCellReturnsSameCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet().createRow(0).createCell(0);
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();

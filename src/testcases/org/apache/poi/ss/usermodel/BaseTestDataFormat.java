@@ -40,7 +40,7 @@ public abstract class BaseTestDataFormat {
         _testDataProvider = testDataProvider;
     }
 
-    public void assertNotBuiltInFormat(String customFmt) {
+    void assertNotBuiltInFormat(String customFmt) {
         //check it is not in built-in formats
         assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
     }

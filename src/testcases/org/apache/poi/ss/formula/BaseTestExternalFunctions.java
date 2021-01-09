@@ -136,7 +136,7 @@ public abstract class BaseTestExternalFunctions {
      * @param testFile  either atp.xls or atp.xlsx
      */
     @Test
-    public void baseTestInvokeATP() throws IOException {
+    void baseTestInvokeATP() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook(atpFile);
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 

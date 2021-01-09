@@ -43,7 +43,7 @@ public final class TestFileSystemBugs {
     private List<POIFSFileSystem> openedFSs;
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (openedFSs != null && !openedFSs.isEmpty()) {
             for (POIFSFileSystem fs : openedFSs) {
                 try {

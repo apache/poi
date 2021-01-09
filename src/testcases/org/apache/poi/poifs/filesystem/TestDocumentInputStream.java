@@ -46,7 +46,7 @@ public final class TestDocumentInputStream {
     private static final int _buffer_size = 6;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         int blocks = (_workbook_size + 511) / 512;
 
         _workbook_data = new byte[512 * blocks];

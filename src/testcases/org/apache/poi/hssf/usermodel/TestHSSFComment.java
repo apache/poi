@@ -58,7 +58,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void defaultShapeType() {
+    void defaultShapeType() {
         HSSFComment comment = new HSSFComment(null, new HSSFClientAnchor());
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
     }
@@ -68,7 +68,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
      * when matching cells and their cell comments. The correct algorithm is to map
      */
     @Test
-    public void bug47924() throws IOException {
+    void bug47924() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47924.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFCell cell;
@@ -203,7 +203,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void resultEqualsToNonExistingAbstractShape() throws IOException {
+    void resultEqualsToNonExistingAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -268,7 +268,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void addToExistingFile() throws IOException {
+    void addToExistingFile() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -315,7 +315,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void setGetProperties() throws IOException {
+    void setGetProperties() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -371,7 +371,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void existingFileWithComment() throws IOException {
+    void existingFileWithComment() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("comments");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -385,7 +385,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void findComments() throws IOException{
+    void findComments() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -409,7 +409,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void initState() throws IOException{
+    void initState() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -429,7 +429,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void shapeId() throws IOException{
+    void shapeId() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();

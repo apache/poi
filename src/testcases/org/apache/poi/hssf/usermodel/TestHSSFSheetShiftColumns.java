@@ -34,53 +34,51 @@ public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
         _testDataProvider = HSSFITestDataProvider.instance;
     }
 
-    protected Workbook openWorkbook(String spreadsheetFileName)
-            throws IOException {
+    protected Workbook openWorkbook(String spreadsheetFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(spreadsheetFileName);
     }
 
-    protected Workbook getReadBackWorkbook(Workbook wb) throws IOException {
+    protected Workbook getReadBackWorkbook(Workbook wb) {
         return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)wb);
     }
 
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    public void shiftMergedColumnsToMergedColumnsLeft() throws IOException {
+    protected void shiftMergedColumnsToMergedColumnsLeft() {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
+
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    public void shiftMergedColumnsToMergedColumnsRight() throws IOException {
+    protected void shiftMergedColumnsToMergedColumnsRight() {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
+
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    protected void testBug54524() throws IOException {
+    protected void testBug54524() {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
+
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    protected void testCommentsShifting() throws IOException {
+    protected void testCommentsShifting() {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
     }
+
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    protected void testShiftWithMergedRegions() throws IOException {
+    protected void testShiftWithMergedRegions() {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf,
         // so that original method from BaseTestSheetShiftColumns can be executed.
         // After removing, you can re-add 'final' keyword to specification of original method.
     }
+
     @Override
     @Disabled("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
-    @Test
-    protected void testShiftHyperlinks() throws IOException {}
+    protected void testShiftHyperlinks() {}
 }

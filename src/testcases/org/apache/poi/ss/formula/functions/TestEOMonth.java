@@ -94,7 +94,7 @@ public class TestEOMonth {
     }
 
     @Test
-    public void checkOffset() {
+    void checkOffset() {
         for (int offset=-12; offset<=12; offset++) {
             Calendar cal = LocaleUtil.getLocaleCalendar();
             Date startDate = cal.getTime();

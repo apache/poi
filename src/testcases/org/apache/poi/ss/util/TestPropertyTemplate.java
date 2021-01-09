@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPropertyTemplate {
     @Test
-    public void getNumBorders() throws IOException {
+    void getNumBorders() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorders(a1, BorderStyle.THIN, BorderExtent.TOP);
@@ -52,7 +52,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void getNumBorderColors() throws IOException {
+    void getNumBorderColors() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), BorderExtent.TOP);
@@ -64,7 +64,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void getTemplateProperties() throws IOException {
+    void getTemplateProperties() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorders(a1, BorderStyle.THIN, BorderExtent.TOP);
@@ -82,7 +82,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void drawBorders() throws IOException {
+    void drawBorders() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorders(a1c3, BorderStyle.THIN,
@@ -409,7 +409,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void drawBorderColors() throws IOException {
+    void drawBorderColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorderColors(a1c3, IndexedColors.RED.getIndex(),
@@ -801,7 +801,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void drawBordersWithColors() throws IOException {
+    void drawBordersWithColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
 
@@ -849,7 +849,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void applyBorders() throws IOException {
+    void applyBorders() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         CellRangeAddress b2 = new CellRangeAddress(1, 1, 1, 1);
         PropertyTemplate pt = new PropertyTemplate();
@@ -910,7 +910,7 @@ public final class TestPropertyTemplate {
     }
 
     @Test
-    public void clonePropertyTemplate() throws IOException {
+    void clonePropertyTemplate() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
         pt.drawBorders(a1c3, BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), BorderExtent.ALL);

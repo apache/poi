@@ -38,7 +38,7 @@ public final class TestDate {
     private HSSFFormulaEvaluator evaluator;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
         cell11 = sheet.createRow(0).createCell(0);

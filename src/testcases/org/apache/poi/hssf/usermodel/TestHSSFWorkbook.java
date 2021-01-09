@@ -98,7 +98,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * Tests for {@link HSSFWorkbook#isHidden()} etc
      */
     @Test
-    public void hidden() throws IOException {
+    void hidden() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         WindowOneRecord w1 = wb.getWorkbook().getWindowOne();
@@ -126,7 +126,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void readWriteWithCharts() throws IOException {
+    void readWriteWithCharts() throws IOException {
         Sheet s;
 
         // Single chart, two sheets
@@ -196,7 +196,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void selectedSheet_bug44523() throws IOException {
+    void selectedSheet_bug44523() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
         HSSFSheet sheet2 = wb.createSheet("Sheet2");
@@ -243,7 +243,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void selectMultiple() throws IOException {
+    void selectMultiple() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet0 = wb.createSheet("Sheet0");
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
@@ -287,7 +287,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
 
     @Test
-    public void activeSheetAfterDelete_bug40414() throws IOException {
+    void activeSheetAfterDelete_bug40414() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
         HSSFSheet sheet0 = wb.createSheet("Sheet0");
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
@@ -369,7 +369,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * a specific exception as soon as the situation is detected. See bugzilla 45066
      */
     @Test
-    public void sheetSerializeSizeMismatch_bug45066() throws IOException {
+    void sheetSerializeSizeMismatch_bug45066() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             InternalSheet sheet = wb.createSheet("Sheet1").getSheet();
             List<RecordBase> sheetRecords = sheet.getRecords();
@@ -386,7 +386,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      *  that point to deleted sheets
      */
     @Test
-    public void namesToDeleteSheets() throws IOException {
+    void namesToDeleteSheets() throws IOException {
         HSSFWorkbook b = openSampleWorkbook("30978-deleted.xls");
         assertEquals(3, b.getNumberOfNames());
 
@@ -508,7 +508,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * The sample file provided with bug 45582 seems to have one extra byte after the EOFRecord
      */
     @Test
-    public void extraDataAfterEOFRecord() throws IOException {
+    void extraDataAfterEOFRecord() throws IOException {
         // bug 45582 - RecordFormatException - getCause() instanceof LittleEndian.BufferUnderrunException
         try (HSSFWorkbook wb = openSampleWorkbook("ex45582-22397.xls")) {
             assertNotNull(wb);
@@ -520,7 +520,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * 1-based sheet tab index (not a 1-based extern sheet index)
      */
     @Test
-    public void findBuiltInNameRecord() throws IOException {
+    void findBuiltInNameRecord() throws IOException {
         // testRRaC has multiple (3) built-in name records
         // The second print titles name record has getSheetNumber()==4
         HSSFWorkbook wb1 = openSampleWorkbook("testRRaC.xls");
@@ -553,7 +553,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * Test that the storage clsid property is preserved
      */
     @Test
-    public void bug47920() throws IOException {
+    void bug47920() throws IOException {
         POIFSFileSystem fs1 = new POIFSFileSystem(samples.openResourceAsStream("47920.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(fs1);
         ClassID clsid1 = fs1.getRoot().getStorageClsid();
@@ -581,7 +581,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         "testEXCEL_5.xls,BIFF5",
         "testEXCEL_95.xls,BIFF5"
     })
-    public void helpfulExceptionOnOldFiles(String file, String format) throws Exception {
+    void helpfulExceptionOnOldFiles(String file, String format) throws Exception {
         POIDataSamples xlsData = samples;
         try (InputStream is = xlsData.openResourceAsStream(file)) {
             OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new HSSFWorkbook(is),
@@ -595,7 +595,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      *  and {@link POIFSFileSystem}
      */
     @Test
-    public void differentPOIFS() throws Exception {
+    void differentPOIFS() throws Exception {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
         try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))) {
@@ -627,7 +627,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void wordDocEmbeddedInXls() throws IOException {
+    void wordDocEmbeddedInXls() throws IOException {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
         try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))) {
@@ -665,7 +665,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      *  again (via POIFS) and have it be valid
      */
     @Test
-    public void writeWorkbookFromPOIFS() throws IOException {
+    void writeWorkbookFromPOIFS() throws IOException {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
             POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
@@ -683,7 +683,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void cellStylesLimit() throws IOException {
+    void cellStylesLimit() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             int numBuiltInStyles = wb.getNumCellStyles();
             int MAX_STYLES = 4030;
@@ -701,7 +701,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void setSheetOrderHSSF() throws IOException{
+    void setSheetOrderHSSF() throws IOException{
         Workbook wb = new HSSFWorkbook();
         Sheet s1 = wb.createSheet("first sheet");
         Sheet s2 = wb.createSheet("other sheet");
@@ -762,7 +762,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void clonePictures() throws IOException {
+    void clonePictures() throws IOException {
         HSSFWorkbook wb = openSampleWorkbook("SimpleWithImages.xls");
         InternalWorkbook iwb = wb.getWorkbook();
         iwb.findDrawingGroup();
@@ -789,14 +789,14 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     // Should throw exception about invalid POIFSFileSystem
     @Test
-    public void emptyDirectoryNode() throws IOException {
+    void emptyDirectoryNode() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             assertThrows(IllegalArgumentException.class, () -> new HSSFWorkbook(fs).close());
         }
     }
 
     @Test
-    public void selectedSheetShort() throws IOException {
+    void selectedSheetShort() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
 
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
@@ -830,7 +830,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void names() throws IOException {
+    void names() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
 
         IllegalStateException ex1 = assertThrows(IllegalStateException.class, () -> wb.getNameAt(0));
@@ -866,7 +866,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void writeProtection() throws IOException {
+    void writeProtection() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
 
         assertFalse(wb.isWriteProtected());
@@ -881,7 +881,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-	public void bug50298() throws Exception {
+	void bug50298() throws Exception {
 		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
@@ -915,7 +915,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void bug50298a() throws Exception {
+	void bug50298a() throws Exception {
 		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
@@ -957,7 +957,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void bug54500() throws Exception {
+	void bug54500() throws Exception {
 		String nameName = "AName";
 		String sheetName = "ASheet";
 		HSSFWorkbook wb = openSampleWorkbook("54500.xls");
@@ -1092,7 +1092,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void closeDoesNotModifyWorkbook() throws IOException {
+    void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xls";
         final File file = samples.getFile(filename);
         Workbook wb;
@@ -1107,7 +1107,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void setSheetOrderToEnd() throws Exception {
+    void setSheetOrderToEnd() throws Exception {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             workbook.createSheet("A");
             workbook.createSheet("B");
@@ -1118,7 +1118,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void invalidInPlaceWrite() throws Exception {
+    void invalidInPlaceWrite() throws Exception {
         // Can't work for new files
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             assertThrows(IllegalStateException.class, wb::write, "Shouldn't work for new files");
@@ -1138,7 +1138,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void inPlaceWrite() throws Exception {
+    void inPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
         try (InputStream inputStream = samples.openResourceAsStream("SampleSS.xls");
@@ -1183,7 +1183,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    public void createDrawing() throws Exception {
+    void createDrawing() throws Exception {
         // the dimensions for this image are different than for XSSF and SXSSF
     }
 }

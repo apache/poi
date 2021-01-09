@@ -80,7 +80,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void smallStringSize() {
+    void smallStringSize() {
         //Test a basic string
         UnicodeString s = makeUnicodeString("Test");
         confirmSize(7, s);
@@ -127,7 +127,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void perfectStringSize() {
+    void perfectStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1);
       confirmSize(MAX_DATA_SIZE, s);
@@ -141,7 +141,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void perfectRichStringSize() {
+    void perfectRichStringSize() {
       //Test a rich text string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1-8-2);
       s.addFormatRun(new FormatRun((short)1,(short)0));
@@ -160,7 +160,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void continuedStringSize() {
+    void continuedStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1+20);
       confirmSize(MAX_DATA_SIZE+4+1+20, s);
@@ -168,7 +168,7 @@ public final class TestUnicodeString {
 
     /** Tests that a string size calculation that fits neatly in two records, the second being a continue*/
     @Test
-    public void perfectContinuedStringSize() {
+    void perfectContinuedStringSize() {
       //Test a basic string
       int strSize = MAX_DATA_SIZE*2;
       //String overhead
@@ -182,7 +182,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void formatRun() {
+    void formatRun() {
        FormatRun fr = new FormatRun((short)4, (short)0x15c);
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
@@ -208,7 +208,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void extRstFromEmpty() {
+    void extRstFromEmpty() {
        ExtRst ext = new ExtRst();
 
        assertEquals(0, ext.getNumberOfRuns());
@@ -272,7 +272,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void extRstFromData() {
+    void extRstFromData() {
        byte[] data = new byte[] {
                1, 0, 0x0C, 0,
                0, 0, 0x37, 0,
@@ -296,7 +296,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void corruptExtRstDetection() {
+    void corruptExtRstDetection() {
        byte[] data = new byte[] {
              0x79, 0x79, 0x11, 0x11,
              0x22, 0x22, 0x33, 0x33,
@@ -323,7 +323,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void extRstEqualsAndHashCode() {
+    void extRstEqualsAndHashCode() {
         byte[] buf = new byte[200];
         LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(buf, 0);
         String str = "\u1d02\u1d12\u1d22";
@@ -350,7 +350,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void unicodeStringsNullPointer() throws IOException {
+    void unicodeStringsNullPointer() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
             Sheet sheet = wb.createSheet("styles");
@@ -368,7 +368,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void copyExtRst() {
+    void copyExtRst() {
         ExtRst ext = new ExtRst();
 
         assertEquals(0, ext.getNumberOfRuns());
@@ -389,7 +389,7 @@ public final class TestUnicodeString {
     }
 
     @Test
-    public void copyExtRstFromData() {
+    void copyExtRstFromData() {
         byte[] data = new byte[]{
                 1, 0, 0x0C, 0,
                 0, 0, 0x37, 0,

@@ -31,12 +31,12 @@ import java.util.List;
  * 	private final MemoryLeakVerifier verifier = new MemoryLeakVerifier();
 
 	{@literal}After
-	public void tearDown() {
+	void tearDown() {
 		verifier.assertGarbageCollected();
 	}
 
 	{@literal}Test
-	public void someTest() {
+	void someTest() {
 		...
 		verifier.addObject(object);
 	}

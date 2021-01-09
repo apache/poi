@@ -31,7 +31,7 @@ public abstract class BaseTestXEvaluationSheet {
     protected abstract Map.Entry<Sheet, EvaluationSheet> getInstance();
 
     @Test
-    public void lastRowNumIsUpdatedFromUnderlyingSheet_bug62993() {
+    void lastRowNumIsUpdatedFromUnderlyingSheet_bug62993() {
         Map.Entry<Sheet, EvaluationSheet> sheetPair = getInstance();
         Sheet underlyingSheet = sheetPair.getKey();
         EvaluationSheet instance = sheetPair.getValue();

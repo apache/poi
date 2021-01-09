@@ -251,7 +251,7 @@ public abstract class BaseTestCellComment {
      * code from the quick guide
      */
     @Test
-    public void quickGuide() throws IOException {
+    void quickGuide() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
 
         CreationHelper factory = wb1.getCreationHelper();
@@ -286,7 +286,7 @@ public abstract class BaseTestCellComment {
     }
 
     @Test
-    public void getClientAnchor() throws IOException {
+    void getClientAnchor() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Sheet sheet = wb.createSheet();
@@ -361,7 +361,7 @@ public abstract class BaseTestCellComment {
     }
 
     @Test
-    public void attemptToSave2CommentsWithSameCoordinates() throws IOException {
+    void attemptToSave2CommentsWithSameCoordinates() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             CreationHelper factory = wb.getCreationHelper();
@@ -386,7 +386,7 @@ public abstract class BaseTestCellComment {
     }
 
     @Test
-    public void getAddress() {
+    void getAddress() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
@@ -400,7 +400,7 @@ public abstract class BaseTestCellComment {
     }
 
     @Test
-    public void setAddress() {
+    void setAddress() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();

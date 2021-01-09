@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestGeomean {
     @Test
-    public void acceptanceTest() {
+    void acceptanceTest() {
         Function geomean = getInstance();
 
         final ValueEval result = geomean.evaluate(new ValueEval[]{new NumberEval(2), new NumberEval(3)}, 0, 0);
@@ -49,35 +49,35 @@ public class TestGeomean {
     }
 
     @Test
-    public void booleansByValueAreCoerced() {
+    void booleansByValueAreCoerced() {
         final ValueEval[] args = {BoolEval.TRUE};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         verifyNumericResult(1.0, result);
     }
 
     @Test
-    public void stringsByValueAreCoerced() {
+    void stringsByValueAreCoerced() {
         final ValueEval[] args = {new StringEval("2")};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         verifyNumericResult(2.0, result);
     }
 
     @Test
-    public void nonCoerceableStringsByValueCauseValueInvalid() {
+    void nonCoerceableStringsByValueCauseValueInvalid() {
         final ValueEval[] args = {new StringEval("foo")};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
     @Test
-    public void booleansByReferenceAreSkipped() {
+    void booleansByReferenceAreSkipped() {
         final ValueEval[] args = new ValueEval[]{new NumberEval(2.0), EvalFactory.createRefEval("A1", BoolEval.TRUE)};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         verifyNumericResult(2.0, result);
     }
 
     @Test
-    public void booleansStringsAndBlanksByReferenceAreSkipped() {
+    void booleansStringsAndBlanksByReferenceAreSkipped() {
         ValueEval ref = EvalFactory.createAreaEval("A1:A3", new ValueEval[]{new StringEval("foo"), BoolEval.FALSE, BlankEval.instance});
         final ValueEval[] args = {ref, new NumberEval(2.0)};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
@@ -85,14 +85,14 @@ public class TestGeomean {
     }
 
     @Test
-    public void stringsByValueAreCounted() {
+    void stringsByValueAreCounted() {
         final ValueEval[] args = {new StringEval("2.0")};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         verifyNumericResult(2.0, result);
     }
 
     @Test
-    public void missingArgCountAsZero() {
+    void missingArgCountAsZero() {
         // and, naturally, produces a NUM_ERROR
         final ValueEval[] args = {new NumberEval(1.0), MissingArgEval.instance};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
@@ -103,21 +103,21 @@ public class TestGeomean {
      * Implementation-specific: the math lib returns 0 for the input [1.0, 0.0], but a NUM_ERROR should be returned.
      */
     @Test
-    public void sequence_1_0_shouldReturnError() {
+    void sequence_1_0_shouldReturnError() {
         final ValueEval[] args = {new NumberEval(1.0), new NumberEval(0)};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
     @Test
-    public void minusOneShouldReturnError() {
+    void minusOneShouldReturnError() {
         final ValueEval[] args = {new NumberEval(1.0), new NumberEval(-1.0)};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
     @Test
-    public void firstErrorPropagates() {
+    void firstErrorPropagates() {
         final ValueEval[] args = {ErrorEval.DIV_ZERO, ErrorEval.NUM_ERROR};
         final ValueEval result = getInstance().evaluate(args, 0, 0);
         assertEquals(ErrorEval.DIV_ZERO, result);

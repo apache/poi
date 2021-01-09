@@ -58,8 +58,8 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Test
-    public void cloneSheet() throws IOException {
-        RuntimeException e = assertThrows(RuntimeException.class, super::cloneSheet);
+    protected void cloneSheet() throws IOException {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> super.cloneSheet());
         assertEquals("Not Implemented", e.getMessage());
     }
 
@@ -68,8 +68,8 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Test
-    public void sheetClone() throws IOException {
-        RuntimeException e = assertThrows(RuntimeException.class, super::sheetClone);
+    protected void sheetClone() throws IOException {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> super.sheetClone());
         assertEquals("Not Implemented", e.getMessage());
     }
 
@@ -78,17 +78,14 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Disabled("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
-    @Test
-    public void setSheetName() {}
+    protected void setSheetName() {}
 
     @Override
     @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
-    @Test
     public void parentReferences() {}
 
     @Override
     @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
-    @Test
     public void unicodeInAll() {}
 
     @Test

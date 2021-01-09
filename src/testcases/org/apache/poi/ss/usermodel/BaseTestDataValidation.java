@@ -66,7 +66,7 @@ public abstract class BaseTestDataValidation {
 			_validationType = validationType;
 			_currentRowIndex = fSheet.getPhysicalNumberOfRows();
 		}
-		public void addValidation(int operatorType, String firstFormula, String secondFormula,
+		void addValidation(int operatorType, String firstFormula, String secondFormula,
 				int errorStyle, String ruleDescr, String promptDescr,
 				boolean allowEmpty, boolean inputBox, boolean errorBox) {
 			String[] explicitListValues = null;
@@ -168,7 +168,7 @@ public abstract class BaseTestDataValidation {
 			cell.setCellStyle(style);
 			setCellValue(cell, strStettings);
 		}
-		public void addListValidation(String[] explicitListValues, String listFormula, String listValsDescr,
+		void addListValidation(String[] explicitListValues, String listFormula, String listValsDescr,
 				boolean allowEmpty, boolean suppressDropDown) {
 			String promptDescr = (allowEmpty ? "empty ok" : "not empty")
 					+ ", " + (suppressDropDown ? "no drop-down" : "drop-down");
@@ -256,7 +256,7 @@ public abstract class BaseTestDataValidation {
 			_currentSheet = _wb.createSheet(sheetName);
 			return _currentSheet;
 		}
-		public void createDVTypeRow(String strTypeDescription) {
+		void createDVTypeRow(String strTypeDescription) {
 			Sheet sheet = _currentSheet;
 			Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));
@@ -266,7 +266,7 @@ public abstract class BaseTestDataValidation {
 			row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 		}
 
-		public void createHeaderRow() {
+		void createHeaderRow() {
 			Sheet sheet = _currentSheet;
 			Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 			row.setHeight((short) 400);
@@ -298,7 +298,7 @@ public abstract class BaseTestDataValidation {
 			return new ValidationAdder(_currentSheet, _style_1, _style_2, cellStyle, dataValidationType);
 		}
 
-		public void createDVDescriptionRow(String strTypeDescription) {
+		void createDVDescriptionRow(String strTypeDescription) {
 			Sheet sheet = _currentSheet;
 			Row row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
 			sheet.addMergedRegion(new CellRangeAddress(sheet.getPhysicalNumberOfRows()-1, sheet.getPhysicalNumberOfRows()-1, 0, 5));

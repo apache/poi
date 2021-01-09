@@ -43,7 +43,7 @@ public final class TestFixed {
     private HSSFFormulaEvaluator evaluator;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
             cell11 = sheet.createRow(0).createCell(0);

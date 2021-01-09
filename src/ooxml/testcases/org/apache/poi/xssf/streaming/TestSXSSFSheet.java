@@ -58,15 +58,15 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void cloneSheet() {
-        RuntimeException ex = assertThrows(RuntimeException.class, super::cloneSheet);
+    protected void cloneSheet() {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheet());
         assertEquals("Not Implemented", ex.getMessage());
     }
 
     @Override
     @Test
-    public void cloneSheetMultipleTimes() {
-        RuntimeException ex = assertThrows(RuntimeException.class, super::cloneSheetMultipleTimes);
+    protected void cloneSheetMultipleTimes() {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheetMultipleTimes());
         assertEquals("Not Implemented", ex.getMessage());
     }
 
@@ -75,8 +75,8 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void shiftMerged() {
-        RuntimeException ex = assertThrows(RuntimeException.class, super::shiftMerged);
+    protected void shiftMerged() {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> super.shiftMerged());
         assertEquals("Not Implemented", ex.getMessage());
     }
 
@@ -87,14 +87,13 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void bug35084() {
-        RuntimeException ex = assertThrows(RuntimeException.class, super::bug35084);
+    protected void bug35084() {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> super.bug35084());
         assertEquals("Not Implemented", ex.getMessage());
     }
 
     @Override
-    @Test
-    public void getCellComment() {
+    protected void getCellComment() {
         // TODO: reading cell comments via Sheet does not work currently as it tries
         // to access the underlying sheet for this, but comments are stored as
         // properties on Cells...

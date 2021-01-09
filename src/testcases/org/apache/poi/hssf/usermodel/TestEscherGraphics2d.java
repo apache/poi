@@ -39,7 +39,7 @@ public final class TestEscherGraphics2d {
 	private EscherGraphics2d graphics;
 
 	@BeforeEach
-    public void setUp() {
+    void setUp() {
 		workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("test");
 		escherGroup = sheet.createDrawingPatriarch().createGroup(new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short) 0,0));
@@ -49,7 +49,7 @@ public final class TestEscherGraphics2d {
 	}
 
 	@AfterEach
-	public void closeResources() throws IOException {
+	void closeResources() throws IOException {
 	    workbook.close();
 	}
 

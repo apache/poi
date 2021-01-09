@@ -75,7 +75,7 @@ public class TestPOIFSDump {
     };
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         // clean up the directory that POIFSDump writes to
         deleteDirectory(new File(new File(TEST_FILE+"_dump").getName()));
     }

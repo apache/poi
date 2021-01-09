@@ -68,7 +68,7 @@ public class TestEscherDump {
     private PrintStream stream;
 
     @BeforeEach
-    public void setup() throws UnsupportedEncodingException {
+    void setup() throws UnsupportedEncodingException {
         stream = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
     }
 

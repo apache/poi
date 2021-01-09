@@ -971,7 +971,7 @@ public abstract class BaseTestCell {
      * Tests that the setAsActiveCell and getActiveCell function pairs work together
      */
     @Test
-    public void setAsActiveCell() throws IOException {
+    void setAsActiveCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
@@ -987,7 +987,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void getCellComment() throws IOException {
+    void getCellComment() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             CreationHelper factory = wb.getCreationHelper();
@@ -1120,7 +1120,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void getDateCellValue_returnsNull_onABlankCell() throws IOException {
+    void getDateCellValue_returnsNull_onABlankCell() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
             assertEquals(CellType.BLANK, cell.getCellType());
@@ -1130,7 +1130,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void getBooleanCellValue_returnsFalse_onABlankCell() throws IOException {
+    void getBooleanCellValue_returnsFalse_onABlankCell() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
             assertEquals(CellType.BLANK, cell.getCellType());
@@ -1140,7 +1140,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setStringCellValue_ifThrows_shallNotChangeCell() throws IOException {
+    void setStringCellValue_ifThrows_shallNotChangeCell() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
 
@@ -1163,7 +1163,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setStringCellValueWithRichTextString_ifThrows_shallNotChangeCell() throws IOException {
+    void setStringCellValueWithRichTextString_ifThrows_shallNotChangeCell() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Cell cell = workbook.createSheet().createRow(0).createCell(0);
 
@@ -1187,7 +1187,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellType_null_throwsIAE() throws IOException {
+    void setCellType_null_throwsIAE() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             assertThrows(IllegalArgumentException.class, () -> cell.setCellType(null));
@@ -1195,7 +1195,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellType_NONE_throwsIAE() throws IOException {
+    void setCellType_NONE_throwsIAE() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             assertThrows(IllegalArgumentException.class, () -> cell.setCellType(CellType._NONE));
@@ -1204,7 +1204,7 @@ public abstract class BaseTestCell {
 
 
     @Test
-    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() throws IOException {
+    protected void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
 
@@ -1221,7 +1221,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
+    protected void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
@@ -1231,7 +1231,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
+    protected void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
 
@@ -1244,7 +1244,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void removeFormula_preservesValue() throws IOException {
+    void removeFormula_preservesValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
 
@@ -1275,7 +1275,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() throws IOException {
+    protected void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
 
@@ -1302,7 +1302,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellFormula_onABlankCell_setsValueToZero() throws IOException {
+    void setCellFormula_onABlankCell_setsValueToZero() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.setCellFormula("\"foo\"");
@@ -1314,7 +1314,7 @@ public abstract class BaseTestCell {
 
 
     @Test
-    public void setCellFormula_onANonBlankCell_preservesTheValue() throws IOException {
+    void setCellFormula_onANonBlankCell_preservesTheValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.setCellValue(true);
@@ -1326,7 +1326,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellFormula_onAFormulaCell_changeFormula_preservesTheValue() throws IOException {
+    void setCellFormula_onAFormulaCell_changeFormula_preservesTheValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.setCellFormula("\"foo\"");
@@ -1343,7 +1343,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() throws IOException {
+    protected void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.getSheet().setArrayFormula("\"foo\"", CellRangeAddress.valueOf("A1"));
@@ -1364,7 +1364,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() throws IOException {
+    void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             assertThrows(IllegalArgumentException.class, () -> cell.setCellType(CellType.FORMULA));
@@ -1372,7 +1372,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellType_FORMULA_onAFormulaCell_doesNothing() throws IOException {
+    void setCellType_FORMULA_onAFormulaCell_doesNothing() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.setCellFormula("3");
@@ -1387,7 +1387,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
+    void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));

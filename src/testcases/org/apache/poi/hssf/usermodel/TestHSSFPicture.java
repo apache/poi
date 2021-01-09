@@ -53,7 +53,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
      * Bug # 45829 reported ArithmeticException (/ by zero) when resizing png with zero DPI.
      */
     @Test
-    public void bug45829() throws IOException {
+    void bug45829() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sh1 = wb.createSheet();
             HSSFPatriarch p1 = sh1.createDrawingPatriarch();
@@ -67,7 +67,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
 
     @Test
-    public void addPictures() throws IOException {
+    void addPictures() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             HSSFSheet sh = wb1.createSheet("Pictures");
@@ -166,7 +166,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
     @SuppressWarnings("unused")
     @Test
-    public void bsePictureRef() throws IOException {
+    void bsePictureRef() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sh = wb.createSheet("Pictures");
             HSSFPatriarch dr = sh.createDrawingPatriarch();
@@ -193,7 +193,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
     }
 
     @Test
-    public void readExistingImage() throws IOException {
+    void readExistingImage() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("drawings.xls")) {
             HSSFSheet sheet = wb.getSheet("picture");
             HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -206,7 +206,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
     @SuppressWarnings("resource")
     @Test
-    public void setGetProperties() throws IOException {
+    void setGetProperties() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             HSSFSheet sh = wb1.createSheet("Pictures");
@@ -234,7 +234,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
     @SuppressWarnings("resource")
     @Test
-    public void bug49658() throws IOException {
+    void bug49658() throws IOException {
     	// test if inserted EscherMetafileBlip will be read again
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 

@@ -599,7 +599,7 @@ public abstract class BaseTestSheetShiftRows {
 
     //@Disabled("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
-    public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
+    void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
 
@@ -638,7 +638,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void shiftMergedRowsToMergedRowsUp() throws IOException {
+    void shiftMergedRowsToMergedRowsUp() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         populateSheetCells(sheet, 2);
@@ -661,7 +661,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void shiftMergedRowsToMergedRowsOverlappingMergedRegion() throws IOException {
+    void shiftMergedRowsToMergedRowsOverlappingMergedRegion() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         populateSheetCells(sheet, 10);
@@ -683,7 +683,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void bug60384ShiftMergedRegion() throws IOException {
+    void bug60384ShiftMergedRegion() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         populateSheetCells(sheet, 9);
@@ -718,7 +718,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-    public void shiftMergedRowsToMergedRowsDown() throws IOException {
+    void shiftMergedRowsToMergedRowsDown() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
 
@@ -765,7 +765,7 @@ public abstract class BaseTestSheetShiftRows {
 
 
     @Test
-    public void checkMergedRegions56454() {
+    void checkMergedRegions56454() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 

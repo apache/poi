@@ -60,7 +60,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
     }
 
 
-	public void assertDataValidation(Workbook wb) {
+	void assertDataValidation(Workbook wb) {
 
         byte[] generatedContent;
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(22000)) {

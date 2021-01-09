@@ -231,7 +231,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void containsRow() {
+    void containsRow() {
         final CellRangeAddress region = new CellRangeAddress(10, 12, 3, 5);
 
         assertFalse(region.containsRow(9));
@@ -242,7 +242,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void containsColumn() {
+    void containsColumn() {
         final CellRangeAddress region = new CellRangeAddress(10, 12, 3, 5);
 
         assertFalse(region.containsColumn(2));
@@ -253,7 +253,7 @@ public final class TestCellRangeAddress {
     }
 
     @Test
-    public void iterator() {
+    void iterator() {
         final CellRangeAddress A1_B2 = new CellRangeAddress(0, 1, 0, 1);
 
         // the cell address iterator iterates in row major order

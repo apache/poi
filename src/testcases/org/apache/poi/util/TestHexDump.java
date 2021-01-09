@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
@@ -39,7 +38,7 @@ public class TestHexDump {
     @BeforeAll
     public static void setUp() throws UnsupportedEncodingException {
         SYSTEM_OUT = System.out;
-        System.setOut(new PrintStream(new OutputStream() {public void write(int b) {}}, false, "UTF-8"));
+        System.setOut(new NullPrintStream());
     }
 
     @AfterAll
@@ -110,7 +109,7 @@ public class TestHexDump {
         StringBuilder format = new StringBuilder();
 
         for (int j = 0; j < 16 && (index + j*16) < 256; j++) {
-            obj[0] = offset+index+j*16;
+            obj[0] = offset+index+j*16L;
             chrs.setLength(0);
             format.setLength(0);
             format.append("%08X ");

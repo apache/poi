@@ -48,13 +48,13 @@ public abstract class BaseTestSheetHiding {
     }
 
 	@BeforeEach
-    public void setUp() {
+    void setUp() {
         wbH = _testDataProvider.openSampleWorkbook(_file1);
         wbU = _testDataProvider.openSampleWorkbook(_file2);
     }
 
 	@AfterEach
-	public void teadDown() throws IOException {
+	void teadDown() throws IOException {
 	    wbH.close();
 	    wbU.close();
 	}

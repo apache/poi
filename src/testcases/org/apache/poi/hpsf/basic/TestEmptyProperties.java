@@ -70,7 +70,7 @@ public final class TestEmptyProperties {
      * @exception IOException if an I/O exception occurs
      */
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         final File data = samples.getFile(POI_FS);
         poiFiles = Util.readPOIFiles(data);
     }

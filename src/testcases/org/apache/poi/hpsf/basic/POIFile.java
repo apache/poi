@@ -35,7 +35,7 @@ public class POIFile
      *
      * @param name The POI file's name.
      */
-    public void setName(final String name)
+    void setName(final String name)
     {
         this.name = name;
     }
@@ -55,7 +55,7 @@ public class POIFile
      *
      * @param path The POI file's path.
      */
-    public void setPath(final POIFSDocumentPath path)
+    void setPath(final POIFSDocumentPath path)
     {
         this.path = path;
     }
@@ -75,7 +75,7 @@ public class POIFile
      *
      * @param bytes The POI file's content bytes.
      */
-    public void setBytes(final byte[] bytes)
+    void setBytes(final byte[] bytes)
     {
         this.bytes = bytes;
     }

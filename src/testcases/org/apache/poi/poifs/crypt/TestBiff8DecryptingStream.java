@@ -77,7 +77,7 @@ public final class TestBiff8DecryptingStream {
 		 * Used to 'skip over' the uninteresting middle bits of the key blocks.
 		 * Also confirms that read position of the underlying stream is aligned.
 		 */
-		public void rollForward(int fromPosition, int toPosition) {
+		void rollForward(int fromPosition, int toPosition) {
 			assertEquals(fromPosition, _bds.getPosition());
 			for (int i = fromPosition; i < toPosition; i++) {
 				_bds.readByte();
@@ -85,15 +85,15 @@ public final class TestBiff8DecryptingStream {
 			assertEquals(toPosition, _bds.getPosition());
 		}
 
-		public void confirmByte(int expVal) {
+		void confirmByte(int expVal) {
 		    assertEquals(expVal, _bds.readUByte());
 		}
 
-		public void confirmShort(int expVal) {
+		void confirmShort(int expVal) {
 		    assertEquals((short)expVal, _bds.readShort());
 		}
 
-        public void confirmUShort(int expVal) {
+        void confirmUShort(int expVal) {
             assertEquals(expVal, _bds.readUShort());
         }
 
@@ -105,15 +105,15 @@ public final class TestBiff8DecryptingStream {
             return _bds.readUShort();
         }
 
-		public void confirmInt(int expVal) {
+		void confirmInt(int expVal) {
 			assertEquals(expVal, _bds.readInt());
 		}
 
-		public void confirmLong(long expVal) {
+		void confirmLong(long expVal) {
 		    assertEquals(expVal, _bds.readLong());
 		}
 
-		public void confirmData(String expHexData) {
+		void confirmData(String expHexData) {
 
 			byte[] expData = HexRead.readFromString(expHexData);
 			byte[] actData = new byte[expData.length];
@@ -126,7 +126,7 @@ public final class TestBiff8DecryptingStream {
 	 * Tests reading of 64,32,16 and 8 bit integers aligned with key changing boundaries
 	 */
 	@Test
-	public void readsAlignedWithBoundary() {
+	void readsAlignedWithBoundary() {
 		StreamTester st = createStreamTester();
 
 		st.rollForward(0x0004, 0x03FF);
@@ -156,7 +156,7 @@ public final class TestBiff8DecryptingStream {
 	 * Tests reading of 64,32 and 16 bit integers <i>across</i> key changing boundaries
 	 */
     @Test
-	public void readsSpanningBoundary() {
+	void readsSpanningBoundary() {
 		StreamTester st = createStreamTester();
 
 		st.rollForward(0x0004, 0x03FC);
@@ -172,7 +172,7 @@ public final class TestBiff8DecryptingStream {
 	 * and that the RC4 stream stays aligned during these calls
 	 */
     @Test
-	public void readHeaderUShort() {
+	void readHeaderUShort() {
 		StreamTester st = createStreamTester();
 
 		st.rollForward(0x0004, 0x03FF);
@@ -195,7 +195,7 @@ public final class TestBiff8DecryptingStream {
 	 * Tests reading of byte sequences <i>across</i> and <i>aligned with</i> key changing boundaries
 	 */
     @Test
-	public void readByteArrays() {
+	void readByteArrays() {
 		StreamTester st = createStreamTester();
 
 		st.rollForward(0x0004, 0x2FFC);

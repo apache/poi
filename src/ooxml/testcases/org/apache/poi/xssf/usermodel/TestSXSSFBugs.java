@@ -54,15 +54,15 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
     // override some tests which do not work for SXSSF
     @Override @Disabled("cloneSheet() not implemented") @Test
-    public void bug18800() { /* cloneSheet() not implemented */ }
+    protected void bug18800() { /* cloneSheet() not implemented */ }
     @Override @Disabled("cloneSheet() not implemented") @Test
-    public void bug22720() { /* cloneSheet() not implemented */ }
+    protected void bug22720() { /* cloneSheet() not implemented */ }
     @Override @Disabled("Evaluation is not fully supported") @Test
-    public void bug47815() { /* Evaluation is not supported */ }
+    protected void bug47815() { /* Evaluation is not supported */ }
     @Override @Disabled("Evaluation is not fully supported") @Test
-    public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
+    protected void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
     @Override @Disabled("Reading data is not supported") @Test
-    public void bug57798() { /* Reading data is not supported */ }
+    protected void bug57798() { /* Reading data is not supported */ }
 
     /**
      * Setting repeating rows and columns shouldn't break
@@ -105,7 +105,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     // bug 60197: setSheetOrder should update sheet-scoped named ranges to maintain references to the sheets before the re-order
     @Test
     @Override
-    public void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
+    protected void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
         try {
             super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged();
         } catch (final RuntimeException e) {

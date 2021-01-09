@@ -133,7 +133,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void processFunctionRow(
+    void processFunctionRow(
         String testName, String filename, HSSFSheet sheet, int formulasRowIdx, HSSFFormulaEvaluator evaluator, int precisionColumnIndex
     ) throws Exception {
         HSSFRow r = sheet.getRow(formulasRowIdx);

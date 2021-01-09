@@ -517,7 +517,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
     @Disabled("See bug 59728")
     @Test
-    public void shouldNotBeAbleToCreateArrayFormulaOnPreexistingMergedRegion() throws IOException {
+    void shouldNotBeAbleToCreateArrayFormulaOnPreexistingMergedRegion() throws IOException {
         /*
          *  m  = merged region
          *  f  = array formula

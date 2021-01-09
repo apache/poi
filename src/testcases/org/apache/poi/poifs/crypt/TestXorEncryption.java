@@ -74,7 +74,7 @@ public class TestXorEncryption {
 
     @Test
     @Disabled("currently not supported")
-    public void encrypt() throws IOException {
+    void encrypt() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             try (HSSFWorkbook hwb = HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls")) {

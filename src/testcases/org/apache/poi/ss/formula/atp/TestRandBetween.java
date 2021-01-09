@@ -41,7 +41,7 @@ public class TestRandBetween {
 	private Cell formulaCell;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	void setUp() {
 		Workbook wb = HSSFTestDataSamples.openSampleWorkbook("TestRandBetween.xls");
 		evaluator = wb.getCreationHelper().createFormulaEvaluator();
 

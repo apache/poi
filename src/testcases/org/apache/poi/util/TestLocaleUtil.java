@@ -43,7 +43,7 @@ public class TestLocaleUtil {
      */
     @BeforeEach
     @SuppressForbidden("implementation around default locales in POI")
-    public void setUp() {
+    void setUp() {
         // reset the user locale and time zone so that tests do not interfere with each other
         // the other and better way would be to run each test in its own thread since
         // LocaleUtil uses per-thread settings.
@@ -61,14 +61,14 @@ public class TestLocaleUtil {
      * other tests.
      */
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         LocaleUtil.resetUserLocale();
         LocaleUtil.resetUserTimeZone();
     }
 
     @Test
     @SuppressForbidden("implementation around default locales in POI")
-    public void userLocale() {
+    void userLocale() {
         Locale DEFAULT_LOCALE = LocaleUtil.getUserLocale();
 
         assertEquals(DEFAULT_LOCALE, LocaleUtil.getUserLocale());
@@ -83,7 +83,7 @@ public class TestLocaleUtil {
 
     @Test
     @SuppressForbidden("implementation around default locales in POI")
-    public void userTimeZone() {
+    void userTimeZone() {
         TimeZone DEFAULT_TIME_ZONE = LocaleUtil.getUserTimeZone();
 
         assertEquals(DEFAULT_TIME_ZONE, LocaleUtil.getUserTimeZone());
@@ -95,7 +95,7 @@ public class TestLocaleUtil {
 
     @Test
     @SuppressForbidden("implementation around default locales in POI")
-    public void localeCalendar() {
+    void localeCalendar() {
         Locale DEFAULT_LOCALE = LocaleUtil.getUserLocale();
         TimeZone DEFAULT_TIME_ZONE = LocaleUtil.getUserTimeZone();
         Calendar DEFAULT_CALENDAR = LocaleUtil.getLocaleCalendar();

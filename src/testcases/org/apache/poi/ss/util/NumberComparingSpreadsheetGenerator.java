@@ -55,7 +55,7 @@ public class NumberComparingSpreadsheetGenerator {
             _rowIndex = 1;
         }
 
-        public void addTestRow(double a, double b, int expResult) {
+        void addTestRow(double a, double b, int expResult) {
             writeDataRow(_sheet, _rowIndex++, a, b, expResult);
         }
     }

@@ -61,7 +61,7 @@ public class NumberRenderingSpreadsheetGenerator {
 			_replacementNaNs = new ArrayList<>();
 		}
 
-		public void addTestRow(long rawBits, String expectedExcelRendering) {
+		void addTestRow(long rawBits, String expectedExcelRendering) {
 			writeDataRow(_sheet, _rowIndex++, rawBits, expectedExcelRendering);
 			if(Double.isNaN(Double.longBitsToDouble(rawBits))) {
 				_replacementNaNs.add(Long.valueOf(rawBits));

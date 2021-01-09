@@ -51,7 +51,7 @@ public final class TestFractionFormat {
 
     @Disabled("Runs for some longer time")
     @Test
-    public void microBenchmark() {
+    void microBenchmark() {
         FractionFormat f = new FractionFormat("", "##");
         double val = 321.321;
         for(int i = 0;i < 1000000;i++) {

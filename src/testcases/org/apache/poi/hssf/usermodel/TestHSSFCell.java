@@ -409,7 +409,7 @@ public final class TestHSSFCell extends BaseTestCell {
     }
 
 	@Test
-	public void getErrorCellValue_throwsISE_onABlankCell() throws IOException {
+	void getErrorCellValue_throwsISE_onABlankCell() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			Cell cell = wb.createSheet().createRow(0).createCell(0);
 			assertThrows(IllegalStateException.class, cell::getErrorCellValue);

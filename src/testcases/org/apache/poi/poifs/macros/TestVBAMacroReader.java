@@ -76,95 +76,95 @@ public class TestVBAMacroReader {
 
     //////////////////////////////// From Stream /////////////////////////////
     @Test
-    public void HSSFFromStream() throws Exception {
+    void HSSFFromStream() throws Exception {
         fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
     @Test
-    public void XSSFFromStream() throws Exception {
+    void XSSFFromStream() throws Exception {
         fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
     @Disabled("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
             "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
-    public void HSLFFromStream() throws Exception {
+    void HSLFFromStream() throws Exception {
         fromStream(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
     }
     @Test
-    public void XSLFFromStream() throws Exception {
+    void XSLFFromStream() throws Exception {
         fromStream(POIDataSamples.getSlideShowInstance(), "SimpleMacro.pptm");
     }
     @Test
-    public void HWPFFromStream() throws Exception {
+    void HWPFFromStream() throws Exception {
         fromStream(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
     }
     @Test
-    public void XWPFFromStream() throws Exception {
+    void XWPFFromStream() throws Exception {
         fromStream(POIDataSamples.getDocumentInstance(), "SimpleMacro.docm");
     }
     @Disabled("Found 0 macros")
     @Test
-    public void HDGFFromStream() throws Exception {
+    void HDGFFromStream() throws Exception {
         fromStream(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
     @Test
-    public void XDGFFromStream() throws Exception {
+    void XDGFFromStream() throws Exception {
         fromStream(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsdm");
     }
 
     //////////////////////////////// From File /////////////////////////////
     @Test
-    public void HSSFFromFile() throws Exception {
+    void HSSFFromFile() throws Exception {
         fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
     @Test
-    public void XSSFFromFile() throws Exception {
+    void XSSFFromFile() throws Exception {
         fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
     @Disabled("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
             "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
-    public void HSLFFromFile() throws Exception {
+    void HSLFFromFile() throws Exception {
         fromFile(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
     }
     @Test
-    public void XSLFFromFile() throws Exception {
+    void XSLFFromFile() throws Exception {
         fromFile(POIDataSamples.getSlideShowInstance(), "SimpleMacro.pptm");
     }
     @Test
-    public void HWPFFromFile() throws Exception {
+    void HWPFFromFile() throws Exception {
         fromFile(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
     }
     @Test
-    public void XWPFFromFile() throws Exception {
+    void XWPFFromFile() throws Exception {
         fromFile(POIDataSamples.getDocumentInstance(), "SimpleMacro.docm");
     }
     @Disabled("Found 0 macros")
     @Test
-    public void HDGFFromFile() throws Exception {
+    void HDGFFromFile() throws Exception {
         fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
     @Test
-    public void XDGFFromFile() throws Exception {
+    void XDGFFromFile() throws Exception {
         fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsdm");
     }
 
     //////////////////////////////// From POIFS /////////////////////////////
     @Test
-    public void HSSFFromPOIFS() throws Exception {
+    void HSSFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
     @Disabled("bug 59302: Found 0 macros")
     @Test
-    public void HSLFFromPOIFS() throws Exception {
+    void HSLFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
     }
     @Test
-    public void HWPFFromPOIFS() throws Exception {
+    void HWPFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
     }
     @Disabled("Found 0 macros")
     @Test
-    public void HDGFFromPOIFS() throws Exception {
+    void HDGFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
 
@@ -230,7 +230,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug59830() throws IOException {
+    void bug59830() throws IOException {
         //test file is "609751.xls" in govdocs1
         File f = POIDataSamples.getSpreadSheetInstance().getFile("59830.xls");
         VBAMacroReader r = new VBAMacroReader(f);
@@ -242,7 +242,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug59858() throws IOException {
+    void bug59858() throws IOException {
         File f = POIDataSamples.getSpreadSheetInstance().getFile("59858.xls");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
@@ -253,7 +253,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug60158() throws IOException {
+    void bug60158() throws IOException {
         File f = POIDataSamples.getDocumentInstance().getFile("60158.docm");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
@@ -264,7 +264,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug60273() throws IOException {
+    void bug60273() throws IOException {
         //test file derives from govdocs1 147240.xls
         File f = POIDataSamples.getSpreadSheetInstance().getFile("60273.xls");
         VBAMacroReader r = new VBAMacroReader(f);
@@ -276,7 +276,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug60279() throws IOException {
+    void bug60279() throws IOException {
         File f = POIDataSamples.getDocumentInstance().getFile("60279.doc");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
@@ -288,7 +288,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug62624() throws IOException {
+    void bug62624() throws IOException {
         //macro comes from Common Crawl: HRLOXHGMGLFIJQQU27RIWXOARRHAAAAS
         File f = POIDataSamples.getSpreadSheetInstance().getFile("62624.bin");
         VBAMacroReader r = new VBAMacroReader(f);
@@ -302,7 +302,7 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void bug62625() throws IOException {
+    void bug62625() throws IOException {
         //macro comes from Common Crawl: 4BZ22N5QG5R2SUU2MNN47PO7VBQLNYIQ
         //A REFERENCE_NAME can sometimes only have an ascii string without
         //a reserved byte followed by the unicode string.

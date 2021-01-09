@@ -46,7 +46,7 @@ public final class TestEscherGraphics {
     private EscherGraphics graphics;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         workbook = new HSSFWorkbook();
 
         HSSFSheet sheet = workbook.createSheet("test");
@@ -57,7 +57,7 @@ public final class TestEscherGraphics {
     }
 
     @AfterEach
-    public void closeResources() throws IOException {
+    void closeResources() throws IOException {
         workbook.close();
     }
 

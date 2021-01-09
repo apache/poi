@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestCipherAlgorithm {
     @Test
-    public void validInputs() {
+    void validInputs() {
         assertEquals(128, CipherAlgorithm.aes128.defaultKeySize);
 
         for(CipherAlgorithm alg : CipherAlgorithm.values()) {
@@ -37,7 +37,7 @@ public class TestCipherAlgorithm {
     }
 
     @Test
-    public void invalidInputs() {
+    void invalidInputs() {
         assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromEcmaId(0));
         assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromXmlId("AES", 1));
         assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromXmlId("RC1", 0x40));

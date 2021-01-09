@@ -138,7 +138,7 @@ public class TestSXSSFCell extends BaseTestXCell {
      */
     @Override
     @Disabled
-    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
+    protected void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
     }
 
     /**
@@ -147,33 +147,29 @@ public class TestSXSSFCell extends BaseTestXCell {
      */
     @Override
     @Disabled
-    @Test // <- annotation is necessary to override expected exception
-    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    protected void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
     }
 
     @Override
     @Disabled
-    @Test
-    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    protected void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
     }
 
     @Override
     @Disabled
-    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
+    protected void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
     }
 
     @Override
     @Disabled
-    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
+    protected void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
     }
 
-    @Test
     @Disabled
-    public void setCellFormula_isExceptionSafe_onBlankCell() {
+    protected void setCellFormula_isExceptionSafe_onBlankCell() {
     }
 
-    @Test
     @Disabled
-    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
+    protected void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
     }
 }

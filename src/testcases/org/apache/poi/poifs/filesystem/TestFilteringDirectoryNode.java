@@ -47,7 +47,7 @@ public final class TestFilteringDirectoryNode {
     private DocumentEntry eAA;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         fs = new POIFSFileSystem();
         dirA = fs.createDirectory("DirA");
         dirB = fs.createDirectory("DirB");

@@ -84,7 +84,7 @@ public final class TestRVA {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void confirmCell(HSSFCell formulaCell, String formula) {
+	void confirmCell(HSSFCell formulaCell, String formula) {
 		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
 		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, workbook);
 		int nExcelTokens = excelPtgs.length;

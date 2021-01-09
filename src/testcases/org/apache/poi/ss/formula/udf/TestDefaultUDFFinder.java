@@ -29,7 +29,7 @@ public class TestDefaultUDFFinder extends BaseTestUDFFinder {
     }
 
     @Test
-    public void findFunction() {
+    void findFunction() {
         confirmFindFunction("NotImplemented");
     }
 }

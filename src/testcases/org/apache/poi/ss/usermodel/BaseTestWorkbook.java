@@ -48,7 +48,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void sheetIterator_forEach() throws IOException {
+    void sheetIterator_forEach() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
             wb.createSheet("Sheet1");
@@ -67,7 +67,7 @@ public abstract class BaseTestWorkbook {
      * underlying data has been reordered
      */
     @Test
-    public void sheetIterator_sheetsReordered() throws IOException {
+    void sheetIterator_sheetsReordered() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
             wb.createSheet("Sheet1");
@@ -88,7 +88,7 @@ public abstract class BaseTestWorkbook {
      * underlying data has been reordered
      */
     @Test
-    public void sheetIterator_sheetRemoved() throws IOException {
+    void sheetIterator_sheetRemoved() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
             wb.createSheet("Sheet1");
@@ -107,7 +107,7 @@ public abstract class BaseTestWorkbook {
      * should not be able to remove sheets from the sheet iterator
      */
     @Test
-    public void sheetIterator_remove() throws IOException {
+    void sheetIterator_remove() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
 
@@ -119,7 +119,7 @@ public abstract class BaseTestWorkbook {
 
 
     @Test
-    public void createSheet() throws IOException {
+    void createSheet() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             assertEquals(0, wb.getNumberOfSheets());
 
@@ -211,7 +211,7 @@ public abstract class BaseTestWorkbook {
      * but for the purpose of uniqueness long sheet names are silently truncated to 31 chars.
      */
     @Test
-    public void createSheetWithLongNames() throws IOException {
+    void createSheetWithLongNames() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
 
             String sheetName1 = "My very long sheet name which is longer than 31 chars";
@@ -246,7 +246,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void removeSheetAt() throws IOException {
+    void removeSheetAt() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             workbook.createSheet("sheet1");
             workbook.createSheet("sheet2");
@@ -310,7 +310,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void defaultValues() throws IOException {
+    void defaultValues() throws IOException {
         try (Workbook b = _testDataProvider.createWorkbook()) {
             assertEquals(0, b.getActiveSheetIndex());
             assertEquals(0, b.getFirstVisibleTab());
@@ -320,7 +320,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void sheetSelection() throws IOException {
+    void sheetSelection() throws IOException {
         try (Workbook b = _testDataProvider.createWorkbook()) {
             b.createSheet("Sheet One");
             b.createSheet("Sheet Two");
@@ -333,7 +333,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void printArea() throws IOException {
+    void printArea() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = workbook.createSheet("Test Print Area");
             String sheetName1 = sheet1.getSheetName();
@@ -354,7 +354,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void getSetActiveSheet() throws IOException {
+    void getSetActiveSheet() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             assertEquals(0, workbook.getActiveSheetIndex());
 
@@ -373,7 +373,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void setSheetOrder() throws IOException {
+    void setSheetOrder() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             for (int i = 0; i < 10; i++) {
@@ -441,7 +441,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void cloneSheet() throws IOException {
+    protected void cloneSheet() throws IOException {
         try (Workbook book = _testDataProvider.createWorkbook()) {
             Sheet sheet = book.createSheet("TEST");
             sheet.createRow(0).createCell(0).setCellValue("Test");
@@ -470,7 +470,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void parentReferences() throws IOException {
+    protected void parentReferences() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
             assertSame(wb1, sheet.getWorkbook());
@@ -503,7 +503,7 @@ public abstract class BaseTestWorkbook {
      * is still working correctly
      */
     @Test
-    public void setRepeatingRowsAnsColumns() throws IOException {
+    void setRepeatingRowsAnsColumns() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellRangeAddress cra = new CellRangeAddress(0, 3, 0, 0);
             String expRows = "1:4", expCols = "A:A";
@@ -528,7 +528,7 @@ public abstract class BaseTestWorkbook {
      * Tests that all of the unicode capable string fields can be set, written and then read back
      */
     @Test
-    public void unicodeInAll() throws IOException {
+    protected void unicodeInAll() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             CreationHelper factory = wb1.getCreationHelper();
             //Create a unicode dataformat (contains euro symbol)
@@ -645,7 +645,7 @@ public abstract class BaseTestWorkbook {
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47100">Bugzilla 47100</a>
      */
     @Test
-    public void setSheetName() throws IOException {
+    protected void setSheetName() throws IOException {
         try (Workbook wb1 = newSetSheetNameTestingWorkbook()) {
             Sheet sh1 = wb1.getSheetAt(0);
 
@@ -724,7 +724,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void changeSheetNameWithSharedFormulas() throws IOException {
+    void changeSheetNameWithSharedFormulas() throws IOException {
         String sampleFile = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
 
         try (Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile)) {
@@ -781,7 +781,7 @@ public abstract class BaseTestWorkbook {
 
 
     @Test
-    public void windowOneDefaults() throws IOException {
+    void windowOneDefaults() throws IOException {
         try (Workbook b = _testDataProvider.createWorkbook()) {
             assertEquals(b.getActiveSheetIndex(), 0);
             assertEquals(b.getFirstVisibleTab(), 0);
@@ -790,7 +790,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void getSpreadsheetVersion() throws IOException {
+    void getSpreadsheetVersion() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             assertEquals(_testDataProvider.getSpreadsheetVersion(), wb.getSpreadsheetVersion());
         }
@@ -805,7 +805,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void sheetClone() throws IOException {
+    protected void sheetClone() throws IOException {
         // First up, try a simple file
         try (Workbook b = _testDataProvider.createWorkbook();
              Workbook bBack = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls")) {
@@ -825,7 +825,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void getSheetIndex() throws IOException {
+    void getSheetIndex() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet("Sheet1");
             Sheet sheet2 = wb.createSheet("Sheet2");
@@ -850,7 +850,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void addSheetTwice() throws IOException {
+    void addSheetTwice() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet1 = wb.createSheet("Sheet1");
             assertNotNull(sheet1);
@@ -865,7 +865,7 @@ public abstract class BaseTestWorkbook {
 
     // bug 51233 and 55075: correctly size image if added to a row with a custom height
     @Test
-    public void createDrawing() throws Exception {
+    void createDrawing() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("Main Sheet");
             Row row0 = sheet.createRow(0);

@@ -30,7 +30,7 @@ public class TestCryptoAPI {
     final HSSFITestDataProvider ssTests = HSSFITestDataProvider.instance;
 
     @Test
-    public void bug59857() throws IOException {
+    void bug59857() throws IOException {
         // XOR-Obfuscation
         // TODO: XOR-Obfuscation is currently flawed - although the de-/obfuscation initially works,
         // it suddenly differs from the result of encrypted files via Office ...

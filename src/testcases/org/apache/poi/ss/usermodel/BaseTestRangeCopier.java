@@ -44,7 +44,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void copySheetRangeWithoutFormulas() {
+    void copySheetRangeWithoutFormulas() {
         CellRangeAddress rangeToCopy = CellRangeAddress.valueOf("B1:C2");   //2x2
         CellRangeAddress destRange = CellRangeAddress.valueOf("C2:D3");     //2x2
         rangeCopier.copyRange(rangeToCopy, destRange);
@@ -53,7 +53,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void tileTheRangeAway() {
+    void tileTheRangeAway() {
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5");
         CellRangeAddress destRange = CellRangeAddress.valueOf("F4:K5");
         rangeCopier.copyRange(tileRange, destRange);
@@ -67,7 +67,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void tileTheRangeOver() {
+    void tileTheRangeOver() {
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5");
         CellRangeAddress destRange = CellRangeAddress.valueOf("A4:C5");
         rangeCopier.copyRange(tileRange, destRange);
@@ -77,7 +77,7 @@ public abstract class BaseTestRangeCopier {
     }
 
     @Test
-    public void copyRangeToOtherSheet() {
+    void copyRangeToOtherSheet() {
         Sheet destSheet = sheet2;
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5"); // on sheet1
         CellRangeAddress destRange = CellRangeAddress.valueOf("F4:J6"); // on sheet2

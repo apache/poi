@@ -57,7 +57,7 @@ public abstract class BaseTestPicture {
     protected abstract Picture getPictureShape(Drawing<?> pat, int picIdx);
 
     @Test
-    public void resize() throws IOException {
+    void resize() throws IOException {
         String fileName = "resize_compare.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         double scaleX = 2;
         double scaleY = 2;
@@ -159,7 +159,7 @@ public abstract class BaseTestPicture {
     }
 
     @Test
-    public void bug64213() throws IOException {
+    void bug64213() throws IOException {
         int[] input = {
             200, 50 * 256, -1,
             400, 50 * 256, -1,

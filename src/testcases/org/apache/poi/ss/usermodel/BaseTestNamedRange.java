@@ -693,7 +693,7 @@ public abstract class BaseTestNamedRange {
 
     // bug 60260: renaming a sheet with a named range referring to a unicode (non-ASCII) sheet name
     @Test
-    public void renameSheetWithNamedRangeReferringToUnicodeSheetName() {
+    void renameSheetWithNamedRangeReferringToUnicodeSheetName() {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet\u30FB1");
 

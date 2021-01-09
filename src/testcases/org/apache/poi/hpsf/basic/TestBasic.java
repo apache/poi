@@ -77,7 +77,7 @@ public final class TestBasic {
      * @exception IOException if any other I/O exception occurs.
      */
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         final File data = samples.getFile("TestGermanWord90.doc");
         poiFiles = Util.readPOIFiles(data);
     }
@@ -177,7 +177,7 @@ public final class TestBasic {
     }
 
     @Test
-    public void bug52117LastPrinted() throws IOException, HPSFException {
+    void bug52117LastPrinted() throws IOException, HPSFException {
         File f = samples.getFile("TestBug52117.doc");
         POIFile poiFile = Util.readPOIFiles(f, new String[]{POI_FILES[0]}).get(0);
         InputStream in = new ByteArrayInputStream(poiFile.getBytes());
@@ -189,7 +189,7 @@ public final class TestBasic {
     }
 
     @Test
-    public void bug61809() throws IOException, HPSFException {
+    void bug61809() throws IOException, HPSFException {
         InputStream is_si = new ByteArrayInputStream(poiFiles.get(0).getBytes());
         final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is_si);
         final Section s_si = si.getSections().get(0);

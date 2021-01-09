@@ -32,7 +32,7 @@ public abstract class BaseTestColumnShifting {
     protected ColumnShifter columnShifter;
 
     @BeforeEach
-    public void init() {
+    void init() {
         int rowIndex = 0;
         sheet1 = wb.createSheet("sheet1");
         Row row = sheet1.createRow(rowIndex++);

@@ -51,7 +51,7 @@ public class TestFunctionRegistry {
     HSSFFormulaEvaluator fe;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         wb = new HSSFWorkbook();
         sheet = wb.createSheet("Sheet1");
         row = sheet.createRow(0);
@@ -59,7 +59,7 @@ public class TestFunctionRegistry {
     }
 
     @AfterEach
-    public void teardown() throws IOException {
+    void teardown() throws IOException {
         wb.close();
         wb = null;
         sheet = null;

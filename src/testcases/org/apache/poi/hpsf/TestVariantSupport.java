@@ -72,7 +72,7 @@ public class TestVariantSupport {
     }
 
     @Test
-    public void newNumberTypes() throws Exception {
+    void newNumberTypes() throws Exception {
         ClipboardData cd = new ClipboardData();
         cd.setValue(new byte[10]);
 

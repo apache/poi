@@ -63,7 +63,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void numericCells() throws Exception {
+    void numericCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         DataFormat df = workbook.getCreationHelper().createDataFormat();
         Sheet sheet = workbook.createSheet();
@@ -105,7 +105,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void booleanCells() throws Exception {
+    void booleanCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -136,7 +136,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void dateCells() throws Exception {
+    void dateCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -203,7 +203,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void stringCells() throws Exception {
+    void stringCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -237,7 +237,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void rotatedText() throws Exception {
+    void rotatedText() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -264,7 +264,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     }
 
     @Test
-    public void mergedCells() throws Exception {
+    void mergedCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -291,7 +291,7 @@ public abstract class BaseTestSheetAutosizeColumn {
      *  passed the 32767 boundary. See bug #48079
      */
     @Test
-    public void largeRowNumbers() throws Exception {
+    void largeRowNumbers() throws Exception {
        Workbook workbook = _testDataProvider.createWorkbook();
        Sheet sheet = workbook.createSheet();
        trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -346,7 +346,7 @@ public abstract class BaseTestSheetAutosizeColumn {
 
 
     @Test
-    public void testExcelExporter() throws IOException {
+    void testExcelExporter() throws IOException {
         try (final Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("test");
             trackColumnsForAutoSizingIfSXSSF(sheet);

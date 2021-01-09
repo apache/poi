@@ -67,7 +67,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Moved from TestHSSFWorkbook#testSetRepeatingRowsAndColumns().
      */
     @Test
-    public void setRepeatingRowsAndColumnsBug29747() throws IOException {
+    void setRepeatingRowsAndColumnsBug29747() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             wb.createSheet();
             wb.createSheet();
@@ -82,7 +82,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Test the gridset field gets set as expected.
      */
     @Test
-    public void backupRecord() throws IOException {
+    void backupRecord() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             GridsetRecord gridsetRec = s.getSheet().getGridsetRecord();
@@ -96,7 +96,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Test vertically centered output.
      */
     @Test
-    public void verticallyCenter() throws IOException {
+    void verticallyCenter() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             VCenterRecord record = s.getSheet().getPageSettings().getVCenter();
@@ -113,7 +113,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Test horizontally centered output.
      */
     @Test
-    public void horizontallyCenter() throws IOException {
+    void horizontallyCenter() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             HCenterRecord record = s.getSheet().getPageSettings().getHCenter();
@@ -131,7 +131,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Test WSBoolRecord fields get set in the user model.
      */
     @Test
-    public void wsBool() throws IOException {
+    void wsBool() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             WSBoolRecord record = (WSBoolRecord) s.getSheet().findFirstRecordBySid(WSBoolRecord.sid);
@@ -181,7 +181,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Setting landscape and portrait stuff on existing sheets
      */
     @Test
-    public void printSetupLandscapeExisting() throws IOException {
+    void printSetupLandscapeExisting() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls")) {
 
             assertEquals(3, wb1.getNumberOfSheets());
@@ -228,7 +228,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void groupRows() throws IOException {
+    void groupRows() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();
             HSSFRow r1 = s.createRow(0);
@@ -270,7 +270,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void groupRowsExisting() throws IOException {
+    void groupRowsExisting() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("NoGutsRecords.xls")) {
 
             HSSFSheet s = wb1.getSheetAt(0);
@@ -320,7 +320,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void createDrawings() throws IOException {
+    void createDrawings() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet();
             HSSFPatriarch p1 = sheet.createDrawingPatriarch();
@@ -330,7 +330,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void getDrawings() throws IOException {
+    void getDrawings() throws IOException {
         try (HSSFWorkbook wb1c = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
             HSSFWorkbook wb2c = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls")) {
 
@@ -356,7 +356,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Test that the ProtectRecord is included when creating or cloning a sheet
      */
     @Test
-    public void cloneWithProtect() throws IOException {
+    void cloneWithProtect() throws IOException {
         String passwordA = "secrect";
         int expectedHashA = -6810;
         String passwordB = "admin";
@@ -387,7 +387,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void protectSheetA() throws IOException {
+    void protectSheetA() throws IOException {
         int expectedHash = (short)0xfef1;
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
@@ -405,7 +405,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * (which should be before {@link DimensionsRecord}).
      */
     @Test
-    public void protectSheetRecordOrder_bug47363a() throws IOException {
+    void protectSheetRecordOrder_bug47363a() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             s.protectSheet("secret");
@@ -427,7 +427,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * There should be no problem with adding data validations after sheet protection
      */
     @Test
-    public void dvProtectionOrder_bug47363b() throws IOException {
+    void dvProtectionOrder_bug47363b() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet("Sheet1");
             sheet.protectSheet("secret");
@@ -452,7 +452,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void zoom() throws IOException {
+    void zoom() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             assertEquals(-1, sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid));
@@ -489,7 +489,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Make sure the excel file loads work
      */
     @Test
-    public void pageBreakFiles() throws IOException {
+    void pageBreakFiles() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls")) {
 
             HSSFSheet sheet = wb1.getSheetAt(0);
@@ -520,7 +520,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void dbcsName () throws IOException {
+    void dbcsName () throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DBCSSheetName.xls")) {
             wb.getSheetAt(1);
             assertEquals(wb.getSheetName(1), "\u090f\u0915", "DBCS Sheet Name 2");
@@ -534,7 +534,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * of the sheet when it is first opened.
      */
     @Test
-    public void topRow() throws IOException {
+    void topRow() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls")) {
             HSSFSheet sheet = wb.getSheetAt(0);
             assertNotNull(sheet);
@@ -548,7 +548,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void addEmptyRow() throws IOException {
+    void addEmptyRow() throws IOException {
         //try to add 5 empty rows to a new sheet
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet sheet = wb1.createSheet();
@@ -577,7 +577,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void autoSizeColumn() throws IOException {
+    void autoSizeColumn() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("43902.xls")) {
             String sheetName = "my sheet";
             HSSFSheet sheet = wb1.getSheet(sheetName);
@@ -626,7 +626,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Setting ForceFormulaRecalculation on sheets
      */
     @Test
-    public void forceRecalculation() throws IOException {
+    void forceRecalculation() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("UncalcedRecord.xls")) {
 
             HSSFSheet sheet = wb1.getSheetAt(0);
@@ -680,7 +680,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void columnWidthA() throws IOException {
+    void columnWidthA() throws IOException {
         // check we can correctly read column widths from a reference workbook
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("colwidth.xls")) {
 
@@ -743,7 +743,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
 
     @Test
-    public void defaultColumnWidth() throws IOException {
+    void defaultColumnWidth() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook( "12843-1.xls" )) {
             HSSFSheet sheet = wb1.getSheetAt(7);
             // shall not be NPE
@@ -773,7 +773,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Now POI is too.
      */
     @Test
-    public void missingRowRecords_bug41187() throws IOException {
+    void missingRowRecords_bug41187() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex41187-19267.xls")) {
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
@@ -796,7 +796,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * See bug #45720.
      */
     @Test
-    public void cloneSheetWithDrawings() throws IOException {
+    void cloneSheetWithDrawings() throws IOException {
         try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("45720.xls")) {
             HSSFSheet sheet1 = wb1.getSheetAt(0);
 
@@ -831,7 +831,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * 31 chars.
      */
     @Test
-    public void longSheetNames() throws IOException {
+    void longSheetNames() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             final String SAME_PREFIX = "A123456789B123456789C123456789"; // 30 chars
 
@@ -848,7 +848,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Tests that we can read existing column styles
      */
     @Test
-    public void readColumnStyles() throws IOException {
+    void readColumnStyles() throws IOException {
         try (HSSFWorkbook wbNone = HSSFTestDataSamples.openSampleWorkbook("ColumnStyleNone.xls");
             HSSFWorkbook wbSimple = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dp.xls");
             HSSFWorkbook wbComplex = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dpColoured.xls")) {
@@ -891,7 +891,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Tests the arabic setting
      */
     @Test
-    public void arabic() throws IOException {
+    void arabic() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
 
@@ -902,7 +902,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void autoFilter() throws IOException {
+    void autoFilter() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet sh = wb1.createSheet();
             InternalWorkbook iwb = wb1.getWorkbook();
@@ -955,7 +955,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void getSetColumnHiddenShort() throws IOException {
+    void getSetColumnHiddenShort() throws IOException {
         try (Workbook workbook = new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet 1");
             sheet.setColumnHidden((short) 2, true);
@@ -964,7 +964,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void columnWidthShort() throws IOException {
+    void columnWidthShort() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             Sheet sheet = wb1.createSheet();
 
@@ -1023,7 +1023,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void showInPane() throws IOException {
+    void showInPane() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             sheet.showInPane(2, 3);
@@ -1037,7 +1037,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void drawingRecords() throws IOException {
+    void drawingRecords() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
 
@@ -1049,7 +1049,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void bug55723b() throws IOException {
+    void bug55723b() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
@@ -1095,7 +1095,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void bug59135() throws IOException {
+    void bug59135() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             wb1.createSheet().protectSheet("1111.2222.3333.1234");
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {

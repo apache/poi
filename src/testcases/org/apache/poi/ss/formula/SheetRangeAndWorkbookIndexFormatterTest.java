@@ -23,42 +23,42 @@ import org.junit.jupiter.api.Test;
 
 public class SheetRangeAndWorkbookIndexFormatterTest {
     @Test
-    public void noDelimiting_ifASingleSheetNameDoesntNeedDelimiting() {
+    void noDelimiting_ifASingleSheetNameDoesntNeedDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "noDelimiting", null);
         assertEquals("[0]noDelimiting", result);
     }
 
     @Test
-    public void everythingIsScreened_ifASingleSheetNameNeedsDelimiting() {
+    void everythingIsScreened_ifASingleSheetNameNeedsDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "1delimiting", null);
         assertEquals("'[0]1delimiting'", result);
     }
 
     @Test
-    public void noDelimiting_ifBothSheetNamesDontNeedDelimiting() {
+    void noDelimiting_ifBothSheetNamesDontNeedDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "noDelimiting1", "noDelimiting2");
         assertEquals("[0]noDelimiting1:noDelimiting2", result);
     }
 
     @Test
-    public void everythingIsScreened_ifFirstSheetNamesNeedsDelimiting() {
+    void everythingIsScreened_ifFirstSheetNamesNeedsDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "1delimiting", "noDelimiting");
         assertEquals("'[0]1delimiting:noDelimiting'", result);
     }
 
     @Test
-    public void everythingIsScreened_ifLastSheetNamesNeedsDelimiting() {
+    void everythingIsScreened_ifLastSheetNamesNeedsDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "noDelimiting", "1delimiting");
         assertEquals("'[0]noDelimiting:1delimiting'", result);
     }
 
     @Test
-    public void everythingIsScreened_ifBothSheetNamesNeedDelimiting() {
+    void everythingIsScreened_ifBothSheetNamesNeedDelimiting() {
         StringBuilder sb = new StringBuilder();
         String result = SheetRangeAndWorkbookIndexFormatter.format(sb, 0, "1delimiting", "2delimiting");
         assertEquals("'[0]1delimiting:2delimiting'", result);

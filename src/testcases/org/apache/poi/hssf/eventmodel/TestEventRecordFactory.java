@@ -145,7 +145,7 @@ public final class TestEventRecordFactory {
 
     @Test
     @Disabled("same as testContinuedUnknownRecord but with SequenceInputStream which causes the available() bug 59893")
-    public void bug59893() {
+    void bug59893() {
         Iterator<ByteArrayInputStream> iter = Stream.of(CONTINUE_DATA).map(ByteArrayInputStream::new).iterator();
         SequenceInputStream sis = new SequenceInputStream(IteratorUtils.asEnumeration(iter));
         continueHelper(sis);

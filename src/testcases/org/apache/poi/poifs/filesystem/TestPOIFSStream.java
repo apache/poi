@@ -1183,7 +1183,7 @@ public final class TestPOIFSStream {
     }
 
     @Test
-    public void basicOpen() throws IOException {
+    void basicOpen() throws IOException {
         POIFSFileSystem fsA, fsB;
 
         // With a simple 512 block file
@@ -1206,7 +1206,7 @@ public final class TestPOIFSStream {
     }
 
     @Test
-    public void propertiesAndFatOnRead() throws IOException {
+    void propertiesAndFatOnRead() throws IOException {
         POIFSFileSystem fsA, fsB;
 
         // With a simple 512 block file
@@ -1341,7 +1341,7 @@ public final class TestPOIFSStream {
      * out what the next one is
      */
     @Test
-    public void nextBlock() throws IOException {
+    void nextBlock() throws IOException {
         POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
         POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         for (POIFSFileSystem fs : new POIFSFileSystem[]{fsA, fsB}) {
@@ -1403,7 +1403,7 @@ public final class TestPOIFSStream {
      * Check we get the right data back for each block
      */
     @Test
-    public void getBlock() throws IOException {
+    void getBlock() throws IOException {
         POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
         POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         for (POIFSFileSystem fs : new POIFSFileSystem[]{fsA, fsB}) {
@@ -1477,7 +1477,7 @@ public final class TestPOIFSStream {
      * to be had from the FAT
      */
     @Test
-    public void getFreeBlockWithSpare() throws IOException {
+    void getFreeBlockWithSpare() throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
 
         // Our first BAT block has spares
@@ -1508,7 +1508,7 @@ public final class TestPOIFSStream {
      * file needs to be extended and another BAT/XBAT added
      */
     @Test
-    public void getFreeBlockWithNoneSpare() throws IOException {
+    void getFreeBlockWithNoneSpare() throws IOException {
         POIFSFileSystem fs1 = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
         int free;
 
@@ -1637,7 +1637,7 @@ public final class TestPOIFSStream {
      * entries, and the details on the files in them
      */
     @Test
-    public void listEntries() throws IOException {
+    void listEntries() throws IOException {
         for (POIFSFileSystem fs : get512and4kFileAndInput()) {
             DirectoryEntry root = fs.getRoot();
             assertEquals(5, root.getEntryCount());
@@ -1676,7 +1676,7 @@ public final class TestPOIFSStream {
      * a document in the filesystem
      */
     @Test
-    public void getDocumentEntry() throws Exception {
+    void getDocumentEntry() throws Exception {
         for (POIFSFileSystem fs : get512and4kFileAndInput()) {
             DirectoryEntry root = fs.getRoot();
             Entry si = root.getEntry("\u0005SummaryInformation");
@@ -1722,7 +1722,7 @@ public final class TestPOIFSStream {
      * Then, alter+add some streams, write and read
      */
     @Test
-    public void readWriteRead() throws Exception {
+    void readWriteRead() throws Exception {
         SummaryInformation sinf;
         DocumentSummaryInformation dinf;
         DirectoryEntry root, testDir;
@@ -1996,7 +1996,7 @@ public final class TestPOIFSStream {
      * Then, add some streams, write and read
      */
     @Test
-    public void createWriteRead() throws IOException {
+    void createWriteRead() throws IOException {
         POIFSFileSystem fs1 = new POIFSFileSystem();
         DocumentEntry miniDoc;
         DocumentEntry normDoc;
@@ -2239,7 +2239,7 @@ public final class TestPOIFSStream {
     }
 
     @Test
-    public void addBeforeWrite() throws IOException {
+    void addBeforeWrite() throws IOException {
         POIFSFileSystem fs1 = new POIFSFileSystem();
         DocumentEntry miniDoc;
         DocumentEntry normDoc;
@@ -2392,7 +2392,7 @@ public final class TestPOIFSStream {
     }
 
     @Test
-    public void readZeroLengthEntries() throws IOException {
+    void readZeroLengthEntries() throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("only-zero-byte-streams.ole2"));
         DirectoryNode testDir = fs.getRoot();
         assertEquals(3, testDir.getEntryCount());
@@ -2423,7 +2423,7 @@ public final class TestPOIFSStream {
     }
 
     @Test
-    public void writeZeroLengthEntries() throws IOException {
+    void writeZeroLengthEntries() throws IOException {
         POIFSFileSystem fs1 = new POIFSFileSystem();
         DirectoryNode testDir = fs1.getRoot();
         DocumentEntry miniDoc;
@@ -2526,7 +2526,7 @@ public final class TestPOIFSStream {
      * write it out, read it with POIFS, and see the original data
      */
     @Test
-    public void POIFSReadCopyWritePOIFSRead() throws IOException {
+    void POIFSReadCopyWritePOIFSRead() throws IOException {
         File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
         POIFSFileSystem src = new POIFSFileSystem(testFile);
         byte[] wbDataExp = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
@@ -2551,7 +2551,7 @@ public final class TestPOIFSStream {
      * contents
      */
     @Test
-    public void RecursiveDelete() throws IOException {
+    void RecursiveDelete() throws IOException {
         File testFile = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xls");
         POIFSFileSystem src = new POIFSFileSystem(testFile);
 
@@ -2619,7 +2619,7 @@ public final class TestPOIFSStream {
      */
     @Test
     @Disabled("Work in progress test for #60670")
-    public void creationAndExtensionPast2GB() throws Exception {
+    void creationAndExtensionPast2GB() throws Exception {
         File big = TempFile.createTempFile("poi-test-", ".ole2");
         assumeTrue(big.getFreeSpace() > 2.5 * 1024 * 1024 * 1024,
             "2.5gb of free space is required on your tmp/temp partition/disk to run large file tests");
@@ -2739,7 +2739,7 @@ public final class TestPOIFSStream {
 
     @Disabled("Takes a long time to run")
     @Test
-    public void performance() throws Exception {
+    void performance() throws Exception {
         int iterations = 200;//1_000;
 
         System.out.println("NPOI:");

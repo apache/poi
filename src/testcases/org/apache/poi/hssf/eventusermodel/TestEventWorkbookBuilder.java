@@ -47,7 +47,7 @@ public final class TestEventWorkbookBuilder {
     private SheetRecordCollectingListener listener;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         HSSFRequest req = new HSSFRequest();
         fRecs.clear();
         listener = new SheetRecordCollectingListener(this::addFormulaRecord);

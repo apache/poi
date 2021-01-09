@@ -123,7 +123,7 @@ public class TestWrite {
      * @exception IOException if an I/O exception occurs
      */
     @Test
-    public void withoutAFormatID() throws Exception {
+    void withoutAFormatID() throws Exception {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         /* Create a mutable property set with a section that does not have the
@@ -150,7 +150,7 @@ public class TestWrite {
      * a variant type to be written
      */
     @Test
-    public void writeEmptyPropertySet()
+    void writeEmptyPropertySet()
     throws IOException, UnsupportedVariantTypeException {
         final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
@@ -186,7 +186,7 @@ public class TestWrite {
      * a variant type to be written
      */
     @Test
-    public void writeSimplePropertySet()
+    void writeSimplePropertySet()
     throws IOException, UnsupportedVariantTypeException {
         final String AUTHOR = "Rainer Klute";
         final String TITLE = "Test Document";
@@ -239,7 +239,7 @@ public class TestWrite {
      * a variant type to be written
      */
     @Test
-    public void writeTwoSections() throws WritingNotSupportedException, IOException {
+    void writeTwoSections() throws WritingNotSupportedException, IOException {
         final String STREAM_NAME = "PropertySetStream";
         final String SECTION1 = "Section 1";
         final String SECTION2 = "Section 2";
@@ -297,7 +297,7 @@ public class TestWrite {
      * stuff that has been read back equals the stuff that was written.
      */
     @Test
-    public void variantTypes() throws Exception {
+    void variantTypes() throws Exception {
         final int codepage = CODEPAGE_DEFAULT;
         Assumptions.assumeTrue(hasProperDefaultCharset(), IMPROPER_DEFAULT_CHARSET_MESSAGE);
 
@@ -330,7 +330,7 @@ public class TestWrite {
      * was written.
      */
     @Test
-    public void codepages() throws UnsupportedVariantTypeException, IOException
+    void codepages() throws UnsupportedVariantTypeException, IOException
     {
         final int[] validCodepages = {CODEPAGE_DEFAULT, CodePageUtil.CP_UTF8, CodePageUtil.CP_UNICODE, CodePageUtil.CP_WINDOWS_1252};
         for (final int cp : validCodepages) {
@@ -363,7 +363,7 @@ public class TestWrite {
      * Tests whether writing 8-bit characters to a Unicode property succeeds.
      */
     @Test
-    public void unicodeWrite8Bit() throws WritingNotSupportedException, IOException, NoPropertySetStreamException {
+    void unicodeWrite8Bit() throws WritingNotSupportedException, IOException, NoPropertySetStreamException {
         final String TITLE = "This is a sample title";
         final PropertySet mps = new PropertySet();
         final Section ms = mps.getSections().get(0);
@@ -422,7 +422,7 @@ public class TestWrite {
      * <p>Tests writing and reading back a proper dictionary.</p>
      */
     @Test
-    public void dictionary() throws IOException, HPSFException {
+    void dictionary() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
 
@@ -465,7 +465,7 @@ public class TestWrite {
      *  without needing to stream in + out the whole kitchen sink
      */
     @Test
-    public void inPlacePOIFSWrite() throws Exception {
+    void inPlacePOIFSWrite() throws Exception {
         // We need to work on a File for in-place changes, so create a temp one
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
@@ -673,7 +673,7 @@ public class TestWrite {
      * codepage. (HPSF writes Unicode dictionaries only.)
      */
     @Test
-    public void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
+    void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
 

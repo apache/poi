@@ -70,7 +70,7 @@ public class TestReadAllFiles {
      */
     @ParameterizedTest
     @MethodSource("files")
-    public void read(File file) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+    void read(File file) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
         /* Read the POI filesystem's property set streams: */
         for (POIFile pf : Util.readPropertySets(file)) {
             try (InputStream in = new ByteArrayInputStream(pf.getBytes())) {
@@ -96,7 +96,7 @@ public class TestReadAllFiles {
      */
     @ParameterizedTest
     @MethodSource("files")
-    public void recreate(File file) throws IOException, HPSFException {
+    void recreate(File file) throws IOException, HPSFException {
         /* Read the POI filesystem's property set streams: */
         Map<String,PropertySet> psMap = new HashMap<>();
 
@@ -142,7 +142,7 @@ public class TestReadAllFiles {
      */
     @ParameterizedTest
     @MethodSource("files")
-    public void readDocumentSummaryInformation(File file) throws Exception {
+    void readDocumentSummaryInformation(File file) throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
         try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
             final DirectoryEntry dir = poifs.getRoot();
@@ -185,7 +185,7 @@ public class TestReadAllFiles {
      */
     @ParameterizedTest
     @MethodSource("files")
-    public void readCustomPropertiesFromFiles(File file) throws Exception {
+    void readCustomPropertiesFromFiles(File file) throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
         try (POIFSFileSystem poifs = new POIFSFileSystem(file)) {
             /*

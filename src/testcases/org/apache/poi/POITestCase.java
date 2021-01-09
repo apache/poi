@@ -151,7 +151,7 @@ public final class POITestCase {
      * }
      *
      * {@literal @}Test
-     * public void knownFailingUnitTest() {
+     * void knownFailingUnitTest() {
      *     try {
      *         assertEquals(2, add(1,1));
      *         // this test fails because the assumption that this bug had not been fixed is false
@@ -164,7 +164,7 @@ public final class POITestCase {
      *
      * Once passing, this unit test can be rewritten as:
      * {@literal @}Test
-     * public void knownPassingUnitTest() {
+     * void knownPassingUnitTest() {
      *     assertEquals(2, add(1,1));
      * }
      *
@@ -177,7 +177,7 @@ public final class POITestCase {
      * a clear message that it is a good thing to no longer get the expected
      * exception once the test passes.
      * {@literal @}Test(expected=UnsupportedOperationException.class)
-     * public void knownFailingUnitTest() {
+     * void knownFailingUnitTest() {
      *     assertEquals(2, add(1,1));
      * }
      *

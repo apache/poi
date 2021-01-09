@@ -431,7 +431,7 @@ public final class TestFormulas {
     /**
      * Writes a function then tests to see if its correct
      */
-    public void refArrayFunctionTest(String function) throws IOException {
+    void refArrayFunctionTest(String function) throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();
             HSSFRow r = s.createRow(0);
@@ -454,7 +454,7 @@ public final class TestFormulas {
      * Writes a function then tests to see if its correct
      *
      */
-    public void refAreaArrayFunctionTest(String function) throws IOException {
+    void refAreaArrayFunctionTest(String function) throws IOException {
 
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             HSSFSheet s = wb1.createSheet();

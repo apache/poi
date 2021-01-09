@@ -26,12 +26,12 @@ public class TestAggregatingUDFFinder extends BaseTestUDFFinder {
     }
 
     @Test
-    public void findFunction() {
+    void findFunction() {
         confirmFindFunction("BESSELJ");
     }
 
     @Test
-    public void add() {
+    void add() {
         ((AggregatingUDFFinder)_instance).add(AnalysisToolPak.instance);
     }
 }

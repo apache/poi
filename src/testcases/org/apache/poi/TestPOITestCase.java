@@ -33,41 +33,41 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPOITestCase {
     @Test
-    public void assertStartsWith() {
+    void assertStartsWith() {
         POITestCase.assertStartsWith("Apache POI", "");
         POITestCase.assertStartsWith("Apache POI", "Apache");
         POITestCase.assertStartsWith("Apache POI", "Apache POI");
     }
 
     @Test
-    public void assertEndsWith() {
+    void assertEndsWith() {
         POITestCase.assertEndsWith("Apache POI", "");
         POITestCase.assertEndsWith("Apache POI", "POI");
         POITestCase.assertEndsWith("Apache POI", "Apache POI");
     }
 
     @Test
-    public void assertContains() {
+    void assertContains() {
         POITestCase.assertContains("There is a needle in this haystack", "needle");
     }
 
     @Test
-    public void assertContainsIgnoreCase_Locale() {
+    void assertContainsIgnoreCase_Locale() {
         POITestCase.assertContainsIgnoreCase("There is a Needle in this haystack", "needlE", Locale.ROOT);
     }
 
     @Test
-    public void assertContainsIgnoreCase() {
+    void assertContainsIgnoreCase() {
         POITestCase.assertContainsIgnoreCase("There is a Needle in this haystack", "needlE");
     }
 
     @Test
-    public void assertNotContained() {
+    void assertNotContained() {
         POITestCase.assertNotContained("There is a needle in this haystack", "gold");
     }
 
     @Test
-    public void assertMapContains() {
+    void assertMapContains() {
         Map<String, String> haystack = Collections.singletonMap("needle", "value");
         POITestCase.assertContains(haystack, "needle");
     }
@@ -78,7 +78,7 @@ public final class TestPOITestCase {
      * Only use this method in test cases!!!
      */
     @Test
-    public void getFieldValue() throws IOException {
+    void getFieldValue() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             PropertyTable actual = POITestCase.getFieldValue(POIFSFileSystem.class, fs, PropertyTable.class, "_property_table");
             assertNotNull(actual);

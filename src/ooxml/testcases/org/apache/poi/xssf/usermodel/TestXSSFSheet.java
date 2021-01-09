@@ -96,125 +96,121 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     //TODO column styles are not yet supported by XSSF
     @Override
-    @Test
-    public void defaultColumnStyle() {
+    protected void defaultColumnStyle() {
         //super.defaultColumnStyle();
     }
 
     @Test
     public void existingHeaderFooter() throws IOException {
-        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx");
-        XSSFOddHeader hdr;
-        XSSFOddFooter ftr;
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx")) {
+            XSSFOddHeader hdr;
+            XSSFOddFooter ftr;
 
-        // Sheet 1 has a header with center and right text
-        XSSFSheet s1 = wb1.getSheetAt(0);
-        assertNotNull(s1.getHeader());
-        assertNotNull(s1.getFooter());
-        hdr = (XSSFOddHeader) s1.getHeader();
-        ftr = (XSSFOddFooter) s1.getFooter();
+            // Sheet 1 has a header with center and right text
+            XSSFSheet s1 = wb1.getSheetAt(0);
+            assertNotNull(s1.getHeader());
+            assertNotNull(s1.getFooter());
+            hdr = (XSSFOddHeader) s1.getHeader();
+            ftr = (XSSFOddFooter) s1.getFooter();
 
-        assertEquals("&Ctestdoc&Rtest phrase", hdr.getText());
-        assertNull(ftr.getText());
+            assertEquals("&Ctestdoc&Rtest phrase", hdr.getText());
+            assertNull(ftr.getText());
 
-        assertEquals("", hdr.getLeft());
-        assertEquals("testdoc", hdr.getCenter());
-        assertEquals("test phrase", hdr.getRight());
+            assertEquals("", hdr.getLeft());
+            assertEquals("testdoc", hdr.getCenter());
+            assertEquals("test phrase", hdr.getRight());
 
-        assertEquals("", ftr.getLeft());
-        assertEquals("", ftr.getCenter());
-        assertEquals("", ftr.getRight());
+            assertEquals("", ftr.getLeft());
+            assertEquals("", ftr.getCenter());
+            assertEquals("", ftr.getRight());
 
-        // Sheet 2 has a footer, but it's empty
-        XSSFSheet s2 = wb1.getSheetAt(1);
-        assertNotNull(s2.getHeader());
-        assertNotNull(s2.getFooter());
-        hdr = (XSSFOddHeader) s2.getHeader();
-        ftr = (XSSFOddFooter) s2.getFooter();
+            // Sheet 2 has a footer, but it's empty
+            XSSFSheet s2 = wb1.getSheetAt(1);
+            assertNotNull(s2.getHeader());
+            assertNotNull(s2.getFooter());
+            hdr = (XSSFOddHeader) s2.getHeader();
+            ftr = (XSSFOddFooter) s2.getFooter();
 
-        assertNull(hdr.getText());
-        assertEquals("&L&F", ftr.getText());
+            assertNull(hdr.getText());
+            assertEquals("&L&F", ftr.getText());
 
-        assertEquals("", hdr.getLeft());
-        assertEquals("", hdr.getCenter());
-        assertEquals("", hdr.getRight());
+            assertEquals("", hdr.getLeft());
+            assertEquals("", hdr.getCenter());
+            assertEquals("", hdr.getRight());
 
-        assertEquals("&F", ftr.getLeft());
-        assertEquals("", ftr.getCenter());
-        assertEquals("", ftr.getRight());
+            assertEquals("&F", ftr.getLeft());
+            assertEquals("", ftr.getCenter());
+            assertEquals("", ftr.getRight());
 
-        // Save and reload
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
+            // Save and reload
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                hdr = (XSSFOddHeader) wb2.getSheetAt(0).getHeader();
+                ftr = (XSSFOddFooter) wb2.getSheetAt(0).getFooter();
 
-        hdr = (XSSFOddHeader) wb2.getSheetAt(0).getHeader();
-        ftr = (XSSFOddFooter) wb2.getSheetAt(0).getFooter();
+                assertEquals("", hdr.getLeft());
+                assertEquals("testdoc", hdr.getCenter());
+                assertEquals("test phrase", hdr.getRight());
 
-        assertEquals("", hdr.getLeft());
-        assertEquals("testdoc", hdr.getCenter());
-        assertEquals("test phrase", hdr.getRight());
-
-        assertEquals("", ftr.getLeft());
-        assertEquals("", ftr.getCenter());
-        assertEquals("", ftr.getRight());
-
-        wb2.close();
+                assertEquals("", ftr.getLeft());
+                assertEquals("", ftr.getCenter());
+                assertEquals("", ftr.getRight());
+            }
+        }
     }
 
     @Test
     public void getAllHeadersFooters() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Sheet 1");
-        assertNotNull(sheet.getOddFooter());
-        assertNotNull(sheet.getEvenFooter());
-        assertNotNull(sheet.getFirstFooter());
-        assertNotNull(sheet.getOddHeader());
-        assertNotNull(sheet.getEvenHeader());
-        assertNotNull(sheet.getFirstHeader());
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+            assertNotNull(sheet.getOddFooter());
+            assertNotNull(sheet.getEvenFooter());
+            assertNotNull(sheet.getFirstFooter());
+            assertNotNull(sheet.getOddHeader());
+            assertNotNull(sheet.getEvenHeader());
+            assertNotNull(sheet.getFirstHeader());
 
-        assertEquals("", sheet.getOddFooter().getLeft());
-        sheet.getOddFooter().setLeft("odd footer left");
-        assertEquals("odd footer left", sheet.getOddFooter().getLeft());
+            assertEquals("", sheet.getOddFooter().getLeft());
+            sheet.getOddFooter().setLeft("odd footer left");
+            assertEquals("odd footer left", sheet.getOddFooter().getLeft());
 
-        assertEquals("", sheet.getEvenFooter().getLeft());
-        sheet.getEvenFooter().setLeft("even footer left");
-        assertEquals("even footer left", sheet.getEvenFooter().getLeft());
+            assertEquals("", sheet.getEvenFooter().getLeft());
+            sheet.getEvenFooter().setLeft("even footer left");
+            assertEquals("even footer left", sheet.getEvenFooter().getLeft());
 
-        assertEquals("", sheet.getFirstFooter().getLeft());
-        sheet.getFirstFooter().setLeft("first footer left");
-        assertEquals("first footer left", sheet.getFirstFooter().getLeft());
+            assertEquals("", sheet.getFirstFooter().getLeft());
+            sheet.getFirstFooter().setLeft("first footer left");
+            assertEquals("first footer left", sheet.getFirstFooter().getLeft());
 
-        assertEquals("", sheet.getOddHeader().getLeft());
-        sheet.getOddHeader().setLeft("odd header left");
-        assertEquals("odd header left", sheet.getOddHeader().getLeft());
+            assertEquals("", sheet.getOddHeader().getLeft());
+            sheet.getOddHeader().setLeft("odd header left");
+            assertEquals("odd header left", sheet.getOddHeader().getLeft());
 
-        assertEquals("", sheet.getOddHeader().getRight());
-        sheet.getOddHeader().setRight("odd header right");
-        assertEquals("odd header right", sheet.getOddHeader().getRight());
+            assertEquals("", sheet.getOddHeader().getRight());
+            sheet.getOddHeader().setRight("odd header right");
+            assertEquals("odd header right", sheet.getOddHeader().getRight());
 
-        assertEquals("", sheet.getOddHeader().getCenter());
-        sheet.getOddHeader().setCenter("odd header center");
-        assertEquals("odd header center", sheet.getOddHeader().getCenter());
+            assertEquals("", sheet.getOddHeader().getCenter());
+            sheet.getOddHeader().setCenter("odd header center");
+            assertEquals("odd header center", sheet.getOddHeader().getCenter());
 
-        // Defaults are odd
-        assertEquals("odd footer left", sheet.getFooter().getLeft());
-        assertEquals("odd header center", sheet.getHeader().getCenter());
-
-        workbook.close();
+            // Defaults are odd
+            assertEquals("odd footer left", sheet.getFooter().getLeft());
+            assertEquals("odd header center", sheet.getHeader().getCenter());
+        }
     }
 
     @Test
     public void autoSizeColumn() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Sheet 1");
-        sheet.createRow(0).createCell(13).setCellValue("test");
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+            sheet.createRow(0).createCell(13).setCellValue("test");
 
-        sheet.autoSizeColumn(13);
+            sheet.autoSizeColumn(13);
 
-        ColumnHelper columnHelper = sheet.getColumnHelper();
-        CTCol col = columnHelper.getColumn(13, false);
-        assertTrue(col.getBestFit());
-        workbook.close();
+            ColumnHelper columnHelper = sheet.getColumnHelper();
+            CTCol col = columnHelper.getColumn(13, false);
+            assertTrue(col.getBestFit());
+        }
     }
 
 
@@ -925,7 +921,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void createRow() throws IOException {
+    protected void createRow() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         CTWorksheet wsh = sheet.getCTWorksheet();

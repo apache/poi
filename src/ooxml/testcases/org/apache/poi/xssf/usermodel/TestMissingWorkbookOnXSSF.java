@@ -34,7 +34,7 @@ public final class TestMissingWorkbookOnXSSF extends BaseTestMissingWorkbook {
 
     @Override
     @BeforeEach
-    public void setUp() {
+    protected void setUp() {
         mainWorkbook = XSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
         sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
 

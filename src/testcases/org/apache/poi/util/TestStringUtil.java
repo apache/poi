@@ -106,7 +106,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void startsWithIgnoreCase() {
+    void startsWithIgnoreCase() {
         assertTrue(StringUtil.startsWithIgnoreCase("Apache POI", "Apache POI"), "same string");
         assertTrue(StringUtil.startsWithIgnoreCase("Apache POI project", "Apache POI"), "longer string");
         assertTrue(StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
@@ -115,7 +115,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void endsWithIgnoreCase() {
+    void endsWithIgnoreCase() {
         assertTrue(StringUtil.endsWithIgnoreCase("Apache POI", "Apache POI"), "same string");
         assertTrue(StringUtil.endsWithIgnoreCase("Project Apache POI", "Apache POI"), "longer string");
         assertTrue(StringUtil.endsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
@@ -124,7 +124,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void join() {
+    void join() {
         assertEquals("", StringUtil.join(",")); // degenerate case: nothing to join
         assertEquals("abc", StringUtil.join(",", "abc")); // degenerate case: one thing to join, no trailing comma
         assertEquals("abc|def|ghi", StringUtil.join("|", "abc", "def", "ghi"));
@@ -136,7 +136,7 @@ public class TestStringUtil {
     }
 
     @Test
-    public void count() {
+    void count() {
         String test = "Apache POI project\n\u00a9 Copyright 2016";
         // supports search in null or empty string
         assertEquals(0, StringUtil.countMatches(null, 'A'), "null");

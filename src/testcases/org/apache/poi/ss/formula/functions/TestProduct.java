@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestProduct {
     @Test
-    public void missingArgsAreIgnored() {
+    void missingArgsAreIgnored() {
         ValueEval result = getInstance().evaluate(new ValueEval[]{new NumberEval(2.0), MissingArgEval.instance}, 0, 0);
         assertTrue(result instanceof NumberEval);
         assertEquals(2, ((NumberEval)result).getNumberValue(), 0);
@@ -39,21 +39,22 @@ public class TestProduct {
      * However, PRODUCT(,) is a valid call (which should return 0). So it makes sense to
      * assert that PRODUCT() is also 0 (at least, nothing explodes).
      */
-    public void missingArgEvalReturns0() {
+    @Test
+    void missingArgEvalReturns0() {
         ValueEval result = getInstance().evaluate(new ValueEval[0], 0, 0);
         assertTrue(result instanceof NumberEval);
         assertEquals(0, ((NumberEval)result).getNumberValue(), 0);
     }
 
     @Test
-    public void twoMissingArgEvalsReturn0() {
+    void twoMissingArgEvalsReturn0() {
         ValueEval result = getInstance().evaluate(new ValueEval[]{MissingArgEval.instance, MissingArgEval.instance}, 0, 0);
         assertTrue(result instanceof NumberEval);
         assertEquals(0, ((NumberEval)result).getNumberValue(), 0);
     }
 
     @Test
-    public void acceptanceTest() {
+    void acceptanceTest() {
         final ValueEval[] args = {
                 new NumberEval(2.0),
                 MissingArgEval.instance,

@@ -29,7 +29,7 @@ public final class TestDrawingManager2 {
     private EscherDggRecord dgg;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         dgg = new EscherDggRecord();
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[0] );
         drawingManager2 = new DrawingManager2( dgg );

@@ -41,7 +41,7 @@ public final class TestHSSFPalette {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         PaletteRecord _palette = new PaletteRecord();
         _hssfPalette = new HSSFPalette(_palette);
     }

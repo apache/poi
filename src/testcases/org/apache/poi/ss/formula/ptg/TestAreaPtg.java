@@ -35,7 +35,7 @@ public final class TestAreaPtg {
 	AreaPtg absolute;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		short firstRow=5;
 		short lastRow=13;
 		short firstCol=7;

@@ -47,7 +47,7 @@ public abstract class BaseTestSlideShow<
     public abstract SlideShow<S,P> reopen(SlideShow<S,P> show) throws IOException;
 
     @Test
-    public void addPicture_File() throws IOException {
+    void addPicture_File() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         File f = slTests.getFile("clock.jpg");
 
@@ -60,7 +60,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void addPicture_Stream() throws IOException {
+    void addPicture_Stream() throws IOException {
         try (SlideShow<S,P> show = createSlideShow();
              InputStream stream = slTests.openResourceAsStream("clock.jpg")) {
             assertEquals(0, show.getPictureData().size());
@@ -71,7 +71,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void addPicture_ByteArray() throws IOException {
+    void addPicture_ByteArray() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
 
@@ -84,7 +84,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void findPicture() throws IOException {
+    void findPicture() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
 
@@ -98,7 +98,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void addTabStops() throws IOException {
+    void addTabStops() throws IOException {
         try (final SlideShow<S,P> show1 = createSlideShow()) {
             // first set the TabStops in the Master sheet
             final MasterSheet<S,P> master1 = show1.getSlideMasters().get(0);
@@ -158,7 +158,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void shapeAndSlideName() throws IOException {
+    void shapeAndSlideName() throws IOException {
         final String file = "SampleShow.ppt"+(getClass().getSimpleName().contains("XML")?"x":"");
         //noinspection unchecked
         try (final InputStream is = slTests.openResourceAsStream(file);
@@ -178,7 +178,7 @@ public abstract class BaseTestSlideShow<
     }
 
     @Test
-    public void addFont() throws IOException {
+    void addFont() throws IOException {
         try (SlideShow<S,P> ppt = createSlideShow()) {
             ppt.createSlide();
             try (InputStream fontData = slTests.openResourceAsStream("font.fntdata")) {
