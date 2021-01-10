@@ -47,7 +47,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 
-public class TestCommentsTable {
+class TestCommentsTable {
 
     private static final String TEST_A2_TEXT = "test A2 text";
     private static final String TEST_A1_TEXT = "test A1 text";

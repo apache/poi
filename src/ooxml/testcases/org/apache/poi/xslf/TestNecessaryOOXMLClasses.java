@@ -27,7 +27,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Test;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
-public class TestNecessaryOOXMLClasses {
+class TestNecessaryOOXMLClasses {
 
     @Test
     void testProblemClasses() {

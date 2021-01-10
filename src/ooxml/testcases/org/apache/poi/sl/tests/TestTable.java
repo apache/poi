@@ -43,7 +43,7 @@ import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.jupiter.api.Test;
 
-public class TestTable {
+class TestTable {
 
     @Test
     void colWidthRowHeight() throws IOException {

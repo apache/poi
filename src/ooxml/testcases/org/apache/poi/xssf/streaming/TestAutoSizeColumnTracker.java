@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
  *
  * see Bug #57450 which reported the original misbehaviour
  */
-public class TestAutoSizeColumnTracker {
+class TestAutoSizeColumnTracker {
 
     private SXSSFSheet sheet;
     private SXSSFWorkbook workbook;

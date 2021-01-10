@@ -66,7 +66,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestEncryptor {
+class TestEncryptor {
     @Test
     void binaryRC4Encryption() throws Exception {
         // please contribute a real sample file, which is binary rc4 encrypted

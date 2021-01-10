@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  *  documents
  */
 @SuppressWarnings("deprecation")
-public class TestDetectAsOOXML {
+class TestDetectAsOOXML {
     @Test
 	void testOpensProperly() throws IOException, InvalidFormatException {
     	try (InputStream is = openSampleFileStream("sample.xlsx");

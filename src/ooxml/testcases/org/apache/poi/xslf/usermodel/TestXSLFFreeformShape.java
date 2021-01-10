@@ -36,7 +36,7 @@ import java.io.IOException;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestXSLFFreeformShape {
+class TestXSLFFreeformShape {
 
     @Test
     void testSetPath() throws IOException {

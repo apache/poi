@@ -61,7 +61,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TestOleShape {
+class TestOleShape {
     private static final String PDF_SAMPLE =
         "H4sIAAAAAAAAAJWUezRUWxzHe+o2FXncVtxLpxi3FPOeKYspjMdM5J1S4TTOaDIzxzpzJo9CUrnrSiUxIeT" +
         "9jB7yqInihrhepTwqt1AT5VZCC7XcY0LWcv+5Z521zz6fvX+/vb/7t9cX78CyMiQZ0XD4W4OFEzgKQATgg4" +

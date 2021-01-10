@@ -29,7 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
-public class TestNecessaryOOXMLClasses {
+class TestNecessaryOOXMLClasses {
 
     @Test
     void testProblemClasses() {

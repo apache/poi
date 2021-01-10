@@ -33,7 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.jupiter.api.Test;
 
-public class TestDocumentProtection {
+class TestDocumentProtection {
 
     @Test
     void testShouldReadEnforcementProperties() throws IOException {

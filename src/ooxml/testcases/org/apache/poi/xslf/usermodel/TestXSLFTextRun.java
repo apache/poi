@@ -39,7 +39,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextRun {
+class TestXSLFTextRun {
 
     @Test
     void testRunProperties() throws IOException {

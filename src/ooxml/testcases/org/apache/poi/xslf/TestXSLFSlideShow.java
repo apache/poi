@@ -42,7 +42,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListE
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestXSLFSlideShow {
+class TestXSLFSlideShow {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     private OPCPackage pack;
 

@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestXWPFChart {
+class TestXWPFChart {
 
     /**
      * test method to check charts are not null

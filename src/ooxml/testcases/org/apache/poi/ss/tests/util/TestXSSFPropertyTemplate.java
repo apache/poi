@@ -35,7 +35,7 @@ import org.apache.poi.ss.util.PropertyTemplate;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFPropertyTemplate {
+class TestXSSFPropertyTemplate {
 
     @Test
     void applyBorders() throws IOException {

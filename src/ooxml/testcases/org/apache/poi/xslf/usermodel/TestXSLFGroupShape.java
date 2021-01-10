@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestXSLFGroupShape {
+class TestXSLFGroupShape {
 
     @Test
     void testCreateShapes() throws Exception {

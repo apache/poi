@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
  * flag "Categories" is not empty, only tests that have at least one category
  * listed in "Categories" are run.
  */
-public class TestCellFormatPart {
+class TestCellFormatPart {
     private static final Pattern NUMBER_EXTRACT_FMT = Pattern.compile(
             "([-+]?[0-9]+)(\\.[0-9]+)?.*(?:(e).*?([+-]?[0-9]+))",
             Pattern.CASE_INSENSITIVE);

@@ -161,7 +161,7 @@ import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
 
-public class TestSignatureInfo {
+class TestSignatureInfo {
     private static final POILogger LOG = POILogFactory.getLogger(TestSignatureInfo.class);
     private static final POIDataSamples testdata = POIDataSamples.getXmlDSignInstance();
 

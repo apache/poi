@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
-public class TestNecessaryOOXMLClasses {
+class TestNecessaryOOXMLClasses {
 
     @Test
     void testProblemClasses() {

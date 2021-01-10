@@ -65,7 +65,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TestEmbedOLEPackage {
+class TestEmbedOLEPackage {
     private static byte[] samplePPT, samplePPTX, samplePNG;
 
     private static final POIDataSamples ssamples = POIDataSamples.getSpreadSheetInstance();

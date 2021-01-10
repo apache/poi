@@ -42,7 +42,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFDataValidation extends BaseTestDataValidation {
+class TestXSSFDataValidation extends BaseTestDataValidation {
 
     public TestXSSFDataValidation(){
         super(XSSFITestDataProvider.instance);

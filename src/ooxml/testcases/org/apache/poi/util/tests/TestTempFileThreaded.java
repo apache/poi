@@ -40,7 +40,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestTempFileThreaded {
+class TestTempFileThreaded {
     private static final int NUMBER_OF_THREADS = 10;
     private static final int NUMBER_OF_TESTS = 200;
 

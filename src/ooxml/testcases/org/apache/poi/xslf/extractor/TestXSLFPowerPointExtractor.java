@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for XSLFPowerPointExtractor
  */
-public class TestXSLFPowerPointExtractor {
+class TestXSLFPowerPointExtractor {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 	/**

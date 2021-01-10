@@ -34,7 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
-public class TestXSSFSheetShiftRowsAndColumns {
+class TestXSSFSheetShiftRowsAndColumns {
     private static final File resultDir = new File("build/custom-reports-test");
 
     private static final int numRows = 4;

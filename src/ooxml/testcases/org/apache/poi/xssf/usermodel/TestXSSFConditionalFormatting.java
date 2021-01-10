@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 /**
  * XSSF-specific Conditional Formatting tests
  */
-public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
+class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
 
     public TestXSSFConditionalFormatting(){
         super(XSSFITestDataProvider.instance);

@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test get/set chart title.
  */
-public class TestXSSFChartTitle {
+class TestXSSFChartTitle {
     private XSSFWorkbook createWorkbookWithChart() {
     	XSSFWorkbook wb = new XSSFWorkbook();
     	XSSFSheet sheet = wb.createSheet("linechart");

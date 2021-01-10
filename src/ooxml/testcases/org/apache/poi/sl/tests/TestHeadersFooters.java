@@ -33,7 +33,7 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.junit.jupiter.api.Test;
 
-public class TestHeadersFooters {
+class TestHeadersFooters {
     @Test
     void bug58144c() throws IOException {
         SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2007.pptx");

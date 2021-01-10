@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
-public class TestXWPFEndnote {
+class TestXWPFEndnote {
 
     private XWPFDocument docOut;
     private String p1Text;

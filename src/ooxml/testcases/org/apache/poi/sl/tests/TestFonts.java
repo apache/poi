@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test rendering - specific to font handling
  */
-public class TestFonts {
+class TestFonts {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     private static final String JPTEXT =

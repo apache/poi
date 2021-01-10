@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestXWPFComment {
+class TestXWPFComment {
     @Test
     void testText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("comment.docx")) {

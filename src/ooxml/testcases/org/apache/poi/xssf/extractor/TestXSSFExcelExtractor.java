@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link XSSFExcelExtractor}
  */
-public class TestXSSFExcelExtractor {
+class TestXSSFExcelExtractor {
 	protected XSSFExcelExtractor getExtractor(String sampleName) {
 		return new XSSFExcelExtractor(XSSFTestDataSamples.openSampleWorkbook(sampleName));
 	}

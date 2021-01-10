@@ -45,7 +45,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 import java.util.List;
 
-public class TestXWPFTableCell {
+class TestXWPFTableCell {
 
     @Test
     void testSetGetVertAlignment() {

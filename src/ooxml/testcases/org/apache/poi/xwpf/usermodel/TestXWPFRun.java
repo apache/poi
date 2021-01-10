@@ -58,7 +58,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 /**
  * Tests for XWPF Run
  */
-public class TestXWPFRun {
+class TestXWPFRun {
     private CTR ctRun;
     private XWPFParagraph p;
     private IRunBody irb;

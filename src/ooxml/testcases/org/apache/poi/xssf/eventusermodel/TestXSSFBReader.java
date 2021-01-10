@@ -34,7 +34,7 @@ import org.apache.poi.xssf.binary.XSSFBStylesTable;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFBReader {
+class TestXSSFBReader {
 
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 

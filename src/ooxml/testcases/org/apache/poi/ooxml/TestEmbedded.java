@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test that we handle embeded bits in OOXML files properly
  */
-public class TestEmbedded {
+class TestEmbedded {
 	@Test
 	void testExcel() throws Exception {
 		POIXMLDocument doc = new XSSFWorkbook(

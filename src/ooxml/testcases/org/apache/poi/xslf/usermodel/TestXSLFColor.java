@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STPresetColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STSystemColorVal;
 
-public class TestXSLFColor {
+class TestXSLFColor {
 
     @Test
     void testGetters() {

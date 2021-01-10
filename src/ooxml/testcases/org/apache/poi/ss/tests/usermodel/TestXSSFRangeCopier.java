@@ -35,7 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFRangeCopier extends BaseTestRangeCopier {
+class TestXSSFRangeCopier extends BaseTestRangeCopier {
     public TestXSSFRangeCopier() {
         super();
         workbook = new XSSFWorkbook();

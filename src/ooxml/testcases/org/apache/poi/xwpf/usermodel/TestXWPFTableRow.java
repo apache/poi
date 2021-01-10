@@ -28,7 +28,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
-public class TestXWPFTableRow {
+class TestXWPFTableRow {
 
     @Test
     void testCreateRow() throws IOException {

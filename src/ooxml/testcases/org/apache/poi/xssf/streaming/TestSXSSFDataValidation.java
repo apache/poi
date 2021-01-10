@@ -29,7 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.jupiter.api.Test;
 
-public class TestSXSSFDataValidation extends BaseTestDataValidation {
+class TestSXSSFDataValidation extends BaseTestDataValidation {
 
     public TestSXSSFDataValidation(){
         super(SXSSFITestDataProvider.instance);

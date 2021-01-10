@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 /**
  * Tests for XWPF Tables
  */
-public class TestXWPFTable {
+class TestXWPFTable {
 
     @Test
     void testConstructor() throws IOException {

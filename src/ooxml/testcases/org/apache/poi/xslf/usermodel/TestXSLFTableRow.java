@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 
-public class TestXSLFTableRow {
+class TestXSLFTableRow {
 
     private static XMLSlideShow ppt;
     private static XSLFTable tbl;

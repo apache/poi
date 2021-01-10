@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-public class TestXSLFTableStyles {
+class TestXSLFTableStyles {
 
     @Test
     void testRead() throws IOException {

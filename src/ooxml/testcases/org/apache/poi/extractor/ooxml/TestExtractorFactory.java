@@ -58,7 +58,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 /**
  * Test that the extractor factory plays nicely
  */
-public class TestExtractorFactory {
+class TestExtractorFactory {
 
     private static final POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
     private static final File xls = getFileAndCheck(ssTests, "SampleSS.xls");

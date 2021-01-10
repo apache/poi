@@ -20,7 +20,7 @@ package org.apache.poi.ss.tests.util;
 import org.apache.poi.ss.util.BaseTestCellUtil;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 
-public class TestSXSSFCellUtil extends BaseTestCellUtil {
+class TestSXSSFCellUtil extends BaseTestCellUtil {
     public TestSXSSFCellUtil() {
         super(SXSSFITestDataProvider.instance);
     }

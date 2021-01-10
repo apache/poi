@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
  *         Excel Structured Reference Syntax
  *      </a>
  */
-public class TestStructuredReferences {
+class TestStructuredReferences {
 
     /**
      * Test the regular expression used in INDIRECT() evaluation to recognize structured references

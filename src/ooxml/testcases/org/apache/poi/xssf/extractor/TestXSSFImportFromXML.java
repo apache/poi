@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.xml.sax.SAXException;
 
-public class TestXSSFImportFromXML {
+class TestXSSFImportFromXML {
 
     @Test
     void testImportFromXML() throws IOException, XPathExpressionException, SAXException{

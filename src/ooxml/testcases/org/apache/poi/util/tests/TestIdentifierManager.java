@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.poi.ooxml.util.IdentifierManager;
 import org.junit.jupiter.api.Test;
 
-public class TestIdentifierManager {
+class TestIdentifierManager {
     @Test
     void testBasic()
     {

@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-public class TestXSLFTextShape {
+class TestXSLFTextShape {
     private static boolean xslfOnly;
 
     @BeforeAll

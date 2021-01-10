@@ -27,7 +27,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFSheetMergeRegions {
+class TestXSSFSheetMergeRegions {
 
     private static final POILogger LOG = POILogFactory.getLogger(TestXSSFSheetMergeRegions.class);
 

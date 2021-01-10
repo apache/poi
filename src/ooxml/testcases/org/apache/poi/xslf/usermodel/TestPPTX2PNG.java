@@ -41,7 +41,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
  */
 @SuppressWarnings("ConstantConditions")
-public class TestPPTX2PNG {
+class TestPPTX2PNG {
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
     private static final File basedir = null;

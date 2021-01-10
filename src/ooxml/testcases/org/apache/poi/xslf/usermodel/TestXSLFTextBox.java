@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextBox {
+class TestXSLFTextBox {
 
     @Test
     void testPlaceholder() throws IOException {

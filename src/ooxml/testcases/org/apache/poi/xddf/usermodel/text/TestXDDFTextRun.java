@@ -40,7 +40,7 @@ import org.apache.poi.xssf.usermodel.XSSFTextBox;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public class TestXDDFTextRun {
+class TestXDDFTextRun {
 
     @Test
     void testTextRunPropertiesInSlide() throws IOException {

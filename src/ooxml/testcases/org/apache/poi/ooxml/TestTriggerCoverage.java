@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test to trigger code-execution of various parts so
  * that all required elements are inclueded in the ooxml-schema-lite package
  */
-public class TestTriggerCoverage {
+class TestTriggerCoverage {
     private static final Set<String> FAILING = new HashSet<>();
     static {
         FAILING.add("stress025.docx");

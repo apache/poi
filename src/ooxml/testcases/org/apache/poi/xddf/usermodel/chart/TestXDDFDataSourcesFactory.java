@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link XDDFDataSourcesFactory}.
  */
-public class TestXDDFDataSourcesFactory {
+class TestXDDFDataSourcesFactory {
 
     private static final Object[][] numericCells = {
             {0.0,      1.0,       2.0,     3.0,      4.0},

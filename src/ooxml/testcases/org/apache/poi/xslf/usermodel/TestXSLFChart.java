@@ -61,7 +61,7 @@ import org.junit.jupiter.api.Test;
 /**
  * a modified version from POI-examples
  */
-public class TestXSLFChart {
+class TestXSLFChart {
     @Test
     void testFillPieChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");

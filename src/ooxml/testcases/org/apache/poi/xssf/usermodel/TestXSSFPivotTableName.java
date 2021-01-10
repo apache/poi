@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 /**
  * Test pivot tables created by named range
  */
-public class TestXSSFPivotTableName extends BaseTestXSSFPivotTable {
+class TestXSSFPivotTableName extends BaseTestXSSFPivotTable {
 
     @Override
     @BeforeEach

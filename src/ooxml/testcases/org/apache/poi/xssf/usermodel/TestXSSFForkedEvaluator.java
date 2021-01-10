@@ -20,7 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.formula.eval.forked.BaseTestForkedEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class TestXSSFForkedEvaluator extends BaseTestForkedEvaluator {
+class TestXSSFForkedEvaluator extends BaseTestForkedEvaluator {
 
     @Override
     protected Workbook newWorkbook() {

@@ -36,7 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
-public class TestXSLFAutoShape {
+class TestXSLFAutoShape {
     @Test
     void testTextBodyProperies() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();

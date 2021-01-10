@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFSlide {
+class TestXSLFSlide {
 
     @Test
     void testReadShapes() throws IOException {

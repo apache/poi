@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBlank;
 
-public class TestXSSFVMLDrawing {
+class TestXSSFVMLDrawing {
 
     @Test
     void testNew() throws IOException, XmlException {

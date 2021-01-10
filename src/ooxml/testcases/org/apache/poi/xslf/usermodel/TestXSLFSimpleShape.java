@@ -47,7 +47,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 
-public class TestXSLFSimpleShape {
+class TestXSLFSimpleShape {
 
     @Test
     void testLineStyles() throws IOException {

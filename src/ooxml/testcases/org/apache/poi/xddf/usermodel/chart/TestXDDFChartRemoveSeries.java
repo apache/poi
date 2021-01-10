@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for bug 63153
  */
-public class TestXDDFChartRemoveSeries {
+class TestXDDFChartRemoveSeries {
     final File resultDir = new File("build/custom-reports-test");
     String procName = null;
     String fileName = null;

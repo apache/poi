@@ -29,7 +29,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFBSheetHyperlinkManager {
+class TestXSSFBSheetHyperlinkManager {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test

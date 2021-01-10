@@ -59,7 +59,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
-public class TestXSSFCellStyle {
+class TestXSSFCellStyle {
 	private StylesTable stylesTable;
     private XSSFCellStyle cellStyle;
 

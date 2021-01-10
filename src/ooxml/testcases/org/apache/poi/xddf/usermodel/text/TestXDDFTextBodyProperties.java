@@ -26,7 +26,7 @@ import org.apache.poi.util.Units;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 
-public class TestXDDFTextBodyProperties {
+class TestXDDFTextBodyProperties {
 
     @Test
     void testProperties() throws IOException {

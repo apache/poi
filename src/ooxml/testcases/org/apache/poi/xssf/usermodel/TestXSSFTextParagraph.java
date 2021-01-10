@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFTextParagraph {
+class TestXSSFTextParagraph {
     @Test
     void testXSSFTextParagraph() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

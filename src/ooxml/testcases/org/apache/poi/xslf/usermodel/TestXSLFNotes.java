@@ -26,7 +26,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestXSLFNotes {
+class TestXSLFNotes {
 
     @Test
     void createNewNote() throws IOException {

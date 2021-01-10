@@ -44,7 +44,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TestHxxFEncryption {
+class TestHxxFEncryption {
     public static Stream<Arguments> data() throws IOException {
         final String base64 =
             "H4sIAAAAAAAAAF1Uu24bMRDs/RULVwkgCUhSpHaZwkDgpHJH8fZ0G/Nx4ZI6y13yG/mRfIb9R5mlZFlIpdPtcnZmdnjPf57/vvx6+f3h6obuv3"+

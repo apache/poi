@@ -41,7 +41,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
  * </em>
  *
  */
-public class TestXSSFColGrouping {
+class TestXSSFColGrouping {
 
 	private static final POILogger logger = POILogFactory.getLogger(TestXSSFColGrouping.class);
 

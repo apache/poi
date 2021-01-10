@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Tests for XWPF Header Footer Stuff
  */
-public class TestXWPFHeaderFooterPolicy {
+class TestXWPFHeaderFooterPolicy {
     private XWPFDocument noHeader;
     private XWPFDocument header;
     private XWPFDocument headerFooter;

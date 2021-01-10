@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 
 
-public class TestXSSFDialogSheet {
+class TestXSSFDialogSheet {
 
     @Test
 	void testCreateDialogSheet() throws IOException {

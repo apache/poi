@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for HXFWordExtractor
  */
-public class TestXWPFWordExtractor {
+class TestXWPFWordExtractor {
 
     /**
      * Get text out of the simple file

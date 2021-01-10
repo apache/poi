@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * test common operations on containers of shapes (sheets and groups of shapes)
  */
-public class TestXSLFShapeContainer {
+class TestXSLFShapeContainer {
 
     void verifyContainer(XSLFShapeContainer container) {
         container.clear();

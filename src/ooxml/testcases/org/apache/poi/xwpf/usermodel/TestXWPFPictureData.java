@@ -36,7 +36,7 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestXWPFPictureData {
+class TestXWPFPictureData {
 
     @Test
     void testRead() throws InvalidFormatException, IOException {

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
+class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
         super(HSSFITestDataProvider.instance);
     }

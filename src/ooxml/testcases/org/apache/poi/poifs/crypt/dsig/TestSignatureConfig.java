@@ -25,7 +25,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestSignatureConfig {
+class TestSignatureConfig {
 
     @Test
     @Disabled("failing in automated builds, due to issues loading security classes")

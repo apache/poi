@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFSlideShow {
+class TestXSLFSlideShow {
     @Test
     void testCreateSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
  */
-public class TestXSSFEventBasedExcelExtractor {
+class TestXSSFEventBasedExcelExtractor {
 	protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
         return new XSSFEventBasedExcelExtractor(XSSFTestDataSamples.
                 openSamplePackage(sampleName));

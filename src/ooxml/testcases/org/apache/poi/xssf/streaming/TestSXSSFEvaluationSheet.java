@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TestSXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
+class TestSXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     private List<Workbook> workbooksToClose = new ArrayList<>();
 
     @AfterEach

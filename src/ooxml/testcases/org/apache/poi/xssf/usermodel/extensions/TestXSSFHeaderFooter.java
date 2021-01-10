@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
-public class TestXSSFHeaderFooter {
+class TestXSSFHeaderFooter {
 
     private XSSFWorkbook wb;
     private XSSFSheet sheet;

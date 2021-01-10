@@ -42,7 +42,7 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 
-public class TestXWPFBugs {
+class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
 
     @Test

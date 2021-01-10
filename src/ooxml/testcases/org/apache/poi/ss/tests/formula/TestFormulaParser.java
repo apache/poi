@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author David North
  */
-public class TestFormulaParser {
+class TestFormulaParser {
 
     @Test
     void testHSSFFailsForOver65536() {

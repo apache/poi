@@ -33,7 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
-public class TestXWPFBugs {
+class TestXWPFBugs {
     @Test
     void bug55802() throws Exception {
         String blabla =

@@ -45,7 +45,7 @@ import org.apache.poi.xslf.util.PPTX2PNG;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
-public class TestXSLFPictureShape {
+class TestXSLFPictureShape {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test

@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.Test;
 
 
-public class TestRelationships {
+class TestRelationships {
 	private static final String HYPERLINK_REL_TYPE =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
 	private static final String COMMENTS_REL_TYPE =

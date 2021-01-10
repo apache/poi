@@ -112,7 +112,7 @@ import org.junit.jupiter.api.function.ThrowingSupplier;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-public class TestXSLFBugs {
+class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     private static boolean xslfOnly;

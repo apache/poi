@@ -27,7 +27,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFBSharedStringsTable {
+class TestXSSFBSharedStringsTable {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test

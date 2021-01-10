@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
-public class TestXSLFTable {
+class TestXSLFTable {
 
     @Test
     void testResize() throws Exception {

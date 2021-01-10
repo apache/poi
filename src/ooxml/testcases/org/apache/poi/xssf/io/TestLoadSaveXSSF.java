@@ -32,7 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 
-public class TestLoadSaveXSSF {
+class TestLoadSaveXSSF {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
     @Test

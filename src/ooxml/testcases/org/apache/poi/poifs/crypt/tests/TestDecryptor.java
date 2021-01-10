@@ -44,7 +44,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
 
-public class TestDecryptor {
+class TestDecryptor {
     private static final POIDataSamples samples = POIDataSamples.getPOIFSInstance();
 
     @Test

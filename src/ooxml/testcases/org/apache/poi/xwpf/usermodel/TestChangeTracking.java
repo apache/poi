@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestChangeTracking {
+class TestChangeTracking {
     @Test
     void detection() throws Exception {
         try (XWPFDocument documentWithoutChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx")) {

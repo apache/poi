@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextParagraph {
+class TestXSLFTextParagraph {
     // private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
 
     static class DrawTextParagraphProxy extends DrawTextParagraph {

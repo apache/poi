@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 
-public class TestXWPFNumbering {
+class TestXWPFNumbering {
 
     @Test
     void testCompareAbstractNum() throws IOException {

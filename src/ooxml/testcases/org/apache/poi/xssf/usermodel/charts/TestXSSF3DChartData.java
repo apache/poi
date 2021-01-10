@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for XSSF Area3d Charts
  */
-public class TestXSSF3DChartData {
+class TestXSSF3DChartData {
 
     private static final Object[][] plotData = {
             {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"},

@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
-public class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
+class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     public TestXSSFSheetShiftColumns() {
         super(); 
         workbook = new XSSFWorkbook();

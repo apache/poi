@@ -55,7 +55,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType;
  * Reimplement and test examples classes so the necessary XmlBeans schema objects are included
  * in the lite schema
  */
-public class TestXSLFExamples {
+class TestXSLFExamples {
     @Test
     void LinkVideoToPptx() throws IOException, URISyntaxException {
         String videoFileName = "file_example_MP4_640_3MG.mp4";

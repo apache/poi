@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.BaseTestColumnShifting;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class TestXSSFColumnShifting extends BaseTestColumnShifting {
+class TestXSSFColumnShifting extends BaseTestColumnShifting {
     public TestXSSFColumnShifting() {
         super(); 
         wb = new XSSFWorkbook();

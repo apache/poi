@@ -35,7 +35,7 @@ import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFSimpleShape {
+class TestXSSFSimpleShape {
     @Test
     void testXSSFTextParagraph() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

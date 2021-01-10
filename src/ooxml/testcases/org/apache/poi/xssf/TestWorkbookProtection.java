@@ -44,7 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public class TestWorkbookProtection {
+class TestWorkbookProtection {
 
     @Test
     void workbookAndRevisionPassword() throws Exception {

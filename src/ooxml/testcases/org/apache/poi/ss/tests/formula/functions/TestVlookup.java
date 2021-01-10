@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test the VLOOKUP function
  */
-public class TestVlookup {
+class TestVlookup {
 
     @Test
     void testFullColumnAreaRef61841() throws IOException {

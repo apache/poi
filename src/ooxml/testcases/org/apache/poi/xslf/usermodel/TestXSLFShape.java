@@ -27,7 +27,7 @@ import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
-public class TestXSLFShape {
+class TestXSLFShape {
 
     @Test
     void testReadTextShapes() throws IOException {

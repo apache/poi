@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Yegor Kozlov
  */
-public class TestXSLFSheet {
+class TestXSLFSheet {
 
     @Test
     void testCreateShapes() throws IOException {

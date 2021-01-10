@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Yegor Kozlov
  */
-public class TestXSLFTheme {
+class TestXSLFTheme {
     @Test
     void testRead(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("themes.pptx");

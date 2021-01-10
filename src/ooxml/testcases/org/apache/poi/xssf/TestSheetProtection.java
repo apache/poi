@@ -27,7 +27,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestSheetProtection {
+class TestSheetProtection {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 

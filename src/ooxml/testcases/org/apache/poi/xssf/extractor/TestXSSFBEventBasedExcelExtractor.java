@@ -33,7 +33,7 @@ import java.nio.file.Files;
 /**
  * Tests for {@link XSSFBEventBasedExcelExtractor}
  */
-public class TestXSSFBEventBasedExcelExtractor {
+class TestXSSFBEventBasedExcelExtractor {
     protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
         return new XSSFBEventBasedExcelExtractor(XSSFTestDataSamples.
                 openSamplePackage(sampleName));

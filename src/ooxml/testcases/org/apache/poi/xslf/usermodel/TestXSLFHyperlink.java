@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestXSLFHyperlink {
+class TestXSLFHyperlink {
 
     @Test
     void testRead() throws IOException{

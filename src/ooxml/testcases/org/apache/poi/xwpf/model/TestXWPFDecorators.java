@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for the various XWPF decorators
  */
-public class TestXWPFDecorators {
+class TestXWPFDecorators {
     private XWPFDocument simple;
     private XWPFDocument hyperlink;
     private XWPFDocument comments;

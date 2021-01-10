@@ -43,7 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 
-public class TestSecureTempZip {
+class TestSecureTempZip {
 
     /**
      * Test case for #59841 - this is an example on how to use encrypted temp files,

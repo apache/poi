@@ -21,7 +21,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.jupiter.api.AfterEach;
 
 
-public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventBasedExcelExtractor {
+class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventBasedExcelExtractor {
 	@Override
 	protected final XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
 		ExtractorFactory.setAllThreadsPreferEventExtractors(true);

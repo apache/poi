@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for XSSF Line Charts
  */
-public class TestXSSFLineChartData {
+class TestXSSFLineChartData {
 
     private static final Object[][] plotData = {
             {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"},

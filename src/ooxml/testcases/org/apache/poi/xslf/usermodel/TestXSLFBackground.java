@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestXSLFBackground {
+class TestXSLFBackground {
     @Test
     void testNoFillBackground() throws IOException {
         XMLSlideShow pptx = new XMLSlideShow();

@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
-public class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
+class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
     @Test
     void test() throws Exception {

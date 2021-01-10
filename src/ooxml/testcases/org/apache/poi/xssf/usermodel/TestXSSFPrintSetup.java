@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for {@link XSSFPrintSetup}
  */
-public class TestXSSFPrintSetup {
+class TestXSSFPrintSetup {
     @Test
     void testSetGetPaperSize() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();

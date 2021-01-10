@@ -26,7 +26,7 @@ import org.apache.poi.ooxml.POIXMLRelation;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 
-public class TestXDDFChart {
+class TestXDDFChart {
     @Test
     void testConstruct() {
         // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-lite

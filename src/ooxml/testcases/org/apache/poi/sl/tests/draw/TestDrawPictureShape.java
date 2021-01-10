@@ -40,7 +40,7 @@ import org.apache.poi.util.Units;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TestDrawPictureShape {
+class TestDrawPictureShape {
     final static POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
 
     private static boolean xslfOnly;

@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 
 
-public class TestXSSFBorder {
+class TestXSSFBorder {
 
 	@Test
 	void testGetBorderStyle() {

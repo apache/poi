@@ -50,7 +50,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  * see Bug #57450 which reported the original misbehaviour
  */
-public class TestSXSSFSheetAutoSizeColumn {
+class TestSXSSFSheetAutoSizeColumn {
 
     private static final String SHORT_CELL_VALUE = "Ben";
     private static final String LONG_CELL_VALUE = "B Be Ben Beni Benif Benify Benif Beni Ben Be B";

@@ -34,7 +34,7 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.junit.jupiter.api.Test;
 
-public class TestZipPackagePropertiesMarshaller {
+class TestZipPackagePropertiesMarshaller {
     private final PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
 
     private boolean marshall() throws OpenXML4JException {

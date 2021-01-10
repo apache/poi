@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-public class TestXDDFChartExtensionList {
+class TestXDDFChartExtensionList {
 
     @Test
     void getXmlObject() {

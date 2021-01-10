@@ -39,7 +39,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestXSSFDrawing {
+class TestXSSFDrawing {
     @Test
     void bug54803() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("bug54803.xlsx")) {

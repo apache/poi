@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test built-in table styles
  */
-public class TestTableStyles {
+class TestTableStyles {
 
     /**
      * Test that a built-in style is initialized properly

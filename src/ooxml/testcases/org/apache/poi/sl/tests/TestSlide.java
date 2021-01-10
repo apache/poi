@@ -35,7 +35,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.jupiter.api.Test;
 
-public class TestSlide {
+class TestSlide {
 
     @Test
     void hideHSLF() throws IOException {

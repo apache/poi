@@ -37,7 +37,7 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-public class TestXDDFColor {
+class TestXDDFColor {
     private static final String XMLNS = "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"/>";
 
     @Test

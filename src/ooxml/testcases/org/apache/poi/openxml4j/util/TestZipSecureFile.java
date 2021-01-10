@@ -27,7 +27,7 @@ import java.util.Enumeration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestZipSecureFile {
+class TestZipSecureFile {
     @Test
     void testThresholdInputStream() throws Exception {
         // This fails in Java 10 because our reflection injection of the ThresholdInputStream causes a

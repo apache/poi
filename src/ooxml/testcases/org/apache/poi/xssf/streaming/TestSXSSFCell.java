@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
  * Tests various functionality having to do with {@link SXSSFCell}.  For instance support for
  * particular datatypes, etc.
  */
-public class TestSXSSFCell extends BaseTestXCell {
+class TestSXSSFCell extends BaseTestXCell {
 
     public TestSXSSFCell() {
         super(SXSSFITestDataProvider.instance);

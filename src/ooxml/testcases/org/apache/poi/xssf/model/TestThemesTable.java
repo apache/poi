@@ -44,7 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
-public class TestThemesTable {
+class TestThemesTable {
     private static final String testFileComplex = "Themes2.xlsx";
     // TODO .xls version available too, add HSSF support then check
 

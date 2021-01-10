@@ -26,7 +26,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
-public class TestExternalEntities {
+class TestExternalEntities {
 
     /**
      * Get text out of the simple file

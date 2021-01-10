@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public class TestSumifsXSSF {
+class TestSumifsXSSF {
 
     /**
      * handle null cell predicate

@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
 
-public class TestXSSFCellFill {
+class TestXSSFCellFill {
 
     @Test
     void testGetFillBackgroundColor() {

@@ -31,7 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
  *
  * @author Yegor Kozlov
  */
-public class TestSXSSFHyperlink extends BaseTestHyperlink {
+class TestSXSSFHyperlink extends BaseTestHyperlink {
 
     public TestSXSSFHyperlink() {
         super(SXSSFITestDataProvider.instance);

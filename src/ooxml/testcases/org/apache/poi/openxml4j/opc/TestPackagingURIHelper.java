@@ -24,7 +24,7 @@ import java.net.URI;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.Test;
 
-public class TestPackagingURIHelper {
+class TestPackagingURIHelper {
 
     /**
      * Test relativizePartName() method.

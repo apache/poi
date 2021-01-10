@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  * As we go through XmlBeans, should always use &,
  *  and not &amp;
  */
-public class TestHeaderFooterHelper {
+class TestHeaderFooterHelper {
 
     @Test
     void testGetCenterLeftRightSection() {

@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListE
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParagraph> {
+class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParagraph> {
     private OPCPackage pack;
 
     @Override

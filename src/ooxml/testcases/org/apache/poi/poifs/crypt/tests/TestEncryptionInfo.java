@@ -28,7 +28,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public class TestEncryptionInfo {
+class TestEncryptionInfo {
     @Test
     void testEncryptionInfo() throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));

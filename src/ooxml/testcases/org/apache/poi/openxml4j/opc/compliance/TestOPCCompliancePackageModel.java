@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
  * M1.11 : A package implementer shall neither create nor recognize a part with
  * a part name derived from another part name by appending segments to it.
  */
-public class TestOPCCompliancePackageModel {
+class TestOPCCompliancePackageModel {
 
     private static File TESTFILE;
 
