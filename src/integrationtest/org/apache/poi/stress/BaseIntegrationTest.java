@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  * types of files/exceptions, e.g. old file formats.
  *
  */
-class BaseIntegrationTest {
+public class BaseIntegrationTest {
 	private final File rootDir;
 	private final String file;
 	private FileHandler handler;
@@ -49,7 +49,6 @@ class BaseIntegrationTest {
 		this.handler = handler;
 	}
 
-	@Test
 	void test() throws Exception {
         assertNotNull( handler, "Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file) );
 		testOneFile(new File(rootDir, file));
