@@ -19,15 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayInputStream;
@@ -93,6 +85,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
@@ -118,11 +111,13 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredErrors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -671,7 +666,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             for (Row row : sheet) {
                 for (Cell cell : row) {
                     if (cell.getCellType() == CellType.FORMULA) {
-                        formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
+                        // caused NPE on some cells
+                        assertDoesNotThrow(() -> formulaEvaluator.evaluateInCell(cell));
                     }
                 }
             }
@@ -1205,22 +1201,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     void bug46662() throws IOException {
-        // New file
-        XSSFWorkbook wb1 = new XSSFWorkbook();
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
-        wb1.close();
+        for (int i=0; i<2; i++) {
+            try (XSSFWorkbook wb1 = (i == 0) ? new XSSFWorkbook() : XSSFTestDataSamples.openSampleWorkbook("sample.xlsx")) {
+                for (int j=0; j<3; j++) {
+                    try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                        assertEquals(wb1.getNumberOfSheets(), wb2.getNumberOfSheets());
+                    }
+                }
+            }
+        }
 
-        // Simple file
-        XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        XSSFTestDataSamples.writeOutAndReadBack(wb2).close();
-        XSSFTestDataSamples.writeOutAndReadBack(wb2).close();
-        XSSFTestDataSamples.writeOutAndReadBack(wb2).close();
-        wb2.close();
-
-        // Complex file
-        // TODO
+        // TODO: Complex file
     }
 
     /**
@@ -1469,7 +1460,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
                 WorkbookEvaluator.registerFunction("GETPIVOTDATA", func);
             }
-            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+            assertDoesNotThrow(fe::evaluateAll);
         }
     }
 
@@ -1481,8 +1473,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     void bug55692_poifs() throws IOException {
         // Via a POIFSFileSystem
         try (POIFSFileSystem fsP = new POIFSFileSystem(
-                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"))) {
-            WorkbookFactory.create(fsP);
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+            Workbook wb = WorkbookFactory.create(fsP)) {
+            assertNotNull(wb);
+            assertEquals(3, wb.getNumberOfSheets());
         }
     }
 
@@ -1988,10 +1982,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             Sheet sheet = wb.getSheet("Feuil1");
             Row mod = sheet.getRow(1);
             mod.getCell(1).setCellValue(3);
+            mod = sheet.getRow(2);
+            mod.createCell(0).setCellValue(10);
             HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-//        FileOutputStream fileOutput = new FileOutputStream("/tmp/57196.xlsx");
-//        wb.write(fileOutput);
-//        fileOutput.close();
+            assertEquals(256, mod.getCell(2).getNumericCellValue());
         }
     }
 
@@ -2023,13 +2017,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.close();
     }
 
-    @Test
-    void test57196_WorkbookEvaluator() throws IOException {
+    @ParameterizedTest
+    @CsvSource({
+        // simple formula worked
+        "DEC2HEX(O2+D2), org.apache.poi.ss.formula.eval.StringEval [0]",
+        // this already failed! Hex2Dec did not correctly handle RefEval
+        "HEX2DEC(O8), org.apache.poi.ss.formula.eval.NumberEval [0]",
+        // slightly more complex one failed
+        "HEX2DEC(O8)-O2+D2, org.apache.poi.ss.formula.eval.NumberEval [0]",
+        // more complicated failed
+        "DEC2HEX(HEX2DEC(O8)-O2+D2), org.apache.poi.ss.formula.eval.StringEval [0]",
+        // what other similar functions
+        "DEC2BIN(O8)-O2+D2, org.apache.poi.ss.formula.eval.ErrorEval [#VALUE!]",
+        // what other similar functions
+        "DEC2BIN(A1), org.apache.poi.ss.formula.eval.StringEval [0]"
+    })
+    void test57196_WorkbookEvaluator(String formula, String expValue) throws IOException {
         String previousLogger = System.getProperty("org.apache.poi.util.POILogger");
-        //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
-        //System.setProperty("poi.log.level", "3");
-        try {
-            XSSFWorkbook wb = new XSSFWorkbook();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet("Sheet1");
             XSSFRow row = sheet.createRow(0);
             XSSFCell cell = row.createCell(0);
@@ -2039,61 +2044,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             cell = row.createCell(2);
             cell.setCellValue(0);
 
-            // simple formula worked
-            cell.setCellFormula("DEC2HEX(O2+D2)");
+            cell.setCellFormula(formula);
 
             WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
             workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+            ValueEval ve = workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
 
-            // this already failed! Hex2Dec did not correctly handle RefEval
-            cell.setCellFormula("HEX2DEC(O8)");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            // slightly more complex one failed
-            cell.setCellFormula("HEX2DEC(O8)-O2+D2");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            // more complicated failed
-            cell.setCellFormula("DEC2HEX(HEX2DEC(O8)-O2+D2)");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            // what other similar functions
-            cell.setCellFormula("DEC2BIN(O8)-O2+D2");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            // what other similar functions
-            cell.setCellFormula("DEC2BIN(A1)");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            // what other similar functions
-            cell.setCellFormula("BIN2DEC(B1)");
-            workbookEvaluator.clearAllCachedResultValues();
-
-            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
-            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
-            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
-
-            wb.close();
+            assertEquals(expValue, ve.toString());
         } finally {
             if (previousLogger == null) {
                 System.clearProperty("org.apache.poi.util.POILogger");
@@ -2182,12 +2139,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     void test57165() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx")) {
             removeAllSheetsBut(3, wb);
-            wb.cloneSheet(0); // Throws exception here
+            // Throws exception here
+            assertDoesNotThrow(() -> wb.cloneSheet(0));
             wb.setSheetName(1, "New Sheet");
-            //saveWorkbook(wb, fileName);
 
-            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            wbBack.close();
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertNotNull(wbBack.getSheet("New Sheet"));
+            }
         }
     }
 
@@ -2195,12 +2153,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     void test57165_create() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx")) {
             removeAllSheetsBut(3, wb);
-            wb.createSheet("newsheet"); // Throws exception here
+            // Throws exception here
+            assertDoesNotThrow(() -> wb.createSheet("newsheet"));
             wb.setSheetName(1, "New Sheet");
-            //saveWorkbook(wb, fileName);
 
-            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            wbBack.close();
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertNotNull(wbBack.getSheet("New Sheet"));
+            }
         }
     }
 
@@ -2628,26 +2587,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.close();
     }
 
-    @Test
+    @Disabled("this test is only for manual verification, as we can't test if the cell is visible in Excel")
     void test51451() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        Sheet sh = wb.createSheet();
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sh = wb.createSheet();
 
-        Row row = sh.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(239827342);
+            Row row = sh.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(239827342);
 
-        CellStyle style = wb.createCellStyle();
-        //style.setHidden(false);
-        DataFormat excelFormat = wb.createDataFormat();
-        style.setDataFormat(excelFormat.getFormat("#,##0"));
-        sh.setDefaultColumnStyle(0, style);
-
-//        FileOutputStream out = new FileOutputStream("/tmp/51451.xlsx");
-//        wb.write(out);
-//        out.close();
-
-        wb.close();
+            CellStyle style = wb.createCellStyle();
+            //style.setHidden(false);
+            DataFormat excelFormat = wb.createDataFormat();
+            style.setDataFormat(excelFormat.getFormat("#,##0"));
+            sh.setDefaultColumnStyle(0, style);
+        }
     }
 
     @Test
@@ -2851,7 +2805,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Disabled("Creates files for checking results manually, actual values are tested in Test*CellStyle")
-    @Test
     void test58043() throws IOException {
         saveRotatedTextExample(new HSSFWorkbook(), TempFile.createTempFile("rotated", ".xls"));
         saveRotatedTextExample(new XSSFWorkbook(), TempFile.createTempFile("rotated", ".xlsx"));
@@ -2859,52 +2812,44 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     void test59132() throws IOException {
-        Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("59132.xlsx");
-        Sheet worksheet = workbook.getSheet("sheet1");
+        try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("59132.xlsx")) {
+            Sheet worksheet = workbook.getSheet("sheet1");
 
-        // B3
-        Row row = worksheet.getRow(2);
-        Cell cell = row.getCell(1);
+            // B3
+            Row row = worksheet.getRow(2);
+            Cell cell = row.getCell(1);
 
-        cell.setCellValue((String) null);
+            cell.setCellValue((String) null);
 
-        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-        // B3
-        row = worksheet.getRow(2);
-        cell = row.getCell(1);
+            // B3
+            row = worksheet.getRow(2);
+            cell = row.getCell(1);
 
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals(CellType._NONE, evaluator.evaluateFormulaCell(cell));
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals(CellType._NONE, evaluator.evaluateFormulaCell(cell));
 
-        // A3
-        row = worksheet.getRow(2);
-        cell = row.getCell(0);
+            // A3
+            row = worksheet.getRow(2);
+            cell = row.getCell(0);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
-        assertEquals(CellType.STRING, evaluator.evaluateFormulaCell(cell));
-        CellValue value = evaluator.evaluate(cell);
-        assertEquals("", value.getStringValue());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
+            assertEquals(CellType.STRING, evaluator.evaluateFormulaCell(cell));
+            CellValue value = evaluator.evaluate(cell);
+            assertEquals("", value.getStringValue());
 
-        // A5
-        row = worksheet.getRow(4);
-        cell = row.getCell(0);
+            // A5
+            row = worksheet.getRow(4);
+            cell = row.getCell(0);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
-        assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(cell));
-        value = evaluator.evaluate(cell);
-        assertEquals(1.0, value.getNumberValue(), 0.1);
-
-        /*FileOutputStream output = new FileOutputStream("C:\\temp\\59132.xlsx");
-        try {
-            workbook.write(output);
-        } finally {
-            output.close();
-        }*/
-
-        workbook.close();
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
+            assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(cell));
+            value = evaluator.evaluate(cell);
+            assertEquals(1.0, value.getNumberValue(), 0.1);
+        }
     }
 
     @Disabled("bug 59442")
@@ -3246,14 +3191,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFTable table2 = sheet.createTable(null);
             XSSFTable table3 = sheet.createTable(null);
 
-            sheet.removeTable(table1);
+            assertDoesNotThrow(() -> sheet.removeTable(table1));
 
-            sheet.createTable(null);
+            assertDoesNotThrow(() -> sheet.createTable(null));
 
-            sheet.removeTable(table2);
-            sheet.removeTable(table3);
+            assertDoesNotThrow(() -> sheet.removeTable(table2));
+            assertDoesNotThrow(() -> sheet.removeTable(table3));
 
-            sheet.createTable(null);
+            assertDoesNotThrow(() -> sheet.createTable(null));
         }
     }
 
@@ -3296,7 +3241,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // Do the auto-size
             for (int i = 0; i < numCols; i++) {
-                sheet.autoSizeColumn(i);
+                int i2 = i;
+                assertDoesNotThrow(() -> sheet.autoSizeColumn(i2));
             }
         }
     }
@@ -3468,10 +3414,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // sheet.addIgnoredErrors(new CellReference(cell.getRowIndex(), cell.getColumnIndex(), false, false),
             //        IgnoredErrorType.NUMBER_STORED_AS_TEXT);
 
-            /*File file = new File("/tmp/63509.xlsx");
-            try(FileOutputStream outputStream = new FileOutputStream(file)) {
-                workbook.write(outputStream);
-            }*/
+            String sqref = sheet.getCTWorksheet().getIgnoredErrors().getIgnoredErrorArray(0).getSqref().get(0).toString();
+            assertEquals("A1", sqref);
         }
     }
 
@@ -3501,6 +3445,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                     sheet.autoSizeColumn(col);
                 }
             LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));
+
+            assertTrue(Duration.between(start, Instant.now()).getSeconds() < 10);
         }
     }
 
