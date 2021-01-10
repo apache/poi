@@ -1314,6 +1314,7 @@ under the License.
             module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
+                <exclude name="**/*$*.class"/>
                 <exclude name="**/TestUnfixedBugs.class"/>
                 <exclude name="**/All*Tests.class"/>
                 <exclude name="**/TestSignatureInfo.class"/>
@@ -1548,6 +1549,7 @@ under the License.
                  modulepath-ref="test-main.modules" module1="poi" outputDir="${main.reports.test}">
             <zipfileset src="build/dist/maven/poi-tests/poi-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
+                <exclude name="**/*$*.class"/>
                 <exclude name="**/All*Tests.class"/>
                 <exclude name="**/TestUnfixedBugs.class"/>
                 <exclude name="**/TestcaseRecordInputStream.class"/>
@@ -1604,6 +1606,7 @@ under the License.
                  modulepath-ref="test-scratchpad.modules" module1="scratchpad" outputDir="${scratchpad.reports.test}">
             <zipfileset src="build/dist/maven/poi-scratchpad-tests/poi-scratchpad-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
+                <exclude name="**/*$*.class"/>
                 <exclude name="**/All*Tests.class"/>
                 <exclude name="**/${testexcludepattern}.class"/>
                 <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
@@ -1633,6 +1636,7 @@ under the License.
                      modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
+                    <exclude name="**/*$*.class"/>
                     <exclude name="**/All*Tests.class"/>
                     <exclude name="**/TestUnfixedBugs.class"/>
                     <exclude name="**/${testexcludepattern}.class"/>
@@ -1696,6 +1700,7 @@ under the License.
                  modulepath-ref="test-integration.modules" module1="stress" outputDir="${integration.reports.test}">
             <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
                 <include name="**/${testpattern}.class"/>
+                <exclude name="**/*$*.class"/>
                 <exclude name="**/${testexcludepattern}.class"/>
                 <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
             </zipfileset>
@@ -1849,6 +1854,7 @@ under the License.
                  modulepath-ref="test-excelant.modules" module1="excelant" outputDir="${excelant.reports.test}">
             <zipfileset src="build/dist/maven/poi-excelant-tests/poi-excelant-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
+                <exclude name="**/*$*.class"/>
                 <exclude name="**/${testexcludepattern}.class"/>
                 <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
             </zipfileset>
