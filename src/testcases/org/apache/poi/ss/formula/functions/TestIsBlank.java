@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestIsBlank {
+final class TestIsBlank {
 
     @Test
     void test3DArea() {

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DocumentDescriptor functionality
  */
-public final class TestDocumentDescriptor {
+final class TestDocumentDescriptor {
 
     /**
      * test equality

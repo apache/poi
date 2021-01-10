@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-public class XWPFAbstractNumTest {
+public class TestXWPFAbstractNum {
 
     @Test
     void getXmlObject() {

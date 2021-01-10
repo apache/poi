@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestRowCol {
+final class TestRowCol {
 
 	@Test
 	void testCol() {

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link NumberToTextConverter}
  */
-public final class TestNumberToTextConverter {
+final class TestNumberToTextConverter {
 	/**
 	 * Confirms that <tt>ExcelNumberToTextConverter.toText(d)</tt> produces the right results.
 	 * As part of preparing this test class, the <tt>ExampleConversion</tt> instances should be set

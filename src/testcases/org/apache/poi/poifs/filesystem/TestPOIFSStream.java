@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
@@ -60,7 +59,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests {@link POIFSStream}
  */
-public final class TestPOIFSStream {
+final class TestPOIFSStream {
     private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
 
     /**

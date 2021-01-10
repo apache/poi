@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Various tests for HSSFClientAnchor.
  */
-public final class TestHSSFClientAnchor {
+final class TestHSSFClientAnchor {
     @Test
     void testGetAnchorHeightInPoints() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {

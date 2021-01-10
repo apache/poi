@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test PropertyFactory functionality
  */
-public final class TestPropertyFactory {
+final class TestPropertyFactory {
 
     @Test
     void testConvertToProperties() throws IOException {

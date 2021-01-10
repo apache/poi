@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.junit.jupiter.api.Test;
 
-public final class TestConstantValueParser {
+final class TestConstantValueParser {
 	private static final Object[] SAMPLE_VALUES = {
 			Boolean.TRUE,
 			null,

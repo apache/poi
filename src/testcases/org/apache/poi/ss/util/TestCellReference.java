@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  * Note - some additional testing is also done in the HSSF class,
  *  {@link org.apache.poi.hssf.util.TestCellReference}
  */
-public final class TestCellReference {
+final class TestCellReference {
     @Test
     void testConstructors() {
         CellReference cellReference;

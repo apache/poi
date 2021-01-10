@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public final class TestExcelExtractor {
+final class TestExcelExtractor {
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
 		File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
         POIFSFileSystem fs = new POIFSFileSystem(file);

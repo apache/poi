@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link RefPtg}.
  */
-public final class TestReferencePtg {
+final class TestReferencePtg {
     /**
      * Tests reading a file containing this ptg.
      */

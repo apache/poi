@@ -22,7 +22,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 /**
  * @author Yegor Kozlov
  */
-public final class TestHSSFBorderStyle extends BaseTestBorderStyle  {
+final class TestHSSFBorderStyle extends BaseTestBorderStyle  {
 
     public TestHSSFBorderStyle() {
         super(HSSFITestDataProvider.instance);

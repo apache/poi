@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests YearFracCalculator using test-cases listed in a sample spreadsheet
  */
-public final class TestYearFracCalculatorFromSpreadsheet {
+final class TestYearFracCalculatorFromSpreadsheet {
 
 	private static final class SS {
 

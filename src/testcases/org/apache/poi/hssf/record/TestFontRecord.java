@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the {@link FontRecord}
  * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestFontRecord {
+final class TestFontRecord {
 
     private static final int SID = 0x31;
     private static final byte[] data = {

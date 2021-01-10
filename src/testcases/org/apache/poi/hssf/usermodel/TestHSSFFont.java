@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
  */
-public final class TestHSSFFont extends BaseTestFont {
+final class TestHSSFFont extends BaseTestFont {
 
     public TestHSSFFont() {
         super(HSSFITestDataProvider.instance);

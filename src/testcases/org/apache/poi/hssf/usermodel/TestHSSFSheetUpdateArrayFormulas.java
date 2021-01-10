@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test array formulas in HSSF
  */
-public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateArrayFormulas {
+final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateArrayFormulas {
 
     public TestHSSFSheetUpdateArrayFormulas() {
         super(HSSFITestDataProvider.instance);

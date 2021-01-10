@@ -17,7 +17,9 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -31,12 +33,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 /**
  * Tests that the common RegionUtil works as we need it to.
  */
-public final class TestRegionUtil {
+final class TestRegionUtil {
     private static final CellRangeAddress A1C3 = new CellRangeAddress(0, 2, 0, 2);
     private static final BorderStyle NONE = BorderStyle.NONE;
     private static final BorderStyle THIN = BorderStyle.THIN;

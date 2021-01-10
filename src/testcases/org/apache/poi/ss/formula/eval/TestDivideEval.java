@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for divide operator evaluator.
  */
-public final class TestDivideEval {
+final class TestDivideEval {
 
 	private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
 		ValueEval[] args = {

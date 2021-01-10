@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -34,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestSumproduct {
+final class TestSumproduct {
 
 	private static ValueEval invokeSumproduct(ValueEval[] args) {
 		// srcCellRow and srcCellColumn are ignored by SUMPRODUCT

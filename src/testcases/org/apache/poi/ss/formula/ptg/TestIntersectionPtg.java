@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link IntersectionPtg}.
  */
-public final class TestIntersectionPtg extends BaseTestPtg {
+final class TestIntersectionPtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

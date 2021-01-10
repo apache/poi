@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests bugs for POIFSFileSystem
  */
-public final class TestFileSystemBugs {
+final class TestFileSystemBugs {
     private static final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 

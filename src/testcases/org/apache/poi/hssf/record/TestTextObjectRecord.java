@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Yegor Kozlov
  */
-public final class TestTextObjectRecord {
+final class TestTextObjectRecord {
 
     private static final byte[] simpleData = HexRead.readFromString(
         "B6 01 12 00 " +

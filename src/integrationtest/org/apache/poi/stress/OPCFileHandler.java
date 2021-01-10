@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Test;
 
-public class OPCFileHandler extends AbstractFileHandler {
+class OPCFileHandler extends AbstractFileHandler {
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
@@ -61,7 +61,7 @@ public class OPCFileHandler extends AbstractFileHandler {
 
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/diagram/test.vsdx");
 
         try (InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000)) {

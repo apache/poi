@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Stephen Wolke (smwolke at geistig.com)
  */
-public final class TestTrunc extends BaseTestNumeric {
+final class TestTrunc extends BaseTestNumeric {
     private static final NumericFunction F = null;
 
     @Test

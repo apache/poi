@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestTFunc {
+final class TestTFunc {
 
 	/**
 	 * @return the result of calling function T() with the specified argument

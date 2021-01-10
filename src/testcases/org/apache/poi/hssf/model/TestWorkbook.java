@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for the Workbook class.
  */
-public final class TestWorkbook {
+final class TestWorkbook {
     @Test
     void testFontStuff() throws IOException {
         HSSFWorkbook hwb = new HSSFWorkbook();

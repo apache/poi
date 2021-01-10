@@ -27,7 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public final class TestUnicodeNameRecord {
+final class TestUnicodeNameRecord {
 
 	@Test
 	void testReadBook() throws IOException {

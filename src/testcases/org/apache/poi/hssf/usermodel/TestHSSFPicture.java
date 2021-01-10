@@ -39,7 +39,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFPicture extends BaseTestPicture {
+final class TestHSSFPicture extends BaseTestPicture {
 
     public TestHSSFPicture() {
         super(HSSFITestDataProvider.instance);

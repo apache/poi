@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
-public final class TestBOFRecord {
+final class TestBOFRecord {
     @Test
     void testBOFRecord() throws IOException {
         // This used to throw an error before - #42794

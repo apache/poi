@@ -29,7 +29,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SystemOutLogger;
 import org.junit.jupiter.api.Test;
 
-public class HSLFFileHandler extends SlideShowHandler {
+class HSLFFileHandler extends SlideShowHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
@@ -51,14 +51,14 @@ public class HSLFFileHandler extends SlideShowHandler {
     }
 
     @Test
-    public void testOne() throws Exception {
+    void testOne() throws Exception {
         testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));
     }
 
     // a test-case to test all .ppt files without executing the full TestAllFiles
     @Override
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         File[] files = new File("test-data/slideshow/").listFiles((dir, name) -> name.endsWith(".ppt"));
         assertNotNull(files);
 

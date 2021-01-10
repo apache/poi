@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test read/serialize of escher blip records
 */
-public final class TestEscherBlipRecord {
+final class TestEscherBlipRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
     //test reading/serializing of a PNG blip

@@ -17,19 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.ss.usermodel.BaseTestSheetHiding;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-public final class TestSheetHiding extends BaseTestSheetHiding {
+final class TestSheetHiding extends BaseTestSheetHiding {
     public TestSheetHiding() {
         super(HSSFITestDataProvider.instance,
                 "TwoSheetsOneHidden.xls", "TwoSheetsNoneHidden.xls");

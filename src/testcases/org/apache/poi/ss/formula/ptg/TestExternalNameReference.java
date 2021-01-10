@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for proper calculation of named ranges from external workbooks.
  */
-public final class TestExternalNameReference {
+final class TestExternalNameReference {
 	double MARKUP_COST_1 = 1.8d;
 	double MARKUP_COST_2 = 1.5d;
 	double PART_COST = 12.3d;

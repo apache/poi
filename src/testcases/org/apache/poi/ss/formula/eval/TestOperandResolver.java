@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <tt>OperandResolver</tt>
  */
-public final class TestOperandResolver {
+final class TestOperandResolver {
 	@Test
 	void testParseDouble_bug48472() {
 		// bug 48472 - StringIndexOutOfBoundsException

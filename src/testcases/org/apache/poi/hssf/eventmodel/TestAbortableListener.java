@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link AbortableHSSFListener}
  */
-public final class TestAbortableListener {
+final class TestAbortableListener {
 
 	private POIFSFileSystem openSample() throws IOException {
 		ByteArrayInputStream is = new ByteArrayInputStream(HSSFITestDataProvider.instance

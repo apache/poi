@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Johan Karlsteen
  */
-public final class TestIntercept {
+final class TestIntercept {
 	private static final Function INTERCEPT = new Intercept();
 
 	private static ValueEval invoke(Function function, ValueEval xArray, ValueEval yArray) {

@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestDec2Bin {
+final class TestDec2Bin {
 
     private static ValueEval invokeValue(String number1) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1) };

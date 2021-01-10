@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link EscherContainerRecord}
  */
-public final class TestEscherContainerRecord {
+final class TestEscherContainerRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
     @Test

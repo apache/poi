@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
  * Test the low level formula parser functionality. High level tests are to
  * be done via usermodel/HSSFCell.setFormulaValue().
  */
-public final class TestFormulaParser {
+final class TestFormulaParser {
 
     /**
      * @return parsed token array already confirmed not <code>null</code>

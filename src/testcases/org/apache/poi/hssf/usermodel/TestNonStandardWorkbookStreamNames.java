@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *  with a WORKBOOK or BOOK directory entry (instead of
  *  the more usual, Workbook)
  */
-public final class TestNonStandardWorkbookStreamNames {
+final class TestNonStandardWorkbookStreamNames {
 	private final String xlsA = "WORKBOOK_in_capitals.xls";
     private final String xlsB = "BOOK_in_capitals.xls";
 

@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *  but using parts which need to use
  *  HSSFFormulaEvaluator.
  */
-public final class TestFormulaParserEval {
+final class TestFormulaParserEval {
 
 	@Test
 	void testWithNamedRange() {

@@ -30,7 +30,7 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.junit.jupiter.api.Test;
 
-public class HWPFFileHandler extends POIFSFileHandler {
+class HWPFFileHandler extends POIFSFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         HWPFDocument doc = new HWPFDocument(stream);
@@ -49,7 +49,7 @@ public class HWPFFileHandler extends POIFSFileHandler {
     @Override
     @Test
     @SuppressWarnings("java:S2699")
-    public void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/document/52117.doc");
 
         try (InputStream stream = new FileInputStream(file)) {
@@ -65,7 +65,7 @@ public class HWPFFileHandler extends POIFSFileHandler {
     }
 
     @Test
-    public void testExtractingOld() {
+    void testExtractingOld() {
         File file = new File("test-data/document/52117.doc");
         assertDoesNotThrow(() -> handleExtracting(file));
     }

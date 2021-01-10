@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for TEXT()
  */
-public final class TestText {
+final class TestText {
     @Test
     void testTextWithStringFirstArg() {
         ValueEval strArg = new StringEval("abc");

@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
 
-public class CombinedIteratorTest {
+class TestCombinedIterator {
 
     void testIteration(CombinedIterable<String> iterable, String... expected) {
 

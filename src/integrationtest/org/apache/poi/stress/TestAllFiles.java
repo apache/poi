@@ -68,7 +68,7 @@ import org.opentest4j.TestAbortedException;
  *  here as well! This is to ensure that files that should not work really do not work, e.g.
  *  that we do not remove expected sanity checks.
  */
-public class TestAllFiles {
+class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
     private static final boolean IGNORE_SCRATCHPAD = Boolean.getBoolean("scratchpad.ignore");
 
@@ -384,7 +384,7 @@ public class TestAllFiles {
     // ... even when using a custom display name generator
     @ParameterizedTest(name = "#{index} {0}" )
     @MethodSource("files")
-    public void testAllFiles(String file, FileHandler handler) throws Exception {
+    void testAllFiles(String file, FileHandler handler) throws Exception {
         assertNotNull(handler, "Did not find a handler for file " + file);
 
         // this also removes the password for non encrypted files

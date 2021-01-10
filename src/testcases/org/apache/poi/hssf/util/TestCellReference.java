@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the HSSF and SS versions of CellReference.
  * See also {@link org.apache.poi.ss.util.TestCellReference}
  */
-public final class TestCellReference {
+final class TestCellReference {
     @Test
     void testColNumConversion() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));

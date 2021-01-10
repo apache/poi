@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestSCLRecord {
+final class TestSCLRecord {
     byte[] data = new byte[] {
       (byte)0x3,(byte)0x0,(byte)0x4,(byte)0x0
     };

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link ColumnInfoRecord}
  */
-public final class TestColumnInfoRecord {
+final class TestColumnInfoRecord {
 
 	@Test
 	void testBasic() {

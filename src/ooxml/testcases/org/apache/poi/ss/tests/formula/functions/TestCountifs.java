@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test the COUNTIFS() function
  */
-public class CountifsTests {
+class TestCountifs {
 
     private Workbook workbook;
 

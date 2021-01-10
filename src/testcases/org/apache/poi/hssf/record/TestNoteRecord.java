@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestNoteRecord {
+final class TestNoteRecord {
     private final byte[] testData = HexRead.readFromString(
             "06 00 01 00 02 00 02 04 " +
             "1A 00 00 " +

@@ -39,7 +39,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
+final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 
     public TestHSSFFormulaEvaluator() {
         super(HSSFITestDataProvider.instance);

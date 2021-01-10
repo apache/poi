@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Specific test cases for YearFracCalculator
  */
-public final class TestYearFracCalculator {
+final class TestYearFracCalculator {
 
     @Test
 	void testBasis1() {

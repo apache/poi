@@ -39,14 +39,13 @@ import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.util.NotImplemented;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * enclosing_type describe the purpose here
  */
-public final class TestEventRecordFactory {
+final class TestEventRecordFactory {
     private static final byte[][] CONTINUE_DATA = {
         // an unknown record with 0 length
         {0, -1, 0, 0,},

@@ -43,7 +43,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-public final class TestFormulas {
+final class TestFormulas {
 
     private static HSSFWorkbook openSample(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);

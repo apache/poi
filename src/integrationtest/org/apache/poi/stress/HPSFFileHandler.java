@@ -43,7 +43,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-public class HPSFFileHandler extends POIFSFileHandler {
+class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
 
     private static File copyOutput;
@@ -120,7 +120,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	@Override
     @Test
     @SuppressWarnings("java:S2699")
-	public void test() throws Exception {
+	void test() throws Exception {
 	    String path = "test-data/diagram/44501.vsd";
         try (InputStream stream = new FileInputStream(path)) {
             handleFile(stream, path);
@@ -129,7 +129,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
-    public void testExtractor() {
+    void testExtractor() {
         File file = new File("test-data/hpsf/TestBug44375.xls");
         assertDoesNotThrow(() -> handleExtracting(file));
     }

@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
  * Test case for OLE2 files with empty properties.
  * An empty property's type is {@link Variant#VT_EMPTY}.
  */
-public final class TestEmptyProperties {
+final class TestEmptyProperties {
 
     private static final POIDataSamples samples = POIDataSamples.getHPSFInstance();
 

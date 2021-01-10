@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  *  https://poi.apache.org/hssf/eval.html
  * all actually works as we'd expect them to
  */
-public final class TestFormulaEvaluatorDocs {
+final class TestFormulaEvaluatorDocs {
 
 	/**
 	 * https://poi.apache.org/hssf/eval.html#EvaluateAll

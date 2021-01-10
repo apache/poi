@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestFontBasisRecord {
+final class TestFontBasisRecord {
     byte[] data = new byte[] {
         (byte)0x28,(byte)0x1A,   // x basis
         (byte)0x9C,(byte)0x0F,   // y basis

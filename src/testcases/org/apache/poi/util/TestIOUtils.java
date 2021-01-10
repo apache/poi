@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test IOUtils
  */
-public final class TestIOUtils {
+final class TestIOUtils {
 
     private static File TMP;
     private static final long LENGTH = 300+new Random().nextInt(9000);

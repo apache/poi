@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
  *
  * Can also be used to get the appropriate FileHandler for a single file.
  */
-public class POIFileScanner {
+class POIFileScanner {
     private final static File ROOT_DIR;
     static {
         // when running in Gradle, current directory might be "build/integrationtest"
@@ -195,7 +195,7 @@ public class POIFileScanner {
     @Disabled
     @Test
     @SuppressForbidden("Just an ignored test")
-    public void testInvalidFile() throws IOException, InterruptedException {
+    void testInvalidFile() throws IOException, InterruptedException {
         FileHandler fileHandler = POIFileScanner.getFileHandler(new File("/usbc/CommonCrawl"),
                 "www.bgs.ac.uk_downloads_directdownload.cfm_id=2362&noexcl=true&t=west_20sussex_20-_20building_20stone_20quarries");
 
@@ -210,13 +210,13 @@ public class POIFileScanner {
     }
 
     @Test
-    public void testDetectUnnamedFile() throws IOException {
+    void testDetectUnnamedFile() throws IOException {
         File root = new File(ROOT_DIR, "spreadsheet");
         assertDoesNotThrow(() -> POIFileScanner.detectUnnamedFile(root, "49156.xlsx"));
     }
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         assertDoesNotThrow(() -> POIFileScanner.scan(ROOT_DIR));
     }
 }

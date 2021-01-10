@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the INDIRECT() function.</p>
  */
-public final class TestIndirect {
+final class TestIndirect {
     // convenient access to namespace
     // private static final ErrorEval EE = null;
 

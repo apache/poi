@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test BitField functionality
  */
-public final class TestBitField {
+final class TestBitField {
     private static BitField bf_multi  = BitFieldFactory.getInstance(0x3F80);
     private static BitField bf_single = BitFieldFactory.getInstance(0x4000);
 

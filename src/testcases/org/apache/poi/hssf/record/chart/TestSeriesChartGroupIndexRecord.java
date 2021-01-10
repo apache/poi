@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestSeriesChartGroupIndexRecord {
+final class TestSeriesChartGroupIndexRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00
     };

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestNumberFormatIndexRecord {
+final class TestNumberFormatIndexRecord {
     byte[] data = new byte[] {
         0x05,0x00
     };

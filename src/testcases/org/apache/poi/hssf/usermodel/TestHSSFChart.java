@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.chart.SeriesRecord;
 import org.apache.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -36,7 +35,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link HSSFChart}
  */
-public final class TestHSSFChart {
+final class TestHSSFChart {
 
 	@Test
 	void testSingleChart() {

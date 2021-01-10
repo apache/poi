@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link Financed}
  */
-public final class TestFind {
+final class TestFind {
 
     @Test
 	void testFind() throws IOException {

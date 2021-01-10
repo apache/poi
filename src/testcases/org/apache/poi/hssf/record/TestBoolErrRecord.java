@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link BoolErrRecord}
  */
-public final class TestBoolErrRecord {
+final class TestBoolErrRecord {
 
 	@Test
 	void testError() {

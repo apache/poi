@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link LinkTable}
  */
-public final class TestLinkTable {
+final class TestLinkTable {
 
 	/**
 	 * The example file attached to bugzilla 45046 is a clear example of Name records being present

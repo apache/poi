@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test HyperlinkRecord
  */
-public final class TestHyperlinkRecord {
+final class TestHyperlinkRecord {
 
     //link to http://www.lakings.com/
     private static final byte[] data1 = {

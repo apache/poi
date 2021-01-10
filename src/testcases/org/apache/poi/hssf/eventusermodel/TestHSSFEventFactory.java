@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testing for {@link HSSFEventFactory}
  */
-public final class TestHSSFEventFactory {
+final class TestHSSFEventFactory {
     private final List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
     private void openSample(String sampleFileName) throws IOException {

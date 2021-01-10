@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestCommonObjectDataSubRecord {
+final class TestCommonObjectDataSubRecord {
 	byte[] data = new byte[] {
 		(byte)0x12,(byte)0x00,(byte)0x01,(byte)0x00,
 		(byte)0x01,(byte)0x00,(byte)0x11,(byte)0x60,

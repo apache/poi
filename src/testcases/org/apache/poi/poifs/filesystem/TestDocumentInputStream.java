@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DocumentInputStream functionality
  */
-public final class TestDocumentInputStream {
+final class TestDocumentInputStream {
     private DocumentNode _workbook_n;
     private byte[] _workbook_data;
     private static final int _workbook_size = 5000;

@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Milosz Rembisz
  */
-public final class TestDateValue {
+final class TestDateValue {
 
     @BeforeAll
     public static void init() {

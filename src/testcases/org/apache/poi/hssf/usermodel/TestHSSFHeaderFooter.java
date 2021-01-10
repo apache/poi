@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link HSSFHeader} / {@link HSSFFooter}
  */
-public final class TestHSSFHeaderFooter {
+final class TestHSSFHeaderFooter {
 
 	/**
 	 * Tests that get header retrieves the proper values.

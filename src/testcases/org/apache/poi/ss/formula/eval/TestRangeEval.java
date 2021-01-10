@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for unary plus operator evaluator.
  */
-public final class TestRangeEval {
+final class TestRangeEval {
 	@Test
 	void testPermutations() {
 

@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for COUNT(), COUNTA() COUNTIF(), COUNTBLANK()
  */
-public final class TestCountFuncs {
+final class TestCountFuncs {
 
 	private static final String NULL = null;
 

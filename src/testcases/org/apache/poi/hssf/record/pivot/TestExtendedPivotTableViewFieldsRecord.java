@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link ExtendedPivotTableViewFieldsRecord}
  */
-public final class TestExtendedPivotTableViewFieldsRecord {
+final class TestExtendedPivotTableViewFieldsRecord {
 
 	@Test
 	void testSubNameNotPresent_bug46693() {

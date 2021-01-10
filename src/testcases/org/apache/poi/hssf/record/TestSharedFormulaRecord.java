@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.util.LittleEndianInput;
 import org.junit.jupiter.api.Test;
 
-public final class TestSharedFormulaRecord {
+final class TestSharedFormulaRecord {
 
     /**
      * A sample spreadsheet known to have one sheet with 4 shared formula ranges

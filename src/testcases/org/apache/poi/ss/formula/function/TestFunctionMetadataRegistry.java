@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestFunctionMetadataRegistry {
+final class TestFunctionMetadataRegistry {
 	@Test
 	void testWellKnownFunctions() {
 		confirmFunction(0, "COUNT");

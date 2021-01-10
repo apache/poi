@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -38,7 +37,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the Mini Store in the NIO POIFS
  */
 @SuppressWarnings("CatchMayIgnoreException")
-public final class TestPOIFSMiniStore {
+final class TestPOIFSMiniStore {
     private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
 
     /**

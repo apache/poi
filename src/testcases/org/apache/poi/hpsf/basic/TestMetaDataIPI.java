@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
  * This class tests reading and writing of meta data. No actual document is created. All information
  * is stored in a virtual document in a ByteArrayOutputStream
  */
-public final class TestMetaDataIPI {
+final class TestMetaDataIPI {
 
 	private POIFSFileSystem poifs ;
 	private DocumentSummaryInformation dsi;

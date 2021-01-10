@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link WriteAccessRecord}
  */
-public final class TestWriteAccessRecord {
+final class TestWriteAccessRecord {
 
 	private static final String HEX_SIXTYFOUR_SPACES = ""
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "

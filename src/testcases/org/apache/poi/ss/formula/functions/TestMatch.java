@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for MATCH()
  */
-public final class TestMatch {
+final class TestMatch {
 	/** less than or equal to */
 	private static final NumberEval MATCH_LARGEST_LTE = new NumberEval(1);
 	private static final NumberEval MATCH_EXACT = new NumberEval(0);

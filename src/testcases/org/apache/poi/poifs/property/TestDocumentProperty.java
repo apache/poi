@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DocumentProperty functionality
  */
-public final class TestDocumentProperty {
+final class TestDocumentProperty {
 
     @Test
     void testConstructor() throws IOException {

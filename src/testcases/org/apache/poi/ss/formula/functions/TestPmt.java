@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula.functions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -28,7 +27,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
-public final class TestPmt {
+final class TestPmt {
 
 	private static void confirm(double expected, NumberEval ne) {
 		// only asserting accuracy to 4 fractional digits

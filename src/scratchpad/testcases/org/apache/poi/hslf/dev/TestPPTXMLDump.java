@@ -26,7 +26,7 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestPPTXMLDump extends BasePPTIteratingTest {
+public class TestPPTXMLDump extends BaseTestPPTIterating {
     @Test
     void testMain() throws Exception {
         PPTXMLDump.main(new String[0]);

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * A class for testing the POI Junit TestCase utility class
  */
-public final class TestPOITestCase {
+final class TestPOITestCase {
     @Test
     void assertStartsWith() {
         POITestCase.assertStartsWith("Apache POI", "");

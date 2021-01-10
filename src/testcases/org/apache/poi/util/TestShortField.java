@@ -19,7 +19,6 @@ package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test ShortField code
  */
-public final class TestShortField {
+final class TestShortField {
 
     private static final short[] _test_array = {Short.MIN_VALUE, -1, 0, 1, Short.MAX_VALUE};
 

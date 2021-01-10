@@ -28,7 +28,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestEscherBSERecord {
+final class TestEscherBSERecord {
     @Test
     void testFillFields() {
         String data = "01 00 00 00 24 00 00 00 05 05 01 02 03 04 " +

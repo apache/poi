@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
  * See bug 39234 in bugzilla. Thanks to Bill Seddon for providing the solution.
  * </p>
  */
-public final class TestPropertySorter {
+final class TestPropertySorter {
 
     //the correct order of entries in the test file
     private static final String[] _entries = {

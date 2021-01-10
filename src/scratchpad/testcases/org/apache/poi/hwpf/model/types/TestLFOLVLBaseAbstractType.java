@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test cases for {@link LVLFAbstractType}
+ * Test cases for {@link LFOLVLBaseAbstractType}
  */
-public class LVLFAbstractTypeTest {
+class TestLFOLVLBaseAbstractType {
     @Test
     void testGetSize() {
-        assertEquals( 28, LVLFAbstractType.getSize() );
+        assertEquals( 8, LFOLVLBaseAbstractType.getSize() );
     }
 
 }

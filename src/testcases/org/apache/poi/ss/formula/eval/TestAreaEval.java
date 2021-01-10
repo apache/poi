@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <tt>AreaEval</tt>
  */
-public final class TestAreaEval {
+final class TestAreaEval {
 
 	@Test
 	void testGetValue_bug44950() {

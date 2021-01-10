@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Marc Johnson
  */
-public final class TestRootProperty {
+final class TestRootProperty {
 	private RootProperty _property;
 	private byte[] _testblock;
 

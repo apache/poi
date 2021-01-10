@@ -31,7 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public final class TestChartTitleFormatRecord {
+final class TestChartTitleFormatRecord {
 
 	@Test
     void testRecord() throws Exception {

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
  */
-public final class TestFormulaParserIf {
+final class TestFormulaParserIf {
 	private static Ptg[] parseFormula(String formula) {
 		return TestFormulaParser.parseFormula(formula);
 	}

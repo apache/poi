@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-public class PlfLfoTest {
+public class TestPlfLfo {
     @Test
     void testAdd() {
         PlfLfo p = new PlfLfo(new byte[] {0, 0, 0, 0}, 0, 0);

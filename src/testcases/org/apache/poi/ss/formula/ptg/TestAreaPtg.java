@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link AreaPtg}.
  */
-public final class TestAreaPtg {
+final class TestAreaPtg {
 
 	AreaPtg relative;
 	AreaPtg absolute;

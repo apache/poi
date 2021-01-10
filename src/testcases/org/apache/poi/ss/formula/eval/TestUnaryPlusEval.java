@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for unary plus operator evaluator.
  */
-public final class TestUnaryPlusEval {
+final class TestUnaryPlusEval {
 
 	/**
 	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>

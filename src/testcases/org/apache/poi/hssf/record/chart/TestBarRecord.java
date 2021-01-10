@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestBarRecord {
+final class TestBarRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,   // bar space
         (byte)0x96,(byte)0x00,   // category space

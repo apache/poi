@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -54,7 +53,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public final class TestFormulaEvaluatorBugs {
+final class TestFormulaEvaluatorBugs {
     private static boolean OUTPUT_TEST_FILES;
     private static String tmpDirName;
 

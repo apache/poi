@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public final class TestUnicodeWorkbook {
+final class TestUnicodeWorkbook {
 
     /**
      *  Tests Bug38230

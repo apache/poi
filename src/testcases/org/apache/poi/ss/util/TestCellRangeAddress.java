@@ -34,7 +34,7 @@ import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.junit.jupiter.api.Test;
 
-public final class TestCellRangeAddress {
+final class TestCellRangeAddress {
     static final byte[] data = new byte[] {
             0x02, 0x00, 0x04, 0x00,
             0x00, 0x00, 0x03, 0x00,

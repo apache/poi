@@ -40,7 +40,7 @@ import org.apache.tools.ant.BuildException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-public class TestExcelAntWorkbookUtil {
+class TestExcelAntWorkbookUtil {
 
     private static final String mortgageCalculatorFileName =
         TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls" ;

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestLen {
+final class TestLen {
 
 	private static ValueEval invokeLen(ValueEval text) {
 		ValueEval[] args = new ValueEval[] { text, };

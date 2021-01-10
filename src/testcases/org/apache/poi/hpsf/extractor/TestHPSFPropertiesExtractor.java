@@ -32,7 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public final class TestHPSFPropertiesExtractor {
+final class TestHPSFPropertiesExtractor {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     @Test

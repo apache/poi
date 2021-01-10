@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
  */
-public final class TestHSSFSheet extends BaseTestSheet {
+final class TestHSSFSheet extends BaseTestSheet {
 
     public TestHSSFSheet() {
         super(HSSFITestDataProvider.instance);

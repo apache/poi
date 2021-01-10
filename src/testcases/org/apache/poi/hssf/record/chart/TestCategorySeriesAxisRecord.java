@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestCategorySeriesAxisRecord {
+final class TestCategorySeriesAxisRecord {
     byte[] data = new byte[] {
         (byte)0x01,(byte)0x00,    // crossing point
         (byte)0x01,(byte)0x00,    // label frequency

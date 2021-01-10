@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the Fraction Formatting part of DataFormatter.
  * Largely taken from bug #54686
  */
-public final class TestFractionFormat {
+final class TestFractionFormat {
     @Test
     void testSingle() {
         FractionFormat f = new FractionFormat("", "##");

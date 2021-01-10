@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Marc Johnson
  */
-public final class TestIntList {
+final class TestIntList {
     @Test
     void testConstructors() {
         IntList list = new IntList();

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  * This is part 1 of 2 of the tests - it only does the POIDocuments
  *  which are part of the Main (not scratchpad)
  */
-public final class TestPOIDocumentMain {
+final class TestPOIDocumentMain {
     // The POI Documents to work on
     private POIDocument doc;
     private POIDocument doc2;

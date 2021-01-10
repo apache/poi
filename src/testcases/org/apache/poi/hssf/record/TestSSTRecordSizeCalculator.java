@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests that records size calculates correctly.
  */
-public final class TestSSTRecordSizeCalculator {
+final class TestSSTRecordSizeCalculator {
 	private static final String SMALL_STRING = "Small string";
 	private static final int COMPRESSED_PLAIN_STRING_OVERHEAD = 3;
 	private static final int OPTION_FIELD_SIZE = 1;

@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestReadWriteChart {
+final class TestReadWriteChart {
 
     /**
      * In the presence of a chart we need to make sure BOF/EOF records still exist.

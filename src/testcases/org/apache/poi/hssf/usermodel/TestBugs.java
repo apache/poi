@@ -101,7 +101,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  * define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
-public final class TestBugs extends BaseTestBugzillaIssues {
+final class TestBugs extends BaseTestBugzillaIssues {
 
     public TestBugs() {
         super(HSSFITestDataProvider.instance);

@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFColor {
+final class TestHSSFColor {
     @Test
     void testBasics() {
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);

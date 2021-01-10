@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the EndSubRecord
  * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestEndSubRecord {
+final class TestEndSubRecord {
     private static final byte[] data =  { };
 
     @Test

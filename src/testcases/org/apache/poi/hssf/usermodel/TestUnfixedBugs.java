@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
  * Bugzilla id's PLEASE MOVE tests from this class to TestBugs once the bugs are
  * fixed, so that they are then run automatically.
  */
-public final class TestUnfixedBugs {
+final class TestUnfixedBugs {
     @Test
     void testFormulaRecordAggregate_1() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"

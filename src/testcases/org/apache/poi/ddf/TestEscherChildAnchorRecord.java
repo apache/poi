@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestEscherChildAnchorRecord {
+final class TestEscherChildAnchorRecord {
     @Test
     void testSerialize() {
         EscherChildAnchorRecord r = createRecord();

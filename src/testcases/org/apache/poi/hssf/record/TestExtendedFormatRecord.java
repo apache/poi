@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestExtendedFormatRecord {
+final class TestExtendedFormatRecord {
 
 	private static final byte[] data = {
 			0, 0, // Font 0

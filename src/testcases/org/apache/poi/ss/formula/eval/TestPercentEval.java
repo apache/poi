@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for percent operator evaluator.
  */
-public final class TestPercentEval {
+final class TestPercentEval {
 
 	private static void confirm(ValueEval arg, double expectedResult) {
 		ValueEval[] args = {

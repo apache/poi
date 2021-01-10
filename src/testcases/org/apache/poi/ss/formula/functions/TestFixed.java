@@ -37,7 +37,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public final class TestFixed {
+final class TestFixed {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;

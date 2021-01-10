@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  * Test <code>HSSFPictureData</code>.
  * The code to retrieve images from a workbook provided by Trejkaz (trejkaz at trypticon dot org) in Bug 41223.
  */
-public final class TestHSSFPictureData {
+final class TestHSSFPictureData {
     @BeforeAll
     public static void setUpClass() {
         final String tmpDirProperty = System.getProperty("java.io.tmpdir");

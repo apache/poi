@@ -27,7 +27,7 @@ import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public class HPBFFileHandler extends POIFSFileHandler {
+class HPBFFileHandler extends POIFSFileHandler {
 	@Override
 	public void handleFile(InputStream stream, String path) throws Exception {
 		HPBFDocument pub = new HPBFDocument(new POIFSFileSystem(stream));
@@ -42,7 +42,7 @@ public class HPBFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/publisher/SampleBrochure.pub");
 
         InputStream stream = new FileInputStream(file);

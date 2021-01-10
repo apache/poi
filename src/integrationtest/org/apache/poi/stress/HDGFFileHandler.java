@@ -31,7 +31,7 @@ import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public class HDGFFileHandler extends POIFSFileHandler {
+class HDGFFileHandler extends POIFSFileHandler {
 	@Override
 	public void handleFile(InputStream stream, String path) throws IOException {
 	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
@@ -54,7 +54,7 @@ public class HDGFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/diagram/44501.vsd");
 
         InputStream stream = new FileInputStream(file);

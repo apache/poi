@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for the {@link InternalSheet} class.
  */
-public final class TestSheet {
+final class TestSheet {
 	private static InternalSheet createSheet(List<org.apache.poi.hssf.record.Record> inRecs) {
 		return InternalSheet.createSheet(new RecordStream(inRecs, 0));
 	}

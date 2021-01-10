@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestAreaFormatRecord {
+final class TestAreaFormatRecord {
     byte[] data = new byte[] {
         (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0x00,    // forecolor
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // backcolor

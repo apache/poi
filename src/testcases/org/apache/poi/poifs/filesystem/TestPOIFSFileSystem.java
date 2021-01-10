@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
  */
-public final class TestPOIFSFileSystem {
+final class TestPOIFSFileSystem {
    private final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 
 	/**

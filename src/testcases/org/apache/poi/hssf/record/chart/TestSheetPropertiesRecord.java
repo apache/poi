@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link SheetPropertiesRecord}
  * Test data taken directly from a real Excel file.
  */
-public final class TestSheetPropertiesRecord {
+final class TestSheetPropertiesRecord {
     private static final byte[] data = {
         (byte)0x0A,(byte)0x00,
         (byte)0x00,

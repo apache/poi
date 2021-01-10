@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link ExpandedDouble}
  */
-public final class TestExpandedDouble {
+final class TestExpandedDouble {
 	private static final BigInteger BIG_POW_10 = BigInteger.valueOf(1000000000);
 
 	@Test

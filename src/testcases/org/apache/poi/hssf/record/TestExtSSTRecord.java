@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.junit.jupiter.api.Test;
 
-public final class TestExtSSTRecord {
+final class TestExtSSTRecord {
 
     /**
      *  ExtSSTRecord can be continued. Ensure we properly read the continue remainder.

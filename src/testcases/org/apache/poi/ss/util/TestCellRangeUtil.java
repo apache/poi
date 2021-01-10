@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  *
  * @see org.apache.poi.ss.util.CellRangeUtil
  */
-public final class TestCellRangeUtil {
+final class TestCellRangeUtil {
 
     private static final CellRangeAddress A1 = new CellRangeAddress(0, 0, 0, 0);
     private static final CellRangeAddress B1 = new CellRangeAddress(0, 0, 1, 1);

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test {@link LittleEndianInputStream} and {@link LittleEndianOutputStream}
  */
-public final class TestLittleEndianStreams {
+final class TestLittleEndianStreams {
 
 	@Test
 	void testRead() throws IOException {

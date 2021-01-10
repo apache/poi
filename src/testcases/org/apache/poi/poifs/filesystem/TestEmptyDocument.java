@@ -29,7 +29,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.Test;
 
-public final class TestEmptyDocument {
+final class TestEmptyDocument {
     private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
 
     @Test

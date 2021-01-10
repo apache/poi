@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the TestCFRuleRecord
  * class works correctly.
  */
-public final class TestCFRuleRecord {
+final class TestCFRuleRecord {
     @Test
     void testConstructors () throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {

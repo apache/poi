@@ -29,7 +29,7 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.junit.jupiter.api.Test;
 
-public class XSLFFileHandler extends SlideShowHandler {
+class XSLFFileHandler extends SlideShowHandler {
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
 	    XMLSlideShow slide = new XMLSlideShow(stream);
@@ -71,7 +71,7 @@ public class XSLFFileHandler extends SlideShowHandler {
     // a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/slideshow/ca.ubc.cs.people_~emhill_presentations_HowWeRefactor.pptx");
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());

@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
  * Unit tests for the Excel 5/95 and Excel 4 (and older) text
  *  extractor
  */
-public final class TestOldExcelExtractor {
+final class TestOldExcelExtractor {
     private static OldExcelExtractor createExtractor(String sampleFileName) throws IOException {
         File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
         return new OldExcelExtractor(file);

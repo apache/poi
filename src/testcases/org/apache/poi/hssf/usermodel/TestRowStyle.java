@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test row styling functionality
  */
-public final class TestRowStyle {
+final class TestRowStyle {
 
     /**
      * TEST NAME:  Test Write Sheet Font <P>

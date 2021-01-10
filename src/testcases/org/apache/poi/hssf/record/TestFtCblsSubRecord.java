@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the FtCblsSubRecord
  * class works correctly.
  */
-public final class TestFtCblsSubRecord {
+final class TestFtCblsSubRecord {
     private final byte[] data = new byte[] {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x64, 0x00,
         0x01, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x10, 0x00, 0x01, 0x00

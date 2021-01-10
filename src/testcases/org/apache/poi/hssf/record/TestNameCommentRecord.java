@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the NameCommentRecord serializes/deserializes correctly
  */
-public final class TestNameCommentRecord {
+final class TestNameCommentRecord {
 	@Test
 	void testReserialize() {
 		final byte[] data = HexRead

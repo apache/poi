@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link ChartFormatRecord} Test data taken directly from a real
  * Excel file.
  */
-public final class TestChartFormatRecord {
+final class TestChartFormatRecord {
 	/**
 	 * This rather uninteresting data came from attachment 23347 of bug 46693 at
 	 * offsets 0x6BB2 and 0x7BAF

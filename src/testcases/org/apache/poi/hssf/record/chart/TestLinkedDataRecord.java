@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestLinkedDataRecord {
+final class TestLinkedDataRecord {
 
 /*
     The records below are records that would appear in a simple bar chart

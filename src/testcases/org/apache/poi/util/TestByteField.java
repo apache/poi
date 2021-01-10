@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for ByteField class
  */
-public final class TestByteField {
+final class TestByteField {
 
     private static final byte[] _test_array = {
         Byte.MIN_VALUE, ( byte ) -1, ( byte ) 0, ( byte ) 1, Byte.MAX_VALUE

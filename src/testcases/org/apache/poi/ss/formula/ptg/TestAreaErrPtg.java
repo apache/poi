@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link AreaErrPtg}.
  */
-public final class TestAreaErrPtg extends BaseTestPtg {
+final class TestAreaErrPtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

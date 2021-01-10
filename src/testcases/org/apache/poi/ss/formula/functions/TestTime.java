@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link TimeFunc}
  */
-public final class TestTime {
+final class TestTime {
 
 	private static final int SECONDS_PER_MINUTE = 60;
 	private static final int SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;

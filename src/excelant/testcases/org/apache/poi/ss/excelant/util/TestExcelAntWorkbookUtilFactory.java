@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the ExcelAntWorbookUtilFactory.
  */
-public class TestExcelAntWorkbookUtilFactory {
+class TestExcelAntWorkbookUtilFactory {
 
     private static final String mortgageCalculatorWorkbookFile =
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;

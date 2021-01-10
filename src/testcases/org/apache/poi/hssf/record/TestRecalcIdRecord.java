@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestRecalcIdRecord {
+final class TestRecalcIdRecord {
 
 	private static RecalcIdRecord create(byte[] data) {
 		RecordInputStream in = TestcaseRecordInputStream.create(RecalcIdRecord.sid, data);

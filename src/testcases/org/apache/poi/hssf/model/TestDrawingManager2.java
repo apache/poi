@@ -24,7 +24,7 @@ import org.apache.poi.ddf.EscherDggRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public final class TestDrawingManager2 {
+final class TestDrawingManager2 {
     private DrawingManager2 drawingManager2;
     private EscherDggRecord dgg;
 

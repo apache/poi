@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link RowRecordsAggregate}
  */
-public final class TestRowRecordsAggregate {
+final class TestRowRecordsAggregate {
 
     @Test
 	void testRowGet() {

@@ -25,7 +25,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 
-public final class TestDVALRecord {
+final class TestDVALRecord {
     @Test
     void testRead() {
         byte[] data = new byte[22];

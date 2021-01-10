@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFPalette {
+final class TestHSSFPalette {
     private HSSFPalette _hssfPalette;
 
 

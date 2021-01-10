@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the TestEmbeddedObjectRefSubRecord
  * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestEmbeddedObjectRefSubRecord {
+final class TestEmbeddedObjectRefSubRecord {
 
 	private static final short EORSR_SID = EmbeddedObjectRefSubRecord.sid;
 

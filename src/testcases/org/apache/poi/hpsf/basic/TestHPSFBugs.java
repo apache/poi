@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests various bugs have been fixed
  */
-public final class TestHPSFBugs {
+final class TestHPSFBugs {
    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
    /**

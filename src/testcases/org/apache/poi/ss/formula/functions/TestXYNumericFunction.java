@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestXYNumericFunction {
+final class TestXYNumericFunction {
 	private static final Function SUM_SQUARES = new Sumx2py2();
 	private static final Function DIFF_SQUARES = new Sumx2my2();
 	private static final Function SUM_SQUARES_OF_DIFFS = new Sumxmy2();

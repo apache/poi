@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the serialization and deserialization of the LbsDataSubRecord class works correctly.
  */
-public final class TestLbsDataSubRecord {
+final class TestLbsDataSubRecord {
 
     /**
      * test read-write round trip

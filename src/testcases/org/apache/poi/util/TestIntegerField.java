@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test IntegerField code
  */
-public final class TestIntegerField {
+final class TestIntegerField {
 
     private static final int[] _test_array = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
 

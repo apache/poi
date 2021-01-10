@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link ViewFieldsRecord}
  */
-public final class TestViewFieldsRecord {
+final class TestViewFieldsRecord {
 
 	@Test
 	void testUnicodeFlag_bug46693() {

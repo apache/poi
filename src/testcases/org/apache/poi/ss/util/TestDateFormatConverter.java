@@ -48,7 +48,7 @@ import org.apache.poi.util.LocaleID;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-public final class TestDateFormatConverter {
+final class TestDateFormatConverter {
     private void outputLocaleDataFormats( Date date, boolean dates, boolean times, int style, String styleName ) throws Exception {
         try (Workbook workbook = new HSSFWorkbook()) {
             String sheetName;

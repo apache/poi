@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestMid {
+final class TestMid {
 
 
 	private static ValueEval invokeMid(ValueEval text, ValueEval startPos, ValueEval numChars) {

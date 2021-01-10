@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Dragos Buleandra ( dragos.buleandra@trade2b.ro )
  */
-public final class TestDataValidation extends BaseTestDataValidation {
+final class TestDataValidation extends BaseTestDataValidation {
 
     public TestDataValidation(){
         super(HSSFITestDataProvider.instance);

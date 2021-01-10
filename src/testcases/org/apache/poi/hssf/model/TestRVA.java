@@ -19,7 +19,6 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * <tt>OperandClassTransformer</tt> by comparing its results with those
  * directly produced by Excel (in a sample spreadsheet).
  */
-public final class TestRVA {
+final class TestRVA {
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
 	private static POIFSFileSystem poifs;

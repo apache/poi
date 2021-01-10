@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the SupBook record
  * class works correctly.
  */
-public final class TestSupBookRecord {
+final class TestSupBookRecord {
     /**
      * This contains a fake data section of a SubBookRecord
      */

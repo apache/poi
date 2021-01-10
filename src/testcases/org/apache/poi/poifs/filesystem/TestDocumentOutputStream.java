@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DocumentOutputStream functionality
  */
-public final class TestDocumentOutputStream {
+final class TestDocumentOutputStream {
 
     /**
      * test write(int) behavior

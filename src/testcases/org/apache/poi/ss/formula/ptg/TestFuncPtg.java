@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Make sure the FuncPtg performs as expected
  */
-public final class TestFuncPtg {
+final class TestFuncPtg {
 
     @Test
     void testRead() {

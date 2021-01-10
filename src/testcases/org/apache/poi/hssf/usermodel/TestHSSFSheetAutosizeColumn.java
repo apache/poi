@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestSheetAutosizeColumn;
 
 /**
  * Test auto-sizing columns in HSSF
  *
  * @author Yegor Kozlov
  */
-public final class TestHSSFSheetAutosizeColumn extends BaseTestSheetAutosizeColumn {
+final class TestHSSFSheetAutosizeColumn extends BaseTestSheetAutosizeColumn {
 
     public TestHSSFSheetAutosizeColumn() {
         super(HSSFITestDataProvider.instance);

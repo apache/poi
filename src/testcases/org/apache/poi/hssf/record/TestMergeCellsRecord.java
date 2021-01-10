@@ -19,12 +19,9 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
@@ -35,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Make sure the merge cells record behaves
  */
-public final class TestMergeCellsRecord {
+final class TestMergeCellsRecord {
 
 	/**
 	 * Make sure when a clone is called, we actually clone it.

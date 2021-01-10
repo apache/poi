@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
-public final class TestDate {
+final class TestDate {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;

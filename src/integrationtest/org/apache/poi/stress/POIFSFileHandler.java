@@ -30,7 +30,7 @@ import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-public class POIFSFileHandler extends AbstractFileHandler {
+class POIFSFileHandler extends AbstractFileHandler {
 
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
@@ -69,7 +69,7 @@ public class POIFSFileHandler extends AbstractFileHandler {
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/poifs/Notes.ole2");
 
         try (InputStream stream = new FileInputStream(file)) {

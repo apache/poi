@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for SUMIFS()
  */
-public final class TestSumifs {
+final class TestSumifs {
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 1, 0, null);
 

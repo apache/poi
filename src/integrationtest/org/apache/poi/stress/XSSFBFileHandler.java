@@ -16,7 +16,12 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -26,7 +31,7 @@ import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public class XSSFBFileHandler extends AbstractFileHandler {
+class XSSFBFileHandler extends AbstractFileHandler {
 
     static {
         //add expected failures here:
@@ -81,7 +86,7 @@ public class XSSFBFileHandler extends AbstractFileHandler {
     }
 
     @Test
-    public void testLocal() throws Exception {
+    void testLocal() throws Exception {
         File file = new File("test-data/spreadsheet/Simple.xlsb");
         try (FileInputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());

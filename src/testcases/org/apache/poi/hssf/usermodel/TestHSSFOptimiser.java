@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFOptimiser {
+final class TestHSSFOptimiser {
     @Test
     void testDoesNoHarmIfNothingToDo() {
         HSSFWorkbook wb = new HSSFWorkbook();

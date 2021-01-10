@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link Irr}
  */
-public final class TestIrr {
+final class TestIrr {
 
     @Test
     void testIrr() {

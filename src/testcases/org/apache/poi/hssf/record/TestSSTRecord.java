@@ -41,7 +41,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public final class TestSSTRecord {
+final class TestSSTRecord {
 
     /**
      * decodes hexdump files and concatenates the results

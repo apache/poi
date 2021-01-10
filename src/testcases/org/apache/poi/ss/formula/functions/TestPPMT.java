@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * Test cases for PPMT()
  *
  */
-public final class TestPPMT {
+final class TestPPMT {
 
 
     /**

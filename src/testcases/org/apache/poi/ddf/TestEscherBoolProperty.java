@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestEscherBoolProperty {
+final class TestEscherBoolProperty {
     @Test
     void testToString() {
         EscherBoolProperty p = new EscherBoolProperty(EscherPropertyTypes.GEOMETRY__FILLOK, 1);

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the LegendRecord class works
  * correctly. Test data taken directly from a real Excel file.
  */
-public final class TestLegendRecord {
+final class TestLegendRecord {
 	byte[] data = new byte[] { (byte) 0x76, (byte) 0x0E, (byte) 0x00, (byte) 0x00, (byte) 0x86,
 			(byte) 0x07, (byte) 0x00, (byte) 0x00, (byte) 0x19, (byte) 0x01, (byte) 0x00,
 			(byte) 0x00, (byte) 0x8B, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03,

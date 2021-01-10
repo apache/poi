@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  * Miscellaneous tests for bugzilla entries.<p> The test name contains the
  * bugzilla bug id.
  */
-public final class TestFormulaBugs {
+final class TestFormulaBugs {
 
 	/**
 	 * Bug 27349 - VLOOKUP with reference to another sheet.<p> This test was

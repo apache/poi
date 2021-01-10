@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link NumberComparer}
  */
-public final class TestNumberComparer {
+final class TestNumberComparer {
 
     @Test
 	void testAllComparisonExamples() {

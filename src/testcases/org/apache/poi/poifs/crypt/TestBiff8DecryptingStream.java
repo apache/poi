@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link Biff8DecryptingStream}
  */
-public final class TestBiff8DecryptingStream {
+final class TestBiff8DecryptingStream {
 
 	/**
 	 * A mock {@link InputStream} that keeps track of position and also produces

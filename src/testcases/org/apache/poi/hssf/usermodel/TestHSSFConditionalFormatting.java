@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 /**
  * HSSF-specific Conditional Formatting tests
  */
-public final class TestHSSFConditionalFormatting extends BaseTestConditionalFormatting {
+final class TestHSSFConditionalFormatting extends BaseTestConditionalFormatting {
     public TestHSSFConditionalFormatting(){
         super(HSSFITestDataProvider.instance);
     }

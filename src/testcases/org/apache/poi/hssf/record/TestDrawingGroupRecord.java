@@ -25,7 +25,7 @@ import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.util.HexDump;
 import org.junit.jupiter.api.Test;
 
-public final class TestDrawingGroupRecord {
+final class TestDrawingGroupRecord {
     private static final int MAX_RECORD_SIZE = 8228;
     private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
 

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestTableRecord {
+final class TestTableRecord {
 	byte[] header = new byte[] {
 			0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
 	};

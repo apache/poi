@@ -27,7 +27,7 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.junit.jupiter.api.Test;
 
-public class HSMFFileHandler extends POIFSFileHandler {
+class HSMFFileHandler extends POIFSFileHandler {
 	@Override
 	public void handleFile(InputStream stream, String path) throws Exception {
 		MAPIMessage mapi = new MAPIMessage(stream);
@@ -77,7 +77,7 @@ public class HSMFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());

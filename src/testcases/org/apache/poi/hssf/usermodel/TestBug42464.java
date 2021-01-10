@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public final class TestBug42464 {
+final class TestBug42464 {
 
     @Test
 	void testOKFile() throws Exception {

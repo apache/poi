@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  * @author Cedric Walter (cedric dot walter at gmail dot com)
  * @see org.apache.poi.ss.formula.functions.TestIrr
  */
-public final class TestMirr {
+final class TestMirr {
 
     @Test
     void testMirr() throws EvaluationException {

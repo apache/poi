@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the SeriesTextRecord class
  * works correctly. Test data taken directly from a real Excel file.
  */
-public final class TestSeriesTextRecord {
+final class TestSeriesTextRecord {
 	private static final byte[] SIMPLE_DATA = HexRead
 			.readFromString("00 00 0C 00 56 61 6C 75 65 20 4E 75 6D 62 65 72");
 

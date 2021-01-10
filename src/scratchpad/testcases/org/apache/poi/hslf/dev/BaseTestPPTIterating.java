@@ -42,7 +42,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public abstract class BasePPTIteratingTest {
+public abstract class BaseTestPPTIterating {
     protected static final Set<String> OLD_FILES = new HashSet<>();
     static {
         OLD_FILES.add("PPT95.ppt");

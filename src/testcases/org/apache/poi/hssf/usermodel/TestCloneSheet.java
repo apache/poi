@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  *  add that record to the sheet in the testCloneSheetBasic method.
  * @author  avik
  */
-public final class TestCloneSheet extends BaseTestCloneSheet {
+final class TestCloneSheet extends BaseTestCloneSheet {
     public TestCloneSheet() {
         super(HSSFITestDataProvider.instance);
     }

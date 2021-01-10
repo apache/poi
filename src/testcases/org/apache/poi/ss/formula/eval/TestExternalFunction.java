@@ -34,7 +34,7 @@ import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.junit.jupiter.api.Test;
 
-public final class TestExternalFunction {
+final class TestExternalFunction {
 
 	private static ValueEval myFunc1(ValueEval[] args, OperationEvaluationContext ec) {
 		if (args.length != 1 || !(args[0] instanceof StringEval)) {

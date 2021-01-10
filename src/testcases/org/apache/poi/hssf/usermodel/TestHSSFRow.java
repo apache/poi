@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestHSSFRow extends BaseTestRow {
+final class TestHSSFRow extends BaseTestRow {
 
     public TestHSSFRow() {
         super(HSSFITestDataProvider.instance);

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.junit.jupiter.api.Test;
 
-public final class TestSheetAdditional {
+final class TestSheetAdditional {
 	@Test
 	void testGetCellWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();

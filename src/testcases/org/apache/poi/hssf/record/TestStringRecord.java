@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -34,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestStringRecord {
+final class TestStringRecord {
 	private static final byte[] data = HexRead.readFromString(
 			"0B 00 " + // length
 			"00 " +    // option

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * Needs to be implemented in this package to have access to
  * HSSFWorkbook.getWorkbook()
  */
-public class HSSFRecordsStresser {
+class HSSFRecordsStresser {
     public static void handleWorkbook(HSSFWorkbook wb) {
         List<org.apache.poi.hssf.record.Record> records = wb.getWorkbook().getRecords();
         for(org.apache.poi.hssf.record.Record record : records) {
@@ -65,7 +65,7 @@ public class HSSFRecordsStresser {
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         try (InputStream stream = new FileInputStream(HSSFTestDataSamples.getSampleFile("15556.xls"))) {
             HSSFWorkbook wb = new HSSFWorkbook(stream);
             handleWorkbook(wb);

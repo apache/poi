@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for FormatTrackingHSSFListener
  */
-public final class TestFormatTrackingHSSFListener {
+final class TestFormatTrackingHSSFListener {
 	private FormatTrackingHSSFListener listener;
 	private MockHSSFListener mockListen;
 

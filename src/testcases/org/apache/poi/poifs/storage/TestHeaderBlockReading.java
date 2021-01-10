@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test HeaderBlockReader functionality
  */
-public final class TestHeaderBlockReading {
+final class TestHeaderBlockReading {
 
 	@Test
 	void testConstructors() throws IOException {

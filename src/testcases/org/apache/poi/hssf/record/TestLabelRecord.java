@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <tt>LabelRecord</tt>
  */
-public final class TestLabelRecord  {
+final class TestLabelRecord  {
 
 	@Test
 	void testEmptyString() throws IOException {

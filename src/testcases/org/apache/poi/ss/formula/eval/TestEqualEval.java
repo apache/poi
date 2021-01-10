@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for EqualEval
  */
-public final class TestEqualEval {
+final class TestEqualEval {
 	/**
 	 * Test for bug observable at svn revision 692218 (Sep 2008)<br>
 	 * The value from a 1x1 area should be taken immediately, regardless of srcRow and srcCol

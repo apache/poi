@@ -19,20 +19,19 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
  *
  * @author Josh Micich
  */
-public final class TestRoundFuncs {
+final class TestRoundFuncs {
 	// github-43
 	// https://github.com/apache/poi/pull/43
     @Disabled("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")

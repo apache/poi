@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test LongField code
  */
-public final class TestLongField {
+final class TestLongField {
 
     static private final long[] _test_array =
     {

@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
  * Another test: {@link TestIndexFunctionFromSpreadsheet} operates from a higher level
  * and has far greater coverage of input permutations.<br>
  */
-public final class TestIndex {
+final class TestIndex {
 
 	private static final Index FUNC_INST = new Index();
 	private static final double[] TEST_VALUES0 = {

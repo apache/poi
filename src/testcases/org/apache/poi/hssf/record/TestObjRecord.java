@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the ObjRecord class works correctly.
  * Test data taken directly from a real Excel file.
  */
-public final class TestObjRecord {
+final class TestObjRecord {
     /**
      * OBJ record data containing two sub-records.
      * The data taken directly from a real Excel file.

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests CellRange operations.
  */
-public final class TestCellRange {
+final class TestCellRange {
 	private static final CellRangeAddress biggest     = createCR( 0, -1, 0,-1);
 	private static final CellRangeAddress tenthColumn = createCR( 0, -1,10,10);
 	private static final CellRangeAddress tenthRow    = createCR(10, 10, 0,-1);

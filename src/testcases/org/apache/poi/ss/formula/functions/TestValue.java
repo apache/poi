@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link Value}
  */
-public final class TestValue {
+final class TestValue {
 
 	private static ValueEval invokeValue(String strText) {
 		ValueEval[] args = new ValueEval[] { new StringEval(strText), };

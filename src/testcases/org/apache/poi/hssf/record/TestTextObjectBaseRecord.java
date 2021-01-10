@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestTextObjectBaseRecord {
+final class TestTextObjectBaseRecord {
 	/** data for one TXO rec and two continue recs */
     private static final byte[] data = HexRead.readFromString(
         "B6 01 " + // TextObjectRecord.sid

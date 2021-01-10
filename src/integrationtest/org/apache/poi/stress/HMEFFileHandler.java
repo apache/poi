@@ -32,7 +32,7 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 
-public class HMEFFileHandler extends AbstractFileHandler {
+class HMEFFileHandler extends AbstractFileHandler {
 
 	@Override
 	public void handleExtracting(File file) throws Exception {
@@ -64,7 +64,7 @@ public class HMEFFileHandler extends AbstractFileHandler {
 
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
-	public void test() throws Exception {
+	void test() throws Exception {
 	    String path = "test-data/hmef/quick-winmail.dat";
 		try (InputStream stream = new FileInputStream(path)) {
 			handleFile(stream, path);

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  * Tests parsing of some built-in functions that were not properly
  * registered in POI as of bug #44675, #44733 (March/April 2008).
  */
-public final class TestParseMissingBuiltInFuncs {
+final class TestParseMissingBuiltInFuncs {
 
 	private static Ptg[] parse(String formula) throws IOException {
 		HSSFWorkbook book = new HSSFWorkbook();

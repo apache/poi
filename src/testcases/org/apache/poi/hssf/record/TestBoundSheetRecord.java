@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests BoundSheetRecord.
  */
-public final class TestBoundSheetRecord {
+final class TestBoundSheetRecord {
 
 	@Test
 	void testRecordLength() {

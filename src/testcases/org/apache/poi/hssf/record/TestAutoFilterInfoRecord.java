@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the AutoFilterInfoRecord class.
  */
-public final class TestAutoFilterInfoRecord {
+final class TestAutoFilterInfoRecord {
     private final byte[] data = new byte[] {
         0x05, 0x00
     };

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test LittleEndian functionality
  */
-public final class TestLittleEndian {
+final class TestLittleEndian {
 
     /**
      * test the getShort() method

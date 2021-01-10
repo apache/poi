@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFRichTextString {
+final class TestHSSFRichTextString {
     @Test
     void testApplyFont() {
         HSSFRichTextString r = new HSSFRichTextString("testing");

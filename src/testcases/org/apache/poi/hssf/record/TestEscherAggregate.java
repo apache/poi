@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the EscherAggregate class.
  */
-public final class TestEscherAggregate {
+final class TestEscherAggregate {
     /**
      * Tests that the create aggregate method correctly rejoins escher records together.
      */

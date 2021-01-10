@@ -24,4 +24,6 @@ module org.apache.poi.stress {
     requires org.apache.poi.examples;
 
     exports org.apache.poi.stress;
+
+    opens org.apache.poi.stress to org.junit.platform.commons;
 }

@@ -40,7 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ConditionalFormattingEvalTest {
+class TestConditionalFormattingEval {
 
     private XSSFWorkbook wb;
     private Sheet sheet;

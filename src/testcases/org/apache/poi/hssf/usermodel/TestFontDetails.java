@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the implementation of the FontDetails class.
  */
-public final class TestFontDetails {
+final class TestFontDetails {
     private FontDetails fontDetails;
 
     @BeforeEach

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestRecordFactoryInputStream {
+final class TestRecordFactoryInputStream {
 	/**
 	 * Hex dump of a BOF record and most of a FILEPASS record.
 	 * A 16 byte saltHash should be added to complete the second record

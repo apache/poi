@@ -28,7 +28,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestExternalNameRecord {
+final class TestExternalNameRecord {
 
 	private static final byte[] dataFDS = {
 		0, 0, 0, 0, 0, 0, 3, 0, 70, 68, 83, 0, 0,

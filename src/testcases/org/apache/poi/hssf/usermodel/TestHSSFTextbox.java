@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test <code>HSSFTextbox</code>.
  */
-public final class TestHSSFTextbox {
+final class TestHSSFTextbox {
 
     /**
      * Test that accessors to horizontal and vertical alignment work properly

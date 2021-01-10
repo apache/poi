@@ -57,7 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-public class XSSFFileHandler extends SpreadsheetHandler {
+class XSSFFileHandler extends SpreadsheetHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files if password is unknown
@@ -205,7 +205,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/spreadsheet/ref-56737.xlsx");
 
         try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
@@ -216,7 +216,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     }
 
     @Test
-    public void testAdditional() throws Exception {
+    void testAdditional() throws Exception {
         handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
     }
 }

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for SUMPRODUCT()
  */
-public final class TestSumif {
+final class TestSumif {
 	private static final NumberEval _30 = new NumberEval(30);
 	private static final NumberEval _40 = new NumberEval(40);
 	private static final NumberEval _50 = new NumberEval(50);

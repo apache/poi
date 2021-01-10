@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
  */
-public final class TestExternalFunctionFormulas {
+final class TestExternalFunctionFormulas {
 
 	/**
 	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that

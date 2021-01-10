@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the NameRecord serializes/deserializes correctly
  */
-public final class TestNameRecord {
+final class TestNameRecord {
 
 	/**
 	 * Makes sure that additional name information is parsed properly such as menu/description

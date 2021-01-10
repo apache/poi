@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  * <li>Comparison operators have slightly different rules regarding '-0.0'.</li>
  * </ol>
  */
-public final class TestMinusZeroResult {
+final class TestMinusZeroResult {
 	private static final double MINUS_ZERO = -0.0;
 
 	@Test

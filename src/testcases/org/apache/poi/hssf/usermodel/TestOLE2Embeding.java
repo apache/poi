@@ -37,7 +37,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public final class TestOLE2Embeding {
+final class TestOLE2Embeding {
 
     @Test
     void testEmbeding() throws Exception {

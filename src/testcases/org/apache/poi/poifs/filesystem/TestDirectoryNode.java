@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DirectoryNode functionality
  */
-public final class TestDirectoryNode {
+final class TestDirectoryNode {
 
     /**
      * test trivial constructor (a DirectoryNode with no children)

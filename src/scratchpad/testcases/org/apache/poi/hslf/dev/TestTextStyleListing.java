@@ -16,18 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.EmptyFileException;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.poi.EmptyFileException;
+import org.junit.jupiter.api.Test;
 
-public class TestTextStyleListing extends BasePPTIteratingTest {
+public class TestTextStyleListing extends BaseTestPPTIterating {
     private static Set<String> FAILING = new HashSet<>();
     static {
         FAILING.add("empty_textbox.ppt");

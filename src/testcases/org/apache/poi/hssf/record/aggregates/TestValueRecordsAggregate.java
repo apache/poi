@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +51,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link ValueRecordsAggregate}
  */
-public final class TestValueRecordsAggregate {
+final class TestValueRecordsAggregate {
 	private static final String ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE = "AbnormalSharedFormulaFlag.xls";
 	private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
 

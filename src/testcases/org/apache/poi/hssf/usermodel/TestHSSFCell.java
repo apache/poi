@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
  * particular datatypes, etc.
  */
-public final class TestHSSFCell extends BaseTestCell {
+final class TestHSSFCell extends BaseTestCell {
 
 	public TestHSSFCell() {
 		super(HSSFITestDataProvider.instance);

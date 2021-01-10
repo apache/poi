@@ -17,20 +17,19 @@
 
 package org.apache.poi.ss.formula;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link SheetNameFormatter}
  *
  * @author Josh Micich
  */
-public final class TestSheetNameFormatter {
+final class TestSheetNameFormatter {
 	/**
 	 * Tests main public method 'format'
 	 */

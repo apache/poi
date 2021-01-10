@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the {@link RKUtil} class.
  */
-public final class TestRKUtil {
+final class TestRKUtil {
 
 	/**
 	 * Check we can decode correctly.

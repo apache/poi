@@ -29,6 +29,7 @@ import java.util.zip.ZipException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.OldFileFormatException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class is used for mass-regression testing via a
@@ -37,7 +38,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
  * types of files/exceptions, e.g. old file formats.
  *
  */
-public class BaseIntegrationTest {
+class BaseIntegrationTest {
 	private final File rootDir;
 	private final String file;
 	private FileHandler handler;
@@ -48,7 +49,8 @@ public class BaseIntegrationTest {
 		this.handler = handler;
 	}
 
-	public void test() throws Exception {
+	@Test
+	void test() throws Exception {
         assertNotNull( handler, "Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file) );
 		testOneFile(new File(rootDir, file));
 	}

@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
-public class HSSFFileHandler extends SpreadsheetHandler {
+class HSSFFileHandler extends SpreadsheetHandler {
 	private final POIFSFileHandler delegate = new POIFSFileHandler();
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
@@ -106,7 +106,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
-	public void test() throws Exception {
+	void test() throws Exception {
         File file = new File("test-data/spreadsheet/49219.xls");
 
 		try (InputStream stream = new FileInputStream(file)) {
@@ -121,7 +121,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
     @Test
 	@SuppressWarnings("java:S2699")
-    public void testExtractor() throws Exception {
+    void testExtractor() throws Exception {
         handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
     }
 }

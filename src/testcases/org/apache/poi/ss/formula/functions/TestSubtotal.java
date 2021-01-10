@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link Subtotal}
  */
-public final class TestSubtotal {
+final class TestSubtotal {
 	private static final int FUNCTION_AVERAGE = 1;
 	private static final int FUNCTION_COUNT = 2;
 	private static final int FUNCTION_MAX = 4;

@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test FilteringDirectoryNode functionality
  */
-public final class TestFilteringDirectoryNode {
+final class TestFilteringDirectoryNode {
     private POIFSFileSystem fs;
     private DirectoryEntry dirA;
     private DirectoryEntry dirAA;

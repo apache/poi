@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <tt>FeatRecord</tt>
  */
-public final class TestFeatRecord {
+final class TestFeatRecord {
 	@Test
 	void testWithoutFeatRecord() throws Exception {
 		HSSFWorkbook hssf =

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link FormulaShifter}.
  */
-public final class TestFormulaShifter {
+final class TestFormulaShifter {
     // Note - the expected result row coordinates here were determined/verified
     // in Excel 2007 by manually testing.
 

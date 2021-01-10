@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  * https://issues.apache.org/bugzilla/show_bug.cgi?id=53972
  */
 
-public final class TestPLVRecord {
+final class TestPLVRecord {
     private final static String DV_DEFINITION = "$A$1:$A$5";
     private final static String XLS_FILENAME = "53972.xls";
     private final static String SHEET_NAME = "S2";

@@ -60,7 +60,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tess for {@link PageSettingsBlock}
  */
-public final class TestPageSettingsBlock {
+final class TestPageSettingsBlock {
 	@Test
 	void testPrintSetup_bug46548() {
 		// PageSettingBlock in this file contains PLS (sid=x004D) record

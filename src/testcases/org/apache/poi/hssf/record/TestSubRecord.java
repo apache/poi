@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  * Tests Subrecord components of an OBJ record.  Test data taken directly
  * from a real Excel file.
  */
-public final class TestSubRecord {
+final class TestSubRecord {
 	/*
 	   The following is a dump of the OBJ record corresponding to an auto-filter
 	   drop-down list. The 3rd subrecord beginning at offset 0x002e (type=0x0013)

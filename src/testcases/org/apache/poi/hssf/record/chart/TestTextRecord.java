@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestTextRecord {
+final class TestTextRecord {
     byte[] data = new byte[] {
         (byte)0x02,                                          // horiz align
         (byte)0x02,                                          // vert align

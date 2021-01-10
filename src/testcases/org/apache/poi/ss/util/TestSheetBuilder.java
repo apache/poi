@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @see org.apache.poi.ss.util.SheetBuilder
  */
-public final class TestSheetBuilder {
+final class TestSheetBuilder {
 
     private static Object[][] testData = new Object[][]{
             {1, 2, 3},

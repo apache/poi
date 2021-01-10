@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSanityChecker {
+final class TestSanityChecker {
 	private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);
 	private static BoundSheetRecord createBoundSheetRec() {
 		return new BoundSheetRecord("Sheet1");

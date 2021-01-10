@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *
  * @see <a href="http://office.microsoft.com/en-us/excel-help/npv-HP005209199.aspx">Excel Help</a>
  */
-public final class TestNpv {
+final class TestNpv {
 
     @Test
     void testEvaluateInSheetExample2() {

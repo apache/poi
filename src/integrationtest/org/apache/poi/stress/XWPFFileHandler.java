@@ -24,7 +24,7 @@ import java.io.InputStream;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
-public class XWPFFileHandler extends AbstractFileHandler {
+class XWPFFileHandler extends AbstractFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
@@ -38,7 +38,7 @@ public class XWPFFileHandler extends AbstractFileHandler {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     @SuppressWarnings("java:S2699")
-    public void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/document/51921-Word-Crash067.docx");
 
         try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {

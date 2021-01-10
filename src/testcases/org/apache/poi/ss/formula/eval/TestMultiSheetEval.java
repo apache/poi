@@ -44,7 +44,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 /**
  * Tests formulas for multi sheet reference (i.e. SUM(Sheet1:Sheet5!A1))
  */
-public final class TestMultiSheetEval {
+final class TestMultiSheetEval {
 	/**
 	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
 	 */

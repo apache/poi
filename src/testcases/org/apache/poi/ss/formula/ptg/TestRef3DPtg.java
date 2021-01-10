@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for Ref3DPtg
  */
-public final class TestRef3DPtg extends BaseTestPtg {
+final class TestRef3DPtg extends BaseTestPtg {
 	@Test
 	void testToFormulaString() throws IOException {
 

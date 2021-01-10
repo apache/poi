@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * Tests the serialization and deserialization of the {@link CFHeaderRecord}
  *  and {@link CFHeader12Record} classes works correctly.
  */
-public final class TestCFHeaderRecord {
+final class TestCFHeaderRecord {
 	@Test
 	void testCreateCFHeaderRecord () {
 		CFHeaderRecord record = new CFHeaderRecord();

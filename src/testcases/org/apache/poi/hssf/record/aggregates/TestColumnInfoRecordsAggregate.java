@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.RecordBase;
 import org.junit.jupiter.api.Test;
 
-public final class TestColumnInfoRecordsAggregate {
+final class TestColumnInfoRecordsAggregate {
 
 	@Test
     void testGetRecordSize() {

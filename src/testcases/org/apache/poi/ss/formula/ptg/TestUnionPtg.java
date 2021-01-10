@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link UnionPtg}.
  */
-public final class TestUnionPtg extends BaseTestPtg {
+final class TestUnionPtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

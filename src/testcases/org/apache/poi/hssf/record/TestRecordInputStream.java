@@ -28,7 +28,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 /**
  * Tests for {@link RecordInputStream}
  */
-public final class TestRecordInputStream {
+final class TestRecordInputStream {
 
 	/**
 	 * Data inspired by attachment 22626 of bug 45866<br>

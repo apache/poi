@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Josh Micich
  */
-public final class TestFuncVarPtg {
+final class TestFuncVarPtg {
 
 	/**
 	 * The first fix for bugzilla 44675 broke the encoding of SUM formulas (and probably others).

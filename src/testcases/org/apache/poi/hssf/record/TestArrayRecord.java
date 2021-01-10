@@ -33,7 +33,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestArrayRecord {
+final class TestArrayRecord {
 
     @Test
     void testRead() {

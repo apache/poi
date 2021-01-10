@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestSeriesRecord {
+final class TestSeriesRecord {
     byte[] data = new byte[] {
         (byte)0x01,(byte)0x00,      // category data type
         (byte)0x01,(byte)0x00,      // values data type

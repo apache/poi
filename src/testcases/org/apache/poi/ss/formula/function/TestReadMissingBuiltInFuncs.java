@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  * Tests reading from a sample spreadsheet some built-in functions that were not properly
  * registered in POI as of bug #44675, #44733 (March/April 2008).
  */
-public final class TestReadMissingBuiltInFuncs {
+final class TestReadMissingBuiltInFuncs {
 
 	/**
 	 * This spreadsheet has examples of calls to the interesting built-in functions in cells A1:A7

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSSTDeserializer {
+final class TestSSTDeserializer {
 	private static final int FAKE_SID = -5555;
 
     private static byte[] concat(byte[] a, byte[] b) {

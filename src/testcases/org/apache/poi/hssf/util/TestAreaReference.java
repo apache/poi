@@ -46,7 +46,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.jupiter.api.Test;
 
-public final class TestAreaReference {
+final class TestAreaReference {
 
     @Test
     void testAreaRef1() {

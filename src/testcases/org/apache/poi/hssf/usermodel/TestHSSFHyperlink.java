@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author  Yegor Kozlov
  */
-public final class TestHSSFHyperlink extends BaseTestHyperlink {
+final class TestHSSFHyperlink extends BaseTestHyperlink {
 
     public TestHSSFHyperlink() {
         super(HSSFITestDataProvider.instance);

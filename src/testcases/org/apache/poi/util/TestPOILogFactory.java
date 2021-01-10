@@ -19,7 +19,7 @@ package org.apache.poi.util;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestPOILogFactory {
+final class TestPOILogFactory {
 
 
     /**

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link FinanceFunction#NPER}
  */
-public final class TestNper {
+final class TestNper {
 
     @Test
 	void testSimpleEvaluate() {

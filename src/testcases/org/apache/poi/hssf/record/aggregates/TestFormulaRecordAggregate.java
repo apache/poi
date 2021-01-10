@@ -34,7 +34,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
 
-public final class TestFormulaRecordAggregate {
+final class TestFormulaRecordAggregate {
 
 	@Test
 	void testBasic() {

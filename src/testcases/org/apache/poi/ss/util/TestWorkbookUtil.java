@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  *
  * @see org.apache.poi.ss.util.WorkbookUtil
  */
-public final class TestWorkbookUtil {
+final class TestWorkbookUtil {
 	/**
 	 * borrowed test cases from
 	 * {@link org.apache.poi.hssf.record.TestBoundSheetRecord#testValidNames()}

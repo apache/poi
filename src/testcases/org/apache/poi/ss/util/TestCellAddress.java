@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests that the common CellAddress works as we need it to.
  */
-public final class TestCellAddress {
+final class TestCellAddress {
     @Test
     void testConstructors() {
         CellAddress cellAddress;

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link SharedValueManager}
  */
-public final class TestSharedValueManager {
+final class TestSharedValueManager {
 
 	/**
 	 * This Excel workbook contains two sheets that each have a pair of overlapping shared formula

@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
  * Class to test cell styling functionality
  */
 
-public final class TestCellStyle {
+final class TestCellStyle {
 
     private static HSSFWorkbook openSample(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);

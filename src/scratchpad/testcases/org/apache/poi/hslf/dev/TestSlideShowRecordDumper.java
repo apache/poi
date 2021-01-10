@@ -17,7 +17,6 @@
 package org.apache.poi.hslf.dev;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +25,7 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-public class TestSlideShowRecordDumper extends BasePPTIteratingTest {
+public class TestSlideShowRecordDumper extends BaseTestPPTIterating {
     @Test
     void testMain() throws IOException {
         SlideShowRecordDumper.main(new String[] {

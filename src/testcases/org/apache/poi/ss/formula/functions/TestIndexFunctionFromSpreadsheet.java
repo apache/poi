@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests INDEX() as loaded from a test data spreadsheet.<p>
  */
-public final class TestIndexFunctionFromSpreadsheet  extends BaseTestFunctionsFromSpreadsheet {
+final class TestIndexFunctionFromSpreadsheet  extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestIndexFunctionFromSpreadsheet.class, "IndexFunctionTestCaseData.xls");
     }

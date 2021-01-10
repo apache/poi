@@ -31,7 +31,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public final class TestDays360 {
+final class TestDays360 {
 
     /**
      * @param month 1-based

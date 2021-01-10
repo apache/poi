@@ -39,7 +39,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  *
  * @author Josh Micich
  */
-public final class TestOffset {
+final class TestOffset {
 
 	/**
 	 * Excel's double to int conversion (for function 'OFFSET()') behaves more like Math.floor().

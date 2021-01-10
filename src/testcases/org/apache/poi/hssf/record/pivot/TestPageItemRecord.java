@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link PageItemRecord}
  */
-public final class TestPageItemRecord {
+final class TestPageItemRecord {
 	@Test
 	void testMoreThanOneInfoItem_bug46917() {
 		byte[] data = HexRead.readFromString("01 02 03 04 05 06 07 08 09 0A 0B 0C");

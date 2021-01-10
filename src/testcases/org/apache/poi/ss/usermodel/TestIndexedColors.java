@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Yegor Kozlov
  */
-public final class TestIndexedColors {
+final class TestIndexedColors {
 
     @Test
     void fromInt() {

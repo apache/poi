@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test PropertyTable functionality
  */
-public final class TestPropertyTable {
+final class TestPropertyTable {
 
 	private static void confirmBlockEncoding(String expectedDataStr, PropertyTable table) throws IOException {
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();

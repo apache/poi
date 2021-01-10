@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author  Yegor Kozlov
  */
-public final class TestHSSFComment extends BaseTestCellComment {
+final class TestHSSFComment extends BaseTestCellComment {
 
     public TestHSSFComment() {
         super(HSSFITestDataProvider.instance);

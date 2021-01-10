@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for power operator evaluator.
  */
-public final class TestPowerEval {
+final class TestPowerEval {
     @Test
     void testPositiveValues() {
         confirm(0, 0, 1);

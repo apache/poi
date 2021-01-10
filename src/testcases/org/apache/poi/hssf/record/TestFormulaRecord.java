@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link FormulaRecord}
  */
-public final class TestFormulaRecord {
+final class TestFormulaRecord {
 
 	@Test
 	void testCreateFormulaRecord () {

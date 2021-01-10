@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for Excel function AVERAGE()
  */
-public final class TestAverage {
+final class TestAverage {
 
 	private static ValueEval invokeAverage(ValueEval[] args) {
 		return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);

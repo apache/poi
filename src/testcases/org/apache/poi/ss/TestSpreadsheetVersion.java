@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Check that all enum values are properly set
  */
-public final class TestSpreadsheetVersion {
+final class TestSpreadsheetVersion {
 
     @Test
     void testExcel97(){

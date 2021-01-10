@@ -25,7 +25,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.junit.jupiter.api.Test;
 
-public final class TestHSSFPatriarch {
+final class TestHSSFPatriarch {
 
 	@Test
 	void testBasic() throws IOException {

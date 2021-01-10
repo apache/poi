@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for Area3DPtg
  */
-public final class TestArea3DPtg extends BaseTestPtg {
+final class TestArea3DPtg extends BaseTestPtg {
 
 	/**
 	 * confirms that sheet names get properly escaped

@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests specific formula examples in <tt>OperandClassTransformer</tt>.
  */
-public final class TestOperandClassTransformer {
+final class TestOperandClassTransformer {
 
     private static Ptg[] parseFormula(String formula) {
         Ptg[] result = HSSFFormulaParser.parse(formula, null);

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  *
  * @see org.apache.poi.ss.util.PropertyTemplate
  */
-public final class TestPropertyTemplate {
+final class TestPropertyTemplate {
     @Test
     void getNumBorders() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link MissingArgEval}
  */
-public final class TestMissingArgEval {
+final class TestMissingArgEval {
 
 	@Test
 	void testEvaluateMissingArgs() throws IOException {

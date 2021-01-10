@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link EventWorkbookBuilder}
  */
-public final class TestEventWorkbookBuilder {
+final class TestEventWorkbookBuilder {
     private final List<FormulaRecord> fRecs = new ArrayList<>();
     private SheetRecordCollectingListener listener;
 

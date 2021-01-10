@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestPlotAreaRecord {
+final class TestPlotAreaRecord {
     byte[] data = new byte[] {
 
     };

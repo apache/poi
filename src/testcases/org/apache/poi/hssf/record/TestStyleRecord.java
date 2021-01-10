@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link StyleRecord}
  */
-public final class TestStyleRecord {
+final class TestStyleRecord {
 	@Test
 	void testUnicodeReadName() {
 		byte[] data = HexRead.readFromString(

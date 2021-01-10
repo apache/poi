@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  *  one anchored at 0,0,1022,255 and another anchored
  *  at 20,30,500,200
  */
-public final class TestEscherGraphics {
+final class TestEscherGraphics {
 	private HSSFWorkbook workbook;
 	private HSSFPatriarch patriarch;
     private HSSFShapeGroup escherGroupA;

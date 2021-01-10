@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
  *
  * E.g. verifies that objects are freed when stuff is removed from sheets or rows
  */
-public class XSSFMemoryLeakTests {
+public class TestXSSFMemoryLeak {
     private final MemoryLeakVerifier verifier = new MemoryLeakVerifier();
 
     // keep some items in memory, so checks in tearDown() actually

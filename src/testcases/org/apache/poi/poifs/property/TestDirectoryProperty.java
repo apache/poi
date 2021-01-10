@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test DirectoryProperty functionality
  */
-public final class TestDirectoryProperty {
+final class TestDirectoryProperty {
     private DirectoryProperty _property;
     private byte[]            _testblock;
 

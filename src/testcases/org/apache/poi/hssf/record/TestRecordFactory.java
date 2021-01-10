@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the record factory
  */
-public final class TestRecordFactory {
+final class TestRecordFactory {
 
 
 	/**

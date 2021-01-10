@@ -23,7 +23,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.junit.jupiter.api.Test;
 
-public class XDGFFileHandler extends AbstractFileHandler {
+class XDGFFileHandler extends AbstractFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
@@ -36,7 +36,7 @@ public class XDGFFileHandler extends AbstractFileHandler {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     @SuppressWarnings("java:S2699")
-    public void test() throws Exception {
+    void test() throws Exception {
         try (OPCPackage pkg = OPCPackage.open("test-data/diagram/test.vsdx", PackageAccess.READ)) {
             XmlVisioDocument doc = new XmlVisioDocument(pkg);
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);

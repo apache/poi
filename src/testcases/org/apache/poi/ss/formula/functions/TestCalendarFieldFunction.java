@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for YEAR / MONTH / DAY / HOUR / MINUTE / SECOND
  */
-public final class TestCalendarFieldFunction {
+final class TestCalendarFieldFunction {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;

@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public final class TestUnknownEscherRecord {
+final class TestUnknownEscherRecord {
     @Test
     void testFillFields() {
         String testData =

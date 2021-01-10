@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public final class TestTrim {
+final class TestTrim {
 
 
 	private static ValueEval invokeTrim(ValueEval text) {

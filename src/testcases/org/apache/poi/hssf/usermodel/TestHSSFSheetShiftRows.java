@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 /**
  * @author Yegor Kozlov
  */
-public final class TestHSSFSheetShiftRows extends BaseTestSheetShiftRows {
+final class TestHSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     public TestHSSFSheetShiftRows() {
         super(HSSFITestDataProvider.instance);

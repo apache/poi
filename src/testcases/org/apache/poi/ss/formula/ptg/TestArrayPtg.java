@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <tt>ArrayPtg</tt>
  */
-public final class TestArrayPtg {
+final class TestArrayPtg {
 
 	private static final byte[] ENCODED_PTG_DATA = {
 		0x40,

@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.junit.jupiter.api.Test;
 
-public final class TestClean {
+final class TestClean {
 
     @Test
     void testClean() {

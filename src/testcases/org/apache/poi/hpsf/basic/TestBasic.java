@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 /**
  * <p>Tests the basic HPSF functionality.</p>
  */
-public final class TestBasic {
+final class TestBasic {
 
     private static final POIDataSamples samples = POIDataSamples.getHPSFInstance();
 

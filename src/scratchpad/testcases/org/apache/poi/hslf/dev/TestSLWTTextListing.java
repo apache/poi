@@ -16,16 +16,15 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.EmptyFileException;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.poi.EmptyFileException;
+import org.junit.jupiter.api.Test;
 
-public class TestSLWTTextListing extends BasePPTIteratingTest {
+public class TestSLWTTextListing extends BaseTestPPTIterating {
     @Test
     void testMain() throws IOException {
         // calls System.exit(): SLWTTextListing.main(new String[0]);

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the Graphics2d drawing capability.
  */
-public final class TestEscherGraphics2d {
+final class TestEscherGraphics2d {
     private HSSFWorkbook workbook;
 	private HSSFShapeGroup escherGroup;
 	private EscherGraphics2d graphics;

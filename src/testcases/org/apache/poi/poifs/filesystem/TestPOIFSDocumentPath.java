@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
@@ -31,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test POIFSDocumentPath functionality
  */
-public final class TestPOIFSDocumentPath {
+final class TestPOIFSDocumentPath {
 
 
     /**

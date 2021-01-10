@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for {@link AbstractWordUtils}
  */
-public class AbstractWordUtilsTest {
+public class TestAbstractWordUtils {
     /**
      * Test case for {@link AbstractWordUtils#buildTableCellEdgesArray(Table)}
      */

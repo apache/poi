@@ -24,7 +24,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
  *
  * @author Josh Micich
  */
-public final class TestHSSFCircularReferences extends BaseTestCircularReferences {
+final class TestHSSFCircularReferences extends BaseTestCircularReferences {
 	public TestHSSFCircularReferences() {
         super(HSSFITestDataProvider.instance);
     }

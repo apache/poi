@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public final class TestDrawingRecord {
+final class TestDrawingRecord {
 
     /**
      * Check that RecordFactoryInputStream properly handles continued DrawingRecords

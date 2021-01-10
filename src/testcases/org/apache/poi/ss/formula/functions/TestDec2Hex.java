@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestDec2Hex {
+final class TestDec2Hex {
 
 	private static ValueEval invokeValue(String number1, String number2) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };

@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
  * class works correctly.
  */
 @SuppressWarnings("resource")
-public final class TestCFRecordsAggregate {
+final class TestCFRecordsAggregate {
     @Test
     void testCFRecordsAggregate() {
         HSSFWorkbook workbook = new HSSFWorkbook();

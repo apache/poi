@@ -44,7 +44,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public final class TestMatrixFormulasFromBinarySpreadsheet {
+final class TestMatrixFormulasFromBinarySpreadsheet {
 
     private static final POILogger LOG = POILogFactory.getLogger(TestMatrixFormulasFromBinarySpreadsheet.class);
 

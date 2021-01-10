@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Johan Karlsteen
  */
-public final class TestSlope {
+final class TestSlope {
 	private static final Function SLOPE = new Slope();
 
 	private static ValueEval invoke(Function function, ValueEval xArray, ValueEval yArray) {

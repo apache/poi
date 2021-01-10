@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jason Height (jheight at apache.org)
  */
-public final class TestUnicodeString {
+final class TestUnicodeString {
     private static final int MAX_DATA_SIZE = RecordInputStream.MAX_RECORD_DATA_SIZE;
 
     /** a 4 character string requiring 16 bit encoding */

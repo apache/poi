@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.Arguments;
  * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
  *  more easily.
  */
-public final class TestLookupFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+final class TestLookupFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestLookupFunctionsFromSpreadsheet.class, "LookupFunctionsTestCaseData.xls");
     }

@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for MissingRecordAwareHSSFListener
  */
-public final class TestMissingRecordAwareHSSFListener {
+final class TestMissingRecordAwareHSSFListener {
 
 	private final List<org.apache.poi.hssf.record.Record> _records = new ArrayList<>();
 

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Verifies that custom palette editing works correctly
  */
-public final class TestPaletteRecord {
+final class TestPaletteRecord {
 
     /**
      * Tests that the default palette matches the constants of HSSFColor

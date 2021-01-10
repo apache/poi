@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test BATBlock functionality
  */
-public final class TestBATBlock {
+final class TestBATBlock {
 
 
     @Test

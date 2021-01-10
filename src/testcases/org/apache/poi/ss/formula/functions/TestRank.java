@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for RANK()
  */
-public final class TestRank {
+final class TestRank {
 
     @Test
     void testFromFile() {
