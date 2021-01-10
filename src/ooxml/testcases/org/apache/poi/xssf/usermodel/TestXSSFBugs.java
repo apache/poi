@@ -3446,7 +3446,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 }
             LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));
 
-            assertTrue(Duration.between(start, Instant.now()).getSeconds() < 10);
+            assertTrue(Duration.between(start, Instant.now()).getSeconds() < 25);
         }
     }
 
