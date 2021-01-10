@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests FIXED() as loaded from a test data spreadsheet.
  */
-public class TestFixedFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestFixedFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestFixedFunctionsFromSpreadsheet.class, "57003-FixedFunctionTestCaseData.xls");
     }

@@ -30,7 +30,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.junit.jupiter.api.Test;
 
-public class TestBinaryRC4 {
+class TestBinaryRC4 {
     @Test
     void createKeyDigest() {
         byte[] docIdData = readFromString("17 F6 D1 6B 09 B1 5F 7B 4C 9D 03 B4 81 B5 B4 4A");

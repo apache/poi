@@ -24,7 +24,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestRangeCopier;
 import org.junit.jupiter.api.BeforeEach;
 
-public class TestHSSFRangeCopier extends BaseTestRangeCopier {
+class TestHSSFRangeCopier extends BaseTestRangeCopier {
 
     public TestHSSFRangeCopier() {
         super();

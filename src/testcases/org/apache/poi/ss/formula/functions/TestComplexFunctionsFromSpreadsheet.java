@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests COMPLEX() as loaded from a test data spreadsheet.<p>
  */
-public class TestComplexFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestComplexFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestComplexFunctionsFromSpreadsheet.class, "ComplexFunctionTestCaseData.xls");
     }

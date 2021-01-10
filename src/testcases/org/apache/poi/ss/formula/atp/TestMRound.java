@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testcase for 'Analysis Toolpak' function MROUND()
  */
-public class TestMRound {
+class TestMRound {
 
     /**
         =MROUND(10, 3) 	Rounds 10 to a nearest multiple of 3 (9)

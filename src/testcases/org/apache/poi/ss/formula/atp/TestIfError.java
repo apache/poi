@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testcase for 'Analysis Toolpak' function IFERROR()
  */
-public class TestIfError {
+class TestIfError {
 
     /**
      * =IFERROR(210/35,\"Error in calculation\")"  Divides 210 by 35 and returns 6.0

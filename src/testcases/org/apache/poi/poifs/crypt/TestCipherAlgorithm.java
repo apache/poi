@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.poi.EncryptedDocumentException;
 import org.junit.jupiter.api.Test;
 
-public class TestCipherAlgorithm {
+class TestCipherAlgorithm {
     @Test
     void validInputs() {
         assertEquals(128, CipherAlgorithm.aes128.defaultKeySize);

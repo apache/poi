@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  * Remarks:
  * Actually, 5. is not true. If an error is encountered before a 0 value, the error is returned.
  */
-public class TestGeomean {
+class TestGeomean {
     @Test
     void acceptanceTest() {
         Function geomean = getInstance();

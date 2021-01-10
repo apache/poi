@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class TestCellFormatCondition {
+class TestCellFormatCondition {
     @Test
     void testSVConditions() {
         CellFormatCondition lt = CellFormatCondition.getInstance("<", "1.5");

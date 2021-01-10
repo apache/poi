@@ -28,7 +28,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.jupiter.api.Test;
 
-public class TestRLEDecompressingInputStream {
+class TestRLEDecompressingInputStream {
 
     /**
      * Section 3.2.1 No Compression Example

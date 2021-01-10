@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class TestEntryUtils {
+class TestEntryUtils {
     private static final byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
     private static final byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
 

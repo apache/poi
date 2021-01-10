@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for StringCodepointsIterable
  */
-public class TestStringCodepointsIterable {
+class TestStringCodepointsIterable {
 
     @Test
     void testIterable() {

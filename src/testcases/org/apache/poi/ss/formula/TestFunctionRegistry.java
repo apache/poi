@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class TestFunctionRegistry {
+class TestFunctionRegistry {
 
     HSSFWorkbook wb;
     HSSFSheet sheet;

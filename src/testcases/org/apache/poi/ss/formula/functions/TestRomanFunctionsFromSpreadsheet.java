@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests Roman() as loaded from a test data spreadsheet.<p>
  */
-public class TestRomanFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestRomanFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestRomanFunctionsFromSpreadsheet.class, "RomanFunctionTestCaseData.xls");
     }

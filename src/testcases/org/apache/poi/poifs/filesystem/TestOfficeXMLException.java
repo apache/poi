@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
  * Class to test that POIFS complains when given an Office 2003 XML
  * of Office Open XML (OOXML, 2007+) document
  */
-public class TestOfficeXMLException {
+class TestOfficeXMLException {
 
     private static InputStream openSampleStream(String sampleFileName) {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);

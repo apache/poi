@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
 
-public class TestDateTimeToNumberFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestDateTimeToNumberFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestDateTimeToNumberFromSpreadsheet.class, "DateTimeToNumberTestCases.xls");
     }

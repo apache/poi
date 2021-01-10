@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests DELTA() as loaded from a test data spreadsheet.<p>
  */
-public class TestDeltaFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestDeltaFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestDeltaFunctionsFromSpreadsheet.class, "DeltaFunctionTestCaseData.xls");
     }

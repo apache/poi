@@ -34,7 +34,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public class TestEOMonth {
+class TestEOMonth {
 
     private static final double BAD_DATE = -1.0;
 

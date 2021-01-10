@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests boolean functions as loaded from a test data spreadsheet.<p>
  */
-public class TestBooleanFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestBooleanFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestBooleanFunctionsFromSpreadsheet.class, "BooleanFunctionsTestCaseData.xls");
     }

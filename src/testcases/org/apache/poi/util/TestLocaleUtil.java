@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class TestLocaleUtil {
+class TestLocaleUtil {
     // This unit test assumes that the user's locale isn't ja-JP and timezone isn't Asia/Tokyo
     // If this is the case, change the values to something else
     private static final Locale ja_JP = Locale.JAPAN;

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  *
  * Should be fixed in JDK 12-ea+29 and JDK 13-ea+5
  */
-public class TestJDK12 {
+class TestJDK12 {
     @Test
     void test() {
         assertDoesNotThrow(() -> {

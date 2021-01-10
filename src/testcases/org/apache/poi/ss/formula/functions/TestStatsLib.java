@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
-public class TestStatsLib extends BaseTestNumeric {
+class TestStatsLib extends BaseTestNumeric {
 
     @Test
     void testDevsq() {

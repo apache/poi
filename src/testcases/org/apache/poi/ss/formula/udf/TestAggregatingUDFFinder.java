@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.udf;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.junit.jupiter.api.Test;
 
-public class TestAggregatingUDFFinder extends BaseTestUDFFinder {
+class TestAggregatingUDFFinder extends BaseTestUDFFinder {
 
     public TestAggregatingUDFFinder() {
         _instance = new AggregatingUDFFinder(AnalysisToolPak.instance);

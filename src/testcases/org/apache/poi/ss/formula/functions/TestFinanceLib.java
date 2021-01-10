@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public class TestFinanceLib extends BaseTestNumeric {
+class TestFinanceLib extends BaseTestNumeric {
 
     @Test
     void testFv() {

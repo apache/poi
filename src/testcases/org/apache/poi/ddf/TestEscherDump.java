@@ -36,7 +36,7 @@ import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestEscherDump {
+class TestEscherDump {
     private static final String recordData =
         "H4sIAAAAAAAAAL2UaVCSWxjHX0SBChABLRXM1FxSEzXTzHK7dpVIcMmwxXCP9KaGTaWlGYLrtGmGmYEmYmqF2qIt4ppmjNG+" +
         "2dWulUtOUdq1NHjva8v90HT7eM+Z5znP/M9/zpk5v3mONgAoc5AANBDKeVDW0gQAjZkVCti3mKnpAExpB/m8AKTyEiTCNd2J" +

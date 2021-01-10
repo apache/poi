@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.jupiter.api.Test;
 
-public class TestRelationalOperations {
+class TestRelationalOperations {
 
     /**
      *  (1, 1)(1, 1) = 1

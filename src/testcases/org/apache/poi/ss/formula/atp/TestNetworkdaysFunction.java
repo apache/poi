@@ -33,7 +33,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.jupiter.api.Test;
 
-public class TestNetworkdaysFunction {
+class TestNetworkdaysFunction {
 
     private static final String STARTING_DATE = "2008/10/01";
     private static final String END_DATE = "2009/03/01";

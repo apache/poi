@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * LogicalFunction unit tests.
  */
-public class TestLogicalFunction {
+class TestLogicalFunction {
 
     private FormulaEvaluator evaluator;
     private Row row3;

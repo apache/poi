@@ -79,7 +79,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests HPSF's writing functionality
  */
-public class TestWrite {
+class TestWrite {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
     private static final int CODEPAGE_DEFAULT = -1;
 

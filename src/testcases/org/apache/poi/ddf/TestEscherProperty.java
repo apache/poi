@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 
-public class TestEscherProperty {
+class TestEscherProperty {
     /**
      * assure that EscherProperty.getName() returns correct name for complex properties
      * See Bugzilla 50401

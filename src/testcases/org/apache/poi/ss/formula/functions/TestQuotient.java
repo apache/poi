@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestQuotient {
+class TestQuotient {
     private static ValueEval invokeValue(String numerator, String denominator) {
         ValueEval[] args = new ValueEval[]{new StringEval(numerator), new StringEval(denominator)};
         return new Quotient().evaluate(args, -1, -1);

@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests whether Unicode string can be read from a DocumentSummaryInformation.
  */
-public class TestUnicode {
+class TestUnicode {
 
     static final String POI_FS = "TestUnicode.xls";
     static final String[] POI_FILES =  {

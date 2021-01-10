@@ -39,7 +39,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-public class TestFileMagic {
+class TestFileMagic {
     @Test
     void testFileMagic() {
         assertEquals(FileMagic.XML, FileMagic.valueOf("XML"));

@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
  * values are used.  Also checks that changing cell values causes the correct (minimal) set of
  * dependent cached values to be cleared.
  */
-public class TestEvaluationCache {
+class TestEvaluationCache {
 
 	private static final class FormulaCellCacheEntryComparer implements Comparator<ICacheEntry> {
 

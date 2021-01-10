@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit tests for DConRefRecord class.
  */
-public class TestDConRefRecord {
+class TestDConRefRecord {
     /**
      * record of a proper single-byte external 'volume'-style path with multiple parts and a sheet
      * name.

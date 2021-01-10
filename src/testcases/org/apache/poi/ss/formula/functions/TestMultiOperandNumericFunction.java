@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.jupiter.api.Test;
 
-public class TestMultiOperandNumericFunction {
+class TestMultiOperandNumericFunction {
 
     @Test
     void testSettings() {

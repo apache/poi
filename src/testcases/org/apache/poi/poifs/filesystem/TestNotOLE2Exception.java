@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *  formats. See also {@link TestOfficeXMLException} for OOXML
  *  checks
  */
-public class TestNotOLE2Exception {
+class TestNotOLE2Exception {
 	private static InputStream openXLSSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}

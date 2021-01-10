@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Yegor Kozlov
  */
-public class TestFrequency {
+class TestFrequency {
 
     @Test
     void testHistogram() {

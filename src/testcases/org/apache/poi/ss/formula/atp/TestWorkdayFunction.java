@@ -38,7 +38,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public class TestWorkdayFunction {
+class TestWorkdayFunction {
 
     private static final String STARTING_DATE      = "2008/10/01";
     private static final String FIRST_HOLIDAY      = "2008/11/26";

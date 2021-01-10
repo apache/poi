@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestVBAMacroReader {
+class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
 
     private static String readVBA(POIDataSamples poiDataSamples) {

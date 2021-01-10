@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests CODE() as loaded from a test data spreadsheet.<p>
  */
-public class TestCodeFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestCodeFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestCodeFunctionsFromSpreadsheet.class, "CodeFunctionTestCaseData.xls");
     }

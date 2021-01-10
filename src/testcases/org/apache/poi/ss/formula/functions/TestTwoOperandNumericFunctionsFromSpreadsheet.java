@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.Arguments;
  * Tests for numeric functions with two arguments such aqs +, -, *, POWER
  * as loaded from a test data spreadsheet.
  */
-public class TestTwoOperandNumericFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestTwoOperandNumericFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestTwoOperandNumericFunctionsFromSpreadsheet.class, "TwoOperandNumericFunctionTestCaseData.xls");
     }

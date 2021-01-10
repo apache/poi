@@ -27,7 +27,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.CellType;
 import org.junit.jupiter.api.Test;
 
-public class TestExternalReferenceChange {
+class TestExternalReferenceChange {
 
 	private static final String MAIN_WORKBOOK_FILENAME = "52575_main.xls";
 	private static final String SOURCE_DUMMY_WORKBOOK_FILENAME = "source_dummy.xls";

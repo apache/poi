@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
 * Tests TREND() as loaded from a test data spreadsheet.
 */
-public class TestTrendFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestTrendFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestTrendFunctionsFromSpreadsheet.class, "Trend.xls");
     }

@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
  * See {@link TestHSSFDataFormatter} too for
  *  more tests.
  */
-public class TestDataFormatter {
+class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 
     @BeforeAll

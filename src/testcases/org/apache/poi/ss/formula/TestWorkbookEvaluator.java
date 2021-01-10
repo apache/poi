@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Josh Micich
  */
-public class TestWorkbookEvaluator {
+class TestWorkbookEvaluator {
 
     private static final double EPSILON = 0.0000001;
 

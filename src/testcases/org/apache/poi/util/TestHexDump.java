@@ -31,7 +31,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TestHexDump {
+class TestHexDump {
 
     private static PrintStream SYSTEM_OUT;
 

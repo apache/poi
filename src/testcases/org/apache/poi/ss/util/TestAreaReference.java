@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author David North
  */
-public class TestAreaReference {
+class TestAreaReference {
     @Test
     void testWholeColumn() {
         AreaReference oldStyle = AreaReference.getWholeColumn(SpreadsheetVersion.EXCEL97, "A", "B");

@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TestCellFormat {
+class TestCellFormat {
 
     private static TimeZone userTimeZone;
 

@@ -40,7 +40,7 @@ import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-public class TestEscherRecordFactory {
+class TestEscherRecordFactory {
 
     private static byte[] toByteArray(List<RecordBase> records) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -68,7 +68,7 @@ import org.junit.jupiter.api.Test;
  *
  * optionally the system setting "poi.deserialize.escher" can be set to {@code true}
  */
-public class TestDrawingShapes {
+class TestDrawingShapes {
     /**
      * HSSFShape tree bust be built correctly
      * Check file with such records structure:

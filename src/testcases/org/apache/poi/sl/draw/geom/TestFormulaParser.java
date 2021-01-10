@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Yegor Kozlov
  */
-public class TestFormulaParser {
+class TestFormulaParser {
     @Test
     void testParse(){
 

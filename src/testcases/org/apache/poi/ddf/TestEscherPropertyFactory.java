@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public class TestEscherPropertyFactory {
+class TestEscherPropertyFactory {
     @Test
     void testCreateProperties() {
         String dataStr = "41 C1 " +     // propid, complex ind

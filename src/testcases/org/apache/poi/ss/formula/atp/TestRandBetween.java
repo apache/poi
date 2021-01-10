@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testcase for 'Analysis Toolpak' function RANDBETWEEN()
  */
-public class TestRandBetween {
+class TestRandBetween {
 
 	private FormulaEvaluator evaluator;
 	private Cell bottomValueCell;

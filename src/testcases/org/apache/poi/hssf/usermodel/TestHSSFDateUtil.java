@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class TestHSSFDateUtil
  */
-public class TestHSSFDateUtil {
+class TestHSSFDateUtil {
 
     static TimeZone userTimeZone;
 

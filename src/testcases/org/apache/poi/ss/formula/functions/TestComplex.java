@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestComplex {
+class TestComplex {
     private static ValueEval invokeValue(String real_num, String i_num, String suffix) {
         ValueEval[] args = new ValueEval[]{new StringEval(real_num), new StringEval(i_num), new StringEval(suffix)};
         return new Complex().evaluate(args, -1, -1);

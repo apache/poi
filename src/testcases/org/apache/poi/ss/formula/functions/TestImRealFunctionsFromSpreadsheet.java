@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests ImReal() as loaded from a test data spreadsheet.<p>
  */
-public class TestImRealFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestImRealFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestImRealFunctionsFromSpreadsheet.class, "ImRealFunctionTestCaseData.xls");
     }

@@ -31,7 +31,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.junit.jupiter.api.Test;
 
-public class TestPolygon {
+class TestPolygon {
     @Test
     void testResultEqualsToAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();

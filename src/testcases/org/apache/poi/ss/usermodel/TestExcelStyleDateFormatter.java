@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public class TestExcelStyleDateFormatter {
+class TestExcelStyleDateFormatter {
     private static final String EXCEL_DATE_FORMAT = "MMMMM";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
     private final int jreVersion;

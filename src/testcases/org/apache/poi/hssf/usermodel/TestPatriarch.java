@@ -27,7 +27,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.junit.jupiter.api.Test;
 
-public class TestPatriarch {
+class TestPatriarch {
     @Test
     void testGetPatriarch(){
         HSSFWorkbook wb = new HSSFWorkbook();

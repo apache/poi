@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
 * Tests DGET() as loaded from a test data spreadsheet.
 */
-public class TestDGetFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestDGetFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestDGetFunctionsFromSpreadsheet.class, "DGet.xls");
     }

@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests QUOTIENT() as loaded from a test data spreadsheet.<p>
  */
-public class TestQuotientFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestQuotientFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestQuotientFunctionsFromSpreadsheet.class, "QuotientFunctionTestCaseData.xls");
     }

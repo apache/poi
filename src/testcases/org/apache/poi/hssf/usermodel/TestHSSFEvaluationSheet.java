@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
-public class TestHSSFEvaluationSheet extends BaseTestXEvaluationSheet {
+class TestHSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     @Override
     protected Map.Entry<Sheet, EvaluationSheet> getInstance() {
         HSSFSheet sheet = new HSSFWorkbook().createSheet();

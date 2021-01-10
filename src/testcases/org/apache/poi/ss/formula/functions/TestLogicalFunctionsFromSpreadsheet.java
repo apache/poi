@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests for logical ISxxx functions as loaded from a test data spreadsheet.<p>
  */
-public class TestLogicalFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestLogicalFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestLogicalFunctionsFromSpreadsheet.class, "LogicalFunctionsTestCaseData.xls");
     }

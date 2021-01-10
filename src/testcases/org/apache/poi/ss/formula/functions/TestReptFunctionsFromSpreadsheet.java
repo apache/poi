@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests REPT() as loaded from a test data spreadsheet.<p>
  */
-public class TestReptFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestReptFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestReptFunctionsFromSpreadsheet.class, "ReptFunctionTestCaseData.xls");
     }

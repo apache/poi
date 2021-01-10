@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for ArrayUtil
  */
-public class TestArrayUtil {
+class TestArrayUtil {
 	/**
 	 * Helper for testArrayMoveWithin
 	 */

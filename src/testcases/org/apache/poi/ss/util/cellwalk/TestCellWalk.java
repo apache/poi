@@ -27,7 +27,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
 import org.junit.jupiter.api.Test;
 
-public class TestCellWalk {
+class TestCellWalk {
 
     private static Object[][] testData = new Object[][]{
             {1, 2, null},

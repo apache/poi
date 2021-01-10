@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests IF() as loaded from a test data spreadsheet.<p>
  */
-public class TestIFFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestIFFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestIFFunctionFromSpreadsheet.class, "IfFunctionTestCaseData.xls");
     }

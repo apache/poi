@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestProduct {
+class TestProduct {
     @Test
     void missingArgsAreIgnored() {
         ValueEval result = getInstance().evaluate(new ValueEval[]{new NumberEval(2.0), MissingArgEval.instance}, 0, 0);

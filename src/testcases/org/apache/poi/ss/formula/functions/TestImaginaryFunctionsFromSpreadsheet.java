@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests Imaginary() as loaded from a test data spreadsheet.<p>
  */
-public class TestImaginaryFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestImaginaryFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestImaginaryFunctionsFromSpreadsheet.class, "ImaginaryFunctionTestCaseData.xls");
     }

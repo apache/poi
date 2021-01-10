@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-public class TestEDate {
+class TestEDate {
 
     @Test
     void testEDateProperValues() {

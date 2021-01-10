@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testcase for Excel function PERCENTILE()
  */
-public class TestPercentile {
+class TestPercentile {
 
     private static ValueEval invokePercentile(ValueEval[] args, ValueEval percentile) {
         AreaEval aeA = EvalFactory.createAreaEval("A1:A" + args.length, args);

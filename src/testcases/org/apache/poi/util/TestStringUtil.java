@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for StringUtil
  */
-public class TestStringUtil {
+class TestStringUtil {
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127

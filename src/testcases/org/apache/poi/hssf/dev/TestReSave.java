@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestReSave extends BaseTestIteratingXLS {
+class TestReSave extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {
         EXCLUDED.clear();

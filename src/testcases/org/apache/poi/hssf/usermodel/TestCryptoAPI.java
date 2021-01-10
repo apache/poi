@@ -26,7 +26,7 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.junit.jupiter.api.Test;
 
-public class TestCryptoAPI {
+class TestCryptoAPI {
     final HSSFITestDataProvider ssTests = HSSFITestDataProvider.instance;
 
     @Test

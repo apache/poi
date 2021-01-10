@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Class to test POIFSDocument functionality
  */
-public class TestDocument {
+class TestDocument {
 
     /**
      * Integration test -- really about all we can do

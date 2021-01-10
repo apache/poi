@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * @author Evgeniy Berlog
  * @date 25.06.12
  */
-public class TestText {
+class TestText {
 
     @Test
     void testResultEqualsToNonExistingAbstractShape() throws IOException {

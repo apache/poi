@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * @author Brendan Nolan
  *
  */
-public class TestLeftRight {
+class TestLeftRight {
 
 	private static final NumberEval NEGATIVE_OPERAND = new NumberEval(-1.0);
 	private static final StringEval ANY_STRING_VALUE = new StringEval("ANYSTRINGVALUE");

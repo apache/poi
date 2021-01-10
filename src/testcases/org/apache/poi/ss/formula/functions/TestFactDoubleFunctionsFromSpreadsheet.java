@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests FactDouble() as loaded from a test data spreadsheet.<p>
  */
-public class TestFactDoubleFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestFactDoubleFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestFactDoubleFunctionsFromSpreadsheet.class, "FactDoubleFunctionTestCaseData.xls");
     }

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests WEEKDAY(serial_number[, return_type]) excep function
  * https://support.office.com/en-us/article/WEEKDAY-function-60E44483-2ED1-439F-8BD0-E404C190949A
  */
-public class TestWeekdayFunc {
+class TestWeekdayFunc {
     private static final double TOLERANCE = 0.001;
 
     private void assertEvaluateEquals(double expected, double serial_number) {

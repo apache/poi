@@ -41,7 +41,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.junit.jupiter.api.Test;
 
-public class TestHSSFAnchor {
+class TestHSSFAnchor {
 
     @Test
     void testDefaultValues(){

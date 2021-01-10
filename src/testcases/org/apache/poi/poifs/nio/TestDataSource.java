@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the datasource implementations
  */
-public class TestDataSource {
+class TestDataSource {
     private static final POIDataSamples data = POIDataSamples.getPOIFSInstance();
 
     @Test

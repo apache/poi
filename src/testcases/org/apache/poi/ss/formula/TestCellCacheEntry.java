@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests {@link org.apache.poi.ss.formula.CellCacheEntry}.
  */
-public class TestCellCacheEntry {
+class TestCellCacheEntry {
 
 	@Test
 	void testBasic() {

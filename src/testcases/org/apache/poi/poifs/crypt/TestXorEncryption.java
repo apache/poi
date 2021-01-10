@@ -36,7 +36,7 @@ import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestXorEncryption {
+class TestXorEncryption {
 
     private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
 

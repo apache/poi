@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
+class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     public TestHSSFSheetShiftColumns() {
         super();
         workbook = new HSSFWorkbook();

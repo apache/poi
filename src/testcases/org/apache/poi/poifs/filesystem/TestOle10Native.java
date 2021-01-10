@@ -36,7 +36,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
-public class TestOle10Native {
+class TestOle10Native {
     private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();
 
     @Test

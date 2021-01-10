@@ -29,7 +29,7 @@ import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeAll;
 
-public class TestBiffViewer extends BaseTestIteratingXLS {
+class TestBiffViewer extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {
         EXCLUDED.clear();

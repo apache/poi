@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
  * <p>Tests HPSF's high-level writing functionality for the well-known property
  * set "SummaryInformation" and "DocumentSummaryInformation".</p>
  */
-public class TestWriteWellKnown {
+class TestWriteWellKnown {
 
     private static final String POI_FS = "TestWriteWellKnown.doc";
 

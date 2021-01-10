@@ -19,7 +19,7 @@ package org.apache.poi.ss.util;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 
-public class TestHSSFCellUtil extends BaseTestCellUtil {
+class TestHSSFCellUtil extends BaseTestCellUtil {
     public TestHSSFCellUtil() {
         super(HSSFITestDataProvider.instance);
     }

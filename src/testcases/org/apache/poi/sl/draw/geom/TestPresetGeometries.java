@@ -30,7 +30,7 @@ import java.util.Enumeration;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class TestPresetGeometries {
+class TestPresetGeometries {
     @Test
     void testRead(){
         PresetGeometries shapes = PresetGeometries.getInstance();

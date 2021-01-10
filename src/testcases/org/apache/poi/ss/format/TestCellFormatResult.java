@@ -22,7 +22,7 @@ import java.awt.Color;
 
 import org.junit.jupiter.api.Test;
 
-public class TestCellFormatResult {
+class TestCellFormatResult {
 
     @Test
     void testNullTextRaisesException() {

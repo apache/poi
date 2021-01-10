@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
  * Tests WeekNum() as loaded from a test data 2013 excel spreadsheet.<p>
  */
-public class TestWeekNumFunctionsFromSpreadsheet2013 extends BaseTestFunctionsFromSpreadsheet {
+class TestWeekNumFunctionsFromSpreadsheet2013 extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         //Only open this file with Excel 2013 to keep binary specific to that version
         return data(TestWeekNumFunctionsFromSpreadsheet2013.class, "WeekNumFunctionTestCaseData2013.xls");

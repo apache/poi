@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestSubstitute {
+class TestSubstitute {
     @Test
     void testSubstitute() {
         Substitute fun = new Substitute();

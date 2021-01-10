@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the embedded object fetching support in HSSF
  */
-public class TestEmbeddedObjects {
+class TestEmbeddedObjects {
     @Test
     void testReadExistingObject() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {

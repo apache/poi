@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 
-public class TestEscherClientDataRecord {
+class TestEscherClientDataRecord {
     @Test
     void testSerialize() {
         EscherClientDataRecord r = createRecord();

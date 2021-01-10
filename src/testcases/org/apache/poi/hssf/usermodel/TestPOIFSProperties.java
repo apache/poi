@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Old-style setting of POIFS properties doesn't work with POI 3.0.2
  */
-public class TestPOIFSProperties {
+class TestPOIFSProperties {
     private static final String title = "Testing POIFS properties";
 
     @Test

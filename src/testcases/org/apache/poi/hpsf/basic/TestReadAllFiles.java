@@ -51,7 +51,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * in the "data" directory. If you want to ensure HPSF can deal with a certain
  * OLE2 file, just add it to the "data" directory and run this test case.
  */
-public class TestReadAllFiles {
+class TestReadAllFiles {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     public static Stream<Arguments> files() {

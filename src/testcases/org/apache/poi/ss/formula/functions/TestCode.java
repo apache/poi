@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestCode {
+class TestCode {
     private static ValueEval invokeValue(String number1) {
         ValueEval[] args = new ValueEval[]{new StringEval(number1),};
         return new Code().evaluate(args, -1, -1);

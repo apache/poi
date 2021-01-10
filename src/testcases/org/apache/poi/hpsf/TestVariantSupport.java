@@ -32,7 +32,7 @@ import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.junit.jupiter.api.Test;
 
-public class TestVariantSupport {
+class TestVariantSupport {
     @Test
     void test52337() throws Exception {
         // document summary stream   from test1-excel.doc attached to Bugzilla 52337

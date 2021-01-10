@@ -28,7 +28,7 @@ import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeAll;
 
-public class TestFormulaViewer extends BaseTestIteratingXLS {
+class TestFormulaViewer extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {
         EXCLUDED.clear();

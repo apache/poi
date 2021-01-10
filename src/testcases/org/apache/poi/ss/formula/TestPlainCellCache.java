@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.junit.jupiter.api.Test;
 
-public class TestPlainCellCache {
+class TestPlainCellCache {
 
     @Test
     void testLoc(){

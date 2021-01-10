@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.poi.util.LittleEndianOutput;
 import org.junit.jupiter.api.Test;
 
-public class TestAbstractFunctionPtg  {
+class TestAbstractFunctionPtg  {
 
     @Test
     void testConstructor() {

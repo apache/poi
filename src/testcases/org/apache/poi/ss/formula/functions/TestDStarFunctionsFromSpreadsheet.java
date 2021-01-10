@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 /**
 * Tests D*() functions as loaded from a test data spreadsheet.
 */
-public class TestDStarFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+class TestDStarFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
         return data(TestDStarFunctionsFromSpreadsheet.class, "DStar.xls");
     }
