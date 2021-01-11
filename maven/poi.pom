@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?xml version="1.0"?><!--
 
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,87 +17,70 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apache.poi</groupId>
-	<artifactId>poi</artifactId>
-	<version>@VERSION@</version>
-	<packaging>jar</packaging>
-	<name>Apache POI</name>
-	<url>https://poi.apache.org/</url>
-	<description>Apache POI - Java API To Access Microsoft Format Files</description>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>@VERSION@</version>
+    <packaging>jar</packaging>
+    <name>Apache POI</name>
+    <url>https://poi.apache.org/</url>
+    <description>Apache POI - Java API To Access Microsoft Format Files</description>
 
-  <mailingLists>
-    <mailingList>
-      <name>POI Users List</name>
-      <subscribe>user-subscribe@poi.apache.org</subscribe>
-      <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
-      <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
-    </mailingList>
-    <mailingList>
-      <name>POI Developer List</name>
-      <subscribe>dev-subscribe@poi.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
-      <archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
-    </mailingList>
-  </mailingLists>
+    <mailingLists>
+        <mailingList>
+            <name>POI Users List</name>
+            <subscribe>user-subscribe@poi.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
+        </mailingList>
+        <mailingList>
+            <name>POI Developer List</name>
+            <subscribe>dev-subscribe@poi.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
+        </mailingList>
+    </mailingLists>
 
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
-  <organization>
-    <name>Apache Software Foundation</name>
-    <url>http://www.apache.org/</url>
-  </organization>
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+    </organization>
 
-  <dependencies>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.15</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math3</artifactId>
-      <version>3.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.zaxxer</groupId>
-      <artifactId>SparseBitSet</artifactId>
-      <version>1.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <scope>test</scope>
-      <version>1.3</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-      <version>4.13.1</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>SparseBitSet</artifactId>
+            <version>1.2</version>
+        </dependency>
+    </dependencies>
 
 </project>
