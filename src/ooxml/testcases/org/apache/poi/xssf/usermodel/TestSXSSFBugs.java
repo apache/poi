@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,15 +52,15 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     // override some tests which do not work for SXSSF
-    @Override @Disabled("cloneSheet() not implemented") @Test
+    @Override @Disabled("cloneSheet() not implemented")
     protected void bug18800() { /* cloneSheet() not implemented */ }
-    @Override @Disabled("cloneSheet() not implemented") @Test
+    @Override @Disabled("cloneSheet() not implemented")
     protected void bug22720() { /* cloneSheet() not implemented */ }
-    @Override @Disabled("Evaluation is not fully supported") @Test
+    @Override @Disabled("Evaluation is not fully supported")
     protected void bug47815() { /* Evaluation is not supported */ }
-    @Override @Disabled("Evaluation is not fully supported") @Test
+    @Override @Disabled("Evaluation is not fully supported")
     protected void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
-    @Override @Disabled("Reading data is not supported") @Test
+    @Override @Disabled("Reading data is not supported")
     protected void bug57798() { /* Reading data is not supported */ }
 
     /**
@@ -106,19 +105,14 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     @Override
     protected void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
-        try {
-            super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged();
-        } catch (final RuntimeException e) {
-            final Throwable cause = e.getCause();
-            //noinspection StatementWithEmptyBody
-            if (cause instanceof IOException && cause.getMessage().equals("Stream closed")) {
-                // expected on the second time that _testDataProvider.writeOutAndReadBack(SXSSFWorkbook) is called
-                // if the test makes it this far, then we know that XSSFName sheet indices are updated when sheet
-                // order is changed, which is the purpose of this test. Therefore, consider this a passing test.
-            } else {
-                throw e;
-            }
-        }
+        // expected on the second time that _testDataProvider.writeOutAndReadBack(SXSSFWorkbook) is called
+        // if the test makes it this far, then we know that XSSFName sheet indices are updated when sheet
+        // order is changed, which is the purpose of this test. Therefore, consider this a passing test.
+        RuntimeException e =
+            assertThrows(RuntimeException.class, () -> super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged());
+        Throwable cause = e.getCause();
+        assertTrue(cause instanceof IOException);
+        assertEquals("Stream closed", cause.getMessage());
     }
 
     @Test
@@ -176,7 +170,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         sheet.setArrayFormula(col1Value, range);
     }
 
-    @Test
     @Disabled("takes too long for the normal test run")
     void test62872() throws Exception {
         final int COLUMN_COUNT = 300;
@@ -204,8 +197,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
                 cell.setCellValue(new Date(i*TEN_MINUTES+(j*TEN_MINUTES)/COLUMN_COUNT));
             }
             i++;
-            // if (i % 1000 == 0)
-            // logger.info("Created Row " + i);
         }
 
         try (FileOutputStream out = new FileOutputStream(File.createTempFile("test62872", ".xlsx"))) {

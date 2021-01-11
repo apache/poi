@@ -318,7 +318,6 @@ public final class TestXSSFReader {
         }
     }
 
-    @Test
     @Disabled("until we fix issue https://bz.apache.org/bugzilla/show_bug.cgi?id=61701")
     void test61701() throws Exception {
         try(Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("simple-table-named-range.xlsx")) {

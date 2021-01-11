@@ -17,17 +17,22 @@
 
 package org.apache.poi.xssf.util;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
@@ -37,84 +42,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 /**
  * Mixed utilities for testing memory usage in XSSF
  */
+@Disabled("only for manual tests")
 @SuppressWarnings("InfiniteLoopStatement")
 public class MemoryUsage {
     private static final int NUM_COLUMNS = 255;
 
     private static void printMemoryUsage(String msg) {
         System.out.println(" Memory (" + msg + "): " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
-    }
-
-    /**
-     * Generate a spreadsheet until OutOfMemoryError
-     * <p>
-     *  cells in even columns are numbers, cells in odd columns are strings
-     * </p>
-     *
-     * @param wb        the workbook to write to
-     * @param numCols   the number of columns in a row
-     */
-    public static void mixedSpreadsheet(Workbook wb, int numCols) {
-        System.out.println();
-        System.out.println("Testing " + wb.getClass().getName() + " mixed");
-        printMemoryUsage("before");
-        int i=0, cnt=0;
-        try {
-            Sheet sh = wb.createSheet();
-            for(i=0; ; i++) {
-                Row row = sh.createRow(i);
-                for(int j=0; j < numCols; j++) {
-                    Cell cell = row.createCell(j);
-                    if(j % 2 == 0) {
-                        cell.setCellValue(j);
-                    } else {
-                        cell.setCellValue(new CellReference(j, i).formatAsString());
-                    }
-                    cnt++;
-                }
-            }
-        } catch (OutOfMemoryError er) {
-            System.out.println("Failed at row=" + i + ", objects : " + cnt);
-        } catch (final Exception e) {
-            System.out.println("Unable to reach an OutOfMemoryError");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        printMemoryUsage("after");
-    }
-
-    /**
-     * Generate a spreadsheet who's all cell values are numbers.
-     * The data is generated until OutOfMemoryError.
-     * <p>
-     * as compared to {@link #mixedSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)},
-     * this method does not set string values and, hence, does not involve the Shared Strings Table.
-     * </p>
-     *
-     * @param wb        the workbook to write to
-     * @param numCols   the number of columns in a row
-     */
-    public static void numberSpreadsheet(Workbook wb, int numCols) {
-        System.out.println();
-        System.out.println("Testing " + wb.getClass().getName() + " numbers");
-        printMemoryUsage("before");
-        int i=0, cnt=0;
-        try {
-            Sheet sh = wb.createSheet();
-            for(i=0; ; i++) {
-                Row row = sh.createRow(i);
-                for(int j=0; j < numCols; j++) {
-                    Cell cell = row.createCell(j);
-                    cell.setCellValue(j);
-                    cnt++;
-                }
-            }
-        } catch (OutOfMemoryError er) {
-            System.out.println("Failed at row=" + i + ", objects : " + cnt);
-        } catch (final Exception e) {
-            System.out.println("Unable to reach an OutOfMemoryError");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        printMemoryUsage("after");
     }
 
     /**
@@ -144,11 +78,9 @@ public class MemoryUsage {
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + ", objects: " + cnt);
-        } catch (final Exception e) {
-            System.out.println("Unable to reach an OutOfMemoryError");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        } finally {
+            printMemoryUsage("after");
         }
-        printMemoryUsage("after");
     }
 
     /**
@@ -158,25 +90,21 @@ public class MemoryUsage {
      */
     @Test
     void testXmlDetached() {
-        System.out.println();
-        System.out.println("Testing detached");
-
         List<CTRow> rows = new ArrayList<>();
         int i = 0;
         try {
             for(;;) {
                 //create a standalone CTRow bean
                 CTRow r = CTRow.Factory.newInstance();
+                assertNotNull(r);
                 r.setR(++i);
                 rows.add(r);
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + " from " + rows.size() + " kept.");
-        } catch (final Exception e) {
-            System.out.println("Unable to reach an OutOfMemoryError");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        } finally {
+            printMemoryUsage("after");
         }
-        printMemoryUsage("after");
     }
 
     /**
@@ -187,8 +115,6 @@ public class MemoryUsage {
      */
     @Test
     void testXmlAttached() {
-        System.out.println();
-        System.out.println("Testing attached");
         printMemoryUsage("before");
         List<CTRow> rows = new ArrayList<>();
         int i = 0;
@@ -199,35 +125,79 @@ public class MemoryUsage {
             for(;;) {
                 //create CTRow attached to the parent object
                 CTRow r = data.addNewRow();
+                assertNotNull(r);
                 r.setR(++i);
                 rows.add(r);
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + " from " + rows.size() + " kept.");
-        } catch (final Exception e) {
-            System.out.println("Unable to reach an OutOfMemoryError");
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        } finally {
+            printMemoryUsage("after");
         }
-        printMemoryUsage("after");
     }
 
-    @Test
-    void testMixedHSSF() {
-        mixedSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
+    /**
+     * Generate a spreadsheet until OutOfMemoryError
+     * cells in even columns are numbers, cells in odd columns are strings
+     */
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testMixed(boolean useXSSF) throws IOException {
+        int i=0, cnt=0;
+        try (Workbook wb = WorkbookFactory.create(useXSSF)) {
+            printMemoryUsage("before");
+            Sheet sh = wb.createSheet();
+            for(i=0; ; i++) {
+                Row row = sh.createRow(i);
+                for(int j=0; j < NUM_COLUMNS; j++) {
+                    Cell cell = row.createCell(j);
+                    assertNotNull(cell);
+                    if(j % 2 == 0) {
+                        cell.setCellValue(j);
+                    } else {
+                        cell.setCellValue(new CellReference(j, i).formatAsString());
+                    }
+                    cnt++;
+                }
+            }
+        } catch (OutOfMemoryError er) {
+            System.out.println("Failed at row=" + i + ", objects : " + cnt);
+        } finally {
+            printMemoryUsage("after");
+        }
     }
 
-    @Test
-    void testMixedXSSF() {
-        mixedSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
-    }
-
-    @Test
-    void testNumberHSSF() {
-        numberSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
-    }
-
-    @Test
-    void testNumberXSSF() {
-        numberSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
+    /**
+     * Generate a spreadsheet who's all cell values are numbers.
+     * The data is generated until OutOfMemoryError.
+     * <p>
+     * as compared to {@link #mixedSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)},
+     * this method does not set string values and, hence, does not involve the Shared Strings Table.
+     * </p>
+     *
+     * @param wb        the workbook to write to
+     * @param numCols   the number of columns in a row
+     */
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testNumberHSSF(boolean useXSSF) throws IOException {
+        int i=0, cnt=0;
+        try (Workbook wb = WorkbookFactory.create(useXSSF)) {
+            printMemoryUsage("before");
+            Sheet sh = wb.createSheet();
+            for(i=0; ; i++) {
+                Row row = sh.createRow(i);
+                assertNotNull(row);
+                for(int j=0; j < NUM_COLUMNS; j++) {
+                    Cell cell = row.createCell(j);
+                    cell.setCellValue(j);
+                    cnt++;
+                }
+            }
+        } catch (OutOfMemoryError er) {
+            System.out.println("Failed at row=" + i + ", objects : " + cnt);
+        } finally {
+            printMemoryUsage("after");
+        }
     }
 }

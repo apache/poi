@@ -51,7 +51,6 @@ class TestPresetGeometries {
     }
 
     @Disabled("problem solved? Turn back on if this debugging is still in process.")
-    @Test
     void testCheckXMLParser() throws Exception{
         // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where
         // this comes from

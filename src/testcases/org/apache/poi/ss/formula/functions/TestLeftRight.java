@@ -50,8 +50,8 @@ class TestLeftRight {
 
 	@Test
 	void testLeftRight_bug49841() {
-		invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND);
-		invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND);
+		assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
+		assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
 	}
 
 	@Test

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.ptg;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -71,7 +72,7 @@ final class TestReferencePtg {
     @Test
     void testBug44921() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex44921-21902.xls")) {
-            HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+            assertDoesNotThrow(() -> HSSFTestDataSamples.writeOutAndReadBack(wb));
         }
     }
 

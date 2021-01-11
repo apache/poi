@@ -18,61 +18,58 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 final class TestEmptyDocument {
     private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
 
-    @Test
-	void testSingleEmptyDocument() throws IOException {
-		POIFSFileSystem fs = new POIFSFileSystem();
-		DirectoryEntry dir = fs.getRoot();
-		dir.createDocument("Foo", new ByteArrayInputStream(new byte[] {}));
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
-		fs.close();
+    private interface EmptyDoc {
+    	void handle(DirectoryEntry dir) throws IOException;
 	}
 
-    @Test
-	void testSingleEmptyDocumentEvent() throws IOException {
-		POIFSFileSystem fs = new POIFSFileSystem();
-		DirectoryEntry dir = fs.getRoot();
+    public static Stream<Arguments> emptySupplier() {
+    	return Stream.of(
+    		Arguments.of("SingleEmptyDocument", (EmptyDoc)TestEmptyDocument::SingleEmptyDocument),
+			Arguments.of("SingleEmptyDocumentEvent", (EmptyDoc)TestEmptyDocument::SingleEmptyDocumentEvent),
+			Arguments.of("EmptyDocumentWithFriend", (EmptyDoc)TestEmptyDocument::EmptyDocumentWithFriend),
+			Arguments.of("EmptyDocumentEventWithFriend", (EmptyDoc)TestEmptyDocument::EmptyDocumentEventWithFriend)
+		);
+	}
+
+	private static void SingleEmptyDocument(DirectoryEntry dir) throws IOException {
+		dir.createDocument("Foo", new ByteArrayInputStream(new byte[]{}));
+	}
+
+	private static void SingleEmptyDocumentEvent(DirectoryEntry dir) throws IOException {
 		dir.createDocument("Foo", 0, event -> LOG.log(POILogger.WARN, "written"));
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
-		fs.close();
 	}
 
-    @Test
-	void testEmptyDocumentWithFriend() throws IOException {
-		POIFSFileSystem fs = new POIFSFileSystem();
-		DirectoryEntry dir = fs.getRoot();
-		dir.createDocument("Bar", new ByteArrayInputStream(new byte[] { 0 }));
-		dir.createDocument("Foo", new ByteArrayInputStream(new byte[] {}));
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
-		fs.close();
+	private static void EmptyDocumentWithFriend(DirectoryEntry dir) throws IOException {
+		dir.createDocument("Bar", new ByteArrayInputStream(new byte[]{0}));
+		dir.createDocument("Foo", new ByteArrayInputStream(new byte[]{}));
 	}
 
-    @Test
-	void testEmptyDocumentEventWithFriend() throws IOException {
-		POIFSFileSystem fs = new POIFSFileSystem();
-		DirectoryEntry dir = fs.getRoot();
+	private static void EmptyDocumentEventWithFriend(DirectoryEntry dir) throws IOException {
 		dir.createDocument("Bar", 1, event -> {
 			try {
 				event.getStream().write(0);
@@ -81,38 +78,45 @@ final class TestEmptyDocument {
 			}
 		});
 		dir.createDocument("Foo", 0, event -> {});
+	}
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
-		fs.close();
+
+	@ParameterizedTest(name = "{index} {0}")
+	@MethodSource("emptySupplier")
+	void testFoo(String testName, EmptyDoc emptyDoc) throws IOException {
+		try (POIFSFileSystem fs = new POIFSFileSystem()) {
+			DirectoryEntry dir = fs.getRoot();
+			emptyDoc.handle(dir);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			fs.writeFilesystem(out);
+			assertDoesNotThrow(() -> new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())));
+		}
 	}
 
     @Test
 	void testEmptyDocumentBug11744() throws Exception {
 		byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-		POIFSFileSystem fs = new POIFSFileSystem();
-		fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
-		fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		fs.writeFilesystem(out);
-		out.toByteArray();
-		fs.close();
+		try (POIFSFileSystem fs = new POIFSFileSystem()) {
+			fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
+			fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
+			fs.writeFilesystem(out);
+		}
 
 		// This line caused the error.
-		fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+		try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()))) {
+			DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
+			assertEquals(0, entry.getSize(), "Expected zero size");
+			byte[] actualReadbackData;
+			actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
+			assertEquals(0, actualReadbackData.length, "Expected zero read from stream");
 
-		DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
-		assertEquals(0, entry.getSize(), "Expected zero size");
-		byte[] actualReadbackData;
-		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-		assertEquals(0, actualReadbackData.length, "Expected zero read from stream");
-
-		entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
-		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-		assertEquals(testData.length, entry.getSize(), "Expected size was wrong");
-		assertArrayEquals(testData, actualReadbackData, "Expected same data read from stream");
-		fs.close();
+			entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
+			actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
+			assertEquals(testData.length, entry.getSize(), "Expected size was wrong");
+			assertArrayEquals(testData, actualReadbackData, "Expected same data read from stream");
+		}
 	}
 }

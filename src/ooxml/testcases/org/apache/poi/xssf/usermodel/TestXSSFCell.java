@@ -57,7 +57,11 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -75,23 +79,29 @@ public final class TestXSSFCell extends BaseTestXCell {
      */
     @Test
     void test47026_1() throws IOException {
-        Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
-        Sheet sheet = wb.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell(0);
-        cell.setCellValue("456");
-        wb.close();
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(0);
+            assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
+            cell.setCellValue("456");
+            assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+        }
     }
 
     @Test
     void test47026_2() throws IOException {
-        Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
-        Sheet sheet = wb.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell(0);
-        cell.setCellFormula(null);
-        cell.setCellValue("456");
-        wb.close();
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(0);
+            assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
+            cell.setCellFormula(null);
+            IllegalStateException e = assertThrows(IllegalStateException.class, cell::getCachedFormulaResultType);
+            assertEquals("Only formula cells have cached results", e.getMessage());
+            cell.setCellValue("456");
+            assertEquals(CellType.STRING, cell.getCellType());
+        }
     }
 
     /**
@@ -441,33 +451,35 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
 
-    @Test
-    void testBug56644ReturnNull() throws IOException {
+    @ParameterizedTest
+    @EnumSource(value = MissingCellPolicy.class)
+    void testBug56644ReturnNull(MissingCellPolicy policy) throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
-            wb.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            wb.setMissingCellPolicy(policy);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
-            row.createCell(2);
-        }
-    }
-
-    @Test
-    void testBug56644ReturnBlank() throws IOException {
-        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
-            wb.setMissingCellPolicy(MissingCellPolicy.RETURN_NULL_AND_BLANK);
-            Sheet sheet = wb.getSheet("samplelist");
-            Row row = sheet.getRow(20);
-            row.createCell(2);
-        }
-    }
-
-    @Test
-    void testBug56644CreateBlank() throws IOException {
-        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
-            wb.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            Sheet sheet = wb.getSheet("samplelist");
-            Row row = sheet.getRow(20);
-            row.createCell(2);
+            switch (policy) {
+                case CREATE_NULL_AS_BLANK: {
+                    Cell cell = row.getCell(2);
+                    assertNotNull(cell);
+                    assertEquals(CellType.STRING, cell.getCellType());
+                    break;
+                }
+                case RETURN_BLANK_AS_NULL: {
+                    Cell cell = row.getCell(2);
+                    assertNotNull(cell);
+                    assertEquals(CellType.STRING, cell.getCellType());
+                    cell.setBlank();
+                    cell = row.getCell(2);
+                    assertNull(cell);
+                    break;
+                }
+                case RETURN_NULL_AND_BLANK: {
+                    Cell cell = row.getCell(2);
+                    assertNotNull(cell);
+                    break;
+                }
+            }
         }
     }
 

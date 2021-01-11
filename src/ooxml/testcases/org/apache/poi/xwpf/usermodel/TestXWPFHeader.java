@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
-public final class TestXWPFHeader {
+final class TestXWPFHeader {
 
     @Test
     void testSimpleHeader() throws IOException {
@@ -143,7 +143,7 @@ public final class TestXWPFHeader {
             String fText2 = "More Text!";
             headerF.createParagraph().insertNewRun(0).setText(fText1);
             headerF.createParagraph().insertNewRun(0).setText(fText2);
-//        headerF.getParagraphs().get(0).insertNewRun(0).setText(fText1);
+            // headerF.getParagraphs().get(0).insertNewRun(0).setText(fText1);
 
             // Check it
             assertEquals(tText, headerD.getParagraphs().get(0).getText());
@@ -206,15 +206,15 @@ public final class TestXWPFHeader {
         }
     }
 
+    @Test
     void testSetWatermarkOnEmptyDoc() throws IOException {
         try (XWPFDocument sampleDoc = new XWPFDocument()) {
 
             // No header is set (yet)
             XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
-            assertNull(policy.getDefaultHeader());
-            assertNull(policy.getFirstPageHeader());
-            assertNull(policy.getDefaultFooter());
+            assertNull(policy);
 
+            policy = sampleDoc.createHeaderFooterPolicy();
             policy.createWatermark("DRAFT");
 
             assertNotNull(policy.getDefaultHeader());
@@ -232,25 +232,21 @@ public final class TestXWPFHeader {
     }
 
     @Disabled
-    @Test
     void testAddPictureData() {
         // TODO
     }
 
     @Disabled
-    @Test
     void testGetAllPictures() {
         // TODO
     }
 
     @Disabled
-    @Test
     void testGetAllPackagePictures() {
         // TODO
     }
 
     @Disabled
-    @Test
     void testGetPictureDataById() {
         // TODO
     }

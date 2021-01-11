@@ -42,6 +42,9 @@ import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
@@ -137,23 +140,18 @@ final class TestPOIFSFileSystem {
 	 * The other is to fix the handling of the last block in
 	 *  POIFS, since it seems to be slight wrong
 	 */
-	@Test
-	void testShortLastBlock() throws Exception {
-		String[] files = new String[] {
-			"ShortLastBlock.qwp", "ShortLastBlock.wps"
-		};
-
-		for (String file : files) {
-			// Open the file up
-			POIFSFileSystem fs = new POIFSFileSystem(
-			    _samples.openResourceAsStream(file)
-			);
+	@ParameterizedTest
+	@CsvSource({ "ShortLastBlock.qwp, 1303681", "ShortLastBlock.wps, 140787" })
+	void testShortLastBlock(String file, int size) throws Exception {
+		// Open the file up
+		try (POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream(file))) {
 
 			// Write it into a temp output array
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			fs.writeFilesystem(baos);
 
 			// Check sizes
+			assertEquals(size, baos.size());
 		}
 	}
 

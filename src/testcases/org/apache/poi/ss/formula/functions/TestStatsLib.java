@@ -104,7 +104,6 @@ class TestStatsLib extends BaseTestNumeric {
         assertDouble("kthLargest ", x, d);
     }
 
-    @Test
     @Disabled("... implement ...")
     void testKthSmallest() {
     }

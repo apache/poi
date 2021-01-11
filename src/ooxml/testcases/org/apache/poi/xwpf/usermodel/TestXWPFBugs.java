@@ -172,11 +172,13 @@ class TestXWPFBugs {
             doc.write(out);
             out.close();
 
-            XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()));
-            doc2.close();
+            try (XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()))) {
+                assertNotNull(doc2);
+            }
 
-            XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
-            docBack.close();
+            try (XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertNotNull(docBack);
+            }
         }
     }
 
