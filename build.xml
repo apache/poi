@@ -387,6 +387,8 @@ under the License.
     <dependency prefix="dist.sqljet" artifact="org.tmatesoft.sqljet:sqljet:1.1.13" usage="util"/>
     <dependency prefix="dist.antlr" artifact="org.antlr:antlr-runtime:3.5.2" usage="util"/>
     <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.4" usage="util"/>
+    <dependency prefix="dist.lz4-java" artifact="org.lz4:lz4-java:1.7.1" usage="util"/>
+
 
 
     <propertyset id="junit.properties">
@@ -795,6 +797,7 @@ under the License.
                     <available file="${dist.sqljet.jar}"/>
                     <available file="${dist.antlr.jar}"/>
                     <available file="${dist.sequence-library.jar}"/>
+                    <available file="${dist.lz4-java.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -810,6 +813,7 @@ under the License.
         <downloadfile src="${dist.sqljet.url}" dest="${dist.sqljet.jar}"/>
         <downloadfile src="${dist.antlr.url}" dest="${dist.antlr.jar}"/>
         <downloadfile src="${dist.sequence-library.url}" dest="${dist.sequence-library.jar}"/>
+        <downloadfile src="${dist.lz4-java.url}" dest="${dist.lz4-java.jar}"/>
     </target>
 
     <target name="check-compiled-ooxml-xsds">
@@ -2766,6 +2770,7 @@ under the License.
             <pathelement location="${dist.sqljet.jar}"/>
             <pathelement location="${dist.antlr.jar}"/>
             <pathelement location="${dist.sequence-library.jar}"/>
+            <pathelement location="${dist.lz4-java.jar}"/>
         </path>
         <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
 
