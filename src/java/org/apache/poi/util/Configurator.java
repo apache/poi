@@ -24,13 +24,15 @@ public class Configurator {
     private static POILogger logger = POILogFactory.getLogger(Configurator.class);
 
     public static int getIntValue(String systemProperty, int defaultValue) {
-        int result = defaultValue;
         String property = System.getProperty(systemProperty);
+        if (property == null || "".equals(property) || "null".equals(property)) {
+            return defaultValue;
+        }
         try {
-            result = Integer.parseInt(property);
+            return Integer.parseInt(property);
         } catch (Exception e) {
             logger.log(POILogger.ERROR, "System property -D", systemProperty, " does not contains a valid integer: ", property);
+            return defaultValue;
         }
-        return result;
     }
 }

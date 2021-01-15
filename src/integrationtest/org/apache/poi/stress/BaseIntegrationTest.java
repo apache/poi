@@ -50,7 +50,7 @@ public class BaseIntegrationTest {
 	}
 
 	void test() throws Exception {
-        assertNotNull( handler, "Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file) );
+        assertNotNull( handler, "Unknown file extension for file: " + file );
 		testOneFile(new File(rootDir, file));
 	}
 
@@ -123,29 +123,29 @@ public class BaseIntegrationTest {
 					message.equals("The document is really a HTML file")), "File " + file + " excluded because it is actually a PDF/RTF/HTML file" );
 
 		if(message != null && (message.equals("The document is really a XLS file"))) {
-			handler = TestAllFiles.HANDLERS.get(".xls");
+			handler = new HSSFFileHandler();
 		} else if(message != null && (message.equals("The document is really a PPT file"))) {
-			handler = TestAllFiles.HANDLERS.get(".ppt");
+			handler = new HSLFFileHandler();
 		} else if(message != null && (message.equals("The document is really a DOC file"))) {
-			handler = TestAllFiles.HANDLERS.get(".doc");
+			handler = new HWPFFileHandler();
 		} else if(message != null && (message.equals("The document is really a VSD file"))) {
-			handler = TestAllFiles.HANDLERS.get(".vsd");
+			handler = new HDGFFileHandler();
 
 		// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
 		} else if (handler instanceof HWPFFileHandler) {
-            handler = TestAllFiles.HANDLERS.get(".docx");
+            handler = new XWPFFileHandler();
         } else if (handler instanceof HSSFFileHandler) {
-            handler = TestAllFiles.HANDLERS.get(".xlsx");
+            handler = new XSSFFileHandler();
         } else if (handler instanceof HSLFFileHandler) {
-			handler = TestAllFiles.HANDLERS.get(".pptx");
+			handler = new XSLFFileHandler();
 
 		// and the other way around, use HWPF instead of XWPF and so forth
 		} else if(handler instanceof XWPFFileHandler) {
-			handler = TestAllFiles.HANDLERS.get(".doc");
+			handler = new HWPFFileHandler();
 		} else if(handler instanceof XSSFFileHandler) {
-			handler = TestAllFiles.HANDLERS.get(".xls");
+			handler = new HSSFFileHandler();
 		} else if(handler instanceof XSLFFileHandler) {
-			handler = TestAllFiles.HANDLERS.get(".ppt");
+			handler = new HSLFFileHandler();
         } else {
 			// nothing matched => throw the exception to the outside
 			throw e;

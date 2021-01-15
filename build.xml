@@ -1277,6 +1277,7 @@ under the License.
 
                         <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                         <jvmarg value="${file.leak.detector}" />
+                        <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true" />
                         <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}" if:true="${isIBMVM}"/>
 
                         <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
@@ -1285,6 +1286,10 @@ under the License.
                         <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
+
+                        <!-- mute some notorious talkative classes -->
+                        <jvmarg line="-Dorg.slf4j.simpleLogger.log.org.apache.poi.hdgf.chunks.Chunk=off"/>
+                        <jvmarg line="-Dorg.slf4j.simpleLogger.log.org.apache.poi=error"/>
                     </fork>
 
                     <!-- can't use resultfile="status-as-tests-run.txt" here ... it's truncated with every test -->

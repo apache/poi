@@ -16,40 +16,50 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.io.BufferedInputStream;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.hwpf.HWPFOldDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-class XWPFFileHandler extends AbstractFileHandler {
+public class OWPFFileHandler extends POIFSFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-        // ignore password protected files
-        if (POIXMLDocumentHandler.isEncrypted(stream)) return;
-
-        try (XWPFDocument doc = new XWPFDocument(stream)) {
-
-            new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
-        } catch (POIXMLException e) {
-            Exception cause = (Exception)e.getCause();
-            throw cause == null ? e : cause;
+        try (POIFSFileSystem poifs = new POIFSFileSystem(stream)) {
+            HWPFOldDocument doc = new HWPFOldDocument(poifs);
+            assertNotNull(doc.getOldFontTable());
+            assertNotNull(doc.getCharacterTable());
         }
     }
 
     // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
     @SuppressWarnings("java:S2699")
-    void test() throws Exception {
-        File file = new File("test-data/document/51921-Word-Crash067.docx");
+    public void test() throws Exception {
+        File file = new File("test-data/document/52117.doc");
 
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+        try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
         }
 
         handleExtracting(file);
+
+        try (FileInputStream stream = new FileInputStream(file);
+             WordExtractor extractor = new WordExtractor(stream)) {
+            assertNotNull(extractor.getText());
+        }
+    }
+
+    @Test
+    public void testExtractingOld() {
+        File file = new File("test-data/document/52117.doc");
+        assertDoesNotThrow(() -> handleExtracting(file));
     }
 }

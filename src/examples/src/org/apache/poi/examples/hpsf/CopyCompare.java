@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -62,6 +63,8 @@ import org.apache.poi.util.TempFile;
 @SuppressWarnings({"java:S106","java:S4823"})
 public final class CopyCompare {
     private CopyCompare() {}
+
+    private static final ThreadLocal<PrintStream> out = ThreadLocal.withInitial(() -> System.out);
 
     /**
      * Runs the example program. The application expects one or two arguments:
@@ -117,8 +120,12 @@ public final class CopyCompare {
              POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName))) {
             final DirectoryEntry oRoot = opfs.getRoot();
             final DirectoryEntry cRoot = cpfs.getRoot();
-            System.out.println(EntryUtils.areDirectoriesIdentical(oRoot, cRoot) ? "Equal" : "Not equal");
+            out.get().println(EntryUtils.areDirectoriesIdentical(oRoot, cRoot) ? "Equal" : "Not equal");
         }
+    }
+
+    public static void setOut(PrintStream ps) {
+        out.set(ps);
     }
 
     private interface InputStreamSupplier {

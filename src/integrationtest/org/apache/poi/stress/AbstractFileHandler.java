@@ -34,6 +34,7 @@ import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.util.IOUtils;
@@ -118,10 +119,10 @@ public abstract class AbstractFileHandler implements FileHandler {
             }
 
             // test again with including formulas and cell-comments as this caused some bugs
-            if(extractor instanceof ExcelExtractor &&
-                    // comment-extraction and formula extraction are not well supported in event based extraction
-                    !(extractor instanceof EventBasedExcelExtractor)) {
-                ((ExcelExtractor)extractor).setFormulasNotResults(true);
+            if (extractor instanceof ExcelExtractor &&
+                // comment-extraction and formula extraction are not well supported in event based extraction
+                !(extractor instanceof EventBasedExcelExtractor)) {
+                ((ExcelExtractor) extractor).setFormulasNotResults(true);
 
                 String text = extractor.getText();
                 assertNotNull(text);
@@ -132,6 +133,17 @@ public abstract class AbstractFileHandler implements FileHandler {
                 text = extractor.getText();
                 assertNotNull(text);
             }
+        } catch (IOException | POIXMLException e) {
+            Exception prevE = e;
+            Throwable cause;
+            while ((cause = prevE.getCause()) instanceof Exception) {
+                if (cause instanceof IOException || cause instanceof POIXMLException) {
+                    prevE = (Exception)cause;
+                } else {
+                    throw (Exception)cause;
+                }
+            }
+            throw e;
         } catch (IllegalArgumentException e) {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName)) {
                 throw e;

@@ -18,6 +18,7 @@ package org.apache.poi.stress;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +47,7 @@ import org.junit.jupiter.api.Test;
 class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
 
-    private static File copyOutput;
+    private static final ThreadLocal<File> copyOutput = ThreadLocal.withInitial(HPSFFileHandler::getTempFile);
 
     static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
         "spreadsheet/45290.xls",
@@ -58,12 +59,6 @@ class HPSFFileHandler extends POIFSFileHandler {
         "document/word2.doc"
     );
 
-    static final Set<String> EXCLUDES_HANDLE_FILE = unmodifiableHashSet(
-        "hpsf/Test_Humor-Generation.ppt",
-        "slideshow/missing-moveto.ppt" // POIFS properties corrupted
-    );
-
-
     private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
@@ -71,7 +66,6 @@ class HPSFFileHandler extends POIFSFileHandler {
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-        assumeFalse(EXCLUDES_HANDLE_FILE.contains(path));
 	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
 		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(poifs);
 		DocumentSummaryInformation dsi = hpsf.getDocumentSummaryInformation();
@@ -95,24 +89,26 @@ class HPSFFileHandler extends POIFSFileHandler {
         }
 	}
 
+	private static File getTempFile() {
+        File f = null;
+        try {
+            f = TempFile.createTempFile("hpsfCopy", "out");
+        } catch (IOException e) {
+            fail(e);
+        }
+        f.deleteOnExit();
+        return f;
+    }
+
     @Override
     public void handleAdditional(File file) throws Exception {
         assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
-        if (copyOutput == null) {
-            copyOutput = TempFile.createTempFile("hpsfCopy", "out");
-            copyOutput.deleteOnExit();
-        }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1");
-        PrintStream ps = System.out;
-        try {
-            System.setOut(psNew);
-            CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
-            assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8.name()));
-        } finally {
-            System.setOut(ps);
-        }
+        CopyCompare.setOut(psNew);
+        CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
+        assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8.name()));
     }
 
 

@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
@@ -32,18 +33,20 @@ import org.junit.jupiter.api.Test;
 class XSLFFileHandler extends SlideShowHandler {
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
-	    XMLSlideShow slide = new XMLSlideShow(stream);
-	    XSLFSlideShow slideInner = new XSLFSlideShow(slide.getPackage());
-		assertNotNull(slideInner.getPresentation());
-		assertNotNull(slideInner.getSlideMasterReferences());
-		assertNotNull(slideInner.getSlideReferences());
+	    try (XMLSlideShow slide = new XMLSlideShow(stream);
+			 XSLFSlideShow slideInner = new XSLFSlideShow(slide.getPackage())) {
+			;
+			assertNotNull(slideInner.getPresentation());
+			assertNotNull(slideInner.getSlideMasterReferences());
+			assertNotNull(slideInner.getSlideReferences());
 
-		new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
+			new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
 
-		handleSlideShow(slide);
-
-		slideInner.close();
-		slide.close();
+			handleSlideShow(slide);
+		} catch (POIXMLException e) {
+	    	Exception cause = (Exception)e.getCause();
+	    	throw cause == null ? e : cause;
+		}
 	}
 
 	@Override

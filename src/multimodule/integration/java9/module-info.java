@@ -21,6 +21,7 @@ module org.apache.poi.stress {
     requires net.bytebuddy;
     requires java.desktop;
 
+    requires org.apache.commons.collections4;
     requires org.apache.poi.examples;
 
     exports org.apache.poi.stress;
