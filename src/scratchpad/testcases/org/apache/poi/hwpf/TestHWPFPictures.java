@@ -32,47 +32,18 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test picture support in HWPF
  */
 public final class TestHWPFPictures {
-	private String docAFile;
-	private String docBFile;
-	private String docCFile;
-	private String docDFile;
-
-	private String imgAFile;
-	private String imgBFile;
-	private String imgCFile;
-	private String imgDFile;
-
-	@BeforeEach
-    void setUp() {
-		docAFile = "testPictures.doc";
-		docBFile = "two_images.doc";
-		docCFile = "vector_image.doc";
-		docDFile = "GaiaTest.doc";
-
-		imgAFile = "simple_image.jpg";
-		imgBFile = "simple_image.png";
-		imgCFile = "vector_image.emf";
-		imgDFile = "GaiaTestImg.png";
-
+	@BeforeAll
+    static void setUp() {
 		// we use ImageIO in one of the tests here so we should ensure that the temporary directory is created correctly
 		File tempDir = new File(System.getProperty("java.io.tmpdir"));
 		assertTrue( tempDir.exists() || tempDir.mkdirs(), "Could not create temporary directory " + tempDir.getAbsolutePath() + ": " + tempDir.exists() + "/" + tempDir.isDirectory() );
-	}
-
-	/**
-	 * Test just opening the files
-	 */
-	@Test
-	void testOpen() {
-		HWPFTestDataSamples.openSampleFile(docAFile);
-		HWPFTestDataSamples.openSampleFile(docBFile);
 	}
 
 	/**
@@ -80,8 +51,8 @@ public final class TestHWPFPictures {
 	 */
 	@Test
 	void testImageCount() {
-		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
-		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile("testPictures.doc");
+		HWPFDocument docB = HWPFTestDataSamples.openSampleFile("two_images.doc");
 
 		assertNotNull(docA.getPicturesTable());
 		assertNotNull(docB.getPicturesTable());
@@ -101,7 +72,7 @@ public final class TestHWPFPictures {
 	 */
 	@Test
 	void testImageData() {
-		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
+		HWPFDocument docB = HWPFTestDataSamples.openSampleFile("two_images.doc");
 		PicturesTable picB = docB.getPicturesTable();
 		List<Picture> picturesB = picB.getAllPictures();
 
@@ -114,8 +85,8 @@ public final class TestHWPFPictures {
 		assertNotNull(pic2);
 
 		// Check the same
-		byte[] pic1B = readFile(imgAFile);
-		byte[] pic2B = readFile(imgBFile);
+		byte[] pic1B = readFile("simple_image.jpg");
+		byte[] pic2B = readFile("simple_image.png");
 
 		assertArrayEquals(pic1B, pic1.getContent());
 		assertArrayEquals(pic2B, pic2.getContent());
@@ -126,7 +97,7 @@ public final class TestHWPFPictures {
 	 */
 	@Test
 	void testCompressedImageData() {
-		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
+		HWPFDocument docC = HWPFTestDataSamples.openSampleFile("vector_image.doc");
 		PicturesTable picC = docC.getPicturesTable();
 		List<Picture> picturesC = picC.getAllPictures();
 
@@ -136,7 +107,7 @@ public final class TestHWPFPictures {
 		assertNotNull(pic);
 
 		// Check the same
-		byte[] picBytes = readFile(imgCFile);
+		byte[] picBytes = readFile("vector_image.emf");
 		assertArrayEquals(picBytes, pic.getContent());
 	}
 
@@ -171,14 +142,14 @@ public final class TestHWPFPictures {
 	 */
 	@Test
 	void testEscherDrawing() {
-		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
+		HWPFDocument docD = HWPFTestDataSamples.openSampleFile("GaiaTest.doc");
 		List<Picture> allPictures = docD.getPicturesTable().getAllPictures();
 
 		assertEquals(1, allPictures.size());
 
 		Picture pic = allPictures.get(0);
 		assertNotNull(pic);
-		byte[] picD = readFile(imgDFile);
+		byte[] picD = readFile("GaiaTestImg.png");
 
 		assertEquals(picD.length, pic.getContent().length);
 

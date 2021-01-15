@@ -27,19 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -56,8 +49,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.imageio.ImageIO;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -66,6 +57,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.Hyperlink;
@@ -1051,4 +1043,41 @@ class TestXSLFBugs {
             assertEquals("Open Jakarta POI HSSF module test  ", strings.get(1));
         }
     }
+
+
+    @Test
+    void bug59056() throws IOException {
+        assumeFalse(xslfOnly);
+
+        final double[][] clips = {
+            { 50.999999999999986, 51.0, 298.0, 98.0 },
+            { 51.00000000000003, 51.0, 298.0, 98.0 },
+            { 51.0, 51.0, 298.0, 98.0 },
+            { 250.02000796164992, 93.10370370370373, 78.61839367617523, 55.89629629629627 },
+            { 79.58198774450841, 53.20887318960063, 109.13118501448272, 9.40935058567127 },
+        };
+
+        DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+            int idx = 0;
+            @Override
+            public void clip(java.awt.Shape s) {
+                assertTrue(s instanceof Rectangle2D);
+                Rectangle2D r = (Rectangle2D)s;
+
+                double[] clip = clips[idx++];
+                assertEquals(clip[0], r.getX(), 0.5);
+                assertEquals(clip[1], r.getY(), 0.5);
+                assertEquals(clip[2], r.getWidth(), 0.5);
+                assertEquals(clip[3], r.getHeight(), 0.5);
+            }
+        };
+
+        Rectangle2D box = new Rectangle2D.Double(51, 51, 298, 98);
+        DrawFactory df = DrawFactory.getInstance(dgfx);
+
+        try (SlideShow<?,?> ppt = SlideShowFactory.create(slTests.getFile("54541_cropped_bitmap.ppt"))) {
+            ppt.getSlides().get(0).getShapes().forEach(shape -> df.drawShape(dgfx, shape, box));
+        }
+    }
+
 }

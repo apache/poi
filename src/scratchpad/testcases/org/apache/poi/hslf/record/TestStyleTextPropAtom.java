@@ -17,14 +17,23 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.util.HexDump;
 import org.junit.jupiter.api.Test;
 
@@ -702,7 +711,7 @@ public final class TestStyleTextPropAtom {
         //  all the properties the mask says we have
         // Make sure we just do the best we can
         StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
-        stpc.setParentTextSize(data_c_text_len);
+        assertDoesNotThrow(() -> stpc.setParentTextSize(data_c_text_len));
 
         // If we get here, we didn't break
     }

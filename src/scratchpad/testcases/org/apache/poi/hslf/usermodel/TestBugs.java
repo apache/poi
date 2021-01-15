@@ -28,11 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -67,7 +65,6 @@ import org.apache.poi.hslf.record.VBAInfoAtom;
 import org.apache.poi.hslf.record.VBAInfoContainer;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.macros.VBAMacroReader;
-import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.ColorStyle;
@@ -87,6 +84,9 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -221,19 +221,6 @@ public final class TestBugs {
     }
 
     /**
-     * Bug 42486:  Failure parsing a seemingly valid PPT
-     */
-    @SuppressWarnings("unused")
-    @Test
-    void bug42486 () throws IOException {
-        try (HSLFSlideShow ppt = open("42486.ppt")) {
-            for (HSLFSlide slide : ppt.getSlides()) {
-                List<HSLFShape> shape = slide.getShapes();
-            }
-        }
-    }
-
-    /**
      * Bug 42524:  NPE in Shape.getShapeType()
      */
     @Test
@@ -259,13 +246,15 @@ public final class TestBugs {
      */
     @SuppressWarnings("unused")
     @Test
-    void bug42520 () throws IOException {
+    void bug42520() throws IOException {
         try (HSLFSlideShow ppt = open("42520.ppt")) {
 
             //test case from the bug report
             HSLFGroupShape shapeGroup = (HSLFGroupShape) ppt.getSlides().get(11).getShapes().get(10);
             HSLFPictureShape picture = (HSLFPictureShape) shapeGroup.getShapes().get(0);
             picture.getPictureData();
+
+            boolean found = false;
 
             //walk down the tree and see if there were no errors while reading
             for (HSLFSlide slide : ppt.getSlides()) {
@@ -275,11 +264,15 @@ public final class TestBugs {
                         for (HSLFShape comp : group.getShapes()) {
                             if (comp instanceof HSLFPictureShape) {
                                 HSLFPictureData pict = ((HSLFPictureShape) comp).getPictureData();
+                                assertEquals("Rectangle 35893", comp.getShapeName());
+                                found = true;
                             }
                         }
                     }
                 }
             }
+
+            assertTrue(found);
         }
     }
 
@@ -364,17 +357,6 @@ public final class TestBugs {
     }
 
     /**
-     * Bug 44770: java.lang.RuntimeException: Couldn't instantiate the class for
-     * type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
-     */
-    @Test
-    void bug44770() throws IOException {
-        try (HSLFSlideShow ppt = open("44770.ppt")) {
-            assertNotNull(ppt.getSlides().get(0));
-        }
-    }
-
-    /**
      * Bug 41071: Will not extract text from Powerpoint TextBoxes
      */
     @Test
@@ -413,31 +395,14 @@ public final class TestBugs {
         try (HSLFSlideShow ppt = open("49648.ppt")) {
             for (HSLFSlide slide : ppt.getSlides()) {
                 for (List<HSLFTextParagraph> run : slide.getTextParagraphs()) {
+                    String repl = "With \u0123\u1234\u5678 unicode";
                     String text = HSLFTextParagraph.getRawText(run);
-                    text = text.replace("{txtTot}", "With \u0123\u1234\u5678 unicode");
+                    text = text.replace("{txtTot}", repl);
                     HSLFTextParagraph.setText(run, text);
+                    if (text.contains(repl)) {
+                        assertTrue(HSLFTextParagraph.getText(run).contains(repl));
+                    }
                 }
-            }
-        }
-    }
-
-    /**
-     * Bug 41246: AIOOB with illegal note references
-     */
-    @Test
-    void bug41246a() throws IOException {
-        try (HSLFSlideShow ppt = open("41246-1.ppt")) {
-            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                assertNotNull(ppt2.getSlides().get(0));
-            }
-        }
-    }
-
-    @Test
-    void bug41246b() throws IOException {
-        try (HSLFSlideShow ppt = open("41246-2.ppt")) {
-            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
-                assertNotNull(ppt2.getSlides().get(0));
             }
         }
     }
@@ -524,26 +489,6 @@ public final class TestBugs {
     }
 
     @Test
-    void bug37625() throws IOException {
-        try (HSLFSlideShow ppt1 = open("37625.ppt");
-             HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
-            assertEquals(29, ppt1.getSlides().size());
-            assertNotNull(ppt2);
-            assertEquals(29, ppt2.getSlides().size());
-        }
-    }
-
-    @Test
-    void bug57272() throws IOException {
-        try (HSLFSlideShow ppt1 = open("57272_corrupted_usereditatom.ppt");
-             HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
-            assertEquals(6, ppt1.getSlides().size());
-            assertNotNull(ppt2);
-            assertEquals(6, ppt2.getSlides().size());
-        }
-    }
-
-    @Test
     void bug49541() throws IOException {
         try (HSLFSlideShow ppt = open("49541_symbol_map.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(0);
@@ -554,21 +499,36 @@ public final class TestBugs {
         }
     }
 
-    @Test
-    void bug47261() throws IOException {
-        try (HSLFSlideShow ppt = open("bug47261.ppt")) {
+    @ParameterizedTest
+    @CsvSource({
+        // bug47261.ppt has actually 16 slides, but also non-conforming multiple document records
+        "bug47261.ppt, 1",
+        "bug56240.ppt, 105",
+        "bug58516.ppt, 5",
+        "57272_corrupted_usereditatom.ppt, 6",
+        "37625.ppt, 29",
+        // Bug 41246: AIOOB with illegal note references
+        "41246-1.ppt, 36",
+        "41246-2.ppt, 16",
+        // Bug 44770: java.lang.RuntimeException: Couldn't instantiate the class for
+        // type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
+        "44770.ppt, 19",
+        // Bug 42486:  Failure parsing a seemingly valid PPT
+        "42486.ppt, 33"
+    })
+    void testFile(String file, int slideCnt) throws IOException {
+        try (HSLFSlideShow ppt = open(file)) {
+            for (HSLFSlide slide : ppt.getSlides()) {
+                List<HSLFShape> shape = slide.getShapes();
+                assertFalse(shape.isEmpty());
+            }
+
+            assertNotNull(ppt.getSlides().get(0));
             ppt.removeSlide(0);
             ppt.createSlide();
-            writeOutAndReadBack(ppt).close();
-        }
-    }
-
-    @Test
-    void bug56240() throws IOException {
-        try (HSLFSlideShow ppt = open("bug56240.ppt")) {
-            int slideCnt = ppt.getSlides().size();
-            assertEquals(105, slideCnt);
-            writeOutAndReadBack(ppt).close();
+            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                assertEquals(slideCnt, ppt2.getSlides().size());
+            };
         }
     }
 
@@ -598,11 +558,6 @@ public final class TestBugs {
                 i++;
             }
         }
-    }
-
-    @Test
-    void bug58516() throws IOException {
-        open("bug58516.ppt").close();
     }
 
     @Test
@@ -771,23 +726,16 @@ public final class TestBugs {
         }
     }
 
-    @Test
-    void bug58718() throws IOException {
-        String[] files = {"bug58718_008524.ppt", "bug58718_008558.ppt", "bug58718_349008.ppt", "bug58718_008495.ppt",};
-        for (String f : files) {
-            File sample = HSLFTestDataSamples.getSampleFile(f);
-            try (SlideShowExtractor<?,?> ex = new SlideShowExtractor<>(SlideShowFactory.create(sample))) {
-                 assertNotNull(ex.getText());
-             }
-        }
-    }
-
-    @Test
-    void bug58733() throws IOException {
-        File sample = HSLFTestDataSamples.getSampleFile("bug58733_671884.ppt");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "bug58718_008524.ppt", "bug58718_008558.ppt", "bug58718_349008.ppt", "bug58718_008495.ppt",
+        "bug58733_671884.ppt"
+    })
+    void bug58718(String file) throws IOException {
+        File sample = HSLFTestDataSamples.getSampleFile(file);
         try (SlideShowExtractor<?,?> ex = new SlideShowExtractor<>(SlideShowFactory.create(sample))) {
-            assertNotNull(ex.getText());
-        }
+             assertNotNull(ex.getText());
+         }
     }
 
     @Test
@@ -830,23 +778,6 @@ public final class TestBugs {
                 }
             }
         }
-    }
-
-    @Test
-    void bug59056() throws IOException {
-        try (HSLFSlideShow ppt = open("54541_cropped_bitmap.ppt")) {
-            for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
-                BufferedImage img = new BufferedImage(500, 300, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D graphics = img.createGraphics();
-                Rectangle2D box = new Rectangle2D.Double(50, 50, 300, 100);
-                graphics.setPaint(Color.red);
-                graphics.fill(box);
-                box = new Rectangle2D.Double(box.getX() + 1, box.getY() + 1, box.getWidth() - 2, box.getHeight() - 2);
-                DrawFactory.getInstance(graphics).drawShape(graphics, shape, box);
-                graphics.dispose();
-            }
-        }
-
     }
 
     private static HSLFSlideShow open(String fileName) throws IOException {

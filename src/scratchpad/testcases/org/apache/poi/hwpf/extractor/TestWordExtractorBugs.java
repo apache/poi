@@ -25,8 +25,8 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for bugs with the WordExtractor
@@ -34,38 +34,27 @@ import org.junit.jupiter.api.Test;
 public final class TestWordExtractorBugs {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
 
-    @Test
-    void testProblemMetadata() throws IOException {
-        InputStream is = SAMPLES.openResourceAsStream("ProblemExtracting.doc");
-		WordExtractor extractor = new WordExtractor(is);
-		is.close();
-
-		// Check it gives text without error
-		extractor.getText();
-		extractor.getParagraphText();
-		extractor.getTextFromPieces();
-		extractor.close();
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "ProblemExtracting.doc",
+        // bug 50688
+        "parentinvguid.doc",
+        // Bug60374
+        "cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"
+    })
+    void testFile(String file) throws IOException {
+        try (InputStream is = SAMPLES.openResourceAsStream(file);
+             POITextExtractor ex = ExtractorFactory.createExtractor(is)) {
+            // Check it gives text without error
+            assertNotNull(ex.getText());
+            if (ex instanceof WordExtractor) {
+                WordExtractor extractor = (WordExtractor)ex;
+                assertNotNull(extractor.getParagraphText());
+                assertNotNull(extractor.getTextFromPieces());
+            } else {
+                Word6Extractor extractor = (Word6Extractor)ex;
+                assertNotNull(extractor.getParagraphText());
+            }
+        }
 	}
-
-    @Test
-    void testBug50688() throws Exception {
-        InputStream is = SAMPLES.openResourceAsStream("parentinvguid.doc");
-        WordExtractor extractor = new WordExtractor(is);
-        is.close();
-
-        // Check it gives text without error
-        extractor.getText();
-        extractor.close();
-    }
-
-    @Test
-    void testBug60374() throws Exception {
-        POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"));
-        final POITextExtractor extractor = ExtractorFactory.createExtractor(fs);
-
-        // Check it gives text without error
-        assertNotNull(extractor.getText());
-
-        extractor.close();
-    }
 }

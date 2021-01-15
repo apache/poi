@@ -17,6 +17,7 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -56,7 +57,7 @@ public class TestWordToTextConverter {
     @Test
     void testBug53380_3() throws Exception {
         try (HWPFDocument doc = openSampleFile( "Bug53380_3.doc" )) {
-            WordToTextConverter.getText(doc);
+            assertNotNull(WordToTextConverter.getText(doc));
         }
     }
 }

@@ -17,7 +17,8 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.apache.poi.POITestCase.assertNotContained;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringWriter;
 
@@ -29,223 +30,114 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.w3c.dom.Document;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
  */
 public class TestWordToHtmlConverter {
-    private static String getHtmlText(final String sampleFileName) throws Exception {
-        return getHtmlText(sampleFileName, false);
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
+
+    @ParameterizedTest
+    @CsvSource({
+        "AIOOB-Tap.doc, <table class=\"t1\">",
+        "Bug33519.doc, " +
+            "\u041F\u043B\u0430\u043D\u0438\u043D\u0441\u043A\u0438 \u0442\u0443\u0440\u043E\u0432\u0435|" +
+            "\u042F\u0432\u043E\u0440 \u0410\u0441\u0435\u043D\u043E\u0432",
+        "Bug46610_2.doc, 012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678",
+        "Bug46817.doc, <table class=\"t1\">",
+        "Bug47286.doc, " +
+            "!FORMTEXT|" +
+            "color:#4f6228;|" +
+            "Passport No and the date of expire|" +
+            "mfa.gov.cy",
+        "Bug48075.doc, \u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u21162",
+        "innertable.doc, <span>A</span>",
+        "o_kurs.doc, \u0412\u0441\u0435 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B \u043D\u0443\u043C\u0435\u0440\u0443\u044E\u0442\u0441\u044F",
+        "Bug52583.doc, <select><option selected>riri</option><option>fifi</option><option>loulou</option></select>",
+        "Bug53182.doc, !italic",
+        "documentProperties.doc, " +
+            "<title>This is document title</title>|" +
+            "<meta content=\"This is document keywords\" name=\"keywords\">",
+        // email hyperlink
+        "Bug47286.doc, provisastpet@mfa.gov.cy",
+        "endingnote.doc, " +
+            "<a class=\"a1 endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>|" +
+            "<a class=\"a1 endnoteindex\" href=\"#endnote_back_1\" name=\"endnote_1\">1</a><span|" +
+            "Ending note text",
+        "equation.doc, <!--Image link to '0.emf' can be here-->",
+        "hyperlink.doc, " +
+            "<span>Before text; </span><a |" +
+            "<a href=\"http://testuri.org/\"><span class=\"s1\">Hyperlink text</span></a>|" +
+            "</a><span>; after text</span>",
+        "lists-margins.doc, " +
+            ".s1{display: inline-block; text-indent: 0; min-width: 0.4861111in;}|" +
+            ".s2{display: inline-block; text-indent: 0; min-width: 0.23055555in;}|" +
+            ".s3{display: inline-block; text-indent: 0; min-width: 0.28541666in;}|" +
+            ".s4{display: inline-block; text-indent: 0; min-width: 0.28333333in;}|" +
+            ".p4{text-indent:-0.59652776in;margin-left:-0.70069444in;",
+        "pageref.doc, " +
+            "<a href=\"#userref\">|" +
+            "<a name=\"userref\">|" +
+            "1",
+        "table-merges.doc, " +
+            "<td class=\"td1\" colspan=\"3\">|" +
+            "<td class=\"td2\" colspan=\"2\">",
+        "52420.doc, " +
+            "!FORMTEXT|" +
+            "\u0417\u0410\u0414\u0410\u041d\u0418\u0415|" +
+            "\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c",
+        "picture.doc, " +
+            "src=\"0.emf\"|" +
+            "width:3.1293333in;height:1.7247736in;|" +
+            "left:-0.09433333;top:-0.2573611;|" +
+            "width:3.4125in;height:2.3253334in;",
+        "pictures_escher.doc, " +
+            "<img src=\"s0.PNG\">|" +
+            "<img src=\"s808.PNG\">"
+
+    })
+    void testFile(String file, String contains) throws Exception {
+        boolean emulatePictureStorage = file.contains("picture");
+
+        String result = getHtmlText(file, emulatePictureStorage);
+        assertNotNull(result);
+        // starting with JDK 9 such unimportant whitespaces may be trimmed
+        result = result.replace("</a> <span", "</a><span");
+
+        for (String match : contains.split("\\|")) {
+            if (match.startsWith("!")) {
+                assertNotContained(result, match.substring(1));
+            } else {
+                assertContains(result, match);
+            }
+        }
     }
 
-    private static String getHtmlText(final String sampleFileName,
-            boolean emulatePictureStorage) throws Exception {
-        HWPFDocument hwpfDocument = new HWPFDocument(POIDataSamples
-                .getDocumentInstance().openResourceAsStream(sampleFileName));
-
+    private static String getHtmlText(final String sampleFileName, boolean emulatePictureStorage) throws Exception {
         Document newDocument = XMLHelper.newDocumentBuilder().newDocument();
-        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                newDocument);
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(newDocument);
 
-        if (emulatePictureStorage)
-        {
-            wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
-        }
+        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream(sampleFileName))) {
+            if (emulatePictureStorage) {
+                wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
+            }
 
-        wordToHtmlConverter.processDocument(hwpfDocument);
+            wordToHtmlConverter.processDocument(hwpfDocument);
 
-        StringWriter stringWriter = new StringWriter();
+            StringWriter stringWriter = new StringWriter();
 
-        Transformer transformer = XMLHelper.newTransformer();
-        transformer.setOutputProperty(OutputKeys.METHOD, "html");
-        transformer.transform(
+            Transformer transformer = XMLHelper.newTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, "html");
+            transformer.transform(
                 new DOMSource(wordToHtmlConverter.getDocument()),
                 new StreamResult(stringWriter));
 
-        return stringWriter.toString();
+            return stringWriter.toString();
+        }
     }
 
-    @Test
-    void testAIOOBTap() throws Exception {
-        String result = getHtmlText("AIOOB-Tap.doc");
-        assertContains(result, "<table class=\"t1\">");
-    }
 
-    @Test
-    void testBug33519() throws Exception {
-        String result = getHtmlText("Bug33519.doc");
-        assertContains(
-                result,
-                "\u041F\u043B\u0430\u043D\u0438\u043D\u0441\u043A\u0438 \u0442\u0443\u0440\u043E\u0432\u0435");
-        assertContains(result,
-                "\u042F\u0432\u043E\u0440 \u0410\u0441\u0435\u043D\u043E\u0432");
-    }
-
-    @Test
-    void testBug46610_2() throws Exception {
-        String result = getHtmlText("Bug46610_2.doc");
-        assertContains(
-                result,
-                "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678");
-    }
-
-    @Test
-    void testBug46817() throws Exception {
-        String result = getHtmlText("Bug46817.doc");
-        final String substring = "<table class=\"t1\">";
-        assertContains(result, substring);
-    }
-
-    @Test
-    void testBug47286() throws Exception {
-        String result = getHtmlText("Bug47286.doc");
-
-        assertFalse(result.contains("FORMTEXT"));
-
-        assertContains(result, "color:#4f6228;");
-        assertContains(result, "Passport No and the date of expire");
-        assertContains(result, "mfa.gov.cy");
-    }
-
-    @Test
-    void testBug48075() throws Exception {
-        getHtmlText("Bug48075.doc");
-    }
-
-    @Test
-    void testBug52583() throws Exception {
-        String result = getHtmlText("Bug52583.doc");
-        assertContains(
-                result,
-                "<select><option selected>riri</option><option>fifi</option><option>loulou</option></select>");
-    }
-
-    @Test
-    void testBug53182() throws Exception {
-        String result = getHtmlText("Bug53182.doc");
-        assertFalse(result.contains("italic"));
-    }
-
-    @Test
-    void testDocumentProperties() throws Exception {
-        String result = getHtmlText("documentProperties.doc");
-
-        assertContains(result, "<title>This is document title</title>");
-        assertContains(result,
-                "<meta content=\"This is document keywords\" name=\"keywords\">");
-    }
-
-    @Test
-    void testEmailhyperlink() throws Exception {
-        String result = getHtmlText("Bug47286.doc");
-        final String substring = "provisastpet@mfa.gov.cy";
-        assertContains(result, substring);
-    }
-
-    @Test
-    void testEndnote() throws Exception {
-        String result = getHtmlText("endingnote.doc");
-
-        assertContains(
-                result,
-                "<a class=\"a1 endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>");
-        assertContains(
-                // starting with JDK 9 such unimportant whitespaces may be trimmed
-                result.replace("</a> <span", "</a><span"),
-                "<a class=\"a1 endnoteindex\" href=\"#endnote_back_1\" name=\"endnote_1\">1</a><span");
-        assertContains(result, "Ending note text");
-    }
-
-    @Test
-    void testEquation() throws Exception {
-        String result = getHtmlText("equation.doc");
-
-        assertContains(result, "<!--Image link to '0.emf' can be here-->");
-    }
-
-    @Test
-    void testHyperlink() throws Exception {
-        String result = getHtmlText("hyperlink.doc");
-
-        assertContains(result, "<span>Before text; </span><a ");
-        assertContains(result,
-                "<a href=\"http://testuri.org/\"><span class=\"s1\">Hyperlink text</span></a>");
-        assertContains(result, "</a><span>; after text</span>");
-    }
-
-    @Test
-    void testInnerTable() throws Exception {
-        getHtmlText("innertable.doc");
-    }
-
-    @Test
-    void testListsMargins() throws Exception {
-        String result = getHtmlText("lists-margins.doc");
-
-        assertContains(result,
-                ".s1{display: inline-block; text-indent: 0; min-width: 0.4861111in;}");
-        assertContains(result,
-                ".s2{display: inline-block; text-indent: 0; min-width: 0.23055555in;}");
-        assertContains(result,
-                ".s3{display: inline-block; text-indent: 0; min-width: 0.28541666in;}");
-        assertContains(result,
-                ".s4{display: inline-block; text-indent: 0; min-width: 0.28333333in;}");
-        assertContains(result,
-                ".p4{text-indent:-0.59652776in;margin-left:-0.70069444in;");
-    }
-
-    @Test
-    void testO_kurs_doc() throws Exception {
-        getHtmlText("o_kurs.doc");
-    }
-
-    @Test
-    void testPageref() throws Exception {
-        String result = getHtmlText("pageref.doc");
-
-        assertContains(result, "<a href=\"#userref\">");
-        assertContains(result, "<a name=\"userref\">");
-        assertContains(result, "1");
-    }
-
-    @Test
-    void testPicture() throws Exception {
-        String result = getHtmlText("picture.doc", true);
-
-        // picture
-        assertContains(result, "src=\"0.emf\"");
-        // visible size
-        assertContains(result, "width:3.1293333in;height:1.7247736in;");
-        // shift due to crop
-        assertContains(result, "left:-0.09433333;top:-0.2573611;");
-        // size without crop
-        assertContains(result, "width:3.4125in;height:2.3253334in;");
-    }
-
-    @Test
-    void testPicturesEscher() throws Exception {
-        String result = getHtmlText("pictures_escher.doc", true);
-        assertContains(result, "<img src=\"s0.PNG\">");
-        assertContains(result, "<img src=\"s808.PNG\">");
-    }
-
-    @Test
-    void testTableMerges() throws Exception {
-        String result = getHtmlText("table-merges.doc");
-
-        assertContains(result, "<td class=\"td1\" colspan=\"3\">");
-        assertContains(result, "<td class=\"td2\" colspan=\"2\">");
-    }
-
-    @Test
-    void testBug52420() throws Exception {
-        String result = getHtmlText("52420.doc");
-
-        assertFalse(result.contains("FORMTEXT"));
-
-        assertContains(result, "\u0417\u0410\u0414\u0410\u041d\u0418\u0415");
-        assertContains(result, "\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c");
-    }
 }

@@ -18,14 +18,13 @@
 package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -45,6 +44,7 @@ import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullPrintStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -168,19 +168,17 @@ public final class TestFixedSizedProperties {
     */
    @Test
    void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
-       PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
-       dump.dump(stream);
+       assertDoesNotThrow(() -> dump.dump(new NullPrintStream()));
    }
 
    /**
     * Test to see if we can read the Date Chunk with HSMFDump.
     */
    @Test
-   void testReadMessageDateFailsWithHSMFDump() throws Exception {
-       PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
+   void testReadMessageDateFailsWithHSMFDump() {
        HSMFDump dump = new HSMFDump(fsMessageFails);
-       dump.dump(stream);
+       assertDoesNotThrow(() -> dump.dump(new NullPrintStream()));
    }
 
    /**

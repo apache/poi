@@ -16,56 +16,42 @@
 ==================================================================== */
 package org.apache.poi.hwpf.dev;
 
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class TestHWPFLister {
-    private static PrintStream oldStdOut;
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
+    private static final String[] CLEAR_PROPS = {
+        "org.apache.poi.hwpf.preserveBinTables",
+        "org.apache.poi.hwpf.preserveTextTable"
+    };
 
-    @BeforeAll
-    public static void muteStdout() {
-        oldStdOut = System.out;
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "",
+        " --dop --textPieces --textPiecesText --chpx --chpxProperties --chpxSprms --papx --papxProperties --papxSprms --paragraphs --paragraphsText --bookmarks --escher --fields --pictures --officeDrawings --styles --writereadback"
+    })
+    void main(String args) throws Exception {
+        String fileArgs = SAMPLES.getFile("SampleDoc.doc").getAbsolutePath() + args;
+
+        PrintStream oldStdOut = System.out;
         System.setOut(new NullPrintStream());
-    }
+        try {
 
-    @AfterAll
-    public static void restoreStdout() {
-        System.setOut(oldStdOut);
-    }
+            assertDoesNotThrow(() -> HWPFLister.main(fileArgs.split(" ")));
 
-    @AfterEach
-    void tearDown() {
-        // the main-method sets these properties, we need to revert them here to not affect other tests
-        System.clearProperty("org.apache.poi.hwpf.preserveBinTables");
-        System.clearProperty("org.apache.poi.hwpf.preserveTextTable");
-    }
+        } finally {
+            System.setOut(oldStdOut);
 
-    @Test
-    void main() throws Exception {
-        File file = POIDataSamples.getDocumentInstance().getFile("SampleDoc.doc");
-        HWPFLister.main(new String[] { file.getAbsolutePath() });
-    }
-
-    @Test
-    void mainAll() throws Exception {
-        File file = POIDataSamples.getDocumentInstance().getFile("SampleDoc.doc");
-        HWPFLister.main(new String[] {
-            file.getAbsolutePath(),
-                "--dop", "--textPieces", "--textPiecesText",
-                "--chpx", "--chpxProperties", "--chpxSprms",
-                "--papx", "--papxProperties", "--papxSprms",
-                "--paragraphs", "--paragraphsText",
-                "--bookmarks", "--escher",
-                "--fields", "--pictures",
-                "--officeDrawings", "--styles",
-                "--writereadback"
-        });
+            // the main-method sets these properties, we need to revert them here to not affect other tests
+            Arrays.stream(CLEAR_PROPS).forEach(System::clearProperty);
+        }
     }
 }

@@ -17,29 +17,33 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.junit.jupiter.api.Test;
 
 public final class TestPAPBinTable {
 
     @Test
-    void testObIs() throws IOException {
+    void testObIs() throws Exception {
         // shall not fail with assertions on
-        HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();
+        try (HWPFDocument doc = openSampleFile("ob_is.doc")) {
+            assertNotNull(WordToTextConverter.getText(doc));
+        }
     }
 
     @Test
     void testReadWrite() throws IOException {
-        /** @todo verify the constructors */
+        // @todo verify the constructors
         HWPFDocFixture _hWPFDocFixture = new HWPFDocFixture( this, HWPFDocFixture.DEFAULT_TEST_FILE );
 
         _hWPFDocFixture.setUp();

@@ -20,6 +20,7 @@ import static org.apache.poi.POIDataSamples.getDocumentInstance;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -402,8 +403,8 @@ class TestBugs {
         try (InputStream is = getDocumentInstance()
             .openResourceAsStream("Bug47742-text.txt")) {
             byte[] expectedBytes = IOUtils.toByteArray(is);
-            String expectedText = new String(expectedBytes, StandardCharsets.UTF_8)
-                .substring(1); // strip-off the unicode marker
+            // strip-off the unicode marker
+            String expectedText = new String(expectedBytes, StandardCharsets.UTF_8).substring(1);
 
             assertEqualsIgnoreNewline(expectedText, foundText);
         }
@@ -413,9 +414,10 @@ class TestBugs {
      * Bug 47958 - Exception during Escher walk of pictures
      */
     @Test
-    void test47958() {
-        HWPFDocument doc = openSampleFile("Bug47958.doc");
-        doc.getPicturesTable().getAllPictures();
+    void test47958() throws IOException {
+        try (HWPFDocument doc = openSampleFile("Bug47958.doc")) {
+            assertDoesNotThrow(doc.getPicturesTable()::getAllPictures);
+        }
     }
 
     /**
@@ -556,42 +558,6 @@ class TestBugs {
     }
 
     /**
-     * [RESOLVED FIXED] Bug 51671 - HWPFDocument.write based on POIFSFileSystem
-     * throws a NullPointerException
-     */
-    @Test
-    void test51671() throws Exception {
-        InputStream is = getDocumentInstance()
-            .openResourceAsStream("empty.doc");
-        try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(is)) {
-            HWPFDocument hwpfDocument = new HWPFDocument(
-                poifsFileSystem.getRoot());
-            hwpfDocument.write(new ByteArrayOutputStream());
-            hwpfDocument.close();
-        }
-    }
-
-    /**
-     * Bug 51678 - Extracting text from Bug51524.zip is slow Bug 51524 -
-     * PapBinTable constructor is slow
-     */
-    @Test
-    void test51678And51524() throws IOException {
-        // YK: the test will run only if the poi.test.remote system property is
-        // set.
-        // TODO: refactor into something nicer!
-        if (System.getProperty("poi.test.remote") != null) {
-            String href = "http://domex.nps.edu/corp/files/govdocs1/007/007488.doc";
-            HWPFDocument hwpfDocument = HWPFTestDataSamples
-                .openRemoteFile(href);
-
-            try (WordExtractor wordExtractor = new WordExtractor(hwpfDocument)) {
-                wordExtractor.getText();
-            }
-        }
-    }
-
-    /**
      * [FIXED] Bug 51902 - Picture.fillRawImageContent -
      * ArrayIndexOutOfBoundsException
      */
@@ -648,7 +614,9 @@ class TestBugs {
         "cap.stanford.edu_profiles_viewbiosketch_facultyid=4009&name=m_maciver.doc, true",
         "ca.kwsymphony.www_education_School_Concert_Seat_Booking_Form_2011-12.doc, true",
         // Bug 33519 - HWPF fails to read a file
-        "Bug33519.doc, false"
+        "Bug33519.doc, false",
+        // Bug 51671 - HWPFDocument.write based on POIFSFileSystem throws a NullPointerException
+        "empty.doc, true"
     })
     void testBug51834(String file, boolean doReadBack) throws Exception {
         try (HWPFDocument doc = openSampleFile(file)) {
@@ -786,7 +754,6 @@ class TestBugs {
         try (HWPFDocument doc = openSampleFile("61490.doc")) {
             Range range = doc.getRange();
 
-            System.out.println("print table");
             TableIterator tableIter = new TableIterator(range);
             assertTrue(tableIter.hasNext());
             Table table = tableIter.next();
