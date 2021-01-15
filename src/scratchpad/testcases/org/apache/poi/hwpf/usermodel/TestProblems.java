@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,17 +42,15 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testListEntryNoListTable() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ListEntryNoListTable.doc");
-
-        Range r = doc.getRange();
-        for (int x = 0; x < r.numSections(); x++) {
-            Section s = r.getSection(x);
-            for (int y = 0; y < s.numParagraphs(); y++) {
-                s.getParagraph(y);
+        try (HWPFDocument doc = openSampleFile("ListEntryNoListTable.doc")) {
+            Range r = doc.getRange();
+            for (int x = 0; x < r.numSections(); x++) {
+                Section s = r.getSection(x);
+                for (int y = 0; y < s.numParagraphs(); y++) {
+                    assertNotNull(s.getParagraph(y));
+                }
             }
         }
-
-        doc.close();
     }
 
     /**
@@ -59,20 +58,19 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testSprmAIOOB() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("AIOOB-Tap.doc");
+        try (HWPFDocument doc = openSampleFile("AIOOB-Tap.doc")) {
+            StyleSheet styleSheet = doc.getStyleSheet();
+            assertNotNull(styleSheet);
 
-        StyleSheet styleSheet = doc.getStyleSheet();
-        assertNotNull(styleSheet);
-
-        Range r = doc.getRange();
-        for (int x = 0; x < r.numSections(); x++) {
-            Section s = r.getSection(x);
-            for (int y = 0; y < s.numParagraphs(); y++) {
-                Paragraph paragraph = s.getParagraph(y);
-                assertNotNull(paragraph);
+            Range r = doc.getRange();
+            for (int x = 0; x < r.numSections(); x++) {
+                Section s = r.getSection(x);
+                for (int y = 0; y < s.numParagraphs(); y++) {
+                    Paragraph paragraph = s.getParagraph(y);
+                    assertNotNull(paragraph);
+                }
             }
         }
-        doc.close();
     }
 
     /**
@@ -81,109 +79,106 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testTableCellLastParagraph() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44292.doc");
-        Range r = doc.getRange();
-        assertEquals(6, r.numParagraphs());
-        assertEquals(0, r.getStartOffset());
-        assertEquals(87, r.getEndOffset());
+        try (HWPFDocument doc = openSampleFile("Bug44292.doc")) {
+            Range r = doc.getRange();
+            assertEquals(6, r.numParagraphs());
+            assertEquals(0, r.getStartOffset());
+            assertEquals(87, r.getEndOffset());
 
-        // Paragraph with table
-        Paragraph p = r.getParagraph(0);
-        assertEquals(0, p.getStartOffset());
-        assertEquals(20, p.getEndOffset());
+            // Paragraph with table
+            Paragraph p = r.getParagraph(0);
+            assertEquals(0, p.getStartOffset());
+            assertEquals(20, p.getEndOffset());
 
-        // Check a few bits of the table directly
-        assertEquals("One paragraph is ok\7", r.getParagraph(0).text());
-        assertEquals("First para is ok\r", r.getParagraph(1).text());
-        assertEquals("Second paragraph is skipped\7", r.getParagraph(2).text());
-        assertEquals("One paragraph is ok\7", r.getParagraph(3).text());
-        assertEquals("\7", r.getParagraph(4).text());
-        assertEquals("\r", r.getParagraph(5).text());
+            // Check a few bits of the table directly
+            assertEquals("One paragraph is ok\7", r.getParagraph(0).text());
+            assertEquals("First para is ok\r", r.getParagraph(1).text());
+            assertEquals("Second paragraph is skipped\7", r.getParagraph(2).text());
+            assertEquals("One paragraph is ok\7", r.getParagraph(3).text());
+            assertEquals("\7", r.getParagraph(4).text());
+            assertEquals("\r", r.getParagraph(5).text());
 
-        // Get the table
-        Table t = r.getTable(p);
+            // Get the table
+            Table t = r.getTable(p);
 
-        // get the only row
-        assertEquals(1, t.numRows());
-        TableRow row = t.getRow(0);
+            // get the only row
+            assertEquals(1, t.numRows());
+            TableRow row = t.getRow(0);
 
-        // sanity check our row
-        assertEquals(5, row.numParagraphs());
-        assertEquals(0, row._parStart);
-        assertEquals(5, row._parEnd);
-        assertEquals(0, row.getStartOffset());
-        assertEquals(86, row.getEndOffset());
+            // sanity check our row
+            assertEquals(5, row.numParagraphs());
+            assertEquals(0, row._parStart);
+            assertEquals(5, row._parEnd);
+            assertEquals(0, row.getStartOffset());
+            assertEquals(86, row.getEndOffset());
 
-        // get the first cell
-        TableCell cell = row.getCell(0);
-        // First cell should have one paragraph
-        assertEquals(1, cell.numParagraphs());
-        assertEquals("One paragraph is ok\7", cell.getParagraph(0).text());
-        assertEquals(0, cell._parStart);
-        assertEquals(1, cell._parEnd);
-        assertEquals(0, cell.getStartOffset());
-        assertEquals(20, cell.getEndOffset());
+            // get the first cell
+            TableCell cell = row.getCell(0);
+            // First cell should have one paragraph
+            assertEquals(1, cell.numParagraphs());
+            assertEquals("One paragraph is ok\7", cell.getParagraph(0).text());
+            assertEquals(0, cell._parStart);
+            assertEquals(1, cell._parEnd);
+            assertEquals(0, cell.getStartOffset());
+            assertEquals(20, cell.getEndOffset());
 
-        // get the second
-        cell = row.getCell(1);
-        // Second cell should be detected as having two paragraphs
-        assertEquals(2, cell.numParagraphs());
-        assertEquals("First para is ok\r", cell.getParagraph(0).text());
-        assertEquals("Second paragraph is skipped\7",
+            // get the second
+            cell = row.getCell(1);
+            // Second cell should be detected as having two paragraphs
+            assertEquals(2, cell.numParagraphs());
+            assertEquals("First para is ok\r", cell.getParagraph(0).text());
+            assertEquals("Second paragraph is skipped\7",
                 cell.getParagraph(1).text());
-        assertEquals(1, cell._parStart);
-        assertEquals(3, cell._parEnd);
-        assertEquals(20, cell.getStartOffset());
-        assertEquals(65, cell.getEndOffset());
+            assertEquals(1, cell._parStart);
+            assertEquals(3, cell._parEnd);
+            assertEquals(20, cell.getStartOffset());
+            assertEquals(65, cell.getEndOffset());
 
-        // get the last cell
-        cell = row.getCell(2);
-        // Last cell should have one paragraph
-        assertEquals(1, cell.numParagraphs());
-        assertEquals("One paragraph is ok\7", cell.getParagraph(0).text());
-        assertEquals(3, cell._parStart);
-        assertEquals(4, cell._parEnd);
-        assertEquals(65, cell.getStartOffset());
-        assertEquals(85, cell.getEndOffset());
-
-        doc.close();
+            // get the last cell
+            cell = row.getCell(2);
+            // Last cell should have one paragraph
+            assertEquals(1, cell.numParagraphs());
+            assertEquals("One paragraph is ok\7", cell.getParagraph(0).text());
+            assertEquals(3, cell._parStart);
+            assertEquals(4, cell._parEnd);
+            assertEquals(65, cell.getStartOffset());
+            assertEquals(85, cell.getEndOffset());
+        }
     }
 
     @Test
     void testRangeDelete() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug28627.doc");
+        try (HWPFDocument doc = openSampleFile("Bug28627.doc")) {
+            Range range = doc.getRange();
+            int numParagraphs = range.numParagraphs();
 
-        Range range = doc.getRange();
-        int numParagraphs = range.numParagraphs();
+            int totalLength = 0, deletedLength = 0;
 
-        int totalLength = 0, deletedLength = 0;
+            for (int i = 0; i < numParagraphs; i++) {
+                Paragraph para = range.getParagraph(i);
+                String text = para.text();
 
-        for (int i = 0; i < numParagraphs; i++) {
-            Paragraph para = range.getParagraph(i);
-            String text = para.text();
-
-            totalLength += text.length();
-            if (text.contains("{delete me}")) {
-                para.delete();
-                deletedLength = text.length();
+                totalLength += text.length();
+                if (text.contains("{delete me}")) {
+                    para.delete();
+                    deletedLength = text.length();
+                }
             }
+
+            // check the text length after deletion
+            int newLength = 0;
+            range = doc.getRange();
+            numParagraphs = range.numParagraphs();
+
+            for (int i = 0; i < numParagraphs; i++) {
+                Paragraph para = range.getParagraph(i);
+                String text = para.text();
+
+                newLength += text.length();
+            }
+
+            assertEquals(newLength, totalLength - deletedLength);
         }
-
-        // check the text length after deletion
-        int newLength = 0;
-        range = doc.getRange();
-        numParagraphs = range.numParagraphs();
-
-        for (int i = 0; i < numParagraphs; i++) {
-            Paragraph para = range.getParagraph(i);
-            String text = para.text();
-
-            newLength += text.length();
-        }
-
-        assertEquals(newLength, totalLength - deletedLength);
-
-        doc.close();
     }
 
     /**
@@ -191,13 +186,13 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testEncryptedFile() {
-        assertThrows(EncryptedDocumentException.class, () -> HWPFTestDataSamples.openSampleFile("PasswordProtected.doc"));
+        assertThrows(EncryptedDocumentException.class, () -> openSampleFile("PasswordProtected.doc"));
 
     }
 
     @Test
     void testWriteProperties() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
+        HWPFDocument doc = openSampleFile("SampleDoc.doc");
         assertEquals("Nick Burch", doc.getSummaryInformation().getAuthor());
 
         // Write and read
@@ -213,7 +208,7 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testReadParagraphsAfterReplaceText() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45269.doc");
+        HWPFDocument doc = openSampleFile("Bug45269.doc");
         Range range = doc.getRange();
 
         String toFind = "campo1";
@@ -230,7 +225,7 @@ public final class TestProblems extends HWPFTestCase {
             }
         }
 
-        doc = HWPFTestDataSamples.openSampleFile("Bug45269.doc");
+        doc = openSampleFile("Bug45269.doc");
         range = doc.getRange();
 
         // check replace with shorter text
@@ -252,7 +247,7 @@ public final class TestProblems extends HWPFTestCase {
     @SuppressWarnings("deprecation")
     @Test
     void testProblemHeaderStories49936() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("HeaderFooterProblematic.doc");
+        HWPFDocument doc = openSampleFile("HeaderFooterProblematic.doc");
         HeaderStories hs = new HeaderStories(doc);
 
         assertEquals("", hs.getFirstHeader());
@@ -275,7 +270,7 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testParagraphPAPXNoParent45877() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45877.doc");
+        HWPFDocument doc = openSampleFile("Bug45877.doc");
         assertEquals(17, doc.getRange().numParagraphs());
 
         assertEquals("First paragraph\r",
@@ -291,7 +286,7 @@ public final class TestProblems extends HWPFTestCase {
      */
     @Test
     void testTableIterator() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("simple-table2.doc");
+        HWPFDocument doc = openSampleFile("simple-table2.doc");
         Range r = doc.getRange();
 
         // Check the text is as we'd expect

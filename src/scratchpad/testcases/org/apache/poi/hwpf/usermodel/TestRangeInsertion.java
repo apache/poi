@@ -35,7 +35,8 @@ public final class TestRangeInsertion {
 
 	// u201c and u201d are "smart-quotes"
 	private static final String originalText =
-		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
+		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d " +
+		"(U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
 	private static final String textToInsert = "Look at me!  I'm cool!  ";
 	private static final int insertionPoint = 122;
 
@@ -46,7 +47,9 @@ public final class TestRangeInsertion {
 	 */
 	@Test
 	void testOpen() throws IOException {
-		openSampleFile(illustrativeDocFile).close();
+		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
+			assertEquals(3, daDoc.getParagraphTable().getParagraphs().size());
+		}
 	}
 
 	/**

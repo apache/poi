@@ -54,7 +54,9 @@ public final class TestRangeDelete {
 	 */
 	@Test
 	void testOpen() throws IOException {
-		openSampleFile(illustrativeDocFile).close();
+		try (HWPFDocument doc = openSampleFile(illustrativeDocFile)) {
+			assertEquals(5, doc.getParagraphTable().getParagraphs().size());
+		}
 	}
 
 	/**
