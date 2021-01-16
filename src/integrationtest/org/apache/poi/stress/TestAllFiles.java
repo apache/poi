@@ -88,15 +88,8 @@ import org.opentest4j.AssertionFailedError;
 @Execution(ExecutionMode.CONCURRENT)
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
-    private static final int jreVersion;
-
-    static {
-        String version = System.getProperty("java.version");
-        String major = version.startsWith("1.")
-            ? version.substring(2, 3)
-            : version.substring(0, version.indexOf("."));
-        jreVersion = Integer.parseInt(major);
-    }
+    private static final int jreVersion =
+        Integer.parseInt(System.getProperty("java.version").replaceAll("^(?:1\\.)?(\\d+).*", "$1"));
 
     public static final String[] SCAN_EXCLUDES = {
         "**/.svn/**",
