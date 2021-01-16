@@ -2887,7 +2887,7 @@ under the License.
         <mkdir dir="build/release"/>
 
         <svn refid="svn.settings">
-            <checkout url="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}" destPath="build/release"/>
+            <checkout url="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}" destPath="build/release" ignoreExternals="false"/>
         </svn>
     </target>
 
