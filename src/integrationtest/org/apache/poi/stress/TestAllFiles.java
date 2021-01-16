@@ -31,26 +31,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.parallel.Execution;
@@ -98,12 +82,8 @@ public class TestAllFiles {
     };
 
     public static Stream<Arguments> allfiles(String testName) throws IOException {
-        MultiValuedMap<String, ExcInfo> exMap;
-        Map<String,String> handlerMap;
-        try (Workbook wb = WorkbookFactory.create(new File(ROOT_DIR, "spreadsheet/stress.xls"))) {
-            exMap = readExMap(wb.getSheet("Exceptions"));
-            handlerMap = readHandlerMap(wb.getSheet("Handlers"));
-        }
+        StressMap sm = new StressMap();
+        sm.load(new File(ROOT_DIR, "spreadsheet/stress.xls"));
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
@@ -113,29 +93,16 @@ public class TestAllFiles {
 
         final List<Arguments> result = new ArrayList<>(100);
         for (String file : scanner.getIncludedFiles()) {
-            // ... failures/handlers lookup doesn't work on windows otherwise
-            final String uniFile = file.replace('\\', '/');
-
-            String firstHandler = handlerMap.entrySet().stream()
-                .filter(me -> uniFile.endsWith(me.getKey()))
-                .map(Map.Entry::getValue).findFirst().orElse("NULL");
-
-            final String[] handlerStr = { firstHandler, secondHandler(firstHandler) };
-            for (String hs : handlerStr) {
-                if ("NULL".equals(hs)) continue;
-                ExcInfo info1 = exMap.get(file).stream()
-                    .filter(e ->
-                        (e.tests == null || e.tests.contains(testName) || "IGNORE".equals(e.tests)) &&
-                        (e.handler == null || e.handler.contains(hs))
-                    ).findFirst().orElse(null);
-
-                if (info1 == null || !"IGNORE".equals(info1.tests)) {
+            // if (!file.contains("44958.xls")) continue;
+            for (FileHandlerKnown handler : sm.getHandler(file)) {
+                ExcInfo info1 = sm.getExcInfo(file, testName, handler);
+                if (info1 == null || info1.isValid(testName, handler.name())) {
                     result.add(Arguments.of(
                         file,
-                        hs,
-                        (info1 != null) ? info1.password : null,
-                        (info1 != null) ? info1.exClazz : null,
-                        (info1 != null) ? info1.exMessage : null
+                        handler,
+                        (info1 != null) ? info1.getPassword() : null,
+                        (info1 != null) ? info1.getExClazz() : null,
+                        (info1 != null) ? info1.getExMessage() : null
                     ));
                 }
             }
@@ -150,12 +117,12 @@ public class TestAllFiles {
 
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("extractFiles")
-    void handleExtracting(String file, String handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
+    void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
         System.out.println("Running extractFiles on "+file);
-        FileHandler fileHandler = Handler.valueOf(handler).fileHandler.get();
+        FileHandler fileHandler = handler.fileHandler.get();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
-        verify(exec, exClass, exMessage, password);
+        verify(file, exec, exClass, exMessage, password);
     }
 
 
@@ -165,13 +132,13 @@ public class TestAllFiles {
 
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("handleFiles")
-    void handleFile(String file, String handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
+    void handleFile(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
         System.out.println("Running handleFiles on "+file);
-        FileHandler fileHandler = Handler.valueOf(handler).fileHandler.get();
+        FileHandler fileHandler = handler.fileHandler.get();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
             Executable exec = () -> fileHandler.handleFile(stream, file);
-            verify(exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password);
         }
     }
 
@@ -181,170 +148,43 @@ public class TestAllFiles {
 
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("handleAdditionals")
-    void handleAdditional(String file, String handler, String password, Class<? extends Throwable> exClass, String exMessage) {
+    void handleAdditional(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) {
         System.out.println("Running additionals on "+file);
-        FileHandler fileHandler = Handler.valueOf(handler).fileHandler.get();
+        FileHandler fileHandler = handler.fileHandler.get();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
-        verify(exec, exClass, exMessage, password);
+        verify(file, exec, exClass, exMessage, password);
     }
 
     @SuppressWarnings("unchecked")
-    private static void verify(Executable exec, Class<? extends Throwable> exClass, String exMessage, String password) {
+    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password) {
+        final String errPrefix = file + " - failed. ";
         // this also removes the password for non encrypted files
         Biff8EncryptionKey.setCurrentUserPassword(password);
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
             try {
                 exec.execute();
-                fail("expected failed assertion");
+                fail(errPrefix + "Expected failed assertion");
             } catch (AssertionFailedError e) {
-                assertEquals(exMessage, e.getMessage());
+                assertEquals(exMessage, e.getMessage(), errPrefix);
             } catch (Throwable e) {
-                fail("unexpected exception", e);
+                fail(errPrefix + "Unexpected exception", e);
             }
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec);
             String actMsg = e.getMessage();
-            if ((NullPointerException.class.isAssignableFrom(exClass) && jreVersion < 16) || exMessage == null) {
-                assertNull(actMsg);
+            if (NullPointerException.class.isAssignableFrom(exClass)) {
+                // with Java 16+ NullPointerExceptions may contain a message ... but apparently not always ?!
+                assertTrue(jreVersion >= 16 || actMsg == null, errPrefix);
+                if (actMsg != null) {
+                    assertTrue(actMsg.startsWith(exMessage), errPrefix + "Message: "+actMsg+" - didn't start with "+exMessage);
+                }
             } else {
-                assertNotNull(actMsg);
-                assertTrue(actMsg.startsWith(exMessage), "Message: "+actMsg+" - didn't start with "+exMessage);
+                assertNotNull(actMsg, errPrefix);
+                assertTrue(actMsg.startsWith(exMessage), errPrefix + "Message: "+actMsg+" - didn't start with "+exMessage);
             }
         } else {
-            assertDoesNotThrow(exec);
-        }
-    }
-
-
-    private static String secondHandler(String handlerStr) {
-        switch (handlerStr) {
-            case "XSSF":
-            case "XWPF":
-            case "XSLF":
-            case "XDGF":
-                return "OPC";
-            case "HSSF":
-            case "HWPF":
-            case "HSLF":
-            case "HDGF":
-            case "HSMF":
-            case "HBPF":
-                return "HPSF";
-            default:
-                return "NULL";
-        }
-    }
-
-    private static Map<String,String> readHandlerMap(Sheet sh) {
-        Map<String,String> handlerMap = new LinkedHashMap<>();
-        boolean IGNORE_SCRATCHPAD = Boolean.getBoolean("scratchpad.ignore");
-        boolean isFirst = true;
-        for (Row row : sh) {
-            if (isFirst) {
-                isFirst = false;
-                continue;
-            }
-            Cell cell = row.getCell(2);
-            if (IGNORE_SCRATCHPAD || cell == null || cell.getCellType() != CellType.STRING) {
-                cell = row.getCell(1);
-            }
-            handlerMap.put(row.getCell(0).getStringCellValue(), cell.getStringCellValue());
-        }
-        return handlerMap;
-    }
-
-
-    private static MultiValuedMap<String, ExcInfo> readExMap(Sheet sh) {
-        MultiValuedMap<String, ExcInfo> exMap = new ArrayListValuedHashMap<>();
-
-        Iterator<Row> iter = sh.iterator();
-        List<BiConsumer<ExcInfo,String>> cols = initCols(iter.next());
-
-        while (iter.hasNext()) {
-            ExcInfo info = new ExcInfo();
-            for (Cell cell : iter.next()) {
-                if (cell.getCellType() == CellType.STRING) {
-                    cols.get(cell.getColumnIndex()).accept(info, cell.getStringCellValue());
-                }
-            }
-            exMap.put(info.file, info);
-        }
-        return exMap;
-    }
-
-
-    private static List<BiConsumer<ExcInfo,String>> initCols(Row row) {
-        Map<String,BiConsumer<ExcInfo,String>> m = new HashMap<>();
-        m.put("File", (e,s) -> e.file = s);
-        m.put("Tests", (e,s) -> e.tests = s);
-        m.put("Handler", (e,s) -> e.handler = s);
-        m.put("Password", (e,s) -> e.password = s);
-        m.put("Exception Class", (e,s) -> {
-            try {
-                e.exClazz = (Class<? extends Exception>) Class.forName(s);
-            } catch (ClassNotFoundException ex) {
-                fail(ex);
-            }
-        });
-        m.put("Exception Message", (e,s) -> e.exMessage = s);
-
-        return StreamSupport
-            .stream(row.spliterator(), false)
-            .map(Cell::getStringCellValue)
-            .map(v -> m.getOrDefault(v, (e,s) -> {}))
-            .collect(Collectors.toList());
-    }
-
-    private static class ExcInfo {
-        String file;
-        String tests;
-        String handler;
-        String password;
-        Class<? extends Throwable> exClazz;
-        String exMessage;
-
-
-    }
-
-    @SuppressWarnings("unused")
-    private enum Handler {
-        HDGF(HDGFFileHandler::new),
-        HMEF(HMEFFileHandler::new),
-        HPBF(HPBFFileHandler::new),
-        HPSF(HPSFFileHandler::new),
-        HSLF(HSLFFileHandler::new),
-        HSMF(HSMFFileHandler::new),
-        HSSF(HSSFFileHandler::new),
-        HWPF(HWPFFileHandler::new),
-        OPC(OPCFileHandler::new),
-        POIFS(POIFSFileHandler::new),
-        XDGF(XDGFFileHandler::new),
-        XSLF(XSLFFileHandler::new),
-        XSSFB(XSSFBFileHandler::new),
-        XSSF(XSSFFileHandler::new),
-        XWPF(XWPFFileHandler::new),
-        OWPF(OWPFFileHandler::new),
-        NULL(NullFileHandler::new)
-        ;
-
-        final Supplier<FileHandler> fileHandler;
-        Handler(Supplier<FileHandler> fileHandler) {
-            this.fileHandler = fileHandler;
-        }
-    }
-
-    public static class NullFileHandler implements FileHandler {
-        @Override
-        public void handleFile(InputStream stream, String path) {
-        }
-
-        @Override
-        public void handleExtracting(File file) {
-        }
-
-        @Override
-        public void handleAdditional(File file) {
+            assertDoesNotThrow(exec, errPrefix);
         }
     }
 }
