@@ -3037,6 +3037,7 @@ under the License.
                         <containsstring contains="Content-Length"/>
                         <replaceregex pattern=".* ([0-9]+)$" replace="\1" flags="gi"/>
                     </tokenfilter>
+                    <striplinebreaks/>
                 </filterchain>
             </loadfile>
 
