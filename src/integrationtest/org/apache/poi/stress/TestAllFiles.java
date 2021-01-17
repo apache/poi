@@ -176,11 +176,11 @@ public class TestAllFiles {
                 // with Java 16+ NullPointerExceptions may contain a message ... but apparently not always ?!
                 assertTrue(jreVersion >= 16 || actMsg == null, errPrefix);
                 if (actMsg != null) {
-                    assertTrue(actMsg.startsWith(exMessage), errPrefix + "Message: "+actMsg+" - didn't start with "+exMessage);
+                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
                 }
             } else {
                 assertNotNull(actMsg, errPrefix);
-                assertTrue(actMsg.startsWith(exMessage), errPrefix + "Message: "+actMsg+" - didn't start with "+exMessage);
+                assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
             }
         } else {
             assertDoesNotThrow(exec, errPrefix);
