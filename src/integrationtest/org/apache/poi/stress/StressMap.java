@@ -64,7 +64,10 @@ public class StressMap {
     }
 
     public ExcInfo getExcInfo(String file, String testName, FileHandlerKnown handler) {
-        return exMap.get(file).stream()
+        // ... failures/handlers lookup doesn't work on windows otherwise
+        final String uniFile = file.replace('\\', '/');
+
+        return exMap.get(uniFile).stream()
             .filter(e -> e.isMatch(testName, handler.name()))
             .findFirst().orElse(null);
     }
