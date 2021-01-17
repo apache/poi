@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+@SuppressWarnings("unused")
 public class NextRelease extends Task {
     private final Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+).*");
     private String property;
@@ -30,7 +31,7 @@ public class NextRelease extends Task {
         this.property = property;
     }
 
-    public void increment(int increment) {
+    public void setIncrement(int increment) {
         this.increment = increment;
     }
 
@@ -38,7 +39,8 @@ public class NextRelease extends Task {
         Project project = getProject();
         String relCurr = project.getProperty("version.id");
         Matcher m = pattern.matcher(relCurr);
-        m.find();
-        project.setProperty(property, m.group(1)+"."+m.group(2)+"."+(Integer.parseInt(m.group(3))+increment));
+        if (m.find()) {
+            project.setProperty(property, m.group(1) + "." + m.group(2) + "." + (Integer.parseInt(m.group(3)) + increment));
+        }
     }
 }

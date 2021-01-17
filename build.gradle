@@ -108,13 +108,13 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin
     apply plugin: 'me.champeau.gradle.japicmp'
 
-    version = '5.0.0-SNAPSHOT'
+    version = '5.0.1-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.67'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
-        japicmpversion = '4.1.2'
+        japicmpversion = '5.0.0'
         junitVersion = '5.7.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'

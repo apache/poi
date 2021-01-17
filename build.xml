@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="5.0.1"/>
+    <property name="version.id" value="5.0.1-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -2954,7 +2954,7 @@ under the License.
         <replaceregexp file="build.gradle" match="(japicmpversion += +)'[^']+'" replace="\1'${rel_prev}'"/>
         <replaceregexp file="src/examples/groovy/build.gradle" match="( *compile 'org.apache.poi:[^0-9]+)([0-9.]+)'" replace="\1${rel_prev}'" byline="true"/>
         <replaceregexp file="src/examples/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
-        <replaceregexp file="osgi/build.xml" match='(name="version.id" value=")[^"]+' replace="\1${version.id}"/>
+        <replaceregexp file="osgi/pom.xml" match="version>${rel_prev}[^&lt;]+" replace="version>${version.id}"/>
         <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
 
         <replaceregexp match="(&lt;version&gt;)[^&lt;]+" replace="\1${version.id}">
