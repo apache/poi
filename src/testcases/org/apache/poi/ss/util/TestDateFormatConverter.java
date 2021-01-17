@@ -19,6 +19,9 @@
 
 package org.apache.poi.ss.util;
 
+import static java.text.DateFormat.getDateInstance;
+import static java.text.DateFormat.getDateTimeInstance;
+import static java.text.DateFormat.getTimeInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,22 +48,34 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleID;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 final class TestDateFormatConverter {
-    private void outputLocaleDataFormats( Date date, boolean dates, boolean times, int style, String styleName ) throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+        "true, false, " + DateFormat.DEFAULT + ", Default",
+        "true, false, " + DateFormat.SHORT + ", Short",
+        "true, false, " + DateFormat.MEDIUM + ", Medium",
+        "true, false, " + DateFormat.LONG + ", Long",
+        "true, false, " + DateFormat.FULL + ", Full",
+        "true, true, " + DateFormat.DEFAULT + ", Default",
+        "true, true, " + DateFormat.SHORT + ", Short",
+        "true, true, " + DateFormat.MEDIUM + ", Medium",
+        "true, true, " + DateFormat.LONG + ", Long",
+        "true, true, " + DateFormat.FULL + ", Full",
+        "false, true, " + DateFormat.DEFAULT + ", Default",
+        "false, true, " + DateFormat.SHORT + ", Short",
+        "false, true, " + DateFormat.MEDIUM + ", Medium",
+        "false, true, " + DateFormat.LONG + ", Long",
+        "false, true, " + DateFormat.FULL + ", Full"
+    })
+    void testJavaDateFormatsInExcel(boolean dates, boolean times, int style, String styleName ) throws Exception {
         try (Workbook workbook = new HSSFWorkbook()) {
-            String sheetName;
-            if (dates) {
-                if (times) {
-                    sheetName = "DateTimes";
-                } else {
-                    sheetName = "Dates";
-                }
-            } else {
-                sheetName = "Times";
-            }
+            String sheetName = (dates) ? ((times) ? "DateTimes" : "Dates") : "Times";
             Sheet sheet = workbook.createSheet(sheetName);
             Row header = sheet.createRow(0);
             header.createCell(0).setCellValue("locale");
@@ -73,90 +88,51 @@ final class TestDateFormatConverter {
 
             int rowNum = 1;
             for (Locale locale : DateFormat.getAvailableLocales()) {
-                try {
-                    Row row = sheet.createRow(rowNum++);
+                Row row = sheet.createRow(rowNum++);
 
-                    row.createCell(0).setCellValue(locale.toString());
-                    row.createCell(1).setCellValue(locale.getDisplayName(Locale.ROOT));
+                row.createCell(0).setCellValue(locale.toString());
+                row.createCell(1).setCellValue(locale.getDisplayName(Locale.ROOT));
 
-                    DateFormat dateFormat;
-                    if (dates) {
-                        if (times) {
-                            dateFormat = DateFormat.getDateTimeInstance(style, style, locale);
-                        } else {
-                            dateFormat = DateFormat.getDateInstance(style, locale);
-                        }
-                    } else {
-                        dateFormat = DateFormat.getTimeInstance(style, locale);
-                    }
+                DateFormat dateFormat = (dates)
+                    ? (times ? getDateTimeInstance(style, style, locale) : getDateInstance(style, locale))
+                    : getTimeInstance(style, locale);
 
-                    Cell cell = row.createCell(2);
+                Cell cell = row.createCell(2);
+                Date date = new Date();
+                cell.setCellValue(date);
+                CellStyle cellStyle = row.getSheet().getWorkbook().createCellStyle();
 
-                    cell.setCellValue(date);
-                    CellStyle cellStyle = row.getSheet().getWorkbook().createCellStyle();
+                String javaDateFormatPattern = ((SimpleDateFormat) dateFormat).toPattern();
+                String excelFormatPattern = DateFormatConverter.convert(locale, javaDateFormatPattern);
 
-                    String javaDateFormatPattern = ((SimpleDateFormat) dateFormat).toPattern();
-                    String excelFormatPattern = DateFormatConverter.convert(locale, javaDateFormatPattern);
+                DataFormat poiFormat = row.getSheet().getWorkbook().createDataFormat();
+                cellStyle.setDataFormat(poiFormat.getFormat(excelFormatPattern));
+                row.createCell(3).setCellValue(dateFormat.format(date));
 
-                    DataFormat poiFormat = row.getSheet().getWorkbook().createDataFormat();
-                    cellStyle.setDataFormat(poiFormat.getFormat(excelFormatPattern));
-                    row.createCell(3).setCellValue(dateFormat.format(date));
+                cell.setCellStyle(cellStyle);
 
-                    cell.setCellStyle(cellStyle);
-
-                    // the formula returns TRUE is the formatted date in column C equals to the string in column D
-                    row.createCell(4).setCellFormula("TEXT(C" + rowNum + ",G" + rowNum + ")=D" + rowNum);
-                    row.createCell(5).setCellValue(javaDateFormatPattern);
-                    row.createCell(6).setCellValue(excelFormatPattern);
-                } catch (Exception e) {
-                    throw new RuntimeException(
-                            "Failed for locale: " + locale + " and style " + style + "\n" +
-                            "Having locales: " + Arrays.toString(DateFormat.getAvailableLocales()), e);
-                }
+                // the formula returns TRUE is the formatted date in column C equals to the string in column D
+                row.createCell(4).setCellFormula("TEXT(C" + rowNum + ",G" + rowNum + ")=D" + rowNum);
+                row.createCell(5).setCellValue(javaDateFormatPattern);
+                row.createCell(6).setCellValue(excelFormatPattern);
             }
 
-            File outputFile = TempFile.createTempFile("Locale" + sheetName + styleName, ".xlsx");
-            try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-                workbook.write(outputStream);
-            }
-
-            //System.out.println("Open " + outputFile.getAbsolutePath() + " in Excel");
+            workbook.write(new NullOutputStream());
         }
-    }
-
-    @Test
-    void testJavaDateFormatsInExcel() throws Exception {
-        Date date = new Date();
-
-        outputLocaleDataFormats(date, true, false, DateFormat.DEFAULT, "Default" );
-        outputLocaleDataFormats(date, true, false, DateFormat.SHORT, "Short" );
-        outputLocaleDataFormats(date, true, false, DateFormat.MEDIUM, "Medium" );
-        outputLocaleDataFormats(date, true, false, DateFormat.LONG, "Long" );
-        outputLocaleDataFormats(date, true, false, DateFormat.FULL, "Full" );
-
-        outputLocaleDataFormats(date, true, true, DateFormat.DEFAULT, "Default" );
-        outputLocaleDataFormats(date, true, true, DateFormat.SHORT, "Short" );
-        outputLocaleDataFormats(date, true, true, DateFormat.MEDIUM, "Medium" );
-        outputLocaleDataFormats(date, true, true, DateFormat.LONG, "Long" );
-        outputLocaleDataFormats(date, true, true, DateFormat.FULL, "Full" );
-
-        outputLocaleDataFormats(date, false, true, DateFormat.DEFAULT, "Default" );
-        outputLocaleDataFormats(date, false, true, DateFormat.SHORT, "Short" );
-        outputLocaleDataFormats(date, false, true, DateFormat.MEDIUM, "Medium" );
-        outputLocaleDataFormats(date, false, true, DateFormat.LONG, "Long" );
-        outputLocaleDataFormats(date, false, true, DateFormat.FULL, "Full" );
     }
 
     @Test
     void testJDK8EmptyLocale() {
         // JDK 8 seems to add an empty locale-string to the list returned via DateFormat.getAvailableLocales()
         // therefore we now cater for this special locale as well
-        DateFormatConverter.getPrefixForLocale(new Locale(""));
+        String prefix = DateFormatConverter.getPrefixForLocale(new Locale(""));
+        assertEquals("", prefix);
     }
 
     @Test
     void testJDK11MyLocale() {
-        DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
+        DateFormat df = getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
+        assertNotNull(df);
     }
 
     @Test

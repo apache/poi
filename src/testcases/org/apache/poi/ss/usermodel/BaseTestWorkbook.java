@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -765,8 +766,7 @@ public abstract class BaseTestWorkbook {
 
     @Test
     void test58499() throws IOException {
-        try (Workbook workbook = _testDataProvider.createWorkbook();
-             OutputStream os = new NullOutputStream()) {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             for (int i = 0; i < 900; i++) {
                 Row r = sheet.createRow(i);
@@ -775,7 +775,7 @@ public abstract class BaseTestWorkbook {
                 c.setCellStyle(cs);
                 c.setCellValue("AAA");
             }
-            workbook.write(os);
+            assertDoesNotThrow(() -> workbook.write(new NullOutputStream()));
         }
     }
 

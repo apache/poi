@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -93,7 +94,7 @@ final class TestSheetUtil {
     void testCanComputeWidthHSSF() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             // cannot check on result because on some machines we get back false here!
-            SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
+            assertDoesNotThrow(() -> SheetUtil.canComputeColumnWidth(wb.getFontAt(0)));
         }
     }
 

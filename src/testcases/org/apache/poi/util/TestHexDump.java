@@ -30,6 +30,8 @@ import java.io.UnsupportedEncodingException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TestHexDump {
 
@@ -168,21 +170,18 @@ class TestHexDump {
         assertTrue(dump.contains("123456789:;<=>?@"), "Had: \n" + dump);
     }
 
-    @Test
-    void testDumpToStringOutOfIndex1() {
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, -1));
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 2));
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 1));
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 2, 1})
+    void testDumpToStringOutOfIndex1(int index) {
+        assertThrows(ArrayIndexOutOfBoundsException.class, () ->
+            HexDump.dump(new byte[1], 0, index));
     }
 
-    @Test
-    void testDumpToStringNoDataEOL1() {
-        HexDump.dump(new byte[0], 0, 1);
-    }
-
-    @Test
-    void testDumpToStringNoDataEOL2() {
-        HexDump.dump(new byte[0], 0, 0);
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void testDumpToStringNoDataEOL(int index) {
+        String s = HexDump.dump(new byte[0], 0, index);
+        assertEquals("No Data", s.trim());
     }
 
     private static byte[] testArray() {

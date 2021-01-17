@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.POITestCase.skipTest;
 import static org.apache.poi.POITestCase.testPassesNow;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -124,12 +125,12 @@ public abstract class BaseTestSheetShiftRows {
      */
     @Test
     public final void testShiftRow() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s = wb.createSheet();
-        s.createRow(0).createCell(0).setCellValue("TEST1");
-        s.createRow(3).createCell(0).setCellValue("TEST2");
-        s.shiftRows(0,4,1);
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            s.createRow(0).createCell(0).setCellValue("TEST1");
+            s.createRow(3).createCell(0).setCellValue("TEST2");
+            assertDoesNotThrow(() -> s.shiftRows(0, 4, 1));
+        }
     }
 
     /**
@@ -491,13 +492,12 @@ public abstract class BaseTestSheetShiftRows {
 
     @Test
     void test47169() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        sheet.createRow(30);
-        sheet.shiftRows(29, 29, 1, true, true);
-        sheet.createRow(30);
-
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            sheet.createRow(30);
+            sheet.shiftRows(29, 29, 1, true, true);
+            assertDoesNotThrow(() -> sheet.createRow(30));
+        }
     }
 
     /**

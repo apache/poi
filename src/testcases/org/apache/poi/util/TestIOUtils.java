@@ -181,7 +181,8 @@ final class TestIOUtils {
 
     @Test
     void testSkipFullyBug61294() throws IOException {
-        IOUtils.skipFully(new ByteArrayInputStream(new byte[0]), 1);
+        long skipped = IOUtils.skipFully(new ByteArrayInputStream(new byte[0]), 1);
+        assertEquals(-1L, skipped);
     }
 
     @Test
@@ -215,9 +216,12 @@ final class TestIOUtils {
     @Test
     void testMaxLengthIgnored() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
-            IOUtils.toByteArray(is, 90, Integer.MAX_VALUE);
-            IOUtils.toByteArray(is, 90, 100);
-            IOUtils.toByteArray(is, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            int len = IOUtils.toByteArray(is, 90, Integer.MAX_VALUE).length;
+            assertEquals(90, len);
+            len = IOUtils.toByteArray(is, 90, 100).length;
+            assertEquals(90, len);
+            len = IOUtils.toByteArray(is, Integer.MAX_VALUE, Integer.MAX_VALUE).length;
+            assertTrue(len > 300-2*90);
         }
     }
 

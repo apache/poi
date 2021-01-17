@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigInteger;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for {@link ExpandedDouble}
@@ -54,33 +56,27 @@ final class TestExpandedDouble {
 	/**
 	 * Tests specific values for conversion from {@link ExpandedDouble} to {@link NormalisedDecimal} and back
 	 */
-	@Test
-	void testRoundTripShifting() {
-		long[] rawValues = {
-				0x4010000000000004L,
-				0x7010000000000004L,
-				0x1010000000000004L,
-				0x0010000000000001L, // near lowest normal number
-				0x0010000000000000L, // lowest normal number
-				0x000FFFFFFFFFFFFFL, // highest subnormal number
-				0x0008000000000000L, // subnormal number
+	@ParameterizedTest
+	@ValueSource(longs = {
+		0x4010000000000004L,
+		0x7010000000000004L,
+		0x1010000000000004L,
+		0x0010000000000001L, // near lowest normal number
+		0x0010000000000000L, // lowest normal number
+		0x000FFFFFFFFFFFFFL, // highest subnormal number
+		0x0008000000000000L, // subnormal number
 
-				0xC010000000000004L,
-				0xE230100010001004L,
-				0x403CE0FFFFFFFFF2L,
-				0x0000000000000001L, // smallest non-zero number (subnormal)
-				0x6230100010000FFEL,
-				0x6230100010000FFFL,
-				0x6230100010001000L,
-				0x403CE0FFFFFFFFF0L, // has single digit round trip error
-				0x2B2BFFFF10001079L,
-		};
-		for (int i = 0; i < rawValues.length; i++) {
-			confirmRoundTrip(i, rawValues[i]);
-		}
-	}
-
-	public static void confirmRoundTrip(int i, long rawBitsA) {
+		0xC010000000000004L,
+		0xE230100010001004L,
+		0x403CE0FFFFFFFFF2L,
+		0x0000000000000001L, // smallest non-zero number (subnormal)
+		0x6230100010000FFEL,
+		0x6230100010000FFFL,
+		0x6230100010001000L,
+		0x403CE0FFFFFFFFF0L, // has single digit round trip error
+		0x2B2BFFFF10001079L,
+	})
+	void confirmRoundTrip(long rawBitsA) {
 		double a = Double.longBitsToDouble(rawBitsA);
 		if (a == 0.0) {
 			// Can't represent 0.0 or -0.0 with NormalisedDecimal

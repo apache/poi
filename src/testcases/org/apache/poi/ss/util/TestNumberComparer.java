@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.poi.ss.util.NumberComparisonExamples.ComparisonExample;
 import org.apache.poi.util.HexDump;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests for {@link NumberComparer}
@@ -46,20 +49,13 @@ final class TestNumberComparer {
 		assertTrue(success, "One or more cases failed.  See stderr");
 	}
 
-    @Test
-	void testRoundTripOnComparisonExamples() {
-		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
-		for(int i=0;i<examples.length; i++) {
-			ComparisonExample ce = examples[i];
-			confirmRoundTrip(i, ce.getA());
-			confirmRoundTrip(i, ce.getNegA());
-			confirmRoundTrip(i, ce.getB());
-			confirmRoundTrip(i, ce.getNegB());
+    @ParameterizedTest
+	@MethodSource("org.apache.poi.ss.util.NumberComparisonExamples#getComparisonExamples")
+	void testRoundTripOnComparisonExamples(ComparisonExample ce) {
+    	double[] vals = { ce.getA(), ce.getNegA(), ce.getB(), ce.getNegB() };
+    	for (double a : vals) {
+			assertDoesNotThrow(() -> new TestExpandedDouble().confirmRoundTrip(Double.doubleToLongBits(a)));
 		}
-	}
-
-	private void confirmRoundTrip(int i, double a) {
-		TestExpandedDouble.confirmRoundTrip(i, Double.doubleToLongBits(a));
 	}
 
 	/**
