@@ -21,7 +21,7 @@ package org.apache.poi.util;
  * Helper for fetching int values from system properties
  */
 public class Configurator {
-    private static POILogger logger = POILogFactory.getLogger(Configurator.class);
+    private static final POILogger LOG = POILogFactory.getLogger(Configurator.class);
 
     public static int getIntValue(String systemProperty, int defaultValue) {
         String property = System.getProperty(systemProperty);
@@ -31,7 +31,7 @@ public class Configurator {
         try {
             return Integer.parseInt(property);
         } catch (Exception e) {
-            logger.log(POILogger.ERROR, "System property -D", systemProperty, " does not contains a valid integer: ", property);
+            LOG.log(POILogger.ERROR, "System property -D", systemProperty, " does not contains a valid integer: ", property);
             return defaultValue;
         }
     }

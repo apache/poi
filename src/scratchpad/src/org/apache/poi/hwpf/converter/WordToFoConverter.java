@@ -64,8 +64,7 @@ import org.w3c.dom.Text;
 public class WordToFoConverter extends AbstractWordConverter
 {
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( WordToFoConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( WordToFoConverter.class );
 
     /**
      * Java main() interface to interact with {@link WordToFoConverter}
@@ -575,7 +574,7 @@ public class WordToFoConverter extends AbstractWordConverter
         }
         else
         {
-            logger.log(
+            LOG.log(
                     POILogger.WARN,
                     "Table without body starting on offset ",
                             table.getStartOffset(), " -- ",
@@ -588,7 +587,7 @@ public class WordToFoConverter extends AbstractWordConverter
         // making sure ID used once
         if ( usedIds.contains( id ) )
         {
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Tried to create element with same ID '", id, "'. Skipped" );
             return false;
         }

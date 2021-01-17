@@ -78,9 +78,9 @@ public class HSSFCell extends CellBase {
     public static final int LAST_COLUMN_NUMBER  = SpreadsheetVersion.EXCEL97.getLastColumnIndex(); // 2^8 - 1
     private static final String LAST_COLUMN_NAME  = SpreadsheetVersion.EXCEL97.getLastColumnName();
 
-    public final static short        ENCODING_UNCHANGED          = -1;
-    public final static short        ENCODING_COMPRESSED_UNICODE = 0;
-    public final static short        ENCODING_UTF_16             = 1;
+    public static final short        ENCODING_UNCHANGED          = -1;
+    public static final short        ENCODING_COMPRESSED_UNICODE = 0;
+    public static final short        ENCODING_UTF_16             = 1;
 
     private final HSSFWorkbook       _book;
     private final HSSFSheet          _sheet;

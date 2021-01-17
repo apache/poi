@@ -28,9 +28,9 @@ import org.apache.poi.util.POILogger;
 
 
 @Internal
-public final class SectionSprmUncompressor extends SprmUncompressor
-{
-  private static final POILogger logger = POILogFactory.getLogger(SectionSprmUncompressor.class);
+public final class SectionSprmUncompressor extends SprmUncompressor {
+
+  private static final POILogger LOG = POILogFactory.getLogger(SectionSprmUncompressor.class);
 
   public SectionSprmUncompressor()
   {
@@ -241,7 +241,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setNfcEdnRef(sprm.getOperand());
         break;
       default:
-        logger.log(POILogger.INFO, "Unsupported Sprm operation: ", operation, " (", HexDump.byteToHex(operation), ")");
+        LOG.log(POILogger.INFO, "Unsupported Sprm operation: ", operation, " (", HexDump.byteToHex(operation), ")");
         break;
     }
 

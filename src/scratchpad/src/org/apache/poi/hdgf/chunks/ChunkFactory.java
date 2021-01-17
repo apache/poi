@@ -59,7 +59,7 @@ public final class ChunkFactory {
 		"/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
 
 	/** For logging problems we spot with the file */
-	private static final POILogger logger = POILogFactory.getLogger(ChunkFactory.class);
+	private static final POILogger LOG = POILogFactory.getLogger(ChunkFactory.class);
 
 	public ChunkFactory(int version) throws IOException {
 		this.version = version;
@@ -139,7 +139,7 @@ public final class ChunkFactory {
 		// Check we have enough data, and tweak the header size
 		//  as required
 		if(endOfDataPos > data.length) {
-			logger.log(POILogger.WARN,
+			LOG.log(POILogger.WARN,
 				"Header called for ", header.getLength(), " bytes, but that would take us past the end of the data!");
 
 			endOfDataPos = data.length;
@@ -165,7 +165,7 @@ public final class ChunkFactory {
 					data, endOfDataPos);
 				endOfDataPos += 8;
 			} else {
-				logger.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the trailer in the data (", data.length, ")");
+				LOG.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the trailer in the data (", data.length, ")");
 			}
 		}
 		if(header.hasSeparator()) {
@@ -173,7 +173,7 @@ public final class ChunkFactory {
 				separator = new ChunkSeparator(
 						data, endOfDataPos);
 			} else {
-				logger.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the separator in the data (", data.length, ")");
+				LOG.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the separator in the data (", data.length, ")");
 			}
 		}
 

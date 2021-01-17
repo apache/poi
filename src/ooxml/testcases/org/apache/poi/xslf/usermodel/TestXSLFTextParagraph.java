@@ -38,12 +38,7 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Yegor Kozlov
- */
 class TestXSLFTextParagraph {
-    // private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
-
     static class DrawTextParagraphProxy extends DrawTextParagraph {
         DrawTextParagraphProxy(XSLFTextParagraph p) {
             super(p);

@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * field using IEEE notation
  */
 public final class NumberPtg extends ScalarConstantPtg {
-	public final static int SIZE = 9;
-	public final static byte sid = 0x1f;
+	public static final int SIZE = 9;
+	public static final byte sid = 0x1f;
 	private final double field_1_value;
 
 	public NumberPtg(LittleEndianInput in)  {

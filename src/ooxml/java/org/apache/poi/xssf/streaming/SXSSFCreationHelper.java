@@ -37,11 +37,11 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *  regular XSSF Workbook
  */
 public class SXSSFCreationHelper implements CreationHelper {
-    private static final POILogger logger = POILogFactory.getLogger(SXSSFCreationHelper.class);
-    
+    private static final POILogger LOG = POILogFactory.getLogger(SXSSFCreationHelper.class);
+
     private final SXSSFWorkbook wb;
     private final XSSFCreationHelper helper;
-    
+
     /**
      * Should only be called by {@link SXSSFWorkbook#getCreationHelper()}
      *
@@ -55,7 +55,7 @@ public class SXSSFCreationHelper implements CreationHelper {
 
     @Override
     public XSSFRichTextString createRichTextString(String text) {
-        logger.log(POILogger.INFO, "SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
+        LOG.log(POILogger.INFO, "SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
         return new XSSFRichTextString(text);
     }
 
@@ -81,7 +81,7 @@ public class SXSSFCreationHelper implements CreationHelper {
     public ClientAnchor createClientAnchor() {
         return helper.createClientAnchor();
     }
-    
+
     /**
      * {@inheritDoc}
      */

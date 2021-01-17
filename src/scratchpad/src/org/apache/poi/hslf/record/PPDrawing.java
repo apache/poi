@@ -201,7 +201,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		// Wind on
 		int size = r.getRecordSize();
 		if(size < 8) {
-			logger.log(POILogger.WARN, "Hit short DDF record at ", startPos, " - ", size);
+			LOG.log(POILogger.WARN, "Hit short DDF record at ", startPos, " - ", size);
 		}
 
 		/*
@@ -211,7 +211,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		 * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
 		 */
 		if(size != escherBytes){
-			logger.log(POILogger.WARN, "Record length=", escherBytes, " but getRecordSize() returned ", r.getRecordSize(), "; record: ", r.getClass());
+			LOG.log(POILogger.WARN, "Record length=", escherBytes, " but getRecordSize() returned ", r.getRecordSize(), "; record: ", r.getClass());
 			size = escherBytes;
 		}
 		startPos += size;

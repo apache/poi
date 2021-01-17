@@ -32,7 +32,7 @@ public enum Grouping {
         this.underlying = grouping;
     }
 
-    private final static HashMap<STGrouping.Enum, Grouping> reverse = new HashMap<STGrouping.Enum, Grouping>();
+    private static final HashMap<STGrouping.Enum, Grouping> reverse = new HashMap<STGrouping.Enum, Grouping>();
     static {
         for (Grouping value : values()) {
             reverse.put(value.underlying, value);

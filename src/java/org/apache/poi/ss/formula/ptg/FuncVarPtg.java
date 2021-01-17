@@ -28,8 +28,8 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class FuncVarPtg extends AbstractFunctionPtg {
-    public final static byte sid  = 0x22;
-    private final static int  SIZE = 4;
+    public static final byte sid  = 0x22;
+    private static final int  SIZE = 4;
 
     // See spec at 2.5.198.63 PtgFuncVar
     private static final BitField ceFunc = BitFieldFactory.getInstance(0xF000);

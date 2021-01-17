@@ -43,8 +43,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class PAPBinTable
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( PAPBinTable.class );
+    private static final POILogger LOG = POILogFactory.getLogger( PAPBinTable.class );
 
     protected final ArrayList<PAPX> _paragraphs = new ArrayList<>();
 
@@ -81,13 +80,13 @@ public class PAPBinTable
             }
         }
 
-        logger.log( POILogger.DEBUG, "PAPX tables loaded in ",
+        LOG.log( POILogger.DEBUG, "PAPX tables loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
 
         if ( _paragraphs.isEmpty() )
         {
-            logger.log( POILogger.WARN, "PAPX FKPs are empty" );
+            LOG.log( POILogger.WARN, "PAPX FKPs are empty" );
             _paragraphs.add( new PAPX( 0, 0, new SprmBuffer( 2 ) ) );
         }
     }
@@ -118,7 +117,7 @@ public class PAPBinTable
 
                 if ( igrpprl < 0 || igrpprl >= sprmBuffers.length )
                 {
-                    logger.log( POILogger.WARN, textPiece
+                    LOG.log( POILogger.WARN, textPiece
                             + "'s PRM references to unknown grpprl" );
                     continue;
                 }
@@ -147,7 +146,7 @@ public class PAPBinTable
                 }
             }
 
-            logger.log( POILogger.DEBUG,
+            LOG.log( POILogger.DEBUG,
                     "Merged (?) with PAPX from complex file table in ",
                     Long.valueOf( System.currentTimeMillis() - start ),
                     " ms (", Integer.valueOf( paragraphs.size() ),
@@ -158,7 +157,7 @@ public class PAPBinTable
         List<PAPX> oldPapxSortedByEndPos = new ArrayList<>(paragraphs);
         oldPapxSortedByEndPos.sort(PropertyNode.EndComparator);
 
-        logger.log( POILogger.DEBUG, "PAPX sorted by end position in ",
+        LOG.log( POILogger.DEBUG, "PAPX sorted by end position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
@@ -180,7 +179,7 @@ public class PAPBinTable
             }
         };
 
-        logger.log( POILogger.DEBUG, "PAPX's order map created in ",
+        LOG.log( POILogger.DEBUG, "PAPX's order map created in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
@@ -224,7 +223,7 @@ public class PAPBinTable
 
             if ( papxs.size() == 0 )
             {
-                logger.log( POILogger.WARN, "Paragraph [",
+                LOG.log( POILogger.WARN, "Paragraph [",
                         Integer.valueOf( startInclusive ), "; ",
                         Integer.valueOf( endExclusive ),
                         ") has no PAPX. Creating new one." );
@@ -274,7 +273,7 @@ public class PAPBinTable
         paragraphs.clear();
         paragraphs.addAll( newPapxs );
 
-        logger.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
+        LOG.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( paragraphs.size() ), " elements)" );
     }

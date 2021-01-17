@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianInput;
  * ReferencePtg - handles references (such as A1, A2, IA4)
  */
 public final class RefPtg extends Ref2DPtgBase {
-	public final static byte sid = 0x24;
+	public static final byte sid = 0x24;
 
 	/**
 	 * Takes in a String representation of a cell reference and fills out the

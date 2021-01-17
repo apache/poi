@@ -51,8 +51,7 @@ public class AbstractWordUtils
 {
     static final String EMPTY = "";
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( AbstractWordUtils.class );
+    private static final POILogger LOG = POILogFactory.getLogger( AbstractWordUtils.class );
 
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
@@ -418,7 +417,7 @@ public class AbstractWordUtils
         case 2057:
             return "en-uk";
         default:
-            logger.log( POILogger.WARN, "Uknown or unmapped language code: ", languageCode);
+            LOG.log( POILogger.WARN, "Uknown or unmapped language code: ", languageCode);
             return EMPTY;
         }
     }
@@ -427,7 +426,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-        	logger.log( POILogger.INFO, "NYI: toListItemNumberLabel(): ", format );
+        	LOG.log( POILogger.INFO, "NYI: toListItemNumberLabel(): ", format );
 
         return String.valueOf( number );
     }

@@ -31,7 +31,7 @@ public enum AxisCrossBetween {
         this.underlying = crossBetween;
     }
 
-    private final static HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<>();
+    private static final HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<>();
     static {
         for (AxisCrossBetween value : values()) {
             reverse.put(value.underlying, value);

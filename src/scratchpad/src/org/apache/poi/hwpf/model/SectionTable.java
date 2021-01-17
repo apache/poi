@@ -37,7 +37,7 @@ public class SectionTable
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private final static POILogger _logger = POILogFactory.getLogger(SectionTable.class);
+    private static final POILogger LOG = POILogFactory.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
 
     protected List<SEPX> _sections = new ArrayList<>();
@@ -100,7 +100,7 @@ public class SectionTable
             }
         }
         if(! matchAt && matchHalf) {
-            _logger.log(POILogger.WARN, "Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
+            LOG.log(POILogger.WARN, "Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
             for(int i=0; i<_sections.size(); i++) {
                 SEPX s = _sections.get(i);
                 GenericPropertyNode node = sedPlex.getProperty(i);

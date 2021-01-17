@@ -73,13 +73,16 @@ import org.apache.poi.util.Units;
  */
 public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable, GenericRecord {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 10_000_000;
-
 	/** Powerpoint document entry/stream name */
-    public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
+	public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
 	public static final String PP97_DOCUMENT = "PP97_DUALSTORAGE";
 	public static final String PP95_DOCUMENT = "PP40";
+
+	// For logging
+	private static final POILogger LOG = POILogFactory.getLogger(HSLFSlideShow.class);
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 10_000_000;
 
     enum LoadSavePhase {
         INIT, LOADED
@@ -105,9 +108,6 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	private final List<HSLFSlide> _slides = new ArrayList<>();
 	private final List<HSLFNotes> _notes = new ArrayList<>();
 	private FontCollection _fonts;
-
-	// For logging
-	private static final POILogger logger = POILogFactory.getLogger(HSLFSlideShow.class);
 
 
 	/**
@@ -290,7 +290,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		if (coreRecordId != null) {
 			return _mostRecentCoreRecords[coreRecordId];
 		}
-		logger.log(POILogger.ERROR,
+		LOG.log(POILogger.ERROR,
 				"We tried to look up a reference to a core record, but there was no core ID for reference ID ", refID);
 		return null;
 	}
@@ -382,13 +382,13 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
             // we need to add null-records, otherwise the index references to other existing don't work anymore
             if (r == null) {
-                logger.log(POILogger.WARN, loggerLoc+", but that record didn't exist - record ignored.");
+                LOG.log(POILogger.WARN, loggerLoc+", but that record didn't exist - record ignored.");
                 continue;
             }
 
             // Ensure it really is a notes record
             if (!(r instanceof Notes)) {
-                logger.log(POILogger.ERROR, loggerLoc, ", but that was actually a ", r);
+                LOG.log(POILogger.ERROR, loggerLoc, ", but that was actually a ", r);
                 continue;
             }
 
@@ -420,7 +420,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
             // Ensure it really is a slide record
             if (!(r instanceof Slide)) {
-                logger.log(POILogger.ERROR, "A Slide SlideAtomSet at ", idx,
+                LOG.log(POILogger.ERROR, "A Slide SlideAtomSet at ", idx,
                         " said its record was at refID ",
                         spa.getRefID(),
                         ", but that was actually a ", r);
@@ -439,7 +439,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
                 if (notesPos != null && 0 <= notesPos && notesPos < _notes.size()) {
                     notes = _notes.get(notesPos);
                 } else {
-                    logger.log(POILogger.ERROR, "Notes not found for noteId=", noteId);
+                    LOG.log(POILogger.ERROR, "Notes not found for noteId=", noteId);
                 }
             }
 
@@ -759,7 +759,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 		// Add in to the list of Slides
 		_slides.add(slide);
-		logger.log(POILogger.INFO, "Added slide ", _slides.size(), " with ref ", sp.getRefID(),
+		LOG.log(POILogger.INFO, "Added slide ", _slides.size(), " with ref ", sp.getRefID(),
 				" and identifier ", sp.getSlideIdentifier());
 
 		// Add the core records for this new Slide to the record tree
@@ -1145,7 +1145,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		int slideOffset = slideRecord.getLastOnDiskOffset();
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(psrId, slideOffset);
-		logger.log(POILogger.INFO, "New slide/object ended up at ", slideOffset);
+		LOG.log(POILogger.INFO, "New slide/object ended up at ", slideOffset);
 
 		return psrId;
     }

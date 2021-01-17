@@ -391,7 +391,7 @@ public abstract class NumericFunction implements Function {
 	};
     public static final Function POISSON = new Fixed3ArgFunction() {
 
-        private final static double DEFAULT_RETURN_RESULT =1;
+        private static final double DEFAULT_RETURN_RESULT =1;
         
         /**
          * This checks is x = 0 and the mean = 0.

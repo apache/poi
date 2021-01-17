@@ -54,7 +54,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 public class StandardEncryptor extends Encryptor {
-    private static final POILogger logger = POILogFactory.getLogger(StandardEncryptor.class);
+    private static final POILogger LOG = POILogFactory.getLogger(StandardEncryptor.class);
 
     protected StandardEncryptor() {}
 
@@ -193,7 +193,7 @@ public class StandardEncryptor extends Encryptor {
                     IOUtils.copy(fis, leos);
                 }
                 if (!fileOut.delete()) {
-                    logger.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
+                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
                 }
 
                 leos.close();

@@ -101,7 +101,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * rows.  It is currently set to 20.  If you generate larger sheets you may benefit
      * by setting this to a higher number and recompiling a custom edition of HSSFSheet.
      */
-    public final static int INITIAL_CAPACITY = Configurator.getIntValue("HSSFSheet.RowInitialCapacity", 20);
+    public static final int INITIAL_CAPACITY = Configurator.getIntValue("HSSFSheet.RowInitialCapacity", 20);
 
     /**
      * reference to the low level {@link InternalSheet} object

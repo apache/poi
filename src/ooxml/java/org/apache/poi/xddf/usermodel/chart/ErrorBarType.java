@@ -32,7 +32,7 @@ public enum ErrorBarType {
         this.underlying = barType;
     }
 
-    private final static HashMap<STErrBarType.Enum, ErrorBarType> reverse = new HashMap<>();
+    private static final HashMap<STErrBarType.Enum, ErrorBarType> reverse = new HashMap<>();
     static {
         for (ErrorBarType value : values()) {
             reverse.put(value.underlying, value);

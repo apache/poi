@@ -56,7 +56,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public class XSLFGroupShape extends XSLFShape
 implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
-    private final static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFGroupShape.class);
 
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;
@@ -396,7 +396,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                 } else if (shape instanceof XSLFTable) {
                     newShape = createTable();
                 } else {
-                    _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
+                    LOG.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
                     continue;
                 }
 

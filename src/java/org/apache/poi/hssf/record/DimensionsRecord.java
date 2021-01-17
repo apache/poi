@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 
 public final class DimensionsRecord extends StandardRecord {
 
-    private static final POILogger logger = POILogFactory.getLogger(DimensionsRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(DimensionsRecord.class);
 
     public static final short sid = 0x200;
     private int               field_1_first_row;
@@ -63,7 +63,7 @@ public final class DimensionsRecord extends StandardRecord {
         field_5_zero      = in.readShort();
         //POI-61045 -- in practice, there can be an extra 2 bytes
         if (in.available() == 2) {
-            logger.log(POILogger.INFO, "DimensionsRecord has extra 2 bytes.");
+            LOG.log(POILogger.INFO, "DimensionsRecord has extra 2 bytes.");
             in.readShort();
         }
     }

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class TestDrawPictureShape {
-    final static POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
+    static final POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
 
     private static boolean xslfOnly;
 

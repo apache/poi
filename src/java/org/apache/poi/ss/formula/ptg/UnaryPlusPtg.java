@@ -21,9 +21,9 @@ package org.apache.poi.ss.formula.ptg;
  * Unary Plus operator -  does not have any effect on the operand
  */
 public final class UnaryPlusPtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x12;
+    public static final byte sid  = 0x12;
 
-    private final static String ADD = "+";
+    private static final String ADD = "+";
 
     public static final UnaryPlusPtg instance = new UnaryPlusPtg();
 

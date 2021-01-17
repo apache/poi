@@ -52,7 +52,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class HwmfBitmapDib implements GenericRecord {
 
-    private static final POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
@@ -479,7 +479,7 @@ public class HwmfBitmapDib implements GenericRecord {
         try {
             bi = ImageIO.read(getBMPStream());
         } catch (IOException|RuntimeException e) {
-            logger.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
+            LOG.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
             return getPlaceholder();
         }
 

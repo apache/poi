@@ -38,7 +38,7 @@ public final class PackagingURIHelper {
     // FIXME: this class implements a lot of path joining and splitting logic that
     // is already implemented in java.nio.file.Path.
     // This class should heavily leverage Java library code to reduce the number of lines of code that POI has to maintain and test
-    private final static POILogger _logger = POILogFactory.getLogger(PackagingURIHelper.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PackagingURIHelper.class);
 
     /**
      * Package root URI.
@@ -290,7 +290,7 @@ public final class PackagingURIHelper {
                 try {
                     targetURI = new URI(path.substring(1));
                 } catch (Exception e) {
-                    _logger.log(POILogger.WARN, e);
+                    LOG.log(POILogger.WARN, e);
                     return null;
                 }
             }
@@ -328,7 +328,7 @@ public final class PackagingURIHelper {
             try {
                 return new URI(retVal.toString());
             } catch (Exception e) {
-                _logger.log(POILogger.WARN, e);
+                LOG.log(POILogger.WARN, e);
                 return null;
             }
         }
@@ -377,7 +377,7 @@ public final class PackagingURIHelper {
         try {
             return new URI(retVal.toString());
         } catch (Exception e) {
-            _logger.log(POILogger.WARN, e);
+            LOG.log(POILogger.WARN, e);
             return null;
         }
     }
@@ -394,7 +394,7 @@ public final class PackagingURIHelper {
      *         <code>null</code>.
      */
     public static URI relativizeURI(URI sourceURI, URI targetURI) {
-        return relativizeURI(sourceURI, targetURI, false);        
+        return relativizeURI(sourceURI, targetURI, false);
     }
 
     /**
@@ -754,7 +754,7 @@ public final class PackagingURIHelper {
         return sb.toString();
     }
 
-    private final static char[] hexDigits = {
+    private static final char[] hexDigits = {
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };

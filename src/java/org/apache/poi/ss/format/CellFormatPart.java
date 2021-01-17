@@ -26,10 +26,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.poi.ss.format.CellFormatter.logger;
 import static org.apache.poi.ss.format.CellFormatter.quote;
 
 /**
@@ -49,12 +49,15 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  * @author Ken Arnold, Industrious Media LLC
  */
 public class CellFormatPart {
+    private static final Logger LOG = Logger.getLogger(CellFormat.class.getName());
+
+    static final Map<String, Color> NAMED_COLORS;
+
+
     private final Color color;
     private CellFormatCondition condition;
     private final CellFormatter format;
     private final CellFormatType type;
-
-    static final Map<String, Color> NAMED_COLORS;
 
     static {
         NAMED_COLORS = new TreeMap<>(
@@ -106,7 +109,7 @@ public class CellFormatPart {
         // A condition specification
         String condition = "([<>=]=?|!=|<>)    # The operator\n" +
                 "  \\s*([0-9]+(?:\\.[0-9]*)?)\\s*  # The constant to test against\n";
-        
+
         // A currency symbol / string, in a specific locale
         String currency = "(\\[\\$.{0,3}-[0-9a-f]{3}\\])";
 
@@ -173,7 +176,7 @@ public class CellFormatPart {
     public CellFormatPart(String desc) {
         this(LocaleUtil.getUserLocale(), desc);
     }
-    
+
     /**
      * Create an object to represent a format part.
      *
@@ -253,8 +256,9 @@ public class CellFormatPart {
         if (cdesc == null || cdesc.length() == 0)
             return null;
         Color c = NAMED_COLORS.get(cdesc);
-        if (c == null)
-            logger.warning("Unknown color: " + quote(cdesc));
+        if (c == null) {
+            LOG.warning("Unknown color: " + quote(cdesc));
+        }
         return c;
     }
 
@@ -297,7 +301,7 @@ public class CellFormatPart {
      */
     private CellFormatter getFormatter(Locale locale, Matcher matcher) {
         String fdesc = matcher.group(SPECIFICATION_GROUP);
-        
+
         // For now, we don't support localised currencies, so simplify if there
         Matcher currencyM = CURRENCY_PAT.matcher(fdesc);
         if (currencyM.find()) {
@@ -311,7 +315,7 @@ public class CellFormatPart {
             }
             fdesc = fdesc.replace(currencyPart, currencyRepl);
         }
-        
+
         // Build a formatter for this simplified string
         return type.formatter(locale, fdesc);
     }
@@ -339,7 +343,7 @@ public class CellFormatPart {
                 String c2 = null;
                 if (codePoints.hasNext())
                     c2 = codePoints.next().toLowerCase(Locale.ROOT);
-                
+
                 switch (c1) {
                 case "@":
                     return CellFormatType.TEXT;

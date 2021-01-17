@@ -69,13 +69,14 @@ import java.util.Map;
  * </blockquote>
  */
 public final class EscherGraphics2d extends Graphics2D {
+    private static final POILogger LOG = POILogFactory.getLogger(EscherGraphics2d.class);
+
     private EscherGraphics _escherGraphics;
     private BufferedImage _img;
     private AffineTransform _trans;
     private Stroke _stroke;
     private Paint _paint;
     private Shape _deviceclip;
-    private POILogger logger = POILogFactory.getLogger(getClass());
 
     /**
      * Constructs one escher graphics object from an escher graphics object.
@@ -152,8 +153,8 @@ public final class EscherGraphics2d extends Graphics2D {
         }
         else
         {
-            if (logger.check(POILogger.WARN))
-                logger.log(POILogger.WARN, "draw not fully supported");
+            if (LOG.check(POILogger.WARN))
+                LOG.log(POILogger.WARN, "draw not fully supported");
         }
     }
 
@@ -171,22 +172,22 @@ public final class EscherGraphics2d extends Graphics2D {
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, Color bgColor, ImageObserver imageobserver)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage() not supported");
+        if (LOG.check( POILogger.WARN ))
+            LOG.log(POILogger.WARN,"drawImage() not supported");
         return true;
     }
 
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, ImageObserver imageobserver)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage() not supported");
+        if (LOG.check( POILogger.WARN ))
+            LOG.log(POILogger.WARN,"drawImage() not supported");
         return drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null, imageobserver);
     }
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, Color bgColor, ImageObserver imageobserver)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage() not supported");
+        if (LOG.check( POILogger.WARN ))
+            LOG.log(POILogger.WARN,"drawImage() not supported");
         return true;
     }
 
@@ -310,8 +311,8 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public void fill(Shape shape)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"fill(Shape) not supported");
+        if (LOG.check( POILogger.WARN ))
+            LOG.log(POILogger.WARN,"fill(Shape) not supported");
     }
 
     public void fillArc(int i, int j, int k, int l, int i1, int j1)

@@ -42,7 +42,7 @@ import java.util.List;
  */
 @Internal
 /*private*/ final class XSSFRowColShifter {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFRowColShifter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFRowColShifter.class);
 
     private XSSFRowColShifter() { /*no instances for static classes*/}
 
@@ -151,7 +151,7 @@ import java.util.List;
             return shiftedFmla;
         } catch (FormulaParseException fpe) {
             // Log, but don't change, rather than breaking
-            logger.log(POILogger.WARN, "Error shifting formula on row ", row.getRowNum(), fpe);
+            LOG.log(POILogger.WARN, "Error shifting formula on row ", row.getRowNum(), fpe);
             return formula;
         }
     }

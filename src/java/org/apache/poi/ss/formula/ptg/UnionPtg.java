@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class UnionPtg extends OperationPtg {
-    public final static byte sid  = 0x10;
+    public static final byte sid  = 0x10;
 
     public static final UnionPtg instance = new UnionPtg();
 

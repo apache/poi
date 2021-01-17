@@ -57,7 +57,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
     public static final int MAX_RECORD_LENGTH = 50_000_000;
 
-    private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HwmfPicture.class);
 
     final List<HwmfRecord> records = new ArrayList<>();
     final HwmfPlaceableHeader placeableHeader;
@@ -85,7 +85,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     recordSize = (int)recordSizeLong;
                     recordFunction = leis.readShort();
                 } catch (Exception e) {
-                    logger.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
+                    LOG.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
                     break;
                 }
                 // 4 bytes (recordSize) + 2 bytes (recordFunction)

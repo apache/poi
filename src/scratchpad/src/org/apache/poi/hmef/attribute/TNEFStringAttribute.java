@@ -31,16 +31,16 @@ import org.apache.poi.util.StringUtil;
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFStringAttribute extends TNEFAttribute {
-   private final static POILogger logger = POILogFactory.getLogger(TNEFStringAttribute.class);
-   private String data;
-   
+   private static final POILogger LOG = POILogFactory.getLogger(TNEFStringAttribute.class);
+   private final String data;
+
    /**
     * Constructs a single new string attribute from the id, type,
     *  and the contents of the stream
     */
    protected TNEFStringAttribute(int id, int type, InputStream inp) throws IOException {
       super(id, type, inp);
-      
+
       String tmpData = null;
       byte[] data = getData();
       if(getType() == TNEFProperty.TYPE_TEXT) {
@@ -50,7 +50,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
               data, 0, data.length
          );
       }
-      
+
       // Strip off the null terminator if present
       if(tmpData.endsWith("\0")) {
          tmpData = tmpData.substring(0, tmpData.length()-1);
@@ -61,12 +61,12 @@ public final class TNEFStringAttribute extends TNEFAttribute {
    public String getString() {
       return this.data;
    }
-   
+
    public String toString() {
       return "Attribute " + getProperty() + ", type=" + getType() +
-             ", data=" + getString(); 
+             ", data=" + getString();
    }
-   
+
    /**
     * Returns the string of a Attribute, converting as appropriate
     */
@@ -77,8 +77,8 @@ public final class TNEFStringAttribute extends TNEFAttribute {
       if(attr instanceof TNEFStringAttribute) {
          return ((TNEFStringAttribute)attr).getString();
       }
-      
-      logger.log(POILogger.WARN, "Warning, non string property found: ", attr);
+
+      LOG.log(POILogger.WARN, "Warning, non string property found: ", attr);
       return null;
   }
 }

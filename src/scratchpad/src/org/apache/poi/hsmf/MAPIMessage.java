@@ -56,10 +56,10 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
- * 
+ *
  * If you want to develop with HSMF, you might find it worth getting
  *  some of the Microsoft public documentation, such as:
- *  
+ *
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
 public class MAPIMessage extends POIReadOnlyDocument {
@@ -79,8 +79,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    }
 
    /** For logging problems we spot with the file */
-   private POILogger logger = POILogFactory.getLogger(MAPIMessage.class);
-   
+   private static final POILogger LOG = POILogFactory.getLogger(MAPIMessage.class);
+
    private Chunks mainChunks;
    private NameIdChunks nameIdChunks;
    private RecipientChunks[] recipientChunks;
@@ -99,7 +99,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Constructor for reading MSG Files from the file system.
-    * 
+    *
     * @param filename Name of the file to read
     * @exception IOException on errors reading, or invalid data
     */
@@ -108,7 +108,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    }
    /**
     * Constructor for reading MSG Files from the file system.
-    * 
+    *
     * @param file The file to read from
     * @exception IOException on errors reading, or invalid data
     */
@@ -118,10 +118,10 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Constructor for reading MSG Files from an input stream.
-    * 
+    *
     * <p>Note - this will buffer the whole message into memory
     *  in order to process. For lower memory use, use {@link #MAPIMessage(File)}
-    *  
+    *
     * @param in The InputStream to buffer then read from
     * @exception IOException on errors reading, or invalid data
     */
@@ -130,7 +130,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    }
    /**
     * Constructor for reading MSG Files from a POIFS filesystem
-    * 
+    *
     * @param fs Open POIFS FileSystem containing the message
     * @exception IOException on errors reading, or invalid data
     */
@@ -221,7 +221,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
                byte[] htmlBodyBinary = htmlBodyBinaryChunk.getValue();
                return new String(htmlBodyBinary, encoding);
             } catch (UnsupportedEncodingException e) {
-               logger.log(POILogger.WARN, "HTML body binary: Invalid codepage ID ", codepage, " set for the message via ",
+               LOG.log(POILogger.WARN, "HTML body binary: Invalid codepage ID ", codepage, " set for the message via ",
                   MAPIProperty.INTERNET_CPID, ", ignoring");
             }
          }
@@ -246,7 +246,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             throw new ChunkNotFoundException();
          }
       }
-      
+
       try {
          MAPIRtfAttribute rtf = new MAPIRtfAttribute(
                MAPIProperty.RTF_COMPRESSED, Types.BINARY.getId(), chunk.getValue()
@@ -279,8 +279,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the display value of the "TO" line of the outlook message.
     * If there are multiple recipients, they will be separated
-    *  by semicolons. 
-    * This is not the actual list of addresses/values that will be 
+    *  by semicolons.
+    * This is not the actual list of addresses/values that will be
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
     * @throws ChunkNotFoundException If the to-chunk does not exist and
@@ -293,8 +293,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the display value of the "CC" line of the outlook message.
     * If there are multiple recipients, they will be separated
-    *  by semicolons. 
-    * This is not the actual list of addresses/values that will be 
+    *  by semicolons.
+    * This is not the actual list of addresses/values that will be
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
     * @throws ChunkNotFoundException If the cc-chunk does not exist and
@@ -307,8 +307,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the display value of the "BCC" line of the outlook message.
     * If there are multiple recipients, they will be separated
-    *  by semicolons. 
-    * This is not the actual list of addresses/values that will be 
+    *  by semicolons.
+    * This is not the actual list of addresses/values that will be
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
     * This will only be present in sent emails, not received ones!
@@ -321,7 +321,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Returns all the recipients' email address, separated by
-    *  semicolons. Checks all the likely chunks in search of 
+    *  semicolons. Checks all the likely chunks in search of
     *  the addresses.
     */
    public String getRecipientEmailAddress() throws ChunkNotFoundException {
@@ -330,7 +330,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Returns an array of all the recipient's email address, normally
     *  in TO then CC then BCC order.
-    * Checks all the likely chunks in search of the addresses. 
+    * Checks all the likely chunks in search of the addresses.
     */
    public String[] getRecipientEmailAddressList() throws ChunkNotFoundException {
       if(recipientChunks == null || recipientChunks.length == 0) {
@@ -358,7 +358,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Returns all the recipients' names, separated by
-    *  semicolons. Checks all the likely chunks in search of 
+    *  semicolons. Checks all the likely chunks in search of
     *  the names.
     * See also {@link #getDisplayTo()}, {@link #getDisplayCC()}
     *  and {@link #getDisplayBCC()}.
@@ -369,7 +369,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Returns an array of all the recipient's names, normally
     *  in TO then CC then BCC order.
-    * Checks all the likely chunks in search of the names. 
+    * Checks all the likely chunks in search of the names.
     * See also {@link #getDisplayTo()}, {@link #getDisplayCC()}
     *  and {@link #getDisplayBCC()}.
     */
@@ -391,7 +391,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
       return names;
    }
-   
+
    /**
     * Tries to identify the correct encoding for 7-bit (non-unicode)
     *  strings in the file.
@@ -400,7 +400,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *  strings, but don't always store the encoding anywhere
     *  helpful in the file.</p>
     * <p>This method checks for codepage properties, and failing that
-    *  looks at the headers for the message, and uses these to 
+    *  looks at the headers for the message, and uses these to
     *  guess the correct encoding for your file.</p>
     * <p>Bug #49441 has more on why this is needed</p>
     */
@@ -418,7 +418,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
          String encoding = CodePageUtil.codepageToEncoding(codepage, true);
          generalcodepage = encoding;
        } catch (UnsupportedEncodingException e) {
-         logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
+         LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
              MAPIProperty.MESSAGE_CODEPAGE, ", ignoring");
        }
      }
@@ -436,7 +436,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
              generalcodepage = encoding;
            }
          } catch (UnsupportedEncodingException e) {
-           logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, "from locale ID", lcid, " set for the message via ",
+           LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, "from locale ID", lcid, " set for the message via ",
                MAPIProperty.MESSAGE_LOCALE_ID, ", ignoring");
          }
        }
@@ -476,7 +476,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
            bodycodepage = encoding;
          }
        } catch (UnsupportedEncodingException e) {
-         logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
+         LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
              MAPIProperty.INTERNET_CPID, ", ignoring");
        }
      }
@@ -534,7 +534,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
         }
       }
    }
-   
+
    /**
     * Does this file contain any strings that
     *  are stored as 7 bit rather than unicode?
@@ -547,7 +547,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             }
          }
       }
-      
+
       if (nameIdChunks!=null) {
          for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
@@ -557,7 +557,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             }
          }
       }
-      
+
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
@@ -569,7 +569,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       }
       return false;
    }
-   
+
    /**
     * Returns all the headers, one entry per line
     */
@@ -617,7 +617,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       } else if (mc.equalsIgnoreCase("IPM.Post")) {
          return MESSAGE_CLASS.POST;
       } else {
-         logger.log(POILogger.WARN, "I don't recognize message class '", mc, "'. ",
+         LOG.log(POILogger.WARN, "I don't recognize message class '", mc, "'. ",
                  "Please open an issue on POI's bugzilla");
          return MESSAGE_CLASS.UNKNOWN;
       }
@@ -642,7 +642,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             }
          }
       }
-      
+
       if(returnNullOnMissingChunk)
          return null;
       throw new ChunkNotFoundException();
@@ -681,7 +681,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
 
    /**
-    * Will you get a null on a missing chunk, or a 
+    * Will you get a null on a missing chunk, or a
     *  {@link ChunkNotFoundException} (default is the
     *  exception).
     */
@@ -692,7 +692,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Sets whether on asking for a missing chunk,
     *  you get back null or a {@link ChunkNotFoundException}
-    *  (default is the exception). 
+    *  (default is the exception).
     */
    public void setReturnNullOnMissingChunk(boolean returnNullOnMissingChunk) {
       this.returnNullOnMissingChunk = returnNullOnMissingChunk;

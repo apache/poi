@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class TestListParts {
-    private static final POILogger logger = POILogFactory.getLogger(TestListParts.class);
+    private static final POILogger LOG = POILogFactory.getLogger(TestListParts.class);
 
 	private TreeMap<PackagePartName, String> expectedValues;
 
@@ -91,7 +91,7 @@ public final class TestListParts {
 
 			for (PackagePart part : p.getParts()) {
 				values.put(part.getPartName(), part.getContentType());
-				logger.log(POILogger.DEBUG, part.getPartName());
+				LOG.log(POILogger.DEBUG, part.getPartName());
 			}
 
 			// Compare expected values with values return by the package

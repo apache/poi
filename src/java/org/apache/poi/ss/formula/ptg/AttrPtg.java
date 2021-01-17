@@ -36,8 +36,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * in SUM functions (i.e. SUM(A1:A3) causes an area PTG then an ATTR with the SUM option set)
  */
 public final class AttrPtg extends ControlPtg {
-    public final static byte sid  = 0x19;
-    private final static int  SIZE = 4;
+    public static final byte sid  = 0x19;
+    private static final int  SIZE = 4;
 
     // flags 'volatile' and 'space', can be combined.
     // OOO spec says other combinations are theoretically possible but not likely to occur.

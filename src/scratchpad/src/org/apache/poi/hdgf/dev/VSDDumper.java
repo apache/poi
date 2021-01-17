@@ -35,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  of a Visio file
  */
 public final class VSDDumper {
-    final static String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+    static final String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
     private final PrintStream ps;
     private final HDGFDiagram hdgf;

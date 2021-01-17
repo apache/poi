@@ -67,7 +67,7 @@ public final class BuiltinFormats {
 	 */
 	public static final int FIRST_USER_DEFINED_FORMAT_INDEX = 164;
 
-	private final static String[] _formats = {
+	private static final String[] _formats = {
         "General",
         "0",
         "0.00",

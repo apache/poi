@@ -63,9 +63,6 @@ import org.w3c.dom.Document;
  * against HWPF
  */
 class TestBugs {
-
-    private static final POILogger logger = POILogFactory.getLogger(TestBugs.class);
-
     private static void assertEqualsIgnoreNewline(String expected, String actual) {
         String newExpected = expected.replaceAll("\r\n", "\n")
             .replaceAll("\r", "\n").trim();

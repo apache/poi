@@ -33,7 +33,7 @@ public enum AxisTickMark {
         this.underlying = tickMark;
     }
 
-    private final static HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<>();
+    private static final HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<>();
     static {
         for (AxisTickMark value : values()) {
             reverse.put(value.underlying, value);

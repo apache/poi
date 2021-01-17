@@ -105,14 +105,14 @@ public class ExEmbed extends RecordContainer {
         if(_children[0] instanceof ExEmbedAtom) {
             embedAtom = (ExEmbedAtom)_children[0];
         } else {
-            logger.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type ", _children[0].getRecordType());
+            LOG.log(POILogger.ERROR, "First child record wasn't a ExEmbedAtom, was of type ", _children[0].getRecordType());
         }
 
         // Second child should be the ExOleObjAtom
         if (_children[1] instanceof ExOleObjAtom) {
             oleObjAtom = (ExOleObjAtom)_children[1];
         } else {
-            logger.log(POILogger.ERROR, "Second child record wasn't a ExOleObjAtom, was of type ", _children[1].getRecordType());
+            LOG.log(POILogger.ERROR, "Second child record wasn't a ExOleObjAtom, was of type ", _children[1].getRecordType());
         }
 
         for (int i = 2; i < _children.length; i++) {

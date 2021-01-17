@@ -43,8 +43,7 @@ public final class ListLevel
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_485_760;
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( ListLevel.class );
+    private static final POILogger LOG = POILogFactory.getLogger( ListLevel.class );
 
     private byte[] _grpprlChpx;
     private byte[] _grpprlPapx;
@@ -245,7 +244,7 @@ public final class ListLevel
         {
             if ( _xst.getCch() != 1 )
             {
-                logger.log( POILogger.WARN, "LVL at offset ",
+                LOG.log( POILogger.WARN, "LVL at offset ",
                         Integer.valueOf( startOffset ),
                         " has nfc == 0x17 (bullets), but cch != 1 (",
                         Integer.valueOf( _xst.getCch() ), ")" );

@@ -44,8 +44,8 @@ public final class Delta extends Fixed2ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new Delta();
 
-    private final static NumberEval ONE = new NumberEval(1);
-    private final static NumberEval ZERO = new NumberEval(0);
+    private static final NumberEval ONE = new NumberEval(1);
+    private static final NumberEval ZERO = new NumberEval(0);
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
         try {

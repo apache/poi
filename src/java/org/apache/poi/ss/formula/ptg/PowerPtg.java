@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.ptg;
 
 public final class PowerPtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x07;
+    public static final byte sid  = 0x07;
 
     public static final PowerPtg instance = new PowerPtg();
 

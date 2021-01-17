@@ -82,7 +82,7 @@ import org.apache.poi.util.Units;
  */
 
 public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
-    protected static final POILogger logger = POILogFactory.getLogger(HSLFTextParagraph.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFTextParagraph.class);
 
     /**
      * How to align the text
@@ -322,7 +322,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         if (startIdx[0] >= records.length) {
-            logger.log(POILogger.INFO, "header atom wasn't found - container might contain only an OutlineTextRefAtom");
+            LOG.log(POILogger.INFO, "header atom wasn't found - container might contain only an OutlineTextRefAtom");
             return new org.apache.poi.hslf.record.Record[0];
         }
 
@@ -884,7 +884,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         } else {
             master = sheet.getMasterSheet();
             if (master == null) {
-                logger.log(POILogger.WARN, "MasterSheet is not available");
+                LOG.log(POILogger.WARN, "MasterSheet is not available");
                 return null;
             }
         }
@@ -984,7 +984,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         if (style == null) {
-            logger.log(POILogger.INFO, "styles atom doesn't exist. Creating dummy record for later saving.");
+            LOG.log(POILogger.INFO, "styles atom doesn't exist. Creating dummy record for later saving.");
             style = new StyleTextPropAtom((textLen < 0) ? 1 : textLen);
         } else {
             if (textLen >= 0) {
@@ -1395,7 +1395,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 }
             }
             if (rv == null || rv.isEmpty()) {
-                logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
+                LOG.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
             }
         } else {
             if (sheet != null) {
@@ -1481,7 +1481,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             if (tbytes == null && tchars == null) {
                 tbytes = new TextBytesAtom();
                 // don't add record yet - set it in storeText
-                logger.log(POILogger.INFO, "bytes nor chars atom doesn't exist. Creating dummy record for later saving.");
+                LOG.log(POILogger.INFO, "bytes nor chars atom doesn't exist. Creating dummy record for later saving.");
             }
 
             String rawText = (tchars != null) ? tchars.getText() : tbytes.getText();
@@ -1510,7 +1510,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         if (paragraphCollection.isEmpty()) {
-            logger.log(POILogger.DEBUG, "No text records found.");
+            LOG.log(POILogger.DEBUG, "No text records found.");
         }
 
         return paragraphCollection;

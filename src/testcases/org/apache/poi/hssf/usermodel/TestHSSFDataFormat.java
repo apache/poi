@@ -39,7 +39,6 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link HSSFDataFormat}
  */
 final class TestHSSFDataFormat extends BaseTestDataFormat {
-    private static final POILogger _logger = POILogFactory.getLogger(TestHSSFDataFormat.class);
 
     public TestHSSFDataFormat() {
         super(HSSFITestDataProvider.instance);

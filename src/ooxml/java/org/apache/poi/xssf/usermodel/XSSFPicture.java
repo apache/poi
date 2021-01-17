@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNo
  * @author Yegor Kozlov
  */
 public final class XSSFPicture extends XSSFShape implements Picture {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFPicture.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFPicture.class);
 
     /**
      * Column width measured as the number of characters of the maximum digit width of the
@@ -154,7 +154,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     public void resize(double scale) {
         resize(scale, scale);
     }
-    
+
     /**
      * Resize the image relatively to its current size.
      * <p>
@@ -166,7 +166,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * <code>resize(1.0,1.0)</code> keeps the original size,<br>
      * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br>
      * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br>
-     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image.
      * </p>
      *
      * @param scaleX the amount by which the image width is multiplied relative to the original width,
@@ -178,7 +178,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         XSSFClientAnchor anchor = getClientAnchor();
         XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
         if (anchor == null || pref == null) {
-            logger.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
             return;
         }
 
@@ -212,7 +212,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     public XSSFClientAnchor getPreferredSize(double scale){
         return getPreferredSize(scale, scale);
     }
-    
+
     /**
      * Calculate the preferred size for this picture.
      *
@@ -242,7 +242,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
             return ImageUtils.getImageDimension(part.getInputStream(), type);
         } catch (IOException e){
             //return a "singulariry" if ImageIO failed to read the image
-            logger.log(POILogger.WARN, e);
+            LOG.log(POILogger.WARN, e);
             return new Dimension();
         }
     }
@@ -256,7 +256,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         XSSFPictureData picData = getPictureData();
         return getImageDimension(picData.getPackagePart(), picData.getPictureType());
     }
-    
+
     /**
      * Return picture data for this shape
      *

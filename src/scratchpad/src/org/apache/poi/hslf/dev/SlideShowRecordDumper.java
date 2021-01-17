@@ -44,7 +44,7 @@ import org.apache.poi.util.HexDump;
  * @author Nick Burch
  */
 public final class SlideShowRecordDumper {
-    final static String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+    static final String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
     
     private boolean optVerbose;
     private boolean optEscher;

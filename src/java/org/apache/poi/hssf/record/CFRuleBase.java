@@ -95,7 +95,7 @@ public abstract class CFRuleBase extends StandardRecord {
     public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
 
-    protected static final POILogger logger = POILogFactory.getLogger(CFRuleBase.class);
+    protected static final POILogger LOG = POILogFactory.getLogger(CFRuleBase.class);
 
     static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
     static final BitField alignHor         = bf(0x00000001); // 0 = Horizontal alignment modified

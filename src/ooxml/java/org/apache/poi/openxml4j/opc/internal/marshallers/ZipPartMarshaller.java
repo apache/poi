@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
  */
 public final class ZipPartMarshaller implements PartMarshaller {
-	private final static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
+	private static final POILogger LOG = POILogFactory.getLogger(ZipPartMarshaller.class);
 
 	/**
 	 * Save the specified part to the given stream.
@@ -64,7 +64,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	public boolean marshall(PackagePart part, OutputStream os)
 			throws OpenXML4JException {
 		if (!(os instanceof ZipArchiveOutputStream)) {
-			logger.log(POILogger.ERROR,"Unexpected class ", os.getClass().getName());
+			LOG.log(POILogger.ERROR,"Unexpected class ", os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
 			// Normally should happen only in development phase, so just throw
 			// exception
@@ -91,7 +91,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException ioe) {
-			logger.log(POILogger.ERROR,"Cannot write: ", part.getPartName(), ": in ZIP",
+			LOG.log(POILogger.ERROR,"Cannot write: ", part.getPartName(), ": in ZIP",
 					ioe);
 			return false;
 		}
@@ -186,7 +186,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException e) {
-			logger.log(POILogger.ERROR,"Cannot create zip entry ", relPartName, e);
+			LOG.log(POILogger.ERROR,"Cannot create zip entry ", relPartName, e);
 			return false;
 		}
 	}

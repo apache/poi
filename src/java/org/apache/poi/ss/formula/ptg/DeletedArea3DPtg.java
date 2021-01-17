@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 1.0-pre
  */
 public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDependentFormula {
-	public final static byte sid = 0x3d;
+	public static final byte sid = 0x3d;
 	private final int field_1_index_extern_sheet;
 	private final int unused1;
 	private final int unused2;

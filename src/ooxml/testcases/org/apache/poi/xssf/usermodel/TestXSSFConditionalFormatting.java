@@ -67,7 +67,7 @@ class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
     }
 
-    private final static java.awt.Color PEAK_ORANGE = new java.awt.Color(255, 239, 221);
+    private static final java.awt.Color PEAK_ORANGE = new java.awt.Color(255, 239, 221);
 
     @Test
     void testFontFormattingColor() {

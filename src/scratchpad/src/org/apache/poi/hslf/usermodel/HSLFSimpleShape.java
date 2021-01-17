@@ -60,7 +60,7 @@ import org.apache.poi.util.Units;
 public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(HSLFSimpleShape.class);
 
-    public final static double DEFAULT_LINE_WIDTH = 0.75;
+    public static final double DEFAULT_LINE_WIDTH = 0.75;
 
     protected static final EscherPropertyTypes[] ADJUST_VALUES = {
             EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,

@@ -52,7 +52,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
  * </p>
  */
 public class POIXMLDocumentPart {
-    private static final POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
+    private static final POILogger LOG = POILogFactory.getLogger(POIXMLDocumentPart.class);
 
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
@@ -619,7 +619,7 @@ public class POIXMLDocumentPart {
         PackagePart pp = getPackagePart();
 
         if (pp.getContentType().equals(XWPFRelation.GLOSSARY_DOCUMENT.getContentType())) {
-            logger.log(POILogger.WARN,
+            LOG.log(POILogger.WARN,
                     "POI does not currently support template.main+xml (glossary) parts.  " +
                     "Skipping this part for now.");
             return;
@@ -651,7 +651,7 @@ public class POIXMLDocumentPart {
 
                 final PackagePart p = packagePart.getPackage().getPart(relName);
                 if (p == null) {
-                    logger.log(POILogger.ERROR, "Skipped invalid entry ", rel.getTargetURI());
+                    LOG.log(POILogger.ERROR, "Skipped invalid entry ", rel.getTargetURI());
                     continue;
                 }
 

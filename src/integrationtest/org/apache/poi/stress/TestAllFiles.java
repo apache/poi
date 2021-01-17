@@ -93,7 +93,6 @@ public class TestAllFiles {
 
         final List<Arguments> result = new ArrayList<>(100);
         for (String file : scanner.getIncludedFiles()) {
-            // if (!file.contains("44958.xls")) continue;
             for (FileHandlerKnown handler : sm.getHandler(file)) {
                 ExcInfo info1 = sm.getExcInfo(file, testName, handler);
                 if (info1 == null || info1.isValid(testName, handler.name())) {

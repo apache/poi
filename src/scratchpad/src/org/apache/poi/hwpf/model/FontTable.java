@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class FontTable
 {
-    private final static POILogger _logger = POILogFactory.getLogger(FontTable.class);
+    private static final POILogger LOG = POILogFactory.getLogger(FontTable.class);
     private short _stringCount;// how many strings are included in the string table
     private short _extraDataSz;// size in bytes of the extra data
 
@@ -93,7 +93,7 @@ public final class FontTable
     {
         if(chpFtc >= _stringCount)
         {
-            _logger.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
             return null;
         }
 
@@ -104,7 +104,7 @@ public final class FontTable
     {
         if(chpFtc >= _stringCount)
         {
-            _logger.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
             return null;
         }
 

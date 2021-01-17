@@ -40,8 +40,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public class TextPieceTable implements CharIndexTranslator {
-    private static final POILogger logger = POILogFactory
-            .getLogger(TextPieceTable.class);
+    private static final POILogger LOG = POILogFactory.getLogger(TextPieceTable.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -287,7 +286,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int toAppendLength = toAppend.length();
 
             if (toAppendLength != textPiece.getEnd() - textPiece.getStart()) {
-                logger.log(
+                LOG.log(
                         POILogger.WARN,
                         "Text piece has boundaries [",
                         textPiece.getStart(),
@@ -301,7 +300,7 @@ public class TextPieceTable implements CharIndexTranslator {
                     + toAppendLength, toAppend);
         }
 
-        logger.log(POILogger.DEBUG, "Document text were rebuilded in ",
+        LOG.log(POILogger.DEBUG, "Document text were rebuilded in ",
                 System.currentTimeMillis() - start, " ms (",
                 docText.length(), " chars)");
 

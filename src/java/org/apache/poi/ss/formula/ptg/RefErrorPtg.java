@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class RefErrorPtg extends OperandPtg {
 
-    private final static int SIZE = 5;
-    public final static byte sid  = 0x2A;
+    private static final int SIZE = 5;
+    public static final byte sid  = 0x2A;
     private int              field_1_reserved;
 
     public RefErrorPtg() {

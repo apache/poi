@@ -55,8 +55,7 @@ import org.w3c.dom.Element;
 @Beta
 public class WordToTextConverter extends AbstractWordConverter
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( WordToTextConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( WordToTextConverter.class );
 
     public static String getText( DirectoryNode root ) throws Exception
     {
@@ -352,7 +351,7 @@ public class WordToTextConverter extends AbstractWordConverter
         catch ( Exception exc )
         {
             // no extractor in classpath
-            logger.log( POILogger.WARN, "There is an OLE object entry '",
+            LOG.log( POILogger.WARN, "There is an OLE object entry '",
                     entry.getName(),
                     "', but there is no text extractor for this object type ",
                     "or text extractor factory is not available: ", "", exc );
@@ -371,7 +370,7 @@ public class WordToTextConverter extends AbstractWordConverter
         }
         catch ( Exception exc )
         {
-            logger.log( POILogger.ERROR,
+            LOG.log( POILogger.ERROR,
                     "Unable to extract text from OLE entry '", entry.getName(),
                     "': ", exc, exc );
             return false;

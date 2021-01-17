@@ -41,8 +41,8 @@ import org.apache.poi.util.LittleEndian;
  */
 public class TextPFException9 implements GenericRecord {
 
-	private final static AutoNumberingScheme DEFAULT_AUTONUMBER_SCHEME = AutoNumberingScheme.arabicPeriod;
-	private final static Short DEFAULT_START_NUMBER = 1;
+	private static final AutoNumberingScheme DEFAULT_AUTONUMBER_SCHEME = AutoNumberingScheme.arabicPeriod;
+	private static final Short DEFAULT_START_NUMBER = 1;
 
 	//private final byte mask1;
 	//private final byte mask2;

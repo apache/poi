@@ -58,7 +58,7 @@ public class VariantSupport extends Variant {
             Variant.VT_CF, Variant.VT_BOOL };
 
 
-    private static final POILogger logger = POILogFactory.getLogger(VariantSupport.class);
+    private static final POILogger LOG = POILogFactory.getLogger(VariantSupport.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -114,7 +114,7 @@ public class VariantSupport extends Variant {
             Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))
             {
-            	logger.log( POILogger.ERROR, ex.getMessage());
+            	LOG.log( POILogger.ERROR, ex.getMessage());
                 unsupportedMessage.add(vt);
             }
         }

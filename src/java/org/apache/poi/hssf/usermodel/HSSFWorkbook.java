@@ -156,7 +156,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * since you're never allowed to have more or less than three sheets!
      */
 
-    public final static int INITIAL_CAPACITY = Configurator.getIntValue("HSSFWorkbook.SheetInitialCapacity", 3);
+    public static final int INITIAL_CAPACITY = Configurator.getIntValue("HSSFWorkbook.SheetInitialCapacity", 3);
 
     /**
      * this is the reference to the low level Workbook object

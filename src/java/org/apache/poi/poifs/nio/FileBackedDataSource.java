@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  * A POIFS {@link DataSource} backed by a File
  */
 public class FileBackedDataSource extends DataSource implements Closeable {
-    private final static POILogger logger = POILogFactory.getLogger(FileBackedDataSource.class);
+    private static final POILogger LOG = POILogFactory.getLogger(FileBackedDataSource.class);
 
     private final FileChannel channel;
     private Long channelSize;
@@ -195,10 +195,10 @@ public class FileBackedDataSource extends DataSource implements Closeable {
             try {
                 CleanerUtil.getCleaner().freeBuffer(buffer);
             } catch (IOException e) {
-                logger.log(POILogger.WARN, "Failed to unmap the buffer", e);
+                LOG.log(POILogger.WARN, "Failed to unmap the buffer", e);
             }
         } else {
-            logger.log(POILogger.DEBUG, CleanerUtil.UNMAP_NOT_SUPPORTED_REASON);
+            LOG.log(POILogger.DEBUG, CleanerUtil.UNMAP_NOT_SUPPORTED_REASON);
         }
     }
 }

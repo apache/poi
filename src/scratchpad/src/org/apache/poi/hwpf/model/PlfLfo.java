@@ -39,7 +39,7 @@ import org.apache.poi.util.POILogger;
  */
 public class PlfLfo
 {
-    private final static POILogger log = POILogFactory.getLogger( PlfLfo.class );
+    private static final POILogger log = POILogFactory.getLogger( PlfLfo.class );
 
     /**
      * An unsigned integer that specifies the count of elements in both the

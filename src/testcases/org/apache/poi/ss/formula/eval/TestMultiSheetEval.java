@@ -53,7 +53,7 @@ final class TestMultiSheetEval {
 		/**
 		 * Name of the test spreadsheet (found in the standard test data folder)
 		 */
-		public final static String FILENAME = "FormulaSheetRange.xls";
+		public static final String FILENAME = "FormulaSheetRange.xls";
 		/**
 		 * Row (zero-based) in the test spreadsheet where the function examples start.
 		 */

@@ -51,11 +51,11 @@ public abstract class FFDataBaseAbstractType
     protected short field_2_bits;
     /**/private static final BitField iType = new BitField(0x0003);
     /**   Specifies that the form field is a textbox. */
-    /*  */public final static byte ITYPE_TEXT = 0;
+    /*  */public static final byte ITYPE_TEXT = 0;
     /**   Specifies that the form field is a checkbox. */
-    /*  */public final static byte ITYPE_CHCK = 1;
+    /*  */public static final byte ITYPE_CHCK = 1;
     /**   Specifies that the form field is a dropdown list box. */
-    /*  */public final static byte ITYPE_DROP = 2;
+    /*  */public static final byte ITYPE_DROP = 2;
     /**/private static final BitField iRes = new BitField(0x007C);
     /**/private static final BitField fOwnHelp = new BitField(0x0080);
     /**/private static final BitField fOwnStat = new BitField(0x0100);
@@ -63,17 +63,17 @@ public abstract class FFDataBaseAbstractType
     /**/private static final BitField iSize = new BitField(0x0400);
     /**/private static final BitField iTypeTxt = new BitField(0x3800);
     /**   Specifies that the textbox value is regular text. */
-    /*  */public final static byte ITYPETXT_REG = 0;
+    /*  */public static final byte ITYPETXT_REG = 0;
     /**   Specifies that the textbox value is a number. */
-    /*  */public final static byte ITYPETXT_NUM = 0;
+    /*  */public static final byte ITYPETXT_NUM = 0;
     /**   Specifies that the textbox value is a date or time. */
-    /*  */public final static byte ITYPETXT_DATE = 0;
+    /*  */public static final byte ITYPETXT_DATE = 0;
     /**   Specifies that the textbox value is the current date. */
-    /*  */public final static byte ITYPETXT_CURDATE = 0;
+    /*  */public static final byte ITYPETXT_CURDATE = 0;
     /**   Specifies that the textbox value is the current time. */
-    /*  */public final static byte ITYPETXT_CURTIME = 0;
+    /*  */public static final byte ITYPETXT_CURTIME = 0;
     /**   Specifies that the textbox value is calculated from an expression. The expression is given by FFData.xstzTextDef. */
-    /*  */protected final static byte ITYPETXT_CALC = 0;
+    /*  */protected static final byte ITYPETXT_CALC = 0;
     /**/private static final BitField fRecalc = new BitField(0x4000);
     /**/private static final BitField fHasListBox = new BitField(0x8000);
     protected int field_3_cch;

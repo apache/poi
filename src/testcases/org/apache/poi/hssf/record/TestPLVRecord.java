@@ -37,9 +37,9 @@ import org.junit.jupiter.api.Test;
  */
 
 final class TestPLVRecord {
-    private final static String DV_DEFINITION = "$A$1:$A$5";
-    private final static String XLS_FILENAME = "53972.xls";
-    private final static String SHEET_NAME = "S2";
+    private static final String DV_DEFINITION = "$A$1:$A$5";
+    private static final String XLS_FILENAME = "53972.xls";
+    private static final String SHEET_NAME = "S2";
 
     @Test
     void testPLVRecord() throws Exception {

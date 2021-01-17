@@ -27,16 +27,15 @@ import org.apache.poi.util.POILogger;
 
 public final class TableRow extends Range
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( TableRow.class );
+    private static final POILogger LOG = POILogFactory.getLogger( TableRow.class );
 
-    private final static short SPRM_DXAGAPHALF = (short) 0x9602;
-    private final static short SPRM_DYAROWHEIGHT = (short) 0x9407;
-    private final static short SPRM_FCANTSPLIT = 0x3403;
-    private final static short SPRM_FTABLEHEADER = 0x3404;
-    private final static short SPRM_TJC = 0x5400;
+    private static final short SPRM_DXAGAPHALF = (short) 0x9602;
+    private static final short SPRM_DYAROWHEIGHT = (short) 0x9407;
+    private static final short SPRM_FCANTSPLIT = 0x3403;
+    private static final short SPRM_FTABLEHEADER = 0x3404;
+    private static final short SPRM_TJC = 0x5400;
 
-    private final static char TABLE_CELL_MARK = '\u0007';
+    private static final char TABLE_CELL_MARK = '\u0007';
 
     private TableCell[] _cells;
     private boolean _cellsFound;
@@ -188,7 +187,7 @@ public final class TableRow extends Range
 
         if ( cells.size() != expectedCellsCount )
         {
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Number of found table cells (", cells.size(),
                             ") for table row [", getStartOffset(), "c; ",
                             getEndOffset(), "c] not equals to stored property value ",

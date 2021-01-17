@@ -45,7 +45,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public static final short sid = 0x01B8;
-    private static final POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HyperlinkRecord.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -403,7 +403,7 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if (in.remaining() > 0) {
-           logger.log(POILogger.WARN,
+           LOG.log(POILogger.WARN,
                  "Hyperlink data remains: " + in.remaining() +
                  " : " +HexDump.toHex(in.readRemainder())
            );

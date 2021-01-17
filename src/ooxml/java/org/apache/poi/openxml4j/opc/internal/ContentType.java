@@ -71,16 +71,16 @@ public final class ContentType {
 	/**
 	 * Media type compiled pattern, without parameters
 	 */
-	private final static Pattern patternTypeSubType;
+	private static final Pattern patternTypeSubType;
     /**
      * Media type compiled pattern, with parameters.
      */
-    private final static Pattern patternTypeSubTypeParams;
+    private static final Pattern patternTypeSubTypeParams;
     /**
      * Pattern to match on just the parameters part, to work
      * around the Java Regexp group capture behaviour
      */
-    private final static Pattern patternParams;
+    private static final Pattern patternParams;
 
 	static {
 		/*

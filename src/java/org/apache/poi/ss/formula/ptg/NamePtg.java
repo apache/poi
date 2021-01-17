@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * See the spec at 2.5.198.76 PtgName
  */
 public final class NamePtg extends OperandPtg implements WorkbookDependentFormula {
-	public final static short sid = 0x23;
-	private final static int SIZE = 5;
+	public static final short sid = 0x23;
+	private static final int SIZE = 5;
 
 	/** one-based index to defined name record */
 	private int field_1_label_index;

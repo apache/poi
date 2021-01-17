@@ -22,8 +22,8 @@ package org.apache.poi.ss.formula.ptg;
  * Greater than operator PTG ">"
  */
 public final class GreaterThanPtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x0D;
-    private final static String GREATERTHAN = ">";
+    public static final byte sid  = 0x0D;
+    private static final String GREATERTHAN = ">";
 
     public static final GreaterThanPtg instance = new GreaterThanPtg();
 

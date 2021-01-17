@@ -28,16 +28,19 @@ import org.apache.poi.util.POILogger;
  * Base of all chunks, which hold data, flags etc
  */
 public final class Chunk {
+    /** For logging warnings about the structure of the file */
+    private static final POILogger LOG = POILogFactory.getLogger(Chunk.class);
+
     /**
      * The contents of the chunk, excluding the header,
      * trailer and separator
      */
-    private byte[] contents;
-    private ChunkHeader header;
+    private final byte[] contents;
+    private final ChunkHeader header;
     /** May be null */
-    private ChunkTrailer trailer;
+    private final ChunkTrailer trailer;
     /** May be null */
-    private ChunkSeparator separator;
+    private final ChunkSeparator separator;
     /** The possible different commands we can hold */
     private CommandDefinition[] commandDefinitions;
     /** The command+value pairs we hold */
@@ -46,9 +49,6 @@ public final class Chunk {
     //private Block[] blocks
     /** The name of the chunk, as found from the commandDefinitions */
     private String name;
-
-    /** For logging warnings about the structure of the file */
-    private POILogger logger = POILogFactory.getLogger(Chunk.class);
 
     public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
         this.header = header;
@@ -179,7 +179,7 @@ public final class Chunk {
 
             // Check we seem to have enough data
             if(offset >= contents.length) {
-                logger.log(POILogger.WARN,
+                LOG.log(POILogger.WARN,
                         "Command offset ", offset, " past end of data at ", contents.length
                 );
                 continue;
@@ -241,12 +241,12 @@ public final class Chunk {
                     break;
 
                 default:
-                    logger.log(POILogger.INFO,
+                    LOG.log(POILogger.INFO,
                             "Command of type ", type, " not processed!");
                 }
             }
             catch (Exception e) {
-                logger.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: ", command, e);
+                LOG.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: ", command, e);
             }
 
             // Add to the array

@@ -22,8 +22,8 @@ package org.apache.poi.ss.formula.ptg;
  * PTG class to implement greater or equal to
  */
 public final class GreaterEqualPtg extends ValueOperatorPtg {
-    public final static int  SIZE = 1;
-    public final static byte sid  = 0x0c;
+    public static final int  SIZE = 1;
+    public static final byte sid  = 0x0c;
 
     public static final GreaterEqualPtg instance = new GreaterEqualPtg();
 

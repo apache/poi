@@ -61,7 +61,7 @@ import org.apache.poi.util.IOUtils;
  */
 public class OldExcelExtractor implements POITextExtractor {
 
-    private final static int FILE_PASS_RECORD_SID = 0x2f;
+    private static final int FILE_PASS_RECORD_SID = 0x2f;
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 

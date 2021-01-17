@@ -29,8 +29,8 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class ParenthesisPtg extends ControlPtg {
 
-	private final static int SIZE = 1;
-	public final static byte sid = 0x15;
+	private static final int SIZE = 1;
+	public static final byte sid = 0x15;
 
 	public static final ParenthesisPtg instance = new ParenthesisPtg();
 

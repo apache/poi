@@ -21,9 +21,9 @@ package org.apache.poi.ss.formula.ptg;
  * Addition operator PTG the "+" binomial operator.
  */
 public final class AddPtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x03;
+    public static final byte sid  = 0x03;
 
-    private final static String ADD = "+";
+    private static final String ADD = "+";
 
     public static final AddPtg instance = new AddPtg();
 

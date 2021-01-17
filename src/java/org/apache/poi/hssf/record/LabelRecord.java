@@ -33,7 +33,7 @@ import org.apache.poi.util.RecordFormatException;
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
-    private static final POILogger logger = POILogFactory.getLogger(LabelRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(LabelRecord.class);
 
     public static final short sid = 0x0204;
 
@@ -77,7 +77,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
         }
 
         if (in.remaining() > 0) {
-           logger.log(POILogger.INFO,
+           LOG.log(POILogger.INFO,
                    "LabelRecord data remains: ", in.remaining(),
                            " : ", HexDump.toHex(in.readRemainder())
            );

@@ -30,7 +30,7 @@ import org.apache.poi.util.StringUtil;
  * &lt;length 2 bytes&gt;char[]
  */
 public final class StringPtg extends ScalarConstantPtg {
-     public final static byte sid = 0x17;
+     public static final byte sid = 0x17;
     /** the character (") used in formulas to delimit string literals */
     private static final char FORMULA_DELIMITER = '"';
 

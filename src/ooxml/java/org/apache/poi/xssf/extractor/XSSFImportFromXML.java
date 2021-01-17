@@ -70,7 +70,7 @@ public class XSSFImportFromXML {
 
     private final XSSFMap _map;
 
-    private static final POILogger logger = POILogFactory.getLogger(XSSFImportFromXML.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFImportFromXML.class);
 
     public XSSFImportFromXML(XSSFMap map) {
         _map = map;
@@ -109,9 +109,9 @@ public class XSSFImportFromXML {
             // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
             if (result != null) {
                 String textContent = result.getTextContent();
-                logger.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
+                LOG.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
                 XSSFCell cell = singleXmlCell.getReferencedCell();
-                logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
+                LOG.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
                                                 + cell.getSheet().getSheetName());
                 setCellValue(textContent, cell, xmlDataType);
             }
@@ -147,7 +147,7 @@ public class XSSFImportFromXML {
 
                     // TODO: convert the data to the cell format
                     String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
-                    logger.log(POILogger.DEBUG, "Extracting with xpath " + localXPath + " : value is '" + value + "'");
+                    LOG.log(POILogger.DEBUG, "Extracting with xpath " + localXPath + " : value is '" + value + "'");
                     XSSFRow row = table.getXSSFSheet().getRow(rowId);
                     if (row == null) {
                         row = table.getXSSFSheet().createRow(rowId);
@@ -157,7 +157,7 @@ public class XSSFImportFromXML {
                     if (cell == null) {
                         cell = row.createCell(columnId);
                     }
-                    logger.log(POILogger.DEBUG, "Setting '" + value + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
+                    LOG.log(POILogger.DEBUG, "Setting '" + value + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
                                                     + table.getXSSFSheet().getSheetName());
                     setCellValue(value, cell, xmlColumnPr.getXmlDataType());
                 }

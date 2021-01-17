@@ -52,7 +52,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfComment {
-    private static final POILogger logger = POILogFactory.getLogger(HemfComment.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HemfComment.class);
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
@@ -601,7 +601,7 @@ public class HemfComment {
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {
-                logger.log(POILogger.INFO, "Emf comment with WMF: expected ", wmfData.length,
+                LOG.log(POILogger.INFO, "Emf comment with WMF: expected ", wmfData.length,
                         " bytes - received only ", readBytes, " bytes.");
             }
 

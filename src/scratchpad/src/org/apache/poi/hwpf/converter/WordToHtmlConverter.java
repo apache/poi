@@ -81,7 +81,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
     }
 
-    private static final POILogger logger = POILogFactory.getLogger( WordToHtmlConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( WordToHtmlConverter.class );
 
     private final Deque<BlockProperies> blocksProperies = new LinkedList<>();
 
@@ -737,7 +737,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
         else
         {
-            logger.log( POILogger.WARN, "Table without body starting at [",
+            LOG.log( POILogger.WARN, "Table without body starting at [",
                     Integer.valueOf( table.getStartOffset() ), "; ",
                     Integer.valueOf( table.getEndOffset() ), ")" );
         }

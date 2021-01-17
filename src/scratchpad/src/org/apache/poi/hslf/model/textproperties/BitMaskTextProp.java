@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
  *  (but related) properties
  */
 public abstract class BitMaskTextProp extends TextProp {
-    protected static final POILogger logger = POILogFactory.getLogger(BitMaskTextProp.class);
+    protected static final POILogger LOG = POILogFactory.getLogger(BitMaskTextProp.class);
 
     private String[] subPropNames;
 	private int[] subPropMasks;
@@ -148,8 +148,8 @@ public abstract class BitMaskTextProp extends TextProp {
 	    setWriteMask(writeMask);
 	    super.setValue(maskValue(val));
 	    if (val != super.getValue()) {
-	        logger.log(POILogger.WARN, "Style properties of '", getName(), "' don't match mask - output will be sanitized");
-	        if (logger.check(POILogger.DEBUG)) {
+	        LOG.log(POILogger.WARN, "Style properties of '", getName(), "' don't match mask - output will be sanitized");
+	        if (LOG.check(POILogger.DEBUG)) {
 	            StringBuilder sb = new StringBuilder("The following style attributes of the '")
 						.append(getName()).append("' property will be ignored:\n");
 	            int i=0;
@@ -159,7 +159,7 @@ public abstract class BitMaskTextProp extends TextProp {
 	                }
 	                i++;
 	            }
-	            logger.log(POILogger.DEBUG, sb.toString());
+	            LOG.log(POILogger.DEBUG, sb.toString());
 	        }
 	    }
 	}

@@ -214,7 +214,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     private List<XSSFPictureData> pictures;
 
-    private static final POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
      * cached instance of XSSFCreationHelper for this workbook
@@ -415,7 +415,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 for (CTExternalReference er : this.workbook.getExternalReferences().getExternalReferenceArray()) {
                     ExternalLinksTable el = elIdMap.get(er.getId());
                     if(el == null) {
-                        logger.log(POILogger.WARN, "ExternalLinksTable with r:id ", er.getId(), " was defined, but didn't exist in package, skipping");
+                        LOG.log(POILogger.WARN, "ExternalLinksTable with r:id ", er.getId(), " was defined, but didn't exist in package, skipping");
                         continue;
                     }
                     externalLinks.add(el);
@@ -436,7 +436,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
         XSSFSheet sh = shIdMap.get(ctSheet.getId());
         if(sh == null) {
-            logger.log(POILogger.WARN, "Sheet with name ", ctSheet.getName(), " and r:id ",
+            LOG.log(POILogger.WARN, "Sheet with name ", ctSheet.getName(), " and r:id ",
                     ctSheet.getId(), " was defined, but didn't exist in package, skipping");
             return;
         }
@@ -649,11 +649,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
         CTWorksheet ct = clonedSheet.getCTWorksheet();
         if(ct.isSetLegacyDrawing()) {
-            logger.log(POILogger.WARN, "Cloning sheets with comments is not yet supported.");
+            LOG.log(POILogger.WARN, "Cloning sheets with comments is not yet supported.");
             ct.unsetLegacyDrawing();
         }
         if (ct.isSetPageSetup()) {
-            logger.log(POILogger.WARN, "Cloning sheets with page setup is not yet supported.");
+            LOG.log(POILogger.WARN, "Cloning sheets with page setup is not yet supported.");
             ct.unsetPageSetup();
         }
 

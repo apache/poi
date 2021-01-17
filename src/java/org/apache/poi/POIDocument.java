@@ -60,7 +60,7 @@ public abstract class POIDocument implements Closeable {
     private DirectoryNode directory;
 
     /** For our own logging use */
-    private static final POILogger logger = POILogFactory.getLogger(POIDocument.class);
+    private static final POILogger LOG = POILogFactory.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized;
@@ -162,12 +162,12 @@ public abstract class POIDocument implements Closeable {
             if (clazz.isInstance(ps)) {
                 return (T)ps;
             } else if (ps != null) {
-                logger.log(POILogger.WARN, localName+" property set came back with wrong class - "+ps.getClass().getName());
+                LOG.log(POILogger.WARN, localName+" property set came back with wrong class - "+ps.getClass().getName());
             } else {
-                logger.log(POILogger.WARN, localName+" property set came back as null");
+                LOG.log(POILogger.WARN, localName+" property set came back as null");
             }
         } catch (IOException e) {
-            logger.log(POILogger.ERROR, "can't retrieve property set", e);
+            LOG.log(POILogger.ERROR, "can't retrieve property set", e);
         }
         return null;
     }
@@ -333,9 +333,9 @@ public abstract class POIDocument implements Closeable {
             // Create or Update the Property Set stream in the POIFS
             outFS.createOrUpdateDocument(bIn, name);
 
-            logger.log(POILogger.INFO, "Wrote property set ", name, " of size ", data.length);
+            LOG.log(POILogger.INFO, "Wrote property set ", name, " of size ", data.length);
         } catch(WritingNotSupportedException ignored) {
-            logger.log( POILogger.ERROR, "Couldn't write property set with name ", name, " as not supported by HPSF yet");
+            LOG.log( POILogger.ERROR, "Couldn't write property set with name ", name, " as not supported by HPSF yet");
         }
     }
 

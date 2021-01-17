@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
 public final class HSSFRowShifter extends RowShifter {
-    private static final POILogger logger = POILogFactory.getLogger(HSSFRowShifter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HSSFRowShifter.class);
 
     public HSSFRowShifter(HSSFSheet sh) {
         super(sh);

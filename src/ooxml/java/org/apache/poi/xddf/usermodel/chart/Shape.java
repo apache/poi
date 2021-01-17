@@ -35,7 +35,7 @@ public enum Shape {
         this.underlying = grouping;
     }
 
-    private final static HashMap<STShape.Enum, Shape> reverse = new HashMap<>();
+    private static final HashMap<STShape.Enum, Shape> reverse = new HashMap<>();
     static {
         for (Shape value : values()) {
             reverse.put(value.underlying, value);

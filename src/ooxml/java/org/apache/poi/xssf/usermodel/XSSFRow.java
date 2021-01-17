@@ -45,8 +45,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * High level representation of a row of a spreadsheet.
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
-    //private static final POILogger _logger = POILogFactory.getLogger(XSSFRow.class);
-
     /**
      * the xml bean containing all cell definitions for this row
      */

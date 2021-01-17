@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class ArrayRecord extends SharedValueRecordBase {
 
-	public final static short sid = 0x0221;
+	public static final short sid = 0x0221;
 	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
 	private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
 

@@ -103,7 +103,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * </p>
  */
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFSheet.class);
 
     private static final double DEFAULT_ROW_HEIGHT = 15.0;
     private static final double DEFAULT_MARGIN_HEADER = 0.3;
@@ -556,7 +556,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     break;
                 }
             }
-            logger.log(POILogger.ERROR, "Can't find drawing with id=", ctDrawing.getId(), " in the list of the sheet's relationships");
+            LOG.log(POILogger.ERROR, "Can't find drawing with id=", ctDrawing.getId(), " in the list of the sheet's relationships");
         }
         return null;
     }
@@ -628,7 +628,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 }
             }
             if(drawing == null){
-                logger.log(POILogger.ERROR, "Can't find VML drawing with id=", id, " in the list of the sheet's relationships");
+                LOG.log(POILogger.ERROR, "Can't find VML drawing with id=", id, " in the list of the sheet's relationships");
             }
         }
         return drawing;
@@ -4676,12 +4676,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                         }
                         coo = coos.getOleObjectArray(0);
                     } catch (XmlException e) {
-                        logger.log(POILogger.INFO, "can't parse CTOleObjects", e);
+                        LOG.log(POILogger.INFO, "can't parse CTOleObjects", e);
                     } finally {
                         try {
                             reader.close();
                         } catch (XMLStreamException e) {
-                            logger.log(POILogger.INFO, "can't close reader", e);
+                            LOG.log(POILogger.INFO, "can't close reader", e);
                         }
                     }
                 }

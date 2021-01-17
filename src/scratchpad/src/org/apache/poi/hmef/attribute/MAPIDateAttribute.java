@@ -33,25 +33,25 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * A pure-MAPI attribute holding a Date, which applies 
+ * A pure-MAPI attribute holding a Date, which applies
  * to a {@link HMEFMessage} or one of its {@link Attachment}s.
- * 
+ *
  * Timestamps are usually given in UTC.
- * 
+ *
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc433482(v=exchg.80).aspx">[MS-OXOMSG]: Email Object Protocol</a>
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx">[MS-OXPROPS]: Exchange Server Protocols Master Property List</a>
  */
 public final class MAPIDateAttribute extends MAPIAttribute {
-   private final static POILogger logger = POILogFactory.getLogger(MAPIDateAttribute.class);
-   private Date data;
-   
+   private static final POILogger LOG = POILogFactory.getLogger(MAPIDateAttribute.class);
+   private final Date data;
+
    /**
     * Constructs a single new date attribute from the id, type,
     *  and the contents of the stream
     */
    protected MAPIDateAttribute(MAPIProperty property, int type, byte[] data) {
       super(property, type, data);
-      
+
       // The value is a 64 bit Windows Filetime
       this.data = Filetime.filetimeToDate(
             LittleEndian.getLong(data, 0)
@@ -61,14 +61,14 @@ public final class MAPIDateAttribute extends MAPIAttribute {
    public Date getDate() {
       return this.data;
    }
-   
+
    public String toString() {
        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
        return getProperty() + " " + df.format(data);
    }
-   
+
    /**
     * Returns the Date of a Attribute, converting as appropriate
     */
@@ -79,8 +79,8 @@ public final class MAPIDateAttribute extends MAPIAttribute {
       if(attr instanceof MAPIDateAttribute) {
          return ((MAPIDateAttribute)attr).getDate();
       }
-      
-      logger.log(POILogger.WARN, "Warning, non date property found: ", attr);
+
+      LOG.log(POILogger.WARN, "Warning, non date property found: ", attr);
       return null;
   }
 }

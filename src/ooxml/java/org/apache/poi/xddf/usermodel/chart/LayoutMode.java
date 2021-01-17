@@ -31,7 +31,7 @@ public enum LayoutMode {
         this.underlying = layoutMode;
     }
 
-    private final static HashMap<STLayoutMode.Enum, LayoutMode> reverse = new HashMap<>();
+    private static final HashMap<STLayoutMode.Enum, LayoutMode> reverse = new HashMap<>();
     static {
         for (LayoutMode value : values()) {
             reverse.put(value.underlying, value);

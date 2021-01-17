@@ -46,7 +46,7 @@ import org.apache.poi.util.StringUtil;
  */
 public class CurrentUserAtom
 {
-	private final static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
+	private static final POILogger LOG = POILogFactory.getLogger(CurrentUserAtom.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
@@ -177,7 +177,7 @@ public class CurrentUserAtom
 		long usernameLen = LittleEndian.getUShort(_contents,20);
 		if(usernameLen > 512) {
 			// Handle the case of it being garbage
-			logger.log(POILogger.WARN, "Warning - invalid username length ", usernameLen, " found, treating as if there was no username set");
+			LOG.log(POILogger.WARN, "Warning - invalid username length ", usernameLen, " found, treating as if there was no username set");
 			usernameLen = 0;
 		}
 

@@ -34,7 +34,7 @@ public enum ErrorValueType {
         this.underlying = valueType;
     }
 
-    private final static HashMap<STErrValType.Enum, ErrorValueType> reverse = new HashMap<>();
+    private static final HashMap<STErrValType.Enum, ErrorValueType> reverse = new HashMap<>();
     static {
         for (ErrorValueType value : values()) {
             reverse.put(value.underlying, value);

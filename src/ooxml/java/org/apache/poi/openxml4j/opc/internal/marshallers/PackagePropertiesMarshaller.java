@@ -34,13 +34,13 @@ import org.w3c.dom.Element;
  * Package properties marshaller.
  */
 public class PackagePropertiesMarshaller implements PartMarshaller {
-    private final static NamespaceImpl namespaceDC =
+    private static final NamespaceImpl namespaceDC =
             new NamespaceImpl("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
-    private final static NamespaceImpl namespaceCoreProperties =
+    private static final NamespaceImpl namespaceCoreProperties =
             new NamespaceImpl("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
-    private final static NamespaceImpl namespaceDcTerms =
+    private static final NamespaceImpl namespaceDcTerms =
             new NamespaceImpl("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
-    private final static NamespaceImpl namespaceXSI =
+    private static final NamespaceImpl namespaceXSI =
             new NamespaceImpl("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 
     protected static final String KEYWORD_CATEGORY = "category";

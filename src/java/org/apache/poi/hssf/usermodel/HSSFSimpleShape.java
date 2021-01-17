@@ -47,32 +47,32 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
     // The commented out ones haven't been tested yet or aren't supported
     // by HSSFSimpleShape.
 
-    public final static short       OBJECT_TYPE_LINE               = HSSFShapeTypes.Line;
-    public final static short       OBJECT_TYPE_RECTANGLE          = HSSFShapeTypes.Rectangle;
-    public final static short       OBJECT_TYPE_OVAL               = HSSFShapeTypes.Ellipse;
-    public final static short       OBJECT_TYPE_ARC                = HSSFShapeTypes.Arc;
-    //    public final static short       OBJECT_TYPE_CHART              = 5;
-//    public final static short       OBJECT_TYPE_TEXT               = 6;
-//    public final static short       OBJECT_TYPE_BUTTON             = 7;
-    public final static short       OBJECT_TYPE_PICTURE            = HSSFShapeTypes.PictureFrame;
+    public static final short       OBJECT_TYPE_LINE               = HSSFShapeTypes.Line;
+    public static final short       OBJECT_TYPE_RECTANGLE          = HSSFShapeTypes.Rectangle;
+    public static final short       OBJECT_TYPE_OVAL               = HSSFShapeTypes.Ellipse;
+    public static final short       OBJECT_TYPE_ARC                = HSSFShapeTypes.Arc;
+    //    public static final short       OBJECT_TYPE_CHART              = 5;
+//    public static final short       OBJECT_TYPE_TEXT               = 6;
+//    public static final short       OBJECT_TYPE_BUTTON             = 7;
+    public static final short       OBJECT_TYPE_PICTURE            = HSSFShapeTypes.PictureFrame;
 
-//    public final static short       OBJECT_TYPE_POLYGON            = 9;
-//    public final static short       OBJECT_TYPE_CHECKBOX           = 11;
-//    public final static short       OBJECT_TYPE_OPTION_BUTTON      = 12;
-//    public final static short       OBJECT_TYPE_EDIT_BOX           = 13;
-//    public final static short       OBJECT_TYPE_LABEL              = 14;
-//    public final static short       OBJECT_TYPE_DIALOG_BOX         = 15;
-//    public final static short       OBJECT_TYPE_SPINNER            = 16;
-//    public final static short       OBJECT_TYPE_SCROLL_BAR         = 17;
-//    public final static short       OBJECT_TYPE_LIST_BOX           = 18;
-//    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
-    public final static short       OBJECT_TYPE_COMBO_BOX          = HSSFShapeTypes.HostControl;
-    public final static short       OBJECT_TYPE_COMMENT            = HSSFShapeTypes.TextBox;
-    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
+//    public static final short       OBJECT_TYPE_POLYGON            = 9;
+//    public static final short       OBJECT_TYPE_CHECKBOX           = 11;
+//    public static final short       OBJECT_TYPE_OPTION_BUTTON      = 12;
+//    public static final short       OBJECT_TYPE_EDIT_BOX           = 13;
+//    public static final short       OBJECT_TYPE_LABEL              = 14;
+//    public static final short       OBJECT_TYPE_DIALOG_BOX         = 15;
+//    public static final short       OBJECT_TYPE_SPINNER            = 16;
+//    public static final short       OBJECT_TYPE_SCROLL_BAR         = 17;
+//    public static final short       OBJECT_TYPE_LIST_BOX           = 18;
+//    public static final short       OBJECT_TYPE_GROUP_BOX          = 19;
+    public static final short       OBJECT_TYPE_COMBO_BOX          = HSSFShapeTypes.HostControl;
+    public static final short       OBJECT_TYPE_COMMENT            = HSSFShapeTypes.TextBox;
+    public static final short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
-    public final static int WRAP_SQUARE = 0;
-    public final static int WRAP_BY_POINTS = 1;
-    public final static int WRAP_NONE = 2;
+    public static final int WRAP_SQUARE = 0;
+    public static final int WRAP_BY_POINTS = 1;
+    public static final int WRAP_NONE = 2;
 
     private TextObjectRecord _textObjectRecord;
 
@@ -251,7 +251,7 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
         EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeType((short) value);
     }
-    
+
     private TextObjectRecord getOrCreateTextObjRecord(){
         if (getTextObjectRecord() == null){
             _textObjectRecord = createTextObjRecord();

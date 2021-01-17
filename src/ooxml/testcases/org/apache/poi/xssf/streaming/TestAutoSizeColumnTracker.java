@@ -59,8 +59,8 @@ class TestAutoSizeColumnTracker {
         _columns.add(3);
         columns = Collections.unmodifiableSortedSet(_columns);
     }
-    private final static String SHORT_MESSAGE = "short";
-    private final static String LONG_MESSAGE = "This is a test of a long message! This is a test of a long message!";
+    private static final String SHORT_MESSAGE = "short";
+    private static final String LONG_MESSAGE = "This is a test of a long message! This is a test of a long message!";
 
     @BeforeEach
     void setUpSheetAndWorkbook() {

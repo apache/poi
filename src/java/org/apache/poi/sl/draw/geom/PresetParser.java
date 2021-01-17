@@ -55,7 +55,7 @@ class PresetParser {
         }
     }
 
-    private final static POILogger LOG = POILogFactory.getLogger(PresetParser.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PresetParser.class);
 
     private Mode mode;
 

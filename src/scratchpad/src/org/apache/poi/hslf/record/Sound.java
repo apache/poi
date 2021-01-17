@@ -68,14 +68,14 @@ public final class Sound extends RecordContainer {
         if(_children[0] instanceof CString) {
             _name = (CString)_children[0];
         } else {
-            logger.log(POILogger.ERROR, "First child record wasn't a CString, was of type ", _children[0].getRecordType());
+            LOG.log(POILogger.ERROR, "First child record wasn't a CString, was of type ", _children[0].getRecordType());
         }
 
         // Second child should be the ExOleObjAtom
         if (_children[1] instanceof CString) {
             _type = (CString)_children[1];
         } else {
-            logger.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
+            LOG.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
         }
 
         for (int i = 2; i < _children.length; i++) {

@@ -39,8 +39,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * See page 811 of the june 08 binary docs.
  */
 public final class TblPtg extends ControlPtg {
-    private final static int  SIZE = 5;
-    public final static short sid  = 0x02;
+    private static final int  SIZE = 5;
+    public static final short sid  = 0x02;
 
     /** The row number of the upper left corner */
     private final int field_1_first_row;

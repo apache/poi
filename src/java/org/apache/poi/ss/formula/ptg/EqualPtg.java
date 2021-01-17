@@ -22,7 +22,7 @@ package org.apache.poi.ss.formula.ptg;
  * @author  andy
  */
 public final class EqualPtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x0b;
+    public static final byte sid  = 0x0b;
 
     public static final EqualPtg instance = new EqualPtg();
 

@@ -285,7 +285,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
             in.readFully(template_params);
         } else {
-            logger.log(POILogger.WARN, "CF Rule v12 template params length should be 0 or 16, found " + template_param_length);
+            LOG.log(POILogger.WARN, "CF Rule v12 template params length should be 0 or 16, found " + template_param_length);
             in.readRemainder();
         }
 

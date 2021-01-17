@@ -27,13 +27,13 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 public final class ChunkStream extends Stream {
-	private final static POILogger logger = POILogFactory.getLogger(ChunkStream.class);
-	
-	private ChunkFactory chunkFactory;
+	private static final POILogger LOG = POILogFactory.getLogger(ChunkStream.class);
+
+	private final ChunkFactory chunkFactory;
 	/** All the Chunks we contain */
 	private Chunk[] chunks;
 
-	protected ChunkStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
+	ChunkStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
 		super(pointer, store);
 		this.chunkFactory = chunkFactory;
 
@@ -66,14 +66,14 @@ public final class ChunkStream extends Stream {
 
 					pos += chunk.getOnDiskSize();
 				} else {
-					logger.log(POILogger.WARN, "Needed ", headerSize, " bytes to create the next chunk header, but only found ", (contents.length-pos), " bytes, ignoring rest of data");
+					LOG.log(POILogger.WARN, "Needed ", headerSize, " bytes to create the next chunk header, but only found ", (contents.length-pos), " bytes, ignoring rest of data");
 					pos = contents.length;
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			logger.log(POILogger.ERROR, "Failed to create chunk at ", pos, ", ignoring rest of data." + e);
+			LOG.log(POILogger.ERROR, "Failed to create chunk at ", pos, ", ignoring rest of data." + e);
 		}
 
 		chunks = chunksA.toArray(new Chunk[0]);

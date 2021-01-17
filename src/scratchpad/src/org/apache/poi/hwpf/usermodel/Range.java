@@ -53,7 +53,7 @@ import org.apache.poi.util.POILogger;
  */
 public class Range {
 
-    private static final POILogger logger = POILogFactory.getLogger( Range.class );
+    private static final POILogger LOG = POILogFactory.getLogger( Range.class );
 
     /**
      * @deprecated POI 3.8 beta 5
@@ -824,7 +824,7 @@ public class Range {
         initAll();
         if ( tableEndInclusive >= this._parEnd )
         {
-            logger.log( POILogger.WARN, "The table's bounds ", "[",
+            LOG.log( POILogger.WARN, "The table's bounds ", "[",
                     this._parStart, "; ", tableEndInclusive, ")",
                     " fall outside of this Range paragraphs numbers [",
                     this._parStart, "; ", this._parEnd, ")" );

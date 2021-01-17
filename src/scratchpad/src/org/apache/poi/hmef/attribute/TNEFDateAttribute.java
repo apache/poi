@@ -39,16 +39,16 @@ import org.apache.poi.util.POILogger;
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFDateAttribute extends TNEFAttribute {
-   private final static POILogger logger = POILogFactory.getLogger(TNEFDateAttribute.class);
-   private Date data;
-   
+   private static final POILogger LOG = POILogFactory.getLogger(TNEFDateAttribute.class);
+   private final Date data;
+
    /**
     * Constructs a single new date attribute from the id, type,
     *  and the contents of the stream
     */
    protected TNEFDateAttribute(int id, int type, InputStream inp) throws IOException {
       super(id, type, inp);
-      
+
       byte[] binData = getData();
       if(binData.length == 8) {
          // The value is a 64 bit Windows Filetime
@@ -75,15 +75,15 @@ public final class TNEFDateAttribute extends TNEFAttribute {
    public Date getDate() {
       return this.data;
    }
-   
+
    public String toString() {
        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
-       df.setTimeZone(LocaleUtil.TIMEZONE_UTC);       
+       df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       return "Attribute " + getProperty() + ", type=" + getType() +
-             ", date=" + df.format(data); 
+             ", date=" + df.format(data);
    }
-   
+
    /**
     * Returns the Date of a Attribute, converting as appropriate
     */
@@ -94,8 +94,8 @@ public final class TNEFDateAttribute extends TNEFAttribute {
       if(attr instanceof TNEFDateAttribute) {
          return ((TNEFDateAttribute)attr).getDate();
       }
-      
-      logger.log(POILogger.WARN, "Warning, non date property found: ", attr);
+
+      LOG.log(POILogger.WARN, "Warning, non date property found: ", attr);
       return null;
   }
 }

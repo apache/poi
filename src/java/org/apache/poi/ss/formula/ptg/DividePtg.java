@@ -21,7 +21,7 @@ package org.apache.poi.ss.formula.ptg;
  * This PTG implements the standard binomial divide "/"
  */
 public final class DividePtg extends ValueOperatorPtg {
-    public final static byte sid  = 0x06;
+    public static final byte sid  = 0x06;
 
     public static final DividePtg instance = new DividePtg();
 

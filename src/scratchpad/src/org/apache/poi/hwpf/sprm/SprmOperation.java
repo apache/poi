@@ -41,8 +41,8 @@ public final class SprmOperation
     private static final BitField BITFIELD_TYPE = BitFieldFactory
             .getInstance( 0x1c00 );
 
-    final static private short SPRM_LONG_PARAGRAPH = (short) 0xc615;
-    final static private short SPRM_LONG_TABLE = (short) 0xd608;
+    static final private short SPRM_LONG_PARAGRAPH = (short) 0xc615;
+    static final private short SPRM_LONG_TABLE = (short) 0xd608;
 
     public static final int TYPE_PAP = 1;
     public static final int TYPE_CHP = 2;

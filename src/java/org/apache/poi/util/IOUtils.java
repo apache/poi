@@ -37,7 +37,7 @@ import org.apache.poi.EmptyFileException;
 
 @Internal
 public final class IOUtils {
-    private static final POILogger logger = POILogFactory.getLogger( IOUtils.class );
+    private static final POILogger LOG = POILogFactory.getLogger( IOUtils.class );
 
     /**
      * The default buffer size to use for the skip() methods.
@@ -395,7 +395,7 @@ public final class IOUtils {
         try {
             closeable.close();
         } catch ( Exception exc ) {
-            logger.log( POILogger.ERROR, "Unable to close resource: ", exc,
+            LOG.log( POILogger.ERROR, "Unable to close resource: ", exc,
                     exc );
         }
     }

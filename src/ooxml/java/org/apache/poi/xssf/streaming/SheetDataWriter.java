@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * so that it was renamed to "SheetDataWriter"
  */
 public class SheetDataWriter implements Closeable {
-    private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(SheetDataWriter.class);
 
     private final File _fd;
     protected final Writer _out;
@@ -186,7 +186,7 @@ public class SheetDataWriter implements Closeable {
     @Override
     protected void finalize() throws Throwable {
         if (_fd.exists() && !_fd.delete()) {
-            logger.log(POILogger.ERROR, "Can't delete temporary encryption file: ", _fd);
+            LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", _fd);
         }
     }
 

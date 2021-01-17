@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 public final class MemFuncPtg extends OperandPtg {
 
-	public final static byte sid = 0x29;
+	public static final byte sid = 0x29;
 	private final int field_1_len_ref_subexpression;
 
 	/**

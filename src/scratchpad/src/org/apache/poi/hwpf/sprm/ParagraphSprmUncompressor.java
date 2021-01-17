@@ -40,11 +40,9 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-public final class ParagraphSprmUncompressor
-  extends SprmUncompressor
-{
-    private static final POILogger logger = POILogFactory
-            .getLogger( ParagraphSprmUncompressor.class );
+public final class ParagraphSprmUncompressor extends SprmUncompressor {
+
+    private static final POILogger LOG = POILogFactory.getLogger( ParagraphSprmUncompressor.class );
 
   public ParagraphSprmUncompressor()
   {
@@ -71,7 +69,7 @@ public final class ParagraphSprmUncompressor
           }
           catch ( Exception exc )
           {
-              logger.log(
+              LOG.log(
                       POILogger.ERROR,
                       "Unable to apply SPRM operation '", sprm.getOperation(), "': ", exc );
           }
@@ -413,7 +411,7 @@ public final class ParagraphSprmUncompressor
           newPAP.setRsid( sprm.getOperand() );
           break;
         default:
-            logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: ", sprm );
+            LOG.log( POILogger.DEBUG, "Unknown PAP sprm ignored: ", sprm );
             break;
         }
   }

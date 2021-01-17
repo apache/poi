@@ -32,25 +32,25 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * An variant of SXSSFWorkbook that avoids generating a temporary file and writes data directly to
  * the provided OutputStream.
- * 
+ *
  * This variant is experimental and APIs may change at short notice.
- * 
+ *
  * @since 5.0.0
  */
 @Beta
 public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
-    private static final POILogger logger = POILogFactory.getLogger(DeferredSXSSFWorkbook.class);
-    
+    private static final POILogger LOG = POILogFactory.getLogger(DeferredSXSSFWorkbook.class);
+
     public DeferredSXSSFWorkbook() {
         this(null);
     }
 
     public DeferredSXSSFWorkbook(int rowAccessWindowSize) { this(null, rowAccessWindowSize); }
-    
+
     public DeferredSXSSFWorkbook(XSSFWorkbook workbook) {
         this(workbook, SXSSFWorkbook.DEFAULT_WINDOW_SIZE);
     }
-    
+
     public DeferredSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
         super(workbook, rowAccessWindowSize, false, false);
     }
@@ -60,11 +60,11 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
     }
-    
+
     protected StreamingSheetWriter createSheetDataWriter(OutputStream out) throws IOException {
         return new StreamingSheetWriter(out);
     }
-    
+
     @Override
     protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
         DeferredSXSSFSheet ssxSheet = (DeferredSXSSFSheet) sxSheet;
@@ -72,7 +72,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
             ssxSheet.writeRows(output);
         };
     }
-    
+
     @Override
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet) {
         final DeferredSXSSFSheet sxSheet;
@@ -84,15 +84,15 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
         registerSheetMapping(sxSheet, xSheet);
         return sxSheet;
     }
-    
+
     public DeferredSXSSFSheet createSheet() {
         return (DeferredSXSSFSheet) super.createSheet();
     }
-    
+
     public DeferredSXSSFSheet createSheet(String sheetname) {
         return (DeferredSXSSFSheet) super.createSheet(sheetname);
     }
-    
+
     /**
      * Returns an iterator of the sheets in the workbook in sheet order. Includes hidden and very hidden sheets.
      *
@@ -102,7 +102,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     public Iterator<Sheet> sheetIterator() {
         return new SheetIterator<>();
     }
-    
+
     /**
      * Gets the sheet at the given index for streaming.
      *
@@ -118,11 +118,11 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
             return (DeferredSXSSFSheet) sxSheet;
         }
     }
-    
+
     public XSSFSheet getXSSFSheet(String name) {
         return _wb.getSheet(name);
     }
-    
+
     /**
      * Gets sheet with the given name for streaming.
      *
@@ -138,7 +138,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
             return sxSheet;
         }
     }
-    
+
     /**
      * Removes sheet at the given index
      *
@@ -149,19 +149,19 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
         // Get the sheet to be removed
         XSSFSheet xSheet = _wb.getSheetAt(index);
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
-        
+
         // De-register it
         _wb.removeSheetAt(index);
-        
+
         // The sheet may not be a streaming sheet and is not mapped
         if (sxSheet != null) {
             deregisterSheetMapping(xSheet);
-            
+
             // Clean up temporary resources
             try {
                 sxSheet.dispose();
             } catch (IOException e) {
-                logger.log(POILogger.WARN, e);
+                LOG.log(POILogger.WARN, e);
             }
         }
     }

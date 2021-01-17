@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
  * @see ContentTypeManager
  */
 public class ZipContentTypeManager extends ContentTypeManager {
-    private final static POILogger logger = POILogFactory.getLogger(ZipContentTypeManager.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ZipContentTypeManager.class);
 
 	/**
 	 * Delegate constructor to the super constructor.
@@ -71,7 +71,7 @@ public class ZipContentTypeManager extends ContentTypeManager {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException ioe) {
-			logger.log(POILogger.ERROR, "Cannot write: ", CONTENT_TYPES_PART_NAME,
+			LOG.log(POILogger.ERROR, "Cannot write: ", CONTENT_TYPES_PART_NAME,
 					" in Zip !", ioe);
 			return false;
 		}

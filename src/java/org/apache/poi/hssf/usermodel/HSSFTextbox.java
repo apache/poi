@@ -38,25 +38,25 @@ import org.apache.poi.hssf.record.TextObjectRecord;
  * A textbox is a shape that may hold a rich text string.
  */
 public class HSSFTextbox extends HSSFSimpleShape {
-    public final static short OBJECT_TYPE_TEXT = 6;
+    public static final short OBJECT_TYPE_TEXT = 6;
 
     /**
      * How to align text horizontally
      */
-    public final static short HORIZONTAL_ALIGNMENT_LEFT = 1;
-    public final static short HORIZONTAL_ALIGNMENT_CENTERED = 2;
-    public final static short HORIZONTAL_ALIGNMENT_RIGHT = 3;
-    public final static short HORIZONTAL_ALIGNMENT_JUSTIFIED = 4;
-    public final static short HORIZONTAL_ALIGNMENT_DISTRIBUTED = 7;
+    public static final short HORIZONTAL_ALIGNMENT_LEFT = 1;
+    public static final short HORIZONTAL_ALIGNMENT_CENTERED = 2;
+    public static final short HORIZONTAL_ALIGNMENT_RIGHT = 3;
+    public static final short HORIZONTAL_ALIGNMENT_JUSTIFIED = 4;
+    public static final short HORIZONTAL_ALIGNMENT_DISTRIBUTED = 7;
 
     /**
      * How to align text vertically
      */
-    public final static short VERTICAL_ALIGNMENT_TOP = 1;
-    public final static short VERTICAL_ALIGNMENT_CENTER = 2;
-    public final static short VERTICAL_ALIGNMENT_BOTTOM = 3;
-    public final static short VERTICAL_ALIGNMENT_JUSTIFY = 4;
-    public final static short VERTICAL_ALIGNMENT_DISTRIBUTED = 7;
+    public static final short VERTICAL_ALIGNMENT_TOP = 1;
+    public static final short VERTICAL_ALIGNMENT_CENTER = 2;
+    public static final short VERTICAL_ALIGNMENT_BOTTOM = 3;
+    public static final short VERTICAL_ALIGNMENT_JUSTIFY = 4;
+    public static final short VERTICAL_ALIGNMENT_DISTRIBUTED = 7;
 
     public HSSFTextbox(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord) {
         super(spContainer, objRecord, textObjectRecord);

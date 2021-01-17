@@ -98,7 +98,7 @@ public final class TextRulerAtom extends RecordAtom {
             // Get the record data.
             read(leis);
         } catch (IOException e){
-            logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: ", e.getMessage());
+            LOG.log(POILogger.ERROR, "Failed to parse TextRulerAtom: ", e.getMessage());
         }
     }
 

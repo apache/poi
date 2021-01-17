@@ -102,7 +102,7 @@ public class SXSSFWorkbook implements Workbook {
      * via {@link SXSSFSheet#getRow} anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
-    private static final POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
+    private static final POILogger LOG = POILogFactory.getLogger(SXSSFWorkbook.class);
 
     protected final XSSFWorkbook _wb;
 
@@ -839,7 +839,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             sxSheet.dispose();
         } catch (IOException e) {
-            logger.log(POILogger.WARN, e);
+            LOG.log(POILogger.WARN, e);
         }
     }
 
@@ -935,7 +935,7 @@ public class SXSSFWorkbook implements Workbook {
                 SheetDataWriter _writer = sheet.getSheetDataWriter();
                 if (_writer != null) _writer.close();
             } catch (IOException e) {
-                logger.log(POILogger.WARN,
+                LOG.log(POILogger.WARN,
                         "An exception occurred while closing sheet data writer for sheet "
                                 + sheet.getSheetName() + ".", e);
             }
@@ -998,7 +998,7 @@ public class SXSSFWorkbook implements Workbook {
             try {
                 success = sheet.dispose() && success;
             } catch (IOException e) {
-                logger.log(POILogger.WARN, e);
+                LOG.log(POILogger.WARN, e);
                 success = false;
             }
         }

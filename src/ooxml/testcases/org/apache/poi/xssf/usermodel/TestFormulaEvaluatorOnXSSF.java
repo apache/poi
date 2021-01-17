@@ -58,7 +58,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  */
 public final class TestFormulaEvaluatorOnXSSF {
-    private static final POILogger logger = POILogFactory.getLogger(TestFormulaEvaluatorOnXSSF.class);
+    private static final POILogger LOG = POILogFactory.getLogger(TestFormulaEvaluatorOnXSSF.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;
@@ -244,12 +244,12 @@ public final class TestFormulaEvaluatorOnXSSF {
 	 */
 	private static String getTargetFunctionName(Row r) {
 		if(r == null) {
-            logger.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
+            LOG.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
 			return null;
 		}
 		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
 		if(cell == null) {
-            logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
+            LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
 		if(cell.getCellType() == CellType.BLANK) {

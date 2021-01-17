@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class IntersectionPtg extends OperationPtg {
-	public final static byte sid = 0x0f;
+	public static final byte sid = 0x0f;
 
 	public static final IntersectionPtg instance = new IntersectionPtg();
 

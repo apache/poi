@@ -36,17 +36,17 @@ public final class HSSFFont implements Font {
     /**
      * Normal boldness (not bold)
      */
-    final static short BOLDWEIGHT_NORMAL = 0x190;
+    static final short BOLDWEIGHT_NORMAL = 0x190;
 
     /**
      * Bold boldness (bold)
      */
-    final static short BOLDWEIGHT_BOLD = 0x2bc;
+    static final short BOLDWEIGHT_BOLD = 0x2bc;
 
     /**
      * Arial font
      */
-    public final static String FONT_ARIAL = "Arial";
+    public static final String FONT_ARIAL = "Arial";
 
 
     private FontRecord font;

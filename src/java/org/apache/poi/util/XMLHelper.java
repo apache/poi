@@ -74,7 +74,7 @@ public final class XMLHelper {
     };
 
 
-    private static POILogger logger = POILogFactory.getLogger(XMLHelper.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XMLHelper.class);
     private static long lastLog;
 
     // DocumentBuilderFactory.newDocumentBuilder is thread-safe
@@ -290,7 +290,7 @@ public final class XMLHelper {
 
     private static void logThrowable(Throwable t, String message, String name) {
         if (System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
-            logger.log(POILogger.WARN, message + " [log suppressed for 5 minutes]", name, t);
+            LOG.log(POILogger.WARN, message + " [log suppressed for 5 minutes]", name, t);
             lastLog = System.currentTimeMillis();
         }
     }
@@ -326,7 +326,7 @@ public final class XMLHelper {
                     ':' + ex.getColumnNumber() +
                     ':' + ex.getMessage();
 
-            logger.log(type, message, ex);
+            LOG.log(type, message, ex);
         }
     }
 

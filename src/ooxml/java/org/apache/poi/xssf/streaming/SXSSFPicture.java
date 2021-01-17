@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
  * The main change is to access the rows in the SXSSF sheet, not the always empty rows in the XSSF sheet when checking the row heights.
  */
 public final class SXSSFPicture implements Picture {
-    private static final POILogger logger = POILogFactory.getLogger(SXSSFPicture.class);
+    private static final POILogger LOG = POILogFactory.getLogger(SXSSFPicture.class);
     /**
      * Column width measured as the number of characters of the maximum digit width of the
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
@@ -58,7 +58,7 @@ public final class SXSSFPicture implements Picture {
      *
      * This value is the same for default font in Office 2007 (Calibri) and Office 2003 and earlier (Arial)
      */
-    private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
+    private static final float DEFAULT_COLUMN_WIDTH = 9.140625f;
 
     private final SXSSFWorkbook _wb;
     private final XSSFPicture _picture;
@@ -109,7 +109,7 @@ public final class SXSSFPicture implements Picture {
         XSSFClientAnchor anchor = getClientAnchor();
         XSSFClientAnchor pref = getPreferredSize(scale);
         if (anchor == null || pref == null) {
-            logger.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
             return;
         }
 
@@ -144,7 +144,7 @@ public final class SXSSFPicture implements Picture {
     public XSSFClientAnchor getPreferredSize(double scale){
         XSSFClientAnchor anchor = getClientAnchor();
         if (anchor == null) {
-            logger.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
             return null;
         }
 
@@ -222,7 +222,7 @@ public final class SXSSFPicture implements Picture {
             return ImageUtils.getImageDimension(part.getInputStream(), type);
         } catch (IOException e){
             //return a "singulariry" if ImageIO failed to read the image
-            logger.log(POILogger.WARN, e);
+            LOG.log(POILogger.WARN, e);
             return new Dimension();
         }
     }
@@ -266,7 +266,7 @@ public final class SXSSFPicture implements Picture {
         XSSFAnchor a = getAnchor();
         return (a instanceof XSSFClientAnchor) ? (XSSFClientAnchor)a : null;
     }
-    
+
     public XSSFDrawing getDrawing() {
         return _picture.getDrawing();
     }
@@ -300,7 +300,7 @@ public final class SXSSFPicture implements Picture {
     public void setFillColor(int red, int green, int blue) {
         _picture.setFillColor(red, green, blue);
     }
-    
+
     @Override
     public void setLineStyleColor( int red, int green, int blue ) {
         _picture.setLineStyleColor(red, green, blue);

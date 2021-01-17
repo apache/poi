@@ -34,12 +34,12 @@ import org.apache.poi.util.POILogger;
  * Read Quill Contents (/Quill/QuillSub/CONTENTS) from an HPBF (Publisher .pub) document
  */
 public final class QuillContents extends HPBFPart {
-	private static POILogger logger = POILogFactory.getLogger(QuillContents.class);
+	private static final POILogger LOG = POILogFactory.getLogger(QuillContents.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
-	private QCBit[] bits;
+	private final QCBit[] bits;
 
 	public QuillContents(DirectoryNode baseDir) throws IOException {
 		super(baseDir, PATH);
@@ -79,7 +79,7 @@ public final class QuillContents extends HPBFPart {
 						bits[i] = QCPLCBit.createQCPLCBit(thingType, bitType, bitData);
 					} catch (ArrayIndexOutOfBoundsException e) {
 						// bug 60685: fall back so that the rest of the document can be read
-						logger.log(POILogger.WARN, "Unable to read Quill Contents PLC Bit record. Ignoring this record.");
+						LOG.log(POILogger.WARN, "Unable to read Quill Contents PLC Bit record. Ignoring this record.");
 						bits[i] = new UnknownQCBit(thingType, bitType, bitData);
 					}
 				} else {

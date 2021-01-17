@@ -38,11 +38,12 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * 
+ *
  */
 public class HSSFPolygon  extends HSSFSimpleShape {
-	private static POILogger logger = POILogFactory.getLogger(HSSFPolygon.class);
-    public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
+    public static final short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
+
+    private static final POILogger LOG = POILogFactory.getLogger(HSSFPolygon.class);
 
     public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
         super(spContainer, objRecord, _textObjectRecord);
@@ -173,11 +174,11 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      */
     public void setPoints(int[] xPoints, int[] yPoints) {
         if (xPoints.length != yPoints.length){
-        	logger.log( POILogger.ERROR, "xPoint.length must be equal to yPoints.length");
+        	LOG.log( POILogger.ERROR, "xPoint.length must be equal to yPoints.length");
             return;
         }
         if (xPoints.length == 0){
-        	logger.log( POILogger.ERROR, "HSSFPolygon must have at least one point");
+        	LOG.log( POILogger.ERROR, "HSSFPolygon must have at least one point");
         }
         EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, false, 0);
         verticesProp.setNumberOfElementsInArray(xPoints.length+1);

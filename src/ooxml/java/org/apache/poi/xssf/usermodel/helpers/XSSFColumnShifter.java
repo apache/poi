@@ -33,7 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class XSSFColumnShifter extends ColumnShifter {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFColumnShifter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFColumnShifter.class);
 
     public XSSFColumnShifter(XSSFSheet sh) {
         super(sh);

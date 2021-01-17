@@ -58,8 +58,7 @@ import org.w3c.dom.Text;
  */
 @Beta
 public class ExcelToHtmlConverter extends AbstractExcelConverter {
-    private static final POILogger logger = POILogFactory
-            .getLogger( ExcelToHtmlConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( ExcelToHtmlConverter.class );
 
     /**
      * Java main() interface to interact with {@link ExcelToHtmlConverter}
@@ -323,7 +322,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
                 value = ErrorEval.getText( cell.getErrorCellValue() );
                 break;
             default:
-                logger.log(
+                LOG.log(
                         POILogger.WARN,
                         "Unexpected cell cachedFormulaResultType ("
                                 + cell.getCachedFormulaResultType() + ")" );
@@ -344,7 +343,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             value = ErrorEval.getText( cell.getErrorCellValue() );
             break;
         default:
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Unexpected cell type (" + cell.getCellType() + ")" );
             return true;
         }

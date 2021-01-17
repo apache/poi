@@ -47,8 +47,8 @@ import org.apache.poi.util.TempFile;
 public class EncryptedTempData {
     private static POILogger LOG = POILogFactory.getLogger(EncryptedTempData.class);
  
-    private final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
-    private final static String PADDING = "PKCS5Padding";
+    private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
+    private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
     private final byte[] ivBytes;
     private final File tempFile;

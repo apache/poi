@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class SupBookRecord extends StandardRecord {
 
-    private static final POILogger logger = POILogFactory.getLogger(SupBookRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(SupBookRecord.class);
 
     public static final short sid = 0x01AE;
 
@@ -222,12 +222,12 @@ public final class SupBookRecord extends StandardRecord {
         		break;
         	case CH_LONG_VOLUME:
         		//Don't known to handle...
-        		logger.log(POILogger.WARN, "Found unexpected key: ChLongVolume - IGNORING");
+        		LOG.log(POILogger.WARN, "Found unexpected key: ChLongVolume - IGNORING");
         		break;
         	case CH_STARTUP_DIR:
         	case CH_ALT_STARTUP_DIR:
         	case CH_LIB_DIR:
-        		logger.log(POILogger.WARN, "EXCEL.EXE path unkown - using this directoy instead: .");
+        		LOG.log(POILogger.WARN, "EXCEL.EXE path unkown - using this directoy instead: .");
         		sb.append(".").append(PATH_SEPERATOR);
         		break;
         	default:

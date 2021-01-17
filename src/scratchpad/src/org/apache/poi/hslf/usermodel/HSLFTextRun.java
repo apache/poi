@@ -46,7 +46,7 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public final class HSLFTextRun implements TextRun {
-	private static final POILogger logger = POILogFactory.getLogger(HSLFTextRun.class);
+	private static final POILogger LOG = POILogFactory.getLogger(HSLFTextRun.class);
 
 	/** The TextRun we belong to */
 	private HSLFTextParagraph parentParagraph;
@@ -147,13 +147,13 @@ public final class HSLFTextRun implements TextRun {
         final int txtype = parentParagraph.getRunType();
         final HSLFSheet sheet = parentParagraph.getSheet();
         if (sheet == null) {
-            logger.log(POILogger.ERROR, "Sheet is not available");
+            LOG.log(POILogger.ERROR, "Sheet is not available");
             return null;
         }
 
         final HSLFMasterSheet master = sheet.getMasterSheet();
         if (master == null) {
-            logger.log(POILogger.WARN, "MasterSheet is not available");
+            LOG.log(POILogger.WARN, "MasterSheet is not available");
             return null;
         }
 

@@ -51,13 +51,12 @@ import org.apache.poi.util.StringUtil;
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( HWPFOldDocument.class );
+    private static final POILogger LOG = POILogFactory.getLogger( HWPFOldDocument.class );
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_000_000;
 
-    private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
+    private static final Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 
     private OldTextPieceTable tpt;
 
@@ -115,7 +114,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 //if there was a problem with the guessed charset and the length of the
                 //textpiece, back off to win1252. This is effectively what we used to do.
                 tp = buildTextPiece(StringUtil.WIN_1252);
-                logger.log(POILogger.WARN, "Error with "+guessedCharset +". Backing off to Windows-1252");
+                LOG.log(POILogger.WARN, "Error with "+guessedCharset +". Backing off to Windows-1252");
             }
             tpt.add(tp);
 
@@ -206,7 +205,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 return wmfCharset.getCharset();
             }
         }
-        logger.log(POILogger.WARN, "Couldn't find a defined charset; backing off to cp1252");
+        LOG.log(POILogger.WARN, "Couldn't find a defined charset; backing off to cp1252");
         //if all else fails
         return DEFAULT_CHARSET;
     }

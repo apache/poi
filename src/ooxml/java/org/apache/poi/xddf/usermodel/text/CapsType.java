@@ -32,7 +32,7 @@ public enum CapsType {
         this.underlying = caps;
     }
 
-    private final static HashMap<STTextCapsType.Enum, CapsType> reverse = new HashMap<>();
+    private static final HashMap<STTextCapsType.Enum, CapsType> reverse = new HashMap<>();
     static {
         for (CapsType value : values()) {
             reverse.put(value.underlying, value);

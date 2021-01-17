@@ -34,7 +34,7 @@ import org.apache.poi.util.StringUtil;
 
 @Internal
 public class ExtRst implements Comparable<ExtRst>, GenericRecord {
-    private static final POILogger _logger = POILogFactory.getLogger(ExtRst.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ExtRst.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -78,7 +78,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
 
         // Spot corrupt records
         if(reserved != 1) {
-            _logger.log(POILogger.WARN, "Warning - ExtRst has wrong magic marker, expecting 1 but found ", reserved, " - ignoring");
+            LOG.log(POILogger.WARN, "Warning - ExtRst has wrong magic marker, expecting 1 but found ", reserved, " - ignoring");
             // Grab all the remaining data, and ignore it
             for(int i=0; i<expectedLength-2; i++) {
                 in.readByte();
@@ -121,7 +121,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
 
         int extraDataLength = runData - (numRuns*6);
         if(extraDataLength < 0) {
-            _logger.log( POILogger.WARN, "Warning - ExtRst overran by ",  (0-extraDataLength), " bytes");
+            LOG.log( POILogger.WARN, "Warning - ExtRst overran by ",  (0-extraDataLength), " bytes");
             extraDataLength = 0;
         }
         extraData = IOUtils.safelyAllocate(extraDataLength, MAX_RECORD_LENGTH);

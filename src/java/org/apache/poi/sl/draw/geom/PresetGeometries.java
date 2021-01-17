@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 
 public final class PresetGeometries {
-    private final static POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
 
     private final Map<String, CustomGeometry> map = new TreeMap<>();
 

@@ -30,8 +30,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class BookmarksTables
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( BookmarksTables.class );
+    private static final POILogger LOG = POILogFactory.getLogger( BookmarksTables.class );
 
     private PlexOfCps descriptorsFirst = new PlexOfCps( 4 );
 
@@ -54,7 +53,7 @@ public class BookmarksTables
             GenericPropertyNode endNode = descriptorsLim.getProperty( i );
             if ( startNode.getStart() == endNode.getStart() )
             {
-                logger.log( POILogger.DEBUG, "Removing bookmark #",
+                LOG.log( POILogger.DEBUG, "Removing bookmark #",
                         Integer.valueOf( i ), "..." );
                 remove( i );
                 i--;

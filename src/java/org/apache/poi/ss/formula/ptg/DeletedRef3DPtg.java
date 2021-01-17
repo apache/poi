@@ -35,7 +35,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @since 1.0-pre
  */
 public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDependentFormula {
-	public final static byte sid  = 0x3c;
+	public static final byte sid  = 0x3c;
 	private final int field_1_index_extern_sheet;
 	private final int unused1;
 

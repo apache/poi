@@ -58,7 +58,7 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings("WeakerAccess")
 public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
-    private static final POILogger logger = POILogFactory.getLogger(OLE2ScratchpadExtractorFactory.class);
+    private static final POILogger LOG = POILogFactory.getLogger(OLE2ScratchpadExtractorFactory.class);
 
     @Override
     public boolean accepts(FileMagic fm) {
@@ -169,7 +169,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                     .filter(entry -> entry.getName().startsWith("_"))
                     .forEach(dirs::add);
             } catch(FileNotFoundException e) {
-                logger.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
+                LOG.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
                 // ignored here
             }
             //} else if(ext instanceof PowerPointExtractor) {

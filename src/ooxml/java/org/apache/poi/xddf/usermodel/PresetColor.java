@@ -167,7 +167,7 @@ public enum PresetColor {
         this.underlying = color;
     }
 
-    private final static HashMap<STPresetColorVal.Enum, PresetColor> reverse = new HashMap<>();
+    private static final HashMap<STPresetColorVal.Enum, PresetColor> reverse = new HashMap<>();
     static {
         for (PresetColor value : values()) {
             reverse.put(value.underlying, value);

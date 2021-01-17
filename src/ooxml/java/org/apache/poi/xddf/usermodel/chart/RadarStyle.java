@@ -32,7 +32,7 @@ public enum RadarStyle {
         this.underlying = style;
     }
 
-    private final static HashMap<STRadarStyle.Enum, RadarStyle> reverse = new HashMap<>();
+    private static final HashMap<STRadarStyle.Enum, RadarStyle> reverse = new HashMap<>();
     static {
         for (RadarStyle value : values()) {
             reverse.put(value.underlying, value);

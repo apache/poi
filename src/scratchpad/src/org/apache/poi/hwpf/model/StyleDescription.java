@@ -39,14 +39,14 @@ import org.apache.poi.util.StringUtil;
 @Internal
 public final class StyleDescription {
 
-    private static final POILogger logger = POILogFactory.getLogger(StyleDescription.class);
+    private static final POILogger LOG = POILogFactory.getLogger(StyleDescription.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private final static int PARAGRAPH_STYLE = 1;
-    private final static int CHARACTER_STYLE = 2;
-    // private final static int TABLE_STYLE = 3;
-    // private final static int NUMBERING_STYLE = 4;
+    private static final int PARAGRAPH_STYLE = 1;
+    private static final int CHARACTER_STYLE = 2;
+    // private static final int TABLE_STYLE = 3;
+    // private static final int NUMBERING_STYLE = 4;
 
     private int _baseLength;
     private StdfBase _stdfBase;
@@ -74,7 +74,7 @@ public final class StyleDescription {
         } else if (baseLength == 0x000A) {
             readStdfPost2000 = false;
         } else {
-            logger.log(POILogger.WARN, "Style definition has non-standard size of ", baseLength);
+            LOG.log(POILogger.WARN, "Style definition has non-standard size of ", baseLength);
         }
 
         _stdfBase = new StdfBase(std, offset);

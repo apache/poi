@@ -41,7 +41,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleElement;
  * Also used for built-in styles via dummy XML generated from presetTableStyles.xml.
  */
 public class XSSFTableStyle implements TableStyle {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFTableStyle.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFTableStyle.class);
 
     private final String name;
     private final int index;
@@ -57,7 +57,7 @@ public class XSSFTableStyle implements TableStyle {
     public XSSFTableStyle(int index, CTDxfs dxfs, CTTableStyle tableStyle, IndexedColorMap colorMap) {
         this.name = tableStyle.getName();
         this.index = index;
-        
+
         List<CTDxf> dxfList = new ArrayList<>();
 
         // CT* classes don't handle "mc:AlternateContent" elements, so get the Dxf instances manually
@@ -79,7 +79,7 @@ public class XSSFTableStyle implements TableStyle {
                     }
                     if (dxf != null) dxfList.add(dxf);
                 } catch (XmlException e) {
-                    logger.log(POILogger.WARN, "Error parsing XSSFTableStyle", e);
+                    LOG.log(POILogger.WARN, "Error parsing XSSFTableStyle", e);
                 }
             }
         }
@@ -98,7 +98,7 @@ public class XSSFTableStyle implements TableStyle {
             elementMap.put(type, dstyle);
         }
     }
-    
+
     public String getName() {
         return name;
     }
@@ -106,16 +106,16 @@ public class XSSFTableStyle implements TableStyle {
     public int getIndex() {
         return index;
     }
-    
+
     /**
      * Always false for these, these are user defined styles
      */
     public boolean isBuiltin() {
         return false;
     }
-    
+
     public DifferentialStyleProvider getStyle(TableStyleType type) {
         return elementMap.get(type);
     }
-    
+
 }

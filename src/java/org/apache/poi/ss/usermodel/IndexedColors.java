@@ -90,7 +90,7 @@ public enum IndexedColors {
     GREY_80_PERCENT(63),
     AUTOMATIC(64);
 
-    private final static IndexedColors[] _values = new IndexedColors[65];
+    private static final IndexedColors[] _values = new IndexedColors[65];
     static {
         for (IndexedColors color : values()) {
             _values[color.index] = color;

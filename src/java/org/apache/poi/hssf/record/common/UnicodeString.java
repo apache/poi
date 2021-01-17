@@ -43,7 +43,7 @@ import org.apache.poi.util.POILogger;
  * This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
  */
 public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
-    private static final POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
+    private static final POILogger LOG = POILogFactory.getLogger(UnicodeString.class);
 
     private static final BitField highByte  = BitFieldFactory.getInstance(0x1);
     // 0x2 is reserved
@@ -102,7 +102,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         if (isExtendedText() && (extensionLength > 0)) {
           field_5_ext_rst = new ExtRst(new ContinuableRecordInput(in), extensionLength);
           if(field_5_ext_rst.getDataSize()+4 != extensionLength) {
-             _logger.log(POILogger.WARN, "ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize() + 4));
+             LOG.log(POILogger.WARN, "ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize() + 4));
           }
         }
     }

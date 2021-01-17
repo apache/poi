@@ -30,8 +30,7 @@ import org.apache.poi.util.POILogger;
 
 public class HWPFTestDataSamples {
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( HWPFTestDataSamples.class );
+    private static final POILogger LOG = POILogFactory.getLogger( HWPFTestDataSamples.class );
 
     public static HWPFDocument openSampleFile(String sampleFileName) {
         try {
@@ -66,7 +65,7 @@ public class HWPFTestDataSamples {
                 final long endUnzip = System.currentTimeMillis();
                 byte[] byteArray = baos.toByteArray();
 
-                logger.log(POILogger.DEBUG, "Unzipped in ",
+                LOG.log(POILogger.DEBUG, "Unzipped in ",
                         Long.valueOf(endUnzip - start), " ms -- ",
                         Long.valueOf(byteArray.length), " byte(s)");
 
@@ -74,7 +73,7 @@ public class HWPFTestDataSamples {
                 HWPFDocument doc = new HWPFDocument(bais);
                 final long endParse = System.currentTimeMillis();
 
-                logger.log(POILogger.DEBUG, "Parsed in ",
+                LOG.log(POILogger.DEBUG, "Parsed in ",
                         Long.valueOf(endParse - start), " ms");
 
                 return doc;

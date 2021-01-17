@@ -32,7 +32,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public final class OldFontTable {
-    private final static POILogger _logger = POILogFactory.getLogger(OldFontTable.class);
+    private static final POILogger LOG = POILogFactory.getLogger(OldFontTable.class);
 
     // added extra facilitator members
     // FFN structure containing strings of font names
@@ -69,7 +69,7 @@ public final class OldFontTable {
 
     public String getMainFont(int chpFtc) {
         if (chpFtc >= _fontNames.length) {
-            _logger.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
             return null;
         }
 

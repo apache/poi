@@ -25,8 +25,8 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class ExpPtg extends ControlPtg {
-    private final static int  SIZE = 5;
-    public final static short sid  = 0x1;
+    private static final int  SIZE = 5;
+    public static final short sid  = 0x1;
 
     private final int field_1_first_row;
     private final int field_2_first_col;

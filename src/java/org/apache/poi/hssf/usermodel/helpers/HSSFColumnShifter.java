@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 // {@link org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter}
 @Beta
 public final class HSSFColumnShifter extends ColumnShifter {
-    private static final POILogger logger = POILogFactory.getLogger(HSSFColumnShifter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HSSFColumnShifter.class);
 
     public HSSFColumnShifter(HSSFSheet sh) {
         super(sh);

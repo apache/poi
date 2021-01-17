@@ -48,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * you need to implement for reading information from a file.
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
 
     /**
     * These are the different kinds of cells we support.
@@ -63,7 +63,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        SST_STRING,
        NUMBER,
    }
-   
+
    /**
     * Table with the styles used for formatting
     */
@@ -136,7 +136,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this.formatter = dataFormatter;
        init(comments);
    }
-   
+
    /**
     * Accepts objects needed while parsing.
     *
@@ -151,7 +151,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            boolean formulasNotResults) {
        this(styles, null, strings, sheetContentsHandler, dataFormatter, formulasNotResults);
    }
-   
+
    /**
     * Accepts objects needed while parsing.
     *
@@ -165,7 +165,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            boolean formulasNotResults) {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
-   
+
    private void init(Comments commentsTable) {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<>();
@@ -191,7 +191,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       // It isn't a text tag
       return false;
    }
-   
+
    @Override
    @SuppressWarnings("unused")
    public void startElement(String uri, String localName, String qName,
@@ -211,29 +211,29 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        } else if ("f".equals(localName)) {
           // Clear contents cache
           formula.setLength(0);
-          
+
           // Mark us as being a formula if not already
           if(nextDataType == xssfDataType.NUMBER) {
              nextDataType = xssfDataType.FORMULA;
           }
-          
+
           // Decide where to get the formula string from
           String type = attributes.getValue("t");
           if(type != null && type.equals("shared")) {
              // Is it the one that defines the shared, or uses it?
              String ref = attributes.getValue("ref");
              String si = attributes.getValue("si");
-             
+
              if(ref != null) {
                 // This one defines it
                 // TODO Save it somewhere
                 fIsOpen = true;
              } else {
                 // This one uses a shared formula
-                // TODO Retrieve the shared formula and tweak it to 
+                // TODO Retrieve the shared formula and tweak it to
                 //  match the current cell
                 if(formulasNotResults) {
-                    logger.log(POILogger.WARN, "shared formulas not yet supported!");
+                    LOG.log(POILogger.WARN, "shared formulas not yet supported!");
                 } /*else {
                    // It's a shared formula, so we can't get at the formula string yet
                    // However, they don't care about the formula string, so that's ok!
@@ -312,7 +312,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        // v => contents of a cell
        if (isTextTag(localName)) {
            vIsOpen = false;
-           
+
            // Process the value contents as required, now we have it all
            switch (nextDataType) {
                case BOOLEAN:
@@ -329,7 +329,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                       thisStr = formula.toString();
                    } else {
                       String fv = value.toString();
-                      
+
                       if (this.formatString != null) {
                          try {
                             // Try to use the value as a formattable number
@@ -360,7 +360,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                        thisStr = rtss.toString();
                    }
                    catch (NumberFormatException ex) {
-                       logger.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
+                       LOG.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
                    }
                    break;
 
@@ -376,11 +376,11 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    thisStr = "(TODO: Unexpected type: " + nextDataType + ")";
                    break;
            }
-           
+
            // Do we have a comment for this cell?
            checkForEmptyCellComments(EmptyCellCommentsCheckType.CELL);
            XSSFComment comment = comments != null ? comments.findCellComment(new CellAddress(cellRef)) : null;
-           
+
            // Output
            output.cell(cellRef, thisStr, comment);
        } else if ("f".equals(localName)) {
@@ -390,10 +390,10 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        } else if ("row".equals(localName)) {
           // Handle any "missing" cells which had comments attached
           checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_ROW);
-          
+
           // Finish up the row
           output.endRow(rowNum);
-          
+
           // some sheets do not have rowNum set in the XML, Excel can read them so we should try to read them as well
           nextRowNum = rowNum + 1;
        } else if ("sheetData".equals(localName)) {
@@ -432,7 +432,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           headerFooter.append(ch, start, length);
        }
    }
-   
+
    /**
     * Do a check for, and output, comments in otherwise empty cells.
     */
@@ -496,7 +496,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        XSSFComment comment = comments.findCellComment(cellRef);
        output.cell(cellRef.formatAsString(), null, comment);
    }
-   
+
    private enum EmptyCellCommentsCheckType {
        CELL,
        END_OF_ROW,
@@ -520,7 +520,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       void endRow(int rowNum);
 
       /**
-       * A cell, with the given formatted value (may be null), 
+       * A cell, with the given formatted value (may be null),
        * and possibly a comment (may be null), was encountered.
        *
        * Sheets that have missing or empty cells may result in

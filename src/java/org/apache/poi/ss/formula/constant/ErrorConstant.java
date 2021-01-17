@@ -22,12 +22,12 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 /**
  * Represents a constant error code value as encoded in a constant values array. <p>
- * 
- * This class is a type-safe wrapper for a 16-bit int value performing a similar job to 
+ *
+ * This class is a type-safe wrapper for a 16-bit int value performing a similar job to
  * <tt>ErrorEval</tt>.
  */
-public class ErrorConstant {
-	private static final POILogger logger = POILogFactory.getLogger(ErrorConstant.class);
+public final class ErrorConstant {
+	private static final POILogger LOG = POILogFactory.getLogger(ErrorConstant.class);
     private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
     private static final ErrorConstant DIV_0 = new ErrorConstant(FormulaError.DIV0.getCode());
     private static final ErrorConstant VALUE = new ErrorConstant(FormulaError.VALUE.getCode());
@@ -41,7 +41,7 @@ public class ErrorConstant {
 	private ErrorConstant(int errorCode) {
 		_errorCode = errorCode;
 	}
-	
+
 	public int getErrorCode() {
 		return _errorCode;
 	}
@@ -66,7 +66,7 @@ public class ErrorConstant {
     			default:    break;
     		}
 	    }
-		logger.log( POILogger.WARN, "Warning - unexpected error code (", errorCode, ")");
+		LOG.log( POILogger.WARN, "Warning - unexpected error code (", errorCode, ")");
 		return new ErrorConstant(errorCode);
 	}
 

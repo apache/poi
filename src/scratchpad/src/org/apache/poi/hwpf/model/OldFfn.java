@@ -32,9 +32,9 @@ import org.apache.poi.util.StringUtil;
 @Internal
 public final class OldFfn {
 
-    private static final POILogger logger = POILogFactory.getLogger(OldFfn.class);
+    private static final POILogger LOG = POILogFactory.getLogger(OldFfn.class);
 
-    private byte _chs;// character set identifier
+    private final byte _chs;// character set identifier
 
     private final String fontName;
     private final String altFontName;
@@ -59,7 +59,7 @@ public final class OldFfn {
         short fontDescriptionLength = buf[offset];
         offset += 1;
         if (offset + fontDescriptionLength > fontTableEnd) {
-            logger.log(POILogger.WARN, "Asked to read beyond font table end. Skipping font");
+            LOG.log(POILogger.WARN, "Asked to read beyond font table end. Skipping font");
             return null;
         }
 
@@ -69,7 +69,7 @@ public final class OldFfn {
         Charset charset = null;
         FontCharset wmfCharset = FontCharset.valueOf(chs & 0xff);
         if (wmfCharset == null) {
-            logger.log(POILogger.WARN, "Couldn't find font for type: ", (chs & 0xff));
+            LOG.log(POILogger.WARN, "Couldn't find font for type: ", (chs & 0xff));
         } else {
             charset = wmfCharset.getCharset();
         }
@@ -88,7 +88,7 @@ public final class OldFfn {
             }
         }
         if (fontNameLength == -1) {
-            logger.log(POILogger.WARN, "Couldn't find the zero-byte delimited font name length");
+            LOG.log(POILogger.WARN, "Couldn't find the zero-byte delimited font name length");
             return null;
         }
         String fontName = new String(buf, offset, fontNameLength, charset);

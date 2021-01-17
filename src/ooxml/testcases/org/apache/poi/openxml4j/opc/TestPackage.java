@@ -98,7 +98,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
-    private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
+    private static final POILogger LOG = POILogFactory.getLogger(TestPackage.class);
 	private static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 	private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
 	private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
@@ -444,7 +444,7 @@ public final class TestPackage {
 
 				for (PackagePart part : p.getParts()) {
 					values.put(part.getPartName(), part.getContentType());
-					logger.log(POILogger.DEBUG, part.getPartName());
+					LOG.log(POILogger.DEBUG, part.getPartName());
 				}
 
 				// Compare expected values with values return by the package
@@ -478,7 +478,7 @@ public final class TestPackage {
 
 				for (PackagePart part : p.getParts()) {
 					values.put(part.getPartName(), part.getContentType());
-					logger.log(POILogger.DEBUG, part.getPartName());
+					LOG.log(POILogger.DEBUG, part.getPartName());
 				}
 
 				// Compare expected values with values return by the package

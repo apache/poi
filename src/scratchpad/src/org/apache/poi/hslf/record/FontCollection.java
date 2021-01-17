@@ -62,7 +62,7 @@ public final class FontCollection extends RecordContainer {
 			    HSLFFontInfo fi = addFont(fontHeader);
 			    fi.addFacet(fed);
 			} else {
-				logger.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was ", r.getClass().getSimpleName());
+				LOG.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was ", r.getClass().getSimpleName());
 			}
 		}
 	}

@@ -60,12 +60,12 @@ public final class ExVideoContainer extends RecordContainer {
 		if(_children[0] instanceof ExMediaAtom) {
 			mediaAtom = (ExMediaAtom)_children[0];
 		} else {
-			logger.log(POILogger.ERROR, "First child record wasn't a ExMediaAtom, was of type ", _children[0].getRecordType());
+			LOG.log(POILogger.ERROR, "First child record wasn't a ExMediaAtom, was of type ", _children[0].getRecordType());
 		}
         if(_children[1] instanceof CString) {
             pathAtom = (CString)_children[1];
         } else {
-            logger.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
+            LOG.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
         }
 	}
 

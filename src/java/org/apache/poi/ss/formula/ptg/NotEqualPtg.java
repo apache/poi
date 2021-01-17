@@ -21,7 +21,7 @@ package org.apache.poi.ss.formula.ptg;
  * Ptg class to implement not equal
  */
 public final class NotEqualPtg extends ValueOperatorPtg {
-    public final static byte sid = 0x0e;
+    public static final byte sid = 0x0e;
 
     public static final NotEqualPtg instance = new NotEqualPtg();
 

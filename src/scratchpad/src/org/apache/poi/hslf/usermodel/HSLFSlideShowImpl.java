@@ -68,7 +68,7 @@ import org.apache.poi.util.POILogger;
  * "reader". It is only a very basic class for now
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
-    private static final POILogger logger = POILogFactory.getLogger(HSLFSlideShowImpl.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFSlideShowImpl.class);
 
     static final int UNSET_OFFSET = -1;
 
@@ -303,7 +303,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 int type = LittleEndian.getUShort(docstream, usrOffset + 2);
                 int len = LittleEndian.getInt(docstream, usrOffset + 4);
                 if (ver_inst == 0 && type == 4085 && (len == 0x1C || len == 0x20)) {
-                    logger.log(POILogger.WARN, "Repairing invalid user edit atom");
+                    LOG.log(POILogger.WARN, "Repairing invalid user edit atom");
                     usr.setLastUserEditAtomOffset(usrOffset);
                 } else {
                     throw new CorruptPowerPointFileException("Powerpoint document contains invalid user edit atom");
@@ -329,7 +329,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         try {
             currentUser = new CurrentUserAtom(getDirectory());
         } catch (IOException ie) {
-            logger.log(POILogger.ERROR, "Error finding Current User Atom", ie);
+            LOG.log(POILogger.ERROR, "Error finding Current User Atom", ie);
             currentUser = new CurrentUserAtom();
         }
     }
@@ -393,14 +393,14 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 // If they type (including the bonus 0xF018) is 0, skip it
                 PictureType pt = PictureType.forNativeID(type - 0xF018);
                 if (pt == null) {
-                    logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length ", imgsize, ".\nYour document will probably become corrupted if you save it!");
-                    logger.log(POILogger.ERROR, "position: ", pos);
+                    LOG.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length ", imgsize, ".\nYour document will probably become corrupted if you save it!");
+                    LOG.log(POILogger.ERROR, "position: ", pos);
                 } else {
                     //The pictstream can be truncated halfway through a picture.
                     //This is not a problem if the pictstream contains extra pictures
                     //that are not used in any slide -- BUG-60305
                     if (pos + imgsize > pictstream.length) {
-                        logger.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
+                        LOG.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
                                 "in others, this could indicate a corrupt file");
                         break;
                     }
@@ -417,7 +417,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setIndex(_pictures.size() + 1);        // index is 1-based
                         _pictures.add(pict);
                     } catch (IllegalArgumentException e) {
-                        logger.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYour document will probably become corrupted if you save it!");
+                        LOG.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYour document will probably become corrupted if you save it!");
                     }
                 }
 

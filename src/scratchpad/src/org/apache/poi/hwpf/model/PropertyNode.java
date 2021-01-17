@@ -40,7 +40,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
 
     public static final Comparator<PropertyNode<?>> StartComparator = Comparator.comparingInt(PropertyNode::getStart);
 
-    private static final POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PropertyNode.class);
 
 
     protected Object _buf;
@@ -72,12 +72,12 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         _buf = buf;
 
         if (_cpStart < 0) {
-            _logger.log(POILogger.WARN, "A property claimed to start before zero, at ", _cpStart, "! Resetting it to zero, and hoping for the best");
+            LOG.log(POILogger.WARN, "A property claimed to start before zero, at ", _cpStart, "! Resetting it to zero, and hoping for the best");
             _cpStart = 0;
         }
 
         if (_cpEnd < _cpStart) {
-            _logger.log(POILogger.WARN, "A property claimed to end (", _cpEnd,
+            LOG.log(POILogger.WARN, "A property claimed to end (", _cpEnd,
                     ") before start! Resetting end to start, and hoping for the best");
             _cpEnd = _cpStart;
         }

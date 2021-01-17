@@ -26,10 +26,9 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-public final class TableSprmUncompressor
-  extends SprmUncompressor
-{
-  private static final POILogger logger = POILogFactory.getLogger( TableSprmUncompressor.class );
+public final class TableSprmUncompressor extends SprmUncompressor {
+
+  private static final POILogger LOG = POILogFactory.getLogger( TableSprmUncompressor.class );
 
   public TableSprmUncompressor()
   {
@@ -49,7 +48,7 @@ public final class TableSprmUncompressor
         }
         else
         {
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Some table rows didn't specify number of columns in SPRMs" );
             tableProperties = new TableProperties( (short) 1 );
         }
@@ -70,7 +69,7 @@ public final class TableSprmUncompressor
                 }
                 catch ( ArrayIndexOutOfBoundsException ex )
                 {
-                    logger.log( POILogger.ERROR, "Unable to apply ", sprm,
+                    LOG.log( POILogger.ERROR, "Unable to apply ", sprm,
                             ": ", ex, ex );
                 }
             }

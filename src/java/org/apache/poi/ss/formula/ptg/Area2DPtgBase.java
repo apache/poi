@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Common superclass of 2-D area refs
  */
 public abstract class Area2DPtgBase extends AreaPtgBase {
-	private final static int SIZE = 9;
+	private static final int SIZE = 9;
 
 	protected Area2DPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);

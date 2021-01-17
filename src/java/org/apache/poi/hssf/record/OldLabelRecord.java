@@ -33,7 +33,7 @@ import org.apache.poi.util.RecordFormatException;
  *  didn't use {@link LabelSSTRecord}
  */
 public final class OldLabelRecord extends OldCellRecord {
-    private static final POILogger logger = POILogFactory.getLogger(OldLabelRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(OldLabelRecord.class);
     //arbitrarily set, may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -62,7 +62,7 @@ public final class OldLabelRecord extends OldCellRecord {
         in.read(field_5_bytes, 0, field_4_string_len);
 
         if (in.remaining() > 0) {
-            logger.log(POILogger.INFO,
+            LOG.log(POILogger.INFO,
                     "LabelRecord data remains: ", in.remaining(),
                     " : ", HexDump.toHex(in.readRemainder())
                     );

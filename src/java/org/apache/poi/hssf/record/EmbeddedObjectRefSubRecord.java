@@ -43,7 +43,7 @@ import org.apache.poi.util.StringUtil;
  * stored in a separate entry within the OLE2 compound file.
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord {
-	private static POILogger logger = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
+	private static final POILogger LOG = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -157,7 +157,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
 
 		if (nUnexpectedPadding > 0) {
-			logger.log( POILogger.ERROR, "Discarding ", nUnexpectedPadding, " unexpected padding bytes");
+			LOG.log( POILogger.ERROR, "Discarding ", nUnexpectedPadding, " unexpected padding bytes");
 			readRawData(in, nUnexpectedPadding);
 			remaining-=nUnexpectedPadding;
 		}

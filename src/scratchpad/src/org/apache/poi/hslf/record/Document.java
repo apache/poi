@@ -161,10 +161,10 @@ public final class Document extends PositionDependentRecordContainer
 		//  (normally it's 2, or 3 if you have notes)
 		// Complain if it's not
 		if(slwtcount == 0) {
-			logger.log(POILogger.WARN, "No SlideListWithText's found - there should normally be at least one!");
+			LOG.log(POILogger.WARN, "No SlideListWithText's found - there should normally be at least one!");
 		}
 		if(slwtcount > 3) {
-			logger.log(POILogger.WARN, "Found ", slwtcount, " SlideListWithTexts - normally there should only be three!");
+			LOG.log(POILogger.WARN, "Found ", slwtcount, " SlideListWithTexts - normally there should only be three!");
 		}
 
 		// Now grab all the SLWTs

@@ -30,14 +30,14 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.BaseXSSFFormulaEvaluator;
 
 /**
- * Streaming-specific Formula Evaluator, which is able to 
+ * Streaming-specific Formula Evaluator, which is able to
  *  lookup cells within the current Window.
  */
 public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
-    private static final POILogger logger = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
-    
-    private SXSSFWorkbook wb;
-    
+    private static final POILogger LOG = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
+
+    private final SXSSFWorkbook wb;
+
     public SXSSFFormulaEvaluator(SXSSFWorkbook workbook) {
         this(workbook, null, null);
     }
@@ -48,7 +48,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         super(bookEvaluator);
         this.wb = workbook;
     }
-    
+
     /**
      * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
      * for the (conservative) assumption that any cell may have its definition changed after
@@ -81,12 +81,12 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
 
         return new SXSSFEvaluationCell((SXSSFCell)cell);
     }
-    
+
     @Override
     public SXSSFCell evaluateInCell(Cell cell) {
         return (SXSSFCell) super.evaluateInCell(cell);
     }
-    
+
     /**
      * For active worksheets only, will loop over rows and
      *  cells, evaluating formula cells there.
@@ -95,26 +95,26 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      */
     public static void evaluateAllFormulaCells(SXSSFWorkbook wb, boolean skipOutOfWindow) {
         SXSSFFormulaEvaluator eval = new SXSSFFormulaEvaluator(wb);
-        
+
         // Check they're all available
         for (Sheet sheet : wb) {
             if (((SXSSFSheet)sheet).areAllRowsFlushed()) {
                 throw new SheetsFlushedException();
             }
         }
-        
+
         // Process the sheets as best we can
         for (Sheet sheet : wb) {
-            
+
             if (sheet instanceof SXSSFSheet) {
                 // Check if any rows have already been flushed out
                 int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
                 if (lastFlushedRowNum > -1) {
                     if (! skipOutOfWindow) throw new RowFlushedException(0);
-                    logger.log(POILogger.INFO, "Rows up to ", lastFlushedRowNum, " have already been flushed, skipping");
+                    LOG.log(POILogger.INFO, "Rows up to ", lastFlushedRowNum, " have already been flushed, skipping");
                 }
             }
-            
+
             // Evaluate what we have
             for (Row r : sheet) {
                 for (Cell c : r) {
@@ -125,7 +125,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
             }
         }
     }
-    
+
     /**
      * Loops over rows and cells, evaluating formula cells there.
      * If any sheets are inactive, or any cells outside of the window,
@@ -137,7 +137,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         // Have the evaluation done, with exceptions
         evaluateAllFormulaCells(wb, false);
     }
-    
+
     public static class SheetsFlushedException extends IllegalStateException {
         protected SheetsFlushedException() {
             super("One or more sheets have been flushed, cannot evaluate all cells");

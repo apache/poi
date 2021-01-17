@@ -68,7 +68,7 @@ public abstract class PropertiesChunk extends Chunk {
     public static final int PROPERTIES_FLAG_WRITEABLE = 4;
 
     /** For logging problems we spot with the file */
-    private POILogger logger = POILogFactory.getLogger(PropertiesChunk.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PropertiesChunk.class);
 
     /**
      * Holds properties, indexed by type. If a property is multi-valued, or
@@ -176,7 +176,7 @@ public abstract class PropertiesChunk extends Chunk {
                 if (chunk != null) {
                     cVal.setValue(chunk);
                 } else {
-                    logger.log(POILogger.WARN, "No chunk found matching Property " + cVal);
+                    LOG.log(POILogger.WARN, "No chunk found matching Property " + cVal);
                 }
             }
         }
@@ -200,7 +200,7 @@ public abstract class PropertiesChunk extends Chunk {
                     prop = MAPIProperty.createCustom(id, type, "Unknown " + id);
                 }
                 if (type == null) {
-                    logger.log(POILogger.WARN, "Invalid type found, expected ",
+                    LOG.log(POILogger.WARN, "Invalid type found, expected ",
                             prop.usualType, " but got ", typeID,
                             " for property ", prop);
                     going = false;
@@ -220,11 +220,11 @@ public abstract class PropertiesChunk extends Chunk {
                         // We don't know what this property normally is, but it
                         // has come
                         // through with a valid type, so use that
-                        logger.log(POILogger.INFO, "Property definition for ", prop,
+                        LOG.log(POILogger.INFO, "Property definition for ", prop,
                             " is missing a type definition, found a value with type ", type);
                     } else {
                         // Oh dear, something has gone wrong...
-                        logger.log(POILogger.WARN, "Type mismatch, expected ",
+                        LOG.log(POILogger.WARN, "Type mismatch, expected ",
                             prop.usualType, " but got ", type, " for property ", prop);
                         going = false;
                         break;
@@ -285,7 +285,7 @@ public abstract class PropertiesChunk extends Chunk {
                 }
 
                 if (properties.get(prop) != null) {
-                    logger.log(POILogger.WARN,
+                    LOG.log(POILogger.WARN,
                             "Duplicate values found for " + prop);
                 }
                 properties.put(prop, propVal);
@@ -298,7 +298,7 @@ public abstract class PropertiesChunk extends Chunk {
 
     /**
      * Writes this chunk in the specified {@code DirectoryEntry}.
-     * 
+     *
      * @param directory
      *        The directory.
      * @throws IOException
@@ -316,11 +316,11 @@ public abstract class PropertiesChunk extends Chunk {
         // write the property values
         writeNodeData(directory, values);
     }
-    
+
     /**
      * Write the nodes for variable-length data. Those properties are returned by
      * {@link #writeProperties(java.io.OutputStream)}.
-     * 
+     *
      * @param directory
      *        The directory.
      * @param values
@@ -338,7 +338,7 @@ public abstract class PropertiesChunk extends Chunk {
 
     /**
      * Writes the header of the properties.
-     * 
+     *
      * @param out
      *          The {@code OutputStream}.
      * @return The variable-length properties that need to be written in another

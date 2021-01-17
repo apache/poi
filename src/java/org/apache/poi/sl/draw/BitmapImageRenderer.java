@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
  **/
 public class BitmapImageRenderer implements ImageRenderer {
-    private final static POILogger LOG = POILogFactory.getLogger(BitmapImageRenderer.class);
+    private static final POILogger LOG = POILogFactory.getLogger(BitmapImageRenderer.class);
 
     protected BufferedImage img;
 

@@ -41,15 +41,15 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * An abstract shape.
- * 
- * Note: Microsoft Excel seems to sometimes disallow 
- * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
+ *
+ * Note: Microsoft Excel seems to sometimes disallow
+ * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to
  * reverse them and draw shapes vertically or horizontally flipped via
- * setFlipVertical() or setFlipHorizontally(). 
+ * setFlipVertical() or setFlipHorizontally().
  */
 public abstract class HSSFShape implements Shape {
     private static final POILogger LOG = POILogFactory.getLogger(HSSFShape.class);
-    
+
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
     public static final int LINESTYLE__COLOR_DEFAULT = 0x08000040;
@@ -79,9 +79,9 @@ public abstract class HSSFShape implements Shape {
     private final EscherContainerRecord _escherContainer;
     private final ObjRecord _objRecord;
     private final EscherOptRecord _optRecord;
-    
-    public final static int NO_FILLHITTEST_TRUE = 0x00110000;
-    public final static int NO_FILLHITTEST_FALSE = 0x00010000;
+
+    public static final int NO_FILLHITTEST_TRUE = 0x00110000;
+    public static final int NO_FILLHITTEST_FALSE = 0x00010000;
 
     /**
      * creates shapes from existing file
@@ -147,7 +147,7 @@ public abstract class HSSFShape implements Shape {
     }
 
     /**
-     * Return the low-level EscherOptRecord to read/modify not yet wrapped escher properties  
+     * Return the low-level EscherOptRecord to read/modify not yet wrapped escher properties
      *
      * @return the low-level EscherOptRecord
      */

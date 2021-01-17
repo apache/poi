@@ -39,14 +39,14 @@ import org.apache.poi.xssf.streaming.SheetDataWriter;
 
 @Beta
 public class SheetDataWriterWithDecorator extends SheetDataWriter {
-    final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
+    static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     SecretKeySpec skeySpec;
     byte[] ivBytes;
-    
+
     public SheetDataWriterWithDecorator() throws IOException {
         super();
     }
-    
+
     void init() {
         if(skeySpec == null) {
             SecureRandom sr = new SecureRandom();
@@ -64,7 +64,7 @@ public class SheetDataWriterWithDecorator extends SheetDataWriter {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, "PKCS5Padding");
         return new CipherOutputStream(fos, ciEnc);
     }
-    
+
     @Override
     protected InputStream decorateInputStream(FileInputStream fis) {
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, "PKCS5Padding");

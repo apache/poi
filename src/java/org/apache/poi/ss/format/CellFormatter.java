@@ -23,10 +23,11 @@ import org.apache.poi.util.LocaleUtil;
 
 /**
  * This is the abstract supertype for the various cell formatters.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public abstract class CellFormatter {
+    /** The logger to use in the formatting code. */
+    private static final Logger LOG = Logger.getLogger(CellFormatter.class.getName());
+
     /** The original specified format. */
     protected final String format;
     protected final Locale locale;
@@ -51,16 +52,12 @@ public abstract class CellFormatter {
         this.format = format;
     }
 
-    /** The logger to use in the formatting code. */
-    static final Logger logger = Logger.getLogger(
-            CellFormatter.class.getName());
-
     /**
      * Format a value according the format string.
      * <p/>
-     * NOTE: this method must be thread safe!  In particular, if it uses a 
+     * NOTE: this method must be thread safe!  In particular, if it uses a
      * Format instance that is not thread safe, i.e. DateFormat, this method
-     * must be synchronized, either on the method, if the format is a final 
+     * must be synchronized, either on the method, if the format is a final
      * property, or on the format instance itself.
      *
      * @param toAppendTo The buffer to append to.
@@ -71,9 +68,9 @@ public abstract class CellFormatter {
     /**
      * Format a value according to the type, in the most basic way.
      * <p/>
-     * NOTE: this method must be thread safe!  In particular, if it uses a 
+     * NOTE: this method must be thread safe!  In particular, if it uses a
      * Format instance that is not thread safe, i.e. DateFormat, this method
-     * must be synchronized, either on the method, if the format is a final 
+     * must be synchronized, either on the method, if the format is a final
      * property, or on the format instance itself.
      *
      * @param toAppendTo The buffer to append to.

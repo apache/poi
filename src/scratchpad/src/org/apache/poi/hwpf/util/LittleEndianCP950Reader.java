@@ -43,14 +43,14 @@ public class LittleEndianCP950Reader extends Reader {
 
     //https://en.wikipedia.org/wiki/Code_page_950
     //see private use area
-    private final static char range1Low = '\u8140';
-    private final static char range1High = '\u8DFE';
-    private final static char range2Low = '\u8E40';
-    private final static char range2High = '\uA0FE';
-    private final static char range3Low = '\uC6A1';
-    private final static char range3High = '\uC8FE';
-    private final static char range4Low = '\uFA40';
-    private final static char range4High = '\uFEFE';
+    private static final char range1Low = '\u8140';
+    private static final char range1High = '\u8DFE';
+    private static final char range2Low = '\u8E40';
+    private static final char range2High = '\uA0FE';
+    private static final char range3Low = '\uC6A1';
+    private static final char range3High = '\uC8FE';
+    private static final char range4Low = '\uFA40';
+    private static final char range4High = '\uFEFE';
 
     private final byte[] data;
     private final int startOffset;

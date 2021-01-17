@@ -121,8 +121,7 @@ public abstract class AbstractWordConverter
 
     private static final byte FIELD_SEPARATOR_MARK = 20;
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( AbstractWordConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( AbstractWordConverter.class );
 
     private static final Pattern PATTERN_HYPERLINK_EXTERNAL = Pattern
             .compile( "^[ \\t\\r\\n]*HYPERLINK \"(.*)\".*$" );
@@ -449,7 +448,7 @@ public abstract class AbstractWordConverter
         {
             if ( previous > range.getEndOffset() )
             {
-                logger.log( POILogger.WARN, "Latest structure in ", range,
+                LOG.log( POILogger.WARN, "Latest structure in ", range,
                         " ended at #", previous, " after range boundaries [",
                         range.getStartOffset(), "; ", range.getEndOffset(),
                         ")" );
@@ -674,7 +673,7 @@ public abstract class AbstractWordConverter
             debug.append( range.getCharacterRun( i ) );
             debug.append( "\n" );
         }
-        logger.log( POILogger.WARN, debug );
+        LOG.log( POILogger.WARN, debug );
 
         Range deadFieldValueSubrage = new Range( range.getCharacterRun(
                 separatorMark ).getStartOffset() + 1, range.getCharacterRun(
@@ -706,7 +705,7 @@ public abstract class AbstractWordConverter
         }
         catch ( Exception exc )
         {
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Unable to process document summary information: ", exc,
                     exc );
         }
@@ -747,7 +746,7 @@ public abstract class AbstractWordConverter
                 .getOfficeDrawingAt( characterRun.getStartOffset() );
         if ( officeDrawing == null )
         {
-            logger.log( POILogger.WARN, "Characters #", characterRun,
+            LOG.log( POILogger.WARN, "Characters #", characterRun,
                     " references missing drawn object" );
             return;
         }
@@ -812,7 +811,7 @@ public abstract class AbstractWordConverter
         {
             if ( !field.hasSeparator() )
             {
-                logger.log( POILogger.WARN, parentRange, " contains ", field,
+                LOG.log( POILogger.WARN, parentRange, " contains ", field,
                         " with 'Embedded Object' but without separator mark" );
                 return;
             }
@@ -898,7 +897,7 @@ public abstract class AbstractWordConverter
         }
         }
 
-        logger.log( POILogger.WARN, parentRange, " contains ", field,
+        LOG.log( POILogger.WARN, parentRange, " contains ", field,
                 " with unsupported type or format" );
         processCharacters( wordDocument, currentTableLevel,
                 field.secondSubrange( parentRange ), currentBlock );
@@ -1011,7 +1010,7 @@ public abstract class AbstractWordConverter
                 "_" + characterRun.getPicOffset() );
         if ( entry == null )
         {
-            logger.log( POILogger.WARN, "Referenced OLE2 object '",
+            LOG.log( POILogger.WARN, "Referenced OLE2 object '",
                     Integer.valueOf( characterRun.getPicOffset() ),
                     "' not found in ObjectPool" );
             return false;
@@ -1023,7 +1022,7 @@ public abstract class AbstractWordConverter
         }
         catch ( Exception exc )
         {
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Unable to convert internal OLE2 object '",
                     Integer.valueOf( characterRun.getPicOffset() ), "': ", exc,
                     exc );

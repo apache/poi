@@ -49,8 +49,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class CHPBinTable
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( CHPBinTable.class );
+    private static final POILogger LOG = POILogFactory.getLogger( CHPBinTable.class );
 
   /** List of character properties.*/
   protected List<CHPX> _textRuns = new ArrayList<>();
@@ -106,13 +105,13 @@ public class CHPBinTable
                     _textRuns.add( chpx );
             }
     }
-        logger.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
+        LOG.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
 
         if ( _textRuns.isEmpty() )
         {
-            logger.log( POILogger.WARN, "CHPX FKPs are empty" );
+            LOG.log( POILogger.WARN, "CHPX FKPs are empty" );
             _textRuns.add( new CHPX( 0, 0, new SprmBuffer( 0 ) ) );
         }
     }
@@ -136,7 +135,7 @@ public class CHPBinTable
 
                 if ( igrpprl < 0 || igrpprl >= sprmBuffers.length )
                 {
-                    logger.log( POILogger.WARN, textPiece
+                    LOG.log( POILogger.WARN, textPiece
                             + "'s PRM references to unknown grpprl" );
                     continue;
                 }
@@ -163,7 +162,7 @@ public class CHPBinTable
                     _textRuns.add( chpx );
                 }
             }
-            logger.log( POILogger.DEBUG,
+            LOG.log( POILogger.DEBUG,
                     "Merged with CHPX from complex file table in ",
                     Long.valueOf( System.currentTimeMillis() - start ),
                     " ms (", Integer.valueOf( _textRuns.size() ),
@@ -174,7 +173,7 @@ public class CHPBinTable
         List<CHPX> oldChpxSortedByStartPos = new ArrayList<>(_textRuns);
         oldChpxSortedByStartPos.sort(PropertyNode.StartComparator);
 
-        logger.log( POILogger.DEBUG, "CHPX sorted by start position in ",
+        LOG.log( POILogger.DEBUG, "CHPX sorted by start position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
@@ -196,7 +195,7 @@ public class CHPBinTable
             }
         };
 
-        logger.log( POILogger.DEBUG, "CHPX's order map created in ",
+        LOG.log( POILogger.DEBUG, "CHPX's order map created in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
@@ -214,7 +213,7 @@ public class CHPBinTable
             Collections.sort( textRunsBoundariesList );
         }
 
-        logger.log( POILogger.DEBUG, "Texts CHPX boundaries collected in ",
+        LOG.log( POILogger.DEBUG, "Texts CHPX boundaries collected in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
@@ -254,7 +253,7 @@ public class CHPBinTable
 
             if ( chpxs.size() == 0 )
             {
-                logger.log( POILogger.WARN, "Text piece [",
+                LOG.log( POILogger.WARN, "Text piece [",
                         Integer.valueOf( startInclusive ), "; ",
                         Integer.valueOf(boundary),
                         ") has no CHPX. Creating new one." );
@@ -291,7 +290,7 @@ public class CHPBinTable
         }
         this._textRuns = new ArrayList<>(newChpxs);
 
-        logger.log( POILogger.DEBUG, "CHPX rebuilded in ",
+        LOG.log( POILogger.DEBUG, "CHPX rebuilded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
         start = System.currentTimeMillis();
@@ -319,7 +318,7 @@ public class CHPBinTable
             previous = current;
         }
 
-        logger.log( POILogger.DEBUG, "CHPX compacted in ",
+        LOG.log( POILogger.DEBUG, "CHPX compacted in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
     }

@@ -57,7 +57,7 @@ import org.apache.poi.util.SuppressForbidden;
  */
 public final class BiffViewer {
     private static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
-    private static final POILogger logger = POILogFactory.getLogger(BiffViewer.class);
+    private static final POILogger LOG = POILogFactory.getLogger(BiffViewer.class);
 
     private BiffViewer() {
         // no instances of this class
@@ -81,7 +81,7 @@ public final class BiffViewer {
             try {
                 hasNext = recStream.hasNextRecord();
             } catch (LeftoverDataException e) {
-                logger.log(POILogger.ERROR, "Discarding ", recStream.remaining(), " bytes and continuing", e);
+                LOG.log(POILogger.ERROR, "Discarding ", recStream.remaining(), " bytes and continuing", e);
                 recStream.readRemainder();
                 hasNext = recStream.hasNextRecord();
             }

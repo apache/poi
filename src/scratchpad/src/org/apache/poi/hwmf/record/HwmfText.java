@@ -48,7 +48,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 public class HwmfText {
-    private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HwmfText.class);
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
@@ -430,13 +430,13 @@ public class HwmfText {
             size += rawTextBytes.length;
 
             if (size >= remainingRecordSize) {
-                logger.log(POILogger.INFO, "META_EXTTEXTOUT doesn't contain character tracking info");
+                LOG.log(POILogger.INFO, "META_EXTTEXTOUT doesn't contain character tracking info");
                 return size;
             }
 
             int dxLen = Math.min(stringLength, (remainingRecordSize-size)/LittleEndianConsts.SHORT_SIZE);
             if (dxLen < stringLength) {
-                logger.log(POILogger.WARN, "META_EXTTEXTOUT tracking info doesn't cover all characters");
+                LOG.log(POILogger.WARN, "META_EXTTEXTOUT tracking info doesn't cover all characters");
             }
 
             for (int i=0; i<dxLen; i++) {

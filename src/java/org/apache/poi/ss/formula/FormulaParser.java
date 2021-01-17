@@ -93,7 +93,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public final class FormulaParser {
-    private final static POILogger log = POILogFactory.getLogger(FormulaParser.class);
+    private static final POILogger log = POILogFactory.getLogger(FormulaParser.class);
     private final String _formulaString;
     private final int _formulaLength;
     /** points at the next character to be read (after the {@link #look} codepoint) */
@@ -101,9 +101,9 @@ public final class FormulaParser {
 
     private ParseNode _rootNode;
 
-    private final static char TAB = '\t'; // HSSF + XSSF
-    private final static char CR = '\r';  // Normally just XSSF
-    private final static char LF = '\n';  // Normally just XSSF
+    private static final char TAB = '\t'; // HSSF + XSSF
+    private static final char CR = '\r';  // Normally just XSSF
+    private static final char LF = '\n';  // Normally just XSSF
 
     /**
      * Lookahead unicode codepoint
@@ -585,11 +585,11 @@ public final class FormulaParser {
 
 
     
-    private final static String specHeaders = "Headers";
-    private final static String specAll = "All";
-    private final static String specData = "Data";
-    private final static String specTotals = "Totals";
-    private final static String specThisRow = "This Row";
+    private static final String specHeaders = "Headers";
+    private static final String specAll = "All";
+    private static final String specData = "Data";
+    private static final String specTotals = "Totals";
+    private static final String specThisRow = "This Row";
     
     /**
      * Parses a structured reference, returns it as area reference.

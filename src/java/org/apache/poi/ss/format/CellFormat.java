@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,13 +51,13 @@ import org.apache.poi.util.LocaleUtil;
  * <dt>One part (example: <tt>[Green]#.##</tt>)</dt>
  * <dd>If the value is a number, display according to this one part (example: green text,
  * with up to two decimal points). If the value is text, display it as is.</dd>
- * 
+ *
  * <dt>Two parts (example: <tt>[Green]#.##;[Red]#.##</tt>)</dt>
  * <dd>If the value is a positive number or zero, display according to the first part (example: green
  * text, with up to two decimal points); if it is a negative number, display
  * according to the second part (example: red text, with up to two decimal
  * points). If the value is text, display it as is.</dd>
- * 
+ *
  * <dt>Three parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##</tt>)</dt>
  * <dd>If the value is a positive
  * number, display according to the first part (example: green text, with up to
@@ -64,7 +65,7 @@ import org.apache.poi.util.LocaleUtil;
  * (example: black text, with up to two decimal points); if it is a negative
  * number, display according to the third part (example: red text, with up to
  * two decimal points). If the value is text, display it as is.</dd>
- * 
+ *
  * <dt>Four parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##;[@]</tt>)</dt>
  * <dd>If the value is a positive number, display according to the first part (example: green text,
  * with up to two decimal points); if it is zero, display according to the
@@ -82,7 +83,7 @@ import org.apache.poi.util.LocaleUtil;
  * <p>
  * In addition to these, there is a general format that is used when no format
  * is specified.
- * 
+ *
  * TODO Merge this with {@link DataFormatter} so we only have one set of
  *  code for formatting numbers.
  * TODO Re-use parts of this logic with {@link ConditionalFormatting} /
@@ -91,13 +92,8 @@ import org.apache.poi.util.LocaleUtil;
  *  native character numbers, as documented at https://help.libreoffice.org/Common/Number_Format_Codes
  */
 public class CellFormat {
-    private final Locale locale;
-    private final String format;
-    private final CellFormatPart posNumFmt;
-    private final CellFormatPart zeroNumFmt;
-    private final CellFormatPart negNumFmt;
-    private final CellFormatPart textFmt;
-    private final int formatPartCount;
+    /** The logger to use in the formatting code. */
+    private static final Logger LOG = Logger.getLogger(CellFormat.class.getName());
 
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
@@ -115,8 +111,16 @@ public class CellFormat {
             "###################################################" +
             "###################################################";
 
-    private static String QUOTE = "\"";
-            
+    private static final String QUOTE = "\"";
+
+    private final Locale locale;
+    private final String format;
+    private final CellFormatPart posNumFmt;
+    private final CellFormatPart zeroNumFmt;
+    private final CellFormatPart negNumFmt;
+    private final CellFormatPart textFmt;
+    private final int formatPartCount;
+
     private static CellFormat createGeneralFormat(final Locale locale) {
         return new CellFormat(locale, "General") {
             @Override
@@ -187,14 +191,13 @@ public class CellFormat {
 
                 parts.add(new CellFormatPart(locale, valueDesc));
             } catch (RuntimeException e) {
-                CellFormatter.logger.log(Level.WARNING,
-                        "Invalid format: " + CellFormatter.quote(m.group()), e);
+                LOG.log(Level.WARNING, "Invalid format: " + CellFormatter.quote(m.group()), e);
                 parts.add(null);
             }
         }
-        
+
         formatPartCount = parts.size();
-        
+
         switch (formatPartCount) {
         case 1:
             posNumFmt = parts.get(0);
@@ -382,16 +385,16 @@ public class CellFormat {
      * Returns the {@link CellFormatPart} that applies to the value.  Result
      * depends on how many parts the cell format has, the cell value and any
      * conditions.  The value must be a {@link Number}.
-     * 
+     *
      * @param value The value.
      * @return The {@link CellFormatPart} that applies to the value.
      */
     private CellFormatPart getApplicableFormatPart(Object value) {
-        
+
         if (value instanceof Number) {
-            
+
             double val = ((Number) value).doubleValue();
-            
+
             if (formatPartCount == 1) {
                 if (!posNumFmt.hasCondition()
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
@@ -425,15 +428,15 @@ public class CellFormat {
         } else {
             throw new IllegalArgumentException("value must be a Number");
         }
-        
+
     }
-    
+
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
      * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
      * result of {@link Cell#getCellType()}.
-     * 
+     *
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.

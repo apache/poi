@@ -27,8 +27,8 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class MissingArgPtg extends ScalarConstantPtg {
 
-	private final static int SIZE = 1;
-	public final static byte sid = 0x16;
+	private static final int SIZE = 1;
+	public static final byte sid = 0x16;
 
 	public static final Ptg instance = new MissingArgPtg();
 

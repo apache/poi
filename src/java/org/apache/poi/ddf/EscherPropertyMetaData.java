@@ -26,12 +26,12 @@ package org.apache.poi.ddf;
 public class EscherPropertyMetaData
 {
     // Escher property types.
-    public final static byte TYPE_UNKNOWN = (byte) 0;
-    public final static byte TYPE_BOOLEAN = (byte) 1;
-    public final static byte TYPE_RGB = (byte) 2;
-    public final static byte TYPE_SHAPEPATH = (byte) 3;
-    public final static byte TYPE_SIMPLE = (byte)4;
-    public final static byte TYPE_ARRAY = (byte)5;
+    public static final byte TYPE_UNKNOWN = (byte) 0;
+    public static final byte TYPE_BOOLEAN = (byte) 1;
+    public static final byte TYPE_RGB = (byte) 2;
+    public static final byte TYPE_SHAPEPATH = (byte) 3;
+    public static final byte TYPE_SIMPLE = (byte)4;
+    public static final byte TYPE_ARRAY = (byte)5;
 
     private String description;
     private byte type;

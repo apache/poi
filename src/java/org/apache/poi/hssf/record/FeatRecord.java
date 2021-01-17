@@ -39,7 +39,7 @@ import org.apache.poi.util.POILogger;
  *  up with a {@link FeatHdrRecord}.
  */
 public final class FeatRecord extends StandardRecord {
-    private static final POILogger logger = POILogFactory.getLogger(FeatRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(FeatRecord.class);
     public static final short sid = 0x0868;
     // SIDs from newer versions
     public static final short v11_sid = 0x0872;
@@ -108,7 +108,7 @@ public final class FeatRecord extends StandardRecord {
 			sharedFeature = new FeatSmartTag(in);
 			break;
 		default:
-			logger.log( POILogger.ERROR, "Unknown Shared Feature ", isf_sharedFeatureType, " found!");
+			LOG.log( POILogger.ERROR, "Unknown Shared Feature ", isf_sharedFeatureType, " found!");
 		}
 	}
 

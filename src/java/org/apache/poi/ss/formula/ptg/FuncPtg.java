@@ -24,8 +24,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 public final class FuncPtg extends AbstractFunctionPtg {
 
-    public final static byte sid  = 0x21;
-    public final static int  SIZE = 3;
+    public static final byte sid  = 0x21;
+    public static final int  SIZE = 3;
 
     public static FuncPtg create(LittleEndianInput in) {
         return create(in.readUShort());

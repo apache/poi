@@ -36,46 +36,46 @@ import org.apache.poi.util.POILogger;
  */
 @Beta
 public class StreamingSheetWriter extends SheetDataWriter {
-    private static final POILogger logger = POILogFactory.getLogger(StreamingSheetWriter.class);
-    
+    private static final POILogger LOG = POILogFactory.getLogger(StreamingSheetWriter.class);
+
     public StreamingSheetWriter() throws IOException {
         throw new RuntimeException("StreamingSheetWriter requires OutputStream");
     }
-    
+
     public StreamingSheetWriter(OutputStream out) throws IOException {
         super(createWriter(out));
-        logger.log(POILogger.DEBUG, "Preparing SSXSSF sheet writer");
+        LOG.log(POILogger.DEBUG, "Preparing SSXSSF sheet writer");
     }
-    
+
     @Override
     public File createTempFile() throws IOException {
         throw new RuntimeException("Not supported with StreamingSheetWriter");
     }
-    
+
     @Override
     public Writer createWriter(File fd) throws IOException {
         throw new RuntimeException("Not supported with StreamingSheetWriter");
     }
-    
+
     /**
      * Create a writer for the sheet data.
-     * 
+     *
      * @param out the output stream to write to
      */
     protected static Writer createWriter(OutputStream out) throws IOException {
         return new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
     }
-    
+
     @Override
     public void close() throws IOException {
         _out.flush();
     }
-    
+
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
         throw new RuntimeException("Not supported with StreamingSheetWriter");
     }
-    
+
     @Override
     boolean dispose() throws IOException {
         _out.close();

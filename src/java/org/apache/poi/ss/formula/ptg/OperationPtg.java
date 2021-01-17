@@ -25,9 +25,9 @@ import java.util.function.Supplier;
  * @author  andy
  */
 public abstract class OperationPtg extends Ptg {
-    public final static int TYPE_UNARY    = 0;
-    public final static int TYPE_BINARY   = 1;
-    public final static int TYPE_FUNCTION = 2;
+    public static final int TYPE_UNARY    = 0;
+    public static final int TYPE_BINARY   = 1;
+    public static final int TYPE_FUNCTION = 2;
 
     protected OperationPtg() {}
 

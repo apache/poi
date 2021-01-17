@@ -60,8 +60,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
     private static final float DPI = 72;
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( ExcelToFoConverter.class );
+    private static final POILogger LOG = POILogFactory.getLogger( ExcelToFoConverter.class );
 
     private static final float PAPER_A4_HEIGHT_INCHES = 29.4f / CM_PER_INCH;
 
@@ -233,7 +232,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 value = ErrorEval.getText( cell.getErrorCellValue() );
                 break;
             default:
-                logger.log(
+                LOG.log(
                         POILogger.WARN,
                         "Unexpected cell cachedFormulaResultType ("
                                 + cell.getCachedFormulaResultType() + ")" );
@@ -254,7 +253,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             value = ErrorEval.getText( cell.getErrorCellValue() );
             break;
         default:
-            logger.log( POILogger.WARN,
+            LOG.log( POILogger.WARN,
                     "Unexpected cell type (" + cell.getCellType() + ")" );
             return true;
         }

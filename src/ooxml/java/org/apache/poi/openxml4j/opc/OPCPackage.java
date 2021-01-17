@@ -70,7 +70,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Logger.
 	 */
-    private static final POILogger logger = POILogFactory.getLogger(OPCPackage.class);
+    private static final POILogger LOG = POILogFactory.getLogger(OPCPackage.class);
 
 	/**
 	 * Default package access.
@@ -442,13 +442,13 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 
 		if (this.packageAccess == PackageAccess.READ) {
-			logger.log(POILogger.WARN,
+			LOG.log(POILogger.WARN,
 			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
 			revert();
 			return;
 		}
 		if (this.contentTypeManager == null) {
-		    logger.log(POILogger.WARN,
+		    LOG.log(POILogger.WARN,
 		            "Unable to call close() on a package that hasn't been fully opened yet");
 			revert();
 		    return;
@@ -748,7 +748,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 					if (!hasCorePropertiesPart) {
 						hasCorePropertiesPart = true;
 					} else {
-					   logger.log(POILogger.WARN, "OPC Compliance error [M4.1]: " +
+					   LOG.log(POILogger.WARN, "OPC Compliance error [M4.1]: " +
 					   		"there is more than one core properties relationship in the package! " +
 					   		"POI will use only the first, but other software may reject this file.");
 					}
@@ -772,7 +772,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 							needCorePropertiesPart = false;
 						}
 					} catch (IOException ioe) {
-						logger.log(POILogger.WARN, "Unmarshall operation : IOException for "
+						LOG.log(POILogger.WARN, "Unmarshall operation : IOException for "
 								+ part._partName);
 						continue;
 					} catch (InvalidOperationException invoe) {
@@ -1005,7 +1005,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			try {
 				sourcePartName = PackagingURIHelper.createPartName(sourceURI);
 			} catch (InvalidFormatException e) {
-				logger
+				LOG
 						.log(POILogger.ERROR, "Part name URI '", sourceURI,
 								"' is not valid ! This message is not intended to be displayed !");
 				return;
@@ -1109,7 +1109,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				this.deletePartRecursive(targetPartName);
 			}
 		} catch (InvalidFormatException e) {
-			logger.log(POILogger.WARN, "An exception occurs while deleting part '"
+			LOG.log(POILogger.WARN, "An exception occurs while deleting part '"
 					+ partName.getName()
 					+ "'. Some parts may remain in the package. - "
 					+ e.getMessage());
@@ -1397,7 +1397,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			partMarshallers.put(new ContentType(contentType), marshaller);
 		} catch (InvalidFormatException e) {
-			logger.log(POILogger.WARN, "The specified content type is not valid: '"
+			LOG.log(POILogger.WARN, "The specified content type is not valid: '"
 					+ e.getMessage() + "'. The marshaller will not be added !");
 		}
 	}
@@ -1415,7 +1415,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			partUnmarshallers.put(new ContentType(contentType), unmarshaller);
 		} catch (InvalidFormatException e) {
-			logger.log(POILogger.WARN, "The specified content type is not valid: '"
+			LOG.log(POILogger.WARN, "The specified content type is not valid: '"
 					+ e.getMessage()
 					+ "'. The unmarshaller will not be added !");
 		}

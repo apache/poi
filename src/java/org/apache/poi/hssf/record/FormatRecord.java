@@ -33,7 +33,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class FormatRecord extends StandardRecord {
 
-    private static final POILogger logger = POILogFactory.getLogger(FormatRecord.class);
+    private static final POILogger LOG = POILogFactory.getLogger(FormatRecord.class);
 
     public static final short sid = 0x041E;
 
@@ -149,7 +149,7 @@ public final class FormatRecord extends StandardRecord {
         }
 
         if (ris.available() > 0) {
-            logger.log(POILogger.INFO, "FormatRecord has ", ris.available(), " unexplained bytes. Silently skipping");
+            LOG.log(POILogger.INFO, "FormatRecord has ", ris.available(), " unexplained bytes. Silently skipping");
             //swallow what's left
             while (ris.available() > 0) {
                 ris.readByte();

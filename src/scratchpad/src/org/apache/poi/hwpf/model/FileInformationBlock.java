@@ -45,25 +45,23 @@ import org.apache.poi.util.POILogger;
  * </ul>
  */
 @Internal
-public final class FileInformationBlock
-{
+public final class FileInformationBlock {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public static final POILogger logger = POILogFactory
-            .getLogger( FileInformationBlock.class );
+    private static final POILogger LOG = POILogFactory.getLogger( FileInformationBlock.class );
 
-    private FibBase _fibBase;
-    private int _csw;
-    private FibRgW97 _fibRgW;
-    private int _cslw;
-    private FibRgLw _fibRgLw;
+    private final FibBase _fibBase;
+    private final int _csw;
+    private final FibRgW97 _fibRgW;
+    private final int _cslw;
+    private final FibRgLw _fibRgLw;
     private int _cbRgFcLcb;
     private FIBFieldHandler _fieldHandler;
     private int _cswNew;
-    private int _nFibNew;
-    private byte[] _fibRgCswNew;
+    private final int _nFibNew;
+    private final byte[] _fibRgCswNew;
 
     /** Creates a new instance of FileInformationBlock */
     public FileInformationBlock( byte[] mainDocument )
@@ -177,7 +175,7 @@ public final class FileInformationBlock
             /* The Word spec has a much smaller list of "valid" values
              * to what the large CommonCrawl corpus contains!
              */
-            logger.log(POILogger.WARN, "Invalid file format version number: ", nfib, "(", nfibHex, ")");
+            LOG.log(POILogger.WARN, "Invalid file format version number: ", nfib, "(", nfibHex, ")");
         }
     }
 
@@ -188,7 +186,7 @@ public final class FileInformationBlock
         if ( cbRgFcLcb == expectedCbRgFcLcb )
             return;
 
-        logger.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
+        LOG.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
                 " value of FIB.cbRgFcLcb MUST be ", strCbRgFcLcb + ", not 0x",
                 Integer.toHexString( cbRgFcLcb ) );
     }
@@ -213,7 +211,7 @@ public final class FileInformationBlock
             assertCswNew( "0x0112", 0x0005, "0x0005", _cswNew );
             break;
         default:
-            logger.log(POILogger.WARN, "Invalid file format version number: ", getNFib());
+            LOG.log(POILogger.WARN, "Invalid file format version number: ", getNFib());
         }
     }
 
@@ -224,7 +222,7 @@ public final class FileInformationBlock
         if ( cswNew == expectedCswNew )
             return;
 
-        logger.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
+        LOG.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
                 " value of FIB.cswNew MUST be ",
                 strExpectedCswNew + ", not 0x", Integer.toHexString( cswNew ) );
     }
@@ -237,14 +235,14 @@ public final class FileInformationBlock
          * UnhandledDataStructure and save them on save.
          */
         HashSet<Integer> knownFieldSet = new HashSet<>();
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STSHF ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.CLX ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.DOP ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBTECHPX ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBTEPAPX ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFSED ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLFLST ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLFLFO ) );
+        knownFieldSet.add(FIBFieldHandler.STSHF);
+        knownFieldSet.add(FIBFieldHandler.CLX);
+        knownFieldSet.add(FIBFieldHandler.DOP);
+        knownFieldSet.add(FIBFieldHandler.PLCFBTECHPX);
+        knownFieldSet.add(FIBFieldHandler.PLCFBTEPAPX);
+        knownFieldSet.add(FIBFieldHandler.PLCFSED);
+        knownFieldSet.add(FIBFieldHandler.PLFLST);
+        knownFieldSet.add(FIBFieldHandler.PLFLFO);
 
         // field info
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
@@ -256,18 +254,15 @@ public final class FileInformationBlock
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFBKMK ) );
 
         // notes
-        for ( NoteType noteType : NoteType.values() )
-        {
-            knownFieldSet.add( Integer.valueOf( noteType
-                    .getFibDescriptorsFieldIndex() ) );
-            knownFieldSet.add( Integer.valueOf( noteType
-                    .getFibTextPositionsFieldIndex() ) );
+        for ( NoteType noteType : NoteType.values() ) {
+            knownFieldSet.add(noteType.getFibDescriptorsFieldIndex());
+            knownFieldSet.add(noteType.getFibTextPositionsFieldIndex());
         }
 
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFFFN ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFRMARK ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBSAVEDBY ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.MODIFIED ) );
+        knownFieldSet.add( FIBFieldHandler.STTBFFFN );
+        knownFieldSet.add( FIBFieldHandler.STTBFRMARK );
+        knownFieldSet.add( FIBFieldHandler.STTBSAVEDBY );
+        knownFieldSet.add( FIBFieldHandler.MODIFIED );
 
         _fieldHandler = new FIBFieldHandler( mainDocument, 154, _cbRgFcLcb,
                 tableStream, knownFieldSet, true );

@@ -37,9 +37,9 @@ import org.apache.poi.util.LittleEndianOutput;
  * is {@link Ref3DPxg}
  */
 public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
-    public final static byte sid  = 0x3a;
+    public static final byte sid  = 0x3a;
 
-    private final static int  SIZE = 7; // 6 + 1 for Ptg
+    private static final int  SIZE = 7; // 6 + 1 for Ptg
     private int field_1_index_extern_sheet;
 
     public Ref3DPtg(Ref3DPtg other) {

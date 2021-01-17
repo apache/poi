@@ -176,8 +176,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 
             if (newPos == null) {
                 Integer id = me.getKey();
-                logger.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
-                logger.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
+                LOG.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
+                LOG.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
             } else {
                 me.setValue(newPos);
             }

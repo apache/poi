@@ -41,8 +41,7 @@ import org.apache.poi.util.POILogger;
  * chain of blocks.
  */
 public final class PropertyTable implements BATManaged {
-    private static final POILogger _logger =
-       POILogFactory.getLogger(PropertyTable.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PropertyTable.class);
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -97,7 +96,7 @@ public final class PropertyTable implements BATManaged {
                     // Looks to be a truncated block
                     // This isn't allowed, but some third party created files
                     //  sometimes do this, and we can normally read anyway
-                    _logger.log(POILogger.WARN, "Short Property Block, ", bb.remaining(),
+                    LOG.log(POILogger.WARN, "Short Property Block, ", bb.remaining(),
                             " bytes instead of the expected " + _bigBigBlockSize.getBigBlockSize());
                     toRead = bb.remaining();
                 }
@@ -175,7 +174,7 @@ public final class PropertyTable implements BATManaged {
        }
        return numBlocks;
     }
- 
+
     /**
      * Prepare to be written
      */
@@ -184,7 +183,7 @@ public final class PropertyTable implements BATManaged {
         // give each property its index
         int i=0;
         for (Property p : _properties) {
-            // only handle non-null properties 
+            // only handle non-null properties
             if (p == null) continue;
             p.setIndex(i++);
             pList.add(p);
@@ -192,8 +191,8 @@ public final class PropertyTable implements BATManaged {
 
         // prepare each property for writing
         for (Property p : pList) p.preWrite();
-    }    
-    
+    }
+
     /**
      * Writes the properties out into the given low-level stream
      */
@@ -205,7 +204,7 @@ public final class PropertyTable implements BATManaged {
           }
        }
        os.close();
-       
+
        // Update the start position if needed
        if(getStartBlock() != stream.getStartBlock()) {
           setStartBlock(stream.getStartBlock());
@@ -248,7 +247,7 @@ public final class PropertyTable implements BATManaged {
         if (! Property.isValidIndex(index))
             return false;
         if (index < 0 || index >= _properties.size()) {
-            _logger.log(POILogger.WARN, "Property index " + index +
+            LOG.log(POILogger.WARN, "Property index " + index +
                     "outside the valid range 0.."+_properties.size());
             return false;
         }

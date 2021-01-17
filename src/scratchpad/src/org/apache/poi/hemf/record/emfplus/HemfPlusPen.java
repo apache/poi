@@ -295,62 +295,62 @@ public class HemfPlusPen {
         /**
          * If set, a 2x3 transform matrix MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField TRANSFORM = BitFieldFactory.getInstance(0x00000001);
+        private static final BitField TRANSFORM = BitFieldFactory.getInstance(0x00000001);
         /**
          * If set, the style of a starting line cap MUST be specified in the OptionalData field of an
          * EmfPlusPenData object.
          */
-        private final static BitField START_CAP = BitFieldFactory.getInstance(0x00000002);
+        private static final BitField START_CAP = BitFieldFactory.getInstance(0x00000002);
         /**
          * Indicates whether the style of an ending line cap MUST be specified in the OptionalData field
          * of an EmfPlusPenData object.
          */
-        private final static BitField END_CAP = BitFieldFactory.getInstance(0x00000004);
+        private static final BitField END_CAP = BitFieldFactory.getInstance(0x00000004);
         /**
          * Indicates whether a line join type MUST be specified in the OptionalData
          * field of an EmfPlusPenData object.
          */
-        private final static BitField JOIN = BitFieldFactory.getInstance(0x00000008);
+        private static final BitField JOIN = BitFieldFactory.getInstance(0x00000008);
         /**
          * Indicates whether a miter limit MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField MITER_LIMIT = BitFieldFactory.getInstance(0x00000010);
+        private static final BitField MITER_LIMIT = BitFieldFactory.getInstance(0x00000010);
         /**
          * Indicates whether a line style MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField LINE_STYLE = BitFieldFactory.getInstance(0x00000020);
+        private static final BitField LINE_STYLE = BitFieldFactory.getInstance(0x00000020);
         /**
          * Indicates whether a dashed line cap MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField DASHED_LINE_CAP = BitFieldFactory.getInstance(0x00000040);
+        private static final BitField DASHED_LINE_CAP = BitFieldFactory.getInstance(0x00000040);
         /**
          * Indicates whether a dashed line offset MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField DASHED_LINE_OFFSET = BitFieldFactory.getInstance(0x00000080);
+        private static final BitField DASHED_LINE_OFFSET = BitFieldFactory.getInstance(0x00000080);
         /**
          * Indicates whether an EmfPlusDashedLineData object MUST be specified in the
          * OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField DASHED_LINE = BitFieldFactory.getInstance(0x00000100);
+        private static final BitField DASHED_LINE = BitFieldFactory.getInstance(0x00000100);
         /**
          * Indicates whether a pen alignment MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField NON_CENTER = BitFieldFactory.getInstance(0x00000200);
+        private static final BitField NON_CENTER = BitFieldFactory.getInstance(0x00000200);
         /**
          * Indicates whether the length and content of a EmfPlusCompoundLineData object are present in the
          * OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField COMPOUND_LINE = BitFieldFactory.getInstance(0x00000400);
+        private static final BitField COMPOUND_LINE = BitFieldFactory.getInstance(0x00000400);
         /**
          * Indicates whether an EmfPlusCustomStartCapData object MUST be specified
          * in the OptionalData field of an EmfPlusPenData object.y
          */
-        private final static BitField CUSTOM_START_CAP = BitFieldFactory.getInstance(0x00000800);
+        private static final BitField CUSTOM_START_CAP = BitFieldFactory.getInstance(0x00000800);
         /**
          * Indicates whether an EmfPlusCustomEndCapData object MUST be specified in
          * the OptionalData field of an EmfPlusPenData object.
          */
-        private final static BitField CUSTOM_END_CAP = BitFieldFactory.getInstance(0x00001000);
+        private static final BitField CUSTOM_END_CAP = BitFieldFactory.getInstance(0x00001000);
 
         private static final int[] FLAGS_MASKS = {
             0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,

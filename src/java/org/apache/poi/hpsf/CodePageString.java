@@ -34,7 +34,7 @@ public class CodePageString {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private final static POILogger LOG = POILogFactory.getLogger( CodePageString.class );
+    private static final POILogger LOG = POILogFactory.getLogger( CodePageString.class );
 
     private byte[] _value;
 

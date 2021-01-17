@@ -37,8 +37,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * The XSSF equivalent is {@link Area3DPxg}
  */
 public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
-	public final static byte sid = 0x3b;
-	private final static int SIZE = 11; // 10 + 1 for Ptg
+	public static final byte sid = 0x3b;
+	private static final int SIZE = 11; // 10 + 1 for Ptg
 
 	private int field_1_index_extern_sheet;
 

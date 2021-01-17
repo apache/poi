@@ -85,7 +85,7 @@ public final class MasterTextPropAtom extends RecordAtom {
         try {
             read();
         } catch (Exception e){
-            logger.log(POILogger.ERROR, "Failed to parse MasterTextPropAtom", e);
+            LOG.log(POILogger.ERROR, "Failed to parse MasterTextPropAtom", e);
         }
     }
 

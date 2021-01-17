@@ -42,8 +42,8 @@ public final class IntPtg extends ScalarConstantPtg {
 		return i >= MIN_VALUE && i <= MAX_VALUE;
 	}
 
-	public final static int SIZE = 3;
-	public final static byte sid = 0x1e;
+	public static final int SIZE = 3;
+	public static final byte sid = 0x1e;
 	private final int field_1_value;
 
 	public IntPtg(LittleEndianInput in)  {

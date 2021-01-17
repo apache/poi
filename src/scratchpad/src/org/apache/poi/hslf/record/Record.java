@@ -42,7 +42,7 @@ import org.apache.poi.util.POILogger;
 public abstract class Record implements GenericRecord
 {
     // For logging
-	protected static final POILogger logger = POILogFactory.getLogger(Record.class);
+	protected static final POILogger LOG = POILogFactory.getLogger(Record.class);
 
 	/**
 	 * Is this record type an Atom record (only has data),
@@ -183,7 +183,7 @@ public abstract class Record implements GenericRecord
 			// Handle case of a corrupt last record, whose claimed length
 			//  would take us passed the end of the file
 			if(start + len > b.length ) {
-				logger.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
+				LOG.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
 				return null;
 			}
 

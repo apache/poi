@@ -31,7 +31,7 @@ public enum ErrorDirection {
         this.underlying = direction;
     }
 
-    private final static HashMap<STErrDir.Enum, ErrorDirection> reverse = new HashMap<>();
+    private static final HashMap<STErrDir.Enum, ErrorDirection> reverse = new HashMap<>();
     static {
         for (ErrorDirection value : values()) {
             reverse.put(value.underlying, value);

@@ -31,7 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class XSSFRowShifter extends RowShifter {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFRowShifter.class);
 
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
@@ -45,7 +45,7 @@ public final class XSSFRowShifter extends RowShifter {
     public void updateFormulas(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
     }
-    
+
     /**
      * Update the formulas in specified row using the formula shifting policy specified by shifter
      *

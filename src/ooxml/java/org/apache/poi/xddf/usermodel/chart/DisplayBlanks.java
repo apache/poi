@@ -32,7 +32,7 @@ public enum DisplayBlanks {
         this.underlying = mode;
     }
 
-    private final static HashMap<STDispBlanksAs.Enum, DisplayBlanks> reverse = new HashMap<>();
+    private static final HashMap<STDispBlanksAs.Enum, DisplayBlanks> reverse = new HashMap<>();
     static {
         for (DisplayBlanks value : values()) {
             reverse.put(value.underlying, value);

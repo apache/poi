@@ -19,10 +19,10 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * The enumeration value indicating the style of fill pattern being used for a cell format.
- * 
+ *
  */
 public enum FillPatternType {
-    
+
     /**  No background */
      NO_FILL(0),
 
@@ -79,18 +79,18 @@ public enum FillPatternType {
 
     /**  Least Dots */
      LEAST_DOTS(18);
-     
+
      /** Codes are used by ExtendedFormatRecord in HSSF */
      private final short code;
      private FillPatternType(int code) {
          this.code = (short) code;
      }
-     
+
      public short getCode() {
          return code;
      }
-     
-     private final static int length = values().length;
+
+     private static final int length = values().length;
      public static FillPatternType forInt(int code) {
          if (code < 0 || code > length) {
              throw new IllegalArgumentException("Invalid FillPatternType code: " + code);

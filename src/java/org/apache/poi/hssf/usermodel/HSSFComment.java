@@ -39,12 +39,12 @@ import org.apache.poi.ss.util.CellAddress;
  */
 public class HSSFComment extends HSSFTextbox implements Comment {
 
-    private final static int FILL_TYPE_SOLID = 0;
-    private final static int FILL_TYPE_PICTURE = 3;
+    private static final int FILL_TYPE_SOLID = 0;
+    private static final int FILL_TYPE_PICTURE = 3;
 
-    private final static int GROUP_SHAPE_PROPERTY_DEFAULT_VALUE = 655362;
-    private final static int GROUP_SHAPE_HIDDEN_MASK = 0x1000002;
-    private final static int GROUP_SHAPE_NOT_HIDDEN_MASK = 0xFEFFFFFD;
+    private static final int GROUP_SHAPE_PROPERTY_DEFAULT_VALUE = 655362;
+    private static final int GROUP_SHAPE_HIDDEN_MASK = 0x1000002;
+    private static final int GROUP_SHAPE_NOT_HIDDEN_MASK = 0xFEFFFFFD;
 
     /*
       * TODO - make HSSFComment more consistent when created vs read from file.

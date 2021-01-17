@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public final class ImageUtils {
-    private static final POILogger logger = POILogFactory.getLogger(ImageUtils.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ImageUtils.class);
 
     private static final int WIDTH_UNITS = 1024;
     private static final int HEIGHT_UNITS = 256;
@@ -93,18 +93,18 @@ public final class ImageUtils {
                                 r.dispose();
                             }
                         } else {
-                            logger.log(POILogger.WARN, "ImageIO found no images");
+                            LOG.log(POILogger.WARN, "ImageIO found no images");
                         }
                     }
 
                 } catch (IOException e) {
                     //silently return if ImageIO failed to read the image
-                    logger.log(POILogger.WARN, e);
+                    LOG.log(POILogger.WARN, e);
                 }
 
                 break;
             default:
-                logger.log(POILogger.WARN, "Only JPEG, PNG and DIB pictures can be automatically sized");
+                LOG.log(POILogger.WARN, "Only JPEG, PNG and DIB pictures can be automatically sized");
         }
         return size;
     }

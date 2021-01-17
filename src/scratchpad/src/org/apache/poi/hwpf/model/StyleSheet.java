@@ -49,12 +49,12 @@ public final class StyleSheet {
 //  private static final int TAP_TYPE = 5;
 
     @Deprecated
-    private final static ParagraphProperties NIL_PAP = new ParagraphProperties();
+    private static final ParagraphProperties NIL_PAP = new ParagraphProperties();
     @Deprecated
-    private final static CharacterProperties NIL_CHP = new CharacterProperties();
+    private static final CharacterProperties NIL_CHP = new CharacterProperties();
 
-    private final static byte[] NIL_CHPX = new byte[]{};
-    private final static byte[] NIL_PAPX = new byte[]{0, 0};
+    private static final byte[] NIL_CHPX = new byte[]{};
+    private static final byte[] NIL_PAPX = new byte[]{0, 0};
 
     /**
      * Size of the STSHI structure

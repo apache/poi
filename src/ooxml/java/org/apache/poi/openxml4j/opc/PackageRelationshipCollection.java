@@ -37,10 +37,9 @@ import org.w3c.dom.NodeList;
  * @author Julien Chable, CDubettier
  * @version 0.1
  */
-public final class PackageRelationshipCollection implements
-        Iterable<PackageRelationship> {
+public final class PackageRelationshipCollection implements Iterable<PackageRelationship> {
 
-    private final static POILogger logger = POILogFactory.getLogger(PackageRelationshipCollection.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PackageRelationshipCollection.class);
 
     /**
      * Package relationships ordered by ID.
@@ -301,7 +300,7 @@ public final class PackageRelationshipCollection implements
     public void parseRelationshipsPart(PackagePart relPart)
             throws InvalidFormatException {
         try {
-            logger.log(POILogger.DEBUG, "Parsing relationship: ", relPart.getPartName());
+            LOG.log(POILogger.DEBUG, "Parsing relationship: ", relPart.getPartName());
             Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
 
             // Browse default types
@@ -349,7 +348,7 @@ public final class PackageRelationshipCollection implements
                     // package
                     target = PackagingURIHelper.toURI(value);
                 } catch (URISyntaxException e) {
-                    logger.log(POILogger.ERROR, "Cannot convert ", value,
+                    LOG.log(POILogger.ERROR, "Cannot convert ", value,
                             " in a valid relationship URI-> dummy-URI used", e);
                 }
                 addRelationship(target, targetMode, type, id);

@@ -118,7 +118,7 @@ public class ExHyperlink extends RecordContainer {
 		if(_children[0] instanceof ExHyperlinkAtom) {
 			linkAtom = (ExHyperlinkAtom)_children[0];
 		} else {
-			logger.log(POILogger.ERROR, "First child record wasn't a ExHyperlinkAtom, was of type ", _children[0].getRecordType());
+			LOG.log(POILogger.ERROR, "First child record wasn't a ExHyperlinkAtom, was of type ", _children[0].getRecordType());
 		}
 
         for (int i = 1; i < _children.length; i++) {
@@ -126,7 +126,7 @@ public class ExHyperlink extends RecordContainer {
                 if ( linkDetailsA == null) linkDetailsA = (CString)_children[i];
                 else linkDetailsB = (CString)_children[i];
             } else {
-                logger.log(POILogger.ERROR, "Record after ExHyperlinkAtom wasn't a CString, was of type ", _children[1].getRecordType());
+                LOG.log(POILogger.ERROR, "Record after ExHyperlinkAtom wasn't a CString, was of type ", _children[1].getRecordType());
             }
 
         }

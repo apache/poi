@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings("unused")
 public final class DateFormatConverter  {
-	private static POILogger logger = POILogFactory.getLogger(DateFormatConverter.class);
+	private static final POILogger LOG = POILogFactory.getLogger(DateFormatConverter.class);
 
 	private DateFormatConverter() {
 	}
@@ -152,7 +152,7 @@ public final class DateFormatConverter  {
 				loc = LocaleID.lookupByLanguageTag(languageTag.substring(0, idx));
 			}
 			if (loc == null) {
-				logger.log( POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales." );
+				LOG.log( POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales." );
 				return "";
 			}
 		}

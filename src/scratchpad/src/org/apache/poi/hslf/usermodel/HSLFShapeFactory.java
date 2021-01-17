@@ -45,12 +45,10 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Create a <code>Shape</code> object depending on its type
- *
- * @author Yegor Kozlov
  */
 public final class HSLFShapeFactory {
     // For logging
-    protected static final POILogger logger = POILogFactory.getLogger(HSLFShapeFactory.class);
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.
@@ -79,15 +77,15 @@ public final class HSLFShapeFactory {
                 }
             }
         }
-        
+
         HSLFGroupShape group;
         if (isTable) {
             group = new HSLFTable(spContainer, parent);
-            
+
         } else {
             group = new HSLFGroupShape(spContainer, parent);
         }
-        
+
         return group;
      }
 
@@ -114,7 +112,7 @@ public final class HSLFShapeFactory {
                 if (parent instanceof HSLFTable) {
                     EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
                     if (etr == null) {
-                        logger.log(POILogger.WARN, "invalid ppt - add EscherTextboxRecord to cell");
+                        LOG.log(POILogger.WARN, "invalid ppt - add EscherTextboxRecord to cell");
                         etr = new EscherTextboxRecord();
                         etr.setRecordId(EscherTextboxRecord.RECORD_ID);
                         etr.setOptions((short)15);
@@ -141,24 +139,24 @@ public final class HSLFShapeFactory {
                     break;
             }
         }
-        
+
         ExObjRefAtom oes = getClientDataRecord(spContainer, RecordTypes.ExObjRefAtom.typeID);
         return (oes != null)
             ? new HSLFObjectShape(spContainer, parent)
             : new HSLFPictureShape(spContainer, parent);
     }
-    
+
     private static HSLFShape createNonPrimitive(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         AbstractEscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
         EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__VERTICES);
         if(prop != null) {
             return new HSLFFreeformShape(spContainer, parent);
         }
-        
-        logger.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
+
+        LOG.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
         return new HSLFAutoShape(spContainer, parent);
     }
-    
+
     @SuppressWarnings("unchecked")
     protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
         HSLFEscherClientDataRecord cldata = spContainer.getChildById(EscherClientDataRecord.RECORD_ID);
