@@ -220,12 +220,11 @@ public class XWPFStyles extends POIXMLDocumentPart {
             usedStyleList.add(linkStyle);
             getUsedStyleList(linkStyle, usedStyleList);
         }
-
         String nextStyleID = style.getNextStyleID();
         XWPFStyle nextStyle = getStyle(nextStyleID);
         if ((nextStyle != null) && (!usedStyleList.contains(nextStyle))) {
-            usedStyleList.add(linkStyle);
-            getUsedStyleList(linkStyle, usedStyleList);
+            usedStyleList.add(nextStyle);
+            getUsedStyleList(nextStyle, usedStyleList);
         }
         return usedStyleList;
     }
