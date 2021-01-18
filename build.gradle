@@ -57,7 +57,7 @@ ant.taskdef(name: "junit",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
-    gradleVersion = '6.5'
+    gradleVersion = '6.8'
 }
 
 task adjustWrapperPropertiesFile {
