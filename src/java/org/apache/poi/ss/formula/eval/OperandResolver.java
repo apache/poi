@@ -41,8 +41,8 @@ public final class OperandResolver {
                  "[+-]?(" +
                    "("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
                  "(\\."+Digits+"("+Exp+")?))"+
-                 "[\\x00-\\x20]*"); 
-            
+                 "[\\x00-\\x20]*");
+    private static final Pattern fpPattern = Pattern.compile(fpRegex);
     
     private OperandResolver() {
         // no instances of this class
@@ -291,8 +291,8 @@ public final class OperandResolver {
      * @return <code>null</code> if the specified text cannot be parsed as a number
      */
     public static Double parseDouble(String pText) {
-        
-        if (Pattern.matches(fpRegex, pText))
+
+        if (fpPattern.matcher(pText).matches())
             try {
                 return Double.parseDouble(pText);
             } catch (NumberFormatException e) {
