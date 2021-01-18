@@ -80,7 +80,9 @@ public interface XDDFDataSource<T> {
             }
         }
         if (effectiveNumOfPoints == 0) {
-            cache.unsetPtCount();
+            if (cache.isSetPtCount()) {
+                cache.unsetPtCount();
+            }
         } else {
             if (cache.isSetPtCount()) {
                 cache.getPtCount().setVal(numOfPoints);
