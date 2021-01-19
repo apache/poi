@@ -94,7 +94,7 @@ class TestXSLFTable {
         while (rowIdx<data.length) {
             row = tab.addRow();
             for (int col=0; col<data[rowIdx].length; col++) {
-                XSLFTextRun tr = tab.getCell(rowIdx, col).setText(data[rowIdx][col]);
+                XSLFTextRun tr = row.addCell().setText(data[rowIdx][col]);
                 tr.setFontSize(15.);
                 tr.setFontFamily("Arial");
             }
@@ -102,8 +102,7 @@ class TestXSLFTable {
             for (int col=0; col<data[rowIdx].length; col++) {
                 XSLFTextRun tr = tab
                         .getCell(rowIdx, col)
-                        .setText(
-                                data[rowIdx][col]);
+                        .setText(data[rowIdx][col]);
                 tr.setFontSize(12.);
                 tr.setFontFamily("Arial");
             }
