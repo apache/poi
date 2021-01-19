@@ -23,8 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 class TestXDDFChart {
     @Test
@@ -46,6 +54,39 @@ class TestXDDFChart {
 
         xddfChart.setExternalId("rid2");
         assertEquals("rid2", ctChartSpace.getExternalData().getId());
+    }
+
+    @Test
+    public void test65016() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("65016.xlsx")) {
+            XSSFSheet splitSheet = wb.getSheet("Splits");
+
+            XDDFChart chart = newXDDFChart();
+            XDDFChartLegend legend = chart.getOrAddLegend();
+            legend.setPosition(LegendPosition.BOTTOM);
+
+            // Use a category axis for the bottom axis.
+            XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+            XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
+            leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+
+            XDDFLineChartData data = (XDDFLineChartData) chart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
+
+            // starting row 1 to include description
+            XDDFNumericalDataSource<Double> xs = XDDFDataSourcesFactory.fromNumericCellRange(splitSheet,
+                    new CellRangeAddress(2, 100, 0, 0));
+            XDDFNumericalDataSource<Double> ys1 = XDDFDataSourcesFactory.fromNumericCellRange(splitSheet,
+                    new CellRangeAddress(2, 100, 1, 1));
+
+            XDDFLineChartData.Series series = (XDDFLineChartData.Series) data.addSeries(xs, ys1);
+            assertEquals(series.categoryData.getPointCount(), xs.getPointCount());
+
+            chart.plot(data);
+
+            try (OutputStream out = new FileOutputStream("/tmp/chart20201220.xlsx")) {
+                wb.write(out);
+            }
+        }
     }
 
     private XDDFChart newXDDFChart() {
