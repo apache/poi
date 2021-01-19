@@ -1278,6 +1278,8 @@ under the License.
                         <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                         <jvmarg value="${file.leak.detector}" />
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true" />
+                        <jvmarg value="-Djunit.jupiter.execution.parallel.config.strategy=fixed" />
+                        <jvmarg value="-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3" />
                         <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}" if:true="${isIBMVM}"/>
 
                         <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
