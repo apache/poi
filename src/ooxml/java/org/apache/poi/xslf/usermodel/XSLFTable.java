@@ -156,6 +156,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         CTTableRow tr = _table.addNewTr();
         XSLFTableRow row = initializeRow(tr);
         _rows.add(row);
+        updateRowColIndexes();
         return row;
     }
 
@@ -163,9 +164,6 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         XSLFTableRow row = new XSLFTableRow(tr, this);
         // default height is 20 points
         row.setHeight(20.0);
-        for (int i = 0;  i < getNumberOfColumns(); i++) {
-            row.addCell();
-        }
         return row;
     }
 
@@ -180,6 +178,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
         CTTableRow tr = _table.insertNewTr(rowIdx);
         XSLFTableRow row = initializeRow(tr);
+        for (int i = 0;  i < getNumberOfColumns(); i++) {
+            row.addCell();
+        }
         _rows.add(rowIdx, row);
         return row;
     }

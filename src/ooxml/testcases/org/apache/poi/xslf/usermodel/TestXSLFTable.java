@@ -27,18 +27,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -94,7 +98,7 @@ class TestXSLFTable {
         while (rowIdx<data.length) {
             row = tab.addRow();
             for (int col=0; col<data[rowIdx].length; col++) {
-                XSLFTextRun tr = tab.getCell(rowIdx, col).setText(data[rowIdx][col]);
+                XSLFTextRun tr = row.addCell().setText(data[rowIdx][col]);
                 tr.setFontSize(15.);
                 tr.setFontFamily("Arial");
             }
@@ -102,8 +106,7 @@ class TestXSLFTable {
             for (int col=0; col<data[rowIdx].length; col++) {
                 XSLFTextRun tr = tab
                         .getCell(rowIdx, col)
-                        .setText(
-                                data[rowIdx][col]);
+                        .setText(data[rowIdx][col]);
                 tr.setFontSize(12.);
                 tr.setFontFamily("Arial");
             }
@@ -333,4 +336,31 @@ class TestXSLFTable {
             }
         }
     }
+
+    @Test
+    void simpleMerge() throws IOException {
+        // github-221
+        try (XMLSlideShow slideshow = new XMLSlideShow()) {
+            XSLFSlide slide = slideshow.createSlide();
+            XSLFTable newTable = slide.createTable(3, 3);
+            newTable.setAnchor(new Rectangle(100, 100, 100, 100));
+
+            XSLFTableRow tableRow = newTable.addRow();
+            assertEquals(0, tableRow.getCells().size());
+            XSLFTableCell cell = tableRow.addCell();
+            XSLFTextParagraph textparagraph = cell.addNewTextParagraph();
+            XSLFTextRun textrun = textparagraph.addNewTextRun();
+            textrun.setText("Any Text");
+            textrun.setFontColor(Color.BLUE);
+            textparagraph.setTextAlign(TextParagraph.TextAlign.CENTER);
+            tableRow.addCell();
+            tableRow.addCell();
+            tableRow.mergeCells(0, 1);
+
+            new DrawTableShape(newTable).setAllBorders(3., StrokeStyle.LineDash.LG_DASH_DOT, Color.BLUE);
+
+            assertEquals(3, newTable.getCTTable().getTblGrid().sizeOfGridColArray());
+        }
+    }
+
 }
