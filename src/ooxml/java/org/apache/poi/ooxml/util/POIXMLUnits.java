@@ -133,6 +133,11 @@ public class POIXMLUnits {
     }
 
 
+    public static int parsePercent(org.openxmlformats.schemas.drawingml.x2006.chart.STHoleSize pctUnion) {
+        return parsePercentInner(pctUnion, 1);
+    }
+
+
     private static int parsePercentInner(org.apache.xmlbeans.XmlAnySimpleType pctUnion, int noUnitScale) {
         String strVal = pctUnion.getStringValue();
         if (strVal.endsWith("%")) {
@@ -211,7 +216,7 @@ public class POIXMLUnits {
 
 
     /**
-     * If not unit is specified, DXA (twentieth of a point) is assumed
+     * If no unit is specified, DXA (twentieth of a point) is assumed
      *
      * @return length in EMUs
      */
@@ -222,7 +227,7 @@ public class POIXMLUnits {
 
 
     /**
-     * Returns the EMUs for the given measurment (mm|cm|in|pt|pc|pi, defaults to EMUs*noUnitEmuFactor if not specified)
+     * Returns the EMUs for the given measurement (mm|cm|in|pt|pc|pi, defaults to EMUs*noUnitEmuFactor if not specified)
      *
      * @param coordUnion the raw type
      * @return the EMUs for the given attribute

@@ -61,7 +61,7 @@ public final class PieChartDemo {
         }
 
         try (FileInputStream argIS = new FileInputStream(args[0]);
-             BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[1]), StandardCharsets.ISO_8859_1)) {
+             BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[1]), StandardCharsets.UTF_8)) {
             String chartTitle = modelReader.readLine();  // first line is chart title
 
             try (XMLSlideShow pptx = new XMLSlideShow(argIS)) {

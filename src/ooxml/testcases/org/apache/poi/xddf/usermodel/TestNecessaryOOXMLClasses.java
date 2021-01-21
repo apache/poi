@@ -177,6 +177,7 @@ class TestNecessaryOOXMLClasses {
         assertNotNull(CTErrBarType.Factory.newInstance());
         assertNotNull(CTErrValType.Factory.newInstance());
         assertNotNull(CTErrDir.Factory.newInstance());
+        assertNotNull(CTHoleSize.Factory.newInstance());
 
         STErrBarType.Enum e9 = STErrBarType.Enum.forString("both");
         assertNotNull(e9);
