@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -60,10 +61,60 @@ public class XDDFDoughnutChartData extends XDDFChartData {
         }
     }
 
+    public Integer getFirstSliceAngle() {
+        if (chart.isSetFirstSliceAng()) {
+            return chart.getFirstSliceAng().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setFirstSliceAngle(Integer angle) {
+        if (angle == null) {
+            if (chart.isSetFirstSliceAng()) {
+                chart.unsetFirstSliceAng();
+            }
+        } else {
+            if (angle < 0 || 360 < angle) {
+                throw new IllegalArgumentException("Value of angle must be between 0 and 360, both inclusive.");
+            }
+            if (chart.isSetFirstSliceAng()) {
+                chart.getFirstSliceAng().setVal(angle);
+            } else {
+                chart.addNewFirstSliceAng().setVal(angle);
+            }
+        }
+    }
+
+    public Integer getHoleSize() {
+        if (chart.isSetHoleSize()) {
+            return POIXMLUnits.parsePercent(chart.getHoleSize().xgetVal());
+        } else {
+            return null;
+        }
+    }
+
+    public void setHoleSize(Integer holeSize) {
+        if (holeSize == null) {
+            if (chart.isSetHoleSize()) {
+                chart.unsetHoleSize();
+            }
+        } else {
+            if (holeSize < 10 || holeSize > 90) {
+                throw new IllegalArgumentException("Value of holeSize must be between 10 and 90, both inclusive.");
+            }
+            if (chart.isSetHoleSize()) {
+                chart.getHoleSize().setVal(holeSize);
+            } else {
+                chart.addNewHoleSize().setVal(holeSize);
+            }
+        }
+    }
+
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTPieSer ctSer = this.chart.addNewSer();
         ctSer.addNewCat();
         ctSer.addNewVal();
@@ -133,19 +184,25 @@ public class XDDFDoughnutChartData extends XDDFChartData {
             }
         }
 
-        public long getExplosion() {
+        public Long getExplosion() {
             if (series.isSetExplosion()) {
                 return series.getExplosion().getVal();
             } else {
-                return 0;
+                return null;
             }
         }
 
-        public void setExplosion(long explosion) {
-            if (series.isSetExplosion()) {
-                series.getExplosion().setVal(explosion);
+        public void setExplosion(Long explosion) {
+            if (explosion == null) {
+                if (series.isSetExplosion()) {
+                    series.unsetExplosion();
+                }
             } else {
-                series.addNewExplosion().setVal(explosion);
+                if (series.isSetExplosion()) {
+                    series.getExplosion().setVal(explosion);
+                } else {
+                    series.addNewExplosion().setVal(explosion);
+                }
             }
         }
 

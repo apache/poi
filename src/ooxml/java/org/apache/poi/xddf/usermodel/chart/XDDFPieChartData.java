@@ -75,7 +75,7 @@ public class XDDFPieChartData extends XDDFChartData {
             }
         } else {
             if (angle < 0 || 360 < angle) {
-                throw new IllegalArgumentException("angle must be between 0 and 360");
+                throw new IllegalArgumentException("Value of angle must be between 0 and 360, both inclusive.");
             }
             if (chart.isSetFirstSliceAng()) {
                 chart.getFirstSliceAng().setVal(angle);
