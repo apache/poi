@@ -204,7 +204,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        if (isTextTag(localName)) {
            vIsOpen = true;
            // Clear contents cache
-           value.setLength(0);
+           if (!isIsOpen) {
+               value.setLength(0);
+           }
        } else if ("is".equals(localName)) {
           // Inline string outer tag
           isIsOpen = true;
@@ -307,86 +309,19 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            return;
        }
 
-       String thisStr = null;
-
        // v => contents of a cell
        if (isTextTag(localName)) {
            vIsOpen = false;
 
-           // Process the value contents as required, now we have it all
-           switch (nextDataType) {
-               case BOOLEAN:
-                   char first = value.charAt(0);
-                   thisStr = first == '0' ? "FALSE" : "TRUE";
-                   break;
-
-               case ERROR:
-                   thisStr = "ERROR:" + value;
-                   break;
-
-               case FORMULA:
-                   if(formulasNotResults) {
-                      thisStr = formula.toString();
-                   } else {
-                      String fv = value.toString();
-
-                      if (this.formatString != null) {
-                         try {
-                            // Try to use the value as a formattable number
-                            double d = Double.parseDouble(fv);
-                            thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
-                         } catch(NumberFormatException e) {
-                            // Formula is a String result not a Numeric one
-                            thisStr = fv;
-                         }
-                      } else {
-                         // No formatting applied, just do raw value in all cases
-                         thisStr = fv;
-                      }
-                   }
-                   break;
-
-               case INLINE_STRING:
-                   // TODO: Can these ever have formatting on them?
-                   XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
-                   thisStr = rtsi.toString();
-                   break;
-
-               case SST_STRING:
-                   String sstIndex = value.toString();
-                   try {
-                       int idx = Integer.parseInt(sstIndex);
-                       RichTextString rtss = sharedStringsTable.getItemAt(idx);
-                       thisStr = rtss.toString();
-                   }
-                   catch (NumberFormatException ex) {
-                       LOG.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
-                   }
-                   break;
-
-               case NUMBER:
-                   String n = value.toString();
-                   if (this.formatString != null && n.length() > 0)
-                       thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
-                   else
-                       thisStr = n;
-                   break;
-
-               default:
-                   thisStr = "(TODO: Unexpected type: " + nextDataType + ")";
-                   break;
+           if (!isIsOpen) {
+               outputCell();
            }
-
-           // Do we have a comment for this cell?
-           checkForEmptyCellComments(EmptyCellCommentsCheckType.CELL);
-           XSSFComment comment = comments != null ? comments.findCellComment(new CellAddress(cellRef)) : null;
-
-           // Output
-           output.cell(cellRef, thisStr, comment);
        } else if ("f".equals(localName)) {
           fIsOpen = false;
        } else if ("is".equals(localName)) {
           isIsOpen = false;
+           outputCell();
+           value.setLength(0);
        } else if ("row".equals(localName)) {
           // Handle any "missing" cells which had comments attached
           checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_ROW);
@@ -431,6 +366,81 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        if (hfIsOpen) {
           headerFooter.append(ch, start, length);
        }
+   }
+
+   private void outputCell() {
+       String thisStr = null;
+
+       // Process the value contents as required, now we have it all
+       switch (nextDataType) {
+           case BOOLEAN:
+               char first = value.charAt(0);
+               thisStr = first == '0' ? "FALSE" : "TRUE";
+               break;
+
+           case ERROR:
+               thisStr = "ERROR:" + value;
+               break;
+
+           case FORMULA:
+               if(formulasNotResults) {
+                   thisStr = formula.toString();
+               } else {
+                   String fv = value.toString();
+
+                   if (this.formatString != null) {
+                       try {
+                           // Try to use the value as a formattable number
+                           double d = Double.parseDouble(fv);
+                           thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
+                       } catch(NumberFormatException e) {
+                           // Formula is a String result not a Numeric one
+                           thisStr = fv;
+                       }
+                   } else {
+                       // No formatting applied, just do raw value in all cases
+                       thisStr = fv;
+                   }
+               }
+               break;
+
+           case INLINE_STRING:
+               // TODO: Can these ever have formatting on them?
+               XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
+               thisStr = rtsi.toString();
+               break;
+
+           case SST_STRING:
+               String sstIndex = value.toString();
+               try {
+                   int idx = Integer.parseInt(sstIndex);
+                   RichTextString rtss = sharedStringsTable.getItemAt(idx);
+                   thisStr = rtss.toString();
+               }
+               catch (NumberFormatException ex) {
+                   LOG.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
+               }
+               break;
+
+           case NUMBER:
+               String n = value.toString();
+               if (this.formatString != null && n.length() > 0)
+                   thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
+               else
+                   thisStr = n;
+               break;
+
+           default:
+               thisStr = "(TODO: Unexpected type: " + nextDataType + ")";
+               break;
+       }
+
+       // Do we have a comment for this cell?
+       checkForEmptyCellComments(EmptyCellCommentsCheckType.CELL);
+       XSSFComment comment = comments != null ? comments.findCellComment(new CellAddress(cellRef)) : null;
+
+       // Output
+       output.cell(cellRef, thisStr, comment);
    }
 
    /**
