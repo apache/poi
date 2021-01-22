@@ -20,6 +20,9 @@ package org.apache.poi.hdgf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
@@ -30,49 +33,40 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class TestHDGFCore {
-    private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
-
-    private POIFSFileSystem fs;
-    private HDGFDiagram hdgf;
-    private VisioTextExtractor textExtractor;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
-    }
-    @AfterEach
-    void tearDown() throws Exception {
-        if (textExtractor != null) textExtractor.close();
-        if (hdgf != null) hdgf.close();
-    }
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDiagramInstance();
 
     @Test
     void testCreate() throws Exception {
-        hdgf = new HDGFDiagram(fs);
+        try (POIFSFileSystem fs = openFS("Test_Visio-Some_Random_Text.vsd");
+            HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
+        }
     }
 
     @Test
     void testTrailer() throws Exception {
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
-        assertNotNull(hdgf.getTrailerStream());
+        try (POIFSFileSystem fs = openFS("Test_Visio-Some_Random_Text.vsd");
+            HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
+            assertNotNull(hdgf.getTrailerStream());
 
-        // Check it has what we'd expect
-        TrailerStream trailer = hdgf.getTrailerStream();
-        assertEquals(0x8a94, trailer.getPointer().getOffset());
+            // Check it has what we'd expect
+            TrailerStream trailer = hdgf.getTrailerStream();
+            assertEquals(0x8a94, trailer.getPointer().getOffset());
 
-        assertNotNull(trailer.getPointedToStreams());
-        assertEquals(20, trailer.getPointedToStreams().length);
+            assertNotNull(trailer.getPointedToStreams());
+            assertEquals(20, trailer.getPointedToStreams().length);
 
-        assertEquals(20, hdgf.getTopLevelStreams().length);
+            assertEquals(20, hdgf.getTopLevelStreams().length);
 
-        // 9th one should have children
-        assertNotNull(trailer.getPointedToStreams()[8]);
-        assertNotNull(trailer.getPointedToStreams()[8].getPointer());
-        PointerContainingStream ps8 = (PointerContainingStream)
+            // 9th one should have children
+            assertNotNull(trailer.getPointedToStreams()[8]);
+            assertNotNull(trailer.getPointedToStreams()[8].getPointer());
+            PointerContainingStream ps8 = (PointerContainingStream)
                 trailer.getPointedToStreams()[8];
-        assertNotNull(ps8.getPointedToStreams());
-        assertEquals(8, ps8.getPointedToStreams().length);
+            assertNotNull(ps8.getPointedToStreams());
+            assertEquals(8, ps8.getPointedToStreams().length);
+        }
     }
 
     /**
@@ -81,15 +75,16 @@ public final class TestHDGFCore {
      */
     @Test
     void testNegativeChunkLength() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
-
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
+        try (POIFSFileSystem fs = openFS("NegativeChunkLength.vsd");
+             HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
+        }
 
         // And another file
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength2.vsd"));
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
+        try (POIFSFileSystem fs = openFS("NegativeChunkLength2.vsd");
+            HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
+        }
     }
 
     /**
@@ -98,49 +93,55 @@ public final class TestHDGFCore {
      *  chunk commands.
      */
     @Test
-    void DISABLEDtestAIOOB() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("44501.vsd"));
-
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
+    void testAIOOB() throws Exception {
+        try (POIFSFileSystem fs = openFS("44501.vsd");
+             HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
+        }
     }
 
     @Test
     void testV5() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
+        try (POIFSFileSystem fs = openFS("v5_Connection_Types.vsd");
+             HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
 
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
-
-        textExtractor = new VisioTextExtractor(hdgf);
-        String text = textExtractor.getText().replace("\u0000", "").trim();
-
-        assertEquals("Static to Static\nDynamic to Static\nDynamic to Dynamic", text);
+            try (VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf)) {
+                String text = textExtractor.getText().replace("\u0000", "").trim();
+                assertEquals("Static to Static\nDynamic to Static\nDynamic to Dynamic", text);
+            }
+        }
     }
 
     @Test
     void testV6NonUtf16LE() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
+        try (POIFSFileSystem fs = openFS("v6-non-utf16le.vsd");
+             HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
 
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
-
-        textExtractor = new VisioTextExtractor(hdgf);
-        String text = textExtractor.getText().replace("\u0000", "").trim();
-
-        assertEquals("Table\n\n\nPropertySheet\n\n\n\nPropertySheetField", text);
+            try (VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf)) {
+                String text = textExtractor.getText().replace("\u0000", "").trim();
+                assertEquals("Table\n\n\nPropertySheet\n\n\n\nPropertySheetField", text);
+            }
+        }
     }
 
     @Test
     void testUtf16LE() throws Exception {
-        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
+        try (POIFSFileSystem fs = openFS("Test_Visio-Some_Random_Text.vsd");
+             HDGFDiagram hdgf = new HDGFDiagram(fs)) {
+            assertNotNull(hdgf);
 
-        hdgf = new HDGFDiagram(fs);
-        assertNotNull(hdgf);
+            try (VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf)) {
+                String text = textExtractor.getText().trim();
+                assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page", text);
+            }
+        }
+    }
 
-        textExtractor = new VisioTextExtractor(hdgf);
-        String text = textExtractor.getText().trim();
-
-        assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page", text);
+    private POIFSFileSystem openFS(String file) throws IOException {
+        try (InputStream is = SAMPLES.openResourceAsStream(file)) {
+            return new POIFSFileSystem(is);
+        }
     }
 }

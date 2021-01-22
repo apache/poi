@@ -17,6 +17,9 @@
 
 package org.apache.poi.hslf;
 
+import static org.apache.poi.hslf.usermodel.HSLFSlideShow.POWERPOINT_DOCUMENT;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,121 +29,89 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
  *  correctly. Currently, that means being the same as what it read in
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestReWrite {
-    // HSLFSlideShow primed on the test data
-    private HSLFSlideShowImpl hssA;
-    private HSLFSlideShowImpl hssB;
-    private HSLFSlideShowImpl hssC;
-    // POIFS primed on the test data
-    private POIFSFileSystem pfsA;
-    private POIFSFileSystem pfsB;
-    private POIFSFileSystem pfsC;
+    private static final POIDataSamples SAMPLES = POIDataSamples.getSlideShowInstance();
 
-    @BeforeEach
-    void setUp() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "basic_test_ppt_file.ppt", "ParagraphStylesShorterThanCharStyles.ppt" })
+    void testWritesOutTheSame(String testfile) throws Exception {
+        try (POIFSFileSystem pfs = new POIFSFileSystem(SAMPLES.openResourceAsStream(testfile));
+             HSLFSlideShowImpl hss = new HSLFSlideShowImpl(pfs)) {
 
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+            // Write out to a byte array, and to a temp file
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            hss.write(baos);
 
-        pfsA = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-        hssA = new HSLFSlideShowImpl(pfsA);
-
-        pfsB = new POIFSFileSystem(slTests.openResourceAsStream("ParagraphStylesShorterThanCharStyles.ppt"));
-        hssB = new HSLFSlideShowImpl(pfsB);
-
-        pfsC = new POIFSFileSystem(slTests.openResourceAsStream("WithMacros.ppt"));
-        hssC = new HSLFSlideShowImpl(pfsC);
-    }
-
-    @Test
-    void testWritesOutTheSame() throws Exception {
-        assertWritesOutTheSame(hssA, pfsA);
-        assertWritesOutTheSame(hssB, pfsB);
-    }
-
-    void assertWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
-        // Write out to a byte array, and to a temp file
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        hss.write(baos);
-
-        final File file = TempFile.createTempFile("TestHSLF", ".ppt");
-        final File file2 = TempFile.createTempFile("TestHSLF", ".ppt");
-        hss.write(file);
-        hss.write(file2);
+            final File file = TempFile.createTempFile("TestHSLF", ".ppt");
+            final File file2 = TempFile.createTempFile("TestHSLF", ".ppt");
+            hss.write(file);
+            hss.write(file2);
 
 
-        // Build an input stream of it, and read back as a POIFS from the stream
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        POIFSFileSystem npfS = new POIFSFileSystem(bais);
+            // Build an input stream of it, and read back as a POIFS from the stream
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            try (POIFSFileSystem npfS = new POIFSFileSystem(bais);
+                // And the same on the temp file
+                POIFSFileSystem npfF = new POIFSFileSystem(file)) {
 
-        // And the same on the temp file
-        POIFSFileSystem npfF = new POIFSFileSystem(file);
-
-        // And another where we do an in-place write
-        POIFSFileSystem npfRF = new POIFSFileSystem(file2, false);
-        HSLFSlideShowImpl hssRF = new HSLFSlideShowImpl(npfRF);
-        hssRF.write();
-        hssRF.close();
-        npfRF = new POIFSFileSystem(file2);
-
-        // Check all of them in turn
-        for (POIFSFileSystem npf : new POIFSFileSystem[] { npfS, npfF, npfRF }) {
-            // Check that the "PowerPoint Document" sections have the same size
-            DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-            DocumentEntry nProps = (DocumentEntry)npf.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-            assertEquals(oProps.getSize(),nProps.getSize());
-
-            // Check that they contain the same data
-            byte[] _oData = new byte[oProps.getSize()];
-            byte[] _nData = new byte[nProps.getSize()];
-            pfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
-            npf.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
-            for(int i=0; i<_oData.length; i++) {
-                //System.out.println(i + "\t" + Integer.toHexString(i));
-                assertEquals(_oData[i], _nData[i]);
+                // And another where we do an in-place write
+                try (POIFSFileSystem npfRF = new POIFSFileSystem(file2, false);
+                     HSLFSlideShowImpl hssRF = new HSLFSlideShowImpl(npfRF)) {
+                    hssRF.write();
+                }
+                try (POIFSFileSystem npfRF = new POIFSFileSystem(file2)) {
+                    // Check all of them in turn
+                    for (POIFSFileSystem npf : new POIFSFileSystem[]{npfS, npfF, npfRF}) {
+                        assertSame(pfs, npf);
+                    }
+                }
             }
-            npf.close();
         }
     }
 
     @Test
     void testWithMacroStreams() throws IOException {
-        // Check that they're apparently the same
-        assertSlideShowWritesOutTheSame(hssC, pfsC);
+        try (POIFSFileSystem pfsC = new POIFSFileSystem(SAMPLES.openResourceAsStream("WithMacros.ppt"));
+            HSLFSlideShowImpl hssC = new HSLFSlideShowImpl(pfsC)) {
+            // Check that they're apparently the same
+            assertSlideShowWritesOutTheSame(hssC, pfsC);
 
-        // Currently has a Macros stream
-        assertNotNull( pfsC.getRoot().getEntry("Macros") );
+            // Currently has a Macros stream
+            assertNotNull(pfsC.getRoot().getEntry("Macros"));
 
-        // Write out normally, will loose the macro stream
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        hssC.write(baos);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        POIFSFileSystem pfsNew = new POIFSFileSystem(bais);
-        assertFalse(pfsNew.getRoot().hasEntry("Macros"));
-        pfsNew.close();
+            // Write out normally, will loose the macro stream
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            hssC.write(baos);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            try (POIFSFileSystem pfsNew = new POIFSFileSystem(bais)) {
+                assertFalse(pfsNew.getRoot().hasEntry("Macros"));
+            }
 
-        // But if we write out with nodes preserved, will be there
-        baos.reset();
-        hssC.write(baos, true);
-        bais = new ByteArrayInputStream(baos.toByteArray());
-        pfsNew = new POIFSFileSystem(bais);
-        assertTrue( pfsNew.getRoot().hasEntry("Macros") );
-        pfsNew.close();
+            // But if we write out with nodes preserved, will be there
+            baos.reset();
+            hssC.write(baos, true);
+            bais = new ByteArrayInputStream(baos.toByteArray());
+            try (POIFSFileSystem pfsNew = new POIFSFileSystem(bais)) {
+                assertTrue(pfsNew.getRoot().hasEntry("Macros"));
+            }
+        }
     }
 
     /**
@@ -149,7 +120,10 @@ public final class TestReWrite {
      */
     @Test
     void testSlideShowWritesOutTheSame() throws Exception {
-        assertSlideShowWritesOutTheSame(hssA, pfsA);
+        try (POIFSFileSystem pfsA = new POIFSFileSystem(SAMPLES.openResourceAsStream("basic_test_ppt_file.ppt"));
+            HSLFSlideShowImpl hssA = new HSLFSlideShowImpl(pfsA)) {
+            assertSlideShowWritesOutTheSame(hssA, pfsA);
+        }
 
         // Some bug in StyleTextPropAtom rewriting means this will fail
         // We need to identify and fix that first
@@ -160,8 +134,8 @@ public final class TestReWrite {
         // Create a slideshow covering it
         @SuppressWarnings("resource")
         HSLFSlideShow ss = new HSLFSlideShow(hss);
-        ss.getSlides();
-        ss.getNotes();
+        assertDoesNotThrow(ss::getSlides);
+        assertDoesNotThrow(ss::getNotes);
 
         // Now write out to a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -171,40 +145,46 @@ public final class TestReWrite {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
         // Use POIFS to query that lot
-        POIFSFileSystem npfs = new POIFSFileSystem(bais);
+        try (POIFSFileSystem npfs = new POIFSFileSystem(bais)) {
+            assertSame(pfs, npfs);
+        }
+    }
 
+    private void assertSame(POIFSFileSystem origPFS, POIFSFileSystem newPFS) throws IOException {
         // Check that the "PowerPoint Document" sections have the same size
-        DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-        DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-        assertEquals(oProps.getSize(),nProps.getSize());
+        DocumentEntry oProps = (DocumentEntry) origPFS.getRoot().getEntry(POWERPOINT_DOCUMENT);
+        DocumentEntry nProps = (DocumentEntry) newPFS.getRoot().getEntry(POWERPOINT_DOCUMENT);
+        assertEquals(oProps.getSize(), nProps.getSize());
+
 
         // Check that they contain the same data
-        byte[] _oData = new byte[oProps.getSize()];
-        byte[] _nData = new byte[nProps.getSize()];
-        pfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
-        npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
-        for(int i=0; i<_oData.length; i++) {
-            if(_oData[i] != _nData[i])
-                System.out.println(i + "\t" + Integer.toHexString(i));
-            assertEquals(_oData[i], _nData[i]);
+        try (InputStream os = origPFS.createDocumentInputStream(POWERPOINT_DOCUMENT);
+             InputStream ns = newPFS.createDocumentInputStream(POWERPOINT_DOCUMENT)) {
+
+            byte[] _oData = IOUtils.toByteArray(os, oProps.getSize());
+            byte[] _nData = IOUtils.toByteArray(ns, nProps.getSize());
+
+            assertArrayEquals(_oData, _nData);
         }
-        npfs.close();
     }
+
 
     @Test
     void test48593() throws IOException {
-        HSLFSlideShow ppt1 = new HSLFSlideShow();
-        ppt1.createSlide();
-        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
-        ppt2.createSlide();
-        HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2);
-        ppt3.createSlide();
-        HSLFSlideShow ppt4 = HSLFTestDataSamples.writeOutAndReadBack(ppt3);
-        ppt4.createSlide();
-        HSLFTestDataSamples.writeOutAndReadBack(ppt4).close();
-        ppt4.close();
-        ppt3.close();
-        ppt2.close();
-        ppt1.close();
+        try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
+            ppt1.createSlide();
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
+                ppt2.createSlide();
+                try (HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2)) {
+                    ppt3.createSlide();
+                    try (HSLFSlideShow ppt4 = HSLFTestDataSamples.writeOutAndReadBack(ppt3)) {
+                        ppt4.createSlide();
+                        try (HSLFSlideShow ppt5 = HSLFTestDataSamples.writeOutAndReadBack(ppt4)) {
+                            assertEquals(4, ppt5.getSlides().size());
+                        }
+                    }
+                }
+            }
+        }
     }
 }

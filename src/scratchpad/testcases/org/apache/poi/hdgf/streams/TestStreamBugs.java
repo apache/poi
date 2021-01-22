@@ -17,6 +17,9 @@
 
 package org.apache.poi.hdgf.streams;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,14 +47,14 @@ public final class TestStreamBugs extends StreamTest {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 
-        InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("44594.vsd");
-        filesystem = new POIFSFileSystem(is);
-        is.close();
+        try (InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("44594.vsd")) {
+			filesystem = new POIFSFileSystem(is);
+		}
 
 		// Grab the document stream
-		InputStream is2 = filesystem.createDocumentInputStream("VisioDocument");
-		contents = IOUtils.toByteArray(is2);
-		is2.close();
+		try (InputStream is2 = filesystem.createDocumentInputStream("VisioDocument")) {
+			contents = IOUtils.toByteArray(is2);
+		}
 	}
 
 	@Test
@@ -80,22 +83,19 @@ public final class TestStreamBugs extends StreamTest {
 
 		// Get with recursing into chunks
 		for (Pointer ptr : ptrs) {
-			Stream stream =
-				Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
+			Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
 			if(stream instanceof ChunkStream) {
 				ChunkStream cStream = (ChunkStream)stream;
-				cStream.findChunks();
+				assertDoesNotThrow(cStream::findChunks);
 			}
 		}
 
 		// Get with recursing into chunks and pointers
 		for (Pointer ptr : ptrs) {
-			Stream stream =
-				Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
+			Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
 			if(stream instanceof PointerContainingStream) {
-				PointerContainingStream pStream =
-					(PointerContainingStream)stream;
-				pStream.findChildren(contents);
+				PointerContainingStream pStream = (PointerContainingStream)stream;
+				assertDoesNotThrow(() -> pStream.findChildren(contents));
 			}
 		}
 
@@ -104,6 +104,8 @@ public final class TestStreamBugs extends StreamTest {
 
 	@Test
     void testOpen() throws IOException {
-		new HDGFDiagram(filesystem).close();
+		try (HDGFDiagram dia = new HDGFDiagram(filesystem)) {
+			assertEquals(20, dia.getTopLevelStreams().length);
+		}
 	}
 }

@@ -21,6 +21,7 @@
 package org.apache.poi.hmef.dev;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -39,13 +40,13 @@ public class TestHMEFDumper {
     @Test
     void main() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
-        doMain(file.getAbsolutePath());
+        assertDoesNotThrow(() -> doMain(file.getAbsolutePath()));
     }
 
     @Test
     void mainFull() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
-        doMain("--full", file.getAbsolutePath());
+        assertDoesNotThrow(() -> doMain("--full", file.getAbsolutePath()));
     }
 
     private static void doMain(String... args) throws Exception {

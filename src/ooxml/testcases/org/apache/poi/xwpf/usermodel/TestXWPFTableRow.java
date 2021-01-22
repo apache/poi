@@ -172,8 +172,7 @@ class TestXWPFTableRow {
 
     @Test
     void testBug62174() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples
-                .openSampleDocument("Bug60337.docx")) {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60337.docx")) {
             XWPFTable table = doc.getTables().get(0);
             XWPFTableRow tr = table.getRow(0);
 

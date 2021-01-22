@@ -20,32 +20,26 @@
 ==================================================================== */
 package org.apache.poi.hdgf.dev;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class TestVSDDumper {
-    private static PrintStream oldStdOut;
-
-    @BeforeAll
-    public static void muteStdout() {
-        oldStdOut = System.out;
-        System.setOut(new NullPrintStream());
-    }
-
-    @AfterAll
-    public static void restoreStdout() {
-        System.setOut(oldStdOut);
-    }
-
     @Test
-    void main() throws Exception {
-        File file = POIDataSamples.getDiagramInstance().getFile("Test_Visio-Some_Random_Text.vsd");
-        VSDDumper.main(new String[] { file.getAbsolutePath() });
+    void main() {
+        PrintStream oldStdOut = System.out;
+        System.setOut(new NullPrintStream());
+        try {
+            File file = POIDataSamples.getDiagramInstance().getFile("Test_Visio-Some_Random_Text.vsd");
+            String[] args = { file.getAbsolutePath() };
+            assertDoesNotThrow(() -> VSDDumper.main(args));
+        } finally {
+            System.setOut(oldStdOut);
+        }
     }
 }

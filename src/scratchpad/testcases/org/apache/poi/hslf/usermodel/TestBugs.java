@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -446,7 +447,7 @@ public final class TestBugs {
             /* Iterate over slides and extract text */
             for (HSLFSlide slide : ppt.getSlides()) {
                 HeadersFooters hf = slide.getHeadersFooters();
-                hf.isHeaderVisible(); // exception happens here
+                assertDoesNotThrow(hf::isHeaderVisible);
             }
         }
     }

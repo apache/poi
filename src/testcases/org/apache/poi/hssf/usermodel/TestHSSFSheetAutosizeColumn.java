@@ -22,8 +22,6 @@ import org.apache.poi.ss.usermodel.BaseTestSheetAutosizeColumn;
 
 /**
  * Test auto-sizing columns in HSSF
- *
- * @author Yegor Kozlov
  */
 final class TestHSSFSheetAutosizeColumn extends BaseTestSheetAutosizeColumn {
 

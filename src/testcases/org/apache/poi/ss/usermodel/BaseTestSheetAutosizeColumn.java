@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
@@ -292,41 +293,47 @@ public abstract class BaseTestSheetAutosizeColumn {
      */
     @Test
     void largeRowNumbers() throws Exception {
-       Workbook workbook = _testDataProvider.createWorkbook();
-       Sheet sheet = workbook.createSheet();
-       trackColumnsForAutoSizingIfSXSSF(sheet);
+       try (Workbook workbook = _testDataProvider.createWorkbook()) {
+           boolean isHssf = workbook instanceof HSSFWorkbook;
+           Sheet sheet = workbook.createSheet();
+           trackColumnsForAutoSizingIfSXSSF(sheet);
 
-       Row r0 = sheet.createRow(0);
-       r0.createCell(0).setCellValue("I am ROW 0");
-       Row r200 = sheet.createRow(200);
-       r200.createCell(0).setCellValue("I am ROW 200");
+           Row r0 = sheet.createRow(0);
+           r0.createCell(0).setCellValue("I am ROW 0");
+           Row r200 = sheet.createRow(200);
+           r200.createCell(0).setCellValue("I am ROW 200");
 
-       // This should work fine
-       sheet.autoSizeColumn(0);
+           // This should work fine
+           sheet.autoSizeColumn(0);
+           assertEquals(isHssf ? 3645 : 3545, sheet.getColumnWidth(0));
 
-       // Get close to 32767
-       Row r32765 = sheet.createRow(32765);
-       r32765.createCell(0).setCellValue("Nearly there...");
-       sheet.autoSizeColumn(0);
+           // Get close to 32767
+           Row r32765 = sheet.createRow(32765);
+           r32765.createCell(0).setCellValue("Nearly there...");
+           sheet.autoSizeColumn(0);
+           assertEquals(isHssf ? 3645 : 3554, sheet.getColumnWidth(0), 2);
 
-       // To it
-       Row r32767 = sheet.createRow(32767);
-       r32767.createCell(0).setCellValue("At the boundary");
-       sheet.autoSizeColumn(0);
+           // To it
+           Row r32767 = sheet.createRow(32767);
+           r32767.createCell(0).setCellValue("At the boundary");
+           sheet.autoSizeColumn(0);
+           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
 
-       // And passed it
-       Row r32768 = sheet.createRow(32768);
-       r32768.createCell(0).setCellValue("Passed");
-       Row r32769 = sheet.createRow(32769);
-       r32769.createCell(0).setCellValue("More Passed");
-       sheet.autoSizeColumn(0);
+           // And passed it
+           Row r32768 = sheet.createRow(32768);
+           r32768.createCell(0).setCellValue("Passed");
+           Row r32769 = sheet.createRow(32769);
+           r32769.createCell(0).setCellValue("More Passed");
+           sheet.autoSizeColumn(0);
+           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
 
-       // Long way passed
-       Row r60708 = sheet.createRow(60708);
-       r60708.createCell(0).setCellValue("Near the end");
-       sheet.autoSizeColumn(0);
+           // Long way passed
+           Row r60708 = sheet.createRow(60708);
+           r60708.createCell(0).setCellValue("Near the end");
+           sheet.autoSizeColumn(0);
+           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
 
-       workbook.close();
+       }
     }
 
     // TODO should we have this stuff in the FormulaEvaluator?
@@ -348,6 +355,7 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     void testExcelExporter() throws IOException {
         try (final Workbook wb = _testDataProvider.createWorkbook()) {
+            boolean isHssf = wb instanceof HSSFWorkbook;
             final Sheet sheet = wb.createSheet("test");
             trackColumnsForAutoSizingIfSXSSF(sheet);
             final Row row = sheet.createRow(0);
@@ -360,6 +368,7 @@ public abstract class BaseTestSheetAutosizeColumn {
             cell.setCellStyle(csDateTime);
 
             sheet.autoSizeColumn(0);
+            assertEquals(isHssf ? 3249 : 3262, sheet.getColumnWidth(0));
         }
     }
 }

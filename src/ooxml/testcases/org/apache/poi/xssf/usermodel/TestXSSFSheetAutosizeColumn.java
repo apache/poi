@@ -20,9 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.BaseTestSheetAutosizeColumn;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFSheetAutosizeColumn extends BaseTestSheetAutosizeColumn {
 
     public TestXSSFSheetAutosizeColumn(){

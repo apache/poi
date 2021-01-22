@@ -29,15 +29,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.BitSet;
 import java.util.List;
 
 import com.zaxxer.sparsebits.SparseBitSet;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
@@ -45,6 +50,7 @@ import org.apache.poi.sl.usermodel.ObjectShape;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.NullOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -231,9 +237,15 @@ public final class TestExtractor {
     @Test
     void test52991() throws IOException {
         try (SlideShowExtractor<?,?> ppe = openExtractor("badzip.ppt")) {
-            for (ObjectShape<?,?> shape : ppe.getOLEShapes()) {
-                IOUtils.copy(shape.getObjectData().getInputStream(), new ByteArrayOutputStream());
+            List<? extends ObjectShape<?, ?>> shapes = ppe.getOLEShapes();
+            assertEquals(1, shapes.size());
+            MessageDigest sha2 = CryptoFunctions.getMessageDigest(HashAlgorithm.sha256);
+            try (InputStream is = shapes.get(0).getObjectData().getInputStream()) {
+                sha2.update(IOUtils.toByteArray(is));
             }
+            String exp = "lIRRfGMin6B4++WR4XvA82usdQ3ijeHBHU85j523sKY=";
+            String act = Base64.encodeBase64String(sha2.digest());
+            assertEquals(exp, act);
         }
     }
 
