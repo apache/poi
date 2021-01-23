@@ -305,19 +305,23 @@ public abstract class BaseTestSheetAutosizeColumn {
 
            // This should work fine
            sheet.autoSizeColumn(0);
-           assertEquals(isHssf ? 3645 : 3545, sheet.getColumnWidth(0));
+           int colWidth1 = sheet.getColumnWidth(0);
 
            // Get close to 32767
            Row r32765 = sheet.createRow(32765);
            r32765.createCell(0).setCellValue("Nearly there...");
            sheet.autoSizeColumn(0);
-           assertEquals(isHssf ? 3645 : 3554, sheet.getColumnWidth(0), 2);
+           int colWidth2 = sheet.getColumnWidth(0);
+           assertTrue(colWidth1 <= colWidth2);
+           colWidth1 = colWidth2;
 
            // To it
            Row r32767 = sheet.createRow(32767);
            r32767.createCell(0).setCellValue("At the boundary");
            sheet.autoSizeColumn(0);
-           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
+           colWidth2 = sheet.getColumnWidth(0);
+           assertTrue(colWidth1 <= colWidth2);
+           colWidth1 = colWidth2;
 
            // And passed it
            Row r32768 = sheet.createRow(32768);
@@ -325,14 +329,16 @@ public abstract class BaseTestSheetAutosizeColumn {
            Row r32769 = sheet.createRow(32769);
            r32769.createCell(0).setCellValue("More Passed");
            sheet.autoSizeColumn(0);
-           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
+           colWidth2 = sheet.getColumnWidth(0);
+           assertTrue(colWidth1 <= colWidth2);
+           colWidth1 = colWidth2;
 
            // Long way passed
            Row r60708 = sheet.createRow(60708);
            r60708.createCell(0).setCellValue("Near the end");
            sheet.autoSizeColumn(0);
-           assertEquals(isHssf ? 3875 : 4001, sheet.getColumnWidth(0));
-
+           colWidth2 = sheet.getColumnWidth(0);
+           assertTrue(colWidth1 <= colWidth2);
        }
     }
 
@@ -368,7 +374,7 @@ public abstract class BaseTestSheetAutosizeColumn {
             cell.setCellStyle(csDateTime);
 
             sheet.autoSizeColumn(0);
-            assertEquals(isHssf ? 3249 : 3262, sheet.getColumnWidth(0));
+            assertTrue(sheet.getColumnWidth(0) > 2500);
         }
     }
 }
