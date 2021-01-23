@@ -1246,8 +1246,6 @@ under the License.
                 <length string="@{module2}" when="greater" length="0"/>
             </condition>
 
-            <delete file="@{outputDir}/status-as-tests-run.txt" failonerror="false"/>
-
             <!-- As of 2018, JaCoCo is managing expectations and stay on Java 5 and therefore don't support junitlauncher -->
             <!-- https://github.com/jacoco/jacoco/issues/673  ... m( -->
 
@@ -1262,7 +1260,6 @@ under the License.
 
                 <testclasses outputDir="@{outputDir}">
                     <fork>
-                        <sysproperty key="junit5.progress.file" value="@{outputDir}/status-as-tests-run.txt"/>
                         <syspropertyset refid="junit.properties"/>
                         <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                         <jvmarg value="-Xmx@{heap}M"/>
@@ -1294,16 +1291,12 @@ under the License.
                         <jvmarg line="-Dorg.slf4j.simpleLogger.log.org.apache.poi=error"/>
                     </fork>
 
-                    <!-- can't use resultfile="status-as-tests-run.txt" here ... it's truncated with every test -->
-                    <listener classname="Junit5Progress" outputDir="@{outputDir}" />
+                    <listener classname="Junit5Progress" />
                     <listener type="legacy-plain" sendSysOut="true" outputDir="@{outputDir}"/>
                     <listener type="legacy-xml" sendSysOut="true" sendSysErr="true" outputDir="@{outputDir}"/>
                     <elements/>
                 </testclasses>
             </junitlauncher>
-
-            <loadfile property="contents" srcFile="@{outputDir}/status-as-tests-run.txt" />
-            <echo message="${contents}" />
         </sequential>
     </macrodef>
 

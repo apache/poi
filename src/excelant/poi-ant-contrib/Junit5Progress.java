@@ -15,104 +15,85 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UncheckedIOException;
+import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.platform.engine.TestDescriptor.Type;
 import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.TestExecutionResult.Status;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
-import org.junit.platform.launcher.TestPlan;
 
 /**
  * Custom listener class for Ants junitlauncher, because it chomps the important running details
  *
- * @see <a href="https://www.selikoff.net/2018/07/28/ant-and-junit-5-outputting-test-duration-and-failure-to-the-log/">ant and junit 5 - outputting test duration and failure to the log</a>
+ * @see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64836">Bug 64836 - junitlaucher poor summary</a>
  **/
 public class Junit5Progress implements TestExecutionListener {
+    private final AtomicInteger numSkippedInTestSet = new AtomicInteger();
+    private final AtomicInteger numAbortedInTestSet = new AtomicInteger();
+    private final AtomicInteger numSucceededInTestSet = new AtomicInteger();
+    private final AtomicInteger numFailedInTestSet = new AtomicInteger();
+    private Instant testSetStartTime;
 
-    private final StringWriter inMemoryWriter = new StringWriter();
+    final PrintStream out;
 
-    private int numSkippedInCurrentClass;
-    private int numAbortedInCurrentClass;
-    private int numSucceededInCurrentClass;
-    private int numFailedInCurrentClass;
-    private Instant startCurrentClass;
+    public Junit5Progress() {
+        this.out = System.out;
+    }
 
-    private void resetCountsForNewClass() {
-        numSkippedInCurrentClass = 0;
-        numAbortedInCurrentClass = 0;
-        numSucceededInCurrentClass = 0;
-        numFailedInCurrentClass = 0;
-        startCurrentClass = Instant.now();
+    private void resetCountsForNewTestSet() {
+        this.numSkippedInTestSet.set(0);
+        this.numAbortedInTestSet.set(0);
+        this.numSucceededInTestSet.set(0);
+        this.numFailedInTestSet.set(0);
+        this.testSetStartTime = Instant.now();
     }
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
-        if ("[engine:junit-jupiter]".equals(testIdentifier.getParentId().orElse(""))) {
-            println("Ran " + testIdentifier.getLegacyReportingName());
-            resetCountsForNewClass();
+        Optional<String> parentId = testIdentifier.getParentId();
+        if (parentId.isPresent() && parentId.get().indexOf('/') < 0) {
+            println("\nRunning " + testIdentifier.getLegacyReportingName());
+            resetCountsForNewTestSet();
         }
     }
 
     @Override
     public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-        numSkippedInCurrentClass++;
+        this.numSkippedInTestSet.incrementAndGet();
     }
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        if ("[engine:junit-jupiter]".equals(testIdentifier.getParentId().orElse(""))) {
-            int totalTestsInClass = numSucceededInCurrentClass + numAbortedInCurrentClass
-                + numFailedInCurrentClass + numSkippedInCurrentClass;
-            Duration duration = Duration.between(startCurrentClass, Instant.now());
-            double numSeconds = duration.toNanos() / (double) 1_000_000_000;
-            String output = String.format("Tests run: %d, Failures: %d, Aborted: %d, Skipped: %d, Time elapsed: %f sec",
-                totalTestsInClass, numFailedInCurrentClass, numAbortedInCurrentClass,
-                numSkippedInCurrentClass, numSeconds);
-            println(output);
-
-        }
-        // don't count containers since looking for legacy JUnit 4 counting style
-        if (testIdentifier.getType() == Type.TEST) {
-            if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
-                numSucceededInCurrentClass++;
-            } else if (testExecutionResult.getStatus() == Status.ABORTED) {
-                println("  ABORTED: " + testIdentifier.getDisplayName());
-                numAbortedInCurrentClass++;
-            } else if (testExecutionResult.getStatus() == Status.FAILED) {
-                println("  FAILED: " + testIdentifier.getDisplayName());
-                numFailedInCurrentClass++;
+        Optional<String> parentId = testIdentifier.getParentId();
+        if (parentId.isPresent() && parentId.get().indexOf('/') < 0) {
+            int totalTestsInClass = this.numSucceededInTestSet.get() + this.numAbortedInTestSet.get() + this.numFailedInTestSet.get()
+                + this.numSkippedInTestSet.get();
+            Duration duration = Duration.between(this.testSetStartTime, Instant.now());
+            double numSeconds = (double) duration.toMillis() / 1_000;
+            String summary = String.format("Tests run: %d, Failures: %d, Aborted: %d, Skipped: %d, Time elapsed: %f sec", totalTestsInClass,
+                this.numFailedInTestSet.get(), this.numAbortedInTestSet.get(), this.numSkippedInTestSet.get(), numSeconds);
+            println(summary);
+        } else if (testIdentifier.isTest()) {
+            switch (testExecutionResult.getStatus()) {
+                case SUCCESSFUL:
+                    this.numSucceededInTestSet.incrementAndGet();
+                    break;
+                case ABORTED:
+                    println("   Aborted: " + testIdentifier.getDisplayName());
+                    this.numAbortedInTestSet.incrementAndGet();
+                    break;
+                case FAILED:
+                    println("   Failed: " + testIdentifier.getDisplayName());
+                    this.numFailedInTestSet.incrementAndGet();
+                    break;
             }
         }
     }
 
     private void println(String str) {
-        inMemoryWriter.write(str + "\n");
-    }
-
-    /*
-     * Append to file on disk since listener can't write to System.out (because legacy listeners enabled)
-     *
-     * Implementing/using the TestResultFormatter - mentioned in the junitlauncher ant manual -
-     * doesn't work currently, because the output is truncated/overwritten with every test
-     */
-    private void flushToDisk() {
-        String outFile = System.getProperty("junit5.progress.file", "build/status-as-tests-run.txt");
-        try (FileWriter writer = new FileWriter(outFile, true)) {
-            writer.write(inMemoryWriter.toString());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    @Override
-    public void testPlanExecutionFinished(TestPlan testPlan) {
-        flushToDisk();
+        this.out.println(str);
     }
 }
