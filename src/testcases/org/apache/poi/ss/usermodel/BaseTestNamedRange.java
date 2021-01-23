@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,21 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests of implementations of {@link org.apache.poi.ss.usermodel.Name}.
- *
- * @author Yegor Kozlov
  */
 public abstract class BaseTestNamedRange {
 
@@ -103,13 +100,13 @@ public abstract class BaseTestNamedRange {
 
     @Test
     public final void testUnicodeNamedRange() throws Exception {
-        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             wb1.createSheet("Test");
             Name name = wb1.createName();
             name.setNameName("\u03B1");
             name.setRefersToFormula("Test!$D$3:$E$8");
 
-            try (HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
                 Name name2 = wb2.getName("\u03B1");
 
                 assertNotNull(name2);
@@ -637,71 +634,64 @@ public abstract class BaseTestNamedRange {
 
     // bug 56781: name validation only checks for first character's validity and presence of spaces
     // bug 60246: validate name does not allow DOT in named ranges
-    @Test
-    void testValid() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-
-        Name name = wb.createName();
-        for (String valid : Arrays.asList(
-                "Hello",
-                "number1",
-                "_underscore",
-                "underscore_",
-                "p.e.r.o.i.d.s",
-                "\\Backslash",
-                "Backslash\\"
-                )) {
-            name.setNameName(valid);
+    @ParameterizedTest
+    @ValueSource(strings = {"Hello", "number1", "_underscore", "underscore_", "p.e.r.o.i.d.s", "\\Backslash", "Backslash\\"})
+    void testValid(String valid) throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Name name = wb.createName();
+            assertDoesNotThrow(() -> name.setNameName(valid));
         }
-
-        wb.close();
     }
 
-    @Test
-    void testInvalid() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "1number", "Sheet1!A1", "Exclamation!", "Has Space", "Colon:", "A-Minus", "A+Plus", "Dollar$", ".periodAtBeginning",
+        //special shorthand
+        "R", "C",
+        // A1-style cell reference
+        "A1",
+        // R1C1-style cell reference
+        "R1C1",
+        "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+        "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+        "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+        "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+        "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters"
+    })
+    void testInvalid(String invalid) {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Name name = wb.createName();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> name.setNameName(""));
+        IllegalArgumentException e;
+        e = assertThrows(IllegalArgumentException.class, () -> name.setNameName(""));
         assertEquals("Name cannot be blank", e.getMessage());
 
-        for (String invalid : Arrays.asList(
-            "1number",
-            "Sheet1!A1",
-            "Exclamation!",
-            "Has Space",
-            "Colon:",
-            "A-Minus",
-            "A+Plus",
-            "Dollar$",
-            ".periodAtBeginning",
-            "R", //special shorthand
-            "C", //special shorthand
-            "A1", // A1-style cell reference
-            "R1C1", // R1C1-style cell reference
-            "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
-            "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
-            "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
-            "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
-            "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters"
-        )) {
-            e = assertThrows(IllegalArgumentException.class, () -> name.setNameName(invalid));
-            assertTrue(e.getMessage().startsWith("Invalid name: '"+invalid+"'"));
-        }
-
+        e = assertThrows(IllegalArgumentException.class, () -> name.setNameName(invalid));
+        assertTrue(e.getMessage().startsWith("Invalid name: '"+invalid+"'"));
     }
 
     // bug 60260: renaming a sheet with a named range referring to a unicode (non-ASCII) sheet name
     @Test
-    void renameSheetWithNamedRangeReferringToUnicodeSheetName() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        wb.createSheet("Sheet\u30FB1");
+    void renameSheetWithNamedRangeReferringToUnicodeSheetName() throws IOException {
+        String unicodeName = "Sheet\u30FB201";
+        String asciiName = "Sheet 1";
+        String rangeName = "test_named_range";
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            wb1.createSheet(unicodeName);
 
-        Name name = wb.createName();
-        name.setNameName("test_named_range");
-        name.setRefersToFormula("'Sheet\u30FB201'!A1:A6");
+            Name name1 = wb1.createName();
+            name1.setNameName(rangeName);
+            name1.setRefersToFormula("'"+unicodeName+"'!A1:A6");
 
-        wb.setSheetName(0, "Sheet 1");
-        IOUtils.closeQuietly(wb);
+            wb1.setSheetName(0, asciiName);
+            assertEquals(asciiName, name1.getSheetName());
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                Name name2 = wb2.getName(rangeName);
+                assertNotNull(name2);
+                // Eventually this will be updated, but currently we don't update the sheet name
+                assertEquals(asciiName, name2.getSheetName());
+            }
+         }
     }
 }

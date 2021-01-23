@@ -17,20 +17,19 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFName extends BaseTestNamedRange {
 
     public TestXSSFName() {

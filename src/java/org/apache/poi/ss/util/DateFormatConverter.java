@@ -133,28 +133,30 @@ public final class DateFormatConverter  {
 		result.put( "S", "0" );
 		result.put( "SS", "00" );
 		result.put( "SSS", "000" );
+		result.put( "y", "yyyy" );
 
 		return result;
 	}
 
 	public static String getPrefixForLocale( Locale locale ) {
 		final String languageTag = locale.toLanguageTag();
-		if ("".equals(languageTag)) {
+		if (Locale.ROOT.equals(locale) || "".equals(languageTag)) {
 			// JDK 8 adds an empty locale-string, see also https://issues.apache.org/jira/browse/LANG-941
-			return "[$-0409]";
+			return "";
 		}
 
 		LocaleID loc = LocaleID.lookupByLanguageTag(languageTag);
 		if (loc == null) {
-			String cmpTag = (languageTag.indexOf('_') > -1) ? languageTag.replace('_','-') : languageTag;
+			String cmpTag = (languageTag.indexOf('_') > -1) ? languageTag.replace('_', '-') : languageTag;
 			int idx = languageTag.length();
-			while (loc == null && (idx = cmpTag.lastIndexOf('-', idx-1)) > 0) {
+			while (loc == null && (idx = cmpTag.lastIndexOf('-', idx - 1)) > 0) {
 				loc = LocaleID.lookupByLanguageTag(languageTag.substring(0, idx));
 			}
-			if (loc == null) {
-				LOG.log( POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales." );
-				return "";
-			}
+		}
+
+		if (loc == null) {
+			LOG.log(POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales.");
+			return "";
 		}
 
 		return String.format(Locale.ROOT, "[$-%04X]", loc.getLcid());

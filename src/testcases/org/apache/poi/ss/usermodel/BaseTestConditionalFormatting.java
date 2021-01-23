@@ -1221,7 +1221,8 @@ public abstract class BaseTestConditionalFormatting {
                     CellRangeAddress.valueOf("C9:D30"), CellRangeAddress.valueOf("C7:C31")
             };
             ConditionalFormattingRule rule = sheet.getSheetConditionalFormatting().createConditionalFormattingRule("$A$1>0");
-            sheet.getSheetConditionalFormatting().addConditionalFormatting(ranges, rule);
+            int form = sheet.getSheetConditionalFormatting().addConditionalFormatting(ranges, rule);
+            assertEquals(0, form);
         }
     }
 

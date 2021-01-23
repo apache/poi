@@ -19,6 +19,7 @@ package org.apache.poi.hdgf.streams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,8 @@ public final class TestStreamBugs extends StreamTest {
 	@Test
     void testGetTrailer() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
-		Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
+		Stream s = Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
+		assertNotNull(s);
 	}
 
 	@SuppressWarnings("unused")

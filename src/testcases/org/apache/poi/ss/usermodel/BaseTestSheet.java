@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.POITestCase.assertBetween;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -39,6 +40,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellAddress;
@@ -1039,7 +1041,7 @@ public abstract class BaseTestSheet {
 
             // here we can only verify that setting some zoom values works,
             // range-checking is different between the implementations
-            sheet.setZoom(75);
+            assertDoesNotThrow(() -> sheet.setZoom(75));
         }
     }
 
@@ -1048,6 +1050,10 @@ public abstract class BaseTestSheet {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             sheet.showInPane(2, 3);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(2, sheet.getTopRow());
+                assertEquals(3, sheet.getLeftCol());
+            }
         }
     }
 

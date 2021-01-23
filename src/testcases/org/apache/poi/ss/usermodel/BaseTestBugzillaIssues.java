@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -1318,7 +1319,7 @@ public abstract class BaseTestBugzillaIssues {
             sheet.setRowGroupCollapsed(0, true);
 
             sheet.groupColumn(0, 0);
-            sheet.setColumnGroupCollapsed(0, true);
+            assertDoesNotThrow(() -> sheet.setColumnGroupCollapsed(0, true));
         }
     }
 
@@ -1328,7 +1329,7 @@ public abstract class BaseTestBugzillaIssues {
     void test58648() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = wb.createSheet().createRow(0).createCell(0);
-            cell.setCellFormula("((1 + 1) )");
+            assertDoesNotThrow(() -> cell.setCellFormula("((1 + 1) )"));
         }
     }
 
@@ -1441,9 +1442,11 @@ public abstract class BaseTestBugzillaIssues {
         return time() - startTimeMillis;
     }
 
-    @Disabled("bug 59393")
     @Test
     void bug59393_commentsCanHaveSameAnchor() throws IOException {
+        // only executed for HSSF currently
+        assumeTrue("xls".equals(_testDataProvider.getStandardFileNameExtension()));
+
         try (Workbook wb = _testDataProvider.createWorkbook()) {
 
             Sheet sheet = wb.createSheet();
@@ -1473,14 +1476,13 @@ public abstract class BaseTestBugzillaIssues {
             Comment comment2 = drawing.createCellComment(anchor);
             RichTextString richTextString2 = helper.createRichTextString("comment2");
             comment2.setString(richTextString2);
-            cell2.setCellComment(comment2);
+            assertDoesNotThrow(() -> cell2.setCellComment(comment2));
 
             // anchor.setCol1(2);
             Comment comment3 = drawing.createCellComment(anchor);
             RichTextString richTextString3 = helper.createRichTextString("comment3");
             comment3.setString(richTextString3);
-            cell3.setCellComment(comment3);
-
+            assertDoesNotThrow(() -> cell3.setCellComment(comment3));
         }
     }
 
