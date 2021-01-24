@@ -155,13 +155,10 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
                 // We saw exceptions with JDK 8 on Windows in the Jenkins CI which
                 // seem to only be triggered by some font (maybe Calibri?!)
                 // We cannot avoid this, so let's try to not make the tests fail in this case
-                Assumptions.assumeFalse(
-                        e.getMessage().equals("-1") &&
-                        ExceptionUtils.readStackTrace(e).contains("ExtendedTextSourceLabel.getJustificationInfos"),
-                        "JDK sometimes fails at this point on some fonts on Windows machines, but we " +
-                                "should not fail the build because of this: " + ExceptionUtils.readStackTrace(e));
-
-                throw e;
+                if (!"-1".equals(e.getMessage()) ||
+                    !ExceptionUtils.readStackTrace(e).contains("ExtendedTextSourceLabel.getJustificationInfos")) {
+                    throw e;
+                }
             }
 
             graphics.dispose();

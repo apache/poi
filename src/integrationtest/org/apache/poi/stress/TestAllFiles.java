@@ -165,13 +165,14 @@ public class TestAllFiles {
                 exec.execute();
                 fail(errPrefix + "Expected failed assertion");
             } catch (AssertionFailedError e) {
-                assertEquals(exMessage, e.getMessage(), errPrefix);
+                String actMsg = pathReplace(e.getMessage());
+                assertEquals(exMessage, actMsg, errPrefix);
             } catch (Throwable e) {
                 fail(errPrefix + "Unexpected exception", e);
             }
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec);
-            String actMsg = e.getMessage();
+            String actMsg = pathReplace(e.getMessage());
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 // with Java 16+ NullPointerExceptions may contain a message ... but apparently not always ?!
                 assertTrue(jreVersion >= 16 || actMsg == null, errPrefix);
@@ -185,5 +186,10 @@ public class TestAllFiles {
         } else {
             assertDoesNotThrow(exec, errPrefix);
         }
+    }
+
+    private static String pathReplace(String msg) {
+        // Windows path replacement
+        return msg == null ? null : msg.replace('\\', '/');
     }
 }
