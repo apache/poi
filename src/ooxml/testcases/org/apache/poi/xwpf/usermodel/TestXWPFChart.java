@@ -56,7 +56,7 @@ class TestXWPFChart {
         assertEquals(1, chart.getChartSeries().size());
         XDDFChartData data = chart.getChartSeries().get(0);
         assertEquals(XDDFBarChartData.class, data.getClass());
-        assertEquals(3, data.getSeries().size());
+        assertEquals(3, data.getSeriesCount());
     }
 
     /**

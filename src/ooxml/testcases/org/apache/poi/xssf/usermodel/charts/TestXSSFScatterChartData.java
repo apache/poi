@@ -70,8 +70,8 @@ public final class TestXSSFScatterChartData {
 
         assertEquals(ScatterStyle.LINE_MARKER, scatterChartData.getStyle());
         assertNotNull(series);
-        assertEquals(1, scatterChartData.getSeries().size());
-        assertTrue(scatterChartData.getSeries().contains(series));
+        assertEquals(1, scatterChartData.getSeriesCount());
+        assertTrue(scatterChartData.getSeries(0) == series);
 
         chart.plot(scatterChartData);
         wb.close();
