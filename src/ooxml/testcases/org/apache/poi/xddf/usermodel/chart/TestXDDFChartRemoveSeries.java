@@ -117,7 +117,7 @@ class TestXDDFChartRemoveSeries {
     }
 
     /**
-     * Remove the first series by calling chartData.getSeries().remove(0).
+     * Attempt to remove the first series by calling chartData.getSeries().remove(0).
      * <p>
      * This used to corrupt the workbook but the returned <code>List</code> is unmodifiable.
      */

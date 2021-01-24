@@ -67,7 +67,7 @@ public final class ChartFromScratch {
             return;
         }
 
-        try (BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[0]), StandardCharsets.ISO_8859_1)) {
+        try (BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[0]), StandardCharsets.UTF_8)) {
 
             String chartTitle = modelReader.readLine();  // first line is chart title
             String[] series = modelReader.readLine().split(",");

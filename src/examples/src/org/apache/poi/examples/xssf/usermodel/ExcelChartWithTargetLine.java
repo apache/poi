@@ -137,7 +137,7 @@ public final class ExcelChartWithTargetLine {
         }
 
         XDDFScatterChartData scatter = (XDDFScatterChartData) chart.createData(ChartTypes.SCATTER, scatterX, scatterY);
-        scatter.setVaryColors(true);
+        scatter.setVaryColors(false);
 
         //  This only works for Excel since OpenOffice or LibreOffice Calc does not support literal numeric data series.
         XDDFNumericalDataSource<Double> targetDS = XDDFDataSourcesFactory.fromArray(new Double[] { target, target });

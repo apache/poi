@@ -67,8 +67,8 @@ class TestXSSFLineChartData {
         XDDFChartData.Series series = lineChartData.addSeries(xs, ys);
 
         assertNotNull(series);
-        assertEquals(1, lineChartData.getSeries().size());
-        assertTrue(lineChartData.getSeries().contains(series));
+        assertEquals(1, lineChartData.getSeriesCount());
+        assertTrue(lineChartData.getSeries(0) == series);
 
         chart.plot(lineChartData);
         wb.close();
