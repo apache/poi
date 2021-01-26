@@ -19,18 +19,19 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.apache.xmlbeans.XmlCursor;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
@@ -42,8 +43,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
-
-import java.util.List;
 
 class TestXWPFTableCell {
 
@@ -133,21 +132,19 @@ class TestXWPFTableCell {
         }
     }
 
-    // This is not a very useful test as written. It is not worth the execution time for a unit test
-    @Disabled
     @Test
     void testCellVerticalAlignShouldNotThrowNPE() throws Exception {
-        XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");
-        List<XWPFTable> tables = docx.getTables();
-        for (XWPFTable table : tables) {
-            List<XWPFTableRow> tableRows = table.getRows();
-            for (XWPFTableRow tableRow : tableRows) {
-                List<XWPFTableCell> tableCells = tableRow.getTableCells();
-                for (XWPFTableCell tableCell : tableCells) {
-                    // getVerticalAlignment should return either an XWPFVertAlign enum or null if not set
-                    tableCell.getVerticalAlignment();
-                }
-            }
+        try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx")) {
+            String[] act =  docx.getTables().stream()
+                .flatMap(t -> t.getRows().stream())
+                .flatMap(r -> r.getTableICells().stream())
+                .map(XWPFTableCell.class::cast)
+                .map(XWPFTableCell::getVerticalAlignment)
+                .map(e -> e == null ? null : e.name())
+                .toArray(String[]::new);
+
+            String[] exp = { null, "BOTTOM", "CENTER", null};
+            assertArrayEquals(exp, act);
         }
     }
 

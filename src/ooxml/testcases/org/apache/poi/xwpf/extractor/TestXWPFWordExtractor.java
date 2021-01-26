@@ -23,6 +23,7 @@ import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -387,7 +388,7 @@ class TestXWPFWordExtractor {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             // Check it gives text without error
-            extractor.getText();
+            assertNotNull(extractor.getText());
         }
     }
 

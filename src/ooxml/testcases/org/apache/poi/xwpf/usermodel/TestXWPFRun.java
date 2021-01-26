@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,7 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -554,20 +554,12 @@ class TestXWPFRun {
      */
     @Test
     void testSetFontFamily_52288() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx");
-        final Iterator<XWPFParagraph> paragraphs = doc.getParagraphsIterator();
-        while (paragraphs.hasNext()) {
-            final XWPFParagraph paragraph = paragraphs.next();
-            for (final XWPFRun run : paragraph.getRuns()) {
-                if (run != null) {
-                    final String text = run.getText(0);
-                    if (text != null) {
-                        run.setFontFamily("Times New Roman");
-                    }
-                }
-            }
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx")) {
+            doc.getParagraphs().stream()
+                .flatMap(p -> p.getRuns().stream())
+                .filter(p -> p != null && p.getText(0) != null)
+                .forEach(r -> assertDoesNotThrow(() -> r.setFontFamily("Times New Roman")));
         }
-        doc.close();
     }
 
     @Test

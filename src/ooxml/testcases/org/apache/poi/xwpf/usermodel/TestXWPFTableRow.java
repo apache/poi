@@ -24,79 +24,80 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
 class TestXWPFTableRow {
 
     @Test
     void testCreateRow() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        XWPFTable table = doc.createTable(1, 1);
-        XWPFTableRow tr = table.createRow();
-        assertNotNull(tr);
-        doc.close();
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable(1, 1);
+            XWPFTableRow tr = table.createRow();
+            assertNotNull(tr);
+        }
     }
 
     @Test
     void testSetGetCantSplitRow() throws IOException {
         // create a table
-        XWPFDocument doc = new XWPFDocument();
-        XWPFTable table = doc.createTable(1, 1);
-        // table has a single row by default; grab it
-        XWPFTableRow tr = table.getRow(0);
-        assertNotNull(tr);
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable(1, 1);
+            // table has a single row by default; grab it
+            XWPFTableRow tr = table.getRow(0);
+            assertNotNull(tr);
 
-        // Assert the repeat header is false by default
-        boolean isCantSplit = tr.isCantSplitRow();
-        assertFalse(isCantSplit);
+            // Assert the repeat header is false by default
+            boolean isCantSplit = tr.isCantSplitRow();
+            assertFalse(isCantSplit);
 
-        // Repeat the header
-        tr.setCantSplitRow(true);
-        isCantSplit = tr.isCantSplitRow();
-        assertTrue(isCantSplit);
+            // Repeat the header
+            tr.setCantSplitRow(true);
+            isCantSplit = tr.isCantSplitRow();
+            assertTrue(isCantSplit);
 
-        // Make the header no longer repeating
-        tr.setCantSplitRow(false);
-        isCantSplit = tr.isCantSplitRow();
-        assertFalse(isCantSplit);
-
-        doc.close();
+            // Make the header no longer repeating
+            tr.setCantSplitRow(false);
+            isCantSplit = tr.isCantSplitRow();
+            assertFalse(isCantSplit);
+        }
     }
 
     @Test
     void testSetGetRepeatHeader() throws IOException {
         // create a table
-        XWPFDocument doc = new XWPFDocument();
-        XWPFTable table = doc.createTable(3, 1);
-        // table has a single row by default; grab it
-        XWPFTableRow tr = table.getRow(0);
-        assertNotNull(tr);
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable(3, 1);
+            // table has a single row by default; grab it
+            XWPFTableRow tr = table.getRow(0);
+            assertNotNull(tr);
 
-        // Assert the repeat header is false by default
-        boolean isRpt = tr.isRepeatHeader();
-        assertFalse(isRpt);
+            // Assert the repeat header is false by default
+            boolean isRpt = tr.isRepeatHeader();
+            assertFalse(isRpt);
 
-        // Repeat the header
-        tr.setRepeatHeader(true);
-        isRpt = tr.isRepeatHeader();
-        assertTrue(isRpt);
+            // Repeat the header
+            tr.setRepeatHeader(true);
+            isRpt = tr.isRepeatHeader();
+            assertTrue(isRpt);
 
-        // Make the header no longer repeating
-        tr.setRepeatHeader(false);
-        isRpt = tr.isRepeatHeader();
-        assertFalse(isRpt);
+            // Make the header no longer repeating
+            tr.setRepeatHeader(false);
+            isRpt = tr.isRepeatHeader();
+            assertFalse(isRpt);
 
-        // If the third row is set to repeat, but not the second,
-        // isRepeatHeader should report false because Word will
-        // ignore it.
-        tr = table.getRow(2);
-        tr.setRepeatHeader(true);
-        isRpt = tr.isRepeatHeader();
-        assertFalse(isRpt);
-
-        doc.close();
+            // If the third row is set to repeat, but not the second,
+            // isRepeatHeader should report false because Word will
+            // ignore it.
+            tr = table.getRow(2);
+            tr.setRepeatHeader(true);
+            isRpt = tr.isRepeatHeader();
+            assertFalse(isRpt);
+        }
     }
 
     // Test that validates the table header value can be parsed from a document
@@ -144,30 +145,30 @@ class TestXWPFTableRow {
 
     @Test
     void testRemoveCell() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        XWPFTableRow tr = doc.createTable(1, 1).createRow();
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTableRow tr = doc.createTable(1, 1).createRow();
 
-        assertEquals(1, tr.getTableCells().size());
-        assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
+            assertEquals(1, tr.getTableCells().size());
+            assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
 
-        tr.removeCell(0);
-        assertEquals(0, tr.getTableCells().size());
-        assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
-        doc.close();
+            tr.removeCell(0);
+            assertEquals(0, tr.getTableCells().size());
+            assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
+        }
     }
 
     @Test
     void testGetSetHeightRule() throws IOException {
-        XWPFDocument doc = new XWPFDocument();
-        XWPFTableRow tr = doc.createTable(1, 1).createRow();
-        assertEquals(TableRowHeightRule.AUTO, tr.getHeightRule());
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTableRow tr = doc.createTable(1, 1).createRow();
+            assertEquals(TableRowHeightRule.AUTO, tr.getHeightRule());
 
-        tr.setHeightRule(TableRowHeightRule.AT_LEAST);
-        assertEquals(TableRowHeightRule.AT_LEAST, tr.getHeightRule());
+            tr.setHeightRule(TableRowHeightRule.AT_LEAST);
+            assertEquals(TableRowHeightRule.AT_LEAST, tr.getHeightRule());
 
-        tr.setHeightRule(TableRowHeightRule.EXACT);
-        assertEquals(TableRowHeightRule.EXACT, tr.getHeightRule());
-        doc.close();
+            tr.setHeightRule(TableRowHeightRule.EXACT);
+            assertEquals(TableRowHeightRule.EXACT, tr.getHeightRule());
+        }
     }
 
     @Test
@@ -178,7 +179,9 @@ class TestXWPFTableRow {
 
             int twipsPerInch =  1440;
             tr.setHeight(twipsPerInch/10);
-            tr.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT);
+            CTHeight height = tr.getCtRow().getTrPr().getTrHeightArray(0);
+            height.setHRule(STHeightRule.EXACT);
+            assertEquals(twipsPerInch/10., Units.toDXA(POIXMLUnits.parseLength(height.xgetVal())), 0);
         }
     }
 }

@@ -908,13 +908,15 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testBug54399() throws IOException {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54399.xlsx");
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54399.xlsx")) {
 
-        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-          workbook.setSheetName(i, "SheetRenamed" + (i + 1));
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                String name = "SheetRenamed" + (i + 1);
+                workbook.setSheetName(i, name);
+                assertEquals(name, workbook.getSheetName(i));
+            }
+
         }
-
-        workbook.close();
     }
 
     /**
@@ -935,53 +937,45 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     @SuppressWarnings("unchecked")
     @Test
     void bug58245_XSSFSheetIterator() throws IOException {
-        final XSSFWorkbook wb = new XSSFWorkbook();
-        wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.createSheet();
 
-        // =====================================================================
-        // Case 1: Existing code uses XSSFSheet for-each loop
-        // =====================================================================
-        // Original code (no longer valid)
-        /*
-        for (XSSFSheet sh : wb) {
-            sh.createRow(0);
+            // =====================================================================
+            // Case 1: Existing code uses XSSFSheet for-each loop
+            // =====================================================================
+
+            // Option A:
+            for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
+                sh.createRow(0);
+            }
+
+            // Option B (preferred for new code):
+            for (Sheet sh : wb) {
+                sh.createRow(1);
+            }
+
+            // =====================================================================
+            // Case 2: Existing code creates an iterator variable
+            // =====================================================================
+
+            // Option A:
+            {
+                Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
+                XSSFSheet sh = it.next();
+                sh.createRow(2);
+            }
+
+            // Option B (preferred for new code):
+            {
+                Iterator<Sheet> it = wb.iterator();
+                Sheet sh = it.next();
+                sh.createRow(3);
+            }
+
+            assertEquals(4, wb.getSheetAt(0).getPhysicalNumberOfRows());
+
+
         }
-        */
-
-        // Option A:
-        for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
-            sh.createRow(0);
-        }
-
-        // Option B (preferred for new code):
-        for (Sheet sh : wb) {
-            sh.createRow(0);
-        }
-
-        // =====================================================================
-        // Case 2: Existing code creates an iterator variable
-        // =====================================================================
-        // Original code (no longer valid)
-        /*
-        Iterator<XSSFSheet> it = wb.iterator();
-        XSSFSheet sh = it.next();
-        sh.createRow(0);
-        */
-
-        // Option A:
-        {
-            Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
-            XSSFSheet sh = it.next();
-            sh.createRow(0);
-        }
-
-        // Option B (preferred for new code):
-        {
-            Iterator<Sheet> it = wb.iterator();
-            Sheet sh = it.next();
-            sh.createRow(0);
-        }
-        wb.close();
     }
 
     @Test
