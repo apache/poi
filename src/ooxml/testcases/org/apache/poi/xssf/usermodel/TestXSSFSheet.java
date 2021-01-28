@@ -1274,7 +1274,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     @Timeout(value = 180, unit = SECONDS)
     @Test
     void bug51585() throws IOException {
-        XSSFTestDataSamples.openSampleWorkbook("51585.xlsx").close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51585.xlsx")) {
+            assertNotNull(wb.getSheetAt(0));
+        }
     }
 
     private XSSFWorkbook setupSheet(){
@@ -1885,45 +1887,49 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      */
     @Test
     void testInsertCommentsToClonedSheet() throws IOException {
-    	Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx");
-		CreationHelper helper = wb.getCreationHelper();
-		Sheet sheet2 = wb.createSheet("Sheet 2");
-		Sheet sheet3 = wb.cloneSheet(0);
-		wb.setSheetName(2, "Sheet 3");
+    	try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx")) {
+            CreationHelper helper = wb.getCreationHelper();
+            Sheet sheet2 = wb.createSheet("Sheet 2");
+            Sheet sheet3 = wb.cloneSheet(0);
+            wb.setSheetName(2, "Sheet 3");
 
-		// Adding Comment to new created Sheet 2
-		addComments(helper, sheet2);
-		// Adding Comment to cloned Sheet 3
-		addComments(helper, sheet3);
+            Sheet[] sheets = { sheet2, sheet3 };
 
-        wb.close();
-    }
+            for (Sheet sheet : sheets) {
+                Drawing<?> drawing = sheet.createDrawingPatriarch();
 
-    private void addComments(CreationHelper helper, Sheet sheet) {
-		Drawing<?> drawing = sheet.createDrawingPatriarch();
+                for (int i = 0; i < 2; i++) {
+                    ClientAnchor anchor = helper.createClientAnchor();
+                    anchor.setCol1(0);
+                    anchor.setRow1(i);
+                    anchor.setCol2(2);
+                    anchor.setRow2(3 + i);
 
-		for (int i = 0; i < 2; i++) {
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(0);
-			anchor.setRow1(i);
-			anchor.setCol2(2);
-			anchor.setRow2(3 + i);
+                    Comment comment = drawing.createCellComment(anchor);
+                    comment.setString(helper.createRichTextString("BugTesting"));
 
-			Comment comment = drawing.createCellComment(anchor);
-			comment.setString(helper.createRichTextString("BugTesting"));
+                    Row row = sheet.getRow(i);
+                    if (row == null) {
+                        row = sheet.createRow(i);
+                    }
+                    Cell cell = row.getCell(0);
+                    if (cell == null) {
+                        cell = row.createCell(0);
+                    }
 
-			Row row = sheet.getRow(i);
-			if (row == null) {
-                row = sheet.createRow(i);
-            }
-			Cell cell = row.getCell(0);
-			if (cell == null) {
-                cell = row.createCell(0);
+                    cell.setCellComment(comment);
+                }
             }
 
-			cell.setCellComment(comment);
-		}
-
+            for (Sheet sheet : sheets) {
+                for (int i = 0; i < 2; i++) {
+                    CellAddress ref = new CellAddress(i, 0);
+                    Comment c = sheet.getCellComment(ref);
+                    assertNotNull(c);
+                    assertEquals("BugTesting", c.getString().getString());
+                }
+            }
+        }
     }
 
     // bug 59687:  XSSFSheet.RemoveRow doesn't handle row gaps properly when removing row comments

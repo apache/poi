@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,22 +56,23 @@ public final class TestXWPFStyles {
 
     @Test
     void testAddStylesToDocument() throws IOException {
-        XWPFDocument docOut = new XWPFDocument();
-        XWPFStyles styles = docOut.createStyles();
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            XWPFStyles styles = docOut.createStyles();
 
-        String strStyleId = "headline1";
-        CTStyle ctStyle = CTStyle.Factory.newInstance();
+            String strStyleId = "headline1";
+            CTStyle ctStyle = CTStyle.Factory.newInstance();
 
-        ctStyle.setStyleId(strStyleId);
-        XWPFStyle s = new XWPFStyle(ctStyle);
-        styles.addStyle(s);
+            ctStyle.setStyleId(strStyleId);
+            XWPFStyle s = new XWPFStyle(ctStyle);
+            styles.addStyle(s);
 
-        assertTrue(styles.styleExist(strStyleId));
+            assertTrue(styles.styleExist(strStyleId));
 
-        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
-        styles = docIn.getStyles();
-        assertTrue(styles.styleExist(strStyleId));
+            styles = docIn.getStyles();
+            assertTrue(styles.styleExist(strStyleId));
+        }
     }
 
     /**
@@ -96,17 +96,18 @@ public final class TestXWPFStyles {
      * YK: tests below don't make much sense,
      * they exist only to copy xml beans to pi-ooxml-lite.jar
      */
-    @SuppressWarnings("resource")
     @Test
-    void testLanguages() {
-        XWPFDocument docOut = new XWPFDocument();
-        XWPFStyles styles = docOut.createStyles();
-        styles.setEastAsia("Chinese");
+    void testLanguages() throws IOException {
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            XWPFStyles styles = docOut.createStyles();
+            styles.setEastAsia("Chinese");
+            styles.setSpellingLanguage("English");
 
-        styles.setSpellingLanguage("English");
+            CTFonts def = CTFonts.Factory.newInstance();
+            styles.setDefaultFonts(def);
 
-        CTFonts def = CTFonts.Factory.newInstance();
-        styles.setDefaultFonts(def);
+            assertEquals(1, styles.getDefaultRunStyle().getRPr().sizeOfRFontsArray());
+        }
     }
 
     @Test
@@ -130,22 +131,23 @@ public final class TestXWPFStyles {
 
     @Test
     void testSetStyles_Bug57254() throws IOException {
-        XWPFDocument docOut = new XWPFDocument();
-        XWPFStyles styles = docOut.createStyles();
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            XWPFStyles styles = docOut.createStyles();
 
-        CTStyles ctStyles = CTStyles.Factory.newInstance();
-        String strStyleId = "headline1";
-        CTStyle ctStyle = ctStyles.addNewStyle();
+            CTStyles ctStyles = CTStyles.Factory.newInstance();
+            String strStyleId = "headline1";
+            CTStyle ctStyle = ctStyles.addNewStyle();
 
-        ctStyle.setStyleId(strStyleId);
-        styles.setStyles(ctStyles);
+            ctStyle.setStyleId(strStyleId);
+            styles.setStyles(ctStyles);
 
-        assertTrue(styles.styleExist(strStyleId));
+            assertTrue(styles.styleExist(strStyleId));
 
-        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
-        styles = docIn.getStyles();
-        assertTrue(styles.styleExist(strStyleId));
+            styles = docIn.getStyles();
+            assertTrue(styles.styleExist(strStyleId));
+        }
     }
 
     @Test

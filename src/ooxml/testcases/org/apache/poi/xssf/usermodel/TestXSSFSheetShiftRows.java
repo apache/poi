@@ -17,17 +17,26 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+import java.util.stream.IntStream;
+
+import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
@@ -390,61 +399,71 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
     void testSharedFormulas() throws Exception {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
-        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
-        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
-        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
+            assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
+            assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
 
-        assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
-        assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
-        assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
+            assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
+            assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
 
-        sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+            sheet.shiftRows(3, sheet.getLastRowNum(), 1);
 
-        assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
-        assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
-        assertEquals("SUM(E2:E5)", getCellFormula(sheet, "E6"));
+            assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
+            assertEquals("SUM(E2:E5)", getCellFormula(sheet, "E6"));
 
-        assertEquals("SUM(C3:C6)", getCellFormula(sheet, "C7"));
-        assertEquals("SUM(D3:D6)", getCellFormula(sheet, "D7"));
-        assertEquals("SUM(E3:E6)", getCellFormula(sheet, "E7"));
-        wb.close();
+            assertEquals("SUM(C3:C6)", getCellFormula(sheet, "C7"));
+            assertEquals("SUM(D3:D6)", getCellFormula(sheet, "D7"));
+            assertEquals("SUM(E3:E6)", getCellFormula(sheet, "E7"));
+        }
     }
 
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
     void testShiftSharedFormulas() throws Exception {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
-        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
-        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
-        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
+            assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
+            assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
 
-        assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
-        assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
-        assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
+            assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
+            assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
 
-        sheet.shiftRows(sheet.getFirstRowNum(), 4, -1);
+            sheet.shiftRows(sheet.getFirstRowNum(), 4, -1);
 
-        assertEquals("SUM(C1:C3)", getCellFormula(sheet, "C4"));
-        assertEquals("SUM(D1:D3)", getCellFormula(sheet, "D4"));
-        assertEquals("SUM(E1:E3)", getCellFormula(sheet, "E4"));
+            assertEquals("SUM(C1:C3)", getCellFormula(sheet, "C4"));
+            assertEquals("SUM(D1:D3)", getCellFormula(sheet, "D4"));
+            assertEquals("SUM(E1:E3)", getCellFormula(sheet, "E4"));
 
-        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C6"));
-        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D6"));
-        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E6"));
-        wb.close();
+            assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D6"));
+            assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E6"));
+        }
     }
 
     // bug 60260: shift rows or rename a sheet containing a named range
     // that refers to formula with a unicode (non-ASCII) sheet name formula
     @Test
-    void shiftRowsWithUnicodeNamedRange() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("unicodeSheetName.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
-        sheet.shiftRows(1, 2, 3);
-        IOUtils.closeQuietly(wb);
+    void shiftRowsWithUnicodeNamedRange() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("unicodeSheetName.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            sheet.shiftRows(1, 2, 3);
+
+            Integer[] exp = { 1, null, null, 4, 2, 3, 7, 8, 9 };
+            IntStream.rangeClosed(0, 8).forEach(i -> {
+                Row row = sheet.getRow(i);
+                if (exp[i] == null) {
+                    assertNull(row);
+                } else {
+                    assertEquals(exp[i], (int)row.getCell(0).getNumericCellValue());
+                }
+            });
+        }
     }
 
     @Test

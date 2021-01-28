@@ -24,10 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Spliterator;
 import java.util.TreeMap;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -446,31 +449,16 @@ public final class TestXSSFRichTextString {
     @Test
     void testBug56511() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx")) {
-            for (Sheet sheet : wb) {
-                int lastRow = sheet.getLastRowNum();
-                for (int rowIdx = sheet.getFirstRowNum(); rowIdx <= lastRow; rowIdx++) {
-                    Row row = sheet.getRow(rowIdx);
-                    if (row != null) {
-                        int lastCell = row.getLastCellNum();
-
-                        for (int cellIdx = row.getFirstCellNum(); cellIdx <= lastCell; cellIdx++) {
-
-                            Cell cell = row.getCell(cellIdx);
-                            if (cell != null) {
-                                //System.out.println("row " + rowIdx + " column " + cellIdx + ": " + cell.getCellType() + ": " + cell.toString());
-
-                                XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
-                                int anzFormattingRuns = richText.numFormattingRuns();
-                                for (int run = 0; run < anzFormattingRuns; run++) {
-                                    /*XSSFFont font =*/ richText.getFontOfFormattingRun(run);
-                                    //System.out.println("  run " + run
-                                    //        + " font " + (font == null ? "<null>" : font.getFontName()));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            int[] idx = { 0 };
+            StreamSupport.stream(wb::spliterator, Spliterator.IMMUTABLE, false)
+                .flatMap(sheet -> StreamSupport.stream(sheet::spliterator, Spliterator.IMMUTABLE, false))
+                .filter(Objects::nonNull)
+                .flatMap(row -> StreamSupport.stream(row::spliterator, Spliterator.IMMUTABLE, false))
+                .filter(Objects::nonNull)
+                .map(Cell::getRichStringCellValue)
+                .map(XSSFRichTextString.class::cast)
+                .flatMap(x -> IntStream.range(0, x.numFormattingRuns()).mapToObj(x::getFontOfFormattingRun))
+                .forEach(f -> { if (idx[0]++ == 2) { assertNull(f); } else { assertNotNull(f); }} );
         }
     }
 
