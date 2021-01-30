@@ -170,7 +170,7 @@ public final class TestXWPFStyles {
                 assertNull(r.getColor());
                 assertNull(r.getFontFamily());
                 assertNull(r.getFontName());
-                assertEquals(-1, r.getFontSize());
+                assertNull(r.getFontSizeAsDouble());
             }
 
             // On page two, has explicit styles, but on runs not on
@@ -184,7 +184,7 @@ public final class TestXWPFStyles {
                 XWPFRun r = p.getRuns().get(0);
                 assertEquals("Arial Black", r.getFontFamily());
                 assertEquals("Arial Black", r.getFontName());
-                assertEquals(16, r.getFontSize());
+                assertEquals(16.0, r.getFontSizeAsDouble(), 0.01);
                 assertEquals("548DD4", r.getColor());
             }
 
@@ -203,7 +203,7 @@ public final class TestXWPFStyles {
             assertNotNull(styles.getDefaultRunStyle());
             assertNotNull(styles.getDefaultParagraphStyle());
 
-            assertEquals(11, styles.getDefaultRunStyle().getFontSize());
+            assertEquals(11.0, styles.getDefaultRunStyle().getFontSizeAsDouble(), 0.01);
             assertEquals(11.0, styles.getDefaultRunStyle().getFontSizeAsDouble(), 0.01);
             assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
         }

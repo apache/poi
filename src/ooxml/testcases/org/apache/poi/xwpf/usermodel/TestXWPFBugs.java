@@ -20,12 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -229,5 +231,34 @@ class TestXWPFBugs {
         BigInteger abstractNumID = documentNumbering.addAbstractNum(abstractNum);
 
         documentNumbering.addNum(abstractNumID);
+    }
+
+    @Test
+    public void test65099() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("65099.docx")) {
+            XWPFStyles styles = doc.getStyles();
+            assertNotNull(styles);
+
+            XWPFStyle normal = styles.getStyle("Normal");
+            assertNotNull(normal);
+
+            XWPFStyle style1 = styles.getStyle("EdfTitre3Car");
+            assertNotNull(style1);
+
+            List<XWPFStyle> list = styles.getUsedStyleList(normal);
+            assertNotNull(list);
+            assertEquals(1, list.size());
+
+            list = styles.getUsedStyleList(style1);
+            assertNotNull(list);
+            assertEquals(7, list.size());
+
+            assertThrows(NullPointerException.class,
+                    () -> styles.getUsedStyleList(null),
+                    "Pasisng in 'null' triggers an exception");
+
+            XWPFStyle style = doc.getStyles().getStyle("TableauGrille41");
+            doc.getStyles().getUsedStyleList(style);
+        }
     }
 }
