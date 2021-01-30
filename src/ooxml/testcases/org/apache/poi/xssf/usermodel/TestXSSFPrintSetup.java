@@ -17,11 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.poi.ss.usermodel.PageOrder;
 import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PrintCellComments;
 import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
@@ -29,10 +34,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link XSSFPrintSetup}
@@ -290,7 +291,7 @@ class TestXSSFPrintSetup {
      * Open a file with print settings, save and check.
      * Then, change, save, read, check
      */
-    @Test
+    @Disabled
     void testRoundTrip() {
        // TODO
     }

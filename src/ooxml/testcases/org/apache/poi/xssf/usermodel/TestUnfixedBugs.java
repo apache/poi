@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -369,7 +370,7 @@ public final class TestUnfixedBugs {
 
             FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
             formulaEvaluator.setIgnoreMissingWorkbooks(true);
-            formulaEvaluator.evaluateAll();
+            assertDoesNotThrow(formulaEvaluator::evaluateAll);
         }
     }
 

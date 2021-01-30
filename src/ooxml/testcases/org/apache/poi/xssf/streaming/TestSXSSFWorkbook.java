@@ -345,17 +345,16 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb2.close();
     }
 
-    @Disabled("currently writing the same sheet multiple times is not supported...")
     @Test
     void bug53515() throws Exception {
-        Workbook wb1 = new SXSSFWorkbook(10);
-        populateWorkbook(wb1);
-        saveTwice(wb1);
-        Workbook wb2 = new XSSFWorkbook();
-        populateWorkbook(wb2);
-        saveTwice(wb2);
-        wb2.close();
-        wb1.close();
+        try (Workbook wb1 = new SXSSFWorkbook(10)) {
+            populateWorkbook(wb1);
+            saveTwice(wb1);
+            try (Workbook wb2 = new XSSFWorkbook()) {
+                populateWorkbook(wb2);
+                saveTwice(wb2);
+            }
+        }
     }
 
     @Disabled("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "

@@ -33,10 +33,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 /**
  * Test the VLOOKUP function
  */
+@Execution(ExecutionMode.CONCURRENT)
 class TestVlookup {
 
     @Test

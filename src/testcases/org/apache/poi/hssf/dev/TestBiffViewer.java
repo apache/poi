@@ -28,7 +28,10 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
+@Execution(ExecutionMode.CONCURRENT)
 class TestBiffViewer extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {

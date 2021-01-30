@@ -18,23 +18,41 @@ package org.apache.poi.ss.formula.udf;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-public class BaseTestUDFFinder {
+public class TestUDFFinder {
+    public static Stream<Arguments> instances() {
+        UDFFinder notImplFinder = new DefaultUDFFinder(
+            new String[] { "NotImplemented" },
+            new FreeRefFunction[] { TestUDFFinder::notImplemented }
+        );
 
-    protected UDFFinder _instance;
-    protected static final FreeRefFunction NotImplemented = new FreeRefFunction() {
-        @Override
-        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-            throw new RuntimeException("not implemented");
-        }
-    };
+        AggregatingUDFFinder aggUDF = new AggregatingUDFFinder(notImplFinder);
+        aggUDF.add(AnalysisToolPak.instance);
 
-    protected void confirmFindFunction(String name) {
-        FreeRefFunction func = _instance.findFunction(name);
+        return Stream.of(
+            Arguments.of("NotImplemented", notImplFinder),
+            Arguments.of("BESSELJ", new AggregatingUDFFinder(AnalysisToolPak.instance)),
+            Arguments.of("BESSELJ", aggUDF)
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("instances")
+    void confirmFindFunction(String functionName, UDFFinder instance) {
+        FreeRefFunction func = instance.findFunction(functionName);
         assertNotNull(func);
     }
 
+    private static ValueEval notImplemented(ValueEval[] args, OperationEvaluationContext ec) {
+        throw new RuntimeException("not implemented");
+    }
 }

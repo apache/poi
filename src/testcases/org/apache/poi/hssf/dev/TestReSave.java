@@ -30,7 +30,10 @@ import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
+@Execution(ExecutionMode.CONCURRENT)
 class TestReSave extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {

@@ -42,6 +42,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
@@ -1012,18 +1013,18 @@ public abstract class BaseTestBugzillaIssues {
 
             Name name1 = wb.createName();
             name1.setNameName("FMLA");
-            name1.setRefersToFormula("Sheet1!$B$3");
+            assertDoesNotThrow(() -> name1.setRefersToFormula("Sheet1!$B$3"));
         }
     }
 
     @Test
     void bug56981() throws IOException {
-        try (Workbook wb = _testDataProvider.createWorkbook()) {
-            CellStyle vertTop = wb.createCellStyle();
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            CellStyle vertTop = wb1.createCellStyle();
             vertTop.setVerticalAlignment(VerticalAlignment.TOP);
-            CellStyle vertBottom = wb.createCellStyle();
+            CellStyle vertBottom = wb1.createCellStyle();
             vertBottom.setVerticalAlignment(VerticalAlignment.BOTTOM);
-            Sheet sheet = wb.createSheet("Sheet 1");
+            Sheet sheet = wb1.createSheet("Sheet 1");
             Row row = sheet.createRow(0);
             Cell top = row.createCell(0);
             Cell bottom = row.createCell(1);
@@ -1033,64 +1034,61 @@ public abstract class BaseTestBugzillaIssues {
             bottom.setCellValue("Bottom");
             bottom.setCellStyle(vertBottom);
             row.setHeightInPoints(85.75f); // make it obvious
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                Cell cell = wb2.getSheetAt(0).getRow(0).getCell(1);
+                assertEquals(VerticalAlignment.BOTTOM, cell.getCellStyle().getVerticalAlignment());
+            }
         }
     }
 
     @Test
     void test57973() throws IOException {
-        try (Workbook wb = _testDataProvider.createWorkbook()) {
+        String[] vals = { "Cell0", "F4", "C3" };
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            CreationHelper helper1 = wb1.getCreationHelper();
+            Sheet sheet1 = wb1.createSheet();
+            Drawing<?> drawing1 = sheet1.createDrawingPatriarch();
 
-            CreationHelper factory = wb.getCreationHelper();
+            for (int i=0; i< vals.length; i++) {
+                Cell cell = sheet1.createRow(i).createCell(i);
+                cell.setCellValue(vals[i]);
+                ClientAnchor anchor = helper1.createClientAnchor();
+                anchor.setCol1(i);
+                anchor.setCol2(i);
+                anchor.setRow1(i);
+                anchor.setRow2(i);
 
-            Sheet sheet = wb.createSheet();
-            Drawing<?> drawing = sheet.createDrawingPatriarch();
-            ClientAnchor anchor = factory.createClientAnchor();
+                Comment comment = drawing1.createCellComment(anchor);
+                RichTextString str = helper1.createRichTextString("Hello, World"+i);
+                comment.setString(str);
+                comment.setAuthor("Apache POI");
+                cell.setCellComment(comment);
+                comment.setColumn(i);
+                comment.setRow(i);
 
-            Cell cell0 = sheet.createRow(0).createCell(0);
-            cell0.setCellValue("Cell0");
+                //apply custom font to the text in the comment
+                Font font = wb1.createFont();
+                font.setFontName("Arial");
+                font.setFontHeightInPoints((short) (14+i));
+                font.setBold(true);
+                font.setColor(IndexedColors.RED.getIndex());
+                str.applyFont(font);
+            }
 
-            Comment comment0 = drawing.createCellComment(anchor);
-            RichTextString str0 = factory.createRichTextString("Hello, World1!");
-            comment0.setString(str0);
-            comment0.setAuthor("Apache POI");
-            cell0.setCellComment(comment0);
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                Sheet sheet2 = wb2.getSheetAt(0);
 
-            anchor = factory.createClientAnchor();
-            anchor.setCol1(1);
-            anchor.setCol2(1);
-            anchor.setRow1(1);
-            anchor.setRow2(1);
-            Cell cell1 = sheet.createRow(3).createCell(5);
-            cell1.setCellValue("F4");
-            Comment comment1 = drawing.createCellComment(anchor);
-            RichTextString str1 = factory.createRichTextString("Hello, World2!");
-            comment1.setString(str1);
-            comment1.setAuthor("Apache POI");
-            cell1.setCellComment(comment1);
-
-            Cell cell2 = sheet.createRow(2).createCell(2);
-            cell2.setCellValue("C3");
-
-            anchor = factory.createClientAnchor();
-            anchor.setCol1(2);
-            anchor.setCol2(2);
-            anchor.setRow1(2);
-            anchor.setRow2(2);
-
-            Comment comment2 = drawing.createCellComment(anchor);
-            RichTextString str2 = factory.createRichTextString("XSSF can set cell comments");
-            //apply custom font to the text in the comment
-            Font font = wb.createFont();
-            font.setFontName("Arial");
-            font.setFontHeightInPoints((short) 14);
-            font.setBold(true);
-            font.setColor(IndexedColors.RED.getIndex());
-            str2.applyFont(font);
-
-            comment2.setString(str2);
-            comment2.setAuthor("Apache POI");
-            comment2.setColumn(2);
-            comment2.setRow(2);
+                for (int i=0; i<vals.length; i++) {
+                    Cell cell = sheet2.getRow(i).getCell(i);
+                    assertEquals(vals[i], cell.getStringCellValue());
+                    CellAddress cr = new CellAddress(cell);
+                    Comment comment = sheet2.getCellComment(cr);
+                    assertEquals("Apache POI", comment.getAuthor());
+                    RichTextString str = comment.getString();
+                    assertEquals("Hello, World"+i, str.getString());
+                }
+            }
         }
     }
 

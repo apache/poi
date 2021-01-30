@@ -25,21 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
+import com.microsoft.schemas.vml.CTShape;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -50,12 +46,9 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.xmlbeans.XmlObject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-
-import com.microsoft.schemas.vml.CTShape;
 
 public final class TestXSSFComment extends BaseTestCellComment  {
 
@@ -259,48 +252,6 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
             assertEquals(vmlShape1.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"), vmlShape2.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"),
                 "The vmlShapes should have equal content afterwards");
-        }
-    }
-
-    @Disabled("Used for manual testing with opening the resulting Workbook in Excel")
-    @Test
-    void testBug58175a() throws IOException {
-        try (Workbook wb = new SXSSFWorkbook()) {
-            Sheet sheet = wb.createSheet();
-
-            Row row = sheet.createRow(1);
-            Cell cell = row.createCell(3);
-
-            cell.setCellValue("F4");
-
-            Drawing<?> drawing = sheet.createDrawingPatriarch();
-
-            CreationHelper factory = wb.getCreationHelper();
-
-            // When the comment box is visible, have it show in a 1x3 space
-            ClientAnchor anchor = factory.createClientAnchor();
-            anchor.setCol1(cell.getColumnIndex());
-            anchor.setCol2(cell.getColumnIndex() + 1);
-            anchor.setRow1(row.getRowNum());
-            anchor.setRow2(row.getRowNum() + 3);
-
-            // Create the comment and set the text+author
-            Comment comment = drawing.createCellComment(anchor);
-            RichTextString str = factory.createRichTextString("Hello, World!");
-            comment.setString(str);
-            comment.setAuthor("Apache POI");
-
-            /* fixed the problem as well
-             * comment.setColumn(cell.getColumnIndex());
-             * comment.setRow(cell.getRowIndex());
-             */
-
-            // Assign the comment to the cell
-            cell.setCellComment(comment);
-
-            try (OutputStream out = new FileOutputStream("C:\\temp\\58175.xlsx")) {
-                wb.write(out);
-            }
         }
     }
 

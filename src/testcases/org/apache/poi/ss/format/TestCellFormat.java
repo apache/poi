@@ -73,9 +73,9 @@ class TestCellFormat {
     @Test
     void testSome() {
         JLabel l = new JLabel();
-        CellFormat fmt = CellFormat.getInstance(
-                "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)");
+        CellFormat fmt = CellFormat.getInstance("\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)");
         fmt.apply(l, 1.1);
+        assertEquals("$1.10 ", l.getText());
     }
 
     @Test

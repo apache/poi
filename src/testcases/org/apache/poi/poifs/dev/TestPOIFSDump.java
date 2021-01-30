@@ -16,29 +16,29 @@
 ==================================================================== */
 package org.apache.poi.poifs.dev;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Permission;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class TestPOIFSDump {
@@ -47,12 +47,7 @@ public class TestPOIFSDump {
     @BeforeAll
     public static void setUp() throws UnsupportedEncodingException {
         SYSTEM = System.out;
-        System.setOut(new PrintStream(new OutputStream() {
-            @Override
-            public void write(int b) {
-
-            }
-        }, false, "UTF-8"));
+        System.setOut(new NullPrintStream());
     }
 
     @AfterAll
@@ -137,15 +132,10 @@ public class TestPOIFSDump {
 
     @Test
     void testMain() throws Exception {
-        POIFSDump.main(new String[] {
-                TEST_FILE
-        });
+        POIFSDump.main(new String[]{TEST_FILE});
 
         for(String option : DUMP_OPTIONS) {
-            POIFSDump.main(new String[]{
-                    option,
-                    TEST_FILE
-            });
+            assertDoesNotThrow(() -> POIFSDump.main(new String[]{option, TEST_FILE}));
         }
     }
     @Test
@@ -159,10 +149,26 @@ public class TestPOIFSDump {
         }
     }
 
-    @Disabled("Calls System.exit()")
     @Test
     void testMainNoArgs() throws Exception {
-        POIFSDump.main(new String[] {});
+        SecurityManager sm = System.getSecurityManager();
+        try {
+            System.setSecurityManager(new SecurityManager() {
+                @Override
+                public void checkExit(int status) {
+                    throw new SecurityException();
+                }
+
+                @Override
+                public void checkPermission(Permission perm) {
+                    // Allow other activities by default
+                }
+            });
+
+            assertThrows(SecurityException.class, () -> POIFSDump.main(new String[]{}));
+        } finally {
+            System.setSecurityManager(sm);
+        }
     }
 
     @Test

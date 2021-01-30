@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 final class TestHSSFPicture extends BaseTestPicture {
 
@@ -61,7 +63,7 @@ final class TestHSSFPicture extends BaseTestPicture {
             byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("45829.png");
             int idx1 = wb.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
             HSSFPicture pic = p1.createPicture(new HSSFClientAnchor(), idx1);
-            pic.resize();
+            assertDoesNotThrow((Executable) pic::resize);
         }
     }
 
