@@ -125,7 +125,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
     /**
      * Sets the ctStyles
      *
-     * @param styles
+     * @param styles The CTStyles object to set
      */
     public void setStyles(CTStyles styles) {
         ctStyles = styles;
@@ -160,8 +160,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
     /**
      * add a style to the document
      *
-     * @param style
-     * @throws IOException
+     * @param style The style to add
      */
     public void addStyle(XWPFStyle style) {
         listStyle.add(style);
@@ -190,9 +189,10 @@ public class XWPFStyles extends POIXMLDocumentPart {
 
     /**
      * get the styles which are related to the parameter style and their relatives
+     *
      * this method can be used to copy all styles from one document to another document
      *
-     * @param style
+     * @param style The style to look for
      * @return a list of all styles which were used by this method
      */
     public List<XWPFStyle> getUsedStyleList(XWPFStyle style) {
@@ -204,8 +204,12 @@ public class XWPFStyles extends POIXMLDocumentPart {
     /**
      * get the styles which are related to parameter style
      *
-     * @param style
-     * @return all Styles of the parameterList
+     * @param style The style to look for
+     * @param usedStyleList The list of current style, found
+     *                      related styles are added to this list.
+     *
+     * @return all Styles of the parameterList, returns the same object as
+     *          the input-parameter usedStyleList
      */
     private List<XWPFStyle> getUsedStyleList(XWPFStyle style, List<XWPFStyle> usedStyleList) {
         String basisStyleID = style.getBasisStyleID();
@@ -233,20 +237,17 @@ public class XWPFStyles extends POIXMLDocumentPart {
     protected CTLanguage getCTLanguage() {
         ensureDocDefaults();
 
-        CTLanguage lang = null;
         if (defaultRunStyle.getRPr().sizeOfLangArray() > 0) {
-            lang = defaultRunStyle.getRPr().getLangArray(0);
+            return defaultRunStyle.getRPr().getLangArray(0);
         } else {
-            lang = defaultRunStyle.getRPr().addNewLang();
+            return defaultRunStyle.getRPr().addNewLang();
         }
-
-        return lang;
     }
 
     /**
      * Sets the default spelling language on ctStyles DocDefaults parameter
      *
-     * @param strSpellingLanguage
+     * @param strSpellingLanguage the default spelling language to use
      */
     public void setSpellingLanguage(String strSpellingLanguage) {
         CTLanguage lang = getCTLanguage();
@@ -257,7 +258,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
     /**
      * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
      *
-     * @param strEastAsia
+     * @param strEastAsia The default East Asia spelling language to use
      */
     public void setEastAsia(String strEastAsia) {
         CTLanguage lang = getCTLanguage();

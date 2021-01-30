@@ -1668,4 +1668,15 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * Has close been called already?
 	 */
 	public abstract boolean isClosed();
+
+	@Override
+	public String toString() {
+		return "OPCPackage{" +
+				"packageAccess=" + packageAccess +
+				", relationships=" + relationships +
+				", packageProperties=" + packageProperties +
+				", isDirty=" + isDirty +
+				//", originalPackagePath='" + originalPackagePath + '\'' +
+				'}';
+	}
 }

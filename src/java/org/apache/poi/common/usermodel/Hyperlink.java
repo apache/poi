@@ -16,45 +16,43 @@
 ==================================================================== */
 package org.apache.poi.common.usermodel;
 
-import org.apache.poi.util.Removal;
-
 /**
  * Represents a hyperlink.
  */
 public interface Hyperlink {
-    
+
     /**
      * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @return  the address of this hyperlink
      */
-    public String getAddress();
+    String getAddress();
 
     /**
      * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @param address  the address of this hyperlink
      */
-    public void setAddress(String address);
+    void setAddress(String address);
 
     /**
      * Return text label for this hyperlink
      *
      * @return  text to display
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Sets text label for this hyperlink
      *
      * @param label text label for this hyperlink
      */
-    public void setLabel(String label);
+    void setLabel(String label);
 
     /**
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
      */
-    public HyperlinkType getType();
+    HyperlinkType getType();
 }

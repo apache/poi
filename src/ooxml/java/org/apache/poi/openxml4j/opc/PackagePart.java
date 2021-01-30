@@ -51,7 +51,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
     /**
      * Flag to know if this part is a relationship.
      */
-    private boolean _isRelationshipPart;
+    private final boolean _isRelationshipPart;
 
     /**
      * Flag to know if this part has been logically deleted.

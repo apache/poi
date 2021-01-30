@@ -17,6 +17,7 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,8 +74,8 @@ class TestOPCCompliancePackageModel {
             pkg.createPart(name, ContentTypes.XML);
 
             assertThrows(InvalidOperationException.class, () -> pkg.createPart(nameDerived, ContentTypes.EXTENSION_GIF),
-                "A package implementer shall neither create nor recognize a part with a part name derived from another " +
-                "part name by appending segments to it. [M1.11]");
+                    "A package implementer shall neither create nor recognize a part with a part name derived from another " +
+                            "part name by appending segments to it. [M1.11]");
             pkg.revert();
         }
     }
@@ -88,9 +89,9 @@ class TestOPCCompliancePackageModel {
     void testPartNameDerivationReadingFailure() {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
         assertThrows(InvalidFormatException.class, () ->
-            OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)),
-            "A package implementer shall neither create nor recognize a part with a part name derived from another" +
-            " part name by appending segments to it. [M1.11]"
+                        OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)),
+                "A package implementer shall neither create nor recognize a part with a part name derived from another" +
+                        " part name by appending segments to it. [M1.11]"
         );
     }
 
@@ -107,8 +108,8 @@ class TestOPCCompliancePackageModel {
 
             pkg.createPart(name1, ContentTypes.XML);
             assertThrows(PartAlreadyExistsException.class, () -> pkg.createPart(name2, ContentTypes.XML),
-                "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
-                    "recognize packages with equivalent part names. [M1.12]"
+                    "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
+                            "recognize packages with equivalent part names. [M1.12]"
             );
             pkg.revert();
         }
@@ -125,8 +126,8 @@ class TestOPCCompliancePackageModel {
             PackagePartName partName = PackagingURIHelper.createPartName("/word/document.xml");
             pkg.createPart(partName, ContentTypes.XML);
             assertThrows(InvalidOperationException.class, () -> pkg.createPart(partName, ContentTypes.XML),
-                "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
-                    "recognize packages with equivalent part names. [M1.12]"
+                    "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
+                            "recognize packages with equivalent part names. [M1.12]"
             );
             pkg.revert();
         }
@@ -134,7 +135,7 @@ class TestOPCCompliancePackageModel {
 
     /**
      * Try to add a relationship to a relationship part.
-     *
+     * <p>
      * Check rule M1.25: The Relationships part shall not have relationships to
      * any other part. Package implementers shall enforce this requirement upon
      * the attempt to create such a relationship and shall treat any such
@@ -146,10 +147,21 @@ class TestOPCCompliancePackageModel {
             PackagePartName name1 = PackagingURIHelper.createPartName("/test/_rels/document.xml.rels");
 
             assertThrows(InvalidOperationException.class,
-                () -> pkg.addRelationship(name1, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT),
-                "The Relationships part shall not have relationships to any other part [M1.25]"
+                    () -> pkg.addRelationship(name1, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT),
+                    "The Relationships part shall not have relationships to any other part [M1.25]"
             );
             pkg.revert();
+        }
+    }
+
+    @Test
+    void testToString() throws IOException {
+        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+            assertEquals("OPCPackage{" +
+                        "packageAccess=READ_WRITE, " +
+                        "relationships=null, " +
+                        "packageProperties=Name: /docProps/core.xml - Content Type: application/vnd.openxmlformats-package.core-properties+xml, " +
+                        "isDirty=false}", pkg.toString());
         }
     }
 }

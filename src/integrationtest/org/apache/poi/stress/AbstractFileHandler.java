@@ -35,10 +35,8 @@ import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.util.IOUtils;
-import org.apache.xmlbeans.XmlException;
 
 /**
  * Base class with things that can be run for any supported file handler
@@ -161,7 +159,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         }
     }
 
-    private void handleExtractingAsStream(File file) throws IOException, OpenXML4JException, XmlException {
+    private void handleExtractingAsStream(File file) throws IOException {
         try (InputStream stream = new FileInputStream(file)) {
             try (POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream)) {
                 assertNotNull(streamExtractor);

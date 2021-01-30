@@ -47,9 +47,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
  * Cell is the thing that holds the actual content (paragraphs etc)
  */
 public class XWPFTableCell implements IBody, ICell {
-    private static EnumMap<XWPFVertAlign, STVerticalJc.Enum> alignMap;
+    private static final EnumMap<XWPFVertAlign, STVerticalJc.Enum> alignMap;
     // Create a map from the STVerticalJc.Enum values to the XWPF-level enums
-    private static HashMap<Integer, XWPFVertAlign> stVertAlignTypeMap;
+    private static final HashMap<Integer, XWPFVertAlign> stVertAlignTypeMap;
 
     static {
         // populate enum maps
@@ -64,7 +64,6 @@ public class XWPFTableCell implements IBody, ICell {
         stVertAlignTypeMap.put(STVerticalJc.INT_CENTER, XWPFVertAlign.CENTER);
         stVertAlignTypeMap.put(STVerticalJc.INT_BOTH, XWPFVertAlign.BOTH);
         stVertAlignTypeMap.put(STVerticalJc.INT_BOTTOM, XWPFVertAlign.BOTTOM);
-
     }
 
     private final CTTc ctTc;
@@ -73,7 +72,7 @@ public class XWPFTableCell implements IBody, ICell {
     protected List<IBodyElement> bodyElements;
 
     protected IBody part;
-    private XWPFTableRow tableRow;
+    private final XWPFTableRow tableRow;
 
     /**
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt

@@ -58,42 +58,35 @@ public final class PackageRelationship {
 	/**
 	 * Relation id.
 	 */
-	private String id;
+	private final String id;
 
 	/**
 	 * Reference to the package.
 	 */
-	private OPCPackage container;
+	private final OPCPackage container;
 
 	/**
 	 * Relationship type
 	 */
-	private String relationshipType;
+	private final String relationshipType;
 
 	/**
 	 * Part of this relationship source
 	 */
-	private PackagePart source;
+	private final PackagePart source;
 
 	/**
 	 * Targeting mode [Internal|External]
 	 */
-	private TargetMode targetMode;
+	private final TargetMode targetMode;
 
 	/**
 	 * Target URI
 	 */
-	private URI targetUri;
+	private final URI targetUri;
 
 	/**
 	 * Constructor.
-	 *
-	 * @param pkg
-	 * @param sourcePart
-	 * @param targetUri
-	 * @param targetMode
-	 * @param relationshipType
-	 * @param id
 	 */
 	public PackageRelationship(OPCPackage pkg, PackagePart sourcePart,
 			URI targetUri, TargetMode targetMode, String relationshipType,
@@ -123,7 +116,7 @@ public final class PackageRelationship {
 		PackageRelationship rel = (PackageRelationship) obj;
 		return (this.id.equals(rel.id)
 				&& this.relationshipType.equals(rel.relationshipType)
-				&& (rel.source != null ? rel.source.equals(this.source) : true)
+				&& (rel.source == null || rel.source.equals(this.source))
 				&& this.targetMode == rel.targetMode && this.targetUri
 				.equals(rel.targetUri));
 	}
@@ -207,11 +200,11 @@ public final class PackageRelationship {
 
 	@Override
 	public String toString() {
-		return (id == null ? "id=null" : "id=" + id) +
-				(container == null ? " - container=null" : " - container=" + container) +
-				(relationshipType == null ? " - relationshipType=null" : " - relationshipType=" + relationshipType) +
+		return "id=" + id +
+				" - container=" + container +
+				" - relationshipType=" + relationshipType +
 				(source == null ? " - source=null" : " - source=" + getSourceURI().toASCIIString()) +
-				(targetUri == null ? " - target=null" : " - target=" + getTargetURI().toASCIIString()) +
+				" - target=" + getTargetURI().toASCIIString() +
 				(targetMode == null ? ",targetMode=null" : ",targetMode=" + targetMode);
 	}
 }
