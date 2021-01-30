@@ -131,7 +131,7 @@ public class SheetDataWriter implements Closeable {
      * This method <em>must</em> be invoked before calling {@link #getWorksheetXMLInputStream()}
      */
     public void close() throws IOException {
-        _out.flush();
+        // this would break writing the same document multiple times: _out.flush();
         _out.close();
     }
 

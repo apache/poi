@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,6 +31,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
@@ -106,7 +108,6 @@ public abstract class BaseTestBugzillaIssues {
     /**
      * test writing a file with large number of unique strings,
      * open resulting file in Excel to check results!
-     * @param  num the number of strings to generate
      */
     @Test
     public final void bug15375_2() throws IOException {
@@ -1803,5 +1804,33 @@ public abstract class BaseTestBugzillaIssues {
         // Check we can evaluate it correctly
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
+    }
+
+    @Test
+    void testWriteDocumentTwice() throws Exception {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("RawData");
+            Row row = sheet.createRow(0);
+            Cell cell;
+
+            cell = row.createCell(0);
+            cell.setCellValue("Ernie & Bert");
+
+            cell = row.createCell(1);
+            // Set a precalculated formula value containing a special character.
+            cell.setCellValue("Ernie & Bert are cool!");
+            cell.setCellFormula("A1 & \" are cool!\"");
+
+            try (ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+                 ByteArrayOutputStream out2 = new ByteArrayOutputStream()) {
+                wb.write(out1);
+                wb.write(out2);
+
+                out1.flush();
+                out2.flush();
+
+                assertArrayEquals(out1.toByteArray(), out2.toByteArray());
+            }
+        }
     }
 }

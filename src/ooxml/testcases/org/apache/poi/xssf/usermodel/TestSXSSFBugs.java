@@ -101,20 +101,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         wb2.close();
     }
 
-    // bug 60197: setSheetOrder should update sheet-scoped named ranges to maintain references to the sheets before the re-order
-    @Test
-    @Override
-    protected void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
-        // expected on the second time that _testDataProvider.writeOutAndReadBack(SXSSFWorkbook) is called
-        // if the test makes it this far, then we know that XSSFName sheet indices are updated when sheet
-        // order is changed, which is the purpose of this test. Therefore, consider this a passing test.
-        RuntimeException e =
-            assertThrows(RuntimeException.class, () -> super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged());
-        Throwable cause = e.getCause();
-        assertTrue(cause instanceof IOException);
-        assertEquals("Stream closed", cause.getMessage());
-    }
-
     @Test
     void bug61648() throws Exception {
         // works as expected
