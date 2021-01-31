@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
@@ -38,8 +40,9 @@ import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static java.lang.System.currentTimeMillis;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class holds all of the character formatting properties.
@@ -49,9 +52,9 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class CHPBinTable
 {
-    private static final POILogger LOG = POILogFactory.getLogger( CHPBinTable.class );
+    private static final Logger LOG = LogManager.getLogger(CHPBinTable.class);
 
-  /** List of character properties.*/
+    /** List of character properties.*/
   protected List<CHPX> _textRuns = new ArrayList<>();
 
   public CHPBinTable()
@@ -77,7 +80,7 @@ public class CHPBinTable
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, CharIndexTranslator translator )
     {
-        long start = System.currentTimeMillis();
+        long start = currentTimeMillis();
         /*
          * Page 35:
          *
@@ -105,20 +108,18 @@ public class CHPBinTable
                     _textRuns.add( chpx );
             }
     }
-        LOG.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( _textRuns.size() ), " elements)" );
+        LOG.atDebug().log("CHPX FKPs loaded in {} ms ({} elements)", box(currentTimeMillis() - start),box(_textRuns.size()));
 
         if ( _textRuns.isEmpty() )
         {
-            LOG.log( POILogger.WARN, "CHPX FKPs are empty" );
+            LOG.atWarn().log("CHPX FKPs are empty");
             _textRuns.add( new CHPX( 0, 0, new SprmBuffer( 0 ) ) );
         }
     }
 
     public void rebuild( ComplexFileTable complexFileTable )
     {
-        long start = System.currentTimeMillis();
+        long start = currentTimeMillis();
 
         if ( complexFileTable != null )
         {
@@ -135,8 +136,7 @@ public class CHPBinTable
 
                 if ( igrpprl < 0 || igrpprl >= sprmBuffers.length )
                 {
-                    LOG.log( POILogger.WARN, textPiece
-                            + "'s PRM references to unknown grpprl" );
+                    LOG.atWarn().log("{}'s PRM references to unknown grpprl", textPiece);
                     continue;
                 }
 
@@ -162,20 +162,15 @@ public class CHPBinTable
                     _textRuns.add( chpx );
                 }
             }
-            LOG.log( POILogger.DEBUG,
-                    "Merged with CHPX from complex file table in ",
-                    Long.valueOf( System.currentTimeMillis() - start ),
-                    " ms (", Integer.valueOf( _textRuns.size() ),
-                    " elements in total)" );
-            start = System.currentTimeMillis();
+            LOG.atDebug().log("Merged with CHPX from complex file table in {} ms ({} elements in total)", box(currentTimeMillis() - start),box(_textRuns.size()));
+            start = currentTimeMillis();
         }
 
         List<CHPX> oldChpxSortedByStartPos = new ArrayList<>(_textRuns);
         oldChpxSortedByStartPos.sort(PropertyNode.StartComparator);
 
-        LOG.log( POILogger.DEBUG, "CHPX sorted by start position in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
-        start = System.currentTimeMillis();
+        LOG.atDebug().log("CHPX sorted by start position in {} ms", box(currentTimeMillis() - start));
+        start = currentTimeMillis();
 
         final Map<CHPX, Integer> chpxToFileOrder = new IdentityHashMap<>();
         {
@@ -195,9 +190,8 @@ public class CHPBinTable
             }
         };
 
-        LOG.log( POILogger.DEBUG, "CHPX's order map created in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
-        start = System.currentTimeMillis();
+        LOG.atDebug().log("CHPX's order map created in {} ms", box(currentTimeMillis() - start));
+        start = currentTimeMillis();
 
         List<Integer> textRunsBoundariesList;
         {
@@ -213,9 +207,8 @@ public class CHPBinTable
             Collections.sort( textRunsBoundariesList );
         }
 
-        LOG.log( POILogger.DEBUG, "Texts CHPX boundaries collected in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
-        start = System.currentTimeMillis();
+        LOG.atDebug().log("Texts CHPX boundaries collected in {} ms", box(currentTimeMillis() - start));
+        start = currentTimeMillis();
 
         List<CHPX> newChpxs = new LinkedList<>();
         int lastTextRunStart = 0;
@@ -253,10 +246,7 @@ public class CHPBinTable
 
             if ( chpxs.size() == 0 )
             {
-                LOG.log( POILogger.WARN, "Text piece [",
-                        Integer.valueOf( startInclusive ), "; ",
-                        Integer.valueOf(boundary),
-                        ") has no CHPX. Creating new one." );
+                LOG.atWarn().log("Text piece [{}; {}) has no CHPX. Creating new one.", box(startInclusive),box(boundary));
                 // create it manually
                 CHPX chpx = new CHPX( startInclusive, boundary,
                         new SprmBuffer( 0 ) );
@@ -290,10 +280,8 @@ public class CHPBinTable
         }
         this._textRuns = new ArrayList<>(newChpxs);
 
-        LOG.log( POILogger.DEBUG, "CHPX rebuilded in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( _textRuns.size() ), " elements)" );
-        start = System.currentTimeMillis();
+        LOG.atDebug().log("CHPX rebuilt in {} ms ({} elements)", box(currentTimeMillis() - start),box(_textRuns.size()));
+        start = currentTimeMillis();
 
         CHPX previous = null;
         for ( Iterator<CHPX> iterator = _textRuns.iterator(); iterator
@@ -318,9 +306,7 @@ public class CHPBinTable
             previous = current;
         }
 
-        LOG.log( POILogger.DEBUG, "CHPX compacted in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( _textRuns.size() ), " elements)" );
+        LOG.atDebug().log("CHPX compacted in {} ms ({} elements)", box(currentTimeMillis() - start),box(_textRuns.size()));
     }
 
     private static int binarySearch( List<CHPX> chpxs, int startPosition )

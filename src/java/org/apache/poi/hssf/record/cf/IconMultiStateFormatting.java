@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
@@ -30,14 +32,14 @@ import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Icon / Multi-State Conditional Formatting Rule Record.
  */
 public final class IconMultiStateFormatting implements Duplicatable, GenericRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(IconMultiStateFormatting.class);
+    private static final Logger LOG = LogManager.getLogger(IconMultiStateFormatting.class);
 
     private static BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
     private static BitField REVERSED = BitFieldFactory.getInstance(0x04);
@@ -67,7 +69,7 @@ public final class IconMultiStateFormatting implements Duplicatable, GenericReco
         int set = in.readByte();
         iconSet = IconSet.byId(set);
         if (iconSet.num != num) {
-            LOG.log(POILogger.WARN, "Inconsistent Icon Set defintion, found " + iconSet + " but defined as " + num + " entries");
+            LOG.atWarn().log("Inconsistent Icon Set definition, found {} but defined as {} entries", iconSet, box(num));
         }
         options = in.readByte();
 

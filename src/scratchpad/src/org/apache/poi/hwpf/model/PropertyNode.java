@@ -21,10 +21,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Represents a lightweight node in the Trees used to store content
@@ -40,7 +42,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
 
     public static final Comparator<PropertyNode<?>> StartComparator = Comparator.comparingInt(PropertyNode::getStart);
 
-    private static final POILogger LOG = POILogFactory.getLogger(PropertyNode.class);
+    private static final Logger LOG = LogManager.getLogger(PropertyNode.class);
 
 
     protected Object _buf;
@@ -72,13 +74,12 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         _buf = buf;
 
         if (_cpStart < 0) {
-            LOG.log(POILogger.WARN, "A property claimed to start before zero, at ", _cpStart, "! Resetting it to zero, and hoping for the best");
+            LOG.atWarn().log("A property claimed to start before zero, at {}! Resetting it to zero, and hoping for the best", box(_cpStart));
             _cpStart = 0;
         }
 
         if (_cpEnd < _cpStart) {
-            LOG.log(POILogger.WARN, "A property claimed to end (", _cpEnd,
-                    ") before start! Resetting end to start, and hoping for the best");
+            LOG.atWarn().log("A property claimed to end ({}) before start! Resetting end to start, and hoping for the best", box(_cpEnd));
             _cpEnd = _cpStart;
         }
     }

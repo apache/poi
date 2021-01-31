@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.ExtractorProvider;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
@@ -46,19 +48,17 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Scratchpad-specific logic for {@link ExtractorFactory} and
- *  {@link org.apache.poi.extractor.ExtractorFactory}, which permit the other two to run with
+ *  {@link ExtractorFactory}, which permit the other two to run with
  *  no Scratchpad jar (though without functionality!)
  * <p>Note - should not be used standalone, always use via the other
  *  two classes</p>
  */
 @SuppressWarnings("WeakerAccess")
 public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
-    private static final POILogger LOG = POILogFactory.getLogger(OLE2ScratchpadExtractorFactory.class);
+    private static final Logger LOG = LogManager.getLogger(OLE2ScratchpadExtractorFactory.class);
 
     @Override
     public boolean accepts(FileMagic fm) {
@@ -169,7 +169,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                     .filter(entry -> entry.getName().startsWith("_"))
                     .forEach(dirs::add);
             } catch(FileNotFoundException e) {
-                LOG.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
+                LOG.atInfo().withThrowable(e).log("Ignoring FileNotFoundException while extracting Word document");
                 // ignored here
             }
             //} else if(ext instanceof PowerPointExtractor) {

@@ -24,6 +24,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -41,8 +43,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,7 +60,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
     private static final float DPI = 72;
 
-    private static final POILogger LOG = POILogFactory.getLogger( ExcelToFoConverter.class );
+    private static final Logger LOG = LogManager.getLogger(ExcelToFoConverter.class);
 
     private static final float PAPER_A4_HEIGHT_INCHES = 29.4f / CM_PER_INCH;
 
@@ -232,10 +232,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 value = ErrorEval.getText( cell.getErrorCellValue() );
                 break;
             default:
-                LOG.log(
-                        POILogger.WARN,
-                        "Unexpected cell cachedFormulaResultType ("
-                                + cell.getCachedFormulaResultType() + ")" );
+                LOG.atWarn().log("Unexpected cell cachedFormulaResultType ({})", cell.getCachedFormulaResultType());
                 value = AbstractExcelUtils.EMPTY;
                 break;
             }
@@ -253,8 +250,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             value = ErrorEval.getText( cell.getErrorCellValue() );
             break;
         default:
-            LOG.log( POILogger.WARN,
-                    "Unexpected cell type (" + cell.getCellType() + ")" );
+            LOG.atWarn().log("Unexpected cell type ({})", cell.getCellType());
             return true;
         }
 

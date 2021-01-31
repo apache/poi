@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeader12Record;
@@ -37,9 +39,9 @@ import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * <p>CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord
@@ -52,7 +54,7 @@ import org.apache.poi.util.RecordFormatException;
 public final class CFRecordsAggregate extends RecordAggregate implements GenericRecord {
     /** Excel 97-2003 allows up to 3 conditional formating rules */
     private static final int MAX_97_2003_CONDTIONAL_FORMAT_RULES = 3;
-    private static final POILogger LOG = POILogFactory.getLogger(CFRecordsAggregate.class);
+    private static final Logger LOG = LogManager.getLogger(CFRecordsAggregate.class);
 
     private final CFHeaderBase header;
 
@@ -72,10 +74,9 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
             throw new IllegalArgumentException("rules must not be null");
         }
         if(pRules.length > MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
-            LOG.log(POILogger.WARN, "Excel versions before 2007 require that "
-                    + "No more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES
-                    + " rules may be specified, " + pRules.length + " were found,"
-                    + " this file will cause problems with old Excel versions");
+            LOG.atWarn().log("Excel versions before 2007 require that No more than " +
+                    MAX_97_2003_CONDTIONAL_FORMAT_RULES + " rules may be specified, {} were found, this file will " +
+                    "cause problems with old Excel versions", box(pRules.length));
         }
         if (pRules.length != pHeader.getNumberOfConditionalFormats()) {
             throw new RecordFormatException("Mismatch number of rules");
@@ -181,7 +182,7 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
             throw new IllegalArgumentException("r must not be null");
         }
         if(rules.size() >= MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
-            LOG.log(POILogger.WARN, "Excel versions before 2007 cannot cope with"
+            LOG.atWarn().log("Excel versions before 2007 cannot cope with"
                     + " any more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES
                     + " - this file will cause problems with old Excel versions");
         }

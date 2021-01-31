@@ -23,6 +23,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -48,8 +50,6 @@ import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -69,7 +69,7 @@ import org.apache.poi.util.Units;
  * <p>
  */
 public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFShape.class);
 
     /**
      * Either EscherSpContainer or EscheSpgrContainer record
@@ -168,7 +168,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
             y2 = childRec.getDy2();
         } else {
             if (useChildRec) {
-                LOG.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
+                LOG.atWarn().log("EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
             }
             EscherClientAnchorRecord clientRec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             x1 = clientRec.getCol1();
@@ -715,7 +715,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     public <T extends Record> T getClientDataRecord(int recordType) {
 
         List<? extends Record> records = getClientRecords();
-        if (records != null) for (org.apache.poi.hslf.record.Record r : records) {
+        if (records != null) for (Record r : records) {
             if (r.getRecordType() == recordType){
                 return (T)r;
             }

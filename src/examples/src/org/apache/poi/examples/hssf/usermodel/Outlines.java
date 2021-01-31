@@ -22,12 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Creates outlines.
@@ -35,13 +35,13 @@ import org.apache.poi.util.POILogger;
 public class Outlines implements Closeable {
     public static void main(String[] args)
     throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        POILogger LOGGER = POILogFactory.getLogger(Outlines.class);
+        Logger LOGGER = LogManager.getLogger(Outlines.class);
         for (int i=1; i<=13; i++) {
             try (Outlines o = new Outlines()) {
                 String log = (String) Outlines.class.getDeclaredMethod("test" + i).invoke(o);
                 String filename = "outline" + i + ".xls";
                 o.writeOut(filename);
-                LOGGER.log(POILogger.INFO, filename, " written. ", log);
+                LOGGER.atInfo().log("{} written. {}", filename, log);
             }
         }
     }

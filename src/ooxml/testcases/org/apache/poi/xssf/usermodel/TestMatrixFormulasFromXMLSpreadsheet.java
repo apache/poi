@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.BaseTestNumeric;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,8 +39,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public final class TestMatrixFormulasFromXMLSpreadsheet {
 
-    private static final POILogger LOG = POILogFactory.getLogger(TestMatrixFormulasFromXMLSpreadsheet.class);
+    private static final Logger LOG = LogManager.getLogger(TestMatrixFormulasFromXMLSpreadsheet.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;
@@ -208,13 +209,13 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
      */
     private static String getTargetFunctionName(Row r) {
         if(r == null) {
-            LOG.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
+            LOG.atWarn().log("Given null row, can't figure out function name");
             return null;
         }
         Cell cell = r.getCell(Navigator.START_OPERATORS_COL_INDEX);
-        LOG.log(POILogger.DEBUG, String.valueOf(Navigator.START_OPERATORS_COL_INDEX));
+        LOG.atDebug().log( box(Navigator.START_OPERATORS_COL_INDEX));
         if(cell == null) {
-            LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name");
+            LOG.atWarn().log("Row {} has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name", box(r.getRowNum()));
             return null;
         }
 

@@ -40,10 +40,10 @@ import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -56,12 +56,12 @@ import org.w3c.dom.NodeList;
  */
 public class KeyInfoSignatureFacet implements SignatureFacet {
 
-    private static final POILogger LOG = POILogFactory.getLogger(KeyInfoSignatureFacet.class);
+    private static final Logger LOG = LogManager.getLogger(KeyInfoSignatureFacet.class);
 
     @Override
     public void postSign(SignatureInfo signatureInfo, Document document)
     throws MarshalException {
-        LOG.log(POILogger.DEBUG, "postSign");
+        LOG.atDebug().log("postSign");
 
         NodeList nl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "Object");
 

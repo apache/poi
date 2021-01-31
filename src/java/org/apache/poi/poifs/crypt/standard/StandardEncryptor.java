@@ -36,6 +36,8 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
@@ -49,12 +51,10 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 public class StandardEncryptor extends Encryptor {
-    private static final POILogger LOG = POILogFactory.getLogger(StandardEncryptor.class);
+    private static final Logger LOG = LogManager.getLogger(StandardEncryptor.class);
 
     protected StandardEncryptor() {}
 
@@ -193,7 +193,7 @@ public class StandardEncryptor extends Encryptor {
                     IOUtils.copy(fis, leos);
                 }
                 if (!fileOut.delete()) {
-                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
+                    LOG.atError().log("Can't delete temporary encryption file: {}", fileOut);
                 }
 
                 leos.close();

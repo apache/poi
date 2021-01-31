@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public final class FIBFieldHandler
@@ -145,7 +147,7 @@ public final class FIBFieldHandler
   public static final int STTBLISTNAMES = 91;
   public static final int STTBFUSSR = 92;
 
-  private static final POILogger log = POILogFactory.getLogger(FIBFieldHandler.class);
+  private static final Logger LOGGER = LogManager.getLogger(FIBFieldHandler.class);
 
   private static final int FIELD_SIZE = LittleEndianConsts.INT_SIZE * 2;
 
@@ -171,9 +173,7 @@ public final class FIBFieldHandler
         {
           if (dsOffset + dsSize > tableStream.length)
           {
-              log.log(POILogger.WARN, "Unhandled data structure points to outside the buffer. ",
-                      "offset = ", dsOffset, ", length = ", dsSize,
-                      ", buffer length = ", tableStream.length);
+            LOGGER.atWarn().log("Unhandled data structure points to outside the buffer. offset = {}, length = {}, buffer length = {}", box(dsOffset),box(dsSize),box(tableStream.length));
           }
           else
           {

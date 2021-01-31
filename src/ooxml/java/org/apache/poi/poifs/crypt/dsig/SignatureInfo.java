@@ -52,6 +52,7 @@ import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.crypto.dsig.SignedInfo;
 import javax.xml.crypto.dsig.TransformException;
 import javax.xml.crypto.dsig.XMLObject;
+import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
@@ -61,6 +62,8 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSubTreeData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -76,8 +79,6 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xml.security.Init;
 import org.apache.xml.security.utils.XMLUtils;
 import org.apache.xmlbeans.XmlOptions;
@@ -154,12 +155,12 @@ import org.w3c.dom.events.MutationEvent;
  * <ul>
  * <li>BouncyCastle bcpkix and bcprov (tested against 1.67)</li>
  * <li>Apache Santuario "xmlsec" (tested against 2.2.0)</li>
- * <li>and slf4j-api (tested against 1.7.30)</li>
+ * <li>and log4j-api (tested against 2.14.0)</li>
  * </ul>
  */
 public class SignatureInfo {
 
-    private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
+    private static final Logger LOG = LogManager.getLogger(SignatureInfo.class);
 
     private SignatureConfig signatureConfig;
     private OPCPackage opcPackage;
@@ -313,11 +314,11 @@ public class SignatureInfo {
                     return false;
                 }
                 sigPart = opcPackage.getPart(sigOrigRels.next());
-                LOG.log(POILogger.DEBUG, "Digital Signature Origin part", sigPart);
+                LOG.atDebug().log("Digital Signature Origin part: {}", sigPart);
                 try {
                     sigRels = sigPart.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE).iterator();
                 } catch (InvalidFormatException e) {
-                    LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                    LOG.atWarn().withThrowable(e).log("Reference to signature is invalid.");
                 }
             }
             return true;
@@ -332,9 +333,9 @@ public class SignatureInfo {
                         throw new NoSuchElementException();
                     }
                     sigRelPart = sigPart.getRelatedPart(sigRels.next());
-                    LOG.log(POILogger.DEBUG, "XML Signature part", sigRelPart);
+                    LOG.atDebug().log("XML Signature part: {}", sigRelPart);
                 } catch (InvalidFormatException e) {
-                    LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                    LOG.atWarn().withThrowable(e).log("Reference to signature is invalid.");
                 }
             } while (sigRelPart == null);
             return new SignaturePart(sigRelPart, SignatureInfo.this);
@@ -378,7 +379,7 @@ public class SignatureInfo {
          */
         List<XMLObject> objects = new ArrayList<>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
-            LOG.log(POILogger.DEBUG, "invoking signature facet: ", signatureFacet.getClass().getSimpleName());
+            LOG.atDebug().log("invoking signature facet: {}", signatureFacet.getClass().getSimpleName());
             signatureFacet.preSign(this, document, references, objects);
         }
 
@@ -402,7 +403,7 @@ public class SignatureInfo {
          * JSR105 ds:Signature creation
          */
         String signatureValueId = signatureConfig.getPackageSignatureId() + "-signature-value";
-        javax.xml.crypto.dsig.XMLSignature xmlSignature = signatureFactory
+        XMLSignature xmlSignature = signatureFactory
             .newXMLSignature(signedInfo, null, objects, signatureConfig.getPackageSignatureId(),
             signatureValueId);
 
@@ -415,10 +416,10 @@ public class SignatureInfo {
          * Completion of undigested ds:References in the ds:Manifests.
          */
         for (XMLObject object : objects) {
-            LOG.log(POILogger.DEBUG, "object java type: ", object.getClass().getName());
+            LOG.atDebug().log("object java type: {}", object.getClass().getName());
             List<XMLStructure> objectContentList = object.getContent();
             for (XMLStructure objectContent : objectContentList) {
-                LOG.log(POILogger.DEBUG, "object content java type: ", objectContent.getClass().getName());
+                LOG.atDebug().log("object content java type: {}", objectContent.getClass().getName());
                 if (!(objectContent instanceof Manifest)) {
                     continue;
                 }
@@ -483,7 +484,7 @@ public class SignatureInfo {
      */
     public void postSign(final DOMSignContext xmlSignContext, final String signatureValue)
     throws MarshalException {
-        LOG.log(POILogger.DEBUG, "postSign");
+        LOG.atDebug().log("postSign");
 
         final Document document = (Document)xmlSignContext.getParent();
 
@@ -527,7 +528,7 @@ public class SignatureInfo {
         xo.setSaveSuggestedPrefixes(namespaceMap);
         xo.setUseDefaultNamespace();
 
-        LOG.log(POILogger.DEBUG, "output signed Office OpenXML document");
+        LOG.atDebug().log("output signed Office OpenXML document");
 
         /*
          * Copy the original OOXML content to the signed OOXML package. During
@@ -593,8 +594,7 @@ public class SignatureInfo {
             return (Element)sigValNl.item(0);
         }
 
-        LOG.log(POILogger.WARN, "Signature element '", localName, "' was ",
-                (sigValNl.getLength() == 0 ? "not found" : "multiple times"));
+        LOG.atWarn().log("Signature element '{}' was {}", localName, sigValNl.getLength() == 0 ? "not found" : "multiple times");
 
         return null;
     }
@@ -704,7 +704,7 @@ public class SignatureInfo {
             try {
                 return (Provider)Class.forName(className).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '", className, "' can't be found - trying next.");
+                LOG.atDebug().log("XMLDsig-Provider '{}' can't be found - trying next.", className);
                 return null;
             }
         }

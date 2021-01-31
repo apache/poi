@@ -23,7 +23,7 @@ module org.apache.poi.ooxml {
     requires org.apache.commons.codec;
     requires commons.math3;
     requires SparseBitSet;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
     requires java.logging;
     requires java.desktop;
     requires java.security.jgss;

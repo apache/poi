@@ -40,14 +40,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 
 /**
@@ -58,7 +58,7 @@ import org.apache.poi.util.POILogger;
  * codes, etc.
  * <p>
  * Internally, formats will be implemented using subclasses of {@link Format}
- * such as {@link DecimalFormat} and {@link java.text.SimpleDateFormat}. Therefore the
+ * such as {@link DecimalFormat} and {@link SimpleDateFormat}. Therefore the
  * formats used by this class must obey the same pattern rules as these Format
  * subclasses. This means that only legal number pattern characters ("0", "#",
  * ".", "," etc.) may appear in number formats. Other characters can be
@@ -216,7 +216,7 @@ public class DataFormatter {
     private final PropertyChangeSupport pcs;
 
     /** For logging any problems we find */
-    private static final POILogger LOG = POILogFactory.getLogger(DataFormatter.class);
+    private static final Logger LOG = LogManager.getLogger(DataFormatter.class);
 
     /**
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
@@ -337,7 +337,7 @@ public class DataFormatter {
                 // Wrap and return (non-cacheable - CellFormat does that)
                 return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
             } catch (Exception e) {
-                LOG.log(POILogger.WARN, "Formatting failed for format " + formatStr + ", falling back", e);
+                LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
             }
         }
 
@@ -598,7 +598,7 @@ public class DataFormatter {
         try {
             return new ExcelStyleDateFormatter(formatStr, dateSymbols);
         } catch(IllegalArgumentException iae) {
-            LOG.log(POILogger.DEBUG, "Formatting failed for format ", formatStr, ", falling back", iae);
+            LOG.atDebug().withThrowable(iae).log("Formatting failed for format {}, falling back", formatStr);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
@@ -758,7 +758,7 @@ public class DataFormatter {
         try {
             return new InternalDecimalFormatWithScale(format, symbols);
         } catch(IllegalArgumentException iae) {
-            LOG.log(POILogger.DEBUG, "Formatting failed for format ", formatStr, ", falling back", iae);
+            LOG.atDebug().withThrowable(iae).log("Formatting failed for format {}, falling back", formatStr);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
@@ -1044,7 +1044,7 @@ public class DataFormatter {
      * </p>
      *
      * @param format A Format instance to be used as a default
-     * @see java.text.Format#format
+     * @see Format#format
      */
     public void setDefaultNumberFormat(Format format) {
         for (Map.Entry<String, Format> entry : formats.entrySet()) {

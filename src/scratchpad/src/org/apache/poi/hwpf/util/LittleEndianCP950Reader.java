@@ -23,9 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Stream that converts CP950 (MSOffice's dialect of Big5), with
@@ -34,7 +35,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class LittleEndianCP950Reader extends Reader {
 
-    private static final POILogger LOGGER = POILogFactory.getLogger(LittleEndianCP950Reader.class);
+    private static final Logger LOGGER = LogManager.getLogger(LittleEndianCP950Reader.class);
 
     private static final char UNMAPPABLE = '?';
     private final ByteBuffer doubleByteBuffer = ByteBuffer.allocate(2);
@@ -107,9 +108,9 @@ public class LittleEndianCP950Reader extends Reader {
             charBuffer.flip();
 
             if (charBuffer.length() == 0) {
-                LOGGER.log(POILogger.WARN, "couldn't create char for: "
+                LOGGER.atWarn().log(() -> new SimpleMessage("couldn't create char for: "
                         + Integer.toString((leading & 0xff), 16)
-                        + " " + Integer.toString((trailing & 0xff), 16));
+                        + " " + Integer.toString((trailing & 0xff), 16)));
                 return UNMAPPABLE;
             } else {
                 return Character.codePointAt(charBuffer, 0);
@@ -475,8 +476,9 @@ public class LittleEndianCP950Reader extends Reader {
             case 0xfe:
                 return 0x2593;
             default:
-                LOGGER.log(POILogger.WARN, "couldn't create char for: f9"
-                        + " " + Integer.toString((trailing & 0xff), 16));
+                LOGGER.atWarn().log(() ->
+                        new SimpleMessage("couldn't create char for: f9 " + Integer.toString((trailing & 0xff), 16))
+                );
                 return UNMAPPABLE;
         }
     }

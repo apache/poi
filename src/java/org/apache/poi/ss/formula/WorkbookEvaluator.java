@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
@@ -38,8 +41,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
+
 /**
  * Evaluates formula cells.<p/>
  *
@@ -55,7 +59,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class WorkbookEvaluator {
     
-    private static final POILogger LOG = POILogFactory.getLogger(WorkbookEvaluator.class);
+    private static final Logger LOG = LogManager.getLogger(WorkbookEvaluator.class);
 
     private final EvaluationWorkbook _workbook;
     private EvaluationCache _cache;
@@ -77,7 +81,7 @@ public final class WorkbookEvaluator {
     private boolean dbgEvaluationOutputForNextEval;
 
     // special logger for formula evaluation output (because of possibly very large output)
-    private final POILogger EVAL_LOG = POILogFactory.getLogger("POI.FormulaEval");
+    private final Logger EVAL_LOG = LogManager.getLogger("POI.FormulaEval");
     // current indent level for evalution; negative value for no output
     private int dbgEvaluationOutputIndent = -1;
 
@@ -125,22 +129,6 @@ public final class WorkbookEvaluator {
         return _workbook.getName(name, sheetIndex);
     }
 
-    private static boolean isDebugLogEnabled() {
-        return LOG.check(POILogger.DEBUG);
-    }
-    private static boolean isInfoLogEnabled() {
-        return LOG.check(POILogger.INFO);
-    }
-    private static void logDebug(String s) {
-        if (isDebugLogEnabled()) {
-            LOG.log(POILogger.DEBUG, s);
-        }
-    }
-    private static void logInfo(String s) {
-        if (isInfoLogEnabled()) {
-            LOG.log(POILogger.INFO, s);
-        }
-    }
     /* package */ void attachToEnvironment(CollaboratingWorkbooksEnvironment collaboratingWorkbooksEnvironment, EvaluationCache cache, int workbookIx) {
         _collaboratingWorkbookEnvironment = collaboratingWorkbooksEnvironment;
         _cache = cache;
@@ -285,7 +273,7 @@ public final class WorkbookEvaluator {
                 throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
              } catch (RuntimeException re) {
                  if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
-                     logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
+                     LOG.atInfo().log("{} - Continuing with cached value!", re.getCause().getMessage());
                      switch(srcCell.getCachedFormulaResultType()) {
                          case NUMERIC:
                              result = new NumberEval(srcCell.getNumericCellValue());
@@ -318,11 +306,12 @@ public final class WorkbookEvaluator {
             }
             return cce.getValue();
         }
-        if (isDebugLogEnabled()) {
+        final ValueEval resultForLogging = result;
+        LOG.atDebug().log(()->{
             String sheetName = getSheetName(sheetIndex);
             CellReference cr = new CellReference(rowIndex, columnIndex);
-            logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result);
-        }
+            return new SimpleMessage("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + resultForLogging);
+        });
         // Usually (result === cce.getValue())
         // But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)
         // When circular references are detected, the cache entry is only updated for
@@ -344,7 +333,7 @@ public final class WorkbookEvaluator {
             return new NotImplementedException(msg, inner);
         } catch (Exception e) {
             // avoid bombing out during exception handling
-            LOG.log(POILogger.ERROR, "Can't add exception info", e);
+            LOG.atError().withThrowable(e).log("Can't add exception info");
             return inner; // preserve original exception
         }
     }
@@ -387,14 +376,18 @@ public final class WorkbookEvaluator {
             dbgEvaluationOutputForNextEval = false;
         }
         if (dbgEvaluationOutputIndent > 0) {
-            // init. indent string to needed spaces (create as substring vom very long space-only string;
-            // limit indendation for deep recursions)
+            // init. indent string to needed spaces (create as substring from very long space-only string;
+            // limit indentation for deep recursions)
             dbgIndentStr = "                                                                                                    ";
             dbgIndentStr = dbgIndentStr.substring(0, Math.min(dbgIndentStr.length(), dbgEvaluationOutputIndent*2));
-            EVAL_LOG.log(POILogger.WARN, dbgIndentStr
-                               + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetNameRange()
-                               + "'/" + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
-                               + "): " + Arrays.toString(ptgs).replaceAll("\\Qorg.apache.poi.ss.formula.ptg.\\E", ""));
+            String finalDbgIndentStr = dbgIndentStr;
+            EVAL_LOG.atWarn().log(() -> {
+                String message = finalDbgIndentStr
+                        + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetNameRange()
+                        + "'/" + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
+                        + "): " + Arrays.toString(ptgs).replaceAll("\\Qorg.apache.poi.ss.formula.ptg.\\E", "");
+                return new SimpleMessage(message);
+            });
             dbgEvaluationOutputIndent++;
         }
 
@@ -406,7 +399,7 @@ public final class WorkbookEvaluator {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
             if (dbgEvaluationOutputIndent > 0) {
-                EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "  * ptg ", i, ": ", ptg, ", stack: ", stack);
+                EVAL_LOG.atInfo().log("{}  * ptg {}: {}, stack: {}", dbgIndentStr, box(i),ptg, stack);
             }
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = (AttrPtg) ptg;
@@ -551,7 +544,7 @@ public final class WorkbookEvaluator {
 //            logDebug("push " + opResult);
             stack.push(opResult);
             if (dbgEvaluationOutputIndent > 0) {
-                EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "    = ", opResult);
+                EVAL_LOG.atInfo().log("{}    = {}", dbgIndentStr, opResult);
             }
         }
 
@@ -570,9 +563,7 @@ public final class WorkbookEvaluator {
         }
 
         if (dbgEvaluationOutputIndent > 0) {
-            EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "finished eval of ",
-                            new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString(),
-                            ": ", result);
+            EVAL_LOG.atInfo().log("{}finished eval of {}: {}", dbgIndentStr, new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString(), result);
             dbgEvaluationOutputIndent--;
             if (dbgEvaluationOutputIndent == 1) {
                 // this evaluation is done, reset indent to stop logging

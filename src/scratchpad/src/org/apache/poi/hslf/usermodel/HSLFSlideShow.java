@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
@@ -61,9 +63,9 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -79,7 +81,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	public static final String PP95_DOCUMENT = "PP40";
 
 	// For logging
-	private static final POILogger LOG = POILogFactory.getLogger(HSLFSlideShow.class);
+	private static final Logger LOG = LogManager.getLogger(HSLFSlideShow.class);
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 10_000_000;
@@ -94,7 +96,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 	// Pointers to the most recent versions of the core records
 	// (Document, Notes, Slide etc)
-	private org.apache.poi.hslf.record.Record[] _mostRecentCoreRecords;
+	private Record[] _mostRecentCoreRecords;
 	// Lookup between the PersitPtr "sheet" IDs, and the position
 	// in the mostRecentCoreRecords array
 	private Map<Integer,Integer> _sheetIdToCoreRecordsLookup;
@@ -125,7 +127,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	    _hslfSlideShow = hslfSlideShow;
 
 		// Handle Parent-aware Records
-		for (org.apache.poi.hslf.record.Record record : _hslfSlideShow.getRecords()) {
+		for (Record record : _hslfSlideShow.getRecords()) {
 			if(record instanceof RecordContainer){
                 RecordContainer.handleParentAwareRecords((RecordContainer)record);
             }
@@ -187,7 +189,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	private void findMostRecentCoreRecords() {
 		// To start with, find the most recent in the byte offset domain
 		Map<Integer,Integer> mostRecentByBytes = new HashMap<>();
-		for (org.apache.poi.hslf.record.Record record : _hslfSlideShow.getRecords()) {
+		for (Record record : _hslfSlideShow.getRecords()) {
 			if (record instanceof PersistPtrHolder) {
 				PersistPtrHolder pph = (PersistPtrHolder) record;
 
@@ -208,7 +210,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 		// We now know how many unique special records we have, so init
 		// the array
-		_mostRecentCoreRecords = new org.apache.poi.hslf.record.Record[mostRecentByBytes.size()];
+		_mostRecentCoreRecords = new Record[mostRecentByBytes.size()];
 
 		// We'll also want to be able to turn the slide IDs into a position
 		// in this array
@@ -225,7 +227,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		}
 
 		// Now convert the byte offsets back into record offsets
-		for (org.apache.poi.hslf.record.Record record : _hslfSlideShow.getRecords()) {
+		for (Record record : _hslfSlideShow.getRecords()) {
 			if (!(record instanceof PositionDependentRecord)) {
                 continue;
             }
@@ -253,7 +255,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		}
 
 		// Now look for the interesting records in there
-		for (org.apache.poi.hslf.record.Record record : _mostRecentCoreRecords) {
+		for (Record record : _mostRecentCoreRecords) {
 			// Check there really is a record at this number
 			if (record != null) {
 				// Find the Document, and interesting things in it
@@ -272,7 +274,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	 * For a given SlideAtomsSet, return the core record, based on the refID
 	 * from the SlidePersistAtom
 	 */
-	public org.apache.poi.hslf.record.Record getCoreRecordForSAS(SlideAtomsSet sas) {
+	public Record getCoreRecordForSAS(SlideAtomsSet sas) {
 		SlidePersistAtom spa = sas.getSlidePersistAtom();
 		int refID = spa.getRefID();
 		return getCoreRecordForRefID(refID);
@@ -285,13 +287,12 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	 * @param refID
 	 *            the refID
 	 */
-	public org.apache.poi.hslf.record.Record getCoreRecordForRefID(int refID) {
+	public Record getCoreRecordForRefID(int refID) {
 		Integer coreRecordId = _sheetIdToCoreRecordsLookup.get(refID);
 		if (coreRecordId != null) {
 			return _mostRecentCoreRecords[coreRecordId];
 		}
-		LOG.log(POILogger.ERROR,
-				"We tried to look up a reference to a core record, but there was no core ID for reference ID ", refID);
+		LOG.atError().log("We tried to look up a reference to a core record, but there was no core ID for reference ID {}", box(refID));
 		return null;
 	}
 
@@ -349,7 +350,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         }
 
         for (SlideAtomsSet sas : masterSLWT.getSlideAtomsSets()) {
-            org.apache.poi.hslf.record.Record r = getCoreRecordForSAS(sas);
+            Record r = getCoreRecordForSAS(sas);
             int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
             if (r instanceof Slide) {
                 HSLFTitleMaster master = new HSLFTitleMaster((Slide)r, sheetNo);
@@ -375,20 +376,20 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         for (SlideAtomsSet notesSet : notesSLWT.getSlideAtomsSets()) {
             idx++;
             // Get the right core record
-            org.apache.poi.hslf.record.Record r = getCoreRecordForSAS(notesSet);
+            Record r = getCoreRecordForSAS(notesSet);
             SlidePersistAtom spa = notesSet.getSlidePersistAtom();
 
             String loggerLoc = "A Notes SlideAtomSet at "+idx+" said its record was at refID "+spa.getRefID();
 
             // we need to add null-records, otherwise the index references to other existing don't work anymore
             if (r == null) {
-                LOG.log(POILogger.WARN, loggerLoc+", but that record didn't exist - record ignored.");
+				LOG.atWarn().log("{}, but that record didn't exist - record ignored.", loggerLoc);
                 continue;
             }
 
             // Ensure it really is a notes record
             if (!(r instanceof Notes)) {
-                LOG.log(POILogger.ERROR, loggerLoc, ", but that was actually a ", r);
+				LOG.atError().log("{}, but that was actually a {}", loggerLoc, r);
                 continue;
             }
 
@@ -416,14 +417,11 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             idx++;
             // Get the right core record
             SlidePersistAtom spa = sas.getSlidePersistAtom();
-            org.apache.poi.hslf.record.Record r = getCoreRecordForSAS(sas);
+            Record r = getCoreRecordForSAS(sas);
 
             // Ensure it really is a slide record
             if (!(r instanceof Slide)) {
-                LOG.log(POILogger.ERROR, "A Slide SlideAtomSet at ", idx,
-                        " said its record was at refID ",
-                        spa.getRefID(),
-                        ", but that was actually a ", r);
+				LOG.atError().log("A Slide SlideAtomSet at {} said its record was at refID {}, but that was actually a {}", box(idx),box(spa.getRefID()),r);
                 continue;
             }
 
@@ -439,7 +437,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
                 if (notesPos != null && 0 <= notesPos && notesPos < _notes.size()) {
                     notes = _notes.get(notesPos);
                 } else {
-                    LOG.log(POILogger.ERROR, "Notes not found for noteId=", noteId);
+                    LOG.atError().log("Notes not found for noteId={}", box(noteId));
                 }
             }
 
@@ -499,7 +497,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	 * Returns an array of the most recent version of all the interesting
 	 * records
 	 */
-	public org.apache.poi.hslf.record.Record[] getMostRecentCoreRecords() {
+	public Record[] getMostRecentCoreRecords() {
 		return _mostRecentCoreRecords;
 	}
 
@@ -618,13 +616,13 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		_slides.get(newSlideNumber - 1).setSlideNumber(newSlideNumber);
 		_slides.get(oldSlideNumber - 1).setSlideNumber(oldSlideNumber);
 
-		ArrayList<org.apache.poi.hslf.record.Record> lst = new ArrayList<>();
+		ArrayList<Record> lst = new ArrayList<>();
 		for (SlideAtomsSet s : sas) {
 			lst.add(s.getSlidePersistAtom());
 			lst.addAll(Arrays.asList(s.getSlideRecords()));
 		}
 
-		org.apache.poi.hslf.record.Record[] r = lst.toArray(new org.apache.poi.hslf.record.Record[0]);
+		Record[] r = lst.toArray(new Record[0]);
 		slwt.setChildRecord(r);
 	}
 
@@ -653,7 +651,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		}
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
-		List<org.apache.poi.hslf.record.Record> records = new ArrayList<>();
+		List<Record> records = new ArrayList<>();
 		List<SlideAtomsSet> sa = new ArrayList<>(Arrays.asList(sas));
 
 		HSLFSlide removedSlide = _slides.remove(index);
@@ -673,7 +671,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 			_documentRecord.removeSlideListWithText(slwt);
 		} else {
 			slwt.setSlideAtomsSets(sa.toArray(new SlideAtomsSet[0]));
-			slwt.setChildRecord(records.toArray(new org.apache.poi.hslf.record.Record[0]));
+			slwt.setChildRecord(records.toArray(new Record[0]));
 		}
 
 		// if the removed slide had notes - remove references to them too
@@ -697,7 +695,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 				if (!na.isEmpty()) {
 					nslwt.setSlideAtomsSets(na.toArray(new SlideAtomsSet[0]));
-					nslwt.setChildRecord(records.toArray(new org.apache.poi.hslf.record.Record[0]));
+					nslwt.setChildRecord(records.toArray(new Record[0]));
 				}
 			}
 			if (na.isEmpty()) {
@@ -759,8 +757,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 		// Add in to the list of Slides
 		_slides.add(slide);
-		LOG.log(POILogger.INFO, "Added slide ", _slides.size(), " with ref ", sp.getRefID(),
-				" and identifier ", sp.getSlideIdentifier());
+		LOG.atInfo().log("Added slide {} with ref {} and identifier {}", box(_slides.size()),box(sp.getRefID()),box(sp.getSlideIdentifier()));
 
 		// Add the core records for this new Slide to the record tree
 		Slide slideRecord = slide.getSlideRecord();
@@ -1049,7 +1046,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		ExEmbed exEmbed = new ExEmbed();
         // remove unneccessary infos, so we don't need to specify the type
         // of the ole object multiple times
-        org.apache.poi.hslf.record.Record[] children = exEmbed.getChildRecords();
+        Record[] children = exEmbed.getChildRecords();
         exEmbed.removeChild(children[2]);
         exEmbed.removeChild(children[3]);
         exEmbed.removeChild(children[4]);
@@ -1115,7 +1112,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
     private int addPersistentObject(PositionDependentRecord slideRecord) {
     	slideRecord.setLastOnDiskOffset(HSLFSlideShowImpl.UNSET_OFFSET);
-		_hslfSlideShow.appendRootLevelRecord((org.apache.poi.hslf.record.Record)slideRecord);
+		_hslfSlideShow.appendRootLevelRecord((Record)slideRecord);
 
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
@@ -1145,7 +1142,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		int slideOffset = slideRecord.getLastOnDiskOffset();
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(psrId, slideOffset);
-		LOG.log(POILogger.INFO, "New slide/object ended up at ", slideOffset);
+		LOG.atInfo().log("New slide/object ended up at {}", box(slideOffset));
 
 		return psrId;
     }

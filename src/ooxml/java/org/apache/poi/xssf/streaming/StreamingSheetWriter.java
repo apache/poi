@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Unlike SheetDataWriter, this writer does not create a temporary file, it writes data directly
@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
  */
 @Beta
 public class StreamingSheetWriter extends SheetDataWriter {
-    private static final POILogger LOG = POILogFactory.getLogger(StreamingSheetWriter.class);
+    private static final Logger LOG = LogManager.getLogger(StreamingSheetWriter.class);
 
     public StreamingSheetWriter() throws IOException {
         throw new RuntimeException("StreamingSheetWriter requires OutputStream");
@@ -44,7 +44,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     public StreamingSheetWriter(OutputStream out) throws IOException {
         super(createWriter(out));
-        LOG.log(POILogger.DEBUG, "Preparing SSXSSF sheet writer");
+        LOG.atDebug().log("Preparing SSXSSF sheet writer");
     }
 
     @Override

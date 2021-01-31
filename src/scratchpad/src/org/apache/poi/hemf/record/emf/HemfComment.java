@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
@@ -43,16 +45,16 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Contains arbitrary data
  */
 @Internal
 public class HemfComment {
-    private static final POILogger LOG = POILogFactory.getLogger(HemfComment.class);
+    private static final Logger LOG = LogManager.getLogger(HemfComment.class);
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
@@ -101,7 +103,7 @@ public class HemfComment {
          */
         default void draw(HemfGraphics ctx) {}
 
-        default void calcBounds(Rectangle2D bounds, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) { }
+        default void calcBounds(Rectangle2D bounds, Rectangle2D viewport, EmfRenderState[] renderState) { }
 
 
         @Override
@@ -135,7 +137,7 @@ public class HemfComment {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
             data.calcBounds(window, viewport, renderState);
         }
 
@@ -601,8 +603,7 @@ public class HemfComment {
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {
-                LOG.log(POILogger.INFO, "Emf comment with WMF: expected ", wmfData.length,
-                        " bytes - received only ", readBytes, " bytes.");
+                LOG.atInfo().log("Emf comment with WMF: expected {} bytes - received only {} bytes.", box(wmfData.length),box(readBytes));
             }
 
             return leis.getReadIndex()-startIdx;

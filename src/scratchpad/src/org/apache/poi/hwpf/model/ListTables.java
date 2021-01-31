@@ -23,17 +23,19 @@ import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.LSTFAbstractType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public final class ListTables
 {
-  private static final POILogger log = POILogFactory.getLogger(ListTables.class);
+  private static final Logger LOGGER = LogManager.getLogger(ListTables.class);
 
     /**
      * Both PlfLst and the following LVLs
@@ -141,13 +143,13 @@ public final class ListTables
   {
     ListData lst = _listMap.get(lsid);
     if (lst == null) {
-        log.log(POILogger.WARN, "ListData for ", lsid, " was null.");
+        LOGGER.atWarn().log("ListData for {} was null.", box(lsid));
         return null;
     }
     if(level < lst.numLevels()) {
         return lst.getLevels()[level];
     }
-    log.log(POILogger.WARN, "Requested level ", level, " which was greater than the maximum defined (", lst.numLevels(), ")");
+      LOGGER.atWarn().log("Requested level {} which was greater than the maximum defined ({})", box(level),box(lst.numLevels()));
 	return null;
   }
 

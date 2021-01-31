@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -34,8 +36,6 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  *
@@ -43,7 +43,7 @@ import org.apache.poi.util.POILogger;
 public class HSSFPolygon  extends HSSFSimpleShape {
     public static final short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
 
-    private static final POILogger LOG = POILogFactory.getLogger(HSSFPolygon.class);
+    private static final Logger LOG = LogManager.getLogger(HSSFPolygon.class);
 
     public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
         super(spContainer, objRecord, _textObjectRecord);
@@ -174,11 +174,11 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      */
     public void setPoints(int[] xPoints, int[] yPoints) {
         if (xPoints.length != yPoints.length){
-        	LOG.log( POILogger.ERROR, "xPoint.length must be equal to yPoints.length");
+        	LOG.atError().log("xPoint.length must be equal to yPoints.length");
             return;
         }
         if (xPoints.length == 0){
-        	LOG.log( POILogger.ERROR, "HSSFPolygon must have at least one point");
+        	LOG.atError().log("HSSFPolygon must have at least one point");
         }
         EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, false, 0);
         verticesProp.setNumberOfElementsInArray(xPoints.length+1);

@@ -22,10 +22,10 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Provides the minumum and maximum bounds of a sheet.
@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 
 public final class DimensionsRecord extends StandardRecord {
 
-    private static final POILogger LOG = POILogFactory.getLogger(DimensionsRecord.class);
+    private static final Logger LOG = LogManager.getLogger(DimensionsRecord.class);
 
     public static final short sid = 0x200;
     private int               field_1_first_row;
@@ -63,7 +63,7 @@ public final class DimensionsRecord extends StandardRecord {
         field_5_zero      = in.readShort();
         //POI-61045 -- in practice, there can be an extra 2 bytes
         if (in.available() == 2) {
-            LOG.log(POILogger.INFO, "DimensionsRecord has extra 2 bytes.");
+            LOG.atInfo().log("DimensionsRecord has extra 2 bytes.");
             in.readShort();
         }
     }

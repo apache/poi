@@ -36,6 +36,8 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
@@ -50,6 +52,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
@@ -58,8 +61,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -102,7 +103,7 @@ public class SXSSFWorkbook implements Workbook {
      * via {@link SXSSFSheet#getRow} anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
-    private static final POILogger LOG = POILogFactory.getLogger(SXSSFWorkbook.class);
+    private static final Logger LOG = LogManager.getLogger(SXSSFWorkbook.class);
 
     protected final XSSFWorkbook _wb;
 
@@ -839,7 +840,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             sxSheet.dispose();
         } catch (IOException e) {
-            LOG.log(POILogger.WARN, e);
+            LOG.atWarn().withThrowable(e).log("Failed to dispose old sheet");
         }
     }
 
@@ -935,9 +936,7 @@ public class SXSSFWorkbook implements Workbook {
                 SheetDataWriter _writer = sheet.getSheetDataWriter();
                 if (_writer != null) _writer.close();
             } catch (IOException e) {
-                LOG.log(POILogger.WARN,
-                        "An exception occurred while closing sheet data writer for sheet "
-                                + sheet.getSheetName() + ".", e);
+                LOG.atWarn().withThrowable(e).log("An exception occurred while closing sheet data writer for sheet {}.", sheet.getSheetName());
             }
         }
 
@@ -998,7 +997,7 @@ public class SXSSFWorkbook implements Workbook {
             try {
                 success = sheet.dispose() && success;
             } catch (IOException e) {
-                LOG.log(POILogger.WARN, e);
+                LOG.atWarn().withThrowable(e).log("Failed to dispose sheet");
                 success = false;
             }
         }
@@ -1139,7 +1138,7 @@ public class SXSSFWorkbook implements Workbook {
      *  getting missing or blank cells from a row.
      *
      * This will then apply to all calls to
-     *  {@link org.apache.poi.ss.usermodel.Row#getCell(int)}. See
+     *  {@link Row#getCell(int)}. See
      *  {@link MissingCellPolicy}
      */
     @Override

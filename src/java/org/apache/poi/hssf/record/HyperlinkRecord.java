@@ -17,24 +17,26 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hpsf.ClassIDPredefined.FILE_MONIKER;
 import static org.apache.poi.hpsf.ClassIDPredefined.STD_MONIKER;
 import static org.apache.poi.hpsf.ClassIDPredefined.URL_MONIKER;
 import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.HexDump.toHex;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
@@ -45,7 +47,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public static final short sid = 0x01B8;
-    private static final POILogger LOG = POILogFactory.getLogger(HyperlinkRecord.class);
+    private static final Logger LOG = LogManager.getLogger(HyperlinkRecord.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -184,7 +186,7 @@ public final class HyperlinkRecord extends StandardRecord {
     }
 
     /**
-     * @return 16-byte guid identifier Seems to always equal {@link org.apache.poi.hpsf.ClassIDPredefined#STD_MONIKER}
+     * @return 16-byte guid identifier Seems to always equal {@link ClassIDPredefined#STD_MONIKER}
      */
     ClassID getGuid() {
         return _guid;
@@ -403,10 +405,7 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if (in.remaining() > 0) {
-           LOG.log(POILogger.WARN,
-                 "Hyperlink data remains: " + in.remaining() +
-                 " : " +HexDump.toHex(in.readRemainder())
-           );
+            LOG.atWarn().log("Hyperlink data remains: {} : {}", box(in.remaining()), toHex(in.readRemainder()));
         }
     }
 

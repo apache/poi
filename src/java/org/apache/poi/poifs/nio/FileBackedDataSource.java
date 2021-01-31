@@ -29,15 +29,15 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.IdentityHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A POIFS {@link DataSource} backed by a File
  */
 public class FileBackedDataSource extends DataSource implements Closeable {
-    private static final POILogger LOG = POILogFactory.getLogger(FileBackedDataSource.class);
+    private static final Logger LOG = LogManager.getLogger(FileBackedDataSource.class);
 
     private final FileChannel channel;
     private Long channelSize;
@@ -195,10 +195,10 @@ public class FileBackedDataSource extends DataSource implements Closeable {
             try {
                 CleanerUtil.getCleaner().freeBuffer(buffer);
             } catch (IOException e) {
-                LOG.log(POILogger.WARN, "Failed to unmap the buffer", e);
+                LOG.atWarn().withThrowable(e).log("Failed to unmap the buffer");
             }
         } else {
-            LOG.log(POILogger.DEBUG, CleanerUtil.UNMAP_NOT_SUPPORTED_REASON);
+            LOG.atDebug().log(CleanerUtil.UNMAP_NOT_SUPPORTED_REASON);
         }
     }
 }

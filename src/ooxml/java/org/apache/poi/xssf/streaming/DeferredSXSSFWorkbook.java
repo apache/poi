@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -39,7 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Beta
 public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
-    private static final POILogger LOG = POILogFactory.getLogger(DeferredSXSSFWorkbook.class);
+    private static final Logger LOG = LogManager.getLogger(DeferredSXSSFWorkbook.class);
 
     public DeferredSXSSFWorkbook() {
         this(null);
@@ -161,7 +161,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
             try {
                 sxSheet.dispose();
             } catch (IOException e) {
-                LOG.log(POILogger.WARN, e);
+                LOG.atWarn().withThrowable(e).log("Failed to cleanup old sheet");
             }
         }
     }

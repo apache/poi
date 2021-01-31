@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Class POIFSDocumentPath
@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
 
 public class POIFSDocumentPath {
 
-    private static final POILogger log = POILogFactory.getLogger(POIFSDocumentPath.class);
+    private static final Logger LOGGER = LogManager.getLogger(POIFSDocumentPath.class);
 
     private final String[] components;
     private int hashcode; //lazy-compute hashCode

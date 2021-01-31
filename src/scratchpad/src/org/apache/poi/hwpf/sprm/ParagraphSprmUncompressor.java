@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.model.types.TBDAbstractType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
@@ -36,13 +38,13 @@ import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public final class ParagraphSprmUncompressor extends SprmUncompressor {
 
-    private static final POILogger LOG = POILogFactory.getLogger( ParagraphSprmUncompressor.class );
+    private static final Logger LOG = LogManager.getLogger(ParagraphSprmUncompressor.class);
 
   public ParagraphSprmUncompressor()
   {
@@ -69,9 +71,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
           }
           catch ( Exception exc )
           {
-              LOG.log(
-                      POILogger.ERROR,
-                      "Unable to apply SPRM operation '", sprm.getOperation(), "': ", exc );
+            LOG.atError().withThrowable(exc).log("Unable to apply SPRM operation '{}'", box(sprm.getOperation()));
           }
       }
     }
@@ -411,7 +411,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
           newPAP.setRsid( sprm.getOperand() );
           break;
         default:
-            LOG.log( POILogger.DEBUG, "Unknown PAP sprm ignored: ", sprm );
+            LOG.atDebug().log("Unknown PAP sprm ignored: {}", sprm);
             break;
         }
   }

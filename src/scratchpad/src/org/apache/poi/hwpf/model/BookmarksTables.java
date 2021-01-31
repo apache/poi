@@ -22,15 +22,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.BKFAbstractType;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class BookmarksTables
 {
-    private static final POILogger LOG = POILogFactory.getLogger( BookmarksTables.class );
+    private static final Logger LOG = LogManager.getLogger(BookmarksTables.class);
 
     private PlexOfCps descriptorsFirst = new PlexOfCps( 4 );
 
@@ -53,8 +55,7 @@ public class BookmarksTables
             GenericPropertyNode endNode = descriptorsLim.getProperty( i );
             if ( startNode.getStart() == endNode.getStart() )
             {
-                LOG.log( POILogger.DEBUG, "Removing bookmark #",
-                        Integer.valueOf( i ), "..." );
+                LOG.atDebug().log("Removing bookmark #{}...", box(i));
                 remove( i );
                 i--;
                 continue;

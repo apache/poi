@@ -115,7 +115,7 @@
                     <systemPropertyVariables>
                         <POI.testdata.path>../../test-data</POI.testdata.path>
                         <java.awt.headless>true</java.awt.headless>
-                        <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
+                        <log4j.configurationFile>log4j2-no-logging.xml</log4j.configurationFile>
                     </systemPropertyVariables>
                     <!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
                     <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp -XX:-OmitStackTraceInFastThrow</argLine>

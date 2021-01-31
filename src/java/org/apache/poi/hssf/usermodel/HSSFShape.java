@@ -20,6 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -35,8 +37,6 @@ import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -48,7 +48,7 @@ import org.apache.poi.util.StringUtil;
  * setFlipVertical() or setFlipHorizontally().
  */
 public abstract class HSSFShape implements Shape {
-    private static final POILogger LOG = POILogFactory.getLogger(HSSFShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSSFShape.class);
 
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
@@ -374,7 +374,7 @@ public abstract class HSSFShape implements Shape {
             LittleEndian.putInt(property.getPropertyValue(), bos);
             return LittleEndian.getShort(bos.toByteArray(), 2);
         } catch (IOException e) {
-            LOG.log(POILogger.ERROR, "can't determine rotation degree", e);
+            LOG.atError().withThrowable(e).log("can't determine rotation degree");
             return 0;
         }
     }

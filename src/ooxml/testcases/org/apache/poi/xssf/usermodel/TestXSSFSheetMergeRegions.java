@@ -16,20 +16,21 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 class TestXSSFSheetMergeRegions {
 
-    private static final POILogger LOG = POILogFactory.getLogger(TestXSSFSheetMergeRegions.class);
+    private static final Logger LOG = LogManager.getLogger(TestXSSFSheetMergeRegions.class);
 
     @Test
     void testMergeRegionsSpeed() throws IOException {
@@ -43,7 +44,7 @@ class TestXSSFSheetMergeRegions {
                 if (millis < 2000) {
                     break;
                 }
-                LOG.log(POILogger.INFO, "Retry ", i, " because run-time is too high: ", millis);
+                LOG.atInfo().log("Retry {} because run-time is too high: {}", box(i),box(millis));
             }
 
             boolean inGump = false;

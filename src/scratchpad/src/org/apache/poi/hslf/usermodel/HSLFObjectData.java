@@ -25,18 +25,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.record.ExOleObjStg;
 import org.apache.poi.sl.usermodel.ObjectData;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A class that represents object data embedded in a slide show.
  */
 public class HSLFObjectData implements ObjectData, GenericRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFObjectData.class);
-    
+    private static final Logger LOG = LogManager.getLogger(HSLFObjectData.class);
+
     /**
      * The record that contains the object data.
      */

@@ -31,10 +31,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Maintains the instances of {@link CustomProperty} that belong to a
@@ -65,8 +67,8 @@ import org.apache.poi.util.POILogger;
  * HashMap&lt;String,Object&gt; mapping between Names and Custom Property Values.
  */
 public class CustomProperties implements Map<String,Object> {
-    private static final POILogger LOG = POILogFactory.getLogger(CustomProperties.class);
-    
+    private static final Logger LOG = LogManager.getLogger(CustomProperties.class);
+
     /**
      * The custom properties
      */
@@ -207,7 +209,7 @@ public class CustomProperties implements Map<String,Object> {
 
     @Override
     public void putAll(Map<? extends String, ?> m) {
-        for (Map.Entry<? extends String, ?> me : m.entrySet()) {
+        for (Entry<? extends String, ?> me : m.entrySet()) {
             put(me.getKey(), me.getValue());
         }
     }
@@ -393,12 +395,12 @@ public class CustomProperties implements Map<String,Object> {
         try {
             cps = CodePageUtil.codepageToEncoding(cp, false);
         } catch (UnsupportedEncodingException e) {
-            LOG.log(POILogger.ERROR, "Codepage '", cp, "' can't be found.");
+            LOG.atError().log("Codepage '{}' can't be found.", box(cp));
         }
         if (!cps.isEmpty() && Charset.forName(cps).newEncoder().canEncode(value)) {
             return;
         }
-        LOG.log(POILogger.DEBUG, "Charset '"+cps+"' can't encode '"+value+"' - switching to unicode.");
+        LOG.atDebug().log("Charset '{}' can't encode '{}' - switching to unicode.", cps, value);
         setCodepage(CodePageUtil.CP_UNICODE);
     }
 }

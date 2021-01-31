@@ -32,7 +32,6 @@ import java.security.MessageDigest;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -47,13 +46,13 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
@@ -92,7 +91,7 @@ import org.w3c.dom.NodeList;
  */
 public class XAdESSignatureFacet implements SignatureFacet {
 
-    private static final POILogger LOG = POILogFactory.getLogger(XAdESSignatureFacet.class);
+    private static final Logger LOG = LogManager.getLogger(XAdESSignatureFacet.class);
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
 
@@ -106,7 +105,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         , List<Reference> references
         , List<XMLObject> objects)
     throws XMLSignatureException {
-        LOG.log(POILogger.DEBUG, "preSign");
+        LOG.atDebug().log("preSign");
 
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
@@ -241,7 +240,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         assert(nl.getLength() == 1);
         ((Element)nl.item(0)).setIdAttribute("Id", true);
 
-        List<XMLStructure> xadesObjectContent = Collections.singletonList(new DOMStructure(qualDocEl));
+        List<XMLStructure> xadesObjectContent = singletonList(new DOMStructure(qualDocEl));
         XMLObject xo = signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
         return xo;
     }

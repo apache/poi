@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 @Internal
 public class SectionTable
@@ -37,7 +37,7 @@ public class SectionTable
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger(SectionTable.class);
+    private static final Logger LOG = LogManager.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
 
     protected List<SEPX> _sections = new ArrayList<>();
@@ -100,7 +100,7 @@ public class SectionTable
             }
         }
         if(! matchAt && matchHalf) {
-            LOG.log(POILogger.WARN, "Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
+            LOG.atWarn().log("Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
             for(int i=0; i<_sections.size(); i++) {
                 SEPX s = _sections.get(i);
                 GenericPropertyNode node = sedPlex.getProperty(i);

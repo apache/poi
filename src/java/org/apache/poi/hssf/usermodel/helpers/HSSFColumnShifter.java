@@ -17,14 +17,14 @@
 
 package org.apache.poi.hssf.usermodel.helpers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Helper for shifting columns up or down
@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 // {@link org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter}
 @Beta
 public final class HSSFColumnShifter extends ColumnShifter {
-    private static final POILogger LOG = POILogFactory.getLogger(HSSFColumnShifter.class);
+    private static final Logger LOG = LogManager.getLogger(HSSFColumnShifter.class);
 
     public HSSFColumnShifter(HSSFSheet sh) {
         super(sh);

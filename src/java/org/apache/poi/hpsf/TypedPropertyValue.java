@@ -20,15 +20,17 @@ package org.apache.poi.hpsf;
 
 import java.math.BigInteger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class TypedPropertyValue {
-    private static final POILogger LOG = POILogFactory.getLogger( TypedPropertyValue.class );
+    private static final Logger LOG = LogManager.getLogger(TypedPropertyValue.class);
 
     private int _type;
     private Object _value;
@@ -46,8 +48,7 @@ public class TypedPropertyValue {
         _type = lei.readShort();
         short padding = lei.readShort();
         if ( padding != 0 ) {
-            LOG.log( POILogger.WARN, "TypedPropertyValue padding at offset "
-                    + lei.getReadIndex() + " MUST be 0, but it's value is " + padding );
+            LOG.atWarn().log("TypedPropertyValue padding at offset {} MUST be 0, but it's value is {}", box(lei.getReadIndex()),box(padding));
         }
         readValue( lei );
     }

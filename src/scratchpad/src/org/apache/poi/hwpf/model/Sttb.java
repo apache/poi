@@ -18,10 +18,9 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -81,11 +80,11 @@ public class Sttb
 
         if ( ffff != (short) 0xffff )
         {
-            POILogFactory.getLogger(Sttb.class).log(
-                    POILogger.WARN,
-                    "Non-extended character Pascal strings are not supported right now. ",
-                    "Creating empty values in the RevisionMarkAuthorTable for now.  ",
-                    "Please, contact POI developers for update.");
+            LogManager.getLogger(Sttb.class).atWarn().log(
+                    "Non-extended character Pascal strings are not supported right now. " +
+                            "Creating empty values in the RevisionMarkAuthorTable for now.  " +
+                            "Please, contact POI developers for update."
+            );
             //set data and extraData to empty values to avoid
             //downstream NPE in case someone calls getEntries on RevisionMarkAuthorTable
             _data = new String[0];

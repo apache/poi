@@ -21,7 +21,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class represents the data of a link in the document.
@@ -115,18 +116,20 @@ public class ExHyperlink extends RecordContainer {
 	private void findInterestingChildren() {
 
 		// First child should be the ExHyperlinkAtom
-		if(_children[0] instanceof ExHyperlinkAtom) {
-			linkAtom = (ExHyperlinkAtom)_children[0];
+		Record child = _children[0];
+		if(child instanceof ExHyperlinkAtom) {
+			linkAtom = (ExHyperlinkAtom) child;
 		} else {
-			LOG.log(POILogger.ERROR, "First child record wasn't a ExHyperlinkAtom, was of type ", _children[0].getRecordType());
+			LOG.atError().log("First child record wasn't a ExHyperlinkAtom, was of type {}", box(child.getRecordType()));
 		}
 
         for (int i = 1; i < _children.length; i++) {
-            if (_children[i] instanceof CString){
-                if ( linkDetailsA == null) linkDetailsA = (CString)_children[i];
-                else linkDetailsB = (CString)_children[i];
+			child = _children[i];
+			if (child instanceof CString){
+                if ( linkDetailsA == null) linkDetailsA = (CString) child;
+                else linkDetailsB = (CString) child;
             } else {
-                LOG.log(POILogger.ERROR, "Record after ExHyperlinkAtom wasn't a CString, was of type ", _children[1].getRecordType());
+                LOG.atError().log("Record after ExHyperlinkAtom wasn't a CString, was of type {}", box(child.getRecordType()));
             }
 
         }

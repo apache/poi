@@ -43,6 +43,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -68,6 +70,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Date1904Support;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -81,8 +84,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -200,7 +201,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * The policy to apply in the event of missing or
      *  blank cells when fetching from a row.
-     * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * See {@link MissingCellPolicy}
      */
     private MissingCellPolicy _missingCellPolicy = MissingCellPolicy.RETURN_NULL_AND_BLANK;
 
@@ -214,7 +215,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     private List<XSSFPictureData> pictures;
 
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFWorkbook.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFWorkbook.class);
 
     /**
      * cached instance of XSSFCreationHelper for this workbook
@@ -415,7 +416,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 for (CTExternalReference er : this.workbook.getExternalReferences().getExternalReferenceArray()) {
                     ExternalLinksTable el = elIdMap.get(er.getId());
                     if(el == null) {
-                        LOG.log(POILogger.WARN, "ExternalLinksTable with r:id ", er.getId(), " was defined, but didn't exist in package, skipping");
+                        LOG.atWarn().log("ExternalLinksTable with r:id {} was defined, but didn't exist in package, skipping", er.getId());
                         continue;
                     }
                     externalLinks.add(el);
@@ -436,8 +437,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
         XSSFSheet sh = shIdMap.get(ctSheet.getId());
         if(sh == null) {
-            LOG.log(POILogger.WARN, "Sheet with name ", ctSheet.getName(), " and r:id ",
-                    ctSheet.getId(), " was defined, but didn't exist in package, skipping");
+            LOG.atWarn().log("Sheet with name {} and r:id {} was defined, but didn't exist in package, skipping", ctSheet.getName(), ctSheet.getId());
             return;
         }
         sh.sheet = ctSheet;
@@ -649,11 +649,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
         CTWorksheet ct = clonedSheet.getCTWorksheet();
         if(ct.isSetLegacyDrawing()) {
-            LOG.log(POILogger.WARN, "Cloning sheets with comments is not yet supported.");
+            LOG.atWarn().log("Cloning sheets with comments is not yet supported.");
             ct.unsetLegacyDrawing();
         }
         if (ct.isSetPageSetup()) {
-            LOG.log(POILogger.WARN, "Cloning sheets with page setup is not yet supported.");
+            LOG.atWarn().log("Cloning sheets with page setup is not yet supported.");
             ct.unsetPageSetup();
         }
 
@@ -748,7 +748,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Returns the workbook's data format table (a factory for creating data format strings).
      *
      * @return the XSSFDataFormat object
-     * @see org.apache.poi.ss.usermodel.DataFormat
+     * @see DataFormat
      */
     @Override
     public XSSFDataFormat createDataFormat() {
@@ -839,14 +839,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * </p>
      *
      * <p>
-     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     * See {@link WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
      * </p>
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     @Override
     public XSSFSheet createSheet(String sheetname) {
@@ -1550,7 +1550,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
      * @see #createSheet(String)
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     @Override
     public void setSheetName(int sheetIndex, String sheetname) {

@@ -24,9 +24,9 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
 import com.microsoft.schemas.compatibility.AlternateContentDocument;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -34,7 +34,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 
 public final class XPathHelper {
-    private static final POILogger LOG = POILogFactory.getLogger(XPathHelper.class);
+    private static final Logger LOG = LogManager.getLogger(XPathHelper.class);
 
     private static final String OSGI_ERROR =
         "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
@@ -62,9 +62,9 @@ public final class XPathHelper {
         try {
             xpf.setFeature(feature, enabled);
         } catch (Exception e) {
-            LOG.log(POILogger.WARN, "XPathFactory Feature unsupported", feature, e);
+            LOG.atWarn().withThrowable(e).log("XPathFactory Feature ({}) unsupported", feature);
         } catch (AbstractMethodError ame) {
-            LOG.log(POILogger.WARN, "Cannot set XPathFactory feature because outdated XML parser in classpath", feature, ame);
+            LOG.atWarn().withThrowable(ame).log("Cannot set XPathFactory feature ({}) because outdated XML parser in classpath", feature);
         }
     }
 

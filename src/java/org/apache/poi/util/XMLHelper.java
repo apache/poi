@@ -46,6 +46,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -74,7 +77,7 @@ public final class XMLHelper {
     };
 
 
-    private static final POILogger LOG = POILogFactory.getLogger(XMLHelper.class);
+    private static final Logger LOG = LogManager.getLogger(XMLHelper.class);
     private static long lastLog;
 
     // DocumentBuilderFactory.newDocumentBuilder is thread-safe
@@ -290,7 +293,7 @@ public final class XMLHelper {
 
     private static void logThrowable(Throwable t, String message, String name) {
         if (System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
-            LOG.log(POILogger.WARN, message + " [log suppressed for 5 minutes]", name, t);
+            LOG.atWarn().withThrowable(t).log("{} [log suppressed for 5 minutes]{}", message, name);
             lastLog = System.currentTimeMillis();
         }
     }
@@ -298,22 +301,22 @@ public final class XMLHelper {
     private static class DocHelperErrorHandler implements ErrorHandler {
 
         public void warning(SAXParseException exception) {
-            printError(POILogger.WARN, exception);
+            printError(Level.WARN, exception);
         }
 
         public void error(SAXParseException exception) {
-            printError(POILogger.ERROR, exception);
+            printError(Level.ERROR, exception);
         }
 
         public void fatalError(SAXParseException exception) throws SAXException {
-            printError(POILogger.FATAL, exception);
+            printError(Level.FATAL, exception);
             throw exception;
         }
 
         /**
          * Prints the error message.
          */
-        private void printError(int type, SAXParseException ex) {
+        private void printError(Level type, SAXParseException ex) {
             String systemId = ex.getSystemId();
             if (systemId != null) {
                 int index = systemId.lastIndexOf('/');
@@ -326,7 +329,7 @@ public final class XMLHelper {
                     ':' + ex.getColumnNumber() +
                     ':' + ex.getMessage();
 
-            LOG.log(type, message, ex);
+            LOG.atLevel(type).withThrowable(ex).log(message);
         }
     }
 

@@ -19,6 +19,8 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Color;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
@@ -33,8 +35,6 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
@@ -62,7 +62,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
  */
 @Beta
 public class XSLFTextRun implements TextRun {
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFTextRun.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFTextRun.class);
 
     private final XmlObject _r;
     private final XSLFTextParagraph _p;
@@ -114,7 +114,7 @@ public class XSLFTextRun implements TextRun {
     @Override
     public void setFontColor(PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
-            LOG.log(POILogger.WARN, "Currently only SolidPaint is supported!");
+            LOG.atWarn().log("Currently only SolidPaint is supported!");
             return;
         }
         SolidPaint sp = (SolidPaint)color;

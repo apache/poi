@@ -35,7 +35,6 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * General holder for PersistPtrFullBlock and PersistPtrIncrementalBlock
@@ -176,8 +175,9 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 
             if (newPos == null) {
                 Integer id = me.getKey();
-                LOG.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
-                LOG.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
+				LOG.atWarn().log("Couldn't find the new location of the \"slide\" with id {} that used to " +
+						"be at {}. Not updating the position of it, you probably won't be able to find it any more " +
+						"(if you ever could!)", id, oldPos);
             } else {
                 me.setValue(newPos);
             }

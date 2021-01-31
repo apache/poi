@@ -699,7 +699,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @param zos
      *            Output stream to save this part.
      * @return true if the content has been successfully stored, false otherwise.
-     *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
+     *         More information about errors may be logged via Log4j 2.
      * @throws OpenXML4JException
      *             If any exception occur.
      */
@@ -711,7 +711,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @param ios
      *            The input stream of the content to load.
      * @return true if the content has been successfully loaded, false otherwise.
-     *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
+     *         More information about errors may be logged via Log4j 2.
      * @throws InvalidFormatException
      *             Throws if the content format is invalid.
      */

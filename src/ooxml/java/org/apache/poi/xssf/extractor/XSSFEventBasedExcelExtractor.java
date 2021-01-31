@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
@@ -33,9 +35,9 @@ import org.apache.poi.ooxml.POIXMLProperties.ExtendedProperties;
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
@@ -59,9 +61,9 @@ import org.xml.sax.XMLReader;
  * files that uses SAX event based parsing.
  */
 public class XSSFEventBasedExcelExtractor
-    implements POIXMLTextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
+    implements POIXMLTextExtractor, ExcelExtractor {
 
-    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
+    private static final Logger LOGGER = LogManager.getLogger(XSSFEventBasedExcelExtractor.class);
 
     protected final OPCPackage container;
     protected final POIXMLProperties properties;
@@ -288,7 +290,7 @@ public class XSSFEventBasedExcelExtractor
 
             return text.toString();
         } catch (IOException | OpenXML4JException | SAXException e) {
-            LOGGER.log(POILogger.WARN, e);
+            LOGGER.atWarn().withThrowable(e).log("Failed to load text");
             return null;
         }
     }
@@ -413,7 +415,7 @@ public class XSSFEventBasedExcelExtractor
          * they are appended in XSSFExcelExtractor.
          *
          * @see XSSFExcelExtractor#getText()
-         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
+         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(HeaderFooter)
          */
         void appendHeaderText(StringBuilder buffer) {
             appendHeaderFooterText(buffer, "firstHeader");
@@ -426,7 +428,7 @@ public class XSSFEventBasedExcelExtractor
          * they are appended in XSSFExcelExtractor.
          *
          * @see XSSFExcelExtractor#getText()
-         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
+         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(HeaderFooter)
          */
         void appendFooterText(StringBuilder buffer) {
             // append the text for each footer type in the same order

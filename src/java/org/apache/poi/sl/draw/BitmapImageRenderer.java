@@ -40,16 +40,16 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
  **/
 public class BitmapImageRenderer implements ImageRenderer {
-    private static final POILogger LOG = POILogFactory.getLogger(BitmapImageRenderer.class);
+    private static final Logger LOG = LogManager.getLogger(BitmapImageRenderer.class);
 
     protected BufferedImage img;
 
@@ -200,7 +200,7 @@ public class BitmapImageRenderer implements ImageRenderer {
                 // multiple locations above ...
                 throw lastException;
             }
-            LOG.log(POILogger.WARN, "Content-type: "+contentType+" is not support. Image ignored.");
+            LOG.atWarn().log("Content-type: {} is not support. Image ignored.", contentType);
             return null;
         }
 

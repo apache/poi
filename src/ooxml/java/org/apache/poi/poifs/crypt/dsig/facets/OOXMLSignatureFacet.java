@@ -54,6 +54,8 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import com.microsoft.schemas.office.x2006.digsig.CTSignatureInfoV1;
 import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -68,8 +70,6 @@ import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTSignatureTime;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.SignatureTimeDocument;
 import org.w3c.dom.Document;
@@ -82,7 +82,7 @@ import org.w3c.dom.Element;
  */
 public class OOXMLSignatureFacet implements SignatureFacet {
 
-    private static final POILogger LOG = POILogFactory.getLogger(OOXMLSignatureFacet.class);
+    private static final Logger LOG = LogManager.getLogger(OOXMLSignatureFacet.class);
     private static final String ID_PACKAGE_OBJECT = "idPackageObject";
 
     @Override
@@ -92,7 +92,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         , List<Reference> references
         , List<XMLObject> objects)
     throws XMLSignatureException {
-        LOG.log(POILogger.DEBUG, "pre sign");
+        LOG.atDebug().log("pre sign");
         addManifestObject(signatureInfo, document, references, objects);
         addSignatureInfo(signatureInfo, document, references, objects);
     }
@@ -178,7 +178,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
                 if (relationshipType.endsWith("customXml")
                     && !(contentType.equals("inkml+xml") || contentType.equals("text/xml"))) {
-                    LOG.log(POILogger.DEBUG, "skipping customXml with content type: ", contentType);
+                    LOG.atDebug().log("skipping customXml with content type: {}", contentType);
                     continue;
                 }
 
@@ -212,7 +212,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         }
         try {
             pn = new URI(pn).normalize().getPath().replace('\\', '/');
-            LOG.log(POILogger.DEBUG, "part name: ", pn);
+            LOG.atDebug().log("part name: {}", pn);
         } catch (URISyntaxException e) {
             throw new XMLSignatureException(e);
         }
@@ -230,7 +230,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         CTSignatureTime ctTime = sigTime.addNewSignatureTime();
         ctTime.setFormat("YYYY-MM-DDThh:mm:ssTZD");
         ctTime.setValue(signatureConfig.formatExecutionTime());
-        LOG.log(POILogger.DEBUG, "execution time: ", ctTime.getValue());
+        LOG.atDebug().log("execution time: {}", ctTime.getValue());
 
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
         List<XMLStructure> signatureTimeContent = new ArrayList<>();
@@ -328,7 +328,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
     protected static boolean isSignedRelationship(String relationshipType) {
-        LOG.log(POILogger.DEBUG, "relationship type: ", relationshipType);
+        LOG.atDebug().log("relationship type: {}", relationshipType);
         String rt = relationshipType.replaceFirst(".*/relationships/", "");
         return (signed.contains(rt) || rt.endsWith("customXml"));
     }

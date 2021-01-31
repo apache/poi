@@ -20,6 +20,8 @@ package org.apache.poi.xssf.streaming;
 import java.awt.Dimension;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,8 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFAnchor;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
  * The main change is to access the rows in the SXSSF sheet, not the always empty rows in the XSSF sheet when checking the row heights.
  */
 public final class SXSSFPicture implements Picture {
-    private static final POILogger LOG = POILogFactory.getLogger(SXSSFPicture.class);
+    private static final Logger LOG = LogManager.getLogger(SXSSFPicture.class);
     /**
      * Column width measured as the number of characters of the maximum digit width of the
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
@@ -109,7 +109,7 @@ public final class SXSSFPicture implements Picture {
         XSSFClientAnchor anchor = getClientAnchor();
         XSSFClientAnchor pref = getPreferredSize(scale);
         if (anchor == null || pref == null) {
-            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.atWarn().log("picture is not anchored via client anchor - ignoring resize call");
             return;
         }
 
@@ -144,7 +144,7 @@ public final class SXSSFPicture implements Picture {
     public XSSFClientAnchor getPreferredSize(double scale){
         XSSFClientAnchor anchor = getClientAnchor();
         if (anchor == null) {
-            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.atWarn().log("picture is not anchored via client anchor - ignoring resize call");
             return null;
         }
 
@@ -222,7 +222,7 @@ public final class SXSSFPicture implements Picture {
             return ImageUtils.getImageDimension(part.getInputStream(), type);
         } catch (IOException e){
             //return a "singulariry" if ImageIO failed to read the image
-            LOG.log(POILogger.WARN, e);
+            LOG.atWarn().withThrowable(e).log("Failed to read image");
             return new Dimension();
         }
     }

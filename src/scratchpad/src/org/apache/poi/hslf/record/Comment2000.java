@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class represents a comment on a slide, in the format used by
@@ -129,7 +130,7 @@ public final class Comment2000 extends RecordContainer {
             } else if (r instanceof Comment2000Atom){
                 commentAtom = (Comment2000Atom)r;
             } else {
-                LOG.log(POILogger.WARN, "Unexpected record with type=", r.getRecordType(), " in Comment2000: ", r.getClass().getName());
+				LOG.atWarn().log("Unexpected record with type={} in Comment2000: {}", box(r.getRecordType()),r.getClass().getName());
             }
         }
 

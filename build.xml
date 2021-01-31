@@ -84,9 +84,9 @@ under the License.
 
     <!--
         Logging is suppressed by default.
-        To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
+        To redirect log output to console, run ant with -Dlog4j.configurationFile=log4j2-console.xml
     -->
-    <property name="org.apache.poi.util.POILogger" value="org.apache.poi.util.NullLogger"/>
+    <property name="log4j.configurationFile" value="log4j2-no-logging.xml"/>
 
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
     <property name="java.source.encoding" value="UTF-8"/>
@@ -264,12 +264,11 @@ under the License.
 
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <dependency prefix="main.commons-logging" artifact="org.slf4j:jcl-over-slf4j:1.7.30" usage="main"/>
     <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
-    <dependency prefix="main.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="main"/>
+    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.0" usage="main"/>
 
     <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.7.0" usage="main-tests"/>
     <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.7.0" usage="main-tests"/>
@@ -289,7 +288,7 @@ under the License.
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.19" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.19" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
-    <dependency prefix="main.slf4j-simple" artifact="org.slf4j:slf4j-simple:1.7.30" usage="main-tests"/>
+    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -347,7 +346,7 @@ under the License.
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
-    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.slf4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
+    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.apache.logging.log4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
 
     <property name="file.leak.detector" value="-Dthis.is.a.dummy=true"/>
 
@@ -394,13 +393,12 @@ under the License.
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
-        <propertyref name="org.apache.poi.util.POILogger"/>
+        <propertyref name="log4j.configurationFile"/>
         <propertyref name="http_proxy"/>
         <propertyref name="additionaljar"/>
         <propertyref name="user.language"/>
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
-        <propertyref name="org.apache.commons.logging.Log"/>
         <!-- required for Java 9 compilation -->
         <propertyref name="java.locale.providers"/>
         <!-- to detect if we are running on slow Gump VM -->
@@ -409,11 +407,11 @@ under the License.
     </propertyset>
 
     <path id="main.classpath">
-        <pathelement location="${main.commons-logging.jar}"/>
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
         <pathelement location="${main.commons-math3.jar}"/>
         <pathelement location="${main.com.zaxxer.jar}"/>
+        <pathelement location="${main.log4j-api.jar}"/>
     </path>
 
     <!-- some libraries should only be required for compiling/running tests -->
@@ -434,7 +432,7 @@ under the License.
         <pathelement location="${main.byte-buddy.jar}"/>
         <pathelement location="${main.byte-buddy-agent.jar}"/>
         <pathelement location="${main.objenesis.jar}"/>
-        <pathelement location="${main.slf4j-simple.jar}"/>
+        <pathelement location="${main.log4j-core.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -519,7 +517,7 @@ under the License.
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
         <path refid="test.jar.classpath"/>
-        <pathelement location="${main.slf4j-api.jar}"/>
+        <pathelement location="${main.log4j-api.jar}"/>
         <path path="${env.CLASSPATH}"/>
     </path>
 
@@ -658,7 +656,6 @@ under the License.
         <condition property="jars.present">
             <or>
                 <and>
-                    <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-codec.jar}"/>
                     <available file="${main.junit-api.jar}"/>
                     <available file="${main.junit-jengine.jar}"/>
@@ -678,8 +675,8 @@ under the License.
                     <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
-                    <available file="${main.slf4j-api.jar}"/>
-                    <available file="${main.slf4j-simple.jar}"/>
+                    <available file="${main.log4j-api.jar}"/>
+                    <available file="${main.log4j-core.jar}"/>
                     <available file="${asm.jar}"/>
                     <available file="${asm-commons.jar}"/>
                     <available file="${asm-tree.jar}"/>
@@ -704,7 +701,6 @@ under the License.
     <target name="fetch-jars" depends="check-jars" unless="jars.present"
             description="Fetches needed JAR files from the Internet">
         <mkdir dir="${main.lib}"/>
-        <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
         <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
         <downloadfile src="${main.junit-api.url}" dest="${main.junit-api.jar}"/>
         <downloadfile src="${main.junit-jengine.url}" dest="${main.junit-jengine.jar}"/>
@@ -724,8 +720,8 @@ under the License.
         <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
-        <downloadfile src="${main.slf4j-api.url}" dest="${main.slf4j-api.jar}"/>
-        <downloadfile src="${main.slf4j-simple.url}" dest="${main.slf4j-simple.jar}"/>
+        <downloadfile src="${main.log4j-api.url}" dest="${main.log4j-api.jar}"/>
+        <downloadfile src="${main.log4j-core.url}" dest="${main.log4j-core.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
         <downloadfile src="${asm-commons.url}" dest="${asm-commons.jar}"/>
         <downloadfile src="${asm-tree.url}" dest="${asm-tree.jar}"/>
@@ -1285,10 +1281,6 @@ under the License.
                         <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
-
-                        <!-- mute some notorious talkative classes -->
-                        <jvmarg line="-Dorg.slf4j.simpleLogger.log.org.apache.poi.hdgf.chunks.Chunk=off"/>
-                        <jvmarg line="-Dorg.slf4j.simpleLogger.log.org.apache.poi=error"/>
                     </fork>
 
                     <listener classname="Junit5Progress" />
@@ -1683,7 +1675,7 @@ under the License.
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired">
-        <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.SLF4JLogger"/>
+        <propertyreset name="log4j.configurationFile" value="log4j2-console.xml"/>
         <delete dir="build" includes="test-integration.log*"/>
 
         <path id="test-integration.modules">
@@ -2210,9 +2202,9 @@ under the License.
             <mappedresources cache="true">
                 <fileset dir="${main.lib}">
                     <include name="commons-codec-*.jar"/>
-                    <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
+                    <include name="log4j-api-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
                 </fileset>
                 <globmapper from="*" to="${zipdir}/lib/*"/>
@@ -2560,9 +2552,8 @@ under the License.
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
-            <auxClasspath path="${main.commons-logging.jar}" />
-            <auxClasspath path="${main.slf4j-api.jar}" />
-            <auxClasspath path="${main.slf4j-simple.jar}" />
+            <auxClasspath path="${main.log4j-api.jar}" />
+            <auxClasspath path="${main.log4j-core.jar}" />
             <auxClasspath path="${main.junit-api.jar}" />
             <auxClasspath path="${main.junit-jengine.jar}" />
             <auxClasspath path="${main.junit-params.jar}" />

@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SuppressForbidden;
 
 import java.awt.*;
@@ -60,7 +60,7 @@ import java.text.AttributedCharacterIterator;
  * </blockquote>
  */
 public class EscherGraphics extends Graphics {
-    private static final POILogger LOG = POILogFactory.getLogger(EscherGraphics.class);
+    private static final Logger LOG = LogManager.getLogger(EscherGraphics.class);
 
     private final HSSFShapeGroup escherGroup;
     private final HSSFWorkbook workbook;
@@ -135,14 +135,14 @@ public class EscherGraphics extends Graphics {
     @NotImplemented
     public void clipRect(int x, int y, int width, int height)
     {
-        LOG.log(POILogger.WARN,"clipRect not supported");
+        LOG.atWarn().log("clipRect not supported");
     }
 
     @Override
     @NotImplemented
     public void copyArea(int x, int y, int width, int height, int dx, int dy)
     {
-        LOG.log(POILogger.WARN,"copyArea not supported");
+        LOG.atWarn().log("copyArea not supported");
     }
 
     @Override
@@ -162,7 +162,7 @@ public class EscherGraphics extends Graphics {
     public void drawArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        LOG.log(POILogger.WARN,"drawArc not supported");
+        LOG.atWarn().log("drawArc not supported");
     }
 
     @Override
@@ -173,7 +173,7 @@ public class EscherGraphics extends Graphics {
 				      Color bgcolor,
 				      ImageObserver observer)
     {
-        LOG.log(POILogger.WARN,"drawImage not supported");
+        LOG.atWarn().log("drawImage not supported");
 
         return true;
     }
@@ -185,7 +185,7 @@ public class EscherGraphics extends Graphics {
 				      int sx1, int sy1, int sx2, int sy2,
 				      ImageObserver observer)
     {
-        LOG.log(POILogger.WARN,"drawImage not supported");
+        LOG.atWarn().log("drawImage not supported");
         return true;
     }
 
@@ -266,14 +266,14 @@ public class EscherGraphics extends Graphics {
     public void drawPolyline(int[] xPoints, int[] yPoints,
                              int nPoints)
     {
-        LOG.log(POILogger.WARN,"drawPolyline not supported");
+        LOG.atWarn().log("drawPolyline not supported");
     }
 
     @Override
     @NotImplemented
     public void drawRect(int x, int y, int width, int height)
     {
-        LOG.log(POILogger.WARN,"drawRect not supported");
+        LOG.atWarn().log("drawRect not supported");
     }
 
     @Override
@@ -281,7 +281,7 @@ public class EscherGraphics extends Graphics {
     public void drawRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        LOG.log(POILogger.WARN,"drawRoundRect not supported");
+        LOG.atWarn().log("drawRoundRect not supported");
     }
 
     @Override
@@ -349,16 +349,14 @@ public class EscherGraphics extends Graphics {
     public void drawString(AttributedCharacterIterator iterator,
                                     int x, int y)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"drawString not supported");
+        LOG.atWarn().log("drawString not supported");
     }
 
     @Override
     public void fillArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"fillArc not supported");
+        LOG.atWarn().log("fillArc not supported");
     }
 
     @Override
@@ -389,7 +387,7 @@ public class EscherGraphics extends Graphics {
      * @param xPoints array of the <code>x</code> coordinates.
      * @param yPoints array of the <code>y</code> coordinates.
      * @param nPoints the total number of points in the polygon.
-     * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
+     * @see   Graphics#drawPolygon(int[], int[], int)
      */
     @Override
     public void fillPolygon(int[] xPoints, int[] yPoints,
@@ -442,8 +440,7 @@ public class EscherGraphics extends Graphics {
     public void fillRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"fillRoundRect not supported");
+        LOG.atWarn().log("fillRoundRect not supported");
     }
 
     @Override
@@ -488,7 +485,7 @@ public class EscherGraphics extends Graphics {
     @NotImplemented
     public void setClip(Shape shape)
     {
-        LOG.log(POILogger.WARN,"setClip not supported");
+        LOG.atWarn().log("setClip not supported");
     }
 
     @Override
@@ -507,21 +504,21 @@ public class EscherGraphics extends Graphics {
     @NotImplemented
     public void setPaintMode()
     {
-        LOG.log(POILogger.WARN,"setPaintMode not supported");
+        LOG.atWarn().log("setPaintMode not supported");
     }
 
     @Override
     @NotImplemented
     public void setXORMode(Color color)
     {
-        LOG.log(POILogger.WARN,"setXORMode not supported");
+        LOG.atWarn().log("setXORMode not supported");
     }
 
     @Override
     @NotImplemented
     public void translate(int x, int y)
     {
-        LOG.log(POILogger.WARN,"translate not supported");
+        LOG.atWarn().log("translate not supported");
     }
 
     public Color getBackground()

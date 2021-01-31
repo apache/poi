@@ -25,11 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Escher container records store other escher records as children.
@@ -45,7 +47,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     public static final short SP_CONTAINER     = EscherRecordTypes.SP_CONTAINER.typeID;
     public static final short SOLVER_CONTAINER = EscherRecordTypes.SOLVER_CONTAINER.typeID;
 
-    private static final POILogger log = POILogFactory.getLogger(EscherContainerRecord.class);
+    private static final Logger LOGGER = LogManager.getLogger(EscherContainerRecord.class);
 
     /**
      * in case if document contains any charts we have such document structure:
@@ -95,9 +97,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
             addChildRecord(child);
             if (offset >= data.length && bytesRemaining > 0) {
                 _remainingLength = bytesRemaining;
-                if (log.check(POILogger.WARN)) {
-                    log.log(POILogger.WARN, "Not enough Escher data: " + bytesRemaining + " bytes remaining but no space left");
-                }
+                LOGGER.atWarn().log("Not enough Escher data: {} bytes remaining but no space left", box(bytesRemaining));
             }
         }
         return bytesWritten;

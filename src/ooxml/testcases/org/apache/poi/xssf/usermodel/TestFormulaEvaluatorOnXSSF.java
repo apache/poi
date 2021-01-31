@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -40,8 +43,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -58,9 +59,9 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  */
 public final class TestFormulaEvaluatorOnXSSF {
-    private static final POILogger LOG = POILogFactory.getLogger(TestFormulaEvaluatorOnXSSF.class);
+    private static final Logger LOG = LogManager.getLogger(TestFormulaEvaluatorOnXSSF.class);
 
-    private static XSSFWorkbook workbook;
+	private static XSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
     private static Locale userLocale;
@@ -244,12 +245,12 @@ public final class TestFormulaEvaluatorOnXSSF {
 	 */
 	private static String getTargetFunctionName(Row r) {
 		if(r == null) {
-            LOG.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
+            LOG.atWarn().log("Given null row, can't figure out function name");
 			return null;
 		}
 		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
 		if(cell == null) {
-            LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
+			LOG.atWarn().log("Row {} has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
 			return null;
 		}
 		if(cell.getCellType() == CellType.BLANK) {

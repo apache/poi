@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about animation information for a shape.
@@ -55,10 +56,11 @@ public final class AnimationInfo extends RecordContainer {
 	private void findInterestingChildren() {
 
 		// First child should be the ExMediaAtom
-		if(_children[0] instanceof AnimationInfoAtom) {
-			animationAtom = (AnimationInfoAtom)_children[0];
+		final Record child = _children[0];
+		if(child instanceof AnimationInfoAtom) {
+			animationAtom = (AnimationInfoAtom) child;
 		} else {
-			LOG.log(POILogger.ERROR, "First child record wasn't a AnimationInfoAtom, was of type ", _children[0].getRecordType());
+			LOG.atError().log("First child record wasn't a AnimationInfoAtom, was of type {}", box(child.getRecordType()));
 		}
 	}
 

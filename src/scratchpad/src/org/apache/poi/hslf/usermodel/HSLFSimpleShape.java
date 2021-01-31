@@ -19,6 +19,8 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -49,8 +51,6 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -58,7 +58,7 @@ import org.apache.poi.util.Units;
  *  This is the parent class for all primitive shapes like Line, Rectangle, etc.
  */
 public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFSimpleShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFSimpleShape.class);
 
     public static final double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -322,7 +322,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     @Override
     public Guide getAdjustValue(String name) {
         if (name == null || !name.matches("adj([1-9]|10)?")) {
-            LOG.log(POILogger.INFO, "Adjust value '", name, "' not supported. Using default value.");
+            LOG.atInfo().log("Adjust value '{}' not supported. Using default value.", name);
             return null;
         }
 
@@ -384,7 +384,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             if (name == null) {
                 name = (st != null) ? st.toString() : "<unknown>";
             }
-            LOG.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
+            LOG.atWarn().log("No preset shape definition for shapeType: {}", name);
         }
 
         return geom;

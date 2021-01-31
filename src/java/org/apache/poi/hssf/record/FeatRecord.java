@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.record.common.FeatFormulaErr2;
 import org.apache.poi.hssf.record.common.FeatProtection;
 import org.apache.poi.hssf.record.common.FeatSmartTag;
@@ -29,8 +31,8 @@ import org.apache.poi.hssf.record.common.SharedFeature;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Title: Feat (Feature) Record
@@ -39,8 +41,8 @@ import org.apache.poi.util.POILogger;
  *  up with a {@link FeatHdrRecord}.
  */
 public final class FeatRecord extends StandardRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(FeatRecord.class);
-    public static final short sid = 0x0868;
+    private static final Logger LOG = LogManager.getLogger(FeatRecord.class);
+	public static final short sid = 0x0868;
     // SIDs from newer versions
     public static final short v11_sid = 0x0872;
     public static final short v12_sid = 0x0878;
@@ -108,7 +110,7 @@ public final class FeatRecord extends StandardRecord {
 			sharedFeature = new FeatSmartTag(in);
 			break;
 		default:
-			LOG.log( POILogger.ERROR, "Unknown Shared Feature ", isf_sharedFeatureType, " found!");
+			LOG.atError().log("Unknown Shared Feature {} found!", box(isf_sharedFeatureType));
 		}
 	}
 

@@ -25,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -35,8 +37,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Various utility functions that make working with a cells and rows easier. The various methods
@@ -50,7 +50,7 @@ import org.apache.poi.util.POILogger;
  */
 public final class CellUtil {
     
-    private static final POILogger log = POILogFactory.getLogger(CellUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(CellUtil.class);
 
     // FIXME: Move these constants into an enum
     public static final String ALIGNMENT = "alignment";
@@ -258,7 +258,7 @@ public final class CellUtil {
      * <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
      * 
      * <p>This function is more efficient than multiple calls to
-     * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, String, Object)}
+     * {@link #setCellStyleProperty(Cell, String, Object)}
      * if adding multiple cell styles.</p>
      * 
      * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
@@ -313,7 +313,7 @@ public final class CellUtil {
      * same style.</p>
      * 
      * <p>If setting more than one cell style property on a cell, use
-     * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
+     * {@link #setCellStyleProperties(Cell, Map)},
      * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
      * 
      * @param cell The cell that is to be changed.
@@ -333,7 +333,7 @@ public final class CellUtil {
      *
      * @param style cell style
      * @return map of format properties (String -> Object)
-     * @see #setFormatProperties(org.apache.poi.ss.usermodel.CellStyle, org.apache.poi.ss.usermodel.Workbook, java.util.Map)
+     * @see #setFormatProperties(CellStyle, Workbook, Map)
      */
     private static Map<String, Object> getFormatProperties(CellStyle style) {
         Map<String, Object> properties = new HashMap<>();
@@ -385,7 +385,7 @@ public final class CellUtil {
             } else if (FILL_PATTERN.equals(key)) {
                 dest.put(key, getFillPattern(src, key));
             } else {
-                log.log(POILogger.INFO, "Ignoring unrecognized CellUtil format properties key: ", key);
+                LOGGER.atInfo().log("Ignoring unrecognized CellUtil format properties key: {}", key);
             }
         }
     }
@@ -468,10 +468,7 @@ public final class CellUtil {
         }
         // @deprecated 3.15 beta 2. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
         else if (value instanceof Short) {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map uses Short values for "
-                        + name + ". Should use BorderStyle enums instead.");
-            }
+            LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use BorderStyle enums instead.", name);
             short code = ((Short) value).shortValue();
             border = BorderStyle.valueOf(code);
         }
@@ -500,10 +497,7 @@ public final class CellUtil {
         }
         // @deprecated 3.15 beta 2. getFillPattern will only work on FillPatternType enums instead of codes in the future.
         else if (value instanceof Short) {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map uses Short values for "
-                        + name + ". Should use FillPatternType enums instead.");
-            }
+            LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use FillPatternType enums instead.", name);
             short code = ((Short) value).shortValue();
             pattern = FillPatternType.forInt(code);
         }
@@ -532,10 +526,7 @@ public final class CellUtil {
         }
         // @deprecated 3.15 beta 2. getHorizontalAlignment will only work on HorizontalAlignment enums instead of codes in the future.
         else if (value instanceof Short) {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map used a Short value for "
-                        + name + ". Should use HorizontalAlignment enums instead.");
-            }
+            LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use HorizontalAlignment enums instead.", name);
             short code = ((Short) value).shortValue();
             align = HorizontalAlignment.forInt(code);
         }
@@ -564,10 +555,7 @@ public final class CellUtil {
         }
         // @deprecated 3.15 beta 2. getVerticalAlignment will only work on VerticalAlignment enums instead of codes in the future.
         else if (value instanceof Short) {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map used a Short value for "
-                        + name + ". Should use VerticalAlignment enums instead.");
-            }
+            LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use VerticalAlignment enums instead.", name);
             short code = ((Short) value).shortValue();
             align = VerticalAlignment.forInt(code);
         }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -25,16 +27,16 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.BaseXSSFFormulaEvaluator;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Streaming-specific Formula Evaluator, which is able to
  *  lookup cells within the current Window.
  */
 public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
-    private static final POILogger LOG = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
+    private static final Logger LOG = LogManager.getLogger(SXSSFFormulaEvaluator.class);
 
     private final SXSSFWorkbook wb;
 
@@ -111,7 +113,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
                 int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
                 if (lastFlushedRowNum > -1) {
                     if (! skipOutOfWindow) throw new RowFlushedException(0);
-                    LOG.log(POILogger.INFO, "Rows up to ", lastFlushedRowNum, " have already been flushed, skipping");
+                    LOG.atInfo().log("Rows up to {} have already been flushed, skipping", box(lastFlushedRowNum));
                 }
             }
 

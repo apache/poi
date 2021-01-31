@@ -30,16 +30,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Collection of convenience chunks for standard parts of the MSG file
  * attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
-    private static final POILogger LOG = POILogFactory.getLogger(AttachmentChunks.class);
+    private static final Logger LOG = LogManager.getLogger(AttachmentChunks.class);
     public static final String PREFIX = "__attach_version1.0_#";
 
     private ByteChunk attachData;
@@ -187,7 +187,7 @@ public class AttachmentChunks implements ChunkGroup {
             } else if (chunk instanceof DirectoryChunk) {
                 attachmentDirectory = (DirectoryChunk) chunk;
             } else {
-                LOG.log(POILogger.ERROR, "Unexpected data chunk of type ", chunk.getEntryName());
+                LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
             }
         } else if (chunkId == ATTACH_EXTENSION.id) {
             attachExtension = (StringChunk) chunk;
@@ -202,7 +202,7 @@ public class AttachmentChunks implements ChunkGroup {
         } else if (chunkId == ATTACH_CONTENT_ID.id) {
             attachContentId = (StringChunk) chunk;
         } else {
-            LOG.log(POILogger.WARN, "Currently unsupported attachment chunk property will be ignored. ", chunk.getEntryName());
+            LOG.atWarn().log("Currently unsupported attachment chunk property will be ignored. {}", chunk.getEntryName());
         }
 
         // And add to the main list

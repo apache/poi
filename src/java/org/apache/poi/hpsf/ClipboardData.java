@@ -16,20 +16,22 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class ClipboardData {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger( ClipboardData.class );
+    private static final Logger LOG = LogManager.getLogger(ClipboardData.class);
 
     private int _format;
     private byte[] _value;
@@ -39,10 +41,8 @@ public class ClipboardData {
         long size = lei.readInt();
 
         if ( size < 4 ) {
-            String msg =
-                "ClipboardData at offset "+offset+" size less than 4 bytes "+
-                "(doesn't even have format field!). Setting to format == 0 and hope for the best";
-            LOG.log( POILogger.WARN, msg);
+            LOG.atWarn().log("ClipboardData at offset {} size less than 4 bytes (doesn't even have format " +
+                    "field!). Setting to format == 0 and hope for the best", box(offset));
             _format = 0;
             _value = new byte[0];
             return;

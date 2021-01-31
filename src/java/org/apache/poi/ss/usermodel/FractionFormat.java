@@ -24,10 +24,10 @@ import java.text.ParsePosition;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * <p>Format class that handles Excel style fractions, such as "# #/#" and "#/###"</p>
@@ -43,7 +43,7 @@ import org.apache.poi.util.POILogger;
 
 @SuppressWarnings("serial")
 public class FractionFormat extends Format {
-    private static final POILogger LOGGER = POILogFactory.getLogger(FractionFormat.class);
+    private static final Logger LOGGER = LogManager.getLogger(FractionFormat.class);
     private static final Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
 
     //this was chosen to match the earlier limitation of max denom power
@@ -147,7 +147,7 @@ public class FractionFormat extends Format {
                 fract = SimpleFraction.buildFractionMaxDenominator(decPart.doubleValue(), maxDenom);
             }
         } catch (RuntimeException e){
-            LOGGER.log(POILogger.WARN, "Can't format fraction", e);
+            LOGGER.atWarn().withThrowable(e).log("Can't format fraction");
             return Double.toString(doubleValue.doubleValue());
         }
 

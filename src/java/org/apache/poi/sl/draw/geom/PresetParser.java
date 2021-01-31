@@ -27,10 +27,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 @Internal
 class PresetParser {
@@ -55,7 +55,7 @@ class PresetParser {
         }
     }
 
-    private static final POILogger LOG = POILogFactory.getLogger(PresetParser.class);
+    private static final Logger LOG = LogManager.getLogger(PresetParser.class);
 
     private Mode mode;
 
@@ -104,7 +104,7 @@ class PresetParser {
         final String name = sr.getLocalName();
         customGeometry = new CustomGeometry();
         if (geom.containsKey(name)) {
-            LOG.log(POILogger.WARN, "Duplicate definition of " + name);
+            LOG.atWarn().log("Duplicate definition of {}", name);
         }
         geom.put(name, customGeometry);
         mode = Mode.SHAPE;

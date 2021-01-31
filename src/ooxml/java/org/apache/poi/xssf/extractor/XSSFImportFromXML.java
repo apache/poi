@@ -35,13 +35,13 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -57,6 +57,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 /**
  * Imports data from an external XML to an XLSX according to one of the mappings
  * defined.The output XML Schema must respect this limitations:
@@ -70,7 +72,7 @@ public class XSSFImportFromXML {
 
     private final XSSFMap _map;
 
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFImportFromXML.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFImportFromXML.class);
 
     public XSSFImportFromXML(XSSFMap map) {
         _map = map;
@@ -109,10 +111,9 @@ public class XSSFImportFromXML {
             // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
             if (result != null) {
                 String textContent = result.getTextContent();
-                LOG.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
+                LOG.atDebug().log("Extracting with xpath {} : value is '{}'", xpathString, textContent);
                 XSSFCell cell = singleXmlCell.getReferencedCell();
-                LOG.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
-                                                + cell.getSheet().getSheetName());
+                LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", textContent, box(cell.getColumnIndex()),box(cell.getRowIndex()),cell.getSheet().getSheetName());
                 setCellValue(textContent, cell, xmlDataType);
             }
         }
@@ -147,7 +148,7 @@ public class XSSFImportFromXML {
 
                     // TODO: convert the data to the cell format
                     String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
-                    LOG.log(POILogger.DEBUG, "Extracting with xpath " + localXPath + " : value is '" + value + "'");
+                    LOG.atDebug().log("Extracting with xpath {} : value is '{}'", localXPath, value);
                     XSSFRow row = table.getXSSFSheet().getRow(rowId);
                     if (row == null) {
                         row = table.getXSSFSheet().createRow(rowId);
@@ -157,8 +158,7 @@ public class XSSFImportFromXML {
                     if (cell == null) {
                         cell = row.createCell(columnId);
                     }
-                    LOG.log(POILogger.DEBUG, "Setting '" + value + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
-                                                    + table.getXSSFSheet().getSheetName());
+                    LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", value, box(cell.getColumnIndex()),box(cell.getRowIndex()),table.getXSSFSheet().getSheetName());
                     setCellValue(value, cell, xmlColumnPr.getXmlDataType());
                 }
             }
