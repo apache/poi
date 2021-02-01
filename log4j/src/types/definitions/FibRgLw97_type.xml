@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="FibRgLw97" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The FibRgLw97 structure is the third section of the FIB. This contains an array of
+        4-byte values. &lt;p&gt;Class and fields descriptions are quoted from Microsoft Office Word
+        97-2007 Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </author>
+    <fields>
+        <field type="int" size="4" name="cbMac"
+            description="Specifies the count of bytes of those written to the WordDocument stream of the file that have any meaning. All bytes in the WordDocument stream at offset cbMac and greater MUST be ignored."/>
+
+        <field type="int" size="4" name="reserved1" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved2" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+
+        <field type="int" size="4" name="ccpText"
+            description="A signed integer that specifies the count of CPs in the main document. This value MUST be zero, 1, or greater"/>
+        <field type="int" size="4" name="ccpFtn"
+            description="A signed integer that specifies the count of CPs in the footnote subdocument. This value MUST be zero, 1, or greater"/>
+        <field type="int" size="4" name="ccpHdd"
+            description="A signed integer that specifies the count of CPs in the header subdocument. This value MUST be zero, 1, or greater"/>
+
+        <field type="int" size="4" name="reserved3" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+
+        <field type="int" size="4" name="ccpAtn"
+            description="A signed integer that specifies the count of CPs in the comment subdocument. This value MUST be zero, 1, or greater"/>
+        <field type="int" size="4" name="ccpEdn"
+            description="A signed integer that specifies the count of CPs in the endnote subdocument. This value MUST be zero, 1, or greater"/>
+        <field type="int" size="4" name="ccpTxbx"
+            description="A signed integer that specifies the count of CPs in the textbox subdocument of the main document. This value MUST be zero, 1, or greater"/>
+        <field type="int" size="4" name="ccpHdrTxbx"
+            description="A signed integer that specifies the count of CPs in the textbox subdocument of the header. This value MUST be zero, 1, or greater"/>
+
+        <field type="int" size="4" name="reserved4" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved5" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+
+        <field type="int" size="4" name="reserved6" deprecated="true"
+            description="This value MUST be equal or less than the number of data elements in PlcBteChpx, as specified by FibRgFcLcb97.fcPlcfBteChpx and FibRgFcLcb97.lcbPlcfBteChpx. This value MUST be ignored"/>
+
+        <field type="int" size="4" name="reserved7" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved8" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved9" deprecated="true"
+            description="This value MUST be less than or equal to the number of data elements in PlcBtePapx, as specified by FibRgFcLcb97.fcPlcfBtePapx and FibRgFcLcb97.lcbPlcfBtePapx. This value MUST be ignored"/>
+        <field type="int" size="4" name="reserved10" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved11" deprecated="true"
+            description="This value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="reserved12" deprecated="true"
+            description="This value SHOULD be zero, and MUST be ignored"/>
+        <field type="int" size="4" name="reserved13" deprecated="true"
+            description="This value MUST be zero and MUST be ignored"/>
+        <field type="int" size="4" name="reserved14" deprecated="true"
+            description="This value MUST be zero and MUST be ignored"/>
+    </fields>
+</record>

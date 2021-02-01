@@ -1,0 +1,145 @@
+# (C) Copyright Uwe Schindler (Generics Policeman) and others.
+# Parts of this work are licensed to the Apache Software Foundation (ASF)
+# under one or more contributor license agreements.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# This file contains API signatures which are specific to POI.
+# The goal is to minimize implicit defaults
+
+@ignoreMissingClasses
+@defaultMessage POI forbidden APIs
+
+# Locale related interfaces which we want to avoid to not have code which depends on the locale of the current machine
+java.util.Locale#getDefault() @ Do not use methods that depend on the current Locale, either use Locale.ROOT or let the user define the locale, see class LocaleUtil for details
+java.util.Locale#setDefault(java.util.Locale) @ Do not use methods that depend on the current Locale, either use Locale.ROOT or let the user define the locale, see class LocaleUtil for details
+java.util.TimeZone#getDefault() @ Do not use methods that depend on the current Locale, either use Locale.ROOT or let the user define the locale, see class LocaleUtil for details
+java.util.Date#toString() @ Do not use methods that depend on the current Locale, either use Locale.ROOT or let the user define the locale, see class LocaleUtil for details
+
+java.text.DecimalFormatSymbols#<init>() @ use DecimalFormatSymbols.getInstance()
+java.text.DecimalFormatSymbols#<init>(java.util.Locale) @ use DecimalFormatSymbols.getInstance()
+
+# the following are taken from the Elasticsearch source at https://github.com/elastic/elasticsearch/tree/master/buildSrc/src/main/resources/forbidden
+
+@defaultMessage Convert to URI
+java.net.URL#getPath()
+java.net.URL#getFile()
+
+@defaultMessage Usage of getLocalHost is discouraged
+java.net.InetAddress#getLocalHost()
+
+@defaultMessage Specify a location for the temp file/directory instead.
+java.nio.file.Files#createTempDirectory(java.lang.String,java.nio.file.attribute.FileAttribute[])
+java.nio.file.Files#createTempFile(java.lang.String,java.lang.String,java.nio.file.attribute.FileAttribute[])
+
+@defaultMessage Specify a location for the temp file/directory instead.
+java.nio.file.Files#createTempDirectory(java.lang.String,java.nio.file.attribute.FileAttribute[])
+java.nio.file.Files#createTempFile(java.lang.String,java.lang.String,java.nio.file.attribute.FileAttribute[])
+
+@defaultMessage Don't use java serialization - this can break BWC without noticing it
+java.io.ObjectOutputStream
+java.io.ObjectOutput
+java.io.ObjectInputStream
+java.io.ObjectInput
+
+@defaultMessage Resolve hosts explicitly to the address(es) you want with InetAddress.
+java.net.InetSocketAddress#<init>(java.lang.String,int)
+java.net.Socket#<init>(java.lang.String,int)
+java.net.Socket#<init>(java.lang.String,int,java.net.InetAddress,int)
+
+@defaultMessage Don't bind to wildcard addresses. Be specific.
+java.net.DatagramSocket#<init>()
+java.net.DatagramSocket#<init>(int)
+java.net.InetSocketAddress#<init>(int)
+java.net.MulticastSocket#<init>()
+java.net.MulticastSocket#<init>(int)
+java.net.ServerSocket#<init>(int)
+java.net.ServerSocket#<init>(int,int)
+
+@defaultMessage use NetworkAddress format/formatAddress to print IP or IP+ports
+java.net.InetAddress#toString()
+java.net.InetAddress#getHostAddress()
+java.net.Inet4Address#getHostAddress()
+java.net.Inet6Address#getHostAddress()
+java.net.InetSocketAddress#toString()
+
+@defaultMessage avoid DNS lookups by accident: if you have a valid reason, then @SuppressWarnings with that reason so its completely clear
+java.net.InetAddress#getHostName()
+java.net.InetAddress#getCanonicalHostName()
+
+java.net.InetSocketAddress#getHostName() @ Use getHostString() instead, which avoids a DNS lookup
+
+
+java.lang.Thread#getAllStackTraces() @ this method needs special permission
+java.lang.Thread#getContextClassLoader() @ use getClass().getClassLoader() instead of getContextClassLoader() (see https://stackoverflow.com/a/36228195/2066598)
+
+@defaultMessage Avoid unchecked warnings by using Collections#empty(List|Map|Set) methods
+java.util.Collections#EMPTY_LIST
+java.util.Collections#EMPTY_MAP
+java.util.Collections#EMPTY_SET
+
+
+@defaultMessage spawns threads with vague names; use a custom thread factory and name threads so that you can tell (by its name) which executor it is associated with
+java.util.concurrent.Executors#newFixedThreadPool(int)
+java.util.concurrent.Executors#newSingleThreadExecutor()
+java.util.concurrent.Executors#newCachedThreadPool()
+java.util.concurrent.Executors#newSingleThreadScheduledExecutor()
+java.util.concurrent.Executors#newScheduledThreadPool(int)
+java.util.concurrent.Executors#defaultThreadFactory()
+java.util.concurrent.Executors#privilegedThreadFactory()
+
+java.lang.Character#codePointBefore(char[],int) @ Implicit start offset is error-prone when the char[] is a buffer and the first chars are random chars
+java.lang.Character#codePointAt(char[],int) @ Implicit end offset is error-prone when the char[] is a buffer and the last chars are random chars
+
+@defaultMessage specify a locale when using toUpperCase / to LowerCase
+
+java.lang.Character#isLowerCase(char)
+java.lang.Character#isUpperCase(char)
+java.lang.Character#toLowerCase(char)
+java.lang.Character#toUpperCase(char)
+java.lang.String#toLowerCase()
+java.lang.String#toUpperCase()
+
+@defaultMessage Only use wait / notify when really needed try to use concurrency primitives, latches or callbacks instead.
+java.lang.Object#wait()
+java.lang.Object#wait(long)
+java.lang.Object#wait(long,int)
+java.lang.Object#notify()
+java.lang.Object#notifyAll()
+
+@defaultMessage Don't interrupt threads use FutureUtils#cancel(Future<T>) instead
+java.util.concurrent.Future#cancel(boolean)
+
+@defaultMessage Don't use ...InputStream.available() as it gives wrong result for certain streams - use IOUtils.toByteArray to read the stream fully and then count the available bytes
+java.io.InputStream#available()
+
+@defaultMessage Use newInstance, as newFactory does not seem to work on Android - https://github.com/centic9/poi-on-android/issues/44#issuecomment-426517981
+javax.xml.stream.XMLEventFactory#newFactory()
+javax.xml.stream.XMLInputFactory#newFactory()
+javax.xml.stream.XMLOutputFactory#newFactory()
+
+@defaultMessage Unnecessary, inefficient, and confusing conversion of String.toString
+java.lang.String#toString()
+
+#@defaultMessage Deprecated Java APIs
+#java.lang.StringBuffer
+#java.util.Hashtable
+
+@defaultMessage DatatypeConverter is not available in Java 9+ without adding add-opens - use java.util.Base64
+javax.xml.bind.DatatypeConverter
+
+@defaultMessage don't rely on the threads ContextClassLoader - provide the classloader via load(Class, Classloader)
+java.util.ServiceLoader#load(java.lang.Class)
+
+@defaultMessage use java.nio.charset.StandardCharsets instead
+org.apache.commons.codec.Charsets

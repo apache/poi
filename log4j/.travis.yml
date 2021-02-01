@@ -1,0 +1,14 @@
+dist: bionic
+language: java
+jdk:
+- openjdk11
+before_install:
+  - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.9-bin.tar.gz
+  - tar -xzvf apache-ant-1.10.9-bin.tar.gz
+  - export PATH=`pwd`/apache-ant-1.10.9/bin:$PATH
+  - echo $(ant -version)
+  - svn co https://svn.apache.org/repos/asf/poi/site/src/documentation src/documentation
+install: /bin/true
+before_script: /bin/true
+script:
+- ant clean jenkins

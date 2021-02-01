@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record id="0x101B" name="SEP" fromfile="false" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Section Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+        <field type="byte" size="1" name="bkc" default="2" description="Break code">
+            <const type="byte" value="0" name="NO_BREAK" description="No break"/>
+            <const type="byte" value="1" name="NEW_COLUMN" description="New column"/>
+            <const type="byte" value="2" name="NEW_PAGE" description="New page"/>
+            <const type="byte" value="3" name="EVEN_PAGE" description="Even page"/>
+            <const type="byte" value="4" name="ODD_PAGE" description="Odd page"/>
+        </field>
+        <field type="boolean" size="1" name="fTitlePage" description="Set to 1 when a title page is to be displayed"/>
+        <field type="boolean" size="1" name="fAutoPgn"
+            description="Only for Macintosh compatibility, used only during open, when 1, sep.dxaPgn and sep.dyaPgn are valid page number locations"/>
+        <field type="byte" size="1" name="nfcPgn" description="Page number format code">
+            <const type="byte" name="ARABIC" value="0" description="Arabic"/>
+            <const type="byte" name="ROMAN_UPPER_CASE" value="1" description="Roman (upper case)"/>
+            <const type="byte" name="ROMAN_LOWER_CASE" value="2" description="Roman (lower case)"/>
+            <const type="byte" name="LETTER_UPPER_CASE" value="3" description="Letter (upper case)"/>
+            <const type="byte" name="LETTER_LOWER_CASE" value="4" description="Letter (lower case)"/>
+        </field>
+        <field type="boolean" size="1" name="fUnlocked"/>
+        <field type="byte" size="1" name="cnsPgn"/>
+        <field type="boolean" size="1" name="fPgnRestart"/>
+        <field type="boolean" size="1" default="true" name="fEndNote"/>
+        <field type="byte" size="1" name="lnc"/>
+        <field type="byte" size="1" name="grpfIhdt"/>
+        <field type="int" size="2" name="nLnnMod"/>
+        <field type="int" size="4" name="dxaLnn"/>
+        <field type="int" size="2" default="720" name="dxaPgn"/>
+        <field type="int" size="2" default="720" name="dyaPgn"/>
+        <field type="boolean" size="0" name="fLBetween"/>
+        <field type="byte" size="1" name="vjc"/>
+        <field type="int" size="2" name="dmBinFirst"/>
+        <field type="int" size="2" name="dmBinOther"/>
+        <field type="int" size="2" name="dmPaperReq"/>
+        <field type="BorderCode" size="4" name="brcTop"/>
+        <field type="BorderCode" size="4" name="brcLeft"/>
+        <field type="BorderCode" size="4" name="brcBottom"/>
+        <field type="BorderCode" size="4" name="brcRight"/>
+        <field type="boolean" size="1" name="fPropMark"/>
+        <field type="int" size="2" name="ibstPropRMark"/>
+        <field type="DateAndTime" size="4" name="dttmPropRMark"/>
+        <field type="int" size="4" name="dxtCharSpace"/>
+        <field type="int" size="4" name="dyaLinePitch"/>
+        <field type="int" size="2" name="clm"/>
+        <field type="int" size="2" name="unused2"/>
+        <field type="boolean" size="1" default="true" name="dmOrientPage">
+            <const type="boolean" name="LANDSCAPE" value="false"/>
+            <const type="boolean" name="PORTRAIT" value="true"/>
+        </field>
+        <field type="byte" size="1" name="iHeadingPgn"/>
+        <field type="int" size="2" default="1" name="pgnStart"/>
+        <field type="int" size="2" name="lnnMin"/>
+        <field type="int" size="2" name="wTextFlow"/>
+        <field type="short" size="2" name="unused3"/>
+        <field type="int" size="2" name="pgbProp"/>
+        <field type="short" size="2" name="unused4"/>
+        <field type="int" size="4" default="12240" name="xaPage"/>
+        <field type="int" size="4" default="15840" name="yaPage"/>
+        <field type="int" size="4" default="12240" name="xaPageNUp"/>
+        <field type="int" size="4" default="15840" name="yaPageNUp"/>
+        <field type="int" size="4" default="1800" name="dxaLeft"/>
+        <field type="int" size="4" default="1800" name="dxaRight"/>
+        <field type="int" size="4" default="1440" name="dyaTop"/>
+        <field type="int" size="4" default="1440" name="dyaBottom"/>
+        <field type="int" size="4" name="dzaGutter"/>
+        <field type="int" size="4" default="720" name="dyaHdrTop"/>
+        <field type="int" size="4" default="720" name="dyaHdrBottom"/>
+        <field type="int" size="2" name="ccolM1"/>
+        <field type="boolean" size="0" default="true" name="fEvenlySpaced"/>
+        <field type="byte" size="1" name="unused5"/>
+        <field type="int" size="4" default="720" name="dxaColumns"/>
+        <field type="int[]" size="356" name="rgdxaColumn"/>
+        <field type="int" size="4" name="dxaColumnWidth"/>
+        <field type="byte" size="1" name="dmOrientFirst"/>
+        <field type="byte" size="1" name="fLayout"/>
+        <field type="short" size="2" name="unused6"/>
+        <field type="byte[]" size="212" name="olstAnm"/>
+    </fields>
+</record>

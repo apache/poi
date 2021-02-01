@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="FLD" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Field Descriptor (FLD). &lt;p&gt;Class and fields descriptions are
+        quoted from
+        Microsoft Office Word 97-2007 Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc]
+    </author>
+    <fields>
+        <field type="byte" size="1" name="chHolder" description="ch field holder (along with reserved bits)">
+            <bit number="0" mask="0x1f" name="ch"
+                description="Type of field boundary the FLD describes: 19 -- field begin mark, 20 -- field separation mark; 21 -- field end mark"/>
+            <bit number="0" mask="0xe0" name="reserved" description="Reserved"/>
+        </field>
+        <field type="byte" size="1" name="flt"
+            description="Field type when ch == 19 OR field flags when ch == 21 ">
+            <bit number="0" mask="0x01" name="fDiffer" description="Ignored for saved file"/>
+            <bit number="1" mask="0x02" name="fZombieEmbed"
+                description="==1 when result still believes this field is an EMBED or LINK field"/>
+            <bit number="2" mask="0x04" name="fResultDirty"
+                description="==1 when user has edited or formatted the result. == 0 otherwise"/>
+            <bit number="3" mask="0x08" name="fResultEdited"
+                description="==1 when user has inserted text into or deleted text from the result"/>
+            <bit number="4" mask="0x10" name="fLocked" description="==1 when field is locked from recalculation"/>
+            <bit number="5" mask="0x20" name="fPrivateResult"
+                description="==1 whenever the result of the field is never to be shown"/>
+            <bit number="6" mask="0x40" name="fNested" description="==1 when field is nested within another field"/>
+            <bit number="7" mask="0x40" name="fHasSep" description="==1 when field has a field separator"/>
+        </field>
+    </fields>
+</record>

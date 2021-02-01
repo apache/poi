@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!--suppress DeprecatedClassUsageInspection -->
+<FindBugsFilter>
+	<Match>
+		<Bug code="EI,EI2" pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE,MS_PKGPROTECT,MS_MUTABLE_ARRAY"/>
+	</Match>
+
+	<Match>
+		<Class name="org.apache.poi.xslf.util.DummyGraphics2d"/>
+		<Bug code="FI" />
+	</Match>
+
+	<!-- things that were moved or are named equally on purpose -->
+        <!-- Classes that shadow an identically named class in Common SS should be deprecated and deleted -->
+	<Match>
+		<Or>
+			<Class name="org.apache.poi.hssf.extractor.ExcelExtractor"/>
+			<Class name="org.apache.poi.hssf.record.RecordFormatException"/>
+			<Class name="org.apache.poi.hssf.record.UnicodeString"/>
+			<Class name="org.apache.poi.hssf.usermodel.HeaderFooter"/>
+			<Class name="org.apache.poi.hssf.util.AreaReference"/>
+			<Class name="org.apache.poi.hssf.util.CellRangeAddress"/>
+			<Class name="org.apache.poi.hssf.util.CellRangeAddressList"/>
+			<Class name="org.apache.poi.hssf.util.CellReference"/>
+			<Class name="org.apache.poi.hssf.util.Region"/>
+			<Class name="org.apache.poi.hssf.util.PaneInformation"/>
+			<Class name="org.apache.poi.hwpf.usermodel.CharacterRun"/>
+			<Class name="org.apache.poi.sl.usermodel.Hyperlink"/>
+			<Class name="org.apache.poi.ss.usermodel.Hyperlink"/>
+			<Class name="org.apache.poi.xssf.model.IndexedUDFFinder"/>
+			<Class name="org.apache.poi.xdgf.exceptions.XDGFException"/>
+		</Or>
+		<Bug code="Nm" />
+	</Match>
+
+	<!-- ignore fields that correspond to the values in a H??F binary record -->
+	<Match>
+		<Class name="~org\.apache\.poi\.h..f\..*"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+		<Field name="~field_[12345].*" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFChart"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+		<Field name="chartTitleFormat" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hwmf.record.HwmfWindowing"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+		<Field name="count2" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.xwpf.usermodel.XWPFLatentStyles"/>
+		<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+		<Field name="styles" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hslf.blip.Metafile"/>
+		<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+		<Field name="compression" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hwmf.record.HwmfFont"/>
+		<Bug pattern="UUF_UNUSED_FIELD" />
+		<Or>
+			<Field name="family" />
+			<Field name="pitch" />
+		</Or>
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFCell"/>
+		<Or>
+			<Method name="setCellValue" params="double" />
+			<Method name="setCellValue" params="boolean" />
+			<Method name="setCellErrorValue" params="byte" />
+		</Or>
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFWorkbook"/>
+		<Method name="addPicture" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.atp.YearFrac"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.functions.FinanceFunction"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.functions.Offset"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.util.HeadRead"/>
+		<Method name="readData" params="java.io.InputStream,int" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+
+
+    <!-- invalid performance issues - e.g. see #57840 -->
+    <Match>
+        <Or>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFRow"/>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFSheet"/>
+        </Or>
+        <Bug pattern="DM_NUMBER_CTOR" />
+    </Match>
+
+	<!-- On purpose -->
+    <Match>
+        <Or>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFComment"/>
+        </Or>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" />
+    </Match>
+
+</FindBugsFilter>

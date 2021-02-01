@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="TBD" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The TBD is a substructure of the PAP. &lt;p&gt;Class and fields descriptions are quoted from
+        Microsoft Office Word 97-2007 Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc]
+    </author>
+    <fields>
+        <field type="byte" size="1" name="value" >
+            <bit number="0" mask="0x07" name="jc" description="Justification code">
+                <const type="byte" value="0" name="LEFT"/>
+                <const type="byte" value="1" name="CENTERED"/>
+                <const type="byte" value="2" name="RIGHT"/>
+                <const type="byte" value="3" name="DECIMAL"/>
+                <const type="byte" value="4" name="BAR"/>
+            </bit>
+            <bit number="0" mask="0x38" name="tlc" description="Tab leader code">
+                <const type="byte" value="0" name="NONE"/>
+                <const type="byte" value="1" name="DOTTED"/>
+                <const type="byte" value="2" name="HYPENATED"/>
+                <const type="byte" value="3" name="SINGLELINE"/>
+                <const type="byte" value="4" name="HEAVYLINE"/>
+                <const type="byte" value="5" name="MIDDLEDOT"/>
+            </bit>
+            <bit number="3" mask="0xc0" name="reserved" />
+        </field>
+    </fields>
+</record>

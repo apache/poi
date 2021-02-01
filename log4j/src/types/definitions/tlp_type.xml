@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="TLP" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Table Autoformat Look sPecifier (TLP). &lt;p&gt;Class and fields descriptions are
+        quoted from Microsoft Office Word 97-2007 Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc]
+    </author>
+    <fields>
+        <field type="short" size="2" name="itl"
+            description="Index to Word‘s table of table looks (see itl table below)"/>
+        <field type="byte" size="1" name="tlp_flags">
+            <bit number="0" mask="0x0001" name="fBorders"
+                description="When == 1, use the border properties from the selected table look"/>
+            <bit number="1" mask="0x0002" name="fShading"
+                description="When == 1, use the shading properties from the selected table look"/>
+            <bit number="2" mask="0x0004" name="fFont"
+                description="When == 1, use the font from the selected table look"/>
+            <bit number="3" mask="0x0008" name="fColor"
+                description="When == 1, use the color from the selected table look"/>
+            <bit number="4" mask="0x0010" name="fBestFit"
+                description="When == 1, do best fit from the selected table look"/>
+            <bit number="5" mask="0x0020" name="fHdrRows"
+                description="When == 1, apply properties from the selected table look to the header rows in the table"/>
+            <bit number="6" mask="0x0040" name="fLastRow"
+                description="When == 1, apply properties from the selected table look to the last row in the table"/>
+        </field>
+    </fields>
+</record>

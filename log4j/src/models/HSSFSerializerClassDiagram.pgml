@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE pgml SYSTEM "pgml.dtd">
+<pgml description="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram|-64--88-1-2-717d91:e7cd986e07:-7ffe"
+      name="HSSFSerializerClassDiagram"
+>
+  <group name="Fig0"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[32, 24, 457, 329]"
+       href="127-0-0-1-2264da:e955aac0a4:-7ffd"
+       shown="7"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig0.0"
+      x="32"
+      y="24"
+      width="457"
+      height="328"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig0.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig0.2"
+      context=""
+      x="32"
+      y="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog.italic"
+      textsize="9"
+    >POIFSSerializer</text>
+    <rectangle name="Fig0.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig0.4"
+      context=""
+      x="32"
+      y="44"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >-_output_stream : OutputStream = null
+-_locator : Locator = null
+-_open_elements : Stack = new Stack()
+-_filesystem : Filesystem = new Filesystem()</text>
+    <text name="Fig0.5"
+      context=""
+      x="32"
+      y="88"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+startPrefixMapping(in ignoredPrefix:String, in ignoredUri:String)
++endPrefixMapping(in ignoredPrefix:String)
++processingInstruction(in ignoredTarget:String, in ignoredData:String)
++skippedEntity(in ignoredName:String)
++startDTD(in ignoredName:String, in ignoredPublicId:String, in ignoredSystemId:String)
++endDTD()
++startEntity(in ignoredName:String)
++endEntity(in ignoredName:String)
++startCDATA()
++endCDATA()
++comment(in ignoredCh[]:char, in ignoredStart:int, in ignoredLength:int)
++shouldSetContentLength() : boolean
++setOutputStream(in out:OutputStream)
++setDocumentLocator(in locator:Locator)
++startDocument()
++endDocument()
++startElement(in namespaceURI:String, in localName:String, in qName:String, in atts:Attributes)
++endElement(in namespaceURI:String, in localName:String, in qName:String)
++characters(in ch[]:char, in start:int, in length:int)
++ignorableWhitespace(in ch[]:char, in start:int, in length:int)
+#getElementProcessorFactory() : ElementProcessorFactory
+#doLocalPreEndDocument()
+#doLocalPostEndDocument()
+#getFilesystem() : Filesystem
+#SAXExceptionFactory(in message:String, in e:Exception) : SAXException
+#SAXExceptionFactory(in message:String) : SAXException</text>
+  </group>
+  <group name="Fig1"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[32, 680, 203, 119]"
+       href="127-0-0-1-2264da:e957cbdec1:-7ffc"
+       shown="7"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig1.0"
+      x="32"
+      y="680"
+      width="203"
+      height="118"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig1.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig1.2"
+      context=""
+      x="32"
+      y="680"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >Attribute</text>
+    <rectangle name="Fig1.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig1.4"
+      context=""
+      x="32"
+      y="700"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >-_name : String
+-_value : String</text>
+    <text name="Fig1.5"
+      context=""
+      x="32"
+      y="724"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+getName() : String
++getValue() : String
++getValueAsInt() : int
++getValueAsShort() : short
++getValueAsLong() : long
++getValueAsBoolean() : boolean
++Attribute(in name:String, in value:String)</text>
+  </group>
+  <group name="Fig2"
+       description="org.argouml.uml.diagram.static_structure.ui.FigInterface[32, 600, 429, 67]"
+       href="127-0-0-1-2264da:e957cbdec1:-7fed"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig2.0"
+      x="33"
+      y="601"
+      width="427"
+      height="65"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig2.1"
+      x="32"
+      y="600"
+      width="429"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig2.2"
+      context=""
+      x="33"
+      y="601"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >&lt;&lt;Interface&gt;&gt;</text>
+    <text name="Fig2.3"
+      context=""
+      x="33"
+      y="611"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >ElementProcessor</text>
+    <text name="Fig2.4"
+      context=""
+      x="32"
+      y="623"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+initialize(in attributes[]:Attribute, in parent:ElementProcessor, in filesystem:Filesystem)
++acceptCharacters(in data[]:char)
++acceptWhitespaceCharacters(in data[]:char)
++endProcessing()</text>
+  </group>
+  <group name="Fig3"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[112, 368, 376, 105]"
+       href="127-0-0-1-2264da:e957cbdec1:-7fde"
+       shown="7"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig3.0"
+      x="112"
+      y="368"
+      width="376"
+      height="104"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig3.1"
+      context=""
+      x="10"
+      y="-30"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig3.2"
+      context=""
+      x="112"
+      y="368"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog.italic"
+      textsize="9"
+    >ElementProcessorFactory</text>
+    <rectangle name="Fig3.3"
+      x="10"
+      y="-25"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig3.4"
+      context=""
+      x="112"
+      y="388"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >-_element_processor_map : Map</text>
+    <text name="Fig3.5"
+      context=""
+      x="112"
+      y="408"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+createElementProcessor(in name:String) : ElementProcessor
+#addElementProcessorProgenitor(in name:String, in progenitor:Object)
+#lookupElementProcessorProgenitor(in name:String) : Object
+#doCreateElementProcessor(in progenitor:Object) : ElementProcessor
+#constructElementProcessor(in progenitor:Constructor) : ElementProcessor
+#createNewElementProcessorInstance(in progenitor:Class) : ElementProcessor</text>
+  </group>
+  <group name="Fig4"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[32, 528, 293, 61]"
+       href="127-0-0-1-2264da:e95e6c79c6:-7ffb"
+       shown="7"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig4.0"
+      x="32"
+      y="528"
+      width="293"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig4.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig4.2"
+      context=""
+      x="32"
+      y="528"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >HSSFSerializer</text>
+    <rectangle name="Fig4.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig4.4"
+      context=""
+      x="32"
+      y="548"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >-_element_processor_factory : HSSFElementProcessorFactory</text>
+    <text name="Fig4.5"
+      context=""
+      x="32"
+      y="568"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+getMimeType() : String</text>
+  </group>
+  <group name="Fig5"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[344, 552, 143, 20]"
+       href="127-0-0-1-32fb1e:e95f731f0f:-7ff7"
+       shown="1"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig5.0"
+      x="344"
+      y="552"
+      width="143"
+      height="20"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig5.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig5.2"
+      context=""
+      x="344"
+      y="552"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >HSSFElementProcessorFactory</text>
+    <rectangle name="Fig5.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig5.4"
+      context=""
+      x="344"
+      y="572"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig5.5"
+      context=""
+      x="344"
+      y="572"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+  </group>
+  <group name="Fig9"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[88, 488, 322, 20]"
+       href="127-0-0-1-5780d9:e9ab5b05d8:-7fee"
+       shown="1"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig9.0"
+      x="88"
+      y="488"
+      width="322"
+      height="20"
+      fill="1"
+      fillcolor="-16711681"
+      stroke="1"
+      strokecolor="-16711681"
+    />
+    <text name="Fig9.1"
+      context=""
+      x="88"
+      y="488"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig9.2"
+      context=""
+      x="88"
+      y="488"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >ElementProcessorFactory.CannotCreateElementProcessorException</text>
+    <rectangle name="Fig9.3"
+      x="88"
+      y="493"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig9.4"
+      context=""
+      x="88"
+      y="508"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig9.5"
+      context=""
+      x="88"
+      y="508"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+  </group>
+  <group name="Fig6"
+       description="org.argouml.uml.diagram.ui.FigGeneralization"
+       href="127-0-0-1-2264da:e95e6c79c6:-7ff9"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig4.0"
+      destPortFig="Fig0.0"
+      sourceFigNode="Fig4"
+      destFigNode="Fig0"
+    </private>
+    <path name="Fig6.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="56"
+              y="528" />
+      <lineto x="56"
+              y="352" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig7"
+       description="org.argouml.uml.diagram.ui.FigGeneralization"
+       href="127-0-0-1-32fb1e:e95f731f0f:-7ff6"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig5.0"
+      destPortFig="Fig3.0"
+      sourceFigNode="Fig5"
+      destFigNode="Fig3"
+    </private>
+    <path name="Fig7.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="447"
+              y="552" />
+      <lineto x="447"
+              y="472" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig8"
+       description="org.argouml.uml.diagram.ui.FigAssociation"
+       href="127-0-0-1-32fb1e:e95f731f0f:-7ff5"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig4.0"
+      destPortFig="Fig5.0"
+      sourceFigNode="Fig4"
+      destFigNode="Fig5"
+    </private>
+    <path name="Fig8.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="325"
+              y="560" />
+      <lineto x="344"
+              y="560" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+</pgml>

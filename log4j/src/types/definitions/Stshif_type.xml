@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="Stshif" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The Stshif structure specifies general stylesheet information. &lt;p&gt;Class and
+        fields descriptions are quoted from Microsoft Office Word 97-2007 Binary File Format and
+        [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </author>
+    <fields>
+        <field type="int" size="2" name="cstd"
+            description="An unsigned integer that specifies the count of elements in STSH.rglpstd. This value MUST be equal to or greater than 0x000F, and MUST be less than 0x0FFE"/>
+        <field type="int" size="2" name="cbSTDBaseInFile"
+            description="An unsigned integer that specifies the size, in bytes, of the Stdf structure. The Stdf structure contains an StdfBase structure that is followed by a StdfPost2000OrNone structure which contains an optional StdfPost2000 structure. This value MUST be 0x000A when the Stdf structure does not contain an StdfPost2000 structure and MUST be 0x0012 when the Stdf structure does contain an StdfPost2000 structure."/>
+        <field type="int" size="2" name="info3">
+            <bit mask="0x0001" name="fHasOriginalStyle" description="This value MUST be 1 and MUST be ignored"/>
+            <bit mask="0xFFFE" name="fReserved" description="This value MUST be zero and MUST be ignored"/>
+        </field>
+        <field type="int" size="2" name="stiMaxWhenSaved"
+            description="An unsigned integer that specifies a value that is 1 larger than the largest StdfBase.sti index of any application-defined style. This SHOULD be equal to the largest sti index that is defined in the application, incremented by 1"/>
+        <field type="int" size="2" name="istdMaxFixedWhenSaved"
+            description="An unsigned integer that specifies the count of elements at the start of STSH.rglpstd that are reserved for fixed-index application-defined styles. This value MUST be 0x000F"/>
+        <field type="int" size="2" name="nVerBuiltInNamesWhenSaved"
+            description="An unsigned integer that specifies the version number of the style names as defined by the application that writes the file"/>
+        <field type="short" size="2" name="ftcAsci"
+            description="A signed integer that specifies an operand value for the sprmCRgFtc0 for default document formatting"/>
+        <field type="short" size="2" name="ftcFE"
+            description="A signed integer that specifies an operand value for the sprmCRgFtc1 for default document formatting, as defined in the section Determining Formatting Properties"/>
+        <field type="short" size="2" name="ftcOther"
+            description="A signed integer that specifies an operand value for the sprmCRgFtc2 for default document formatting, as defined in the section Determining Formatting Properties"/>
+    </fields>
+</record>

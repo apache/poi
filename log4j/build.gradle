@@ -1,0 +1,453 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        // 2.x fails with "Could not get unknown property 'me'"
+        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.0"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Only add the plugin for Sonar if enabled
+if (project.hasProperty('enableSonar')) {
+    println 'Enabling Sonar support'
+    apply plugin: "org.sonarqube"
+}
+
+// For help converting an Ant build to a Gradle build, see
+// https://docs.gradle.org/current/userguide/ant.html
+
+configurations {
+    antLibs {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+}
+
+dependencies {
+    antLibs("org.junit.jupiter:junit-jupiter:5.7.0")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.9")
+}
+
+ant.taskdef(name: "junit",
+        classname: "org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask",
+        classpath: configurations.antLibs.asPath)
+
+wrapper {
+    gradleVersion = '6.8'
+}
+
+task adjustWrapperPropertiesFile {
+    doLast {
+        ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
+            fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
+        }
+        new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+        ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
+    }
+}
+wrapper.finalizedBy adjustWrapperPropertiesFile
+
+
+// helper method to download a jar file manually from an URL, e.g. XMLBeans 4.0.0
+def urlFile = { url, name ->
+    File file = new File("$buildDir/download/${name}.jar")
+    file.parentFile.mkdirs()
+    if (!file.exists()) {
+        new URL(url).withInputStream { downloadStream ->
+            file.withOutputStream { fileOut ->
+                fileOut << downloadStream
+            }
+        }
+    }
+    files(file.absolutePath)
+}
+
+/**
+
+ Define properties for all projects, including this one
+
+ */
+allprojects {
+    apply plugin: 'eclipse'
+}
+
+/**
+
+ Define things that are only necessary in sub-projects, but not in the master-project itself
+
+ */
+subprojects {
+    //Put instructions for each sub project, but not the master
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+
+    // See https://github.com/melix/japicmp-gradle-plugin
+    apply plugin: 'me.champeau.gradle.japicmp'
+
+    version = '5.0.1-SNAPSHOT'
+    ext {
+        bouncyCastleVersion = '1.67'
+        commonsCodecVersion = '1.15'
+        commonsCompressVersion = '1.20'
+        commonsMathVersion = '3.6.1'
+        japicmpversion = '5.0.0'
+        junitVersion = '5.7.0'
+        mockitoVersion = '3.6.0'
+        hamcrestVersion = '2.2'
+        slf4jVersion = '1.7.30'
+        xmlbeansVersion = '4.0.0'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://repository.apache.org/content/repositories/releases'
+        }
+    }
+
+    dependencies {
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.hamcrest:hamcrest:${hamcrestVersion}"
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': version
+        }
+    }
+
+    test {
+        // make XML test-results available for Jenkins CI
+        useJUnitPlatform()
+        reports {
+            junitXml.enabled = true
+        }
+
+        // Exclude some tests that are not actually tests or do not run cleanly on purpose
+        exclude '**/BaseTestBorderStyle.class'
+        exclude '**/BaseTestCellUtil.class'
+        exclude '**/TestUnfixedBugs.class'
+        exclude '**/TestOneFile.class'
+
+        // Exclude Test Suites
+        exclude '**/All*Tests.class'
+        exclude '**/HSSFTests.class'
+
+        // set heap size for the test JVM(s)
+        minHeapSize = "128m"
+        maxHeapSize = "768m"
+
+        // Specifying the local via system properties did not work, so we set them this way
+        jvmArgs '-Duser.language=en -Duser.country=US'
+
+        // show standard out and standard error of the test JVM(s) on the console
+        //testLogging.showStandardStreams = true
+
+        // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
+        systemProperties['user.dir'] = workingDir
+
+        systemProperties['POI.testdata.path'] = '../../test-data'
+
+        // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
+        systemProperties['java.locale.providers'] = 'JRE,CLDR'
+    }
+
+    jacoco {
+        toolVersion = '0.8.6'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+    }
+
+    // ensure the build-dir exists
+    projectDir.mkdirs()
+
+    if (project.hasProperty('enableSonar')) {
+        // See https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/ and
+        // https://docs.sonarqube.org/display/SONARQUBE52/Analyzing+with+SonarQube+Scanner+for+Gradle
+        // for documentation of properties.
+        //
+        // Some additional properties are currently set in the Jenkins-DSL, see jenksin/create_jobs.groovy
+        //
+        sonarqube {
+            properties {
+                // as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
+                // the root-folder as "basedir" for the projects
+                property "sonar.projectBaseDir", "$projectDir/../.."
+                // currently supported providers on Jenkins: "hg,git": property "sonar.scm.provider", "svn"
+
+                // the plugin seems to not detect our non-standard build-layout
+                property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
+                property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
+            }
+        }
+    }
+
+    task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
+        to = jar.archivePath
+        onlyModified = true
+        onlyBinaryIncompatibleModified = true
+        failOnModification = false
+        txtOutputFile = file("$buildDir/reports/japi.txt")
+        htmlOutputFile = file("$buildDir/reports/japi.html")
+    }
+}
+
+project('main') {
+    sourceSets.main.java.srcDirs = ['../../src/java']
+    sourceSets.main.resources.srcDirs = ['../../src/resources/main']
+    sourceSets.test.java.srcDirs = ['../../src/testcases']
+
+    dependencies {
+        compile "commons-codec:commons-codec:${commonsCodecVersion}"
+        compile 'commons-logging:commons-logging:1.2'
+        compile 'org.apache.commons:commons-collections4:4.4'
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+        compile 'javax.activation:activation:1.1.1'
+        compile 'com.zaxxer:SparseBitSet:1.2'
+
+        testCompile 'org.reflections:reflections:0.9.12'
+        testRuntime "org.slf4j:slf4j-simple:${slf4jVersion}"
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.main'
+        }
+    }
+
+    // Create a separate jar for test-code to depend on it in other projects
+    // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
+    task testJar(type: Jar, dependsOn: testClasses) {
+        baseName = "test-${project.archivesBaseName}"
+        from sourceSets.test.output
+    }
+
+    configurations {
+        tests
+    }
+
+    artifacts {
+        tests testJar
+    }
+
+    japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
+}
+
+project('ooxml') {
+
+    sourceSets.main.java.srcDirs = ['../../src/ooxml/java']
+    sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
+    sourceSets.test.java.srcDirs = ['../../src/ooxml/testcases']
+
+    configurations {
+        antdep
+    }
+
+    dependencies {
+        antdep 'org.apache.ant:ant:1.10.9'
+    }
+
+    // we need to ensure that the custom ant tasks are compiled before we import the build.xml file
+    ant.mkdir(dir: "../../build/poi-ant-contrib")
+    ant.javac(srcdir: "../../src/excelant/poi-ant-contrib"
+            , destdir: "../../build/poi-ant-contrib"
+            , classpath: configurations.antdep.asPath
+            , includeantruntime: "true"
+            , excludes: "Junit5Progress.java"
+    )
+
+    // for now import the ant-task for building the jars from build.xml
+    // we need to rename the tasks as e.g. task "jar" conflicts with :ooxml:jar
+    ant.importBuild('../../build.xml') { antTargetName ->
+        'ant-' + antTargetName
+    }
+    compileJava.dependsOn 'ant-compile-ooxml-xsds'
+
+    dependencies {
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile 'org.apache.commons:commons-collections4:4.4'
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
+        compile 'org.apache.santuario:xmlsec:2.2.0'
+        compile "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+        compile 'com.github.virtuald:curvesapi:1.06'
+        compile 'com.zaxxer:SparseBitSet:1.2'
+
+        // compile only, don't add it to our dist as it blows up the size
+        compile 'org.apache.xmlgraphics:batik-all:1.13'
+        compile 'xml-apis:xml-apis-ext:1.3.04'
+        compile 'org.apache.xmlgraphics:xmlgraphics-commons:2.4'
+
+        compile 'org.apache.pdfbox:pdfbox:2.0.22'
+        compile 'org.apache.pdfbox:fontbox:2.0.22'
+        compile 'de.rototor.pdfbox:graphics2d:0.30'
+
+        // for ooxml-lite, should we move this somewhere else?
+        compile "org.junit.jupiter:junit-jupiter:${junitVersion}"
+
+        compile project(':main')
+        compile project(':scratchpad')		// TODO: get rid of this dependency!
+        compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
+
+        testCompile 'org.xmlunit:xmlunit-core:2.8.0'
+        testCompile 'org.reflections:reflections:0.9.12'
+        testCompile project(path: ':main', configuration: 'tests')
+        testCompile 'org.openjdk.jmh:jmh-core:1.26'
+        testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.26'
+        testCompile 'com.google.guava:guava:30.0-jre'
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.ooxml'
+        }
+    }
+
+    japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
+
+    test {
+        // for some reason catching the OOM does not work when run from Gradle
+        exclude '**/MemoryUsage.class'
+    }
+}
+
+project('examples') {
+    sourceSets.main.java.srcDirs = ['../../src/examples/src']
+
+    dependencies {
+        compile project(':main')
+        compile project(':ooxml')
+        compile project(':scratchpad')
+
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+
+        compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
+        compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
+    }
+
+    japicmp.enabled = false
+}
+
+
+project('excelant') {
+    sourceSets.main.java.srcDirs = ['../../src/excelant/java']
+    sourceSets.main.resources.srcDirs = ['../../src/excelant/resources']
+    sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
+
+    dependencies {
+        compile 'org.apache.ant:ant:1.10.9'
+
+        compile project(':main')
+        compile project(':ooxml')
+
+        testCompile project(path: ':main', configuration: 'tests')
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
+        }
+    }
+
+    japicmp.baseline = "org.apache.poi:poi-excelant:${japicmpversion}@jar"
+}
+
+project('integrationtest') {
+    sourceSets.test.java.srcDirs = ['../../src/integrationtest']
+
+    dependencies {
+        compile 'org.apache.ant:ant:1.10.9'
+
+        compile project(':main')
+        compile project(':ooxml')
+        compile project(':scratchpad')
+        compile project(':examples')
+
+        testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+
+        testCompile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
+        testCompile files(this.project(':ooxml').sourceSets.test.runtimeClasspath)
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.integrationtest'
+        }
+    }
+
+    test {
+        // exclude these from the normal test-run
+        exclude '**/TestAllFiles.class'
+        exclude '**/*FileHandler.class'
+        exclude '**/RecordsStresser.class'
+    }
+
+    task integrationTest(type: Test) {
+        // these are just tests used during development of more test-code
+        exclude '**/*FileHandler.class'
+        exclude '**/RecordStresser.class'
+    }
+
+    japicmp.enabled = false
+}
+
+project('scratchpad') {
+    sourceSets.main.java.srcDirs = ['../../src/scratchpad/src']
+    sourceSets.main.resources.srcDirs = ['../../src/resources/scratchpad']
+    sourceSets.test.java.srcDirs = ['../../src/scratchpad/testcases']
+
+    dependencies {
+        compile project(':main')
+        compile "commons-codec:commons-codec:${commonsCodecVersion}"
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+
+        // cyclic-dependency here: compile project(':ooxml')
+
+        testCompile project(path: ':main', configuration: 'tests')
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
+        }
+    }
+
+    japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
+}

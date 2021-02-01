@@ -1,0 +1,75 @@
+# JaCoCo Agent
+sun.instrument.InstrumentationImpl.loadClassAndStartAgent
+org.jacoco.agent.rt.internal_14f7ee5.output.FileOutput.openFile
+
+# Ant Junit
+org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocumentBuilder
+
+# JVM
+sun.security.jca.ProviderConfig.doLoadProvider
+java.util.ResourceBundle.getBundle
+
+# Codepage support loads classes
+java.nio.charset.Charset.lookupViaProviders
+
+# Ant
+org.apache.tools.ant.Main.getAntVersion
+org.apache.tools.ant.taskdefs.Antlib.createAntlib
+
+# XML Parser
+com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.loadPropertiesFile
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+javax.xml.stream.FactoryFinder.findJarServiceProvider
+
+# XMLBeans
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
+com.sun.xml.internal.bind.v2.runtime.property.ArrayElementNodeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.AttributeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.SingleElementNodeProperty.<init>
+com.sun.xml.bind.v2.runtime.reflect.opt.AccessorInjector.tailor
+
+# JCA
+sun.security.jca.ProviderConfig.getProvider
+javax.crypto.JceSecurity.setupJurisdictionPolicies
+javax.crypto.Cipher.getMaxAllowedKeyLength
+
+# IntelliJ
+com.intellij.junit4.JUnit4TestRunnerUtil.<clinit>
+com.intellij.rt.coverage.instrumentation.AbstractIntellijClassfileTransformer.getOrLoadClassReader
+
+# OpenJPA/Derby (regression testing)
+org.apache.derby.impl.services.stream.SingleStream.PBmakeFileHPW
+org.apache.derby.impl.io.DirFile.getExclusiveFileLock
+org.apache.derby.impl.store.raw.data.RAFContainer.run
+org.apache.derby.impl.store.raw.log.LogToFile.run
+org.apache.derby.client.net.OpenSocketAction.run
+org.apache.openjpa.enhance.InstrumentationFactory.loadVMClass
+org.apache.openjpa.enhance.PCEnhancer.<init>
+org.apache.openjpa.lib.util.J2DoPrivHelper$7.run
+serp.bytecode.BCClass.read
+serp.util.Strings.toClass
+
+# Java
+sun.util.resources.LocaleData.getBundle
+sun.util.LocaleServiceProviderPool.<init>
+sun.util.calendar.LocalGregorianCalendar.getLocalGregorianCalendar
+sun.net.www.protocol.jar.JarURLConnection.getInputStream
+sun.text.normalizer.ICUData.getStream
+sun.font.T2KFontScaler.initNativeScaler
+sun.font.SunFontManager.loadFonts
+sun.font.FontManagerFactory.getInstance
+sun.font.TrueTypeFont.open
+sun.reflect.misc.MethodUtil.<clinit>
+java.util.logging.Logger.findSystemResourceBundle
+java.text.BreakIterator.getBundle
+sun.java2d.SunGraphicsEnvironment.<init>
+org.kohsuke.file_leak_detector.AgentMain.runHttpServer
+org.apache.log4j.FileAppender.setFile
+sun.launcher.LauncherHelper.validateMainClass
+sun.util.locale.provider.RuleBasedBreakIterator$1.run
+java.util.ServiceLoader$LazyIterator.hasNextService
+
+# other third party libs
+net.bytebuddy.dynamic.ClassFileLocator$ForClassLoader.locate

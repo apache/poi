@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<project name="POI Testbuild" default="run" basedir=".">
+
+    <description>Test-Ant file which verifies that the Apache POI distribution build sources can be compiled successfully.
+
+Before running this, you should execute the "assemble" target in the main build.xml to have the packaged files created correctly.
+    </description>
+
+    <property name="dist" value="../../build/dist"/>
+    <property name="build" value="../../build/distsourcebuild"/>
+
+    <target name="init" depends="">
+    </target>
+
+    <target name="run" depends="init,runSourceBuild,runCompileTest"/>
+
+    <target name="runSourceBuild" depends="init">
+        <!-- clean out old stuff in build-dir -->
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+
+        <!-- select latest built source zip -->
+        <pathconvert property="srcpackage">
+            <last>
+                <sort>
+                    <date xmlns="antlib:org.apache.tools.ant.types.resources.comparators"/>
+                    <resources>
+                        <fileset dir="${dist}">
+                            <include name="poi-src-*.zip"/>
+                        </fileset>
+                    </resources>
+                </sort>
+            </last>
+        </pathconvert>
+
+        <echo message="Found source package at ${srcpackage}"/>
+        <unzip src="${srcpackage}" dest="${build}" failOnEmptyArchive="true"/>
+
+        <!-- look for name of sub-dir, do this dynamically as it changes with every (beta|rc)-release -->
+        <pathconvert property="dirversion">
+            <dirset dir="${build}">
+                <include name="*"/>
+            </dirset>
+        </pathconvert>
+
+        <!-- copy over required libs to avoid re-downloading them always -->
+        <mkdir dir="${dirversion}/lib"/>
+        <copy todir="${dirversion}/lib">
+            <fileset dir="../../lib"/>
+        </copy>
+
+        <!-- finally call Ant on the extracted source to check if we can build the packages -->
+        <echo message="Building in temporary dir ${dirversion}/"/>
+        <ant dir="${dirversion}" target="assemble" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
+    </target>
+
+    <target name="runCompileTest" depends="init" description="Verify that we can compile most examples without including excelant or scratchpad jars">
+        <!-- clean out old stuff in build-dir -->
+        <delete dir="${build}" quiet="true" failonerror="false"/>
+        <!-- ... try again - on Windows, the JaCoCo ant task seems to keep files open and hence the lib directory can't be removed -->
+        <delete dir="${build}" quiet="true" failonerror="false"/>
+        <mkdir dir="${build}"/>
+
+        <!-- select latest built jar files without scratchpad.jar -->
+        <pathconvert property="jarpackage">
+            <sort>
+                <resources>
+                    <fileset dir="${dist}">
+                        <include name="**/poi-5.*.jar"/>
+                        <include name="**/poi-ooxml-5.*.jar"/>
+                        <include name="**/poi-ooxml-lite-5.*.jar"/>
+                        <exclude name="**/*-javadoc*"/>
+                        <exclude name="**/*-sources*"/>
+                    </fileset>
+                </resources>
+            </sort>
+        </pathconvert>
+
+        <fail message="Did not find jar packages looking in directory ${dist}">
+            <condition>
+                <or>
+                    <equals arg1="${jarpackage}" arg2=""/>
+                    <not>
+                        <isset property="jarpackage"/>
+                    </not>
+                </or>
+            </condition>
+        </fail>
+
+        <echo message="Found jar packages at ${jarpackage}, dist: ${dist}"/>
+        <path id="libs">
+            <fileset dir="../../lib/main" includes="*.jar"/>
+            <fileset dir="../../lib/ooxml" includes="*.jar"/>
+            <fileset dir="../../lib/main-tests">
+                <include name="junit*.jar"/>
+            </fileset>
+        </path>
+
+        <echo message="Compiling examples without linking to scratchpad.jar to ensure that only some specific ones require this jar"/>
+        <javac srcdir="../examples/src" destdir="${build}"
+               target="1.8" source="1.8" debug="true"
+               encoding="ASCII" fork="yes" includeantruntime="false"
+               excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,org/apache/poi/examples/hwmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
+               classpath="${jarpackage}" classpathref="libs">
+        </javac>
+
+        <!-- select latest built jar files with additionally scratchpad.jar -->
+        <pathconvert property="jarpackagescratchpad">
+            <sort>
+                <resources>
+                    <fileset dir="${dist}">
+                        <include name="**/poi-5.*.jar"/>
+                        <include name="**/poi-ooxml-5.*.jar"/>
+                        <include name="**/poi-ooxml-lite-5.*.jar"/>
+                        <include name="**/poi-scratchpad-5.*.jar"/>
+                        <exclude name="**/*-javadoc*"/>
+                        <exclude name="**/*-sources*"/>
+                    </fileset>
+                </resources>
+            </sort>
+        </pathconvert>
+
+        <echo message="Compiling all examples with the additional scratchpad.jar"/>
+        <javac srcdir="../examples/src" destdir="${build}"
+               target="1.8" source="1.8" debug="true"
+               encoding="ASCII" fork="yes" includeantruntime="false"
+               classpath="${jarpackagescratchpad}" classpathref="libs">
+        </javac>
+    </target>
+</project>

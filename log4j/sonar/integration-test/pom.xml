@@ -1,0 +1,122 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>5.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>integration-test</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apache POI integration test</name>
+
+    <build>
+        <plugins>
+            <!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+<!--                <version>${mavnen.plugin.resources.version}</version>-->
+                <executions>
+                    <execution>
+                        <id>copy-tests</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/test/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/integrationtest</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../../src/testcases</directory>
+                                    <includes>
+                                        <include>org/apache/poi/POIDataSamples.java</include>
+                                        <include>org/apache/poi/util/NullPrintStream.java</include>
+                                        <include>org/apache/poi/util/NullOutputStream.java</include>
+                                        <include>org/apache/poi/hssf/HSSFTestDataSamples.java</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- clean copied sources afterwards -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.plugin.clean.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>build</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+
+            <!-- set jvm parameters for surefire plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.plugin.surefire.version}</version>
+                <configuration>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
+                    <workingDirectory>../..</workingDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-examples</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.27</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.9</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
+    </dependencies>
+</project>
