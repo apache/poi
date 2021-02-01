@@ -17,9 +17,12 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -31,8 +34,8 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
@@ -53,9 +56,9 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public final class PicturesTable {
-    private static final POILogger LOG = POILogFactory.getLogger( PicturesTable.class );
+    private static final Logger LOG = LogManager.getLogger(PicturesTable.class);
 
-  static final int TYPE_IMAGE = 0x08;
+    static final int TYPE_IMAGE = 0x08;
   static final int TYPE_IMAGE_WORD2000 = 0x00;
   static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD = 0xA;
   static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD_WORD2000 = 0x2;
@@ -151,9 +154,9 @@ public final class PicturesTable {
    * @param run
    * @param fillBytes if true, Picture will be returned with filled byte array that represent picture's contents. If you don't want
    * to have that byte array in memory but only write picture's contents to stream, pass false and then use Picture.writeImageContent
-   * @see Picture#writeImageContent(java.io.OutputStream)
+   * @see Picture#writeImageContent(OutputStream)
    * @return a Picture object if picture exists for specified CharacterRun, null otherwise. PicturesTable.hasPicture is used to determine this.
-   * @see #hasPicture(org.apache.poi.hwpf.usermodel.CharacterRun)
+   * @see #hasPicture(CharacterRun)
    */
   public Picture extractPicture(CharacterRun run, boolean fillBytes) {
     if (hasPicture(run)) {
@@ -198,10 +201,7 @@ public final class PicturesTable {
                     }
                     catch ( Exception exc )
                     {
-                        LOG.log(
-                                POILogger.WARN,
-                                "Unable to load picture from BLIB record at offset #",
-                                Integer.valueOf( bse.getOffset() ), exc );
+                        LOG.atWarn().withThrowable(exc).log("Unable to load picture from BLIP record at offset #{}", box(bse.getOffset()));
                     }
                 }
           }

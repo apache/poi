@@ -48,7 +48,8 @@ import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * These are actually wrappers onto Escher drawings. Make use of
@@ -201,7 +202,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		// Wind on
 		int size = r.getRecordSize();
 		if(size < 8) {
-			LOG.log(POILogger.WARN, "Hit short DDF record at ", startPos, " - ", size);
+			LOG.atWarn().log("Hit short DDF record at {} - {}", box(startPos),box(size));
 		}
 
 		/*
@@ -211,7 +212,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		 * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
 		 */
 		if(size != escherBytes){
-			LOG.log(POILogger.WARN, "Record length=", escherBytes, " but getRecordSize() returned ", r.getRecordSize(), "; record: ", r.getClass());
+			LOG.atWarn().log("Record length={} but getRecordSize() returned {}; record: {}", box(escherBytes),box(r.getRecordSize()),r.getClass());
 			size = escherBytes;
 		}
 		startPos += size;

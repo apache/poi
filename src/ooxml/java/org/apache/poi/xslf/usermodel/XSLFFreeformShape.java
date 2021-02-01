@@ -27,14 +27,14 @@ import java.awt.geom.Rectangle2D;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -62,7 +62,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 public class XSLFFreeformShape extends XSLFAutoShape
     implements FreeformShape<XSLFShape,XSLFTextParagraph> {
 
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFFreeformShape.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFFreeformShape.class);
 
     /*package*/ XSLFFreeformShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
@@ -143,8 +143,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
         try {
             staxReader.close();
         } catch (XMLStreamException e) {
-            LOG.log(POILogger.WARN,
-                    "An error occurred while closing a Custom Geometry XML Stream Reader: " + e.getMessage());
+            LOG.atWarn().log("An error occurred while closing a Custom Geometry XML Stream Reader: {}", e.getMessage());
         }
 
         return custGeo;
@@ -177,7 +176,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
                         } else if (ch instanceof CTPath2DClose) {
                             addClosePath(path);
                         } else {
-                            LOG.log(POILogger.WARN, "can't handle path of type "+xo.getClass());
+                            LOG.atWarn().log("can't handle path of type {}", xo.getClass());
                         }
                     } while (cursor.toNextSibling());
                 }

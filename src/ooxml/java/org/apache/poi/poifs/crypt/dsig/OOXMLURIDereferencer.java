@@ -38,19 +38,19 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * JSR105 URI dereferencer for Office Open XML documents.
  */
 public class OOXMLURIDereferencer implements URIDereferencer {
 
-    private static final POILogger LOG = POILogFactory.getLogger(OOXMLURIDereferencer.class);
+    private static final Logger LOG = LogManager.getLogger(OOXMLURIDereferencer.class);
 
     private SignatureInfo signatureInfo;
     private URIDereferencer baseUriDereferencer;
@@ -77,7 +77,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
 
         PackagePart part = findPart(uri);
         if (part == null) {
-            LOG.log(POILogger.DEBUG, "cannot resolve, delegating to base DOM URI dereferencer", uri);
+            LOG.atDebug().log("cannot resolve {}, delegating to base DOM URI dereferencer", uri);
             return baseUriDereferencer.dereference(uriReference, context);
         }
 
@@ -105,11 +105,11 @@ public class OOXMLURIDereferencer implements URIDereferencer {
     }
 
     private PackagePart findPart(URI uri) {
-        LOG.log(POILogger.DEBUG, "dereference", uri);
+        LOG.atDebug().log("dereference: {}", uri);
 
         String path = uri.getPath();
         if (path == null || path.isEmpty()) {
-            LOG.log(POILogger.DEBUG, "illegal part name (expected)", uri);
+            LOG.atDebug().log("illegal part name (expected): {}", uri);
             return null;
         }
 
@@ -118,7 +118,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             ppn = PackagingURIHelper.createPartName(path);
             return signatureInfo.getOpcPackage().getPart(ppn);
         } catch (InvalidFormatException e) {
-            LOG.log(POILogger.WARN, "illegal part name (not expected)", uri);
+            LOG.atWarn().log("illegal part name (not expected) in {}", uri);
             return null;
         }
     }

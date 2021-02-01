@@ -25,6 +25,8 @@ import java.awt.geom.Rectangle2D;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -44,8 +46,6 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFEffectProperties;
@@ -61,7 +61,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 public abstract class XSLFSimpleShape extends XSLFShape
     implements SimpleShape<XSLFShape,XSLFTextParagraph> {
     private static final CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFSimpleShape.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFSimpleShape.class);
 
     /* package */XSLFSimpleShape(XmlObject shape, XSLFSheet sheet) {
         super(shape,sheet);
@@ -115,7 +115,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 return ((CTShapeProperties)xo).addNewXfrm();
             } else {
                 // ... group shapes have their own getXfrm()
-                LOG.log(POILogger.WARN, getClass() +" doesn't have xfrm element.");
+                LOG.atWarn().log("{} doesn't have xfrm element.", getClass());
                 return null;
             }
         }
@@ -715,8 +715,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 staxReader.close();
             }
             catch (XMLStreamException e) {
-                LOG.log(POILogger.WARN,
-                        "An error occurred while closing a Custom Geometry XML Stream Reader: " + e.getMessage());
+                LOG.atWarn().log("An error occurred while closing a Custom Geometry XML Stream Reader: {}", e.getMessage());
             }
         } else {
             geom = dict.get("rect");
@@ -1114,7 +1113,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     private static CTLineProperties getLn(XSLFShape shape, boolean create) {
         XmlObject pr = shape.getShapeProperties();
         if (!(pr instanceof CTShapeProperties)) {
-            LOG.log(POILogger.WARN, shape.getClass() +" doesn't have line properties");
+            LOG.atWarn().log("{} doesn't have line properties", shape.getClass());
             return null;
         }
 

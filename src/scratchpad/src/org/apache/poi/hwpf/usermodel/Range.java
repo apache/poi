@@ -18,9 +18,12 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.CHPX;
@@ -37,8 +40,6 @@ import org.apache.poi.util.DocumentFormatException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class is the central class of the HWPF object model. All properties that
@@ -53,9 +54,9 @@ import org.apache.poi.util.POILogger;
  */
 public class Range {
 
-    private static final POILogger LOG = POILogFactory.getLogger( Range.class );
+    private static final Logger LOG = LogManager.getLogger(Range.class);
 
-    /**
+	/**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
@@ -824,10 +825,8 @@ public class Range {
         initAll();
         if ( tableEndInclusive >= this._parEnd )
         {
-            LOG.log( POILogger.WARN, "The table's bounds ", "[",
-                    this._parStart, "; ", tableEndInclusive, ")",
-                    " fall outside of this Range paragraphs numbers [",
-                    this._parStart, "; ", this._parEnd, ")" );
+			LOG.atWarn().log("The table's bounds [{}; {}) fall outside of this Range paragraphs numbers [{}; {})",
+					this._parStart, box(tableEndInclusive),box(this._parStart),box(this._parEnd));
         }
 
         if ( tableEndInclusive < 0 )

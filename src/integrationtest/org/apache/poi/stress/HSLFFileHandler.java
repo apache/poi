@@ -23,13 +23,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SystemOutLogger;
 import org.junit.jupiter.api.Test;
 
 class HSLFFileHandler extends SlideShowHandler {
+
+    private static final Logger LOGGER = LogManager.getLogger(HSLFFileHandler.class);
+
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
@@ -64,12 +67,11 @@ class HSLFFileHandler extends SlideShowHandler {
 
         System.out.println("Testing " + files.length + " files");
 
-        POILogger logger = new SystemOutLogger();
         for(File file : files) {
             try {
                 testOneFile(file);
             } catch (Throwable e) {
-                logger.log(POILogger.WARN, "Failed to handle file ", file, e);
+                LOGGER.atWarn().withThrowable(e).log("Failed to handle file {}", file);
             }
         }
     }
@@ -77,7 +79,6 @@ class HSLFFileHandler extends SlideShowHandler {
     private void testOneFile(File file) throws Exception {
         System.out.println(file);
 
-        //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
         try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
         }
@@ -86,7 +87,7 @@ class HSLFFileHandler extends SlideShowHandler {
     }
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+        System.setProperty("log4j.configurationFile", "log4j2-console.xml");
         try (InputStream stream = new FileInputStream(args[0])) {
             new HSLFFileHandler().handleFile(stream, args[0]);
         }

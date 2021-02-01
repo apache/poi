@@ -19,12 +19,12 @@ package org.apache.poi.hmef.attribute;
 
 import java.nio.charset.Charset;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIStringAttribute extends MAPIAttribute {
-   private static final POILogger LOG = POILogFactory.getLogger(MAPIStringAttribute.class);
+   private static final Logger LOG = LogManager.getLogger(MAPIStringAttribute.class);
    private static final String CODEPAGE = "CP1252";
    private final String data;
 
@@ -77,7 +77,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
          return ((MAPIRtfAttribute)attr).getDataString();
       }
 
-      LOG.log(POILogger.WARN, "Warning, non string property found: ", attr);
+      LOG.atWarn().log("Warning, non string property found: {}", attr);
       return null;
   }
 }

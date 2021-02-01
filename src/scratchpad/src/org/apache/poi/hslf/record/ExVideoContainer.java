@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about external video data.
@@ -57,15 +58,17 @@ public final class ExVideoContainer extends RecordContainer {
 	private void findInterestingChildren() {
 
 		// First child should be the ExMediaAtom
-		if(_children[0] instanceof ExMediaAtom) {
-			mediaAtom = (ExMediaAtom)_children[0];
+		Record child = _children[0];
+		if(child instanceof ExMediaAtom) {
+			mediaAtom = (ExMediaAtom) child;
 		} else {
-			LOG.log(POILogger.ERROR, "First child record wasn't a ExMediaAtom, was of type ", _children[0].getRecordType());
+			LOG.atError().log("First child record wasn't a ExMediaAtom, was of type {}", box(child.getRecordType()));
 		}
-        if(_children[1] instanceof CString) {
-            pathAtom = (CString)_children[1];
+		child = _children[1];
+		if(child instanceof CString) {
+            pathAtom = (CString) child;
         } else {
-            LOG.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
+            LOG.atError().log("Second child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }
 	}
 

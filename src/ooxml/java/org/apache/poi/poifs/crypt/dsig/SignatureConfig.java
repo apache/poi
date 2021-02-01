@@ -44,6 +44,8 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -60,8 +62,6 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.xml.security.signature.XMLSignature;
 
@@ -76,7 +76,7 @@ public class SignatureConfig {
 
     public static final String SIGNATURE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
-    private static final POILogger LOG = POILogFactory.getLogger(SignatureConfig.class);
+    private static final Logger LOG = LogManager.getLogger(SignatureConfig.class);
     private static final String DigestMethod_SHA224 = "http://www.w3.org/2001/04/xmldsig-more#sha224";
     private static final String DigestMethod_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
     private static final String XMLSEC_SANTUARIO = "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI";
@@ -350,7 +350,7 @@ public class SignatureConfig {
             try {
                 this.executionTime = fmt.parse(executionTime);
             } catch (ParseException e) {
-                LOG.log(POILogger.WARN, "Illegal execution time: ", executionTime);
+                LOG.atWarn().log("Illegal execution time: {}. Must be formatted as " + SIGNATURE_TIME_FORMAT, executionTime);
             }
         }
     }

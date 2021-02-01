@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ByteChunk;
 import org.apache.poi.hsmf.datatypes.ByteChunkDeferred;
@@ -46,8 +48,6 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Processes a POIFS of a .msg file into groups of Chunks, such as
@@ -55,7 +55,7 @@ import org.apache.poi.util.POILogger;
  * data and so on.
  */
 public final class POIFSChunkParser {
-    private static final POILogger LOG = POILogFactory.getLogger(POIFSChunkParser.class);
+    private static final Logger LOG = LogManager.getLogger(POIFSChunkParser.class);
 
     private POIFSChunkParser() {}
 
@@ -149,7 +149,7 @@ public final class POIFSChunkParser {
             try (DocumentInputStream inp = new DocumentInputStream((DocumentNode) entry)) {
                 chunk.readValue(inp);
             } catch (IOException e) {
-                LOG.log(POILogger.ERROR, "Error reading from part ", entry.getName(), e);
+                LOG.atError().withThrowable(e).log("Error reading from part {}", entry.getName());
             }
         }
 
@@ -234,7 +234,7 @@ public final class POIFSChunkParser {
                     return new StringChunk(namePrefix, chunkId, type);
                 }
                 // Type of an unsupported type! Skipping...
-                LOG.log(POILogger.WARN, "UNSUPPORTED PROP TYPE ", entryName);
+                LOG.atWarn().log("UNSUPPORTED PROP TYPE {}", entryName);
                 return null;
             }
         }
@@ -249,7 +249,7 @@ public final class POIFSChunkParser {
             try {
                 multiValueIdx = Long.parseLong(mvidxstr) & 0xFFFFFFFFL;
             } catch (NumberFormatException ignore) {
-                LOG.log(POILogger.WARN, "Can't read multi value idx from entry ", entry.getName());
+                LOG.atWarn().log("Can't read multi value idx from entry {}", entry.getName());
             }
         }
 
@@ -270,7 +270,7 @@ public final class POIFSChunkParser {
                 chunk = new StringChunk(namePrefix, chunkId, type);
             } else {
                 // Type of an unsupported multivalued type! Skipping...
-                LOG.log(POILogger.WARN, "Unsupported multivalued prop type for entry ", entry.getName());
+                LOG.atWarn().log("Unsupported multivalued prop type for entry {}", entry.getName());
                 return null;
             }
             mc.addChunk((int) multiValueIdx, chunk);

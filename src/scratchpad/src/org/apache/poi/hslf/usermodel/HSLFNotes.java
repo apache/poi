@@ -20,12 +20,12 @@ package org.apache.poi.hslf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Placeholder;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class represents a slide's notes in a PowerPoint Document. It
@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
  */
 
 public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFNotes.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFNotes.class);
 
     private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTe
         }
 
         if (_paragraphs.isEmpty()) {
-            LOG.log(POILogger.WARN, "No text records found for notes sheet");
+            LOG.atWarn().log("No text records found for notes sheet");
         }
     }
 

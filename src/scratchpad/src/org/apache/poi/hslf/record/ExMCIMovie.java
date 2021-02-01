@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about a movie stored externally.
@@ -69,10 +70,11 @@ public class ExMCIMovie extends RecordContainer { // TODO - instantiable supercl
     private void findInterestingChildren() {
 
         // First child should be the ExVideoContainer
-        if (_children[0] instanceof ExVideoContainer) {
-            exVideo = (ExVideoContainer) _children[0];
+        final Record child = _children[0];
+        if (child instanceof ExVideoContainer) {
+            exVideo = (ExVideoContainer) child;
         } else {
-            LOG.log(POILogger.ERROR, "First child record wasn't a ExVideoContainer, was of type ", _children[0].getRecordType());
+            LOG.atError().log("First child record wasn't a ExVideoContainer, was of type {}", box(child.getRecordType()));
         }
     }
 

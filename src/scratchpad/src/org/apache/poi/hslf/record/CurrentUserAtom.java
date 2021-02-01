@@ -20,6 +20,7 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP95_DOCUMENT;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -35,8 +38,6 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -46,7 +47,7 @@ import org.apache.poi.util.StringUtil;
  */
 public class CurrentUserAtom
 {
-	private static final POILogger LOG = POILogFactory.getLogger(CurrentUserAtom.class);
+	private static final Logger LOG = LogManager.getLogger(CurrentUserAtom.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
@@ -177,7 +178,7 @@ public class CurrentUserAtom
 		long usernameLen = LittleEndian.getUShort(_contents,20);
 		if(usernameLen > 512) {
 			// Handle the case of it being garbage
-			LOG.log(POILogger.WARN, "Warning - invalid username length ", usernameLen, " found, treating as if there was no username set");
+			LOG.atWarn().log("Invalid username length {} found, treating as if there was no username set", box(usernameLen));
 			usernameLen = 0;
 		}
 

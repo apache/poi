@@ -24,15 +24,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class TestListParts {
-    private static final POILogger LOG = POILogFactory.getLogger(TestListParts.class);
+    private static final Logger LOG = LogManager.getLogger(TestListParts.class);
 
 	private TreeMap<PackagePartName, String> expectedValues;
 
@@ -91,7 +91,7 @@ public final class TestListParts {
 
 			for (PackagePart part : p.getParts()) {
 				values.put(part.getPartName(), part.getContentType());
-				LOG.log(POILogger.DEBUG, part.getPartName());
+				LOG.atDebug().log(part.getPartName());
 			}
 
 			// Compare expected values with values return by the package

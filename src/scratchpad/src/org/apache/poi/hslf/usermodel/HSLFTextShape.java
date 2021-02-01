@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherPropertyTypes;
@@ -54,8 +56,6 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -63,7 +63,7 @@ import org.apache.poi.util.Units;
  */
 public abstract class HSLFTextShape extends HSLFSimpleShape
 implements TextShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFTextShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFTextShape.class);
 
     /**
      * How to anchor the text
@@ -324,7 +324,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public Rectangle2D resizeToFitText(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.) {
-            LOG.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
+            LOG.atWarn().log("Width of shape wasn't set. Defaulting to 200px");
             anchor.setRect(anchor.getX(), anchor.getY(), 200., anchor.getHeight());
             setAnchor(anchor);
         }
@@ -341,7 +341,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
     * Returns the type of the text, from the TextHeaderAtom.
     * Possible values can be seen from TextHeaderAtom
-    * @see org.apache.poi.hslf.record.TextHeaderAtom
+    * @see TextHeaderAtom
     */
     public int getRunType() {
         getEscherTextboxWrapper();
@@ -356,7 +356,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     * Changes the type of the text. Values should be taken
     *  from TextHeaderAtom. No checking is done to ensure you
     *  set this to a valid value!
-    * @see org.apache.poi.hslf.record.TextHeaderAtom
+    * @see TextHeaderAtom
     */
     public void setRunType(int type) {
         getEscherTextboxWrapper();
@@ -641,7 +641,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             }
 
             if (_paragraphs.isEmpty()) {
-                LOG.log(POILogger.WARN, "TextRecord didn't contained any text lines");
+                LOG.atWarn().log("TextRecord didn't contained any text lines");
             }
         }
 

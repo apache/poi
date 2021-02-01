@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -38,20 +40,20 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 @Beta
 public class AbstractWordUtils
 {
     static final String EMPTY = "";
 
-    private static final POILogger LOG = POILogFactory.getLogger( AbstractWordUtils.class );
+    private static final Logger LOG = LogManager.getLogger(AbstractWordUtils.class);
 
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
@@ -417,7 +419,7 @@ public class AbstractWordUtils
         case 2057:
             return "en-uk";
         default:
-            LOG.log( POILogger.WARN, "Uknown or unmapped language code: ", languageCode);
+            LOG.atWarn().log("Unknown or unmapped language code: {}", box(languageCode));
             return EMPTY;
         }
     }
@@ -426,7 +428,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-        	LOG.log( POILogger.INFO, "NYI: toListItemNumberLabel(): ", format );
+        	LOG.atInfo().log("NYI: toListItemNumberLabel(): {}", box(format));
 
         return String.valueOf( number );
     }

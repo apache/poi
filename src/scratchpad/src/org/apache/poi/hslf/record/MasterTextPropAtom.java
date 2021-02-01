@@ -31,7 +31,6 @@ import org.apache.poi.hslf.model.textproperties.IndentProp;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * Specifies the Indent Level for the text
@@ -85,7 +84,7 @@ public final class MasterTextPropAtom extends RecordAtom {
         try {
             read();
         } catch (Exception e){
-            LOG.log(POILogger.ERROR, "Failed to parse MasterTextPropAtom", e);
+            LOG.atError().withThrowable(e).log("Failed to parse MasterTextPropAtom");
         }
     }
 

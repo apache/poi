@@ -42,6 +42,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -59,8 +61,6 @@ import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Represents a container that can store multiple data objects.
@@ -70,7 +70,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Logger.
 	 */
-    private static final POILogger LOG = POILogFactory.getLogger(OPCPackage.class);
+    private static final Logger LOG = LogManager.getLogger(OPCPackage.class);
 
 	/**
 	 * Default package access.
@@ -442,14 +442,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 
 		if (this.packageAccess == PackageAccess.READ) {
-			LOG.log(POILogger.WARN,
-			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
+			LOG.atWarn().log("The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead!");
 			revert();
 			return;
 		}
 		if (this.contentTypeManager == null) {
-		    LOG.log(POILogger.WARN,
-		            "Unable to call close() on a package that hasn't been fully opened yet");
+		    LOG.atWarn().log("Unable to call close() on a package that hasn't been fully opened yet");
 			revert();
 		    return;
 		}
@@ -559,7 +557,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *
      * @throws InvalidOperationException
      *             Throws if a writing operation is done on a read only package.
-     * @see org.apache.poi.openxml4j.opc.PackageAccess
+     * @see PackageAccess
      */
     void throwExceptionIfReadOnly() throws InvalidOperationException {
         if (packageAccess == PackageAccess.READ) {
@@ -574,7 +572,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * right.
 	 *
 	 * @throws InvalidOperationException if a read operation is done on a write only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
+	 * @see PackageAccess
 	 */
 	void throwExceptionIfWriteOnly() throws InvalidOperationException {
 		if (packageAccess == PackageAccess.WRITE) {
@@ -748,7 +746,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 					if (!hasCorePropertiesPart) {
 						hasCorePropertiesPart = true;
 					} else {
-					   LOG.log(POILogger.WARN, "OPC Compliance error [M4.1]: " +
+					   LOG.atWarn().log("OPC Compliance error [M4.1]: " +
 					   		"there is more than one core properties relationship in the package! " +
 					   		"POI will use only the first, but other software may reject this file.");
 					}
@@ -772,9 +770,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 							needCorePropertiesPart = false;
 						}
 					} catch (IOException ioe) {
-						LOG.log(POILogger.WARN, "Unmarshall operation : IOException for "
-								+ part._partName);
-						continue;
+						LOG.atWarn().log("Unmarshall operation : IOException for {}", part._partName);
 					} catch (InvalidOperationException invoe) {
 						throw new InvalidFormatException(invoe.getMessage(), invoe);
 					}
@@ -1005,9 +1001,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			try {
 				sourcePartName = PackagingURIHelper.createPartName(sourceURI);
 			} catch (InvalidFormatException e) {
-				LOG
-						.log(POILogger.ERROR, "Part name URI '", sourceURI,
-								"' is not valid ! This message is not intended to be displayed !");
+				LOG.atError().log("Part name URI '{}' is not valid! This message is not intended to be displayed!", sourceURI);
 				return;
 			}
 			if (sourcePartName.getURI().equals(
@@ -1109,10 +1103,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				this.deletePartRecursive(targetPartName);
 			}
 		} catch (InvalidFormatException e) {
-			LOG.log(POILogger.WARN, "An exception occurs while deleting part '"
-					+ partName.getName()
-					+ "'. Some parts may remain in the package. - "
-					+ e.getMessage());
+			LOG.atWarn().withThrowable(e).log("An exception occurs while deleting part '{}'. Some parts may remain in the package.", partName.getName());
 			return;
 		}
 		// Remove the relationships part
@@ -1226,8 +1217,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param relationshipType
 	 *            Type of relationship.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
-	 *      java.lang.String)
+	 * @see RelationshipSource#addExternalRelationship(String,
+	 *      String)
 	 */
 	@Override
     public PackageRelationship addExternalRelationship(String target,
@@ -1249,8 +1240,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
-	 *      java.lang.String)
+	 * @see RelationshipSource#addExternalRelationship(String,
+	 *      String)
 	 */
 	@Override
     public PackageRelationship addExternalRelationship(String target,
@@ -1357,7 +1348,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
+	 * @see RelationshipSource#getRelationship(String)
 	 */
 	@Override
     public PackageRelationship getRelationship(String id) {
@@ -1365,7 +1356,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
+	 * @see RelationshipSource#hasRelationships()
 	 */
 	@Override
     public boolean hasRelationships() {
@@ -1373,7 +1364,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
+	 * @see RelationshipSource#isRelationshipExists(PackageRelationship)
 	 */
 	@Override
     public boolean isRelationshipExists(PackageRelationship rel) {
@@ -1397,8 +1388,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			partMarshallers.put(new ContentType(contentType), marshaller);
 		} catch (InvalidFormatException e) {
-			LOG.log(POILogger.WARN, "The specified content type is not valid: '"
-					+ e.getMessage() + "'. The marshaller will not be added !");
+			LOG.atWarn().log("The specified content type is not valid: '{}'. The marshaller will not be added !", e.getMessage());
 		}
 	}
 
@@ -1415,9 +1405,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			partUnmarshallers.put(new ContentType(contentType), unmarshaller);
 		} catch (InvalidFormatException e) {
-			LOG.log(POILogger.WARN, "The specified content type is not valid: '"
-					+ e.getMessage()
-					+ "'. The unmarshaller will not be added !");
+			LOG.atWarn().log("The specified content type is not valid: '{}'. The unmarshaller will not be added !", e.getMessage());
 		}
 	}
 

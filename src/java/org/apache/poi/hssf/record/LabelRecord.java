@@ -20,20 +20,22 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
+
+import static org.apache.logging.log4j.util.Unbox.box;
+import static org.apache.poi.util.HexDump.toHex;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell...
  * Don't use this (except to read), use LabelSST instead
  *
- * @see org.apache.poi.hssf.record.LabelSSTRecord
+ * @see LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
-    private static final POILogger LOG = POILogFactory.getLogger(LabelRecord.class);
+    private static final Logger LOG = LogManager.getLogger(LabelRecord.class);
 
     public static final short sid = 0x0204;
 
@@ -77,10 +79,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
         }
 
         if (in.remaining() > 0) {
-           LOG.log(POILogger.INFO,
-                   "LabelRecord data remains: ", in.remaining(),
-                           " : ", HexDump.toHex(in.readRemainder())
-           );
+            LOG.atInfo().log("LabelRecord data remains: {} : {}", box(in.remaining()), toHex(in.readRemainder()));
         }
     }
 

@@ -22,15 +22,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 public class HWPFTestDataSamples {
 
-    private static final POILogger LOG = POILogFactory.getLogger( HWPFTestDataSamples.class );
+    private static final Logger LOG = LogManager.getLogger(HWPFTestDataSamples.class);
 
     public static HWPFDocument openSampleFile(String sampleFileName) {
         try {
@@ -65,16 +67,13 @@ public class HWPFTestDataSamples {
                 final long endUnzip = System.currentTimeMillis();
                 byte[] byteArray = baos.toByteArray();
 
-                LOG.log(POILogger.DEBUG, "Unzipped in ",
-                        Long.valueOf(endUnzip - start), " ms -- ",
-                        Long.valueOf(byteArray.length), " byte(s)");
+                LOG.atDebug().log("Unzipped in {} ms -- {} byte(s)", box(endUnzip - start),box(byteArray.length));
 
                 ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
                 HWPFDocument doc = new HWPFDocument(bais);
                 final long endParse = System.currentTimeMillis();
 
-                LOG.log(POILogger.DEBUG, "Parsed in ",
-                        Long.valueOf(endParse - start), " ms");
+                LOG.atDebug().log("Parsed in {} ms", box(endParse - start));
 
                 return doc;
             }

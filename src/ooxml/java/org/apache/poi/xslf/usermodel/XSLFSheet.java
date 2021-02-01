@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.zaxxer.sparsebits.SparseBitSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -50,8 +52,6 @@ import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlCursor;
@@ -73,7 +73,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
 implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
-    private static POILogger LOG = POILogFactory.getLogger(XSLFSheet.class);
+    private static Logger LOG = LogManager.getLogger(XSLFSheet.class);
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -122,7 +122,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     @SuppressWarnings("WeakerAccess")
     protected void registerShapeId(final int shapeId) {
         if (shapeIds.get(shapeId)) {
-            LOG.log(POILogger.WARN, "shape id "+shapeId+" has been already used.");
+            LOG.atWarn().log("shape id {} has been already used.", box(shapeId));
         }
         shapeIds.set(shapeId);
     }
@@ -130,7 +130,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     @SuppressWarnings("WeakerAccess")
     protected void deregisterShapeId(final int shapeId) {
         if (!shapeIds.get(shapeId)) {
-            LOG.log(POILogger.WARN, "shape id "+shapeId+" hasn't been registered.");
+            LOG.atWarn().log("shape id {} hasn't been registered.", box(shapeId));
         }
         shapeIds.clear(shapeId);
     }
@@ -168,7 +168,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
                             CTGroupShape grp = CTGroupShape.Factory.parse(cur.newXMLStreamReader());
                             shapes.addAll(buildShapes(grp, parent));
                         } catch (XmlException e) {
-                            LOG.log(POILogger.DEBUG, "unparsable alternate content", e);
+                            LOG.atDebug().withThrowable(e).log("unparsable alternate content");
                         }
                     }
                     cur.pop();
@@ -726,7 +726,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @since POI 4.1.0
      */
     public void addChart(XSLFChart chart) {
-        Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y,
+        Rectangle2D rect2D = new Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y,
                 XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
 
         this.addChart(chart, rect2D);

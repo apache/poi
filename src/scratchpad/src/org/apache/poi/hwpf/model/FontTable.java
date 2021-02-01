@@ -20,12 +20,12 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * FontTable or in MS terminology sttbfffn is a common data structure written in all
@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class FontTable
 {
-    private static final POILogger LOG = POILogFactory.getLogger(FontTable.class);
+    private static final Logger LOG = LogManager.getLogger(FontTable.class);
     private short _stringCount;// how many strings are included in the string table
     private short _extraDataSz;// size in bytes of the extra data
 
@@ -93,7 +93,7 @@ public final class FontTable
     {
         if(chpFtc >= _stringCount)
         {
-            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.atInfo().log("Mismatch in chpFtc with stringCount");
             return null;
         }
 
@@ -104,7 +104,7 @@ public final class FontTable
     {
         if(chpFtc >= _stringCount)
         {
-            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.atInfo().log("Mismatch in chpFtc with stringCount");
             return null;
         }
 

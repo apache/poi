@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class represents the metadata of a link in a slide/notes/etc.
@@ -61,7 +60,7 @@ public class InteractiveInfo extends RecordContainer {
 	private void findInterestingChildren() {
 		// First child should be the InteractiveInfoAtom
 	    if (_children == null || _children.length == 0 || !(_children[0] instanceof InteractiveInfoAtom)) {
-	        LOG.log(POILogger.WARN, "First child record wasn't a InteractiveInfoAtom - leaving this atom in an invalid state...");
+	        LOG.atWarn().log("First child record wasn't a InteractiveInfoAtom - leaving this atom in an invalid state...");
 	        return;
 	    }
 

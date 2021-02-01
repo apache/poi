@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -47,8 +50,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,7 @@ import org.junit.jupiter.api.Test;
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.
  */
 public abstract class BaseTestBugzillaIssues {
-    private static final POILogger LOG = POILogFactory.getLogger(BaseTestBugzillaIssues.class);
+    private static final Logger LOG = LogManager.getLogger(BaseTestBugzillaIssues.class);
 
     private static final String TEST_32 = "Some text with 32 characters to ";
     private static final String TEST_255 = "Some very long text that is exactly 255 characters, which are allowed here, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla.....";
@@ -1387,7 +1388,7 @@ public abstract class BaseTestBugzillaIssues {
         // Create a workbook
         try (Workbook wb = _testDataProvider.createWorkbook(nrows+1)) {
             final Sheet sh = wb.createSheet();
-            LOG.log(POILogger.DEBUG, wb.getClass().getName(), " column autosizing timing...");
+            LOG.atDebug().log("{} column autosizing timing...", wb.getClass().getName());
 
             final long t0 = time();
             _testDataProvider.trackAllColumnsForAutosizing(sh);
@@ -1400,28 +1401,24 @@ public abstract class BaseTestBugzillaIssues {
             }
             final double populateSheetTime = delta(t0);
             final double populateSheetTimePerCell_ns = (1000000 * populateSheetTime / (nrows * ncols));
-            if (LOG.check(POILogger.DEBUG)) {
-                LOG.log(POILogger.DEBUG, "Populate sheet time: ", populateSheetTime, " ms (", populateSheetTimePerCell_ns, " ns/cell)");
+            LOG.atDebug().log("Populate sheet time: {} ms ({} ns/cell)", populateSheetTime, populateSheetTimePerCell_ns);
 
-                LOG.log(POILogger.DEBUG, "Autosizing...");
-            }
+            LOG.atDebug().log("Autosizing...");
             final long t1 = time();
             for (int c = 0; c < ncols; c++) {
                 final long t2 = time();
                 sh.autoSizeColumn(c);
-                LOG.log(POILogger.DEBUG, "Column ", c, " took ", delta(t2), " ms");
+                LOG.atDebug().log("Column {} took {} ms", box(c),delta(t2));
             }
             final double autoSizeColumnsTime = delta(t1);
             final double autoSizeColumnsTimePerColumn = autoSizeColumnsTime / ncols;
             final double bestFitWidthTimePerCell_ns = 1000000 * autoSizeColumnsTime / (ncols * nrows);
 
-            if (LOG.check(POILogger.DEBUG)) {
-                LOG.log(POILogger.DEBUG, "Auto sizing columns took a total of ", autoSizeColumnsTime, " ms (", autoSizeColumnsTimePerColumn, " ms per column)");
-                LOG.log(POILogger.DEBUG, "Best fit width time per cell: ", bestFitWidthTimePerCell_ns, " ns");
-            }
+            LOG.atDebug().log("Auto sizing columns took a total of {} ms ({} ms per column)", autoSizeColumnsTime, autoSizeColumnsTimePerColumn);
+            LOG.atDebug().log("Best fit width time per cell: {} ns", bestFitWidthTimePerCell_ns);
 
             final double totalTime_s = (populateSheetTime + autoSizeColumnsTime) / 1000;
-            LOG.log(POILogger.DEBUG, "Total time: ", totalTime_s, " s");
+            LOG.atDebug().log("Total time: {} s", totalTime_s);
         }
 
         //if (bestFitWidthTimePerCell_ns > 50000) {

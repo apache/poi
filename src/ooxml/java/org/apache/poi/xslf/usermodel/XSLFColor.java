@@ -22,6 +22,8 @@ import java.awt.Color;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
@@ -29,8 +31,6 @@ import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 @Beta
 @Internal
 public class XSLFColor {
-    private static final POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
+    private static final Logger LOGGER = LogManager.getLogger(XSLFColor.class);
     private static final QName VAL_ATTR = new QName("val");
 
     private final XmlObject _xmlObject;
@@ -187,7 +187,7 @@ public class XSLFColor {
     @Internal
     protected void setColor(Color color) {
         if (!(_xmlObject instanceof CTSolidColorFillProperties)) {
-            LOGGER.log(POILogger.ERROR, "XSLFColor.setColor currently only supports CTSolidColorFillProperties");
+            LOGGER.atError().log("XSLFColor.setColor currently only supports CTSolidColorFillProperties");
             return;
         }
         CTSolidColorFillProperties fill = (CTSolidColorFillProperties)_xmlObject;

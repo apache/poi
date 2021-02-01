@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
@@ -27,13 +29,13 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Class for code common to {@link XSSFRowShifter} and {@link XSSFColumnShifter}
@@ -42,7 +44,7 @@ import java.util.List;
  */
 @Internal
 /*private*/ final class XSSFRowColShifter {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFRowColShifter.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFRowColShifter.class);
 
     private XSSFRowColShifter() { /*no instances for static classes*/}
 
@@ -151,7 +153,7 @@ import java.util.List;
             return shiftedFmla;
         } catch (FormulaParseException fpe) {
             // Log, but don't change, rather than breaking
-            LOG.log(POILogger.WARN, "Error shifting formula on row ", row.getRowNum(), fpe);
+            LOG.atWarn().withThrowable(fpe).log("Error shifting formula on row {}", box(row.getRowNum()));
             return formula;
         }
     }

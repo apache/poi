@@ -24,6 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
@@ -49,9 +50,9 @@ import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xmlbeans.XmlException;
@@ -77,7 +78,7 @@ public class RelationshipTransformService extends TransformService {
 
     private final List<String> sourceIds;
 
-    private static final POILogger LOG = POILogFactory.getLogger(RelationshipTransformService.class);
+    private static final Logger LOG = LogManager.getLogger(RelationshipTransformService.class);
 
     /**
      * Relationship Transform parameter specification class.
@@ -107,14 +108,14 @@ public class RelationshipTransformService extends TransformService {
 
     public RelationshipTransformService() {
         super();
-        LOG.log(POILogger.DEBUG, "constructor");
+        LOG.atDebug().log("constructor");
         this.sourceIds = new ArrayList<>();
     }
 
     /**
      * Register the provider for this TransformService
      *
-     * @see javax.xml.crypto.dsig.TransformService
+     * @see TransformService
      */
     public static synchronized void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
@@ -127,7 +128,7 @@ public class RelationshipTransformService extends TransformService {
 
     @Override
     public void init(TransformParameterSpec params) throws InvalidAlgorithmParameterException {
-        LOG.log(POILogger.DEBUG, "init(params)");
+        LOG.atDebug().log("init(params)");
         if (!(params instanceof RelationshipTransformParameterSpec)) {
             throw new InvalidAlgorithmParameterException();
         }
@@ -137,8 +138,8 @@ public class RelationshipTransformService extends TransformService {
 
     @Override
     public void init(XMLStructure parent, XMLCryptoContext context) throws InvalidAlgorithmParameterException {
-        LOG.log(POILogger.DEBUG, "init(parent,context)");
-        LOG.log(POILogger.DEBUG, "parent java type: ", parent.getClass().getName());
+        LOG.atDebug().log("init(parent,context)");
+        LOG.atDebug().log("parent java type: {}", parent.getClass().getName());
         DOMStructure domParent = (DOMStructure) parent;
         Node parentNode = domParent.getNode();
 
@@ -146,11 +147,11 @@ public class RelationshipTransformService extends TransformService {
             TransformDocument transDoc = TransformDocument.Factory.parse(parentNode, DEFAULT_XML_OPTIONS);
             XmlObject[] xoList = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
             if (xoList.length == 0) {
-                LOG.log(POILogger.WARN, "no RelationshipReference/@SourceId parameters present");
+                LOG.atWarn().log("no RelationshipReference/@SourceId parameters present");
             }
             for (XmlObject xo : xoList) {
                 String sourceId = ((CTRelationshipReference)xo).getSourceId();
-                LOG.log(POILogger.DEBUG, "sourceId: ", sourceId);
+                LOG.atDebug().log("sourceId: {}", sourceId);
                 this.sourceIds.add(sourceId);
             }
         } catch (XmlException e) {
@@ -160,7 +161,7 @@ public class RelationshipTransformService extends TransformService {
 
     @Override
     public void marshalParams(XMLStructure parent, XMLCryptoContext context) throws MarshalException {
-        LOG.log(POILogger.DEBUG, "marshallParams(parent,context)");
+        LOG.atDebug().log("marshallParams(parent,context)");
         DOMStructure domParent = (DOMStructure) parent;
         Element parentNode = (Element)domParent.getNode();
         Document doc = parentNode.getOwnerDocument();
@@ -174,7 +175,7 @@ public class RelationshipTransformService extends TransformService {
     }
 
     public AlgorithmParameterSpec getParameterSpec() {
-        LOG.log(POILogger.DEBUG, "getParameterSpec");
+        LOG.atDebug().log("getParameterSpec");
         return null;
     }
 
@@ -186,10 +187,10 @@ public class RelationshipTransformService extends TransformService {
      * @see <a href="https://stackoverflow.com/questions/36063375">XML Relationship Transform Algorithm</a>
      */
     public Data transform(Data data, XMLCryptoContext context) throws TransformException {
-        LOG.log(POILogger.DEBUG, "transform(data,context)");
-        LOG.log(POILogger.DEBUG, "data java type: ", data.getClass().getName());
+        LOG.atDebug().log("transform(data,context)");
+        LOG.atDebug().log("data java type: {}", data.getClass().getName());
         OctetStreamData octetStreamData = (OctetStreamData) data;
-        LOG.log(POILogger.DEBUG, "URI: ", octetStreamData.getURI());
+        LOG.atDebug().log("URI: {}", octetStreamData.getURI());
         InputStream octetStream = octetStreamData.getOctetStream();
 
         Document doc;
@@ -223,18 +224,18 @@ public class RelationshipTransformService extends TransformService {
             root.appendChild(el);
         }
 
-        LOG.log(POILogger.DEBUG, "# Relationship elements: ", rsList.size());
+        LOG.atDebug().log("# Relationship elements: {}", box(rsList.size()));
 
         return new ApacheNodeSetData(new XMLSignatureInput(root));
     }
 
     public Data transform(Data data, XMLCryptoContext context, OutputStream os) throws TransformException {
-        LOG.log(POILogger.DEBUG, "transform(data,context,os)");
+        LOG.atDebug().log("transform(data,context,os)");
         return null;
     }
 
     public boolean isFeatureSupported(String feature) {
-        LOG.log(POILogger.DEBUG, "isFeatureSupported(feature)");
+        LOG.atDebug().log("isFeatureSupported(feature)");
         return false;
     }
 }

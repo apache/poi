@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -64,7 +67,10 @@ import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -76,15 +82,15 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static java.lang.System.currentTimeMillis;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * High level representation of a worksheet.
  */
-public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
-    private static final POILogger log = POILogFactory.getLogger(HSSFSheet.class);
-    private static final int DEBUG = POILogger.DEBUG;
+public final class HSSFSheet implements Sheet {
+    private static final Logger LOGGER = LogManager.getLogger(HSSFSheet.class);
 
     /**
      * width of 1px in columns with default width in units of 1/256 of a character width
@@ -122,7 +128,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * scratch.  You should not be calling this from application code (its protected anyhow).
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
+     * @see HSSFWorkbook#createSheet()
      */
     protected HSSFSheet(HSSFWorkbook workbook) {
         _sheet = InternalSheet.createSheet();
@@ -137,7 +143,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
      * @param sheet    - lowlevel Sheet object this sheet will represent
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
+     * @see HSSFWorkbook#createSheet()
      */
     protected HSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
         this._sheet = sheet;
@@ -196,19 +202,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         Iterator<CellValueRecordInterface> iter = sheet.getCellValueIterator();
-        long timestart = System.currentTimeMillis();
+        long timestart = currentTimeMillis();
 
-        if (log.check( POILogger.DEBUG )) {
-            log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
-                    Long.valueOf(timestart));
-        }
+        LOGGER.atDebug().log("Time at start of cell creating in HSSF sheet = {}", box(timestart));
         HSSFRow lastrow = null;
 
         // Add every cell to its row
         while (iter.hasNext()) {
             CellValueRecordInterface cval = iter.next();
 
-            long cellstart = System.currentTimeMillis();
+            long cellstart = currentTimeMillis();
             HSSFRow hrow = lastrow;
 
             if (hrow == null || hrow.getRowNum() != cval.getRow()) {
@@ -229,24 +232,18 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                     hrow = createRowFromRecord(rowRec);
                 }
             }
-            if (log.check( POILogger.DEBUG )) {
+            LOGGER.atDebug().log(() -> {
                 if (cval instanceof Record) {
-                    log.log( DEBUG, "record id = ", Integer.toHexString( ( (org.apache.poi.hssf.record.Record) cval ).getSid() ) );
+                    return new SimpleMessage("record id = " + Integer.toHexString(((Record) cval).getSid()));
                 } else {
-                    log.log( DEBUG, "record = ", cval );
+                    return new SimpleMessage("record = " + cval);
                 }
-            }
+            });
             hrow.createCellFromRecord( cval );
-            if (log.check( POILogger.DEBUG )) {
-                log.log( DEBUG, "record took ",
-                    Long.valueOf( System.currentTimeMillis() - cellstart ) );
-            }
+            LOGGER.atDebug().log("record took {}ms", box(currentTimeMillis() - cellstart));
 
         }
-        if (log.check( POILogger.DEBUG )) {
-            log.log(DEBUG, "total sheet cell creation took ",
-                Long.valueOf(System.currentTimeMillis() - timestart));
-    }
+        LOGGER.atDebug().log("total sheet cell creation took {}ms", box(currentTimeMillis() - timestart));
     }
 
     /**
@@ -254,8 +251,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param rownum row number
      * @return High level HSSFRow object representing a row in the sheet
-     * @see org.apache.poi.hssf.usermodel.HSSFRow
-     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see HSSFRow
+     * @see #removeRow(Row)
      */
     @Override
     public HSSFRow createRow(int rownum) {
@@ -438,7 +435,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             private HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(getWorkbook());
 
             @Override
-            public void visitRecord(org.apache.poi.hssf.record.Record r) {
+            public void visitRecord(Record r) {
                 if (!(r instanceof DVRecord)) {
                     return;
                 }
@@ -815,17 +812,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Control if Excel should be asked to recalculate all formulas on this sheet
      * when the workbook is opened.<p>
      *
-     * Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
+     * Calculating the formula values with {@link FormulaEvaluator} is the
      * recommended solution, but this may be used for certain cases where
      * evaluation in POI is not possible.<p>
      *
      * It is recommended to force recalcuation of formulas on workbook level using
-     * {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
+     * {@link Workbook#setForceFormulaRecalculation(boolean)}
      * to ensure that all cross-worksheet formuals and external dependencies are updated.
      *
      * @param value true if the application will perform a full recalculation of
      *              this worksheet values when the workbook is opened
-     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
+     * @see Workbook#setForceFormulaRecalculation(boolean)
      */
     @Override
     public void setForceFormulaRecalculation(boolean value) {
@@ -1773,7 +1770,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // add logic for hyperlinks etc, like in shiftRows()
     }
 
-    protected void insertChartRecords(List<org.apache.poi.hssf.record.Record> records) {
+    protected void insertChartRecords(List<Record> records) {
         int window2Loc = _sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
         _sheet.getRecords().addAll(window2Loc, records);
     }

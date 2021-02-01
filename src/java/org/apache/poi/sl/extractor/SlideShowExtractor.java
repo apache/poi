@@ -26,6 +26,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.zaxxer.sparsebits.SparseBitSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Notes;
@@ -43,8 +45,6 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Common SlideShow extractor
@@ -55,7 +55,7 @@ public class SlideShowExtractor<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > implements POITextExtractor {
-    private static final POILogger LOG = POILogFactory.getLogger(SlideShowExtractor.class);
+    private static final Logger LOG = LogManager.getLogger(SlideShowExtractor.class);
 
     // placeholder text for slide numbers
     private static final String SLIDE_NUMBER_PH = "‹#›";
@@ -178,7 +178,7 @@ public class SlideShowExtractor<
 
                 if (ts.isPlaceholder()) {
                     // don't bother about boiler plate text on master sheets
-                    LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
+                    LOG.atInfo().log("Ignoring boiler plate (placeholder) text on slide master: {}", text);
                     continue;
                 }
 

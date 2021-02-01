@@ -22,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -38,15 +40,13 @@ import org.apache.poi.sl.usermodel.ObjectMetaData;
 import org.apache.poi.sl.usermodel.ObjectMetaData.Application;
 import org.apache.poi.sl.usermodel.ObjectShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 
 /**
  * A shape representing embedded OLE object.
  */
 public final class HSLFObjectShape extends HSLFPictureShape implements ObjectShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFObjectShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFObjectShape.class);
 
     private ExEmbed _exEmbed;
 
@@ -104,7 +104,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
         ExObjRefAtom uer = null;
-        for (org.apache.poi.hslf.record.Record r : cldata.getHSLFChildRecords()) {
+        for (Record r : cldata.getHSLFChildRecords()) {
             if (r.getRecordType() == RecordTypes.ExObjRefAtom.typeID) {
                 uer = (ExObjRefAtom)r;
                 break;
@@ -141,7 +141,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
             }
         }
         if (data==null) {
-            LOG.log(POILogger.WARN, "OLE data not found");
+            LOG.atWarn().log("OLE data not found");
         }
 
         return data;
@@ -171,7 +171,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
             ExObjList lst = ppt.getDocumentRecord().getExObjList(create);
             if(lst == null){
-                LOG.log(POILogger.WARN, "ExObjList not found");
+                LOG.atWarn().log("ExObjList not found");
                 return null;
             }
 

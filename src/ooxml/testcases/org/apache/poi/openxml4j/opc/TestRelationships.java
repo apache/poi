@@ -30,9 +30,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.Test;
 
 
@@ -44,7 +44,7 @@ class TestRelationships {
 	private static final String SHEET_WITH_COMMENTS =
 		"/xl/worksheets/sheet1.xml";
 
-    private static final POILogger LOG = POILogFactory.getLogger(TestPackageCoreProperties.class);
+    private static final Logger LOG = LogManager.getLogger(TestPackageCoreProperties.class);
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
@@ -56,7 +56,7 @@ class TestRelationships {
     void testLoadRelationships() throws Exception {
         InputStream is = openSampleStream("sample.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
-            LOG.log(POILogger.DEBUG, "1: " + pkg);
+            LOG.atDebug().log("1: {}", pkg);
             PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
             PackageRelationship coreDocRelationship = rels.getRelationship(0);
             PackagePart corePart = pkg.getPart(coreDocRelationship);

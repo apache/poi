@@ -34,6 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -49,8 +51,6 @@ import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * <p>This is the main class of the POIFS system; it manages the entire
@@ -63,7 +63,7 @@ public class POIFSFileSystem extends BlockStore
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger(POIFSFileSystem.class);
+    private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
 
     /**
      * Maximum number size (in blocks) of the allocation table as supported by
@@ -327,7 +327,7 @@ public class POIFSFileSystem extends BlockStore
             }
             // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
-            LOG.log(POILogger.ERROR, "can't close input stream", e);
+            LOG.atError().withThrowable(e).log("can't close input stream");
         }
     }
 

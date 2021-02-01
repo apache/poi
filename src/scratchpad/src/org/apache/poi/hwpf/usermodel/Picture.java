@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
@@ -35,16 +37,13 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.sl.image.ImageHeaderPNG;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
  * Represents embedded picture extracted from Word Document
  */
 public final class Picture {
-    private static final POILogger log = POILogFactory
-            .getLogger( Picture.class );
+    private static final Logger LOGGER = LogManager.getLogger(Picture.class);
 
     private static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
 
@@ -161,9 +160,7 @@ public final class Picture {
                  * Problems reading from the actual ByteArrayInputStream should
                  * never happen so this will only ever be a ZipException.
                  */
-                log.log( POILogger.INFO,
-                        "Possibly corrupt compression or non-compressed data",
-                        e );
+                LOGGER.atInfo().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
             }
         }
         else

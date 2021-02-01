@@ -20,14 +20,16 @@ package org.apache.poi.hwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 public final class TableRow extends Range
 {
-    private static final POILogger LOG = POILogFactory.getLogger( TableRow.class );
+    private static final Logger LOG = LogManager.getLogger(TableRow.class);
 
     private static final short SPRM_DXAGAPHALF = (short) 0x9602;
     private static final short SPRM_DYAROWHEIGHT = (short) 0x9407;
@@ -187,11 +189,8 @@ public final class TableRow extends Range
 
         if ( cells.size() != expectedCellsCount )
         {
-            LOG.log( POILogger.WARN,
-                    "Number of found table cells (", cells.size(),
-                            ") for table row [", getStartOffset(), "c; ",
-                            getEndOffset(), "c] not equals to stored property value ",
-                            expectedCellsCount );
+            LOG.atWarn().log("Number of found table cells ({}) for table row [{}c; {}c] not equals to stored property value {}",
+                    cells.size(), box(getStartOffset()),box(getEndOffset()),box(expectedCellsCount));
             _tprops.setItcMac( (short) cells.size() );
         }
 

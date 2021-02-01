@@ -19,6 +19,8 @@ package org.apache.poi.hslf.usermodel;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -40,15 +42,13 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Create a <code>Shape</code> object depending on its type
  */
 public final class HSLFShapeFactory {
     // For logging
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFShapeFactory.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.
@@ -112,7 +112,7 @@ public final class HSLFShapeFactory {
                 if (parent instanceof HSLFTable) {
                     EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
                     if (etr == null) {
-                        LOG.log(POILogger.WARN, "invalid ppt - add EscherTextboxRecord to cell");
+                        LOG.atWarn().log("invalid ppt - add EscherTextboxRecord to cell");
                         etr = new EscherTextboxRecord();
                         etr.setRecordId(EscherTextboxRecord.RECORD_ID);
                         etr.setOptions((short)15);
@@ -153,14 +153,14 @@ public final class HSLFShapeFactory {
             return new HSLFFreeformShape(spContainer, parent);
         }
 
-        LOG.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
+        LOG.atInfo().log("Creating AutoShape for a NotPrimitive shape");
         return new HSLFAutoShape(spContainer, parent);
     }
 
     @SuppressWarnings("unchecked")
     protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
         HSLFEscherClientDataRecord cldata = spContainer.getChildById(EscherClientDataRecord.RECORD_ID);
-        if (cldata != null) for (org.apache.poi.hslf.record.Record r : cldata.getHSLFChildRecords()) {
+        if (cldata != null) for (Record r : cldata.getHSLFChildRecords()) {
             if (r.getRecordType() == recordType) {
                 return (T)r;
             }

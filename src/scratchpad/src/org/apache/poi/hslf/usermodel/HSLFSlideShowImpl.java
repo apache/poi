@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.POWERPOINT_DOCUMENT;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP95_DOCUMENT;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP97_DOCUMENT;
@@ -36,6 +37,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
@@ -60,15 +63,13 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class contains the main functionality for the Powerpoint file
  * "reader". It is only a very basic class for now
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFSlideShowImpl.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFSlideShowImpl.class);
 
     static final int UNSET_OFFSET = -1;
 
@@ -82,7 +83,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private byte[] _docstream;
 
     // Low level contents
-    private org.apache.poi.hslf.record.Record[] _records;
+    private Record[] _records;
 
     // Raw Pictures contained in the pictures stream
     private List<HSLFPictureData> _pictures;
@@ -246,7 +247,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _records = read(_docstream, (int) currentUser.getCurrentEditOffset());
     }
 
-    private org.apache.poi.hslf.record.Record[] read(byte[] docstream, int usrOffset) throws IOException {
+    private Record[] read(byte[] docstream, int usrOffset) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
         NavigableMap<Integer, Record> records = new TreeMap<>(); // offset -> record
@@ -256,7 +257,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         for (Map.Entry<Integer, Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
-            org.apache.poi.hslf.record.Record record = entry.getValue();
+            Record record = entry.getValue();
             Integer persistId = persistIds.get(offset);
             if (record == null) {
                 // all plain records have been already added,
@@ -272,7 +273,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         decryptData.close();
-        return records.values().toArray(new org.apache.poi.hslf.record.Record[0]);
+        return records.values().toArray(new Record[0]);
     }
 
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
@@ -303,7 +304,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 int type = LittleEndian.getUShort(docstream, usrOffset + 2);
                 int len = LittleEndian.getInt(docstream, usrOffset + 4);
                 if (ver_inst == 0 && type == 4085 && (len == 0x1C || len == 0x20)) {
-                    LOG.log(POILogger.WARN, "Repairing invalid user edit atom");
+                    LOG.atWarn().log("Repairing invalid user edit atom");
                     usr.setLastUserEditAtomOffset(usrOffset);
                 } else {
                     throw new CorruptPowerPointFileException("Powerpoint document contains invalid user edit atom");
@@ -313,7 +314,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
-        for (org.apache.poi.hslf.record.Record r : _records) {
+        for (Record r : _records) {
             if (r instanceof DocumentEncryptionAtom) {
                 return (DocumentEncryptionAtom) r;
             }
@@ -329,7 +330,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         try {
             currentUser = new CurrentUserAtom(getDirectory());
         } catch (IOException ie) {
-            LOG.log(POILogger.ERROR, "Error finding Current User Atom", ie);
+            LOG.atError().withThrowable(ie).log("Error finding Current User Atom");
             currentUser = new CurrentUserAtom();
         }
     }
@@ -393,14 +394,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 // If they type (including the bonus 0xF018) is 0, skip it
                 PictureType pt = PictureType.forNativeID(type - 0xF018);
                 if (pt == null) {
-                    LOG.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length ", imgsize, ".\nYour document will probably become corrupted if you save it!");
-                    LOG.log(POILogger.ERROR, "position: ", pos);
+                    LOG.atError().log("Problem reading picture: Invalid image type 0, on picture with length {}.\nYour document will probably become corrupted if you save it! Position: {}", box(imgsize),box(pos));
                 } else {
                     //The pictstream can be truncated halfway through a picture.
                     //This is not a problem if the pictstream contains extra pictures
                     //that are not used in any slide -- BUG-60305
                     if (pos + imgsize > pictstream.length) {
-                        LOG.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
+                        LOG.atWarn().log("\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
                                 "in others, this could indicate a corrupt file");
                         break;
                     }
@@ -417,7 +417,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setIndex(_pictures.size() + 1);        // index is 1-based
                         _pictures.add(pict);
                     } catch (IllegalArgumentException e) {
-                        LOG.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYour document will probably become corrupted if you save it!");
+                        LOG.atError().withThrowable(e).log("Problem reading picture. Your document will probably become corrupted if you save it!");
                     }
                 }
 
@@ -464,7 +464,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         UserEditAtom usr = null;
         PersistPtrHolder ptr = null;
         CountingOS cos = new CountingOS();
-        for (org.apache.poi.hslf.record.Record record : _records) {
+        for (Record record : _records) {
             // all top level records are position dependent
             assert (record instanceof PositionDependentRecord);
             PositionDependentRecord pdr = (PositionDependentRecord) record;
@@ -506,7 +506,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         try (HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            for (org.apache.poi.hslf.record.Record record : _records) {
+            for (Record record : _records) {
                 assert (record instanceof PositionDependentRecord);
                 // We've already figured out their new location, and
                 // told them that
@@ -718,7 +718,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public synchronized int appendRootLevelRecord(Record newRecord) {
         int addedAt = -1;
-        org.apache.poi.hslf.record.Record[] r = new org.apache.poi.hslf.record.Record[_records.length + 1];
+        Record[] r = new Record[_records.length + 1];
         boolean added = false;
         for (int i = (_records.length - 1); i >= 0; i--) {
             if (added) {
@@ -770,7 +770,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Returns an array of all the records found in the slideshow
      */
-    public org.apache.poi.hslf.record.Record[] getRecords() {
+    public Record[] getRecords() {
         return _records;
     }
 
@@ -815,7 +815,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public HSLFObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
             List<HSLFObjectData> objects = new ArrayList<>();
-            for (org.apache.poi.hslf.record.Record r : _records) {
+            for (Record r : _records) {
                 if (r instanceof ExOleObjStg) {
                     objects.add(new HSLFObjectData((ExOleObjStg) r));
                 }

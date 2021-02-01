@@ -16,16 +16,18 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class Xstz
 {
-    private static final POILogger log = POILogFactory.getLogger( Xstz.class );
+    private static final Logger LOGGER = LogManager.getLogger(Xstz.class);
 
     private final short _chTerm = 0;
     private Xst _xst;
@@ -50,10 +52,7 @@ public class Xstz
         short term = LittleEndian.getShort( data, offset );
         if ( term != 0 )
         {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "chTerm at the end of Xstz at offset ",
-                        offset, " is not 0");
-            }
+            LOGGER.atWarn().log("chTerm at the end of Xstz at offset {} is not 0", box(offset));
         }
     }
 

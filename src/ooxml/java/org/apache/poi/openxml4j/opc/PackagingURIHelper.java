@@ -23,10 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Helper for part and pack URI.
@@ -38,7 +38,7 @@ public final class PackagingURIHelper {
     // FIXME: this class implements a lot of path joining and splitting logic that
     // is already implemented in java.nio.file.Path.
     // This class should heavily leverage Java library code to reduce the number of lines of code that POI has to maintain and test
-    private static final POILogger LOG = POILogFactory.getLogger(PackagingURIHelper.class);
+    private static final Logger LOG = LogManager.getLogger(PackagingURIHelper.class);
 
     /**
      * Package root URI.
@@ -290,7 +290,7 @@ public final class PackagingURIHelper {
                 try {
                     targetURI = new URI(path.substring(1));
                 } catch (Exception e) {
-                    LOG.log(POILogger.WARN, e);
+                    LOG.atWarn().withThrowable(e).log("Failed to relativize");
                     return null;
                 }
             }
@@ -328,7 +328,7 @@ public final class PackagingURIHelper {
             try {
                 return new URI(retVal.toString());
             } catch (Exception e) {
-                LOG.log(POILogger.WARN, e);
+                LOG.atWarn().withThrowable(e).log("Failed to relativize");
                 return null;
             }
         }
@@ -377,7 +377,7 @@ public final class PackagingURIHelper {
         try {
             return new URI(retVal.toString());
         } catch (Exception e) {
-            LOG.log(POILogger.WARN, e);
+            LOG.atWarn().withThrowable(e).log("Failed to relativize");
             return null;
         }
     }
@@ -661,7 +661,7 @@ public final class PackagingURIHelper {
     }
 
     /**
-     * Convert a string to {@link java.net.URI}
+     * Convert a string to {@link URI}
      *
      * If  part name is not a valid URI, it is resolved as follows:
      * <p>

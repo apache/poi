@@ -12,6 +12,7 @@ The bundle embeds all the jars from lib/main:
 - commons-compress
 - commons-collections4
 - commons-codec
+- Log4j 2 API
 
 ## Optional Dependencies
 

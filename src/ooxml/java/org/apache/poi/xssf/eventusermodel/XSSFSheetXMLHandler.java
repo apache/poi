@@ -22,12 +22,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -48,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * you need to implement for reading information from a file.
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFSheetXMLHandler.class);
 
     /**
     * These are the different kinds of cells we support.
@@ -235,7 +235,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                 // TODO Retrieve the shared formula and tweak it to
                 //  match the current cell
                 if(formulasNotResults) {
-                    LOG.log(POILogger.WARN, "shared formulas not yet supported!");
+                    LOG.atWarn().log("shared formulas not yet supported!");
                 } /*else {
                    // It's a shared formula, so we can't get at the formula string yet
                    // However, they don't care about the formula string, so that's ok!
@@ -418,7 +418,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    thisStr = rtss.toString();
                }
                catch (NumberFormatException ex) {
-                   LOG.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
+                   LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
                }
                break;
 

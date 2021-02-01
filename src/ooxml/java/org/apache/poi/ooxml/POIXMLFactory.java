@@ -18,20 +18,20 @@ package org.apache.poi.ooxml;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLRelation.PackagePartConstructor;
 import org.apache.poi.ooxml.POIXMLRelation.ParentPartConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlException;
 
 /**
  * Defines a factory API that enables sub-classes to create instances of <code>POIXMLDocumentPart</code>
  */
 public abstract class POIXMLFactory {
-    private static final POILogger LOGGER = POILogFactory.getLogger(POIXMLFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(POIXMLFactory.class);
 
     /**
      * Create a POIXMLDocumentPart from existing package part and relation. This method is called
@@ -62,7 +62,7 @@ public abstract class POIXMLFactory {
                 }
             }
 
-            LOGGER.log(POILogger.DEBUG, "using default POIXMLDocumentPart for ", rel.getRelationshipType());
+            LOGGER.atDebug().log("using default POIXMLDocumentPart for {}", rel.getRelationshipType());
             return new POIXMLDocumentPart(parent, part);
         } catch (IOException | XmlException e) {
             throw new POIXMLException(e.getMessage(), e);

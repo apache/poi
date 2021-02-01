@@ -35,6 +35,8 @@ import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -44,8 +46,6 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.draw.SVGImageRenderer;
 import org.apache.xmlbeans.XmlCursor;
@@ -70,7 +70,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 @Beta
 public class XSLFPictureShape extends XSLFSimpleShape
     implements PictureShape<XSLFShape,XSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFPictureShape.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFPictureShape.class);
 
     private static final String MS_DML_NS = "http://schemas.microsoft.com/office/drawing/2010/main";
     private static final String MS_SVG_NS = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
@@ -357,7 +357,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         XSLFPictureShape p = (XSLFPictureShape)sh;
         String blipId = p.getBlipId();
         if (blipId == null) {
-            LOG.log(POILogger.WARN, "unable to copy invalid picture shape");
+            LOG.atWarn().log("unable to copy invalid picture shape");
             return;
         }
 

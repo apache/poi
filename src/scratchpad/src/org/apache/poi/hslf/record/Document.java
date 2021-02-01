@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.poi.util.POILogger;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Master container for Document. There is one of these for every
@@ -161,10 +161,10 @@ public final class Document extends PositionDependentRecordContainer
 		//  (normally it's 2, or 3 if you have notes)
 		// Complain if it's not
 		if(slwtcount == 0) {
-			LOG.log(POILogger.WARN, "No SlideListWithText's found - there should normally be at least one!");
+			LOG.atWarn().log("No SlideListWithText's found - there should normally be at least one!");
 		}
 		if(slwtcount > 3) {
-			LOG.log(POILogger.WARN, "Found ", slwtcount, " SlideListWithTexts - normally there should only be three!");
+			LOG.atWarn().log("Found {} SlideListWithTexts - normally there should only be three!", box(slwtcount));
 		}
 
 		// Now grab all the SLWTs

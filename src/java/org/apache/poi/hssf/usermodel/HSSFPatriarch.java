@@ -57,7 +57,6 @@ import org.apache.poi.util.StringUtil;
  * little other than act as a container for other shapes and groups.
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShape> {
-    // private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);
     private final List<HSSFShape> _shapes = new ArrayList<>();
 
     private final EscherSpgrRecord _spgrRecord;

@@ -24,14 +24,16 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
 import org.apache.poi.hwpf.model.types.FibRgW97AbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * <p>The File Information Block (FIB). Holds pointers
@@ -50,7 +52,7 @@ public final class FileInformationBlock {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger( FileInformationBlock.class );
+    private static final Logger LOG = LogManager.getLogger(FileInformationBlock.class);
 
     private final FibBase _fibBase;
     private final int _csw;
@@ -175,7 +177,7 @@ public final class FileInformationBlock {
             /* The Word spec has a much smaller list of "valid" values
              * to what the large CommonCrawl corpus contains!
              */
-            LOG.log(POILogger.WARN, "Invalid file format version number: ", nfib, "(", nfibHex, ")");
+            LOG.atWarn().log("Invalid file format version number: {}({})", box(nfib),nfibHex);
         }
     }
 
@@ -186,9 +188,7 @@ public final class FileInformationBlock {
         if ( cbRgFcLcb == expectedCbRgFcLcb )
             return;
 
-        LOG.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
-                " value of FIB.cbRgFcLcb MUST be ", strCbRgFcLcb + ", not 0x",
-                Integer.toHexString( cbRgFcLcb ) );
+        LOG.atWarn().log("Since FIB.nFib == {} value of FIB.cbRgFcLcb MUST be {}, not 0x{}", strNFib, strCbRgFcLcb, Integer.toHexString(cbRgFcLcb));
     }
 
     private void assertCswNew()
@@ -211,7 +211,7 @@ public final class FileInformationBlock {
             assertCswNew( "0x0112", 0x0005, "0x0005", _cswNew );
             break;
         default:
-            LOG.log(POILogger.WARN, "Invalid file format version number: ", getNFib());
+            LOG.atWarn().log("Invalid file format version number: {}", box(getNFib()));
         }
     }
 
@@ -222,9 +222,7 @@ public final class FileInformationBlock {
         if ( cswNew == expectedCswNew )
             return;
 
-        LOG.log( POILogger.WARN, "Since FIB.nFib == ", strNFib,
-                " value of FIB.cswNew MUST be ",
-                strExpectedCswNew + ", not 0x", Integer.toHexString( cswNew ) );
+        LOG.atWarn().log("Since FIB.nFib == {} value of FIB.cswNew MUST be {}, not 0x{}", strNFib, strExpectedCswNew, Integer.toHexString(cswNew));
     }
 
     public void fillVariableFields( byte[] mainDocument, byte[] tableStream )

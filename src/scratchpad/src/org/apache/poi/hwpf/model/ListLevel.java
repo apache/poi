@@ -19,11 +19,13 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.LVLFAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * "The LVL structure contains formatting information about a specific level in
@@ -43,7 +45,7 @@ public final class ListLevel
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_485_760;
 
-    private static final POILogger LOG = POILogFactory.getLogger( ListLevel.class );
+    private static final Logger LOG = LogManager.getLogger(ListLevel.class);
 
     private byte[] _grpprlChpx;
     private byte[] _grpprlPapx;
@@ -244,10 +246,7 @@ public final class ListLevel
         {
             if ( _xst.getCch() != 1 )
             {
-                LOG.log( POILogger.WARN, "LVL at offset ",
-                        Integer.valueOf( startOffset ),
-                        " has nfc == 0x17 (bullets), but cch != 1 (",
-                        Integer.valueOf( _xst.getCch() ), ")" );
+                LOG.atWarn().log("LVL at offset {} has nfc == 0x17 (bullets), but cch != 1 ({})", box(startOffset),box(_xst.getCch()));
             }
         }
 

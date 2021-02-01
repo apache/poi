@@ -17,14 +17,15 @@
 
 package org.apache.poi.xssf.binary;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 
 /**
- * Need to have this mirror class of {@link org.apache.poi.xssf.usermodel.XSSFRelation}
+ * Need to have this mirror class of {@link XSSFRelation}
  * because of conflicts with regular ooxml relations.
  * If we failed to break this into a separate class, in the cases of SharedStrings and Styles,
  * 2 parts would exist, and &quot;Packages shall not contain equivalent part names...&quot;
@@ -33,7 +34,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public class XSSFBRelation extends POIXMLRelation {
-    private static final POILogger log = POILogFactory.getLogger(XSSFBRelation.class);
+    private static final Logger LOGGER = LogManager.getLogger(XSSFBRelation.class);
 
     static final XSSFBRelation SHARED_STRINGS_BINARY = new XSSFBRelation(
             "application/vnd.ms-excel.sharedStrings",

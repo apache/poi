@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.macros;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
@@ -37,6 +38,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
@@ -49,8 +52,6 @@ import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RLEDecompressingInputStream;
 import org.apache.poi.util.StringUtil;
 
@@ -68,7 +69,7 @@ import org.apache.poi.util.StringUtil;
  * @since 3.15-beta2
  */
 public class VBAMacroReader implements Closeable {
-    private static final POILogger LOGGER = POILogFactory.getLogger(VBAMacroReader.class);
+    private static final Logger LOGGER = LogManager.getLogger(VBAMacroReader.class);
 
     //arbitrary limit on size of strings to read, etc.
     private static final int MAX_STRING_LENGTH = 20000;
@@ -663,9 +664,7 @@ public class VBAMacroReader implements Closeable {
             }
 
         }
-        if (records >= maxNameRecords) {
-            LOGGER.log(POILogger.WARN, "Hit max name records to read ("+maxNameRecords+"). Stopped early.");
-        }
+        LOGGER.atWarn().log("Hit max name records to read (" + maxNameRecords + "). Stopped early.");
     }
 
     private static String readUnicode(InputStream is, int maxLength) throws IOException {
@@ -684,7 +683,7 @@ public class VBAMacroReader implements Closeable {
             read += 2;
         }
         if (read >= maxLength) {
-            LOGGER.log(POILogger.WARN, "stopped reading unicode name after "+read+" bytes");
+            LOGGER.atWarn().log("stopped reading unicode name after {} bytes", box(read));
         }
         return new String (bos.toByteArray(), StandardCharsets.UTF_16LE);
     }
@@ -747,21 +746,21 @@ public class VBAMacroReader implements Closeable {
                     if (module != null) {
                         module.moduleType = ModuleType.Document;
                     } else {
-                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+mn);
+                        LOGGER.atWarn().log("couldn't find module with name: {}", mn);
                     }
                 } else if ("Module".equals(tokens[0]) && tokens.length > 1) {
                     ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
                     if (module != null) {
                         module.moduleType = ModuleType.Module;
                     } else {
-                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                        LOGGER.atWarn().log("couldn't find module with name: {}", tokens[1]);
                     }
                 } else if ("Class".equals(tokens[0]) && tokens.length > 1) {
                     ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
                     if (module != null) {
                         module.moduleType = ModuleType.Class;
                     } else {
-                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                        LOGGER.atWarn().log("couldn't find module with name: {}", tokens[1]);
                     }
                 }
             }

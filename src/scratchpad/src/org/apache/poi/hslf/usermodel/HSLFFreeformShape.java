@@ -25,6 +25,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -34,9 +36,9 @@ import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A "Freeform" shape.
@@ -47,7 +49,7 @@ import org.apache.poi.util.Units;
  * </p>
  */
 public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFFreeformShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFFreeformShape.class);
 
 
     enum ShapePath {
@@ -138,7 +140,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     break;
                 case PathIterator.SEG_QUADTO:
                     //TODO: figure out how to convert SEG_QUADTO into SEG_CUBICTO
-                    LOG.log(POILogger.WARN, "SEG_QUADTO is not supported");
+                    LOG.atWarn().log("SEG_QUADTO is not supported");
                     break;
                 case PathIterator.SEG_CLOSE:
                     pntInfo.add(pntInfo.get(0));
@@ -150,7 +152,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     numPoints++;
                     break;
                 default:
-                    LOG.log(POILogger.WARN, "Ignoring invalid segment type ", type);
+                    LOG.atWarn().log("Ignoring invalid segment type {}", box(type));
                     break;
             }
 

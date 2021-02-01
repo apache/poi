@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.awt.Dimension;
@@ -34,6 +35,8 @@ import java.util.OptionalLong;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -50,8 +53,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
@@ -72,7 +73,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
 @Beta
 public class XMLSlideShow extends POIXMLDocument
         implements SlideShow<XSLFShape, XSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(XMLSlideShow.class);
+    private static final Logger LOG = LogManager.getLogger(XMLSlideShow.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
@@ -167,7 +168,7 @@ public class XMLSlideShow extends POIXMLDocument
                 _presentation.getSldIdLst().getSldIdList().forEach(id -> {
                     XSLFSlide sh = shIdMap.get(id.getId2());
                     if (sh == null) {
-                        LOG.log(POILogger.WARN, "Slide with r:id " + id.getId() + " was defined, but didn't exist in package, skipping");
+                        LOG.atWarn().log("Slide with r:id {} was defined, but didn't exist in package, skipping", box(id.getId()));
                     } else {
                         _slides.add(sh);
                     }
@@ -260,7 +261,7 @@ public class XMLSlideShow extends POIXMLDocument
         XSLFSlideMaster sm = _masters.get(0);
         XSLFSlideLayout layout = sm.getLayout(SlideLayout.BLANK);
         if (layout == null) {
-            LOG.log(POILogger.WARN, "Blank layout was not found - defaulting to first slide layout in master");
+            LOG.atWarn().log("Blank layout was not found - defaulting to first slide layout in master");
             XSLFSlideLayout[] sl = sm.getSlideLayouts();
             if (sl.length == 0) {
                 throw new POIXMLException("SlideMaster must contain a SlideLayout.");

@@ -24,10 +24,13 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
@@ -35,8 +38,8 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A property in a {@link Section} of a {@link PropertySet}.<p>
@@ -70,7 +73,7 @@ public class Property {
      */
     public static final int DEFAULT_CODEPAGE = CodePageUtil.CP_WINDOWS_1252;
 
-    private static final POILogger LOG = POILogFactory.getLogger(Property.class);
+    private static final Logger LOG = LogManager.getLogger(Property.class);
 
     /** The property's ID. */
     private long id;
@@ -293,7 +296,7 @@ public class Property {
      * section's dictionary. Another special case are strings: Two properties
      * may have the different types Variant.VT_LPSTR and Variant.VT_LPWSTR;
      *
-     * @see Object#equals(java.lang.Object)
+     * @see Object#equals(Object)
      */
     @Override
     public boolean equals(final Object o) {
@@ -412,7 +415,7 @@ public class Property {
             try {
                 write(bos, codepage);
             } catch (Exception e) {
-                LOG.log(POILogger.WARN, "can't serialize string", e);
+                LOG.atWarn().withThrowable(e).log("can't serialize string");
             }
 
             // skip length field
@@ -427,8 +430,8 @@ public class Property {
                 String hex = HexDump.dump(bytes, 0L, 0);
                 b.append(hex);
             }
-        } else if (value instanceof java.util.Date) {
-            java.util.Date d = (java.util.Date)value;
+        } else if (value instanceof Date) {
+            Date d = (Date)value;
             long filetime = Filetime.dateToFileTime(d);
             if (Filetime.isUndefined(d)) {
                 b.append("<undefined>");
@@ -484,7 +487,7 @@ public class Property {
                     return LocaleUtil.getLocaleFromLCID(((Number)value).intValue());
             }
         } catch (Exception e) {
-            LOG.log(POILogger.WARN, "Can't decode id "+getID());
+            LOG.atWarn().log("Can't decode id {}", box(getID()));
         }
         return null;
     }

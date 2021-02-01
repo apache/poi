@@ -17,17 +17,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
@@ -69,7 +71,7 @@ import java.util.Map;
  * </blockquote>
  */
 public final class EscherGraphics2d extends Graphics2D {
-    private static final POILogger LOG = POILogFactory.getLogger(EscherGraphics2d.class);
+    private static final Logger LOG = LogManager.getLogger(EscherGraphics2d.class);
 
     private EscherGraphics _escherGraphics;
     private BufferedImage _img;
@@ -153,15 +155,14 @@ public final class EscherGraphics2d extends Graphics2D {
         }
         else
         {
-            if (LOG.check(POILogger.WARN))
-                LOG.log(POILogger.WARN, "draw not fully supported");
+            LOG.atWarn().log("draw not fully supported");
         }
     }
 
     public void drawArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        draw(new java.awt.geom.Arc2D.Float(x, y, width, height, startAngle, arcAngle, 0));
+        draw(new Arc2D.Float(x, y, width, height, startAngle, arcAngle, 0));
     }
 
     public void drawGlyphVector(GlyphVector g, float x, float y)
@@ -172,22 +173,19 @@ public final class EscherGraphics2d extends Graphics2D {
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, Color bgColor, ImageObserver imageobserver)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"drawImage() not supported");
+        LOG.atWarn().log("drawImage() not supported");
         return true;
     }
 
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, ImageObserver imageobserver)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"drawImage() not supported");
+        LOG.atWarn().log("drawImage() not supported");
         return drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null, imageobserver);
     }
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, Color bgColor, ImageObserver imageobserver)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"drawImage() not supported");
+        LOG.atWarn().log("drawImage() not supported");
         return true;
     }
 
@@ -282,7 +280,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public void drawRoundRect(int i, int j, int k, int l, int i1, int j1)
     {
-        draw(new java.awt.geom.RoundRectangle2D.Float(i, j, k, l, i1, j1));
+        draw(new RoundRectangle2D.Float(i, j, k, l, i1, j1));
     }
 
     public void drawString(String string, float x, float y)
@@ -311,13 +309,12 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public void fill(Shape shape)
     {
-        if (LOG.check( POILogger.WARN ))
-            LOG.log(POILogger.WARN,"fill(Shape) not supported");
+        LOG.atWarn().log("fill(Shape) not supported");
     }
 
     public void fillArc(int i, int j, int k, int l, int i1, int j1)
     {
-        fill(new java.awt.geom.Arc2D.Float(i, j, k, l, i1, j1, 2));
+        fill(new Arc2D.Float(i, j, k, l, i1, j1, 2));
     }
 
     public void fillOval(int x, int y, int width, int height)
@@ -342,7 +339,7 @@ public final class EscherGraphics2d extends Graphics2D {
      * @param xPoints array of the <code>x</code> coordinates.
      * @param yPoints array of the <code>y</code> coordinates.
      * @param nPoints the total number of points in the polygon.
-     * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
+     * @see   Graphics#drawPolygon(int[], int[], int)
      */
     public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints)
     {
@@ -357,7 +354,7 @@ public final class EscherGraphics2d extends Graphics2D {
     public void fillRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        fill(new java.awt.geom.RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
+        fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
     }
 
     public Color getBackground()
@@ -422,7 +419,7 @@ public final class EscherGraphics2d extends Graphics2D {
         return _paint;
     }
 
-    public Object getRenderingHint(java.awt.RenderingHints.Key key)
+    public Object getRenderingHint(RenderingHints.Key key)
     {
         return getG2D().getRenderingHint(key);
     }
@@ -510,7 +507,7 @@ public final class EscherGraphics2d extends Graphics2D {
         getEscherGraphics().setPaintMode();
     }
 
-    public void setRenderingHint(java.awt.RenderingHints.Key key, Object obj)
+    public void setRenderingHint(RenderingHints.Key key, Object obj)
     {
         getG2D().setRenderingHint(key, obj);
     }
@@ -544,18 +541,6 @@ public final class EscherGraphics2d extends Graphics2D {
     {
         getTrans().concatenate(affinetransform);
     }
-
-//    Image transformImage(Image image, Rectangle rectangle, Rectangle rectangle1, ImageObserver imageobserver, Color color1)
-//    {
-//        logger.log(POILogger.WARN,"transformImage() not supported");
-//        return null;
-//    }
-//
-//    Image transformImage(Image image, int ai[], Rectangle rectangle, ImageObserver imageobserver, Color color1)
-//    {
-//        logger.log(POILogger.WARN,"transformImage() not supported");
-//        return null;
-//    }
 
     public void translate(double d, double d1)
     {

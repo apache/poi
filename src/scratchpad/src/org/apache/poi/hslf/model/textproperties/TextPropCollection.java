@@ -29,13 +29,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * For a given run of characters, holds the properties (which could
@@ -44,7 +45,7 @@ import org.apache.poi.util.POILogger;
  *  properties, and the indent level if required.
  */
 public class TextPropCollection implements GenericRecord, Duplicatable {
-    private static final POILogger LOG = POILogFactory.getLogger(TextPropCollection.class);
+    private static final Logger LOG = LogManager.getLogger(TextPropCollection.class);
 
     /** All the different kinds of paragraph properties we might handle */
     private static final TextProp[] paragraphTextPropTypes = {
@@ -291,12 +292,12 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
 	    if (!isMasterStyle) {
 	        // First goes the number of characters we affect
 	        // MasterStyles don't have this field
-            org.apache.poi.hslf.record.Record.writeLittleEndian(charactersCovered,o);
+            Record.writeLittleEndian(charactersCovered,o);
 	    }
 
 		// Then we have the indentLevel field if it's a paragraph collection
 		if (textPropType == TextPropType.paragraph && indentLevel > -1) {
-            org.apache.poi.hslf.record.Record.writeLittleEndian(indentLevel, o);
+            Record.writeLittleEndian(indentLevel, o);
 		}
 
 		// Then the mask field
@@ -304,7 +305,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
 		for (TextProp textProp : textProps.values()) {
             mask |= textProp.getWriteMask();
         }
-        org.apache.poi.hslf.record.Record.writeLittleEndian(mask,o);
+        Record.writeLittleEndian(mask,o);
 
 		// Then the contents of all the properties
 		for (TextProp textProp : getTextPropList()) {
@@ -313,9 +314,9 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                 // don't add empty properties, as they can't be recognized while reading
                 continue;
             } else if (textProp.getSize() == 2) {
-                org.apache.poi.hslf.record.Record.writeLittleEndian((short)val,o);
+                Record.writeLittleEndian((short)val,o);
             } else if (textProp.getSize() == 4) {
-                org.apache.poi.hslf.record.Record.writeLittleEndian(val,o);
+                Record.writeLittleEndian(val,o);
             } else if (textProp instanceof HSLFTabStopPropCollection) {
                 ((HSLFTabStopPropCollection)textProp).writeProperty(o);
             }
@@ -383,7 +384,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
             byte[] b = baos.toByteArray();
             out.append(HexDump.dump(b, 0, 0));
         } catch (IOException e ) {
-            LOG.log(POILogger.ERROR, "can't dump TextPropCollection", e);
+            LOG.atError().withThrowable(e).log("can't dump TextPropCollection");
         }
 
         return out.toString();

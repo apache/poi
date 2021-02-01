@@ -31,6 +31,8 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -41,8 +43,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -73,7 +73,7 @@ public class XSSFReader {
                             XSSFRelation.CHARTSHEET.getRelation(),
                             XSSFRelation.MACRO_SHEET_BIN.getRelation())
             ));
-    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFReader.class);
+    private static final Logger LOGGER = LogManager.getLogger(XSSFReader.class);
 
     protected OPCPackage pkg;
     protected PackagePart workbookPart;
@@ -342,7 +342,7 @@ public class XSSFReader {
                     return new CommentsTable(commentsPart);
                 }
             } catch (InvalidFormatException|IOException e) {
-                LOGGER.log(POILogger.WARN, e);
+                LOGGER.atWarn().withThrowable(e).log("Failed to load sheet comments");
                 return null;
             }
             return null;
@@ -364,14 +364,14 @@ public class XSSFReader {
                     PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
                     if (drawingsPart == null) {
                         //parts can go missing; Excel ignores them silently -- TIKA-2134
-                        LOGGER.log(POILogger.WARN, "Missing drawing: " + drawingsName + ". Skipping it.");
+                        LOGGER.atWarn().log("Missing drawing: {}. Skipping it.", drawingsName);
                         continue;
                     }
                     XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
                     shapes.addAll(drawing.getShapes());
                 }
             } catch (XmlException|InvalidFormatException|IOException e) {
-                LOGGER.log(POILogger.WARN, e);
+                LOGGER.atWarn().withThrowable(e).log("Failed to load shapes");
                 return null;
             }
             return shapes;

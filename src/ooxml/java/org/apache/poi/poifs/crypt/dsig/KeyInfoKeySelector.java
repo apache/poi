@@ -38,8 +38,8 @@ import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * JSR105 key selector implementation using the ds:KeyInfo data of the signature
@@ -47,14 +47,14 @@ import org.apache.poi.util.POILogger;
  */
 public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult {
 
-    private static final POILogger LOG = POILogFactory.getLogger(KeyInfoKeySelector.class);
+    private static final Logger LOG = LogManager.getLogger(KeyInfoKeySelector.class);
 
     private final List<X509Certificate> certChain = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     @Override
     public KeySelectorResult select(KeyInfo keyInfo, Purpose purpose, AlgorithmMethod method, XMLCryptoContext context) throws KeySelectorException {
-        LOG.log(POILogger.DEBUG, "select key");
+        LOG.atDebug().log("select key");
         if (null == keyInfo) {
             throw new KeySelectorException("no ds:KeyInfo present");
         }
@@ -71,7 +71,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
                     continue;
                 }
                 X509Certificate certificate = (X509Certificate) x509DataObject;
-                LOG.log(POILogger.DEBUG, "certificate", certificate.getSubjectX500Principal());
+                LOG.atDebug().log("certificate: {}", certificate.getSubjectX500Principal());
                 certChain.add(certificate);
             }
         }

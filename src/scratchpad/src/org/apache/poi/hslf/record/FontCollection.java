@@ -35,7 +35,6 @@ import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogger;
 
 /**
  * {@code FontCollection} ia a container that holds information
@@ -62,7 +61,7 @@ public final class FontCollection extends RecordContainer {
 			    HSLFFontInfo fi = addFont(fontHeader);
 			    fi.addFacet(fed);
 			} else {
-				LOG.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was ", r.getClass().getSimpleName());
+				LOG.atWarn().log("FontCollection child wasn't a FontEntityAtom, was {}", r.getClass().getSimpleName());
 			}
 		}
 	}

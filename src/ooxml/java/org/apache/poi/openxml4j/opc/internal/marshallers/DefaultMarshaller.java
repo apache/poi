@@ -38,7 +38,7 @@ public final class DefaultMarshaller implements PartMarshaller {
 	 * @param part The {@link PackagePart} to store.
 	 * @param out Output stream to save this part.
 	 * @return true if the content has been successfully stored, false otherwise.
-	 *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
+	 *         More information about errors may be logged via Log4j 2.
 	 * @throws OpenXML4JException
 	 *             If any error occur.
 	 */

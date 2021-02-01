@@ -22,9 +22,10 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Definition of a special kind of property of some text, or its
@@ -34,9 +35,9 @@ import org.apache.poi.util.POILogger;
  *  (but related) properties
  */
 public abstract class BitMaskTextProp extends TextProp {
-    protected static final POILogger LOG = POILogFactory.getLogger(BitMaskTextProp.class);
+    protected static final Logger LOG = LogManager.getLogger(BitMaskTextProp.class);
 
-    private String[] subPropNames;
+	private String[] subPropNames;
 	private int[] subPropMasks;
 	private boolean[] subPropMatches;
 
@@ -148,8 +149,8 @@ public abstract class BitMaskTextProp extends TextProp {
 	    setWriteMask(writeMask);
 	    super.setValue(maskValue(val));
 	    if (val != super.getValue()) {
-	        LOG.log(POILogger.WARN, "Style properties of '", getName(), "' don't match mask - output will be sanitized");
-	        if (LOG.check(POILogger.DEBUG)) {
+			LOG.atWarn().log("Style properties of '{}' don't match mask - output will be sanitized", getName());
+			LOG.atDebug().log(() -> {
 	            StringBuilder sb = new StringBuilder("The following style attributes of the '")
 						.append(getName()).append("' property will be ignored:\n");
 	            int i=0;
@@ -159,8 +160,8 @@ public abstract class BitMaskTextProp extends TextProp {
 	                }
 	                i++;
 	            }
-	            LOG.log(POILogger.DEBUG, sb.toString());
-	        }
+	            return new SimpleMessage(sb);
+			});
 	    }
 	}
 

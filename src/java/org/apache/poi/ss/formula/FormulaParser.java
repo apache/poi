@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.constant.ErrorConstant;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
@@ -71,12 +75,11 @@ import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -93,7 +96,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public final class FormulaParser {
-    private static final POILogger log = POILogFactory.getLogger(FormulaParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(FormulaParser.class);
     private final String _formulaString;
     private final int _formulaLength;
     /** points at the next character to be read (after the {@link #look} codepoint) */
@@ -132,9 +135,9 @@ public final class FormulaParser {
      *  parse results.
      * This class is recommended only for single threaded use.
      *
-     * If you have a {@link org.apache.poi.hssf.usermodel.HSSFWorkbook}, and not a
-     *  {@link org.apache.poi.ss.usermodel.Workbook}, then use the convenience method on
-     *  {@link org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator}
+     * If you have a {@link HSSFWorkbook}, and not a
+     *  {@link Workbook}, then use the convenience method on
+     *  {@link HSSFFormulaEvaluator}
      */
     private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex, int rowIndex) {
         _formulaString = formula;
@@ -148,7 +151,7 @@ public final class FormulaParser {
 
     /**
      * Parse a formula into an array of tokens
-     * Side effect: creates name ({@link org.apache.poi.ss.usermodel.Workbook#createName})
+     * Side effect: creates name ({@link Workbook#createName})
      *     if formula contains unrecognized names (names are likely UDFs)
      *
      * @param formula     the formula to parse
@@ -173,7 +176,7 @@ public final class FormulaParser {
 
     /**
      * Parse a formula into an array of tokens
-     * Side effect: creates name ({@link org.apache.poi.ss.usermodel.Workbook#createName})
+     * Side effect: creates name ({@link Workbook#createName})
      *     if formula contains unrecognized names (names are likely UDFs)
      *
      * @param formula     the formula to parse
@@ -1012,7 +1015,7 @@ public final class FormulaParser {
     /**
      * Matches a zero or one letter-runs followed by zero or one digit-runs.
      * Either or both runs man optionally be prefixed with a single '$'.
-     * (copied+modified from {@link org.apache.poi.ss.util.CellReference#CELL_REF_PATTERN})
+     * (copied+modified from {@link CellReference#CELL_REF_PATTERN})
      */
     private static final Pattern CELL_REF_PATTERN = Pattern.compile("(\\$?[A-Za-z]+)?(\\$?[0-9]+)?");
 
@@ -1325,10 +1328,7 @@ public final class FormulaParser {
                 nameToken = _book.getNameXPtg(name, null);
                 if (nameToken == null) {
                     // name is not an internal or external name
-                    if (log.check(POILogger.WARN)) {
-                        log.log(POILogger.WARN,
-                                "FormulaParser.function: Name '" + name + "' is completely unknown in the current workbook.");
-                    }
+                    LOGGER.atWarn().log("FormulaParser.function: Name '{}' is completely unknown in the current workbook.", name);
                     // name is probably the name of an unregistered User-Defined Function
                     switch (_book.getSpreadsheetVersion()) {
                         case EXCEL97:

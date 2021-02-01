@@ -17,18 +17,18 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.TableProperties;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 @Internal
 public final class TableSprmUncompressor extends SprmUncompressor {
 
-  private static final POILogger LOG = POILogFactory.getLogger( TableSprmUncompressor.class );
+  private static final Logger LOG = LogManager.getLogger(TableSprmUncompressor.class);
 
   public TableSprmUncompressor()
   {
@@ -48,8 +48,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         }
         else
         {
-            LOG.log( POILogger.WARN,
-                    "Some table rows didn't specify number of columns in SPRMs" );
+            LOG.atWarn().log("Some table rows didn't specify number of columns in SPRMs");
             tableProperties = new TableProperties( (short) 1 );
         }
 
@@ -69,8 +68,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
                 }
                 catch ( ArrayIndexOutOfBoundsException ex )
                 {
-                    LOG.log( POILogger.ERROR, "Unable to apply ", sprm,
-                            ": ", ex, ex );
+                  LOG.atError().withThrowable(ex).log("Unable to apply {}", sprm);
                 }
             }
         }

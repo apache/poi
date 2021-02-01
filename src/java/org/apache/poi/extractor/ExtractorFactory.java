@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -36,8 +38,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Figures out the correct POIOLE2TextExtractor for your supplied
@@ -60,7 +60,7 @@ public final class ExtractorFactory {
      */
     public static final String OOXML_PACKAGE = "Package";
 
-    private static final POILogger LOGGER = POILogFactory.getLogger(ExtractorFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtractorFactory.class);
 
     /** Should this thread prefer event based over usermodel based extractors? */
     private static final ThreadLocal<Boolean> threadPreferEventExtractors = ThreadLocal.withInitial(() -> Boolean.FALSE);
@@ -293,7 +293,7 @@ public final class ExtractorFactory {
                 textExtractors.add(createExtractor(stream));
             } catch (IOException e) {
                 // Ignore, just means it didn't contain a format we support as yet
-                LOGGER.log(POILogger.INFO, "Format not supported yet", e.getLocalizedMessage());
+                LOGGER.atInfo().log("Format not supported yet ({})", e.getLocalizedMessage());
             }
         }
         return textExtractors.toArray(new POITextExtractor[0]);

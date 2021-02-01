@@ -26,6 +26,8 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -34,8 +36,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.GraphicalFrame;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -51,7 +51,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 @Beta
 public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
     private static final String DRAWINGML_CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFGraphicFrame.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFGraphicFrame.class);
 
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape,sheet);
@@ -285,7 +285,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         try {
             gs = CTGroupShape.Factory.parse(xo.newDomNode());
         } catch (XmlException e) {
-            LOG.log(POILogger.WARN, "Can't parse fallback picture stream of graphical frame", e);
+            LOG.atWarn().withThrowable(e).log("Can't parse fallback picture stream of graphical frame");
             return null;
         }
 

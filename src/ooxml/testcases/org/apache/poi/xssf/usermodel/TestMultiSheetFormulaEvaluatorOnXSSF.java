@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+import static org.apache.poi.xssf.usermodel.TestMultiSheetFormulaEvaluatorOnXSSF.SS.COLUMN_INDEX_FUNCTION_NAME;
+import static org.apache.poi.xssf.usermodel.TestMultiSheetFormulaEvaluatorOnXSSF.SS.COLUMN_INDEX_TEST_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -38,8 +43,6 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -49,9 +52,9 @@ import org.junit.jupiter.params.provider.MethodSource;
  * Tests formulas for multi sheet reference (i.e. SUM(Sheet1:Sheet5!A1))
  */
 public final class TestMultiSheetFormulaEvaluatorOnXSSF {
-    private static final POILogger LOG = POILogFactory.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
+    private static final Logger LOG = LogManager.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
 
-    private static XSSFWorkbook workbook;
+	private static XSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
 
@@ -211,12 +214,12 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 	 */
 	private static String getTargetFunctionName(Row r) {
 		if(r == null) {
-		    LOG.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
+		    LOG.atWarn().log("Given null row, can't figure out function name");
 			return null;
 		}
-		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
+		Cell cell = r.getCell(COLUMN_INDEX_FUNCTION_NAME);
 		if(cell == null) {
-            LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
+			LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
 			return null;
 		}
 
@@ -232,12 +235,12 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 	 */
 	private static String getTargetTestName(Row r) {
 		if(r == null) {
-            LOG.log(POILogger.WARN, "Warning - given null row, can't figure out test name");
+            LOG.atWarn().log("Given null row, can't figure out test name");
 			return null;
 		}
-		Cell cell = r.getCell(SS.COLUMN_INDEX_TEST_NAME);
+		Cell cell = r.getCell(COLUMN_INDEX_TEST_NAME);
 		if(cell == null) {
-		    LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
+			LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_TEST_NAME + ", can't figure out test name", box(r.getRowNum()));
 			return null;
 		}
 		CellType ct = cell.getCellType();

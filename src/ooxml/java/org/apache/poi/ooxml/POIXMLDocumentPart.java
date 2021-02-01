@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
@@ -38,21 +40,20 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 /**
  * Represents an entry of a OOXML package.
  * <p>
- * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.apache.poi.openxml4j.opc.PackagePart}.
+ * Each POIXMLDocumentPart keeps a reference to the underlying a {@link PackagePart}.
  * </p>
  */
 public class POIXMLDocumentPart {
-    private static final POILogger LOG = POILogFactory.getLogger(POIXMLDocumentPart.class);
+    private static final Logger LOG = LogManager.getLogger(POIXMLDocumentPart.class);
 
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
@@ -161,10 +162,10 @@ public class POIXMLDocumentPart {
 
     /**
      * Creates an POIXMLDocumentPart representing the given package part and relationship.
-     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an existing file.
+     * Called by {@link #read(POIXMLFactory, Map)} when reading in an existing file.
      *
      * @param part - The package part that holds xml data representing this sheet.
-     * @see #read(POIXMLFactory, java.util.Map)
+     * @see #read(POIXMLFactory, Map)
      * @since POI 3.14-Beta1
      */
     public POIXMLDocumentPart(PackagePart part) {
@@ -173,11 +174,11 @@ public class POIXMLDocumentPart {
 
     /**
      * Creates an POIXMLDocumentPart representing the given package part, relationship and parent
-     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an existing file.
+     * Called by {@link #read(POIXMLFactory, Map)} when reading in an existing file.
      *
      * @param parent - Parent part
      * @param part   - The package part that holds xml data representing this sheet.
-     * @see #read(POIXMLFactory, java.util.Map)
+     * @see #read(POIXMLFactory, Map)
      * @since POI 3.14-Beta1
      */
     public POIXMLDocumentPart(POIXMLDocumentPart parent, PackagePart part) {
@@ -619,8 +620,7 @@ public class POIXMLDocumentPart {
         PackagePart pp = getPackagePart();
 
         if (pp.getContentType().equals(XWPFRelation.GLOSSARY_DOCUMENT.getContentType())) {
-            LOG.log(POILogger.WARN,
-                    "POI does not currently support template.main+xml (glossary) parts.  " +
+            LOG.atWarn().log("POI does not currently support template.main+xml (glossary) parts.  " +
                     "Skipping this part for now.");
             return;
         }
@@ -651,7 +651,7 @@ public class POIXMLDocumentPart {
 
                 final PackagePart p = packagePart.getPackage().getPart(relName);
                 if (p == null) {
-                    LOG.log(POILogger.ERROR, "Skipped invalid entry ", rel.getTargetURI());
+                    LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
                     continue;
                 }
 
@@ -721,7 +721,7 @@ public class POIXMLDocumentPart {
      * Internal method, do not use!
      * <p>
      * This method only exists to allow access to protected {@link POIXMLDocumentPart#onDocumentRead()}
-     * from {@link org.apache.poi.xwpf.usermodel.XWPFDocument} without reflection. It should be removed.
+     * from {@link XWPFDocument} without reflection. It should be removed.
      *
      * @param part the part which is to be read
      * @throws IOException if the part can't be read

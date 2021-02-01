@@ -25,11 +25,14 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static java.lang.System.currentTimeMillis;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * The piece table for matching up character positions to bits of text. This
@@ -40,7 +43,7 @@ import org.apache.poi.util.POILogger;
  */
 @Internal
 public class TextPieceTable implements CharIndexTranslator {
-    private static final POILogger LOG = POILogFactory.getLogger(TextPieceTable.class);
+    private static final Logger LOG = LogManager.getLogger(TextPieceTable.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -277,7 +280,7 @@ public class TextPieceTable implements CharIndexTranslator {
     }
 
     public StringBuilder getText() {
-        final long start = System.currentTimeMillis();
+        final long start = currentTimeMillis();
 
         // rebuild document paragraphs structure
         StringBuilder docText = new StringBuilder();
@@ -286,23 +289,14 @@ public class TextPieceTable implements CharIndexTranslator {
             int toAppendLength = toAppend.length();
 
             if (toAppendLength != textPiece.getEnd() - textPiece.getStart()) {
-                LOG.log(
-                        POILogger.WARN,
-                        "Text piece has boundaries [",
-                        textPiece.getStart(),
-                        "; ",
-                        textPiece.getEnd(),
-                        ") but length ",
-                        textPiece.getEnd() - textPiece.getStart());
+                LOG.atWarn().log("Text piece has boundaries [{}; {}) but length {}", box(textPiece.getStart()),box(textPiece.getEnd()),box(textPiece.getEnd() - textPiece.getStart()));
             }
 
             docText.replace(textPiece.getStart(), textPiece.getStart()
                     + toAppendLength, toAppend);
         }
 
-        LOG.log(POILogger.DEBUG, "Document text were rebuilded in ",
-                System.currentTimeMillis() - start, " ms (",
-                docText.length(), " chars)");
+        LOG.atDebug().log("Document text were rebuilt in {} ms ({} chars)", box(currentTimeMillis() - start),box(docText.length()));
 
         return docText;
     }

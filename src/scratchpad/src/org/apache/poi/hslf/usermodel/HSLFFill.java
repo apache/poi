@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -41,19 +43,20 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint.GradientType;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
  */
 @SuppressWarnings("WeakerAccess")
 public final class HSLFFill {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFFill.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFFill.class);
 
     /**
      *  Fill with a solid color
@@ -263,7 +266,7 @@ public final class HSLFFill {
             case FILL_PICTURE:
                 return getTexturePaint();
             default:
-                LOG.log(POILogger.WARN, "unsuported fill type: ", fillType);
+                LOG.atWarn().log("unsupported fill type: {}", box(fillType));
                 return null;
         }
     }
@@ -445,7 +448,7 @@ public final class HSLFFill {
     EscherBSERecord getEscherBSERecord(int idx){
         HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
-            LOG.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
+            LOG.atDebug().log("Fill has not yet been assigned to a sheet");
             return null;
         }
         HSLFSlideShow ppt = sheet.getSlideShow();
@@ -453,7 +456,7 @@ public final class HSLFFill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
-            LOG.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            LOG.atDebug().log("EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
         List<EscherRecord> lst = bstore.getChildRecords();
@@ -560,10 +563,10 @@ public final class HSLFFill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
-        java.util.List<EscherRecord> lst = bstore.getChildRecords();
+        List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
         if (idx == 0){
-            LOG.log(POILogger.WARN, "no reference to picture data found ");
+            LOG.atWarn().log("no reference to picture data found ");
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
             for (HSLFPictureData pd : pict) {
@@ -579,7 +582,7 @@ public final class HSLFFill {
     /**
      * Assign picture used to fill the underlying shape.
      *
-     * @param data the picture data added to this ppt by {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} method.
+     * @param data the picture data added to this ppt by {@link HSLFSlideShow#addPicture(byte[], PictureData.PictureType)} method.
      */
     public void setPictureData(HSLFPictureData data){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();

@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -26,8 +28,6 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -37,7 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *  regular XSSF Workbook
  */
 public class SXSSFCreationHelper implements CreationHelper {
-    private static final POILogger LOG = POILogFactory.getLogger(SXSSFCreationHelper.class);
+    private static final Logger LOG = LogManager.getLogger(SXSSFCreationHelper.class);
 
     private final SXSSFWorkbook wb;
     private final XSSFCreationHelper helper;
@@ -55,7 +55,7 @@ public class SXSSFCreationHelper implements CreationHelper {
 
     @Override
     public XSSFRichTextString createRichTextString(String text) {
-        LOG.log(POILogger.INFO, "SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
+        LOG.atInfo().log("SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
         return new XSSFRichTextString(text);
     }
 

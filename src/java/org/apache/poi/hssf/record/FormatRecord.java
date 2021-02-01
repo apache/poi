@@ -21,19 +21,22 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Describes a number format -- those goofy strings like $(#,###)
  */
 public final class FormatRecord extends StandardRecord {
 
-    private static final POILogger LOG = POILogFactory.getLogger(FormatRecord.class);
+    private static final Logger LOG = LogManager.getLogger(FormatRecord.class);
 
     public static final short sid = 0x041E;
 
@@ -70,7 +73,7 @@ public final class FormatRecord extends StandardRecord {
      * get the format index code (for built in formats)
      *
      * @return the format index code
-     * @see org.apache.poi.hssf.model.InternalWorkbook
+     * @see InternalWorkbook
      */
     public int getIndexCode() {
         return field_1_index_code;
@@ -149,7 +152,7 @@ public final class FormatRecord extends StandardRecord {
         }
 
         if (ris.available() > 0) {
-            LOG.log(POILogger.INFO, "FormatRecord has ", ris.available(), " unexplained bytes. Silently skipping");
+            LOG.atInfo().log("FormatRecord has {} unexplained bytes. Silently skipping", box(ris.available()));
             //swallow what's left
             while (ris.available() > 0) {
                 ris.readByte();

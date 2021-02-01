@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Allows the user to lookup the font metrics for a particular font without
@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  * font. Use a multiplier for other sizes.
  */
 final class StaticFontMetrics {
-    private static final POILogger LOGGER = POILogFactory.getLogger(StaticFontMetrics.class);
+    private static final Logger LOGGER = LogManager.getLogger(StaticFontMetrics.class);
 	/** The font metrics property file we're using */
 	private static Properties fontMetricsProps;
 	/** Our cache of font details we've already looked up */
@@ -109,12 +109,12 @@ final class StaticFontMetrics {
             if (propFileName != null) {
                 propFile = new File(propFileName);
                 if (!propFile.exists()) {
-                    LOGGER.log(POILogger.WARN, "font_metrics.properties not found at path "+propFile.getAbsolutePath());
+					LOGGER.atWarn().log("font_metrics.properties not found at path {}", propFile.getAbsolutePath());
                     propFile = null;
                 }
             }
         } catch (SecurityException e) {
-            LOGGER.log(POILogger.WARN, "Can't access font.metrics.filename system property", e);
+            LOGGER.atWarn().withThrowable(e).log("Can't access font.metrics.filename system property");
         }
 
         try (InputStream metricsIn = (propFile != null)

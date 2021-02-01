@@ -23,13 +23,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.RecordTypes.RecordConstructor;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This abstract class represents a record in the PowerPoint document.
@@ -42,7 +44,7 @@ import org.apache.poi.util.POILogger;
 public abstract class Record implements GenericRecord
 {
     // For logging
-	protected static final POILogger LOG = POILogFactory.getLogger(Record.class);
+	protected static final Logger LOG = LogManager.getLogger(Record.class);
 
 	/**
 	 * Is this record type an Atom record (only has data),
@@ -79,7 +81,7 @@ public abstract class Record implements GenericRecord
 	}
 
 	@Override
-	public List<org.apache.poi.hslf.record.Record> getGenericChildren() {
+	public List<Record> getGenericChildren() {
 		Record[] recs = getChildRecords();
 		return (recs == null) ? null : Arrays.asList(recs);
 	}
@@ -107,7 +109,7 @@ public abstract class Record implements GenericRecord
 	 * @param b The byte array to build from
 	 * @param offset The offset to build at
 	 */
-	public static org.apache.poi.hslf.record.Record buildRecordAtOffset(byte[] b, int offset) {
+	public static Record buildRecordAtOffset(byte[] b, int offset) {
 		long type = LittleEndian.getUShort(b,offset+2);
 		long rlen = LittleEndian.getUInt(b,offset+4);
 
@@ -122,7 +124,7 @@ public abstract class Record implements GenericRecord
 	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
-		List<org.apache.poi.hslf.record.Record> children = new ArrayList<>(5);
+		List<Record> children = new ArrayList<>(5);
 
 		// Jump our little way along, creating records as we go
 		int pos = start;
@@ -149,7 +151,7 @@ public abstract class Record implements GenericRecord
 		}
 
 		// Turn the vector into an array, and return
-        return children.toArray(new org.apache.poi.hslf.record.Record[0]);
+        return children.toArray(new Record[0]);
 	}
 
 	/**
@@ -161,7 +163,7 @@ public abstract class Record implements GenericRecord
 	 *  (not including the size of the header), this code assumes you're
 	 *  passing in corrected lengths
 	 */
-	public static org.apache.poi.hslf.record.Record createRecordForType(long type, byte[] b, int start, int len) {
+	public static Record createRecordForType(long type, byte[] b, int start, int len) {
 		// We use the RecordTypes class to provide us with the right
 		//  class to use for a given type
 		// A spot of reflection gets us the (byte[],int,int) constructor
@@ -183,7 +185,7 @@ public abstract class Record implements GenericRecord
 			// Handle case of a corrupt last record, whose claimed length
 			//  would take us passed the end of the file
 			if(start + len > b.length ) {
-				LOG.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
+				LOG.atWarn().log("Warning: Skipping record of type {} at position {} which claims to be longer than the file! ({} vs {})", type, box(start), box(len), box(b.length - start));
 				return null;
 			}
 

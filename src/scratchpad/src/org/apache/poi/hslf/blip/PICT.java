@@ -24,18 +24,20 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Represents Macintosh PICT picture data.
  */
 public final class PICT extends Metafile {
-    private static final POILogger LOG = POILogFactory.getLogger(PICT.class);
+    private static final Logger LOG = LogManager.getLogger(PICT.class);
 
 
     @Override
@@ -85,7 +87,7 @@ public final class PICT extends Metafile {
                 out.write(chunk, 0, lastLen);
             }
             // End of picture marker for PICT is 0x00 0xFF
-            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: ", header.getWmfSize(), " / Read bytes: ", out.size(), e);
+            LOG.atError().withThrowable(e).log("PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: {} / Read bytes: {}", box(header.getWmfSize()),box(out.size()));
         }
         return out.toByteArray();
     }

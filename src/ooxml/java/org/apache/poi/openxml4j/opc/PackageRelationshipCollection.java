@@ -20,11 +20,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
  */
 public final class PackageRelationshipCollection implements Iterable<PackageRelationship> {
 
-    private static final POILogger LOG = POILogFactory.getLogger(PackageRelationshipCollection.class);
+    private static final Logger LOG = LogManager.getLogger(PackageRelationshipCollection.class);
 
     /**
      * Package relationships ordered by ID.
@@ -300,7 +300,7 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
     public void parseRelationshipsPart(PackagePart relPart)
             throws InvalidFormatException {
         try {
-            LOG.log(POILogger.DEBUG, "Parsing relationship: ", relPart.getPartName());
+            LOG.atDebug().log("Parsing relationship: {}", relPart.getPartName());
             Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
 
             // Browse default types
@@ -348,8 +348,7 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
                     // package
                     target = PackagingURIHelper.toURI(value);
                 } catch (URISyntaxException e) {
-                    LOG.log(POILogger.ERROR, "Cannot convert ", value,
-                            " in a valid relationship URI-> dummy-URI used", e);
+                    LOG.atError().withThrowable(e).log("Cannot convert {} in a valid relationship URI-> dummy-URI used", value);
                 }
                 addRelationship(target, targetMode, type, id);
             }

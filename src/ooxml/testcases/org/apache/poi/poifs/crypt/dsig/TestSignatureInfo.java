@@ -78,6 +78,8 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocument;
@@ -101,8 +103,6 @@ import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -162,7 +162,7 @@ import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
 
 class TestSignatureInfo {
-    private static final POILogger LOG = POILogFactory.getLogger(TestSignatureInfo.class);
+    private static final Logger LOG = LogManager.getLogger(TestSignatureInfo.class);
     private static final POIDataSamples testdata = POIDataSamples.getXmlDSignInstance();
 
     private static Calendar cal;
@@ -357,7 +357,7 @@ class TestSignatureInfo {
                 assertNotNull(result);
                 assertEquals(1, result.size(), "test-file: " + testFile);
                 X509Certificate signer = result.get(0);
-                LOG.log(POILogger.DEBUG, "signer: ", signer.getSubjectX500Principal());
+                LOG.atDebug().log("signer: {}", signer.getSubjectX500Principal());
 
                 boolean b = si.verifySignature();
                 assertTrue(b, "test-file: " + testFile);
@@ -385,8 +385,8 @@ class TestSignatureInfo {
             assertEquals(2, result.size(), "test-file: " + testFile);
             X509Certificate signer1 = result.get(0);
             X509Certificate signer2 = result.get(1);
-            LOG.log(POILogger.DEBUG, "signer 1: ", signer1.getSubjectX500Principal());
-            LOG.log(POILogger.DEBUG, "signer 2: ", signer2.getSubjectX500Principal());
+            LOG.atDebug().log("signer 1: {}", signer1.getSubjectX500Principal());
+            LOG.atDebug().log("signer 2: {}", signer2.getSubjectX500Principal());
 
             boolean b = si.verifySignature();
             assertTrue(b, "test-file: " + testFile);
@@ -527,8 +527,8 @@ class TestSignatureInfo {
             } else {
                 TimeStampServiceValidator tspValidator = (validateChain, revocationData) -> {
                     for (X509Certificate certificate : validateChain) {
-                        LOG.log(POILogger.DEBUG, "certificate: ", certificate.getSubjectX500Principal());
-                        LOG.log(POILogger.DEBUG, "validity: ", certificate.getNotBefore(), " - ", certificate.getNotAfter());
+                        LOG.atDebug().log("certificate: {}", certificate.getSubjectX500Principal());
+                        LOG.atDebug().log("validity: {} - {}", certificate.getNotBefore(), certificate.getNotAfter());
                     }
                 };
                 signatureConfig.setTspValidator(tspValidator);

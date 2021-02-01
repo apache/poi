@@ -17,18 +17,23 @@
 
 package org.apache.poi;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hpsf.PropertySetFactory.newDocumentSummaryInformation;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -43,8 +48,6 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This holds the common functionality for all POI
@@ -60,7 +63,7 @@ public abstract class POIDocument implements Closeable {
     private DirectoryNode directory;
 
     /** For our own logging use */
-    private static final POILogger LOG = POILogFactory.getLogger(POIDocument.class);
+    private static final Logger LOG = LogManager.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized;
@@ -162,12 +165,12 @@ public abstract class POIDocument implements Closeable {
             if (clazz.isInstance(ps)) {
                 return (T)ps;
             } else if (ps != null) {
-                LOG.log(POILogger.WARN, localName+" property set came back with wrong class - "+ps.getClass().getName());
+                LOG.atWarn().log("{} property set came back with wrong class - {}", localName, ps.getClass().getName());
             } else {
-                LOG.log(POILogger.WARN, localName+" property set came back as null");
+                LOG.atWarn().log("{} property set came back as null {}", localName, box(5));
             }
         } catch (IOException e) {
-            LOG.log(POILogger.ERROR, "can't retrieve property set", e);
+            LOG.atError().withThrowable(e).log("can't retrieve property set");
         }
         return null;
     }
@@ -333,9 +336,9 @@ public abstract class POIDocument implements Closeable {
             // Create or Update the Property Set stream in the POIFS
             outFS.createOrUpdateDocument(bIn, name);
 
-            LOG.log(POILogger.INFO, "Wrote property set ", name, " of size ", data.length);
+            LOG.atInfo().log("Wrote property set {} of size {}", name, box(data.length));
         } catch(WritingNotSupportedException ignored) {
-            LOG.log( POILogger.ERROR, "Couldn't write property set with name ", name, " as not supported by HPSF yet");
+            LOG.atError().log("Couldn't write property set with name {} as not supported by HPSF yet", name);
         }
     }
 
@@ -397,9 +400,9 @@ public abstract class POIDocument implements Closeable {
      *  {@link #write()} or to a different File. Overwriting the currently
      *  open file via an OutputStream isn't possible.
      *
-     * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
+     * If {@code stream} is a {@link FileOutputStream} on a networked drive
      * or has a high cost/latency associated with each written byte,
-     * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
+     * consider wrapping the OutputStream in a {@link BufferedOutputStream}
      * to improve write performance, or use {@link #write()} / {@link #write(File)}
      * if possible.
      *

@@ -19,17 +19,19 @@ package org.apache.poi.hdgf.chunks;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Base of all chunks, which hold data, flags etc
  */
 public final class Chunk {
     /** For logging warnings about the structure of the file */
-    private static final POILogger LOG = POILogFactory.getLogger(Chunk.class);
+    private static final Logger LOG = LogManager.getLogger(Chunk.class);
 
     /**
      * The contents of the chunk, excluding the header,
@@ -179,9 +181,7 @@ public final class Chunk {
 
             // Check we seem to have enough data
             if(offset >= contents.length) {
-                LOG.log(POILogger.WARN,
-                        "Command offset ", offset, " past end of data at ", contents.length
-                );
+                LOG.atWarn().log("Command offset {} past end of data at {}", box(offset),box(contents.length));
                 continue;
             }
 
@@ -241,12 +241,11 @@ public final class Chunk {
                     break;
 
                 default:
-                    LOG.log(POILogger.INFO,
-                            "Command of type ", type, " not processed!");
+                    LOG.atInfo().log("Command of type {} not processed!", box(type));
                 }
             }
             catch (Exception e) {
-                LOG.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: ", command, e);
+                LOG.atError().withThrowable(e).log("Unexpected error processing command, ignoring and continuing. Command: {}", command);
             }
 
             // Add to the array

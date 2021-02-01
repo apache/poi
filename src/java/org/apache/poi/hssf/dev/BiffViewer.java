@@ -31,6 +31,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.hssf.record.chart.*;
@@ -46,10 +48,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.SuppressForbidden;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  *  Utility for reading in BIFF8 records and displaying data from them.
@@ -57,7 +60,7 @@ import org.apache.poi.util.SuppressForbidden;
  */
 public final class BiffViewer {
     private static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
-    private static final POILogger LOG = POILogFactory.getLogger(BiffViewer.class);
+    private static final Logger LOG = LogManager.getLogger(BiffViewer.class);
 
     private BiffViewer() {
         // no instances of this class
@@ -71,17 +74,17 @@ public final class BiffViewer {
      * @param recListener the record listener to notify about read records
      * @param dumpInterpretedRecords if {@code true}, the read records will be written to the PrintWriter
      *
-     * @exception  org.apache.poi.util.RecordFormatException  on error processing the InputStream
+     * @exception  RecordFormatException  on error processing the InputStream
      */
     private static void createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
-            throws org.apache.poi.util.RecordFormatException {
+            throws RecordFormatException {
         RecordInputStream recStream = new RecordInputStream(is);
         while (true) {
             boolean hasNext;
             try {
                 hasNext = recStream.hasNextRecord();
             } catch (LeftoverDataException e) {
-                LOG.log(POILogger.ERROR, "Discarding ", recStream.remaining(), " bytes and continuing", e);
+                LOG.atError().withThrowable(e).log("Discarding {} bytes and continuing", box(recStream.remaining()));
                 recStream.readRemainder();
                 hasNext = recStream.hasNextRecord();
             }
@@ -92,7 +95,7 @@ public final class BiffViewer {
             if (recStream.getSid() == 0) {
                 continue;
             }
-            org.apache.poi.hssf.record.Record record;
+            Record record;
             if (dumpInterpretedRecords) {
                 record = createRecord (recStream);
                 if (record.getSid() == ContinueRecord.sid) {
@@ -116,7 +119,7 @@ public final class BiffViewer {
      *  up non-debug operations.
      *
      */
-    private static org.apache.poi.hssf.record.Record createRecord(RecordInputStream in) {
+    private static Record createRecord(RecordInputStream in) {
         switch (in.getSid()) {
             case AreaFormatRecord.sid:        return new AreaFormatRecord(in);
             case AreaRecord.sid:              return new AreaRecord(in);

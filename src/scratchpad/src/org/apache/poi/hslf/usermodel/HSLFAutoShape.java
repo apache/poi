@@ -26,6 +26,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -47,8 +49,6 @@ import org.apache.poi.ss.usermodel.ShapeTypes;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Represents an AutoShape.<p>
@@ -57,7 +57,7 @@ import org.apache.poi.util.POILogger;
  * See {@link ShapeTypes}
  */
 public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFAutoShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFAutoShape.class);
 
     static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
@@ -218,11 +218,11 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
         //sanity check
         if(verticesProp == null) {
-            LOG.log(POILogger.WARN, "Freeform is missing GEOMETRY__VERTICES ");
+            LOG.atWarn().log("Freeform is missing GEOMETRY__VERTICES ");
             return super.getGeometry();
         }
         if(segmentsProp == null) {
-            LOG.log(POILogger.WARN, "Freeform is missing GEOMETRY__SEGMENTINFO ");
+            LOG.atWarn().log("Freeform is missing GEOMETRY__SEGMENTINFO ");
             return super.getGeometry();
         }
 
@@ -236,7 +236,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
         while (segIter.hasNext()) {
             byte[] segElem = segIter.next();
-            HSLFAutoShape.PathInfo pi = getPathInfo(segElem);
+            PathInfo pi = getPathInfo(segElem);
             if (pi == null) {
                 continue;
             }
@@ -368,7 +368,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     private static void handleEscapeInfo(Path pathCT, Path2D path2D, byte[] segElem, Iterator<byte[]> vertIter) {
-        HSLFAutoShape.EscapeInfo ei = getEscapeInfo(segElem);
+        EscapeInfo ei = getEscapeInfo(segElem);
         if (ei == null) {
             return;
         }
@@ -466,26 +466,26 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         return new Point2D.Double(xyPoints[0],xyPoints[1]);
     }
 
-    private static HSLFAutoShape.PathInfo getPathInfo(byte[] elem) {
+    private static PathInfo getPathInfo(byte[] elem) {
         int elemUS = LittleEndian.getUShort(elem, 0);
         int pathInfo = PATH_INFO.getValue(elemUS);
-        return HSLFAutoShape.PathInfo.valueOf(pathInfo);
+        return PathInfo.valueOf(pathInfo);
     }
 
-    private static HSLFAutoShape.EscapeInfo getEscapeInfo(byte[] elem) {
+    private static EscapeInfo getEscapeInfo(byte[] elem) {
         int elemUS = LittleEndian.getUShort(elem, 0);
         int escInfo = ESCAPE_INFO.getValue(elemUS);
-        return HSLFAutoShape.EscapeInfo.valueOf(escInfo);
+        return EscapeInfo.valueOf(escInfo);
     }
 
 
     private static AdjustPoint fillPoint(byte[] xyMaster, int[] xyPoints) {
         if (xyMaster == null || xyPoints == null) {
-            LOG.log(POILogger.WARN, "Master bytes or points not set - ignore point");
+            LOG.atWarn().log("Master bytes or points not set - ignore point");
             return null;
         }
         if ((xyMaster.length != 4 && xyMaster.length != 8) || xyPoints.length != 2) {
-            LOG.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
+            LOG.atWarn().log("Invalid number of master bytes for a single point - ignore point");
             return null;
         }
 

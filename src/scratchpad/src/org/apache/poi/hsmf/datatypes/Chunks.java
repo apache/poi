@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Collection of convenience chunks for standard parts of the MSG file.
@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  * TODO Deprecate the public Chunks in favour of Property Lookups
  */
 public final class Chunks implements ChunkGroupWithProperties {
-    private static final POILogger LOG = POILogFactory.getLogger(Chunks.class);
+    private static final Logger LOG = LogManager.getLogger(Chunks.class);
 
     /**
      * Holds all the chunks that were found, indexed by their MAPIProperty.
@@ -262,8 +262,7 @@ public final class Chunks implements ChunkGroupWithProperties {
         if (messageProperties != null) {
             messageProperties.matchVariableSizedPropertiesToChunks();
         } else {
-            LOG.log(POILogger.WARN,
-                    "Message didn't contain a root list of properties!");
+            LOG.atWarn().log("Message didn't contain a root list of properties!");
         }
     }
 }

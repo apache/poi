@@ -32,12 +32,12 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -45,8 +45,8 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public class EncryptedTempData {
-    private static POILogger LOG = POILogFactory.getLogger(EncryptedTempData.class);
- 
+    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
+
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
@@ -91,7 +91,7 @@ public class EncryptedTempData {
      */
     public void dispose() {
         if (!tempFile.delete()) {
-            LOG.log(POILogger.WARN, tempFile.getAbsolutePath()+" can't be removed (or was already removed.");
+            LOG.atWarn().log("{} can't be removed (or was already removed).", tempFile.getAbsolutePath());
         }
     }
 }

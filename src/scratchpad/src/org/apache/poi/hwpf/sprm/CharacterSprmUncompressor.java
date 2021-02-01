@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
 
 import org.apache.poi.hwpf.model.Colorref;
@@ -28,15 +30,13 @@ import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 @Internal
 public final class CharacterSprmUncompressor extends SprmUncompressor
 {
-    private static final POILogger LOG = POILogFactory.getLogger( CharacterSprmUncompressor.class );
+    private static final Logger LOG = LogManager.getLogger(CharacterSprmUncompressor.class);
 
-  public CharacterSprmUncompressor()
+    public CharacterSprmUncompressor()
   {
   }
 
@@ -77,8 +77,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
             }
             catch ( Exception exc )
             {
-                LOG.log( POILogger.ERROR, "Unable to apply all style ",
-                        style, " CHP SPRMs to CHP: ", exc, exc );
+                LOG.atError().withThrowable(exc).log("Unable to apply all style {} CHP SPRMs to CHP", style);
             }
         }
 
@@ -91,8 +90,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         }
         catch ( Exception exc )
         {
-            LOG.log( POILogger.ERROR,
-                    "Unable to process all direct CHP SPRMs: ", exc, exc );
+            LOG.atError().withThrowable(exc).log("Unable to process all direct CHP SPRMs");
         }
         return newProperties;
     }
@@ -111,8 +109,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
             {
                 if ( warnAboutNonChpSprms )
                 {
-                    LOG.log( POILogger.WARN,
-                            "Non-CHP SPRM returned by SprmIterator: ", sprm );
+                    LOG.atWarn().log("Non-CHP SPRM returned by SprmIterator: {}", sprm);
                 }
                 continue;
             }
@@ -140,8 +137,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         }
         catch ( Exception exc )
         {
-            LOG.log( POILogger.ERROR,
-                    "Unable to extract istd from direct CHP SPRM: ", exc, exc );
+            LOG.atError().withThrowable(exc).log("Unable to extract istd from direct CHP SPRM");
         }
         return style;
     }
@@ -705,7 +701,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
 					oldCHP.isFNoProof()));
 			break;
       default:
-          LOG.log( POILogger.DEBUG, "Unknown CHP sprm ignored: ", sprm );
+          LOG.atDebug().log("Unknown CHP sprm ignored: {}", sprm);
           break;
     }
   }

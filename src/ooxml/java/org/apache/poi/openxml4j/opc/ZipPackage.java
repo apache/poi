@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -52,8 +55,6 @@ import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -63,7 +64,7 @@ public final class ZipPackage extends OPCPackage {
     private static final String MIMETYPE = "mimetype";
     private static final String SETTINGS_XML = "settings.xml";
 
-    private static final POILogger LOG = POILogFactory.getLogger(ZipPackage.class);
+    private static final Logger LOG = LogManager.getLogger(ZipPackage.class);
 
     /**
      * Zip archive, as either a file on disk,
@@ -81,7 +82,7 @@ public final class ZipPackage extends OPCPackage {
         try {
             this.contentTypeManager = new ZipContentTypeManager(null, this);
         } catch (InvalidFormatException e) {
-            LOG.log(POILogger.WARN,"Could not parse ZipPackage", e);
+            LOG.atWarn().withThrowable(e).log("Could not parse ZipPackage");
         }
     }
 
@@ -145,7 +146,7 @@ public final class ZipPackage extends OPCPackage {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
 
-            LOG.log(POILogger.ERROR, "Error in zip file ", file, " - falling back to stream processing (i.e. ignoring zip central directory)");
+            LOG.atError().log("Error in zip file {} - falling back to stream processing (i.e. ignoring zip central directory)", file);
             ze = openZipEntrySourceStream(file);
         }
         this.zipArchive = ze;
@@ -311,7 +312,7 @@ public final class ZipPackage extends OPCPackage {
                     : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
             } catch (Exception e) {
                 // We assume we can continue, even in degraded mode ...
-                LOG.log(POILogger.WARN,"Entry ", entryName, " is not valid, so this part won't be add to the package.", e);
+                LOG.atWarn().withThrowable(e).log("Entry {} is not valid, so this part won't be add to the package.", entryName);
             }
 
             this.partName = ppn;
@@ -370,7 +371,7 @@ public final class ZipPackage extends OPCPackage {
         try {
             return new MemoryPackagePart(this, partName, contentType, loadRelationships);
         } catch (InvalidFormatException e) {
-            LOG.log(POILogger.WARN, e);
+            LOG.atWarn().withThrowable(e).log("Failed to create part {}", partName);
             return null;
         }
     }
@@ -437,9 +438,7 @@ public final class ZipPackage extends OPCPackage {
 			} finally {
 				// Either the save operation succeed or not, we delete the temporary file
 				if (!tempFile.delete()) {
-					LOG.log(POILogger.WARN, "The temporary file: '",
-					    targetFile.getAbsolutePath(),
-					    "' cannot be deleted ! Make sure that no other application use it.");
+                    LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", targetFile.getAbsolutePath());
 				}
 			}
 		}
@@ -496,7 +495,7 @@ public final class ZipPackage extends OPCPackage {
 			// we save it as well
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
-				LOG.log(POILogger.DEBUG,"Save core properties part");
+				LOG.atDebug().log("Save core properties part");
 
 				// Ensure that core properties are added if missing
 				getPackageProperties();
@@ -516,11 +515,11 @@ public final class ZipPackage extends OPCPackage {
 			}
 
             // Save content type part.
-            LOG.log(POILogger.DEBUG,"Save content types part");
+            LOG.atDebug().log("Save content types part");
             this.contentTypeManager.save(zos);
 
 			// Save package relationships part.
-			LOG.log(POILogger.DEBUG,"Save package relationships");
+			LOG.atDebug().log("Save package relationships");
 			ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
 					PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
 					zos);
@@ -534,13 +533,13 @@ public final class ZipPackage extends OPCPackage {
                 }
 
 				final PackagePartName ppn = part.getPartName();
-				LOG.log(POILogger.DEBUG,"Save part '", ZipHelper.getZipItemNameFromOPCName(ppn.getName()), "'");
+                LOG.atDebug().log(() -> new SimpleMessage("Save part '" + ZipHelper.getZipItemNameFromOPCName(ppn.getName()) + "'"));
 				final PartMarshaller marshaller = partMarshallers.get(part._contentType);
 
 				final PartMarshaller pm = (marshaller != null) ? marshaller : defaultPartMarshaller;
                 if (!pm.marshall(part, zos)) {
                     String errMsg = "The part " + ppn.getURI() + " failed to be saved in the stream with marshaller " + pm +
-                            ". Enable logging via POILogger for more details.";
+                            ". Enable logging via Log4j 2 for more details.";
                     throw new OpenXML4JException(errMsg);
                 }
 			}

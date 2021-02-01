@@ -17,9 +17,9 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -50,9 +50,9 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
  */
 @Internal
 /* package */ class XSLFPropertiesDelegate {
-    private static final POILogger LOG = POILogFactory.getLogger(XSLFPropertiesDelegate.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFPropertiesDelegate.class);
 
-    
+
     public static XSLFFillProperties getFillDelegate(XmlObject props) {
         return getDelegate(XSLFFillProperties.class, props);
     }
@@ -1848,15 +1848,15 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
         } else if (props instanceof CTTextCharacterProperties) {
             obj = new TextCharDelegate((CTTextCharacterProperties)props);
         } else {
-            LOG.log(POILogger.ERROR, props.getClass(), " is an unknown properties type");
+            LOG.atError().log("{} is an unknown properties type", props.getClass());
             return null;
         }
 
         if (clazz.isInstance(obj)) {
             return (T)obj;
         }
-        
-        LOG.log(POILogger.WARN, obj.getClass() +" doesn't implement "+ clazz);
+
+        LOG.atWarn().log("{} doesn't implement {}", obj.getClass(), clazz);
         return null;
     }
 }

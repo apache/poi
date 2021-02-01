@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -33,8 +35,6 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -42,7 +42,7 @@ import org.apache.poi.util.Units;
  */
 public class HSLFGroupShape extends HSLFShape
 implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFGroupShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFGroupShape.class);
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
@@ -207,7 +207,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         int x1,y1,x2,y2;
         if(clientAnchor == null){
-            LOG.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
+            LOG.atInfo().log("EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
             EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             x1 = rec.getDx1();
             y1 = rec.getDy1();
@@ -230,7 +230,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     /**
      * Return type of the shape.
-     * In most cases shape group type is {@link org.apache.poi.sl.usermodel.ShapeType#NOT_PRIMITIVE}
+     * In most cases shape group type is {@link ShapeType#NOT_PRIMITIVE}
      *
      * @return type of the shape.
      */
@@ -289,7 +289,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             } else {
                 // Should we do anything special with these non
                 //  Container records?
-                LOG.log(POILogger.ERROR, "Shape contained non container escher record, was ", r.getClass().getName());
+                LOG.atError().log("Shape contained non container escher record, was {}", r.getClass().getName());
             }
         }
 

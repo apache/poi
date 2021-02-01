@@ -33,11 +33,13 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
 
 @Internal
 public final class IOUtils {
-    private static final POILogger LOG = POILogFactory.getLogger( IOUtils.class );
+    private static final Logger LOG = LogManager.getLogger(IOUtils.class);
 
     /**
      * The default buffer size to use for the skip() methods.
@@ -395,8 +397,7 @@ public final class IOUtils {
         try {
             closeable.close();
         } catch ( Exception exc ) {
-            LOG.log( POILogger.ERROR, "Unable to close resource: ", exc,
-                    exc );
+            LOG.atError().withThrowable(exc).log("Unable to close resource");
         }
     }
 

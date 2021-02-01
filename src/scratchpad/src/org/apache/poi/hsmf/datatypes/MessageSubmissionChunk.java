@@ -24,11 +24,11 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A Chunk that holds the details given back by the server at submission time.
@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
  * used if you want to cancel a message or similar
  */
 public class MessageSubmissionChunk extends Chunk {
-    private static final POILogger LOG = POILogFactory.getLogger(MessageSubmissionChunk.class);
+    private static final Logger LOG = LogManager.getLogger(MessageSubmissionChunk.class);
     private String rawId;
     private Calendar date;
 
@@ -103,8 +103,7 @@ public class MessageSubmissionChunk extends Chunk {
                         date.set(Calendar.SECOND, Integer.parseInt(m.group(6)));
                         date.clear(Calendar.MILLISECOND);
                     } else {
-                        LOG.log(POILogger.WARN,
-                                "Warning - unable to make sense of date ", dateS);
+                        LOG.atWarn().log("Warning - unable to make sense of date {}", dateS);
                     }
                 }
             }

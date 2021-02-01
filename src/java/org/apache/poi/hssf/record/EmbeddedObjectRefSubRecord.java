@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -32,10 +34,10 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * ftPictFmla (0x0009)<p>
@@ -43,7 +45,7 @@ import org.apache.poi.util.StringUtil;
  * stored in a separate entry within the OLE2 compound file.
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord {
-	private static final POILogger LOG = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
+	private static final Logger LOG = LogManager.getLogger(EmbeddedObjectRefSubRecord.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -157,7 +159,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
 
 		if (nUnexpectedPadding > 0) {
-			LOG.log( POILogger.ERROR, "Discarding ", nUnexpectedPadding, " unexpected padding bytes");
+			LOG.atError().log("Discarding {} unexpected padding bytes", box(nUnexpectedPadding));
 			readRawData(in, nUnexpectedPadding);
 			remaining-=nUnexpectedPadding;
 		}

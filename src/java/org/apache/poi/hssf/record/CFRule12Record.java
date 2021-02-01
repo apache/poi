@@ -40,7 +40,8 @@ import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Conditional Formatting v12 Rule Record (0x087A).
@@ -285,7 +286,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
             in.readFully(template_params);
         } else {
-            LOG.log(POILogger.WARN, "CF Rule v12 template params length should be 0 or 16, found " + template_param_length);
+            LOG.atWarn().log("CF Rule v12 template params length should be 0 or 16, found {}", box(template_param_length));
             in.readRemainder();
         }
 

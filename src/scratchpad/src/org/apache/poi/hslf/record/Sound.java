@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import org.apache.poi.util.POILogger;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container holding information about a sound. It contains:
@@ -65,17 +65,19 @@ public final class Sound extends RecordContainer {
 
     private void findInterestingChildren() {
         // First child should be the ExHyperlinkAtom
-        if(_children[0] instanceof CString) {
-            _name = (CString)_children[0];
+        Record child = _children[0];
+        if(child instanceof CString) {
+            _name = (CString) child;
         } else {
-            LOG.log(POILogger.ERROR, "First child record wasn't a CString, was of type ", _children[0].getRecordType());
+            LOG.atError().log("First child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }
 
         // Second child should be the ExOleObjAtom
-        if (_children[1] instanceof CString) {
-            _type = (CString)_children[1];
+        child = _children[1];
+        if (child instanceof CString) {
+            _type = (CString) child;
         } else {
-            LOG.log(POILogger.ERROR, "Second child record wasn't a CString, was of type ", _children[1].getRecordType());
+            LOG.atError().log("Second child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }
 
         for (int i = 2; i < _children.length; i++) {
