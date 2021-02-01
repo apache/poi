@@ -913,6 +913,21 @@ class TestXSSFDrawing {
         wb2.close();
     }
 
+    @Test
+    void testBug63901() {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
+        XSSFSheet sheet = workbook.getSheet("Sheet1");
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        assert(drawing.getCharts().size() > 0);
+
+        XSSFWorkbook workbook2 = new XSSFWorkbook();
+        XSSFSheet sheet2 = workbook2.createSheet();
+        XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
+
+        drawing.getCharts().forEach(drawing2::importChart);
+
+        assertEquals(drawing.getCharts().size(), drawing2.getCharts().size());
+    }
 
     private static void checkRewrite(XSSFWorkbook wb) throws IOException {
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);

@@ -271,8 +271,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFClientAnchor destAnchor = new XSSFClientAnchor(from, to);
         destAnchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
         XSSFChart destChart = createChart(destAnchor);
-        destChart.getCTChartSpace().set(srcChart.getCTChartSpace().copy());
-        destChart.getCTChart().set(destChart.getCTChartSpace().getChart());
+        destChart.getCTChart().set(srcChart.getCTChartSpace().getChart().copy());
         return destChart;
     }
 
