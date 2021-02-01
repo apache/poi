@@ -140,7 +140,7 @@ subprojects {
         testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.hamcrest:hamcrest:${hamcrestVersion}"
-        testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+        testCompile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     }
 
     jar {
@@ -239,7 +239,7 @@ project('main') {
         compile "commons-codec:commons-codec:${commonsCodecVersion}"
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
-        implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
@@ -309,7 +309,7 @@ project('ooxml') {
         compile "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
         compile 'com.github.virtuald:curvesapi:1.06'
         compile 'com.zaxxer:SparseBitSet:1.2'
-        implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
         // compile only, don't add it to our dist as it blows up the size
         compile 'org.apache.xmlgraphics:batik-all:1.13'
@@ -358,7 +358,7 @@ project('examples') {
         compile project(':scratchpad')
 
         compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+        compile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 
         compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
@@ -439,7 +439,7 @@ project('scratchpad') {
         compile project(':main')
         compile "commons-codec:commons-codec:${commonsCodecVersion}"
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
-        implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
         // cyclic-dependency here: compile project(':ooxml')
 
