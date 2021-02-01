@@ -73,7 +73,7 @@ public final class DataBarFormatting implements Duplicatable, GenericRecord {
         if (percentMin < 0 || percentMin > 100)
             LOG.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
         if (percentMax < 0 || percentMax > 100)
-            LOG.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
+            LOG.log(POILogger.WARN, "Inconsistent Maximum Percentage found " + percentMax);
 
         color = new ExtendedColor(in);
         thresholdMin = new DataBarThreshold(in);
