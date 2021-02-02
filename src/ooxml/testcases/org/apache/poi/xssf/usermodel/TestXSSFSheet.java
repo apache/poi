@@ -1887,7 +1887,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      */
     @Test
     void testInsertCommentsToClonedSheet() throws IOException {
-    	try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx")) {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx")) {
             CreationHelper helper = wb.getCreationHelper();
             Sheet sheet2 = wb.createSheet("Sheet 2");
             Sheet sheet3 = wb.cloneSheet(0);
@@ -1994,5 +1994,30 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 assertTrue(s.getForceFormulaRecalculation(), "Sheet-level flag is still set to true");
             }
         }
+    }
+
+    @Test
+    public void bug65120() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        CreationHelper creationHelper = wb.getCreationHelper();
+
+        Sheet sheet1 = wb.createSheet();
+        Cell cell1 = sheet1.createRow(0).createCell(0);
+        Comment comment1 = sheet1.createDrawingPatriarch().createCellComment(creationHelper.createClientAnchor());
+        cell1.setCellComment(comment1);
+
+        Sheet sheet2 = wb.createSheet();
+        Cell cell2 = sheet2.createRow(0).createCell(0);
+        Comment comment2 = sheet2.createDrawingPatriarch().createCellComment(creationHelper.createClientAnchor());
+        cell2.setCellComment(comment2);
+
+        wb.removeSheetAt(0);
+
+        Sheet sheet3 = wb.createSheet();
+        Cell cell3 = sheet3.createRow(0).createCell(0);
+        Comment comment3 = sheet3.createDrawingPatriarch().createCellComment(creationHelper.createClientAnchor());
+        cell3.setCellComment(comment3);
+
+        wb.close();
     }
 }

@@ -601,8 +601,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
         if(ctDrawing == null) {
             if(autoCreate) {
-                //drawingNumber = #drawings.size() + 1
-                int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size() + 1;
+                int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
+                        getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
                 RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
                 drawing = rp.getDocumentPart();
                 String relId = rp.getRelationship().getId();
