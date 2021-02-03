@@ -289,6 +289,7 @@ under the License.
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.19" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
+    <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -433,6 +434,7 @@ under the License.
         <pathelement location="${main.byte-buddy-agent.jar}"/>
         <pathelement location="${main.objenesis.jar}"/>
         <pathelement location="${main.log4j-core.jar}"/>
+        <pathelement location="${main.commons-logging.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -701,6 +703,7 @@ under the License.
     <target name="fetch-jars" depends="check-jars" unless="jars.present"
             description="Fetches needed JAR files from the Internet">
         <mkdir dir="${main.lib}"/>
+        <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
         <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
         <downloadfile src="${main.junit-api.url}" dest="${main.junit-api.jar}"/>
         <downloadfile src="${main.junit-jengine.url}" dest="${main.junit-jengine.jar}"/>
@@ -2552,6 +2555,7 @@ under the License.
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
+            <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.log4j-api.jar}" />
             <auxClasspath path="${main.log4j-core.jar}" />
             <auxClasspath path="${main.junit-api.jar}" />
