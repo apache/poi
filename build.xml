@@ -290,6 +290,7 @@ under the License.
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
+    <dependency prefix="main.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -347,7 +348,7 @@ under the License.
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
-    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.apache.logging.log4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
+    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.slf4j.*:org.apache.logging.log4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
 
     <property name="file.leak.detector" value="-Dthis.is.a.dummy=true"/>
 
@@ -435,6 +436,7 @@ under the License.
         <pathelement location="${main.objenesis.jar}"/>
         <pathelement location="${main.log4j-core.jar}"/>
         <pathelement location="${main.commons-logging.jar}"/>
+        <pathelement location="${main.slf4j-api.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -677,6 +679,7 @@ under the License.
                     <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
+                    <available file="${main.slf4j-api.jar}"/>
                     <available file="${main.log4j-api.jar}"/>
                     <available file="${main.log4j-core.jar}"/>
                     <available file="${asm.jar}"/>
@@ -723,6 +726,7 @@ under the License.
         <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
+        <downloadfile src="${main.slf4j-api.url}" dest="${main.slf4j-api.jar}"/>
         <downloadfile src="${main.log4j-api.url}" dest="${main.log4j-api.jar}"/>
         <downloadfile src="${main.log4j-core.url}" dest="${main.log4j-core.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
