@@ -295,6 +295,11 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
             return this;
         }
 
+        XSLFNotes srcNotes = ((XSLFSlide)src).getNotes();
+        if (srcNotes != null) {
+            getSlideShow().getNotesSlide(this).importContent(srcNotes);
+        }
+
         // only copy direct backgrounds - not backgrounds of master sheet
         CTBackground bgOther = ((XSLFSlide)src)._slide.getCSld().getBg();
         if (bgOther == null) {
