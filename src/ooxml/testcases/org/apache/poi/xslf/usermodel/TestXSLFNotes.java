@@ -103,4 +103,25 @@ class TestXSLFNotes {
 
         ppt.close();
     }
+
+    @Test
+    void importNotes() throws IOException {
+
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("sample.pptx");
+        XMLSlideShow newShow = new XMLSlideShow();
+
+        for (XSLFSlide slide : ppt.getSlides()) {
+            XSLFNotes slideNotes = slide.getNotes();
+            assertNotNull(slideNotes);
+            XSLFNotes notesSlide = ppt.getNotesSlide(slide);
+            assertNotNull(notesSlide);
+            assertEquals(notesSlide, slideNotes);
+
+            XSLFSlide newSlide = newShow.createSlide().importContent(slide);
+            XSLFNotes newNotes = newSlide.getNotes();
+            assertNotNull(newNotes);
+        }
+
+        ppt.close();
+    }
 }

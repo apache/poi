@@ -143,7 +143,10 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
         if (this instanceof PlaceableShape) {
             PlaceableShape<?,?> ps = (PlaceableShape<?,?>)this;
-            ps.setAnchor(sh.getAnchor());
+            Rectangle2D anchor = sh.getAnchor();
+            if (anchor != null) {
+                ps.setAnchor(anchor);
+            }
         }
 
 
