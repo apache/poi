@@ -232,7 +232,7 @@ public final class HSSFSheet implements Sheet {
                     hrow = createRowFromRecord(rowRec);
                 }
             }
-            LOGGER.atDebug().log(() -> {
+            LOGGER.atTrace().log(() -> {
                 if (cval instanceof Record) {
                     return new SimpleMessage("record id = " + Integer.toHexString(((Record) cval).getSid()));
                 } else {
@@ -240,7 +240,7 @@ public final class HSSFSheet implements Sheet {
                 }
             });
             hrow.createCellFromRecord( cval );
-            LOGGER.atDebug().log("record took {}ms", box(currentTimeMillis() - cellstart));
+            LOGGER.atTrace().log("record took {}ms", box(currentTimeMillis() - cellstart));
 
         }
         LOGGER.atDebug().log("total sheet cell creation took {}ms", box(currentTimeMillis() - timestart));

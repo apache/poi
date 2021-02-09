@@ -35,7 +35,7 @@
     <Logger name="org.apache.poi.xssf.usermodel.XSSFWorkbook" level="ERROR" />
     <Logger name="org.apache.poi.hslf.usermodel.HSLFGroupShape" level="WARN" />
     <Logger name="org.apache.poi.hslf.record.Record" level="ERROR" />
-    <Root level="TRACE">
+    <Root level="DEBUG">
       <AppenderRef ref="Console" />
     </Root>
   </Loggers>

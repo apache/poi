@@ -301,7 +301,7 @@ public final class InternalWorkbook {
             if (!eofPassed) {
                 records.add(rec);
             }
-            LOG.atDebug().log("found {} record at {}", logObj, box(k));
+            LOG.atTrace().log("found {} record at {}", logObj, box(k));
             if (rec.getSid() == EOFRecord.sid) {
                 eofPassed = true;
             }
@@ -983,7 +983,7 @@ public final class InternalWorkbook {
         }
         UnicodeString retval = sst.getString(str);
 
-        LOG.atDebug().log("Returning SST for index={} String= {}", box(str),retval);
+        LOG.atTrace().log("Returning SST for index={} String= {}", box(str), retval);
         return retval;
     }
 
