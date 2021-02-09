@@ -52,14 +52,3 @@ jobs:
 
       - name: Build with Ant
         run: ANT_HOME=`pwd`/apache-ant-1.10.9 apache-ant-1.10.9/bin/ant clean jenkins
-
-      - name: Publish test report
-        if: failure()
-        run: ANT_HOME=`pwd`/apache-ant-1.10.9 apache-ant-1.10.9/bin/ant test-report
-
-      - name: Upload Test Results
-        if: failure()
-        uses: actions/upload-artifact@v2
-        with:
-          name: Test results
-          path: build/report
