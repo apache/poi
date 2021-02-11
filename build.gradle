@@ -180,7 +180,6 @@ subprojects {
         systemProperties['user.dir'] = workingDir
 
         systemProperties['POI.testdata.path'] = '../../test-data'
-        systemProperties['log4j.configurationFile'] = rootProject.file('log4j2-no-logging.xml')
 
         // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
@@ -234,6 +233,7 @@ project('main') {
     sourceSets.main.java.srcDirs = ['../../src/java']
     sourceSets.main.resources.srcDirs = ['../../src/resources/main']
     sourceSets.test.java.srcDirs = ['../../src/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile "commons-codec:commons-codec:${commonsCodecVersion}"
@@ -275,6 +275,7 @@ project('ooxml') {
     sourceSets.main.java.srcDirs = ['../../src/ooxml/java']
     sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
     sourceSets.test.java.srcDirs = ['../../src/ooxml/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     configurations {
         antdep
@@ -372,6 +373,7 @@ project('excelant') {
     sourceSets.main.java.srcDirs = ['../../src/excelant/java']
     sourceSets.main.resources.srcDirs = ['../../src/excelant/resources']
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile 'org.apache.ant:ant:1.10.9'
@@ -393,6 +395,7 @@ project('excelant') {
 
 project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/integrationtest']
 
     dependencies {
         compile 'org.apache.ant:ant:1.10.9'
@@ -434,6 +437,7 @@ project('scratchpad') {
     sourceSets.main.java.srcDirs = ['../../src/scratchpad/src']
     sourceSets.main.resources.srcDirs = ['../../src/resources/scratchpad']
     sourceSets.test.java.srcDirs = ['../../src/scratchpad/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile project(':main')

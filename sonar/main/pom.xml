@@ -63,6 +63,9 @@
                                 <resource>
                                     <directory>../../src/testcases</directory>
                                 </resource>
+                                <resource>
+                                    <directory>../../src/resources/test</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

@@ -81,13 +81,6 @@ under the License.
         <matches pattern="^10\..*" string="${java.version}"/>
     </condition>
 
-
-    <!--
-        Logging is suppressed by default.
-        To redirect log output to console, run ant with -Dlog4j.configurationFile=log4j2-console.xml
-    -->
-    <property name="log4j.configurationFile" value="log4j2-no-logging.xml"/>
-
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
     <property name="java.source.encoding" value="UTF-8"/>
 
@@ -124,6 +117,7 @@ under the License.
     <property name="main.resource1.dir" value="src/resources/main"/>
     <property name="main.src" location="src/java"/>
     <property name="main.src.test" location="src/testcases"/>
+    <property name="main.resources.test" location="src/resources/test"/>
     <property name="main.documentation" value="src/documentation"/>
     <property name="main.output.dir" location="build/classes"/>
     <property name="main.output.test.dir" location="build/test-classes"/>
@@ -134,6 +128,7 @@ under the License.
     <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
     <property name="scratchpad.src" location="src/scratchpad/src"/>
     <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
+    <property name="scratchpad.resources.test" location="src/resources/test"/>
     <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
     <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
     <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
@@ -151,6 +146,7 @@ under the License.
     <property name="ooxml.src" location="src/ooxml/java"/>
     <property name="ooxml.resource1.dir" value="src/resources/ooxml"/>
     <property name="ooxml.src.test" location="src/ooxml/testcases"/>
+    <property name="ooxml.resources.test" location="src/resources/test"/>
     <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
     <property name="ooxml.output.dir" location="build/ooxml-classes"/>
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
@@ -164,6 +160,7 @@ under the License.
 
     <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
+    <property name="integration.resources.test" location="src/resources/integrationtest"/>
     <property name="integration.reports.test" location="build/integration-test-results"/>
     <property name="integration.output.test.dir" location="build/integration-test-classes"/>
     <property name="integration.testokfile" location="build/integration-testokfile.txt"/>
@@ -172,6 +169,7 @@ under the License.
     <property name="excelant.resource.dir" value="src/excelant/resources"/>
     <property name="excelant.src" location="src/excelant/java"/>
     <property name="excelant.src.test" location="src/excelant/testcases"/>
+    <property name="excelant.resources.test" location="src/resources/test"/>
     <property name="excelant.reports.test" location="build/excelant-test-results"/>
     <property name="excelant.output.dir" location="build/excelant-classes"/>
     <property name="excelant.output.test.dir" location="build/excelant-test-classes"/>
@@ -395,7 +393,6 @@ under the License.
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
-        <propertyref name="log4j.configurationFile"/>
         <propertyref name="http_proxy"/>
         <propertyref name="additionaljar"/>
         <propertyref name="user.language"/>
@@ -1108,6 +1105,9 @@ under the License.
             <resources>
                 <fileset dir="${main.resource1.dir}"/>
             </resources>
+            <test-resources>
+                <fileset dir="${main.resources.test}" />
+            </test-resources>
         </compile-jar>
     </target>
 
@@ -1123,6 +1123,9 @@ under the License.
             <resources>
                 <fileset dir="${scratchpad.resource1.dir}"/>
             </resources>
+            <test-resources>
+                <fileset dir="${scratchpad.resources.test}" />
+            </test-resources>
         </compile-jar>
     </target>
 
@@ -1157,6 +1160,9 @@ under the License.
             <resources>
                 <fileset dir="${ooxml.resource1.dir}"/>
             </resources>
+            <test-resources>
+                <fileset dir="${ooxml.resources.test}" />
+            </test-resources>
         </compile-jar>
 
         <!-- create ooxml-lite-agent jar -->
@@ -1364,6 +1370,7 @@ under the License.
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
                 <pathelement location="${scratchpad.output.dir}"/>
+                <pathelement location="${integration.resources.test}"/>
             </classpath>
             <exclude name="**/HeapDump**" if:true="${isIBMVM}"/>
         </javac>
@@ -1682,7 +1689,6 @@ under the License.
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired">
-        <propertyreset name="log4j.configurationFile" value="log4j2-console.xml"/>
         <delete dir="build" includes="test-integration.log*"/>
 
         <path id="test-integration.modules">

@@ -87,7 +87,6 @@ class HSLFFileHandler extends SlideShowHandler {
     }
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("log4j.configurationFile", "log4j2-console.xml");
         try (InputStream stream = new FileInputStream(args[0])) {
             new HSLFFileHandler().handleFile(stream, args[0]);
         }

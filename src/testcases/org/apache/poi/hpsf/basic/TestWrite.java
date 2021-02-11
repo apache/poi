@@ -94,26 +94,9 @@ class TestWrite {
         "\"de_DE\".";
 
     /*
-    private static String loggingConfigurationBefore;
-
     @BeforeClass
     public static void setUpClass() {
-        loggingConfigurationBefore = System.getProperty("log4j.configurationFile");
-
-        // this test may fails in newer JDKs because of disallowed access if
-        // properties are missing, make this visible
-        System.setProperty("log4j.configurationFile", "log4j2-console.xml");
-
         VariantSupport.setLogUnsupportedTypes(false);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if(loggingConfigurationBefore == null) {
-            System.clearProperty("log4j.configurationFile");
-        } else {
-            System.setProperty("log4j.configurationFile", loggingConfigurationBefore);
-        }
     }
      */
 
