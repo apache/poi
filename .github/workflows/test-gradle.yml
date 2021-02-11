@@ -32,7 +32,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name:Verify Gradle wrapper
+    - name: Verify Gradle wrapper
       uses: gradle/wrapper-validation-action@v1
 
     - name: Grant execute permission for gradlew
