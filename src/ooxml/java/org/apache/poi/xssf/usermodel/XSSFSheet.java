@@ -793,18 +793,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
 
-        final int row = address.getRow();
-        final int column = address.getColumn();
-
-        CellAddress ref = new CellAddress(row, column);
-        CTComment ctComment = sheetComments.getCTComment(ref);
+        CTComment ctComment = sheetComments.getCTComment(address);
         if(ctComment == null) {
             return null;
         }
 
         XSSFVMLDrawing vml = getVMLDrawing(false);
         return new XSSFComment(sheetComments, ctComment,
-                vml == null ? null : vml.findCommentShape(row, column));
+                vml == null ? null : vml.findCommentShape(address.getRow(), address.getColumn()));
     }
 
     /**
