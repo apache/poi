@@ -82,6 +82,16 @@ public class XSSFReader {
      * Creates a new XSSFReader, for the given package
      */
     public XSSFReader(OPCPackage pkg) throws IOException, OpenXML4JException {
+        this(pkg, false);
+    }
+
+    /**
+     * Creates a new XSSFReader, for the given package
+     *
+     * @param pkg an <code>OPCPackage</code> representing a spreasheet file
+     * @param allowStrictOoxmlFiles whether to try to handle Strict OOXML format files
+     */
+    public XSSFReader(OPCPackage pkg, boolean allowStrictOoxmlFiles) throws IOException, OpenXML4JException {
         this.pkg = pkg;
 
         PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
@@ -91,18 +101,22 @@ public class XSSFReader {
         // this code is similar to POIXMLDocumentPart.getPartFromOPCPackage(), but I could not combine it
         // easily due to different return values
         if (coreDocRelationship == null) {
-            if (this.pkg.getRelationshipsByType(
+            if (allowStrictOoxmlFiles) {
+                coreDocRelationship = this.pkg.getRelationshipsByType(
+                        PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
+            } else if (this.pkg.getRelationshipsByType(
                     PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0) != null) {
                 throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
             }
 
-            throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
+            if (coreDocRelationship == null) {
+                throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
+            }
         }
 
         // Get the part that holds the workbook
         workbookPart = this.pkg.getPart(coreDocRelationship);
     }
-
 
     /**
      * Opens up the Shared Strings Table, parses it, and

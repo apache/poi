@@ -334,6 +334,28 @@ public final class TestXSSFReader {
         }
     }
 
+    @Test
+    void testStrictOoxmlNotAllowed() throws Exception {
+        assertThrows(POIXMLException.class, () -> {
+            try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
+                XSSFReader reader = new XSSFReader(pkg);
+            }
+        });
+        assertThrows(POIXMLException.class, () -> {
+            try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
+                XSSFReader reader = new XSSFReader(pkg, false);
+            }
+        });
+    }
+
+    @Test
+    void testStrictOoxmlAllowed() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
+            XSSFReader reader = new XSSFReader(pkg, true);
+            assertNotNull(reader.pkg);
+        }
+    }
+
     private static String hash(XSSFReader reader) throws IOException {
         Iterable<InputStream> iter = () -> {
             try {
