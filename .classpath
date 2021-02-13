@@ -43,7 +43,7 @@
 	<classpathentry kind="lib" path="lib/mockito-core-3.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/main-tests/byte-buddy-1.10.18.jar"/>
 	<classpathentry kind="lib" path="lib/main-tests/byte-buddy-agent-1.10.18.jar"/>
-	<classpathentry kind="lib" path="compile-lib/batik-all-1.12.jar"/>
+	<classpathentry kind="lib" path="compile-lib/batik-all-1.14.jar"/>
 	<classpathentry kind="lib" path="lib/SparseBitSet-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
