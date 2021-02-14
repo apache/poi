@@ -20,6 +20,7 @@ package org.apache.poi.xssf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPhoneticRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 
@@ -33,5 +34,7 @@ class TestNecessaryOOXMLClasses {
         // need to get the inner class that implements the row list class loaded
         assertTrue(sheetData.getRowList().add(row));
         assertTrue(sheetData.getRowList().iterator().hasNext());
+        //important class missing in v5.0.0 poi-ooxml-lite
+        CTPhoneticRun run = CTPhoneticRun.Factory.newInstance();
     }
 }
