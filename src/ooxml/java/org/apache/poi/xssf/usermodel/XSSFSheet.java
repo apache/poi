@@ -826,7 +826,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Get a Hyperlink in this sheet anchored at row, column
      *
      * @param row The row where the hyperlink is anchored
-     * @param column The column where the hyperlinkn is anchored
+     * @param column The column where the hyperlink is anchored
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
     @Override
