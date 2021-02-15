@@ -1665,6 +1665,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     }
 
 	/**
+	 * @return true if the package is in Strict OOXML format
+	 * @since POI 5.0.1
+	 */
+    public boolean isStrictOoxmlFormat() {
+		PackageRelationshipCollection coreDocRelationships = getRelationshipsByType(
+				PackageRelationshipTypes.STRICT_CORE_DOCUMENT);
+		return coreDocRelationships.size() > 0;
+	}
+
+	/**
 	 * Has close been called already?
 	 */
 	public abstract boolean isClosed();

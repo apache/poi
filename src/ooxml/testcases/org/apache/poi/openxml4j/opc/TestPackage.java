@@ -103,6 +103,20 @@ public final class TestPackage {
 	private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
 	private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
 
+	@Test
+	void isStrictOoxmlFormat() throws IOException, InvalidFormatException {
+		try (OPCPackage p = OPCPackage.open(getSampleFileName("TestPackageCommon.docx"), PackageAccess.READ)) {
+			assertFalse(p.isStrictOoxmlFormat());
+		}
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("sample.xlsx"), PackageAccess.READ)) {
+			assertFalse(p.isStrictOoxmlFormat());
+		}
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("sample.strict.xlsx"), PackageAccess.READ)) {
+			assertTrue(p.isStrictOoxmlFormat());
+		}
+	}
+
+
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
 	 */
