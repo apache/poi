@@ -20,7 +20,6 @@ package org.apache.poi.stress;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -71,9 +70,7 @@ import org.opentest4j.AssertionFailedError;
 // also need to set JVM parameter: -Djunit.jupiter.execution.parallel.enabled=true
 @Execution(ExecutionMode.CONCURRENT)
 public class TestAllFiles {
-    private static final File ROOT_DIR = new File("test-data");
-    private static final int jreVersion =
-        Integer.parseInt(System.getProperty("java.version").replaceAll("^(?:1\\.)?(\\d+).*", "$1"));
+    public static final File ROOT_DIR = new File("test-data");
 
     public static final String[] SCAN_EXCLUDES = {
         "**/.svn/**",
@@ -124,7 +121,6 @@ public class TestAllFiles {
         verify(file, exec, exClass, exMessage, password);
     }
 
-
     public static Stream<Arguments> handleFiles() throws IOException {
         return allfiles("handle");
     }
@@ -174,8 +170,6 @@ public class TestAllFiles {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec);
             String actMsg = pathReplace(e.getMessage());
             if (NullPointerException.class.isAssignableFrom(exClass)) {
-                // with Java 16+ NullPointerExceptions may contain a message ... but apparently not always ?!
-                assertTrue(jreVersion >= 16 || actMsg == null, errPrefix);
                 if (actMsg != null) {
                     assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
                 }
