@@ -26,11 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -316,6 +319,16 @@ public final class TestPOIXMLProperties {
             assertEquals(2, cps.getLastPid());
             assertEquals(2, cps.getProperty("prop1").getPid());
             assertEquals("abc", cps.getProperty("prop1").getLpwstr());
+        }
+    }
+
+    @Test
+    void testOoxmlStrict() throws Exception {
+        POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
+            POIXMLProperties props = new POIXMLProperties(pkg);
+            assertNotNull(props.getCoreProperties().getCreated());
+            assertEquals(2007, props.getCoreProperties().getCreated().toInstant().atZone(ZoneId.of("UTC")).getYear());
         }
     }
 
