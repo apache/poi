@@ -353,7 +353,7 @@ public class XSSFReader {
                     PackageRelationship comments = commentsList.getRelationship(0);
                     PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
                     PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                    return new CommentsTable(commentsPart);
+                    return parseComments(commentsPart);
                 }
             } catch (InvalidFormatException|IOException e) {
                 LOGGER.log(POILogger.WARN, e);
@@ -362,6 +362,11 @@ public class XSSFReader {
             return null;
         }
 
+        //to allow subclassing
+        protected CommentsTable parseComments(PackagePart commentsPart) throws IOException {
+            return new CommentsTable(commentsPart);
+        }
+        
         /**
          * Returns the shapes associated with this sheet,
          * an empty list or null if there is an exception
