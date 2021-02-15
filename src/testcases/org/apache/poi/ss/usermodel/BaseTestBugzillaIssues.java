@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -1827,8 +1828,25 @@ public abstract class BaseTestBugzillaIssues {
                 out1.flush();
                 out2.flush();
 
-                assertArrayEquals(out1.toByteArray(), out2.toByteArray());
+                // to avoid flaky tests if the documents are written at slightly different timestamps
+                // we clear some bytes which contain timestamps
+                assertArrayEquals(
+                        removeTimestamp(out1.toByteArray()),
+                        removeTimestamp(out2.toByteArray()));
             }
         }
+    }
+
+    private byte[] removeTimestamp(byte[] bytes) {
+        if (FileMagic.valueOf(bytes) == FileMagic.OOXML) {
+            // This removes the timestamp in the header of the ZIP-Format
+            // see "Local file header" at https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
+            bytes[10] = 0;
+            bytes[11] = 0;
+            bytes[12] = 0;
+            bytes[13] = 0;
+        }
+
+        return bytes;
     }
 }
