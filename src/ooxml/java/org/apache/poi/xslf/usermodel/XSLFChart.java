@@ -84,10 +84,10 @@ public final class XSLFChart extends XDDFChart {
     }
 
     public XSLFTextShape getTitleShape() {
-        if (!chart.isSetTitle()) {
-            chart.addNewTitle();
+        if (!getCTChart().isSetTitle()) {
+            getCTChart().addNewTitle();
         }
-        final CTTitle title = chart.getTitle();
+        final CTTitle title = getCTChart().getTitle();
         if (title.getTx() != null && title.getTx().isSetRich()) {
             return new XSLFTextShape(title, null) {
                 @Override

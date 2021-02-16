@@ -91,7 +91,7 @@ public final class XSSFChart extends XDDFChart {
         CTPlotArea plotArea = getCTPlotArea();
 
         plotArea.addNewLayout();
-        chart.addNewPlotVisOnly().setVal(true);
+        getCTChart().addNewPlotVisOnly().setVal(true);
 
         CTPrintSettings printSettings = chartSpace.addNewPrintSettings();
         printSettings.addNewHeaderFooter();
@@ -154,12 +154,12 @@ public final class XSSFChart extends XDDFChart {
      *         if the title text is empty or the title uses a formula instead
      */
     public XSSFRichTextString getTitleText() {
-        if (!chart.isSetTitle()) {
+        if (!getCTChart().isSetTitle()) {
             return null;
         }
 
         // TODO Do properly
-        CTTitle title = chart.getTitle();
+        CTTitle title = getCTChart().getTitle();
 
         StringBuilder text = new StringBuilder(64);
         XmlObject[] t = title.selectPath("declare namespace a='" + XSSFDrawing.NAMESPACE_A + "' .//a:t");
@@ -183,11 +183,11 @@ public final class XSSFChart extends XDDFChart {
      * @return formula expression or null
      */
     public String getTitleFormula() {
-        if (!chart.isSetTitle()) {
+        if (!getCTChart().isSetTitle()) {
             return null;
         }
 
-        CTTitle title = chart.getTitle();
+        CTTitle title = getCTChart().getTitle();
 
         if (!title.isSetTx()) {
             return null;
@@ -209,10 +209,10 @@ public final class XSSFChart extends XDDFChart {
      */
     public void setTitleFormula(String formula) {
         CTTitle ctTitle;
-        if (chart.isSetTitle()) {
-            ctTitle = chart.getTitle();
+        if (getCTChart().isSetTitle()) {
+            ctTitle = getCTChart().getTitle();
         } else {
-            ctTitle = chart.addNewTitle();
+            ctTitle = getCTChart().addNewTitle();
         }
 
         CTTx tx;

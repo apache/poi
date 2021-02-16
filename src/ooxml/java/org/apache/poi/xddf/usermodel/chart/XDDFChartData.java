@@ -162,12 +162,11 @@ public abstract class XDDFChartData {
         }
 
         public void replaceData(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
-            if (category == null || values == null) {
-                throw new IllegalStateException("Category and values must be defined before filling chart data.");
-            }
-            int numOfPoints = category.getPointCount();
-            if (numOfPoints != values.getPointCount()) {
-                throw new IllegalStateException("Category and values must have the same point count.");
+            if (categoryData != null && values != null) {
+                int numOfPoints = category.getPointCount();
+                if (numOfPoints != values.getPointCount()) {
+                    throw new IllegalStateException("Category and values must have the same point count.");
+                }
             }
             this.categoryData = category;
             this.valuesData = values;
@@ -209,15 +208,19 @@ public abstract class XDDFChartData {
         }
 
         public void plot() {
-            if (categoryData.isNumeric()) {
-                CTNumData cache = retrieveNumCache(getAxDS(), categoryData);
-                categoryData.fillNumericalCache(cache);
-            } else {
-                CTStrData cache = retrieveStrCache(getAxDS(), categoryData);
-                categoryData.fillStringCache(cache);
+            if (categoryData != null) {
+                if (categoryData.isNumeric()) {
+                    CTNumData cache = retrieveNumCache(getAxDS(), categoryData);
+                    categoryData.fillNumericalCache(cache);
+                } else {
+                    CTStrData cache = retrieveStrCache(getAxDS(), categoryData);
+                    categoryData.fillStringCache(cache);
+                }
             }
-            CTNumData cache = retrieveNumCache(getNumDS(), valuesData);
-            valuesData.fillNumericalCache(cache);
+            if (valuesData != null) {
+                CTNumData cache = retrieveNumCache(getNumDS(), valuesData);
+                valuesData.fillNumericalCache(cache);
+            }
         }
 
         /**

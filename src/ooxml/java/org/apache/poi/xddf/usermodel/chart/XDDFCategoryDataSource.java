@@ -42,9 +42,4 @@ public interface XDDFCategoryDataSource extends XDDFDataSource<String> {
     default boolean isReference() {
         return true;
     }
-
-    @Override
-    default String getDataRangeReference() {
-        return getFormula();
-    }
 }
