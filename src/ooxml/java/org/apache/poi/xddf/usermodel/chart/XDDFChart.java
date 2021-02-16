@@ -124,10 +124,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     protected final CTChartSpace chartSpace;
 
-    /**
-     * Chart element in the chart space
-     */
-    protected final CTChart chart;
 
     /**
      * Construct a chart.
@@ -136,8 +132,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         super();
 
         chartSpace = CTChartSpace.Factory.newInstance();
-        chart = chartSpace.addNewChart();
-        chart.addNewPlotArea();
+        chartSpace.addNewChart().addNewPlotArea();
     }
 
     /**
@@ -153,7 +148,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         super(part);
 
         chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
-        chart = chartSpace.getChart();
     }
 
     /**
@@ -174,8 +168,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     @Internal
     public CTChart getCTChart() {
-        return chart;
-
+        return chartSpace.getChart();
     }
 
     /**
@@ -185,7 +178,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     @Internal
     protected CTPlotArea getCTPlotArea() {
-        return chart.getPlotArea();
+        return getCTChart().getPlotArea();
     }
 
     /**
@@ -199,8 +192,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             workbook.removeSheetAt(0);
             workbook.createSheet();
         }
-        chart.set(CTChart.Factory.newInstance());
-        chart.addNewPlotArea();
+        getCTChart().set(CTChart.Factory.newInstance());
+        getCTChart().addNewPlotArea();
     }
 
     /**
@@ -208,8 +201,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *         otherwise
      */
     public boolean isPlotOnlyVisibleCells() {
-        if (chart.isSetPlotVisOnly()) {
-            return chart.getPlotVisOnly().getVal();
+        if (getCTChart().isSetPlotVisOnly()) {
+            return getCTChart().getPlotVisOnly().getVal();
         } else {
             return false;
         }
@@ -221,40 +214,40 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *            the chart
      */
     public void setPlotOnlyVisibleCells(boolean only) {
-        if (!chart.isSetPlotVisOnly()) {
-            chart.setPlotVisOnly(CTBoolean.Factory.newInstance());
+        if (!getCTChart().isSetPlotVisOnly()) {
+            getCTChart().setPlotVisOnly(CTBoolean.Factory.newInstance());
         }
-        chart.getPlotVisOnly().setVal(only);
+        getCTChart().getPlotVisOnly().setVal(only);
     }
 
     public void setFloor(int thickness) {
-        if (!chart.isSetFloor()) {
-            chart.setFloor(CTSurface.Factory.newInstance());
+        if (!getCTChart().isSetFloor()) {
+            getCTChart().setFloor(CTSurface.Factory.newInstance());
         }
-        chart.getFloor().getThickness().setVal(thickness);
+        getCTChart().getFloor().getThickness().setVal(thickness);
     }
 
     public void setBackWall(int thickness) {
-        if (!chart.isSetBackWall()) {
-            chart.setBackWall(CTSurface.Factory.newInstance());
+        if (!getCTChart().isSetBackWall()) {
+            getCTChart().setBackWall(CTSurface.Factory.newInstance());
         }
-        chart.getBackWall().getThickness().setVal(thickness);
+        getCTChart().getBackWall().getThickness().setVal(thickness);
     }
 
     public void setSideWall(int thickness) {
-        if (!chart.isSetSideWall()) {
-            chart.setSideWall(CTSurface.Factory.newInstance());
+        if (!getCTChart().isSetSideWall()) {
+            getCTChart().setSideWall(CTSurface.Factory.newInstance());
         }
-        chart.getSideWall().getThickness().setVal(thickness);
+        getCTChart().getSideWall().getThickness().setVal(thickness);
     }
 
     public void setAutoTitleDeleted(boolean deleted) {
-        if (!chart.isSetAutoTitleDeleted()) {
-            chart.setAutoTitleDeleted(CTBoolean.Factory.newInstance());
+        if (!getCTChart().isSetAutoTitleDeleted()) {
+            getCTChart().setAutoTitleDeleted(CTBoolean.Factory.newInstance());
         }
-        chart.getAutoTitleDeleted().setVal(deleted);
-        if (deleted && chart.isSetTitle()) {
-            chart.unsetTitle();
+        getCTChart().getAutoTitleDeleted().setVal(deleted);
+        if (deleted && getCTChart().isSetTitle()) {
+            getCTChart().unsetTitle();
         }
     }
 
@@ -264,14 +257,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public void displayBlanksAs(DisplayBlanks as) {
         if (as == null){
-            if (chart.isSetDispBlanksAs()) {
-                chart.unsetDispBlanksAs();
+            if (getCTChart().isSetDispBlanksAs()) {
+                getCTChart().unsetDispBlanksAs();
             }
         } else {
-            if (chart.isSetDispBlanksAs()) {
-              chart.getDispBlanksAs().setVal(as.underlying);
+            if (getCTChart().isSetDispBlanksAs()) {
+              getCTChart().getDispBlanksAs().setVal(as.underlying);
             } else {
-                chart.addNewDispBlanksAs().setVal(as.underlying);
+                getCTChart().addNewDispBlanksAs().setVal(as.underlying);
             }
         }
     }
@@ -280,8 +273,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since 4.0.1
      */
     public Boolean getTitleOverlay() {
-        if (chart.isSetTitle()) {
-            CTTitle title = chart.getTitle();
+        if (getCTChart().isSetTitle()) {
+            CTTitle title = getCTChart().getTitle();
             if (title.isSetOverlay()) {
                 return title.getOverlay().getVal();
             }
@@ -293,10 +286,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since 4.0.1
      */
     public void setTitleOverlay(boolean overlay) {
-        if (!chart.isSetTitle()) {
-            chart.addNewTitle();
+        if (!getCTChart().isSetTitle()) {
+            getCTChart().addNewTitle();
         }
-        new XDDFTitle(this, chart.getTitle()).setOverlay(overlay);
+        new XDDFTitle(this, getCTChart().getTitle()).setOverlay(overlay);
     }
 
     /**
@@ -307,18 +300,18 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since 4.0.1
      */
     public void setTitleText(String text) {
-        if (!chart.isSetTitle()) {
-            chart.addNewTitle();
+        if (!getCTChart().isSetTitle()) {
+            getCTChart().addNewTitle();
         }
-        new XDDFTitle(this, chart.getTitle()).setText(text);
+        new XDDFTitle(this, getCTChart().getTitle()).setText(text);
     }
 
     /**
      * @since 4.0.1
      */
     public XDDFTitle getTitle() {
-        if (chart.isSetTitle()) {
-            return new XDDFTitle(this, chart.getTitle());
+        if (getCTChart().isSetTitle()) {
+            return new XDDFTitle(this, getCTChart().getTitle());
         } else {
             return null;
         }
@@ -339,10 +332,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     */
    public XDDFView3D getOrAddView3D() {
       CTView3D view3D;
-      if (chart.isSetView3D()) {
-         view3D = chart.getView3D();
+      if (getCTChart().isSetView3D()) {
+         view3D = getCTChart().getView3D();
       } else {
-         view3D = chart.addNewView3D();
+         view3D = getCTChart().addNewView3D();
       }
       return new XDDFView3D(view3D);
    }
@@ -355,10 +348,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     @Beta
     public XDDFTextBody getFormattedTitle() {
-        if (!chart.isSetTitle()) {
+        if (!getCTChart().isSetTitle()) {
             return null;
         }
-        return new XDDFTitle(this, chart.getTitle()).getBody();
+        return new XDDFTitle(this, getCTChart().getTitle()).getBody();
     }
 
     @Override
@@ -393,12 +386,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     public XDDFChartLegend getOrAddLegend() {
-        return new XDDFChartLegend(chart);
+        return new XDDFChartLegend(getCTChart());
     }
 
     public void deleteLegend() {
-        if (chart.isSetLegend()) {
-            chart.unsetLegend();
+        if (getCTChart().isSetLegend()) {
+            getCTChart().unsetLegend();
         }
     }
 
@@ -418,7 +411,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.plot();
             XDDFDataSource<?> categoryDS = series.getCategoryData();
             XDDFNumericalDataSource<? extends Number> valuesDS = series.getValuesData();
-            if (categoryDS.isCellRange() || valuesDS.isCellRange()
+            if (categoryDS == null || valuesDS == null
+                    || categoryDS.isCellRange() || valuesDS.isCellRange()
                     || categoryDS.isLiteral() || valuesDS.isLiteral()) {
                 // let's assume the data is already in the sheet
             } else {
@@ -910,7 +904,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since POI 4.0.0
      */
     public void importContent(XDDFChart other) {
-        this.chart.set(other.chart);
+        getCTChartSpace().set(other.getCTChartSpace());
     }
 
     /**
@@ -1074,12 +1068,51 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * set chart index which can be use for relation part
+     * Set chart index which can be used for relation part.
      *
      * @param chartIndex
-     *            chart index which can be use for relation part
+     *            chart index which can be used for relation part.
      */
     public void setChartIndex(int chartIndex) {
         this.chartIndex = chartIndex;
+    }
+
+    /**
+     * Replace references to the sheet name in the data supporting the chart.
+     *
+     * @param newSheet
+     *          sheet to be used in the data references.
+     *
+     * @since POI 5.0.1
+     */
+    public void replaceReferences(XSSFSheet newSheet) {
+        for (XDDFChartData data : getChartSeries()) {
+            for (XDDFChartData.Series series : data.series) {
+                XDDFDataSource newCategory = series.categoryData;
+                XDDFNumericalDataSource newValues = series.valuesData;
+                try {
+                    if (series.categoryData != null && series.categoryData.isReference()) {
+                        String ref = series.categoryData.getDataRangeReference();
+                        CellRangeAddress rangeAddress = CellRangeAddress.valueOf(ref.substring(ref.indexOf('!') + 1));
+                        newCategory = series.categoryData.isNumeric()
+                                ? XDDFDataSourcesFactory.fromNumericCellRange(newSheet, rangeAddress)
+                                : XDDFDataSourcesFactory.fromStringCellRange(newSheet, rangeAddress);
+                        if (newCategory.isNumeric()) {
+                            ((XDDFNumericalDataSource) newCategory).setFormatCode(series.categoryData.getFormatCode());
+                        }
+                    }
+                    if (series.valuesData!= null && series.valuesData.isReference()) {
+                        String ref = series.valuesData.getDataRangeReference();
+                        CellRangeAddress rangeAddress = CellRangeAddress.valueOf(ref.substring(ref.indexOf('!') + 1));
+                        newValues = XDDFDataSourcesFactory.fromNumericCellRange(newSheet, rangeAddress);
+                        newValues.setFormatCode(series.valuesData.getFormatCode());
+                    }
+                } catch (IllegalArgumentException iae) {
+                    // keep old values when cell range cannot be parsed
+                }
+                series.replaceData(newCategory, newValues);
+                series.plot();
+            }
+        }
     }
 }

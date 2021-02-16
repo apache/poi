@@ -50,7 +50,9 @@ public interface XDDFDataSource<T> {
 
     String getDataRangeReference();
 
-    String getFormula();
+    default String getFormula() {
+        return getDataRangeReference();
+    }
 
     String getFormatCode();
 

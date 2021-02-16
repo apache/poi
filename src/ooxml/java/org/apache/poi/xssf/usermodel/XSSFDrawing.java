@@ -229,10 +229,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @see org.apache.poi.xssf.usermodel.XSSFDrawing#createChart(ClientAnchor)
      */
     public XSSFChart createChart(XSSFClientAnchor anchor) {
-        int chartNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.CHART.getContentType())
-            .size() + 1;
-
-        RelationPart rp = createRelationship(XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber, false);
+        RelationPart rp = createChartRelationPart();
         XSSFChart chart = rp.getDocumentPart();
         String chartRelId = rp.getRelationship().getId();
 
@@ -241,6 +238,13 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         frame.getCTGraphicalObjectFrame().setXfrm(createXfrm(anchor));
 
         return chart;
+    }
+
+    protected RelationPart createChartRelationPart() {
+        int chartNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.CHART.getContentType())
+            .size() + 1;
+
+        return createRelationship(XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber, false);
     }
 
     /**
@@ -271,7 +275,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFClientAnchor destAnchor = new XSSFClientAnchor(from, to);
         destAnchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
         XSSFChart destChart = createChart(destAnchor);
-        destChart.getCTChart().set(srcChart.getCTChartSpace().getChart().copy());
+        destChart.getCTChartSpace().set(srcChart.getCTChartSpace().copy());
         return destChart;
     }
 

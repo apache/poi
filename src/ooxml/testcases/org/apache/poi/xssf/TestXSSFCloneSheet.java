@@ -18,14 +18,16 @@
 package org.apache.poi.xssf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,4 +89,33 @@ class TestXSSFCloneSheet  extends BaseTestCloneSheet {
             assertNotNull(source_sh);
         }
     }
+
+    @Test
+    void testBug63902() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx")) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFDrawing drawing = sheet.getDrawingPatriarch();
+            assertEquals(1, drawing.getCharts().size());
+
+            XSSFSheet sheet2 = workbook.cloneSheet(0, "Sheet 2");
+            XSSFDrawing drawing2 = sheet2.getDrawingPatriarch();
+            assertEquals(1, drawing2.getCharts().size());
+            assertEquals("Sheet 2", sheet2.getSheetName());
+
+            XDDFDataSource<?> data = drawing.getCharts().get(0).getChartSeries().get(0).getSeries(0).getCategoryData();
+            XDDFDataSource<?> data2 = drawing2.getCharts().get(0).getChartSeries().get(0).getSeries(0).getCategoryData();
+            assertNotEquals(data.getFormula(), data2.getFormula());
+            assertEquals(sheet.getSheetName(), data.getFormula().substring(0, data.getFormula().indexOf('!')));
+            assertEquals("'Sheet 2'", data2.getFormula().substring(0, data2.getFormula().indexOf('!')));
+            assertEquals(
+                    data.getFormula().substring(data.getFormula().indexOf('!')),
+                    data2.getFormula().substring(data2.getFormula().indexOf('!'))
+            );
+
+            Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook, "poi_cloned_sheet_with_chart");
+            assertNotNull(wbBack);
+            wbBack.close();
+        }
+    }
+
 }

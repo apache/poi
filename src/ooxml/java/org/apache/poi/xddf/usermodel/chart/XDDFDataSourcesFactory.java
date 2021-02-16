@@ -42,7 +42,10 @@ public class XDDFDataSourcesFactory {
     }
 
     public static XDDFCategoryDataSource fromDataSource(final CTAxDataSource categoryDS) {
-        if (categoryDS.getStrRef() == null) {
+        if (categoryDS == null) {
+            return null;
+        }
+        if (categoryDS.getNumRef() != null && categoryDS.getNumRef().getNumCache() != null) {
             return new XDDFCategoryDataSource() {
                 private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
                 private String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
@@ -58,7 +61,7 @@ public class XDDFDataSourcesFactory {
                 }
 
                 @Override
-                public String getFormula() {
+                public String getDataRangeReference() {
                     return categoryDS.getNumRef().getF();
                 }
 
@@ -75,7 +78,7 @@ public class XDDFDataSourcesFactory {
                 @Override
                 public String getFormatCode() { return formatCode; }
             };
-        } else {
+        } else if (categoryDS.getStrRef() != null && categoryDS.getStrRef().getStrCache() != null) {
             return new XDDFCategoryDataSource() {
                 private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
 
@@ -85,7 +88,7 @@ public class XDDFDataSourcesFactory {
                 }
 
                 @Override
-                public String getFormula() {
+                public String getDataRangeReference() {
                     return categoryDS.getStrRef().getF();
                 }
 
@@ -102,64 +105,203 @@ public class XDDFDataSourcesFactory {
                 @Override
                 public String getFormatCode() { return null; }
             };
+        } else if (categoryDS.getNumLit() != null) {
+            return new XDDFCategoryDataSource() {
+                private CTNumData category = (CTNumData) categoryDS.getNumLit().copy();
+                private String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
+
+                @Override
+                public boolean isCellRange() {
+                    return false;
+                }
+
+                @Override
+                public boolean isLiteral() {
+                    return true;
+                }
+
+                @Override
+                public boolean isNumeric() {
+                    return true;
+                }
+
+                @Override
+                public boolean isReference() {
+                    return false;
+                }
+
+                @Override
+                public String getDataRangeReference() {
+                    return null;
+                }
+
+                @Override
+                public int getPointCount() {
+                    return (int) category.getPtCount().getVal();
+                }
+
+                @Override
+                public String getPointAt(int index) {
+                    return category.getPtArray(index).getV();
+                }
+
+                @Override
+                public String getFormatCode() { return formatCode; }
+            };
+        } else if (categoryDS.getStrLit() != null) {
+            return new XDDFCategoryDataSource() {
+                private CTStrData category = (CTStrData) categoryDS.getStrLit().copy();
+
+                @Override
+                public boolean isCellRange() {
+                    return false;
+                }
+
+                @Override
+                public boolean isLiteral() {
+                    return true;
+                }
+
+                @Override
+                public boolean isReference() {
+                    return false;
+                }
+
+                @Override
+                public String getDataRangeReference() {
+                    return null;
+                }
+
+                @Override
+                public int getPointCount() {
+                    return (int) category.getPtCount().getVal();
+                }
+
+                @Override
+                public String getPointAt(int index) {
+                    return category.getPtArray(index).getV();
+                }
+
+                @Override
+                public String getFormatCode() { return null; }
+            };
+        } else {
+            return null; // in some weird cases the element is empty
         }
     }
 
     public static XDDFNumericalDataSource<Double> fromDataSource(final CTNumDataSource valuesDS) {
-        return new XDDFNumericalDataSource<Double>() {
-            private CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
-            private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
+        if (valuesDS == null) {
+            return null;
+        }
+        if (valuesDS.getNumRef() != null && valuesDS.getNumRef().getNumCache() != null) {
+            return new XDDFNumericalDataSource<Double>() {
+                private CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
+                private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
-            @Override
-            public String getFormula() {
-                return valuesDS.getNumRef().getF();
-            }
+                @Override
+                public String getFormatCode() {
+                    return formatCode;
+                }
 
-            @Override
-            public String getFormatCode() {
-                return formatCode;
-            }
+                @Override
+                public void setFormatCode(String formatCode) {
+                    this.formatCode = formatCode;
+                }
 
-            @Override
-            public void setFormatCode(String formatCode) {
-                this.formatCode = formatCode;
-            }
+                @Override
+                public boolean isCellRange() {
+                    return true;
+                }
 
-            @Override
-            public boolean isCellRange() {
-                return true;
-            }
+                @Override
+                public boolean isNumeric() {
+                    return true;
+                }
 
-            @Override
-            public boolean isNumeric() {
-                return true;
-            }
+                @Override
+                public boolean isReference() {
+                    return true;
+                }
 
-            @Override
-            public boolean isReference() {
-                return true;
-            }
+                @Override
+                public int getPointCount() {
+                    return (int) values.getPtCount().getVal();
+                }
 
-            @Override
-            public int getPointCount() {
-                return (int) values.getPtCount().getVal();
-            }
+                @Override
+                public Double getPointAt(int index) {
+                    return Double.valueOf(values.getPtArray(index).getV());
+                }
 
-            @Override
-            public Double getPointAt(int index) {
-                return Double.valueOf(values.getPtArray(index).getV());
-            }
+                @Override
+                public String getDataRangeReference() {
+                    return valuesDS.getNumRef().getF();
+                }
 
-            @Override
-            public String getDataRangeReference() {
-                return valuesDS.getNumRef().getF();
-            }
+                @Override
+                public int getColIndex() {
+                    return 0;
+                }
+            };
+        } else if (valuesDS.getNumLit() != null) {
+            return new XDDFNumericalDataSource<Double>() {
+                private CTNumData values = (CTNumData) valuesDS.getNumLit().copy();
+                private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
-            @Override
-            public int getColIndex() {
-                return 0;
-            }
-        };
+                @Override
+                public String getFormatCode() {
+                    return formatCode;
+                }
+
+                @Override
+                public void setFormatCode(String formatCode) {
+                    this.formatCode = formatCode;
+                }
+
+                @Override
+                public boolean isCellRange() {
+                    return false;
+                }
+
+                @Override
+                public boolean isLiteral() {
+                    return true;
+                }
+
+                @Override
+                public boolean isNumeric() {
+                    return true;
+                }
+
+                @Override
+                public boolean isReference() {
+                    return false;
+                }
+
+                @Override
+                public int getPointCount() {
+                    return (int) values.getPtCount().getVal();
+                }
+
+                @Override
+                public Double getPointAt(int index) {
+                    return Double.valueOf(values.getPtArray(index).getV());
+                }
+
+                @Override
+                public String getDataRangeReference() {
+                    return null;
+                }
+
+                @Override
+                public int getColIndex() {
+                    return 0;
+                }
+            };
+        } else {
+            return null; // in some weird cases the element is empty
+        }
     }
 
     public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements) {
@@ -265,11 +407,6 @@ public class XDDFDataSourcesFactory {
         }
 
         @Override
-        public String getFormula() {
-            return getDataRangeReference();
-        }
-
-        @Override
         public String getFormatCode() {
             return formatCode;
         }
@@ -288,11 +425,6 @@ public class XDDFDataSourcesFactory {
 
         public StringArrayDataSource(String[] elements, String dataRange, int col) {
             super(elements, dataRange, col);
-        }
-
-        @Override
-        public String getFormula() {
-            return getDataRangeReference();
         }
 
         @Override
@@ -382,11 +514,6 @@ public class XDDFDataSourcesFactory {
             super(sheet, cellRangeAddress);
         }
 
-        @Override
-        public String getFormula() {
-            return getDataRangeReference();
-        }
-
         private String formatCode;
 
         @Override
@@ -419,11 +546,6 @@ public class XDDFDataSourcesFactory {
             implements XDDFCategoryDataSource {
         protected StringCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
             super(sheet, cellRangeAddress);
-        }
-
-        @Override
-        public String getFormula() {
-            return getDataRangeReference();
         }
 
         @Override
