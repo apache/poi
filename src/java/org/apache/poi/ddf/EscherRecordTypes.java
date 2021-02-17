@@ -25,7 +25,24 @@ import java.util.stream.Stream;
 
 public enum EscherRecordTypes {
     // records greater then 0xF000 belong to Microsoft Office Drawing format also known as Escher
+
+    /**
+     * {@link EscherContainerRecord Container} for all OfficeArt file records that contain document-wide data.
+     * <p>
+     * Contains, amongst others children, a {@link #BSTORE_CONTAINER}.
+     * <p>
+     * Referred to as an {@code OfficeArtDggContainer} in {@code [MS-ODRAW].pdf v20201117}.
+     */
     DGG_CONTAINER(0xF000, "DggContainer", null, EscherContainerRecord::new),
+
+    /**
+     * {@link EscherContainerRecord Container} for all BLIPs (binary large image or picture) that are used in the
+     * drawings associated with the parent {@link #DGG_CONTAINER}.
+     * <p>
+     * Contains a list of {@link EscherBSERecord}s.
+     * <p>
+     * Referred to as an {@code OfficeArtBStoreContainer} in {@code [MS-ODRAW].pdf v20201117}.
+     */
     BSTORE_CONTAINER(0xf001, "BStoreContainer", null, EscherContainerRecord::new),
     DG_CONTAINER(0xf002, "DgContainer", null, EscherContainerRecord::new),
     SPGR_CONTAINER(0xf003, "SpgrContainer", null, EscherContainerRecord::new),
