@@ -31,14 +31,16 @@ import org.apache.poi.util.LittleEndian;
 /**
  * The escher container record is used to hold escher records.  It is abstract and
  * must be subclassed for maximum benefit.
+ * <p>
+ * Child records are deserialized on-demand unless the {@code poi.deserialize.escher} System Property is defined.
  */
 public abstract class AbstractEscherHolderRecord extends Record {
-    private static boolean DESERIALISE;
+    private static boolean DESERIALIZE;
     static {
-    try {
-            DESERIALISE = (System.getProperty("poi.deserialize.escher") != null);
+        try {
+            DESERIALIZE = (System.getProperty("poi.deserialize.escher") != null);
         } catch (SecurityException e) {
-            DESERIALISE = false;
+            DESERIALIZE = false;
         }
     }
 
@@ -53,7 +55,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
 
     public AbstractEscherHolderRecord(RecordInputStream in) {
-        if (! DESERIALISE ) {
+        if (!DESERIALIZE) {
             rawDataContainer.concatenate(in.readRemainder());
         } else {
             byte[] data = in.readAllContinuedRemainder();
@@ -62,7 +64,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
 
     protected void convertRawBytesToEscherRecords() {
-        if (! DESERIALISE ) {
+        if (!DESERIALIZE) {
             byte[] rawData = getRawData();
         	convertToEscherRecords(0, rawData.length, rawData);
         }
@@ -84,24 +86,22 @@ public abstract class AbstractEscherHolderRecord extends Record {
     protected abstract String getRecordName();
 
     @Override
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data,      offset, getSid() );
-        LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
+    public int serialize(int offset, byte[] data) {
         byte[] rawData = getRawData();
-        if ( escherRecords.size() == 0 && rawData != null )
-        {
-            LittleEndian.putShort(data,     offset, getSid());
-            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-            System.arraycopy( rawData, 0, data, 4 + offset, rawData.length);
+
+        LittleEndian.putShort(data, offset, getSid());
+        offset += 2;
+        LittleEndian.putShort(data, offset, (short) (getRecordSize() - 4));
+        offset += 2;
+
+        if (escherRecords.isEmpty() && rawData != null) {
+            System.arraycopy(rawData, 0, data, offset, rawData.length);
             return rawData.length + 4;
         }
-        LittleEndian.putShort(data,     offset, getSid());
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        int pos = offset + 4;
+        NullEscherSerializationListener listener = new NullEscherSerializationListener();
         for (EscherRecord r : escherRecords) {
-            pos += r.serialize( pos, data, new NullEscherSerializationListener() );
+            offset += r.serialize(offset, data, listener);
         }
         return getRecordSize();
     }
@@ -237,9 +237,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
      */
     public void decode()
     {
-        if (null == escherRecords || 0 == escherRecords.size()){
+        if (escherRecords.isEmpty()) {
             byte[] rawData = getRawData();
-            convertToEscherRecords(0, rawData.length, rawData );
+            convertToEscherRecords(0, rawData.length, rawData);
         }
     }
 
