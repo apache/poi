@@ -22,10 +22,18 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
 
-
+/**
+ * Specifies a group of drawing objects.
+ * <p>
+ * Contains a single {@link EscherRecordTypes#DGG_CONTAINER OfficeArtDggContainer} that specifies the group of drawing
+ * objects. Get the {@link org.apache.poi.ddf.EscherContainerRecord} representation via {@link #getEscherContainer()}.
+ * <p>
+ * Referred to as an {@code MsoDrawingGroup} in {@code [MS-XLS].pdf v20190618}.
+ */
 public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     public static final short sid = 0xEB;
 
