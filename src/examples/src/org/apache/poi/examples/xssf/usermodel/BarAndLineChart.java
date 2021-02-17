@@ -166,10 +166,15 @@ public final class BarAndLineChart {
             // some colors
             XDDFFillProperties solidChartreuse = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.CHARTREUSE));
             XDDFFillProperties solidTurquoise = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.TURQUOISE));
-            XDDFLineProperties solidLines = new XDDFLineProperties(solidTurquoise);
+            XDDFLineProperties linesChartreuse = new XDDFLineProperties(solidChartreuse);
+            XDDFLineProperties linesTurquoise = new XDDFLineProperties(solidTurquoise);
             series1.setFillProperties(solidChartreuse);
-            series1.setLineProperties(solidLines); // bar border color different from fill
-            series2.setLineProperties(solidLines);
+            series1.setLineProperties(linesTurquoise); // bar border color different from fill
+            series1.getDataPoint(2).setFillProperties(solidTurquoise); // this specific bar has inverted colors
+            series1.getDataPoint(2).setLineProperties(linesChartreuse);
+            series2.setLineProperties(linesTurquoise);
+            series2.getDataPoint(2).setMarkerStyle(MarkerStyle.STAR);
+            series2.getDataPoint(2).setLineProperties(linesChartreuse);
 
             // legend
             XDDFChartLegend legend = chart.getOrAddLegend();

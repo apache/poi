@@ -30,6 +30,7 @@ import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
@@ -157,6 +158,8 @@ public abstract class XDDFChartData {
 
         protected abstract void setOrder(long order);
 
+        protected abstract List<CTDPt> getDPtList();
+
         protected Series(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
             replaceData(category, values);
         }
@@ -249,6 +252,53 @@ public abstract class XDDFChartData {
             }
             properties.setLineProperties(line);
             setShapeProperties(properties);
+        }
+
+        /**
+         * If a data point definition with the given <code>index</code> exists, then remove it.
+         * Otherwise do nothing.
+         *
+         * @param index
+         *      data point index.
+         * @since POI 5.0.1
+         */
+        public void clearDataPoint(long index) {
+            List<CTDPt> points = getDPtList();
+            for (int i = 0; i < points.size(); i++) {
+                if (points.get(i).getIdx().getVal() == index) {
+                    points.remove(i);
+                    i = points.size();
+                }
+            }
+        }
+
+        /**
+         * If a data point definition with the given <code>index</code> exists, then return it.
+         * Otherwise create a new data point definition and return it.
+         *
+         * @param index
+         *      data point index.
+         * @return
+         *      the data point with the given <code>index</code>.
+         * @since POI 5.0.1
+         */
+        public XDDFDataPoint getDataPoint(long index) {
+            List<CTDPt> points = getDPtList();
+            for (int i = 0; i < points.size(); i++) {
+                if (points.get(i).getIdx().getVal() == index) {
+                    return new XDDFDataPoint(points.get(i));
+                }
+                if (points.get(i).getIdx().getVal() > index) {
+                    points.add(i, CTDPt.Factory.newInstance());
+                    CTDPt point = points.get(i);
+                    point.addNewIdx().setVal(index);
+                    return new XDDFDataPoint(point);
+                }
+            }
+            points.add(CTDPt.Factory.newInstance());
+            CTDPt point = points.get(points.size() - 1);
+            point.addNewIdx().setVal(index);
+            return new XDDFDataPoint(point);
         }
 
         private CTNumData retrieveNumCache(final CTAxDataSource axDataSource, XDDFDataSource<?> data) {

@@ -17,12 +17,14 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
@@ -281,6 +283,11 @@ public class XDDFLineChartData extends XDDFChartData {
         @Override
         protected void setOrder(long val) {
             series.getOrder().setVal(val);
+        }
+
+        @Override
+        protected List<CTDPt> getDPtList() {
+            return series.getDPtList();
         }
     }
 }

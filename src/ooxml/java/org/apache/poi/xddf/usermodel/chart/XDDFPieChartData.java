@@ -17,10 +17,13 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.List;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
@@ -198,6 +201,11 @@ public class XDDFPieChartData extends XDDFChartData {
         @Override
         protected void setOrder(long val) {
             series.getOrder().setVal(val);
+        }
+
+        @Override
+        protected List<CTDPt> getDPtList() {
+            return series.getDPtList();
         }
     }
 }

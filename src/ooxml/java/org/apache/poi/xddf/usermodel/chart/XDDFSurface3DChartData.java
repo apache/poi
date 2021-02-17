@@ -17,12 +17,14 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface3DChart;
@@ -185,6 +187,11 @@ public class XDDFSurface3DChartData extends XDDFChartData {
         @Override
         protected void setOrder(long val) {
             series.getOrder().setVal(val);
+        }
+
+        @Override
+        protected List<CTDPt> getDPtList() {
+            throw new IllegalStateException("Surface data series don't support data point settings.");
         }
     }
 }
