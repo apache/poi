@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -26,6 +27,7 @@ import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
@@ -309,6 +311,11 @@ public class XDDFBarChartData extends XDDFChartData {
         @Override
         protected void setOrder(long order) {
             series.getOrder().setVal(order);
+        }
+
+        @Override
+        protected List<CTDPt> getDPtList() {
+            return series.getDPtList();
         }
     }
 }

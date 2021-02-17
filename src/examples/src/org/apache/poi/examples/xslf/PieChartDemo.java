@@ -110,6 +110,7 @@ public final class PieChartDemo {
 	            firstSeries.replaceData(categoriesData, valuesData);
 	            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle, 0));
 	            firstSeries.setExplosion(25L);
+	            firstSeries.getDataPoint(1).setExplosion(35L);
 	            chart.plot(pie);
 
                 // save the result
