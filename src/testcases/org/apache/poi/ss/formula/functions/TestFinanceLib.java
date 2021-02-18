@@ -33,7 +33,22 @@ class TestFinanceLib extends BaseTestNumeric {
     void testFv() {
         double f, r, y, p, x;
         int n;
-        boolean t = false;
+        boolean t;
+
+        r = 0; n = 1; y = 1; p = 1; t = true;
+        f = FinanceLib.fv(r, n, y, p, t);
+        x = -2;
+        assertDouble("fv ", x, f);
+        
+        r = 0.12/12; n = 12; y = -1000; p = 0; t = false;
+        f = FinanceLib.fv(r, n, y, p, t);
+        x = 12682.50301319;
+        assertDouble("fv ", x, f);
+
+        r = 0.06/12; n = 10; y = -200; p = -500; t = true;
+        f = FinanceLib.fv(r, n, y, p, t);
+        x = 2581.4033740;
+        assertDouble("fv ", x, f);
 
         r = 0; n = 3; y = 2; p = 7; t = true;
         f = FinanceLib.fv(r, n, y, p, t);
@@ -105,7 +120,7 @@ class TestFinanceLib extends BaseTestNumeric {
     void testPmt() {
         double f, r, y, p, x;
         int n;
-        boolean t = false;
+        boolean t;
 
         r = 0; n = 3; p = 2; f = 7; t = true;
         y = FinanceLib.pmt(r, n, p, f, t);
@@ -139,7 +154,7 @@ class TestFinanceLib extends BaseTestNumeric {
     void testPv() {
         double f, r, y, p, x;
         int n;
-        boolean t = false;
+        boolean t;
 
         r = 0; n = 3; y = 2; f = 7; t = true;
         f = FinanceLib.pv(r, n, y, f, t);
@@ -182,7 +197,7 @@ class TestFinanceLib extends BaseTestNumeric {
     @Test
     void testNper() {
         double f, r, y, p, x, n;
-        boolean t = false;
+        boolean t;
 
         r = 0; y = 7; p = 2; f = 3; t = false;
         n = FinanceLib.nper(r, y, p, f, t);
