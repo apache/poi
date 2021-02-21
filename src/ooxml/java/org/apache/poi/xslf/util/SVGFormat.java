@@ -22,7 +22,10 @@ package org.apache.poi.xslf.util;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -55,7 +58,11 @@ public class SVGFormat implements OutputFormat {
 
     @Override
     public void writeSlide(MFProxy proxy, File outFile) throws IOException {
-        svgGenerator.stream(outFile.getCanonicalPath(), true);
+        // Batik DEFAULT_XML_ENCODING is ISO-8859-1 ... srsly?!
+        // Unicode entities aren't encoded, so use UTF-8
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outFile.getCanonicalPath()), StandardCharsets.UTF_8)) {
+            svgGenerator.stream(writer, true);
+        }
     }
 
     @Override
