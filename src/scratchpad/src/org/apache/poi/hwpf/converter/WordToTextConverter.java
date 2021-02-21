@@ -30,6 +30,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -46,8 +48,6 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,7 +55,7 @@ import org.w3c.dom.Element;
 @Beta
 public class WordToTextConverter extends AbstractWordConverter
 {
-    private static final POILogger LOG = POILogFactory.getLogger( WordToTextConverter.class );
+    private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
 
     public static String getText( DirectoryNode root ) throws Exception
     {
@@ -351,10 +351,8 @@ public class WordToTextConverter extends AbstractWordConverter
         catch ( Exception exc )
         {
             // no extractor in classpath
-            LOG.log( POILogger.WARN, "There is an OLE object entry '",
-                    entry.getName(),
-                    "', but there is no text extractor for this object type ",
-                    "or text extractor factory is not available: ", "", exc );
+            LOG.atWarn().withThrowable(exc).log("There is an OLE object entry '{}', but there is no text " +
+                    "extractor for this object type or text extractor factory is not available", entry.getName());
             return false;
         }
 
@@ -370,9 +368,7 @@ public class WordToTextConverter extends AbstractWordConverter
         }
         catch ( Exception exc )
         {
-            LOG.log( POILogger.ERROR,
-                    "Unable to extract text from OLE entry '", entry.getName(),
-                    "': ", exc, exc );
+            LOG.atError().withThrowable(exc).log("Unable to extract text from OLE entry '{}'", entry.getName());
             return false;
         }
     }

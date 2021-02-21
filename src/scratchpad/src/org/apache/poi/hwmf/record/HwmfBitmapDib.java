@@ -36,6 +36,8 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -43,8 +45,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -52,7 +52,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class HwmfBitmapDib implements GenericRecord {
 
-    private static final POILogger LOG = POILogFactory.getLogger(HwmfBitmapDib.class);
+    private static final Logger LOG = LogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
@@ -479,11 +479,11 @@ public class HwmfBitmapDib implements GenericRecord {
         try {
             bi = ImageIO.read(getBMPStream());
         } catch (IOException|RuntimeException e) {
-            LOG.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
+            LOG.atError().log("invalid bitmap data - returning placeholder image");
             return getPlaceholder();
         }
 
-        if (foreground != null && background != null && headerBitCount == HwmfBitmapDib.BitCount.BI_BITCOUNT_1) {
+        if (foreground != null && background != null && headerBitCount == BitCount.BI_BITCOUNT_1) {
             IndexColorModel cmOld = (IndexColorModel)bi.getColorModel();
             int fg = foreground.getRGB();
             int bg = background.getRGB() & (hasAlpha ? 0xFFFFFF : 0xFFFFFFFF);

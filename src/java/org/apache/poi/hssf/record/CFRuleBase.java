@@ -20,6 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
@@ -32,8 +34,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Conditional Formatting Rules. This can hold old-style rules
@@ -95,7 +95,7 @@ public abstract class CFRuleBase extends StandardRecord {
     public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
 
-    protected static final POILogger LOG = POILogFactory.getLogger(CFRuleBase.class);
+    protected static final Logger LOG = LogManager.getLogger(CFRuleBase.class);
 
     static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
     static final BitField alignHor         = bf(0x00000001); // 0 = Horizontal alignment modified

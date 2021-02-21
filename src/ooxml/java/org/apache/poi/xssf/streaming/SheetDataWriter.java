@@ -32,13 +32,13 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringCodepointsIterable;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * so that it was renamed to "SheetDataWriter"
  */
 public class SheetDataWriter implements Closeable {
-    private static final POILogger LOG = POILogFactory.getLogger(SheetDataWriter.class);
+    private static final Logger LOG = LogManager.getLogger(SheetDataWriter.class);
 
     private final File _fd;
     protected final Writer _out;
@@ -186,7 +186,7 @@ public class SheetDataWriter implements Closeable {
     @Override
     protected void finalize() throws Throwable {
         if (_fd.exists() && !_fd.delete()) {
-            LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", _fd);
+            LOG.atError().log("Can't delete temporary encryption file: {}", _fd);
         }
     }
 

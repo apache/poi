@@ -30,6 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hsmf.datatypes.PropertyValue.BooleanPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.CurrencyPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.DoublePropertyValue;
@@ -44,8 +46,8 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * <p>
@@ -68,7 +70,7 @@ public abstract class PropertiesChunk extends Chunk {
     public static final int PROPERTIES_FLAG_WRITEABLE = 4;
 
     /** For logging problems we spot with the file */
-    private static final POILogger LOG = POILogFactory.getLogger(PropertiesChunk.class);
+    private static final Logger LOG = LogManager.getLogger(PropertiesChunk.class);
 
     /**
      * Holds properties, indexed by type. If a property is multi-valued, or
@@ -176,7 +178,7 @@ public abstract class PropertiesChunk extends Chunk {
                 if (chunk != null) {
                     cVal.setValue(chunk);
                 } else {
-                    LOG.log(POILogger.WARN, "No chunk found matching Property " + cVal);
+                    LOG.atWarn().log("No chunk found matching Property {}", cVal);
                 }
             }
         }
@@ -200,9 +202,7 @@ public abstract class PropertiesChunk extends Chunk {
                     prop = MAPIProperty.createCustom(id, type, "Unknown " + id);
                 }
                 if (type == null) {
-                    LOG.log(POILogger.WARN, "Invalid type found, expected ",
-                            prop.usualType, " but got ", typeID,
-                            " for property ", prop);
+                    LOG.atWarn().log("Invalid type found, expected {} but got {} for property {}", prop.usualType, box(typeID),prop);
                     going = false;
                     break;
                 }
@@ -220,12 +220,10 @@ public abstract class PropertiesChunk extends Chunk {
                         // We don't know what this property normally is, but it
                         // has come
                         // through with a valid type, so use that
-                        LOG.log(POILogger.INFO, "Property definition for ", prop,
-                            " is missing a type definition, found a value with type ", type);
+                        LOG.atInfo().log("Property definition for {} is missing a type definition, found a value with type {}", prop, type);
                     } else {
                         // Oh dear, something has gone wrong...
-                        LOG.log(POILogger.WARN, "Type mismatch, expected ",
-                            prop.usualType, " but got ", type, " for property ", prop);
+                        LOG.atWarn().log("Type mismatch, expected {} but got {} for property {}", prop.usualType, type, prop);
                         going = false;
                         break;
                     }
@@ -285,8 +283,7 @@ public abstract class PropertiesChunk extends Chunk {
                 }
 
                 if (properties.get(prop) != null) {
-                    LOG.log(POILogger.WARN,
-                            "Duplicate values found for " + prop);
+                    LOG.atWarn().log("Duplicate values found for {}", prop);
                 }
                 properties.put(prop, propVal);
             } catch (BufferUnderrunException e) {
@@ -310,7 +307,7 @@ public abstract class PropertiesChunk extends Chunk {
         baos.close();
 
         // write the header data with the properties declaration
-        directory.createDocument(org.apache.poi.hsmf.datatypes.PropertiesChunk.NAME,
+        directory.createDocument(PropertiesChunk.NAME,
             new ByteArrayInputStream(baos.toByteArray()));
 
         // write the property values
@@ -319,7 +316,7 @@ public abstract class PropertiesChunk extends Chunk {
 
     /**
      * Write the nodes for variable-length data. Those properties are returned by
-     * {@link #writeProperties(java.io.OutputStream)}.
+     * {@link #writeProperties(OutputStream)}.
      *
      * @param directory
      *        The directory.

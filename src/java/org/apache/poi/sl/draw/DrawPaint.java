@@ -46,6 +46,8 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.Insets2D;
@@ -57,8 +59,6 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.util.Dimension2DDouble;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 
 /**
@@ -69,7 +69,9 @@ import org.apache.poi.util.POILogger;
 public class DrawPaint {
     // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
 
-    private static final POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
+    // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
+
+    private static final Logger LOG = LogManager.getLogger(DrawPaint.class);
 
     private static final Color TRANSPARENT = new Color(1f,1f,1f,0f);
 
@@ -286,7 +288,7 @@ public class DrawPaint {
 
             BufferedImage image = renderer.getImage(imgDim);
             if(image == null) {
-                LOG.log(POILogger.ERROR, "Can't load image data");
+                LOG.atError().log("Can't load image data");
                 return TRANSPARENT;
             }
 
@@ -336,7 +338,7 @@ public class DrawPaint {
             // TODO: check why original bitmaps scale/behave differently to vector based images
             return new DrawTexturePaint(image, s, fill, flipX, flipY, renderer instanceof BitmapImageRenderer);
         } catch (IOException e) {
-            LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
+            LOG.atError().withThrowable(e).log("Can't load image data - using transparent color");
             return TRANSPARENT;
         }
     }
@@ -796,10 +798,10 @@ public class DrawPaint {
         try {
             graphics.fill(shape);
         } catch (ArrayIndexOutOfBoundsException e) {
-            LOG.log(POILogger.WARN, "IBM JDK failed with TexturePaintContext AIOOBE - try adding the following to the VM parameter:\n" +
+            LOG.atWarn().withThrowable(e).log("IBM JDK failed with TexturePaintContext AIOOBE - try adding the following to the VM parameter:\n" +
                 "-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V} and " +
                 "search for 'JIT Problem Determination for IBM SDK using -Xjit' (http://www-01.ibm.com/support/docview.wss?uid=swg21294023) " +
-                "for how to add/determine further excludes", e);
+                "for how to add/determine further excludes");
         }
     }
 }

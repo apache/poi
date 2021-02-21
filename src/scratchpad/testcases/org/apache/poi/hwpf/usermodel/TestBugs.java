@@ -49,8 +49,6 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

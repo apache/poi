@@ -38,12 +38,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
  * </ul>
  */
 public class XSSFExportToXml implements Comparator<String>{
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFExportToXml.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFExportToXml.class);
 
 
     @FunctionalInterface
@@ -259,7 +259,7 @@ public class XSSFExportToXml implements Comparator<String>{
             //if no exceptions where raised, the document is valid
             return true;
         } catch(IOException e) {
-            LOG.log(POILogger.ERROR, "document is not valid", e);
+            LOG.atError().withThrowable(e).log("document is not valid");
         }
 
         return false;
@@ -546,9 +546,9 @@ public class XSSFExportToXml implements Comparator<String>{
         try {
             securityFeature.accept(name);
         } catch (Exception e) {
-            LOG.log(POILogger.WARN, "SchemaFactory feature unsupported", name, e);
+            LOG.atWarn().withThrowable(e).log("SchemaFactory feature ({}) unsupported", name);
         } catch (AbstractMethodError ame) {
-            LOG.log(POILogger.WARN, "Cannot set SchemaFactory feature because outdated XML parser in classpath", name, ame);
+            LOG.atWarn().withThrowable(ame).log("Cannot set SchemaFactory feature ({}) because outdated XML parser in classpath", name);
         }
     }
 }

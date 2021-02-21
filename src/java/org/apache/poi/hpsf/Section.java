@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
@@ -38,8 +40,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Represents a section in a {@link PropertySet}.
@@ -48,7 +48,7 @@ public class Section {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger(Section.class);
+    private static final Logger LOG = LogManager.getLogger(Section.class);
 
     /**
      * Maps property IDs to section-private PID strings. These
@@ -235,7 +235,7 @@ public class Section {
                         id = Math.max(PropertyIDMap.PID_MAX, offset2Id.inverseBidiMap().lastKey())+1;
                         setProperty(new Property(id, leis, pLen, codepage));
                     } catch (RuntimeException e) {
-                        LOG.log(POILogger.INFO, "Dictionary fallback failed - ignoring property");
+                        LOG.atInfo().log("Dictionary fallback failed - ignoring property");
                     }
                 }
             } else {
@@ -730,10 +730,8 @@ public class Section {
          * (property 0) the codepage property (property 1) must be set, too. */
         int codepage = getCodepage();
         if (codepage == -1) {
-            String msg =
-                "The codepage property is not set although a dictionary is present. "+
-                "Defaulting to ISO-8859-1.";
-            LOG.log(POILogger.WARN, msg);
+            LOG.atWarn().log("The codepage property is not set although a dictionary is present. " +
+                    "Defaulting to ISO-8859-1.");
             codepage = Property.DEFAULT_CODEPAGE;
         }
 
@@ -826,7 +824,7 @@ public class Section {
             int cp = (codepage == -1) ? Property.DEFAULT_CODEPAGE : codepage;
             int nrBytes = Math.toIntExact(((sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1)));
             if (nrBytes > 0xFFFFFF) {
-                LOG.log(POILogger.WARN, errMsg);
+                LOG.atWarn().log(errMsg);
                 isCorrupted = true;
                 break;
             }
@@ -844,7 +842,7 @@ public class Section {
 
                 dic.put(id, str);
             } catch (RuntimeException|IOException ex) {
-                LOG.log(POILogger.WARN, errMsg, ex);
+                LOG.atWarn().withThrowable(ex).log(errMsg);
                 isCorrupted = true;
                 break;
             }
@@ -894,8 +892,8 @@ public class Section {
 
     /**
      * Sets the section's dictionary. All keys in the dictionary must be
-     * {@link java.lang.Long} instances, all values must be
-     * {@link java.lang.String}s. This method overwrites the properties with IDs
+     * {@link Long} instances, all values must be
+     * {@link String}s. This method overwrites the properties with IDs
      * 0 and 1 since they are reserved for the dictionary and the dictionary's
      * codepage. Setting these properties explicitly might have surprising
      * effects. An application should never do this but always use this

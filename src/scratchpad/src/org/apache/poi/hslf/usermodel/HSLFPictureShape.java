@@ -21,6 +21,8 @@ import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherComplexProperty;
@@ -34,17 +36,17 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 
 /**
  * Represents a picture in a PowerPoint document.
  */
 public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HSLFShape,HSLFTextParagraph> {
-    private static final POILogger LOG = POILogFactory.getLogger(HSLFPictureShape.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFPictureShape.class);
 
     /**
      * Create a new <code>Picture</code>
@@ -120,14 +122,14 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
 
         EscherBSERecord bse = getEscherBSERecord();
         if (bse == null){
-            LOG.log(POILogger.ERROR, "no reference to picture data found ");
+            LOG.atError().log("no reference to picture data found ");
         } else {
             for (HSLFPictureData pd : pict) {
                 if (pd.getOffset() ==  bse.getOffset()){
                     return pd;
                 }
             }
-            LOG.log(POILogger.ERROR, "no picture found for our BSE offset ", bse.getOffset());
+            LOG.atError().log("no picture found for our BSE offset {}", box(bse.getOffset()));
         }
         return null;
     }
@@ -139,13 +141,13 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
-            LOG.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            LOG.atDebug().log("EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
         List<EscherRecord> lst = bstore.getChildRecords();
         int idx = getPictureIndex();
         if (idx == 0){
-            LOG.log(POILogger.DEBUG, "picture index was not found, returning ");
+            LOG.atDebug().log("picture index was not found, returning ");
             return null;
         }
         return (EscherBSERecord)lst.get(idx-1);

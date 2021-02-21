@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -48,8 +50,6 @@ import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
@@ -57,7 +57,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
     public static final int MAX_RECORD_LENGTH = 50_000_000;
 
-    private static final POILogger LOG = POILogFactory.getLogger(HwmfPicture.class);
+    private static final Logger LOG = LogManager.getLogger(HwmfPicture.class);
 
     final List<HwmfRecord> records = new ArrayList<>();
     final HwmfPlaceableHeader placeableHeader;
@@ -85,7 +85,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     recordSize = (int)recordSizeLong;
                     recordFunction = leis.readShort();
                 } catch (Exception e) {
-                    LOG.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
+                    LOG.atError().log("unexpected eof - wmf file was truncated");
                     break;
                 }
                 // 4 bytes (recordSize) + 2 bytes (recordFunction)

@@ -44,14 +44,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -71,6 +72,8 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 /**
  * A TSP time-stamp service implementation.
  *
@@ -79,7 +82,7 @@ import org.bouncycastle.tsp.TimeStampToken;
  */
 public class TSPTimeStampService implements TimeStampService {
 
-    private static final POILogger LOG = POILogFactory.getLogger(TSPTimeStampService.class);
+    private static final Logger LOG = LogManager.getLogger(TSPTimeStampService.class);
 
     /**
      * Maps the digest algorithm to corresponding OID value.
@@ -151,10 +154,10 @@ public class TSPTimeStampService implements TimeStampService {
 
             int statusCode = huc.getResponseCode();
             if (statusCode != 200) {
-                LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl(),
-                        ", had status code ", statusCode, "/", huc.getResponseMessage());
-                throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl() +
-                        ", had status code " + statusCode + "/" + huc.getResponseMessage());
+                final String message = "Error contacting TSP server " + signatureConfig.getTspUrl() +
+                        ", had status code " + statusCode + "/" + huc.getResponseMessage();
+                LOG.atError().log(message);
+                throw new IOException(message);
             }
 
             // HTTP input validation
@@ -165,7 +168,7 @@ public class TSPTimeStampService implements TimeStampService {
 
             bos = new ByteArrayOutputStream();
             IOUtils.copy(huc.getInputStream(), bos);
-            LOG.log(POILogger.DEBUG, "response content: ", HexDump.dump(bos.toByteArray(), 0, 0));
+            LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(bos.toByteArray(), 0, 0)));
         } finally {
             huc.disconnect();
         }
@@ -188,13 +191,13 @@ public class TSPTimeStampService implements TimeStampService {
         timeStampResponse.validate(request);
 
         if (0 != timeStampResponse.getStatus()) {
-            LOG.log(POILogger.DEBUG, "status: ", timeStampResponse.getStatus());
-            LOG.log(POILogger.DEBUG, "status string: ", timeStampResponse.getStatusString());
+            LOG.atDebug().log("status: {}", box(timeStampResponse.getStatus()));
+            LOG.atDebug().log("status string: {}", timeStampResponse.getStatusString());
             PKIFailureInfo failInfo = timeStampResponse.getFailInfo();
             if (null != failInfo) {
-                LOG.log(POILogger.DEBUG, "fail info int value: ", failInfo.intValue());
+                LOG.atDebug().log("fail info int value: {}", box(failInfo.intValue()));
                 if (/*PKIFailureInfo.unacceptedPolicy*/(1 << 8) == failInfo.intValue()) {
-                    LOG.log(POILogger.DEBUG, "unaccepted policy");
+                    LOG.atDebug().log("unaccepted policy");
                 }
             }
             throw new RuntimeException("timestamp response status != 0: "
@@ -204,8 +207,8 @@ public class TSPTimeStampService implements TimeStampService {
         SignerId signerId = timeStampToken.getSID();
         BigInteger signerCertSerialNumber = signerId.getSerialNumber();
         X500Name signerCertIssuer = signerId.getIssuer();
-        LOG.log(POILogger.DEBUG, "signer cert serial number: ", signerCertSerialNumber);
-        LOG.log(POILogger.DEBUG, "signer cert issuer: ", signerCertIssuer);
+        LOG.atDebug().log("signer cert serial number: {}", signerCertSerialNumber);
+        LOG.atDebug().log("signer cert issuer: {}", signerCertIssuer);
 
         // TSP signer certificates retrieval
         Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
@@ -229,7 +232,7 @@ public class TSPTimeStampService implements TimeStampService {
         x509converter.setProvider("BC");
         X509CertificateHolder certificate = signerCert;
         do {
-            LOG.log(POILogger.DEBUG, "adding to certificate chain: ", certificate.getSubject());
+            LOG.atDebug().log("adding to certificate chain: {}", certificate.getSubject());
             tspCertificateChain.add(x509converter.getCertificate(certificate));
             if (certificate.getSubject().equals(certificate.getIssuer())) {
                 break;
@@ -253,8 +256,7 @@ public class TSPTimeStampService implements TimeStampService {
             signatureConfig.getTspValidator().validate(tspCertificateChain, revocationData);
         }
 
-        LOG.log(POILogger.DEBUG, "time-stamp token time: ",
-                timeStampToken.getTimeStampInfo().getGenTime());
+        LOG.atDebug().log("time-stamp token time: {}", timeStampToken.getTimeStampInfo().getGenTime());
 
         return timeStampToken.getEncoded();
     }

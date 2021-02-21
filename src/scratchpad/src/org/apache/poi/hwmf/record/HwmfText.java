@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -44,11 +46,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 public class HwmfText {
-    private static final POILogger LOG = POILogFactory.getLogger(HwmfText.class);
+    private static final Logger LOG = LogManager.getLogger(HwmfText.class);
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
@@ -430,13 +430,13 @@ public class HwmfText {
             size += rawTextBytes.length;
 
             if (size >= remainingRecordSize) {
-                LOG.log(POILogger.INFO, "META_EXTTEXTOUT doesn't contain character tracking info");
+                LOG.atInfo().log("META_EXTTEXTOUT doesn't contain character tracking info");
                 return size;
             }
 
             int dxLen = Math.min(stringLength, (remainingRecordSize-size)/LittleEndianConsts.SHORT_SIZE);
             if (dxLen < stringLength) {
-                LOG.log(POILogger.WARN, "META_EXTTEXTOUT tracking info doesn't cover all characters");
+                LOG.atWarn().log("META_EXTTEXTOUT tracking info doesn't cover all characters");
             }
 
             for (int i=0; i<dxLen; i++) {

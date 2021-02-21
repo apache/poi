@@ -17,15 +17,13 @@
 
 package org.apache.poi.hssf.usermodel.helpers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Helper for shifting rows up or down
@@ -33,7 +31,7 @@ import org.apache.poi.util.POILogger;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
 public final class HSSFRowShifter extends RowShifter {
-    private static final POILogger LOG = POILogFactory.getLogger(HSSFRowShifter.class);
+    private static final Logger LOG = LogManager.getLogger(HSSFRowShifter.class);
 
     public HSSFRowShifter(HSSFSheet sh) {
         super(sh);

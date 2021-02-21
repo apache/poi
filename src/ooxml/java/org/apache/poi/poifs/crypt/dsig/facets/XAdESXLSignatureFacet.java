@@ -47,11 +47,11 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xmlbeans.XmlException;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -87,7 +87,7 @@ import org.w3c.dom.NodeList;
  */
 public class XAdESXLSignatureFacet implements SignatureFacet {
 
-    private static final POILogger LOG = POILogFactory.getLogger(XAdESXLSignatureFacet.class);
+    private static final Logger LOG = LogManager.getLogger(XAdESXLSignatureFacet.class);
 
     private final CertificateFactory certificateFactory;
 
@@ -101,7 +101,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
     @Override
     public void postSign(SignatureInfo signatureInfo, Document document) throws MarshalException {
-        LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
+        LOG.atDebug().log("XAdES-X-L post sign phase");
 
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
@@ -139,7 +139,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         }
 
         RevocationData tsaRevocationDataXadesT = new RevocationData();
-        LOG.log(POILogger.DEBUG, "creating XAdES-T time-stamp");
+        LOG.atDebug().log("creating XAdES-T time-stamp");
         XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp
             (signatureInfo, Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT);
 
@@ -259,7 +259,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         timeStampNodesXadesX1.add(completeRevocationRefs.getDomNode());
 
         RevocationData tsaRevocationDataXadesX1 = new RevocationData();
-        LOG.log(POILogger.DEBUG, "creating XAdES-X time-stamp");
+        LOG.atDebug().log("creating XAdES-X time-stamp");
         XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp
             (signatureInfo, timeStampNodesXadesX1, tsaRevocationDataXadesX1);
         if (tsaRevocationDataXadesX1.hasRevocationDataEntries()) {

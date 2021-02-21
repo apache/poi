@@ -20,6 +20,8 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Color;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -36,8 +38,6 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 
 /**
@@ -46,7 +46,7 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public final class HSLFTextRun implements TextRun {
-	private static final POILogger LOG = POILogFactory.getLogger(HSLFTextRun.class);
+	private static final Logger LOG = LogManager.getLogger(HSLFTextRun.class);
 
 	/** The TextRun we belong to */
 	private HSLFTextParagraph parentParagraph;
@@ -147,13 +147,13 @@ public final class HSLFTextRun implements TextRun {
         final int txtype = parentParagraph.getRunType();
         final HSLFSheet sheet = parentParagraph.getSheet();
         if (sheet == null) {
-            LOG.log(POILogger.ERROR, "Sheet is not available");
+            LOG.atError().log("Sheet is not available");
             return null;
         }
 
         final HSLFMasterSheet master = sheet.getMasterSheet();
         if (master == null) {
-            LOG.log(POILogger.WARN, "MasterSheet is not available");
+            LOG.atWarn().log("MasterSheet is not available");
             return null;
         }
 
@@ -414,7 +414,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Sets color of the text, as a int bgr.
 	 * (PowerPoint stores as BlueGreenRed, not the more
 	 *  usual RedGreenBlue)
-	 * @see java.awt.Color
+	 * @see Color
 	 */
 	public void setFontColor(int bgr) {
 		setCharTextPropVal("font.color", bgr);

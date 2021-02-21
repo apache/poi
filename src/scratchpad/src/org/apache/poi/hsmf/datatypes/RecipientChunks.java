@@ -24,8 +24,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Collection of convenience chunks for the Recip(ient) part of an outlook file.
@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
  * If a message has multiple recipients, there will be several of these.
  */
 public final class RecipientChunks implements ChunkGroupWithProperties {
-    private static final POILogger LOG = POILogFactory.getLogger(RecipientChunks.class);
+    private static final Logger LOG = LogManager.getLogger(RecipientChunks.class);
 
     public static final String PREFIX = "__recip_version1.0_#";
 
@@ -88,7 +88,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
             try {
                 recipientNumber = Integer.parseInt(number, 16);
             } catch (NumberFormatException e) {
-                LOG.log(POILogger.ERROR, "Invalid recipient number in name ", name);
+                LOG.atError().log("Invalid recipient number in name {}", name);
             }
         }
     }
@@ -238,7 +238,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
         if (recipientProperties != null) {
             recipientProperties.matchVariableSizedPropertiesToChunks();
         } else {
-            LOG.log(POILogger.WARN, "Recipeints Chunk didn't contain a list of properties!");
+            LOG.atWarn().log("Recipients Chunk didn't contain a list of properties!");
         }
     }
 

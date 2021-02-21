@@ -22,17 +22,19 @@ package org.apache.poi.poifs.crypt.temp;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 @Beta
 public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
-    private static final POILogger LOG = POILogFactory.getLogger(SXSSFWorkbookWithCustomZipEntrySource.class);
+    private static final Logger LOG = LogManager.getLogger(SXSSFWorkbookWithCustomZipEntrySource.class);
 
     public SXSSFWorkbookWithCustomZipEntrySource() {
         super(20);
@@ -60,8 +62,8 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         //log values to ensure these values are accessible to subclasses
-        LOG.log(POILogger.INFO, "isCompressTempFiles: ", isCompressTempFiles());
-        LOG.log(POILogger.INFO, "SharedStringSource: ", getSharedStringSource());
+        LOG.atInfo().log("isCompressTempFiles: {}", box(isCompressTempFiles()));
+        LOG.atInfo().log("SharedStringSource: {}", getSharedStringSource());
         return new SheetDataWriterWithDecorator();
     }
 }

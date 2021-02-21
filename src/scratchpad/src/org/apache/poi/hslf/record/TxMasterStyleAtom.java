@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
@@ -35,8 +37,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * TxMasterStyleAtom atom (4003).
@@ -53,7 +53,7 @@ import org.apache.poi.util.POILogger;
  * </p>
  */
 public final class TxMasterStyleAtom extends RecordAtom {
-    private static final POILogger LOG = POILogFactory.getLogger(TxMasterStyleAtom.class);
+    private static final Logger LOG = LogManager.getLogger(TxMasterStyleAtom.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -79,7 +79,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         try {
             init();
         } catch (Exception e){
-            LOG.log(POILogger.WARN, "Exception when reading available styles", e);
+            LOG.atWarn().withThrowable(e).log("Exception when reading available styles");
         }
     }
 

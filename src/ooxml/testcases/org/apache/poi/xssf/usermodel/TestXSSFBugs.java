@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static java.time.Duration.between;
+import static java.time.Instant.now;
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,6 +47,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -96,8 +100,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NullOutputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -117,7 +119,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredErrors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -127,7 +128,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
-    private static final POILogger LOG = POILogFactory.getLogger(TestXSSFBugs.class);
+    private static final Logger LOG = LogManager.getLogger(TestXSSFBugs.class);
 
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -2033,7 +2034,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         "DEC2BIN(A1), org.apache.poi.ss.formula.eval.StringEval [0]"
     })
     void test57196_WorkbookEvaluator(String formula, String expValue) throws IOException {
-        String previousLogger = System.getProperty("org.apache.poi.util.POILogger");
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet("Sheet1");
             XSSFRow row = sheet.createRow(0);
@@ -2051,13 +2051,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             ValueEval ve = workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
 
             assertEquals(expValue, ve.toString());
-        } finally {
-            if (previousLogger == null) {
-                System.clearProperty("org.apache.poi.util.POILogger");
-            } else {
-                System.setProperty("org.apache.poi.util.POILogger", previousLogger);
-            }
-            System.clearProperty("poi.log.level");
         }
     }
 
@@ -3429,24 +3422,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     void test58896WithFile() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58896.xlsx")) {
             Sheet sheet = wb.getSheetAt(0);
-            Instant start = Instant.now();
+            Instant start = now();
 
-            LOG.log(POILogger.INFO, "Autosizing columns...");
+            LOG.atInfo().log("Autosizing columns...");
 
             for (int i = 0; i < 3; ++i) {
-                LOG.log(POILogger.INFO, "Autosize ", i, " - ", Duration.between(start, Instant.now()));
+                LOG.atInfo().log("Autosize {} - {}", box(i), between(start, now()));
                 sheet.autoSizeColumn(i);
             }
 
             for (int i = 0; i < 69 - 35 + 1; ++i)
                 for (int j = 0; j < 8; ++j) {
                     int col = 3 + 2 + i * (8 + 2) + j;
-                    LOG.log(POILogger.INFO, "Autosize ", col, " - ", Duration.between(start, Instant.now()));
+                    LOG.atInfo().log("Autosize {} - {}", box(col), between(start, now()));
                     sheet.autoSizeColumn(col);
                 }
-            LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));
+            LOG.atInfo().log(between(start, now()));
 
-            assertTrue(Duration.between(start, Instant.now()).getSeconds() < 25);
+            assertTrue(between(start, now()).getSeconds() < 25);
         }
     }
 

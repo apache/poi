@@ -24,6 +24,8 @@ import java.net.URI;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -37,8 +39,6 @@ import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
  */
 public final class ZipPartMarshaller implements PartMarshaller {
-	private static final POILogger LOG = POILogFactory.getLogger(ZipPartMarshaller.class);
+	private static final Logger LOG = LogManager.getLogger(ZipPartMarshaller.class);
 
 	/**
 	 * Save the specified part to the given stream.
@@ -56,7 +56,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	 * @param os The stream to write the data to
 	 * @return true if saving was successful or there was nothing to save,
 	 * 		false if an error occurred.
-	 * 		In case of errors, logging via the {@link POILogger} is used to provide more information.
+	 * 		In case of errors, logging via Log4j 2 is used to provide more information.
 	 * @throws OpenXML4JException
 	 *      Throws if the stream cannot be written to or an internal exception is thrown.
 	 */
@@ -64,7 +64,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	public boolean marshall(PackagePart part, OutputStream os)
 			throws OpenXML4JException {
 		if (!(os instanceof ZipArchiveOutputStream)) {
-			LOG.log(POILogger.ERROR,"Unexpected class ", os.getClass().getName());
+			LOG.atError().log("Unexpected class {}", os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
 			// Normally should happen only in development phase, so just throw
 			// exception
@@ -91,8 +91,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException ioe) {
-			LOG.log(POILogger.ERROR,"Cannot write: ", part.getPartName(), ": in ZIP",
-					ioe);
+			LOG.atError().withThrowable(ioe).log("Cannot write: {}: in ZIP", part.getPartName());
 			return false;
 		}
 
@@ -120,7 +119,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	 *            relationships serialization.
 	 * @return true if saving was successful,
 	 * 		false if an error occurred.
-	 * 		In case of errors, logging via the {@link POILogger} is used to provide more information.
+	 * 		In case of errors, logging via Log4j 2 is used to provide more information.
 	 */
 	public static boolean marshallRelationshipPart(
 			PackageRelationshipCollection rels, PackagePartName relPartName,
@@ -186,7 +185,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException e) {
-			LOG.log(POILogger.ERROR,"Cannot create zip entry ", relPartName, e);
+			LOG.atError().withThrowable(e).log("Cannot create zip entry {}", relPartName);
 			return false;
 		}
 	}

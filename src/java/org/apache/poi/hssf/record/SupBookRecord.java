@@ -20,10 +20,10 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class SupBookRecord extends StandardRecord {
 
-    private static final POILogger LOG = POILogFactory.getLogger(SupBookRecord.class);
+    private static final Logger LOG = LogManager.getLogger(SupBookRecord.class);
 
     public static final short sid = 0x01AE;
 
@@ -222,12 +222,12 @@ public final class SupBookRecord extends StandardRecord {
         		break;
         	case CH_LONG_VOLUME:
         		//Don't known to handle...
-        		LOG.log(POILogger.WARN, "Found unexpected key: ChLongVolume - IGNORING");
+        		LOG.atWarn().log("Found unexpected key: ChLongVolume - IGNORING");
         		break;
         	case CH_STARTUP_DIR:
         	case CH_ALT_STARTUP_DIR:
         	case CH_LIB_DIR:
-        		LOG.log(POILogger.WARN, "EXCEL.EXE path unkown - using this directoy instead: .");
+        		LOG.atWarn().log("EXCEL.EXE path unknown - using this directory instead: .");
         		sb.append(".").append(PATH_SEPERATOR);
         		break;
         	default:

@@ -22,19 +22,21 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class ExtRst implements Comparable<ExtRst>, GenericRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(ExtRst.class);
+    private static final Logger LOG = LogManager.getLogger(ExtRst.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -78,7 +80,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
 
         // Spot corrupt records
         if(reserved != 1) {
-            LOG.log(POILogger.WARN, "Warning - ExtRst has wrong magic marker, expecting 1 but found ", reserved, " - ignoring");
+            LOG.atWarn().log("ExtRst has wrong magic marker, expecting 1 but found {} - ignoring", box(reserved));
             // Grab all the remaining data, and ignore it
             for(int i=0; i<expectedLength-2; i++) {
                 in.readByte();
@@ -121,7 +123,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
 
         int extraDataLength = runData - (numRuns*6);
         if(extraDataLength < 0) {
-            LOG.log( POILogger.WARN, "Warning - ExtRst overran by ",  (0-extraDataLength), " bytes");
+            LOG.atWarn().log("ExtRst overran by {} bytes", box(-extraDataLength));
             extraDataLength = 0;
         }
         extraData = IOUtils.safelyAllocate(extraDataLength, MAX_RECORD_LENGTH);

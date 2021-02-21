@@ -32,6 +32,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
 import com.zaxxer.sparsebits.SparseBitSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
@@ -40,13 +42,11 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 @Internal
 public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
-    private static final POILogger LOG = POILogFactory.getLogger(ChunkedCipherOutputStream.class);
+    private static final Logger LOG = LogManager.getLogger(ChunkedCipherOutputStream.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -257,7 +257,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     @Override
     public void close() throws IOException {
         if (isClosed) {
-            LOG.log(POILogger.DEBUG, "ChunkedCipherOutputStream was already closed - ignoring");
+            LOG.atDebug().log("ChunkedCipherOutputStream was already closed - ignoring");
             return;
         }
 
@@ -324,7 +324,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
                 }
 
                 if (!fileOut.delete()) {
-                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
+                    LOG.atError().log("Can't delete temporary encryption file: {}", fileOut);
                 }
             } catch (IOException e) {
                 throw new EncryptedDocumentException(e);

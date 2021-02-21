@@ -49,6 +49,9 @@
                                 <resource>
                                     <directory>../../src/excelant/resources</directory>
                                 </resource>
+                                <resource>
+                                    <directory>../../src/resources/test</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

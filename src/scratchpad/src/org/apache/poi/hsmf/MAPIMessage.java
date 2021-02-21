@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -51,8 +53,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
@@ -79,9 +81,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
    }
 
    /** For logging problems we spot with the file */
-   private static final POILogger LOG = POILogFactory.getLogger(MAPIMessage.class);
+   private static final Logger LOG = LogManager.getLogger(MAPIMessage.class);
 
-   private Chunks mainChunks;
+    private Chunks mainChunks;
    private NameIdChunks nameIdChunks;
    private RecipientChunks[] recipientChunks;
    private AttachmentChunks[] attachmentChunks;
@@ -221,8 +223,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
                byte[] htmlBodyBinary = htmlBodyBinaryChunk.getValue();
                return new String(htmlBodyBinary, encoding);
             } catch (UnsupportedEncodingException e) {
-               LOG.log(POILogger.WARN, "HTML body binary: Invalid codepage ID ", codepage, " set for the message via ",
-                  MAPIProperty.INTERNET_CPID, ", ignoring");
+                LOG.atWarn().log("HTML body binary: Invalid codepage ID {} set for the message via {}, ignoring", box(codepage), MAPIProperty.INTERNET_CPID);
             }
          }
          return htmlBodyBinaryChunk.getAs7bitString();
@@ -418,8 +419,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
          String encoding = CodePageUtil.codepageToEncoding(codepage, true);
          generalcodepage = encoding;
        } catch (UnsupportedEncodingException e) {
-         LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
-             MAPIProperty.MESSAGE_CODEPAGE, ", ignoring");
+           LOG.atWarn().log("Invalid codepage ID {} set for the message via {}, ignoring", box(codepage), MAPIProperty.MESSAGE_CODEPAGE);
        }
      }
      //
@@ -436,8 +436,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
              generalcodepage = encoding;
            }
          } catch (UnsupportedEncodingException e) {
-           LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, "from locale ID", lcid, " set for the message via ",
-               MAPIProperty.MESSAGE_LOCALE_ID, ", ignoring");
+             LOG.atWarn().log("Invalid codepage ID {}from locale ID{} set for the message via {}, ignoring", box(codepage),box(lcid), MAPIProperty.MESSAGE_LOCALE_ID);
          }
        }
      }
@@ -476,8 +475,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
            bodycodepage = encoding;
          }
        } catch (UnsupportedEncodingException e) {
-         LOG.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
-             MAPIProperty.INTERNET_CPID, ", ignoring");
+           LOG.atWarn().log("Invalid codepage ID {} set for the message via {}, ignoring", box(codepage), MAPIProperty.INTERNET_CPID);
        }
      }
      //
@@ -617,8 +615,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       } else if (mc.equalsIgnoreCase("IPM.Post")) {
          return MESSAGE_CLASS.POST;
       } else {
-         LOG.log(POILogger.WARN, "I don't recognize message class '", mc, "'. ",
-                 "Please open an issue on POI's bugzilla");
+          LOG.atWarn().log("I don't recognize message class '{}'. Please open an issue on POI's bugzilla", mc);
          return MESSAGE_CLASS.UNKNOWN;
       }
    }

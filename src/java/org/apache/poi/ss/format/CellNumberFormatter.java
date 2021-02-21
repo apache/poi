@@ -32,15 +32,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.zaxxer.sparsebits.SparseBitSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class implements printing out a value using a number format.
  */
 public class CellNumberFormatter extends CellFormatter {
-    private static final POILogger LOG = POILogFactory.getLogger(CellNumberFormatter.class);
+    private static final Logger LOG = LogManager.getLogger(CellNumberFormatter.class);
 
     private final String desc;
     private final String printfFmt;
@@ -695,8 +695,8 @@ public class CellNumberFormatter extends CellFormatter {
             }
             writeSingleInteger(numeratorFmt, n, output, numeratorSpecials, mods);
             writeSingleInteger(denominatorFmt, d, output, denominatorSpecials, mods);
-        } catch (RuntimeException ignored) {
-            LOG.log(POILogger.ERROR, "error while fraction evaluation", ignored);
+        } catch (RuntimeException e) {
+            LOG.atError().withThrowable(e).log("error while fraction evaluation");
         }
     }
 

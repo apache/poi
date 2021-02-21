@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -34,8 +36,8 @@ import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Unicode String - just standard fields that are in several records.
@@ -43,7 +45,7 @@ import org.apache.poi.util.POILogger;
  * This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
  */
 public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(UnicodeString.class);
+    private static final Logger LOG = LogManager.getLogger(UnicodeString.class);
 
     private static final BitField highByte  = BitFieldFactory.getInstance(0x1);
     // 0x2 is reserved
@@ -102,7 +104,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         if (isExtendedText() && (extensionLength > 0)) {
           field_5_ext_rst = new ExtRst(new ContinuableRecordInput(in), extensionLength);
           if(field_5_ext_rst.getDataSize()+4 != extensionLength) {
-             LOG.log(POILogger.WARN, "ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize() + 4));
+              LOG.atWarn().log("ExtRst was supposed to be {} bytes long, but seems to actually be {}", box(extensionLength),box(field_5_ext_rst.getDataSize() + 4));
           }
         }
     }

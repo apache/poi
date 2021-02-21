@@ -94,26 +94,9 @@ class TestWrite {
         "\"de_DE\".";
 
     /*
-    private static String loggerBefore;
-
     @BeforeClass
     public static void setUpClass() {
-        loggerBefore = System.getProperty("org.apache.poi.util.POILogger");
-
-        // this test may fails in newer JDKs because of disallowed access if
-        // properties are missing, make this visible
-        System.setProperty("org.apache.poi.util.POILogger", CommonsLogger.class.getName());
-
         VariantSupport.setLogUnsupportedTypes(false);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if(loggerBefore == null) {
-            System.clearProperty("org.apache.poi.util.POILogger");
-        } else {
-            System.setProperty("org.apache.poi.util.POILogger", loggerBefore);
-        }
     }
      */
 

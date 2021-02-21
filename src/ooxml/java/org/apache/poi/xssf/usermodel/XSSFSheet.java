@@ -41,6 +41,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -62,12 +64,14 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -78,8 +82,6 @@ import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -103,7 +105,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * </p>
  */
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFSheet.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFSheet.class);
 
     private static final double DEFAULT_ROW_HEIGHT = 15.0;
     private static final double DEFAULT_MARGIN_HEADER = 0.3;
@@ -139,7 +141,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createSheet()
+     * @see XSSFWorkbook#createSheet()
      */
     protected XSSFSheet() {
         super();
@@ -556,7 +558,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     break;
                 }
             }
-            LOG.log(POILogger.ERROR, "Can't find drawing with id=", ctDrawing.getId(), " in the list of the sheet's relationships");
+            LOG.atError().log("Can't find drawing with id={} in the list of the sheet's relationships", ctDrawing.getId());
         }
         return null;
     }
@@ -628,7 +630,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 }
             }
             if(drawing == null){
-                LOG.log(POILogger.ERROR, "Can't find VML drawing with id=", id, " in the list of the sheet's relationships");
+                LOG.atError().log("Can't find VML drawing with id={} in the list of the sheet's relationships", id);
             }
         }
         return drawing;
@@ -720,7 +722,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param rownum  row number
      * @return High level {@link XSSFRow} object representing a row in the sheet
-     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see #removeRow(Row)
      */
     @Override
     public XSSFRow createRow(int rownum) {
@@ -766,10 +768,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
      *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
+     * @see Sheet#PANE_LOWER_LEFT
+     * @see Sheet#PANE_LOWER_RIGHT
+     * @see Sheet#PANE_UPPER_LEFT
+     * @see Sheet#PANE_UPPER_RIGHT
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
@@ -2022,20 +2024,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * when the workbook is opened.
      *
      *  <p>
-     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
+     *  Calculating the formula values with {@link FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
      *  </p>
      *
      *  <p>
      *  It is recommended to force recalcuation of formulas on workbook level using
-     *  {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
+     *  {@link Workbook#setForceFormulaRecalculation(boolean)}
      *  to ensure that all cross-worksheet formuals and external dependencies are updated.
      *  </p>
      * @param value true if the application will perform a full recalculation of
      * this worksheet values when the workbook is opened
      *
-     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
+     * @see Workbook#setForceFormulaRecalculation(boolean)
      */
     @Override
     public void setForceFormulaRecalculation(boolean value) {
@@ -4672,12 +4674,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                         }
                         coo = coos.getOleObjectArray(0);
                     } catch (XmlException e) {
-                        LOG.log(POILogger.INFO, "can't parse CTOleObjects", e);
+                        LOG.atInfo().withThrowable(e).log("can't parse CTOleObjects");
                     } finally {
                         try {
                             reader.close();
                         } catch (XMLStreamException e) {
-                            LOG.log(POILogger.INFO, "can't close reader", e);
+                            LOG.atInfo().withThrowable(e).log("can't close reader");
                         }
                     }
                 }

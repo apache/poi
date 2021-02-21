@@ -41,6 +41,9 @@
                                         <include>org/apache/poi/hssf/HSSFTestDataSamples.java</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>../../src/resources/integrationtest</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about the footers on a presentation slide.
@@ -89,11 +90,11 @@ public final class HeadersFootersContainer extends RecordContainer {
                         csFooter = cs;
                         break;
                     default:
-                        LOG.log(POILogger.WARN, "Unexpected CString.Options in HeadersFootersContainer: ", opts);
+                        LOG.atWarn().log("Unexpected CString.Options in HeadersFootersContainer: {}", box(opts));
                         break;
                 }
             } else {
-                LOG.log(POILogger.WARN, "Unexpected record in HeadersFootersContainer: ", child);
+                LOG.atWarn().log("Unexpected record in HeadersFootersContainer: {}", child);
             }
         }
     }

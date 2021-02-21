@@ -18,16 +18,18 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static java.lang.Integer.toHexString;
+import static org.apache.logging.log4j.util.Unbox.box;
 
 public class NilPICFAndBinData
 {
 
-    private static final POILogger log = POILogFactory
-            .getLogger( NilPICFAndBinData.class );
+    private static final Logger LOGGER = LogManager.getLogger(NilPICFAndBinData.class);
 
     private byte[] _binData;
 
@@ -44,9 +46,7 @@ public class NilPICFAndBinData
 
         if ( cbHeader != 0x44 )
         {
-            log.log(POILogger.WARN, "NilPICFAndBinData at offset ", offset,
-                    " cbHeader 0x", Integer.toHexString(cbHeader), " != 0x44"
-            );
+            LOGGER.atWarn().log("NilPICFAndBinData at offset {} cbHeader 0x{} != 0x44", box(offset), toHexString(cbHeader));
         }
 
         // skip the 62 ignored bytes

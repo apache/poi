@@ -23,14 +23,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Filetime;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A pure-MAPI attribute holding a Date, which applies
@@ -42,7 +42,7 @@ import org.apache.poi.util.POILogger;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx">[MS-OXPROPS]: Exchange Server Protocols Master Property List</a>
  */
 public final class MAPIDateAttribute extends MAPIAttribute {
-   private static final POILogger LOG = POILogFactory.getLogger(MAPIDateAttribute.class);
+   private static final Logger LOG = LogManager.getLogger(MAPIDateAttribute.class);
    private final Date data;
 
    /**
@@ -80,7 +80,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
          return ((MAPIDateAttribute)attr).getDate();
       }
 
-      LOG.log(POILogger.WARN, "Warning, non date property found: ", attr);
+      LOG.atWarn().log("Warning, non date property found: {}", attr);
       return null;
   }
 }

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
@@ -31,8 +33,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSStream;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class embodies the Property Table for a {@link POIFSFileSystem};
@@ -41,7 +43,7 @@ import org.apache.poi.util.POILogger;
  * chain of blocks.
  */
 public final class PropertyTable implements BATManaged {
-    private static final POILogger LOG = POILogFactory.getLogger(PropertyTable.class);
+    private static final Logger LOG = LogManager.getLogger(PropertyTable.class);
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -96,8 +98,7 @@ public final class PropertyTable implements BATManaged {
                     // Looks to be a truncated block
                     // This isn't allowed, but some third party created files
                     //  sometimes do this, and we can normally read anyway
-                    LOG.log(POILogger.WARN, "Short Property Block, ", bb.remaining(),
-                            " bytes instead of the expected " + _bigBigBlockSize.getBigBlockSize());
+                    LOG.atWarn().log("Short Property Block, {} bytes instead of the expected {}", box(bb.remaining()),box(_bigBigBlockSize.getBigBlockSize()));
                     toRead = bb.remaining();
                 }
 
@@ -247,8 +248,7 @@ public final class PropertyTable implements BATManaged {
         if (! Property.isValidIndex(index))
             return false;
         if (index < 0 || index >= _properties.size()) {
-            LOG.log(POILogger.WARN, "Property index " + index +
-                    "outside the valid range 0.."+_properties.size());
+            LOG.atWarn().log("Property index {} outside the valid range 0..{}", box(index),box(_properties.size()));
             return false;
         }
         return true;

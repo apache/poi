@@ -17,11 +17,14 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
@@ -31,14 +34,12 @@ import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Data Bar Conditional Formatting Rule Record.
  */
 public final class DataBarFormatting implements Duplicatable, GenericRecord {
-    private static final POILogger LOG = POILogFactory.getLogger(DataBarFormatting.class);
+    private static final Logger LOG = LogManager.getLogger(DataBarFormatting.class);
 
     private static final BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
     private static final BitField REVERSED = BitFieldFactory.getInstance(0x04);
@@ -71,9 +72,9 @@ public final class DataBarFormatting implements Duplicatable, GenericRecord {
         percentMin = in.readByte();
         percentMax = in.readByte();
         if (percentMin < 0 || percentMin > 100)
-            LOG.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
+            LOG.atWarn().log("Inconsistent Minimum Percentage found {}", box(percentMin));
         if (percentMax < 0 || percentMax > 100)
-            LOG.log(POILogger.WARN, "Inconsistent Maximum Percentage found " + percentMax);
+            LOG.atWarn().log("Inconsistent Maximum Percentage found {}", box(percentMax));
 
         color = new ExtendedColor(in);
         thresholdMin = new DataBarThreshold(in);

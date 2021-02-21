@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.LocaleID;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  *  Convert java DateFormat patterns into Excel custom number formats.
@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings("unused")
 public final class DateFormatConverter  {
-	private static final POILogger LOG = POILogFactory.getLogger(DateFormatConverter.class);
+	private static final Logger LOG = LogManager.getLogger(DateFormatConverter.class);
 
 	private DateFormatConverter() {
 	}
@@ -155,7 +155,7 @@ public final class DateFormatConverter  {
 		}
 
 		if (loc == null) {
-			LOG.log(POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales.");
+			LOG.atError().log("Unable to find prefix for Locale '{}' or its parent locales.", languageTag);
 			return "";
 		}
 

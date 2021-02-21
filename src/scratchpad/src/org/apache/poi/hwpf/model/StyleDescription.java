@@ -20,6 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.StdfBaseAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
@@ -27,9 +29,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Comment me
@@ -39,7 +41,7 @@ import org.apache.poi.util.StringUtil;
 @Internal
 public final class StyleDescription {
 
-    private static final POILogger LOG = POILogFactory.getLogger(StyleDescription.class);
+    private static final Logger LOG = LogManager.getLogger(StyleDescription.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -74,7 +76,7 @@ public final class StyleDescription {
         } else if (baseLength == 0x000A) {
             readStdfPost2000 = false;
         } else {
-            LOG.log(POILogger.WARN, "Style definition has non-standard size of ", baseLength);
+            LOG.atWarn().log("Style definition has non-standard size of {}", box(baseLength));
         }
 
         _stdfBase = new StdfBase(std, offset);

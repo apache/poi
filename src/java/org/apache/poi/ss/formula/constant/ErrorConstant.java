@@ -17,9 +17,12 @@
 
 package org.apache.poi.ss.formula.constant;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
+
 /**
  * Represents a constant error code value as encoded in a constant values array. <p>
  *
@@ -27,8 +30,8 @@ import org.apache.poi.util.POILogger;
  * <tt>ErrorEval</tt>.
  */
 public final class ErrorConstant {
-	private static final POILogger LOG = POILogFactory.getLogger(ErrorConstant.class);
-    private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
+	private static final Logger LOG = LogManager.getLogger(ErrorConstant.class);
+	private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
     private static final ErrorConstant DIV_0 = new ErrorConstant(FormulaError.DIV0.getCode());
     private static final ErrorConstant VALUE = new ErrorConstant(FormulaError.VALUE.getCode());
     private static final ErrorConstant REF = new ErrorConstant(FormulaError.REF.getCode());
@@ -66,7 +69,7 @@ public final class ErrorConstant {
     			default:    break;
     		}
 	    }
-		LOG.log( POILogger.WARN, "Warning - unexpected error code (", errorCode, ")");
+		LOG.atWarn().log("Warning - unexpected error code ({})", box(errorCode));
 		return new ErrorConstant(errorCode);
 	}
 

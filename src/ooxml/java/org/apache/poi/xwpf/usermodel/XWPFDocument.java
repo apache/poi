@@ -36,6 +36,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -55,8 +57,6 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -81,7 +81,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
  */
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
-    private static final POILogger LOG = POILogFactory.getLogger(XWPFDocument.class);
+    private static final Logger LOG = LogManager.getLogger(XWPFDocument.class);
 
     protected List<XWPFFooter> footers = new ArrayList<>();
     protected List<XWPFHeader> headers = new ArrayList<>();
@@ -310,7 +310,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * returns an Iterator with paragraphs and tables
      *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
+     * @see IBody#getBodyElements()
      */
     @Override
     public List<IBodyElement> getBodyElements() {
@@ -322,7 +322,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphs()
+     * @see IBody#getParagraphs()
      */
     @Override
     public List<XWPFParagraph> getParagraphs() {
@@ -330,7 +330,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
+     * @see IBody#getTables()
      */
     @Override
     public List<XWPFTable> getTables() {
@@ -345,7 +345,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
+     * @see IBody#getTableArray(int)
      */
     @Override
     public XWPFTable getTableArray(int pos) {
@@ -629,9 +629,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Add a new paragraph at position of the cursor. The cursor must be on the
-     * {@link org.apache.xmlbeans.XmlCursor.TokenType#START} tag of an subelement
+     * {@link XmlCursor.TokenType#START} tag of an subelement
      * of the documents body. When this method is done, the cursor passed as
-     * parameter points to the {@link org.apache.xmlbeans.XmlCursor.TokenType#END}
+     * parameter points to the {@link XmlCursor.TokenType#END}
      * of the newly inserted paragraph.
      *
      * @param cursor The cursor-position where the new paragraph should be added.
@@ -1010,7 +1010,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     int level = Integer.parseInt(parStyle.substring("Heading".length()));
                     toc.addRow(level, par.getText(), 1, "112723803");
                 } catch (NumberFormatException e) {
-                    LOG.log(POILogger.ERROR, "can't format number in TOC heading", e);
+                    LOG.atError().withThrowable(e).log("can't format number in TOC heading");
                 }
             }
         }
@@ -1542,7 +1542,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param ctTbl
      * @return a table by its CTTbl-Object or null
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
+     * @see IBody#getTable(CTTbl)
      */
     @Override
     public XWPFTable getTable(CTTbl ctTbl) {
@@ -1565,7 +1565,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Returns the paragraph that of position pos
      *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
+     * @see IBody#getParagraphArray(int)
      */
     @Override
     public XWPFParagraph getParagraphArray(int pos) {
@@ -1580,7 +1580,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Actually it is needed of the class XWPFTableCell. Because you have to know to which part the tableCell
      * belongs.
      *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * @see IBody#getPart()
      */
     @Override
     public POIXMLDocumentPart getPart() {
@@ -1592,7 +1592,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * get the PartType of the body, for example
      * DOCUMENT, HEADER, FOOTER, FOOTNOTE,
      *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     * @see IBody#getPartType()
      */
     @Override
     public BodyType getPartType() {

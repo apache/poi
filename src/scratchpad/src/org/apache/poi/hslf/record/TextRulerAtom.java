@@ -36,7 +36,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.POILogger;
 
 /**
  * Ruler of a text as it differs from the style's ruler settings.
@@ -98,7 +97,7 @@ public final class TextRulerAtom extends RecordAtom {
             // Get the record data.
             read(leis);
         } catch (IOException e){
-            LOG.log(POILogger.ERROR, "Failed to parse TextRulerAtom: ", e.getMessage());
+            LOG.atError().withThrowable(e).log("Failed to parse TextRulerAtom");
         }
     }
 

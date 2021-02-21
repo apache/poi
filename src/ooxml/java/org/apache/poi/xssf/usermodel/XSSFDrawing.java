@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -42,8 +44,6 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlCursor;
@@ -76,7 +76,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  * Represents a SpreadsheetML drawing
  */
 public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSSFShape> {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFDrawing.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFDrawing.class);
 
     /**
      * Root element of the SpreadsheetML Drawing part
@@ -90,7 +90,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     /**
      * Create a new SpreadsheetML drawing
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#createDrawingPatriarch()
+     * @see XSSFSheet#createDrawingPatriarch()
      */
     protected XSSFDrawing() {
         super();
@@ -191,7 +191,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @param pictureIndex
      *            the index of the picture in the workbook collection of
      *            pictures,
-     *            {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()}
+     *            {@link XSSFWorkbook#getAllPictures()}
      *            .
      *
      * @return the newly created picture shape.
@@ -226,7 +226,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      *            the client anchor describes how this chart is attached to the
      *            sheet.
      * @return the newly created chart
-     * @see org.apache.poi.xssf.usermodel.XSSFDrawing#createChart(ClientAnchor)
+     * @see XSSFDrawing#createChart(ClientAnchor)
      */
     public XSSFChart createChart(XSSFClientAnchor anchor) {
         RelationPart rp = createChartRelationPart();
@@ -283,7 +283,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * Add the indexed picture to this drawing relations
      *
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
-     *            {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()}           .
+     *            {@link XSSFWorkbook#getAllPictures()}           .
      */
     protected PackageRelationship addPictureReference(int pictureIndex) {
         XSSFWorkbook wb = (XSSFWorkbook) getParent().getParent();
@@ -643,8 +643,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                         } else if (obj instanceof CTGroupShape) {
                             shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
                         } else if (obj instanceof XmlAnyTypeImpl) {
-                            LOG.log(POILogger.WARN,
-                                "trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
+                            LOG.atWarn().log("trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
 
                             // XmlAnyTypeImpl is returned for AlternateContent
                             // parts, which might contain a CTDrawing
@@ -661,7 +660,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                                     addShapes(cur2, lst);
                                 }
                             } catch (XmlException e) {
-                                LOG.log(POILogger.WARN, "unable to parse CTDrawing in alternate content.", e);
+                                LOG.atWarn().withThrowable(e).log("unable to parse CTDrawing in alternate content.");
                             } finally {
                                 if (cur2 != null) {
                                     cur2.dispose();

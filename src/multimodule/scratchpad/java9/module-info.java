@@ -19,6 +19,7 @@ module org.apache.poi.scratchpad {
     requires transitive org.apache.poi.poi;
     requires java.desktop;
     requires commons.math3;
+    requires org.apache.logging.log4j;
 
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;
     provides org.apache.poi.sl.usermodel.SlideShowProvider with org.apache.poi.hslf.usermodel.HSLFSlideShowFactory;

@@ -19,11 +19,11 @@ package org.apache.poi.xssf.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
 import org.apache.poi.xssf.binary.XSSFBHyperlinksTable;
 import org.apache.poi.xssf.binary.XSSFBSharedStringsTable;
@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
  */
 public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor {
 
-    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFBEventBasedExcelExtractor.class);
+    private static final Logger LOGGER = LogManager.getLogger(XSSFBEventBasedExcelExtractor.class);
 
     public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[]{
             XSSFRelation.XLSB_BINARY_WORKBOOK
@@ -139,7 +139,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
 
             return text.toString();
         } catch (IOException | OpenXML4JException | SAXException e) {
-            LOGGER.log(POILogger.WARN, e);
+            LOGGER.atWarn().withThrowable(e).log("Failed to load text");
             return null;
         }
     }

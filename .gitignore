@@ -5,7 +5,6 @@ build.number
 *.el
 scripts
 untitled1.jpx
-log*.*
 *.log
 
 forrest.properties

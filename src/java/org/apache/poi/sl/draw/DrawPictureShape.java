@@ -27,17 +27,17 @@ import java.util.ServiceLoader;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
-    private static final POILogger LOG = POILogFactory.getLogger(DrawPictureShape.class);
+    private static final Logger LOG = LogManager.getLogger(DrawPictureShape.class);
 
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
@@ -69,7 +69,7 @@ public class DrawPictureShape extends DrawSimpleShape {
                     return;
                 }
             } catch (IOException e) {
-                LOG.log(POILogger.ERROR, "image can't be loaded/rendered.", e);
+                LOG.atError().withThrowable(e).log("image can't be loaded/rendered.");
             }
         }
     }
@@ -93,8 +93,8 @@ public class DrawPictureShape extends DrawSimpleShape {
 
         // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
         final Supplier<ImageRenderer> getFallback = () -> {
-            LOG.log(POILogger.WARN, "No suitable image renderer found for content-type '",
-                contentType, "' - include poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!");
+            LOG.atWarn().log("No suitable image renderer found for content-type '{}' - include " +
+                    "poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!", contentType);
             return fallback;
         };
 

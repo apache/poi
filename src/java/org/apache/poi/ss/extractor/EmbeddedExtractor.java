@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -47,8 +49,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This extractor class tries to identify various embedded documents within Excel files
@@ -56,7 +56,7 @@ import org.apache.poi.util.POILogger;
  */
 @Beta
 public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
-    private static final POILogger LOG = POILogFactory.getLogger(EmbeddedExtractor.class);
+    private static final Logger LOG = LogManager.getLogger(EmbeddedExtractor.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
@@ -117,7 +117,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                         data = new EmbeddedData(od.getFileName(), od.getObjectData(), od.getContentType());
                     }
                 } catch (Exception e) {
-                    LOG.log(POILogger.WARN, "Entry not found / readable - ignoring OLE embedding", e);
+                    LOG.atWarn().withThrowable(e).log("Entry not found / readable - ignoring OLE embedding");
                 }
             } else if (shape instanceof Picture) {
                 data = extractOne((Picture)shape);

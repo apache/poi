@@ -16,14 +16,16 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class VariantBool {
-    private static final POILogger LOG = POILogFactory.getLogger( VariantBool.class );
+    private static final Logger LOG = LogManager.getLogger(VariantBool.class);
 
     static final int SIZE = 2;
 
@@ -39,7 +41,7 @@ public class VariantBool {
                 _value = true;
                 break;
             default:
-                LOG.log( POILogger.WARN, "VARIANT_BOOL value '"+value+"' is incorrect" );
+                LOG.atWarn().log("VARIANT_BOOL value '{}' is incorrect", box(value));
                 _value = true;
                 break;
         }

@@ -19,6 +19,8 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.NoSuchElementException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.LFO;
@@ -30,11 +32,11 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 public class Paragraph extends Range implements Duplicatable {
-    private static final POILogger log = POILogFactory.getLogger( Paragraph.class );
+    private static final Logger LOGGER = LogManager.getLogger(Paragraph.class);
 
     public static final short SPRM_JC = 0x2403;
     public static final short SPRM_FSIDEBYSIDE = 0x2404;
@@ -118,8 +120,7 @@ public class Paragraph extends Range implements Duplicatable {
             }
             catch ( NoSuchElementException exc )
             {
-                log.log( POILogger.WARN, "Paragraph refers to LFO #",
-                        properties.getIlfo(), " that does not exists" );
+                LOGGER.atWarn().log("Paragraph refers to LFO #{} that does not exists", box(properties.getIlfo()));
             }
             if ( lfo != null )
             {

@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.FontTable;
@@ -41,8 +43,6 @@ import org.apache.poi.hwpf.util.DoubleByteUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -51,7 +51,7 @@ import org.apache.poi.util.StringUtil;
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
 
-    private static final POILogger LOG = POILogFactory.getLogger( HWPFOldDocument.class );
+    private static final Logger LOG = LogManager.getLogger(HWPFOldDocument.class);
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_000_000;
@@ -114,7 +114,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 //if there was a problem with the guessed charset and the length of the
                 //textpiece, back off to win1252. This is effectively what we used to do.
                 tp = buildTextPiece(StringUtil.WIN_1252);
-                LOG.log(POILogger.WARN, "Error with "+guessedCharset +". Backing off to Windows-1252");
+                LOG.atWarn().log("Error with {}. Backing off to Windows-1252", guessedCharset);
             }
             tpt.add(tp);
 
@@ -205,7 +205,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 return wmfCharset.getCharset();
             }
         }
-        LOG.log(POILogger.WARN, "Couldn't find a defined charset; backing off to cp1252");
+        LOG.atWarn().log("Couldn't find a defined charset; backing off to cp1252");
         //if all else fails
         return DEFAULT_CHARSET;
     }

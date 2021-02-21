@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Common interface for OLE shapes, i.e. shapes linked to embedded documents
@@ -68,8 +68,8 @@ public interface ObjectData {
             FileMagic fm = FileMagic.valueOf(is);
             return fm == FileMagic.OLE2;
         } catch (IOException e) {
-            POILogger LOG = POILogFactory.getLogger(ObjectData.class);
-            LOG.log(POILogger.WARN, "Can't determine filemagic of ole stream", e);
+            Logger LOG = LogManager.getLogger(ObjectData.class);
+            LOG.atWarn().withThrowable(e).log("Can't determine filemagic of ole stream");
             return false;
         }
     }

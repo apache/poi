@@ -16,6 +16,7 @@
 ==================================================================== */
 
 module org.apache.poi.stress {
+    requires org.apache.logging.log4j;
     requires org.junit.jupiter.api;
     requires org.junit.jupiter.params;
     requires net.bytebuddy;

@@ -33,7 +33,8 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties
@@ -251,7 +252,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         }
         if (rawContents.length > 0 && textHandled != (size+1)){
-            LOG.log(POILogger.WARN, "Problem reading paragraph style runs: textHandled = ", textHandled, ", text.size+1 = ", (size+1));
+            LOG.atWarn().log("Problem reading paragraph style runs: textHandled = {}, text.size+1 = {}", box(textHandled),box(size + 1));
         }
 
         // Now do the character stylings
@@ -283,7 +284,7 @@ public final class StyleTextPropAtom extends RecordAtom {
             }
         }
         if (rawContents.length > 0 && textHandled != (size+1)){
-            LOG.log(POILogger.WARN, "Problem reading character style runs: textHandled = ", textHandled, ", text.size+1 = ", (size+1));
+            LOG.atWarn().log("Problem reading character style runs: textHandled = {}, text.size+1 = {}", box(textHandled),box(size + 1));
         }
 
         // Handle anything left over
@@ -296,8 +297,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
     private int checkTextLength(int readLength, int handledSoFar, int overallSize) {
         if (readLength + handledSoFar > overallSize + 1) {
-            LOG.log(POILogger.WARN, "Style length of ", readLength, " at ", handledSoFar,
-                    " larger than stated size of ", overallSize, ", truncating");
+            LOG.atWarn().log("Style length of {} at {} larger than stated size of {}, truncating", box(readLength),box(handledSoFar),box(overallSize));
             return overallSize + 1 - handledSoFar;
         }
         return readLength;

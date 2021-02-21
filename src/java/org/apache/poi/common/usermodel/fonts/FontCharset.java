@@ -20,8 +20,8 @@ package org.apache.poi.common.usermodel.fonts;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Charset represents the basic set of characters associated with a font (that it can display), and
@@ -99,8 +99,8 @@ public enum FontCharset {
                 charset = Charset.forName(javaCharsetName);
                 return;
             } catch (UnsupportedCharsetException e) {
-                POILogger logger = POILogFactory.getLogger(FontCharset.class);
-                logger.log(POILogger.WARN, "Unsupported charset: "+javaCharsetName);
+                Logger logger = LogManager.getLogger(FontCharset.class);
+                logger.atWarn().log("Unsupported charset: {}", javaCharsetName);
             }
         }
         charset = null;

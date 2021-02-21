@@ -74,6 +74,7 @@
                             !org.apache.commons.compress.*,
                             !com.zaxxer.sparsebits.*,
                             !com.graphbuilder.*,
+                            !org.apache.logging.log4j.*,
                             org.apache.batik.*;resolution:=optional,
                             org.apache.pdfbox.*;resolution:=optional,
                             org.apache.fontbox.*;resolution:=optional,
@@ -86,8 +87,6 @@
                             org.apache.xml.resolver.*;resolution:=optional,
                             org.apache.xml.security.*;resolution:=optional,
                             org.bouncycastle.*;resolution:=optional,
-                            org.apache.commons.logging.*;resolution:=optional,
-                            org.slf4j.*;resolution:=optional,
                             !com.github.luben.zstd.*,
                             !org.tukaani.xz.*,
                             !org.brotli.dec.*,
@@ -104,7 +103,8 @@
                             commons-math3,
                             commons-compress,
                             commons-collections4,
-                            commons-codec
+                            commons-codec,
+                            log4j-api
                         </Embed-Dependency>
                         <Embed-Directory>lib</Embed-Directory>
                         <Embed-Transitive>true</Embed-Transitive>
@@ -228,9 +228,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.14.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

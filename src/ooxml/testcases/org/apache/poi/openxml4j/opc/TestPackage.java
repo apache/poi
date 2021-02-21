@@ -58,6 +58,8 @@ import com.google.common.io.Files;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -78,8 +80,6 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -98,7 +98,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
-    private static final POILogger LOG = POILogFactory.getLogger(TestPackage.class);
+    private static final Logger LOG = LogManager.getLogger(TestPackage.class);
 	private static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 	private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
 	private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
@@ -458,7 +458,7 @@ public final class TestPackage {
 
 				for (PackagePart part : p.getParts()) {
 					values.put(part.getPartName(), part.getContentType());
-					LOG.log(POILogger.DEBUG, part.getPartName());
+					LOG.atDebug().log(part.getPartName());
 				}
 
 				// Compare expected values with values return by the package
@@ -492,7 +492,7 @@ public final class TestPackage {
 
 				for (PackagePart part : p.getParts()) {
 					values.put(part.getPartName(), part.getContentType());
-					LOG.log(POILogger.DEBUG, part.getPartName());
+					LOG.atDebug().log(part.getPartName());
 				}
 
 				// Compare expected values with values return by the package

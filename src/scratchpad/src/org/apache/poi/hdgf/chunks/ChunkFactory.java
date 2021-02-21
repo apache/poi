@@ -26,10 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Factor class to create the appropriate chunks, which
@@ -59,7 +61,7 @@ public final class ChunkFactory {
 		"/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
 
 	/** For logging problems we spot with the file */
-	private static final POILogger LOG = POILogFactory.getLogger(ChunkFactory.class);
+	private static final Logger LOG = LogManager.getLogger(ChunkFactory.class);
 
 	public ChunkFactory(int version) throws IOException {
 		this.version = version;
@@ -139,8 +141,7 @@ public final class ChunkFactory {
 		// Check we have enough data, and tweak the header size
 		//  as required
 		if(endOfDataPos > data.length) {
-			LOG.log(POILogger.WARN,
-				"Header called for ", header.getLength(), " bytes, but that would take us past the end of the data!");
+			LOG.atWarn().log("Header called for {} bytes, but that would take us past the end of the data!", box(header.getLength()));
 
 			endOfDataPos = data.length;
 			header.setLength(data.length - offset - header.getSizeInBytes());
@@ -165,7 +166,7 @@ public final class ChunkFactory {
 					data, endOfDataPos);
 				endOfDataPos += 8;
 			} else {
-				LOG.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the trailer in the data (", data.length, ")");
+				LOG.atError().log("Header claims a length to {} there's then no space for the trailer in the data ({})", box(endOfDataPos),box(data.length));
 			}
 		}
 		if(header.hasSeparator()) {
@@ -173,7 +174,7 @@ public final class ChunkFactory {
 				separator = new ChunkSeparator(
 						data, endOfDataPos);
 			} else {
-				LOG.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the separator in the data (", data.length, ")");
+				LOG.atError().log("Header claims a length to {} there's then no space for the separator in the data ({})", box(endOfDataPos),box(data.length));
 			}
 		}
 

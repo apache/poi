@@ -25,12 +25,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Supports reading and writing of variant data.<p>
@@ -58,7 +58,7 @@ public class VariantSupport extends Variant {
             Variant.VT_CF, Variant.VT_BOOL };
 
 
-    private static final POILogger LOG = POILogFactory.getLogger(VariantSupport.class);
+    private static final Logger LOG = LogManager.getLogger(VariantSupport.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -114,7 +114,7 @@ public class VariantSupport extends Variant {
             Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))
             {
-            	LOG.log( POILogger.ERROR, ex.getMessage());
+            	LOG.atError().withThrowable(ex).log("Unsupported type");
                 unsupportedMessage.add(vt);
             }
         }

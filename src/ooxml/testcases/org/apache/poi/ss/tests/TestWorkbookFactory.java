@@ -34,6 +34,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -44,9 +46,6 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -63,7 +62,7 @@ public final class TestWorkbookFactory {
     private static final String[] xlsx_protected = new String[]{"protected_passtika.xlsx", "tika"};
     private static final String txt = "SampleSS.txt";
 
-    private static final POILogger LOGGER = POILogFactory.getLogger(TestWorkbookFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(TestWorkbookFactory.class);
 
     /**
      * Closes the sample workbook read in from filename.
@@ -95,8 +94,7 @@ public final class TestWorkbookFactory {
                 xwb.close();
             } else {
                 // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
-                LOGGER.log(POILogger.WARN,
-                    "reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk. Refer to bug 58779.");
+                LOGGER.atWarn().log("reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk. Refer to bug 58779.");
                 xwb.getPackage().revert();
             }
         } else {

@@ -31,12 +31,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.XMLHelper;
 
 public final class PresetGeometries {
-    private static final POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
+    private static final Logger LOG = LogManager.getLogger(PresetGeometries.class);
 
     private final Map<String, CustomGeometry> map = new TreeMap<>();
 
@@ -76,7 +76,7 @@ public final class PresetGeometries {
             p.parse(staxReader);
             return p.getGeom().values().stream().findFirst().orElse(null);
         } catch (XMLStreamException e) {
-            LOG.log(POILogger.ERROR, "Unable to parse single custom geometry", e);
+            LOG.atError().withThrowable(e).log("Unable to parse single custom geometry");
             return null;
         }
     }

@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.LFOAbstractType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * The PlfLfo structure contains the list format override data for the document.
@@ -39,7 +41,7 @@ import org.apache.poi.util.POILogger;
  */
 public class PlfLfo
 {
-    private static final POILogger log = POILogFactory.getLogger( PlfLfo.class );
+    private static final Logger LOGGER = LogManager.getLogger(PlfLfo.class);
 
     /**
      * An unsigned integer that specifies the count of elements in both the
@@ -107,11 +109,7 @@ public class PlfLfo
 
         if ( ( offset - fcPlfLfo ) != lcbPlfLfo )
         {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "Actual size of PlfLfo is "
-                        + (offset - fcPlfLfo) + " bytes, but expected "
-                        + lcbPlfLfo);
-            }
+            LOGGER.atWarn().log("Actual size of PlfLfo is {} bytes, but expected {}", box(offset - fcPlfLfo),box(lcbPlfLfo));
         }
     }
 

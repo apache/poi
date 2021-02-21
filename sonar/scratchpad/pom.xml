@@ -71,6 +71,9 @@
                                 <resource>
                                     <directory>../../src/scratchpad/testcases</directory>
                                 </resource>
+                                <resource>
+                                    <directory>../../src/resources/test</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

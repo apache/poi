@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
@@ -30,8 +32,8 @@ import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Color Gradient / Color Scale Conditional Formatting Rule Record.
@@ -39,7 +41,7 @@ import org.apache.poi.util.POILogger;
  *  Color Scale in the UI)
  */
 public final class ColorGradientFormatting implements Duplicatable, GenericRecord {
-    private static final POILogger log = POILogFactory.getLogger(ColorGradientFormatting.class);
+    private static final Logger LOGGER = LogManager.getLogger(ColorGradientFormatting.class);
 
     private static final BitField clamp = BitFieldFactory.getInstance(0x01);
     private static final BitField background = BitFieldFactory.getInstance(0x02);
@@ -70,7 +72,7 @@ public final class ColorGradientFormatting implements Duplicatable, GenericRecor
         int numI = in.readByte();
         int numG = in.readByte();
         if (numI != numG) {
-            log.log(POILogger.WARN, "Inconsistent Color Gradient defintion, found " + numI + " vs " + numG + " entries");
+            LOGGER.atWarn().log("Inconsistent Color Gradient definition, found {} vs {} entries", box(numI),box(numG));
         }
         options = in.readByte();
 

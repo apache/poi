@@ -36,14 +36,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -52,7 +52,7 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public final class AesZipFileZipEntrySource implements ZipEntrySource {
-    private static final POILogger LOG = POILogFactory.getLogger(AesZipFileZipEntrySource.class);
+    private static final Logger LOG = LogManager.getLogger(AesZipFileZipEntrySource.class);
 
     private static final String PADDING = "PKCS5Padding";
 
@@ -93,7 +93,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         if(!closed) {
             zipFile.close();
             if (!tmpFile.delete()) {
-                LOG.log(POILogger.WARN, tmpFile.getAbsolutePath()+" can't be removed (or was already removed.");
+                LOG.atWarn().log("{} can't be removed (or was already removed.", tmpFile.getAbsolutePath());
             }
         }
         closed = true;

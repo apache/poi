@@ -23,6 +23,8 @@ import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -32,8 +34,6 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.ObjectData;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtension;
@@ -52,8 +52,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
  */
 public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFObjectData.class);
-    
+    private static final Logger LOG = LogManager.getLogger(XSSFObjectData.class);
+
     /**
      * A default instance of CTShape used for creating new shapes.
      */
@@ -163,7 +163,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
             is = FileMagic.prepareToCheckMagic(is);
             return FileMagic.valueOf(is) == FileMagic.OLE2;
         } catch (IOException e) {
-            LOG.log(POILogger.WARN, "can't determine if directory entry exists", e);
+            LOG.atWarn().withThrowable(e).log("can't determine if directory entry exists");
             return false;
         } finally {
             IOUtils.closeQuietly(is);

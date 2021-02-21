@@ -31,6 +31,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Picture;
@@ -38,14 +40,12 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public final class ImageUtils {
-    private static final POILogger LOG = POILogFactory.getLogger(ImageUtils.class);
+    private static final Logger LOG = LogManager.getLogger(ImageUtils.class);
 
     private static final int WIDTH_UNITS = 1024;
     private static final int HEIGHT_UNITS = 256;
@@ -56,8 +56,8 @@ public final class ImageUtils {
      * Return the dimension of this image
      *
      * @param is the stream containing the image data
-     * @param type type of the picture: {@link org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_JPEG},
-     * {@link org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PNG} or {@link org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_DIB}
+     * @param type type of the picture: {@link Workbook#PICTURE_TYPE_JPEG},
+     * {@link Workbook#PICTURE_TYPE_PNG} or {@link Workbook#PICTURE_TYPE_DIB}
      *
      * @return image dimension in pixels
      */
@@ -93,18 +93,18 @@ public final class ImageUtils {
                                 r.dispose();
                             }
                         } else {
-                            LOG.log(POILogger.WARN, "ImageIO found no images");
+                            LOG.atWarn().log("ImageIO found no images");
                         }
                     }
 
                 } catch (IOException e) {
                     //silently return if ImageIO failed to read the image
-                    LOG.log(POILogger.WARN, e);
+                    LOG.atWarn().withThrowable(e).log("Failed to determine image dimensions");
                 }
 
                 break;
             default:
-                LOG.log(POILogger.WARN, "Only JPEG, PNG and DIB pictures can be automatically sized");
+                LOG.atWarn().log("Only JPEG, PNG and DIB pictures can be automatically sized");
         }
         return size;
     }

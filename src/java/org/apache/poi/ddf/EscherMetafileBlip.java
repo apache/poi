@@ -29,14 +29,16 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 public final class EscherMetafileBlip extends EscherBlipRecord {
-    private static final POILogger log = POILogFactory.getLogger(EscherMetafileBlip.class);
+    private static final Logger LOGGER = LogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -175,7 +177,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
             }
             return out.toByteArray();
         } catch (IOException e) {
-            log.log(POILogger.WARN, "Possibly corrupt compression or non-compressed data", e);
+            LOGGER.atWarn().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
             return data;
         }
     }
@@ -375,9 +377,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
             case BLIP_WMF:  return HSSFPictureData.MSOBI_WMF;
             case BLIP_PICT: return HSSFPictureData.MSOBI_PICT;
         }
-        if (log.check(POILogger.WARN)) {
-            log.log(POILogger.WARN, "Unknown metafile: " + getRecordId());
-        }
+        LOGGER.atWarn().log("Unknown metafile: {}", box(getRecordId()));
         return 0;
     }
 

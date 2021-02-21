@@ -116,9 +116,9 @@ subprojects {
         commonsMathVersion = '3.6.1'
         japicmpversion = '5.0.0'
         junitVersion = '5.7.0'
+        log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'
-        slf4jVersion = '1.7.30'
         xmlbeansVersion = '4.0.0'
     }
 
@@ -140,6 +140,7 @@ subprojects {
         testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.hamcrest:hamcrest:${hamcrestVersion}"
+        testCompile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     }
 
     jar {
@@ -232,18 +233,17 @@ project('main') {
     sourceSets.main.java.srcDirs = ['../../src/java']
     sourceSets.main.resources.srcDirs = ['../../src/resources/main']
     sourceSets.test.java.srcDirs = ['../../src/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile "commons-codec:commons-codec:${commonsCodecVersion}"
-        compile 'commons-logging:commons-logging:1.2'
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
-        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
         testCompile 'org.reflections:reflections:0.9.12'
-        testRuntime "org.slf4j:slf4j-simple:${slf4jVersion}"
     }
 
     jar {
@@ -275,6 +275,7 @@ project('ooxml') {
     sourceSets.main.java.srcDirs = ['../../src/ooxml/java']
     sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
     sourceSets.test.java.srcDirs = ['../../src/ooxml/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     configurations {
         antdep
@@ -309,6 +310,7 @@ project('ooxml') {
         compile "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
         compile 'com.github.virtuald:curvesapi:1.06'
         compile 'com.zaxxer:SparseBitSet:1.2'
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
         // compile only, don't add it to our dist as it blows up the size
         compile 'org.apache.xmlgraphics:batik-all:1.14'
@@ -357,6 +359,7 @@ project('examples') {
         compile project(':scratchpad')
 
         compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 
         compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
@@ -370,6 +373,7 @@ project('excelant') {
     sourceSets.main.java.srcDirs = ['../../src/excelant/java']
     sourceSets.main.resources.srcDirs = ['../../src/excelant/resources']
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile 'org.apache.ant:ant:1.10.9'
@@ -391,6 +395,7 @@ project('excelant') {
 
 project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/integrationtest']
 
     dependencies {
         compile 'org.apache.ant:ant:1.10.9'
@@ -432,11 +437,13 @@ project('scratchpad') {
     sourceSets.main.java.srcDirs = ['../../src/scratchpad/src']
     sourceSets.main.resources.srcDirs = ['../../src/resources/scratchpad']
     sourceSets.test.java.srcDirs = ['../../src/scratchpad/testcases']
+    sourceSets.test.resources.srcDirs = ['../../src/resources/test']
 
     dependencies {
         compile project(':main')
         compile "commons-codec:commons-codec:${commonsCodecVersion}"
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
         // cyclic-dependency here: compile project(':ooxml')
 

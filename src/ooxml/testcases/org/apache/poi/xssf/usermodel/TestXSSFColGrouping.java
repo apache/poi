@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
  */
 class TestXSSFColGrouping {
 
-	private static final POILogger LOG = POILogFactory.getLogger(TestXSSFColGrouping.class);
+	private static final Logger LOG = LogManager.getLogger(TestXSSFColGrouping.class);
 
 
     /**
@@ -65,7 +65,7 @@ class TestXSSFColGrouping {
                 sheet = wb2.getSheet("test");
 
                 CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-                LOG.log(POILogger.DEBUG, "test52186/cols:" + cols);
+                LOG.atDebug().log("test52186/cols:{}", cols);
                 for (CTCol col : cols.getColArray()) {
                     assertTrue(col.isSetWidth(), "Col width attribute is unset: " + col);
                 }
@@ -91,7 +91,7 @@ class TestXSSFColGrouping {
             sheet.setColumnGroupCollapsed(4, true);
 
             CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-            LOG.log(POILogger.DEBUG, "test52186_2/cols:" + cols);
+            LOG.atDebug().log("test52186_2/cols:{}", cols);
 
             try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGroupingAndCollapsing")) {
                 sheet = wb2.getSheet("test");
@@ -125,7 +125,7 @@ class TestXSSFColGrouping {
             sheet.groupColumn((short) 2, (short) 3);
 
             sheet.getCTWorksheet().getColsArray(0);
-            LOG.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_WRAPS/cols:" + cols);
+            LOG.atDebug().log("testMergingOverlappingCols_OVERLAPS_2_WRAPS/cols:{}", cols);
 
             assertEquals(0, cols.getColArray(0).getOutlineLevel());
             assertEquals(2, cols.getColArray(0).getMin()); // 1 based
@@ -173,7 +173,7 @@ class TestXSSFColGrouping {
             sheet.groupColumn((short) 1, (short) 5);
 
             cols = sheet.getCTWorksheet().getColsArray(0);
-            LOG.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_WRAPS/cols:" + cols);
+            LOG.atDebug().log("testMergingOverlappingCols_OVERLAPS_1_WRAPS/cols:{}", cols);
 
             assertEquals(1, cols.getColArray(0).getOutlineLevel());
             assertEquals(2, cols.getColArray(0).getMin()); // 1 based
@@ -221,7 +221,7 @@ class TestXSSFColGrouping {
             sheet.groupColumn((short) 3, (short) 5);
 
             cols = sheet.getCTWorksheet().getColsArray(0);
-            LOG.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_MINOR/cols:" + cols);
+            LOG.atDebug().log("testMergingOverlappingCols_OVERLAPS_1_MINOR/cols:{}", cols);
 
             assertEquals(0, cols.getColArray(0).getOutlineLevel());
             assertEquals(3, cols.getColArray(0).getMin()); // 1 based
@@ -270,7 +270,7 @@ class TestXSSFColGrouping {
             sheet.groupColumn((short) 1, (short) 3);
 
             cols = sheet.getCTWorksheet().getColsArray(0);
-            LOG.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_MINOR/cols:" + cols);
+            LOG.atDebug().log("testMergingOverlappingCols_OVERLAPS_2_MINOR/cols:{}", cols);
 
             assertEquals(1, cols.getColArray(0).getOutlineLevel());
             assertEquals(2, cols.getColArray(0).getMin()); // 1 based

@@ -26,20 +26,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Filetime;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A Date attribute which applies to a {@link HMEFMessage}
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFDateAttribute extends TNEFAttribute {
-   private static final POILogger LOG = POILogFactory.getLogger(TNEFDateAttribute.class);
+   private static final Logger LOG = LogManager.getLogger(TNEFDateAttribute.class);
    private final Date data;
 
    /**
@@ -95,7 +95,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          return ((TNEFDateAttribute)attr).getDate();
       }
 
-      LOG.log(POILogger.WARN, "Warning, non date property found: ", attr);
+      LOG.atWarn().log("Warning, non date property found: {}", attr);
       return null;
   }
 }

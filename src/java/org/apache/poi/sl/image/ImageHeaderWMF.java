@@ -22,11 +22,11 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -47,7 +47,7 @@ import org.apache.poi.util.Units;
 public class ImageHeaderWMF {
 
     public static final int APMHEADER_KEY = 0x9AC6CDD7;
-    private static final POILogger LOG = POILogFactory.getLogger(ImageHeaderWMF.class);
+    private static final Logger LOG = LogManager.getLogger(ImageHeaderWMF.class);
 
     @SuppressWarnings("unused")
     private final int handle;
@@ -80,7 +80,7 @@ public class ImageHeaderWMF {
         int offset = off;
         int key = LittleEndian.getInt(data, offset); offset += LittleEndianConsts.INT_SIZE; //header key
         if (key != APMHEADER_KEY) {
-            LOG.log(POILogger.WARN, "WMF file doesn't contain a placeable header - ignore parsing");
+            LOG.atWarn().log("WMF file doesn't contain a placeable header - ignore parsing");
             handle = 0;
             left = 0;
             top = 0;
@@ -102,7 +102,7 @@ public class ImageHeaderWMF {
 
         checksum = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
         if (checksum != getChecksum()){
-            LOG.log(POILogger.WARN, "WMF checksum does not match the header data");
+            LOG.atWarn().log("WMF checksum does not match the header data");
         }
     }
 

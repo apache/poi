@@ -20,14 +20,14 @@ package org.apache.poi.xssf.usermodel;
 import java.awt.Dimension;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNo
  * @author Yegor Kozlov
  */
 public final class XSSFPicture extends XSSFShape implements Picture {
-    private static final POILogger LOG = POILogFactory.getLogger(XSSFPicture.class);
+    private static final Logger LOG = LogManager.getLogger(XSSFPicture.class);
 
     /**
      * Column width measured as the number of characters of the maximum digit width of the
@@ -170,15 +170,15 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * </p>
      *
      * @param scaleX the amount by which the image width is multiplied relative to the original width,
-     *  when set to {@link java.lang.Double#MAX_VALUE} the width of the embedded image is used
+     *  when set to {@link Double#MAX_VALUE} the width of the embedded image is used
      * @param scaleY the amount by which the image height is multiplied relative to the original height,
-     *  when set to {@link java.lang.Double#MAX_VALUE} the height of the embedded image is used
+     *  when set to {@link Double#MAX_VALUE} the height of the embedded image is used
      */
     public void resize(double scaleX, double scaleY){
         XSSFClientAnchor anchor = getClientAnchor();
         XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
         if (anchor == null || pref == null) {
-            LOG.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            LOG.atWarn().log("picture is not anchored via client anchor - ignoring resize call");
             return;
         }
 
@@ -242,7 +242,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
             return ImageUtils.getImageDimension(part.getInputStream(), type);
         } catch (IOException e){
             //return a "singulariry" if ImageIO failed to read the image
-            LOG.log(POILogger.WARN, e);
+            LOG.atWarn().withThrowable(e).log("Failed to read image");
             return new Dimension();
         }
     }

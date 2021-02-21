@@ -21,18 +21,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Font table for Word 6.0
  */
 @Internal
 public final class OldFontTable {
-    private static final POILogger LOG = POILogFactory.getLogger(OldFontTable.class);
+    private static final Logger LOG = LogManager.getLogger(OldFontTable.class);
 
     // added extra facilitator members
     // FFN structure containing strings of font names
@@ -69,7 +69,7 @@ public final class OldFontTable {
 
     public String getMainFont(int chpFtc) {
         if (chpFtc >= _fontNames.length) {
-            LOG.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+            LOG.atInfo().log("Mismatch in chpFtc with stringCount");
             return null;
         }
 

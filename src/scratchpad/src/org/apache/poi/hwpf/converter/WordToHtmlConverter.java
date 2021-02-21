@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 
 import java.io.File;
@@ -33,6 +34,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -48,8 +51,6 @@ import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,7 +82,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
     }
 
-    private static final POILogger LOG = POILogFactory.getLogger( WordToHtmlConverter.class );
+    private static final Logger LOG = LogManager.getLogger(WordToHtmlConverter.class);
 
     private final Deque<BlockProperies> blocksProperies = new LinkedList<>();
 
@@ -737,9 +738,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
         else
         {
-            LOG.log( POILogger.WARN, "Table without body starting at [",
-                    Integer.valueOf( table.getStartOffset() ), "; ",
-                    Integer.valueOf( table.getEndOffset() ), ")" );
+            LOG.atWarn().log("Table without body starting at [{}; {})", box(table.getStartOffset()),box(table.getEndOffset()));
         }
     }
 
