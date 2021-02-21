@@ -69,7 +69,7 @@ public final class XMLHelper {
     static final String METHOD_ENTITY_EXPANSION_XERCES = "setEntityExpansionLimit";
 
     static final String[] SECURITY_MANAGERS = {
-            //"com.sun.org.apache.xerces.internal.util.SecurityManager",
+            "com.sun.org.apache.xerces.internal.util.SecurityManager",
             "org.apache.xerces.util.SecurityManager"
     };
 
