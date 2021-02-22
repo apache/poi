@@ -23,9 +23,10 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,20 +92,26 @@ public class DrawPictureShape extends DrawSimpleShape {
             return fallback;
         }
 
-        // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
-        final Supplier<ImageRenderer> getFallback = () -> {
-            LOG.atWarn().log("No suitable image renderer found for content-type '{}' - include " +
-                    "poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!", contentType);
-            return fallback;
-        };
-
         ClassLoader cl = DrawPictureShape.class.getClassLoader();
-        return StreamSupport
-            .stream(ServiceLoader.load(ImageRenderer.class, cl).spliterator(), false)
-            .filter(ir -> ir.canRender(contentType))
-            .findFirst()
-            .orElseGet(getFallback)
-        ;
+        Iterator<ImageRenderer> iter = ServiceLoader.load(ImageRenderer.class, cl).iterator();
+        for (;;) {
+            // Batik / SVGImageRenderer fails when executed on the module-path, hence we try/skip it in that case
+            try {
+                ImageRenderer ir = iter.next();
+                if (ir.canRender(contentType)) {
+                    return ir;
+                }
+            } catch (NoSuchElementException ignored) {
+                break;
+            } catch (Exception | ServiceConfigurationError ignored) {
+            }
+        }
+
+        // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
+        LOG.atWarn().log("No suitable image renderer found for content-type '{}' - include " +
+            "poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars - " +
+            "svgs/batik doesn't work on the module-path!", contentType);
+        return fallback;
     }
 
     @Override

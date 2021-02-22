@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.Drawable;
@@ -47,6 +49,7 @@ import org.apache.poi.util.LocaleUtil;
  * An utility to convert slides of a .pptx slide show to a PNG image
  */
 public final class PPTX2PNG {
+    private static final Logger LOG = LogManager.getLogger(PPTX2PNG.class);
 
     private static final String INPUT_PAT_REGEX =
         "(?<slideno>[^|]+)\\|(?<format>[^|]+)\\|(?<basename>.+)\\.(?<ext>[^.]++)";
@@ -350,8 +353,14 @@ public final class PPTX2PNG {
 
     private OutputFormat getOutput() {
         switch (format) {
-            case "svg":
-                return new SVGFormat(textAsShapes);
+            case "svg": {
+                try {
+                    return new SVGFormat(textAsShapes);
+                } catch (Exception | NoClassDefFoundError e) {
+                    LOG.atError().withThrowable(e).log("Batik is not not added to/working on the module-path. Use classpath mode instead of JPMS. Fallback to PNG.");
+                    return new BitmapFormat("png");
+                }
+            }
             case "pdf":
                 return new PDFFormat(textAsShapes,fontDir,fontTtf);
             case "log":

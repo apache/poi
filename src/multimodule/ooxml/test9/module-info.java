@@ -90,11 +90,30 @@ module org.apache.poi.ooxml {
 
 
     /* optional dependencies for slideshow rendering via PPTX2PNG */
-    requires batik.all;
+    requires static batik.anim;
+    requires static batik.awt.util;
+    requires static batik.bridge;
+    requires static batik.codec;
+    requires static batik.constants;
+    requires static batik.css;
+    requires static batik.dom;
+    requires static batik.ext;
+    requires static batik.gvt;
+    requires static batik.i18n;
+    requires static batik.parser;
+    requires static batik.script;
+    requires static batik.shared.resources;
+    requires static batik.svg.dom;
+    requires static batik.svggen;
+    requires static batik.svgrasterizer;
+    requires static batik.transcoder;
+    requires static batik.util;
+    requires static batik.xml;
+    requires static xmlgraphics.commons;
+
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires de.rototor.pdfbox.graphics2d;
-    requires xmlgraphics.commons;
 
 
     // test specific exports

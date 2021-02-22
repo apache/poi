@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -46,7 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 class TestXSLFPictureShape {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
     void testCreate() throws Exception {
@@ -287,6 +288,8 @@ class TestXSLFPictureShape {
         } catch (IIOException ignore) {
             // Ignore all ImageIO related exceptions like "Can't create output stream!"
             // which fail often in maven builds because of missing/wrong temp directory
+        } catch (NoClassDefFoundError ignore) {
+            assumeFalse(true, "Batik doesn't work on th module-path");
         }
     }
 }

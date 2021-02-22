@@ -910,6 +910,8 @@ class TestSignatureInfo {
                 si.setSignatureConfig(sic);
                 // hash > sha1 doesn't work in excel viewer ...
                 si.confirmSignature();
+            } catch (java.util.ServiceConfigurationError e) {
+                assumeFalse(true, "running on module-path / JPMS and batik is \"kaputt\" WRT JPMS");
             }
 
             XmlDocumentPackageInit reinit =

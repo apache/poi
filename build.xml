@@ -288,7 +288,6 @@ under the License.
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
-    <dependency prefix="main.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -300,17 +299,36 @@ under the License.
     <!-- only used for signing the release - not used with the ooxml signatures -->
     <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.68" usage="util"/>
 
-    <!-- svg/batik/pdf libs - not part of the distribution -->
-    <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-provided"/>
-    <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.4" usage="ooxml-provided"/>
-    <dependency prefix="svg.batik-all" artifact="org.apache.xmlgraphics:batik-all:1.14" usage="ooxml-provided"/>
+    <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
+    <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
+    <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.4" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-anim" artifact="org.apache.xmlgraphics:batik-anim:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-awt-util" artifact="org.apache.xmlgraphics:batik-awt-util:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-bridge" artifact="org.apache.xmlgraphics:batik-bridge:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-codec" artifact="org.apache.xmlgraphics:batik-codec:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-constants" artifact="org.apache.xmlgraphics:batik-constants:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-css" artifact="org.apache.xmlgraphics:batik-css:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-dom" artifact="org.apache.xmlgraphics:batik-dom:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-ext" artifact="org.apache.xmlgraphics:batik-ext:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-gvt" artifact="org.apache.xmlgraphics:batik-gvt:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-i18n" artifact="org.apache.xmlgraphics:batik-i18n:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-parser" artifact="org.apache.xmlgraphics:batik-parser:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-script" artifact="org.apache.xmlgraphics:batik-script:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-shared-resources" artifact="org.apache.xmlgraphics:batik-shared-resources:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svg-dom" artifact="org.apache.xmlgraphics:batik-svg-dom:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svggen" artifact="org.apache.xmlgraphics:batik-svggen:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svgrasterizer" artifact="org.apache.xmlgraphics:batik-svgrasterizer:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.22" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.22" usage="ooxml-provided"/>
     <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.30" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
-    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:4.0.0" usage="ooxml"/>
+    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:4.0.1" usage="ooxml"
+                url="https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build//xmlbeans-4.0.1.jar"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.20" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
@@ -433,7 +451,6 @@ under the License.
         <pathelement location="${main.objenesis.jar}"/>
         <pathelement location="${main.log4j-core.jar}"/>
         <pathelement location="${main.commons-logging.jar}"/>
-        <pathelement location="${main.slf4j-api.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -461,7 +478,25 @@ under the License.
     </path>
 
     <path id="batik.classpath">
-        <pathelement location="${svg.batik-all.jar}"/>
+        <pathelement location="${svg.batik-anim.jar}"/>
+        <pathelement location="${svg.batik-awt-util.jar}"/>
+        <pathelement location="${svg.batik-bridge.jar}"/>
+        <pathelement location="${svg.batik-codec.jar}"/>
+        <pathelement location="${svg.batik-constants.jar}"/>
+        <pathelement location="${svg.batik-css.jar}"/>
+        <pathelement location="${svg.batik-dom.jar}"/>
+        <pathelement location="${svg.batik-ext.jar}"/>
+        <pathelement location="${svg.batik-gvt.jar}"/>
+        <pathelement location="${svg.batik-i18n.jar}"/>
+        <pathelement location="${svg.batik-parser.jar}"/>
+        <pathelement location="${svg.batik-script.jar}"/>
+        <pathelement location="${svg.batik-shared-resources.jar}"/>
+        <pathelement location="${svg.batik-svg-dom.jar}"/>
+        <pathelement location="${svg.batik-svggen.jar}"/>
+        <pathelement location="${svg.batik-svgrasterizer.jar}"/>
+        <pathelement location="${svg.batik-transcoder.jar}"/>
+        <pathelement location="${svg.batik-util.jar}"/>
+        <pathelement location="${svg.batik-xml.jar}"/>
         <pathelement location="${svg.xml-apis-ext.jar}"/>
         <pathelement location="${svg.xmlgraphics-commons.jar}"/>
     </path>
@@ -623,12 +658,14 @@ under the License.
             <fileset dir="${basedir}/lib/main">
                 <include name="log4j-1.2*.jar"/>
                 <include name="commons-logging-1.2.jar"/>
+                <include name="*slf4j*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3.2*.jar"/>
                 <include name="mockito-core-3.5*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
+                <include name="*slf4j*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3.1.0.jar"/>
@@ -675,7 +712,6 @@ under the License.
                     <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
-                    <available file="${main.slf4j-api.jar}"/>
                     <available file="${main.log4j-api.jar}"/>
                     <available file="${main.log4j-core.jar}"/>
                     <available file="${asm.jar}"/>
@@ -722,7 +758,6 @@ under the License.
         <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
-        <downloadfile src="${main.slf4j-api.url}" dest="${main.slf4j-api.jar}"/>
         <downloadfile src="${main.log4j-api.url}" dest="${main.log4j-api.jar}"/>
         <downloadfile src="${main.log4j-core.url}" dest="${main.log4j-core.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
@@ -756,7 +791,25 @@ under the License.
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
                     <available file="${svg.xml-apis-ext.jar}"/>
-                    <available file="${svg.batik-all.jar}"/>
+                    <available file="${svg.batik-anim.jar}"/>
+                    <available file="${svg.batik-awt-util.jar}"/>
+                    <available file="${svg.batik-bridge.jar}"/>
+                    <available file="${svg.batik-codec.jar}"/>
+                    <available file="${svg.batik-constants.jar}"/>
+                    <available file="${svg.batik-css.jar}"/>
+                    <available file="${svg.batik-dom.jar}"/>
+                    <available file="${svg.batik-ext.jar}"/>
+                    <available file="${svg.batik-gvt.jar}"/>
+                    <available file="${svg.batik-i18n.jar}"/>
+                    <available file="${svg.batik-parser.jar}"/>
+                    <available file="${svg.batik-script.jar}"/>
+                    <available file="${svg.batik-shared-resources.jar}"/>
+                    <available file="${svg.batik-svg-dom.jar}"/>
+                    <available file="${svg.batik-svggen.jar}"/>
+                    <available file="${svg.batik-svgrasterizer.jar}"/>
+                    <available file="${svg.batik-transcoder.jar}"/>
+                    <available file="${svg.batik-util.jar}"/>
+                    <available file="${svg.batik-xml.jar}"/>
                     <available file="${svg.xmlgraphics-commons.jar}"/>
                     <available file="${pdf.pdfbox.jar}"/>
                     <available file="${pdf.fontbox.jar}"/>
@@ -775,7 +828,25 @@ under the License.
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
-        <downloadfile src="${svg.batik-all.url}" dest="${svg.batik-all.jar}"/>
+        <downloadfile src="${svg.batik-anim.url}" dest="${svg.batik-anim.jar}"/>
+        <downloadfile src="${svg.batik-awt-util.url}" dest="${svg.batik-awt-util.jar}"/>
+        <downloadfile src="${svg.batik-bridge.url}" dest="${svg.batik-bridge.jar}"/>
+        <downloadfile src="${svg.batik-codec.url}" dest="${svg.batik-codec.jar}"/>
+        <downloadfile src="${svg.batik-constants.url}" dest="${svg.batik-constants.jar}"/>
+        <downloadfile src="${svg.batik-css.url}" dest="${svg.batik-css.jar}"/>
+        <downloadfile src="${svg.batik-dom.url}" dest="${svg.batik-dom.jar}"/>
+        <downloadfile src="${svg.batik-ext.url}" dest="${svg.batik-ext.jar}"/>
+        <downloadfile src="${svg.batik-gvt.url}" dest="${svg.batik-gvt.jar}"/>
+        <downloadfile src="${svg.batik-i18n.url}" dest="${svg.batik-i18n.jar}"/>
+        <downloadfile src="${svg.batik-parser.url}" dest="${svg.batik-parser.jar}"/>
+        <downloadfile src="${svg.batik-script.url}" dest="${svg.batik-script.jar}"/>
+        <downloadfile src="${svg.batik-shared-resources.url}" dest="${svg.batik-shared-resources.jar}"/>
+        <downloadfile src="${svg.batik-svg-dom.url}" dest="${svg.batik-svg-dom.jar}"/>
+        <downloadfile src="${svg.batik-svggen.url}" dest="${svg.batik-svggen.jar}"/>
+        <downloadfile src="${svg.batik-svgrasterizer.url}" dest="${svg.batik-svgrasterizer.jar}"/>
+        <downloadfile src="${svg.batik-transcoder.url}" dest="${svg.batik-transcoder.jar}"/>
+        <downloadfile src="${svg.batik-util.url}" dest="${svg.batik-util.jar}"/>
+        <downloadfile src="${svg.batik-xml.url}" dest="${svg.batik-xml.jar}"/>
         <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
         <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>
         <downloadfile src="${pdf.pdfbox.url}" dest="${pdf.pdfbox.jar}"/>
@@ -858,9 +929,13 @@ under the License.
         <mkdir dir="${xmlbean.sources.dir}"/>
         <mkdir dir="${xmlbean.classes.dir}"/>
 
-        <taskdef name="xmlbean"
-                 classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans.jar}"/>
+        <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
+            <classpath>
+                <path location="${ooxml.xmlbeans.jar}"/>
+                <path location="${main.log4j-api.jar}"/>
+                <path location="${main.log4j-core.jar}"/>
+            </classpath>
+        </taskdef>
 
         <xmlbean
             schema="${xmlbean.xsds.dir}"
@@ -1155,6 +1230,7 @@ under the License.
                 <pathelement path="lib/ooxml"/>
                 <pathelement path="lib/ooxml-provided"/>
                 <pathelement path="lib/ooxml-tests"/>
+                <pathelement path="lib/ooxml-batik"/>
             </lib>
             <resources>
                 <fileset dir="${ooxml.resource1.dir}"/>
@@ -1286,6 +1362,10 @@ under the License.
                         <jvmarg value="-Djunit.jupiter.execution.parallel.config.strategy=fixed" />
                         <jvmarg value="-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3" />
                         <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}" if:true="${isIBMVM}"/>
+
+<!--                        <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5000"/>-->
+<!--                        <jvmarg value="&#45;&#45;show-module-resolution"/>-->
+
 
                         <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
 
@@ -2579,7 +2659,25 @@ under the License.
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
             <auxClasspath path="${main.ant.jar}" />
             <auxClasspath path="${main.com.zaxxer.jar}" />
-            <auxClasspath path="${svg.batik-all.jar}"/>
+            <auxClasspath path="${svg.batik-anim.jar}"/>
+            <auxClasspath path="${svg.batik-awt-util.jar}"/>
+            <auxClasspath path="${svg.batik-bridge.jar}"/>
+            <auxClasspath path="${svg.batik-codec.jar}"/>
+            <auxClasspath path="${svg.batik-constants.jar}"/>
+            <auxClasspath path="${svg.batik-css.jar}"/>
+            <auxClasspath path="${svg.batik-dom.jar}"/>
+            <auxClasspath path="${svg.batik-ext.jar}"/>
+            <auxClasspath path="${svg.batik-gvt.jar}"/>
+            <auxClasspath path="${svg.batik-i18n.jar}"/>
+            <auxClasspath path="${svg.batik-parser.jar}"/>
+            <auxClasspath path="${svg.batik-script.jar}"/>
+            <auxClasspath path="${svg.batik-shared-resources.jar}"/>
+            <auxClasspath path="${svg.batik-svg-dom.jar}"/>
+            <auxClasspath path="${svg.batik-svggen.jar}"/>
+            <auxClasspath path="${svg.batik-svgrasterizer.jar}"/>
+            <auxClasspath path="${svg.batik-transcoder.jar}"/>
+            <auxClasspath path="${svg.batik-util.jar}"/>
+            <auxClasspath path="${svg.batik-xml.jar}"/>
             <auxClasspath path="${svg.xml-apis-ext.jar}"/>
             <auxClasspath path="${svg.xmlgraphics-commons.jar}"/>
             <auxClasspath path="${pdf.pdfbox.jar}"/>
