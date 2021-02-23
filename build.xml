@@ -55,6 +55,7 @@ under the License.
     <property name="ooxml.lib" location="${basedir}/lib/ooxml"/>
     <property name="ooxml-tests.lib" location="${basedir}/lib/ooxml-tests"/>
     <property name="ooxml-provided.lib" location="${basedir}/lib/ooxml-provided"/>
+    <property name="ooxml-batik.lib" location="${basedir}/lib/ooxml-batik"/>
     <property name="util.lib" location="${basedir}/lib/util"/>
 
 
@@ -2310,6 +2311,10 @@ under the License.
             </mappedresources>
             <mappedresources cache="true">
                 <fileset dir="${ooxml-provided.lib}"/>
+                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/auxiliary/\1"/>
+            </mappedresources>
+            <mappedresources cache="true">
+                <fileset dir="${ooxml-batik.lib}"/>
                 <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/auxiliary/\1"/>
             </mappedresources>
             <mappedresources cache="true">
