@@ -2501,6 +2501,7 @@ under the License.
             <pathelement location="build/dist/maven/poi-tests/poi-${version.id}-tests.jar"/>
             <pathelement location="build/dist/maven/poi-examples/poi-examples-${version.id}.jar"/>
             <path path="${env.CLASSPATH}"/>
+            <path refid="batik.classpath"/>
         </path>
 
         <!-- forbiddenapis bundled signatures max supported version is 14 -->
