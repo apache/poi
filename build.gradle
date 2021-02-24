@@ -306,7 +306,7 @@ project('ooxml') {
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
-        compile 'org.apache.santuario:xmlsec:2.2.0'
+        compile 'org.apache.santuario:xmlsec:2.2.1'
         compile "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
         compile 'com.github.virtuald:curvesapi:1.06'
         compile 'com.zaxxer:SparseBitSet:1.2'
