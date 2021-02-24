@@ -15,29 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf;
+package org.apache.poi.ooxml;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.microsoft.schemas.compatibility.AlternateContentDocument;
+import org.apache.xmlbeans.impl.schema.DocumentFactory;
 import org.junit.jupiter.api.Test;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
 class TestNecessaryOOXMLClasses {
 
     @Test
     void testProblemClasses() {
-        CTTblLayoutType ctTblLayoutType = CTTblLayoutType.Factory.newInstance();
-        assertNotNull(ctTblLayoutType);
-        STTblLayoutType stTblLayoutType = STTblLayoutType.Factory.newInstance();
-        assertNotNull(stTblLayoutType);
-        CTEm ctEm = CTEm.Factory.newInstance();
-        assertNotNull(ctEm);
-        STEm stEm = STEm.Factory.newInstance();
-        assertNotNull(stEm);
-        assertEquals(STEm.CIRCLE, STEm.Enum.forString("circle"));
-        STHexColorAuto stHexColorAuto = STHexColorAuto.Factory.newInstance();
-        assertNotNull(stHexColorAuto);
+        DocumentFactory<AlternateContentDocument> factory = AlternateContentDocument.Factory;
+        assertNotNull(factory);
     }
 }
