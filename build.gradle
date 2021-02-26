@@ -423,13 +423,11 @@ project('integrationtest') {
         // exclude these from the normal test-run
         exclude '**/TestAllFiles.class'
         exclude '**/*FileHandler.class'
-        exclude '**/RecordsStresser.class'
     }
 
     task integrationTest(type: Test) {
         // these are just tests used during development of more test-code
         exclude '**/*FileHandler.class'
-        exclude '**/RecordStresser.class'
     }
 
     japicmp.enabled = false
