@@ -70,7 +70,8 @@ import org.opentest4j.AssertionFailedError;
 // also need to set JVM parameter: -Djunit.jupiter.execution.parallel.enabled=true
 @Execution(ExecutionMode.CONCURRENT)
 public class TestAllFiles {
-    public static final File ROOT_DIR = new File("test-data");
+    private static final String DEFAULT_TEST_DATA_PATH = "test-data";
+    public static final File ROOT_DIR = new File(System.getProperty("POI.testdata.path", DEFAULT_TEST_DATA_PATH));
 
     public static final String[] SCAN_EXCLUDES = {
         "**/.svn/**",
@@ -183,7 +184,18 @@ public class TestAllFiles {
     }
 
     private static String pathReplace(String msg) {
+        if (msg == null) return null;
+
         // Windows path replacement
-        return msg == null ? null : msg.replace('\\', '/');
+        msg = msg.replace('\\', '/');
+
+        // Adjust file paths to remove unwanted file path info.
+        int filePathIndex = msg.indexOf(ROOT_DIR.toString());
+        if (filePathIndex > 0) {
+            int testDataDirectoryIndex = msg.indexOf(DEFAULT_TEST_DATA_PATH);
+            msg = msg.substring(0, filePathIndex) + msg.substring(testDataDirectoryIndex);
+        }
+
+        return msg;
     }
 }
