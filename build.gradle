@@ -425,11 +425,6 @@ project('integrationtest') {
         exclude '**/*FileHandler.class'
     }
 
-    task integrationTest(type: Test) {
-        // these are just tests used during development of more test-code
-        exclude '**/*FileHandler.class'
-    }
-
     japicmp.enabled = false
 }
 
