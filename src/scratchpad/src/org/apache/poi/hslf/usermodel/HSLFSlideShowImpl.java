@@ -381,7 +381,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
                 // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
                 //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
-                if (!((type == EscherRecordTypes.BSE.typeID) || (type >= EscherRecordTypes.BLIP_START.typeID && type <= 0xf117))) {
+                if (!((type == EscherRecordTypes.BSE.typeID) ||
+                        (type >= EscherRecordTypes.BLIP_START.typeID && type <= EscherRecordTypes.BLIP_END.typeID))) {
                     break;
                 }
 

@@ -74,7 +74,7 @@ public class PICFAndOfficeArtData
                     dataStream, offset );
             if ( nextRecord.getRecordId() != EscherRecordTypes.BSE.typeID
                     && ( nextRecord.getRecordId() < EscherRecordTypes.BLIP_START.typeID || nextRecord
-                            .getRecordId() > (short) 0xF117 ) )
+                            .getRecordId() > EscherRecordTypes.BLIP_END.typeID ) )
                 break;
 
             int blipRecordSize = nextRecord.fillFields( dataStream, offset,
