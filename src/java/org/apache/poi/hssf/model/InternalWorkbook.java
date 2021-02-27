@@ -776,7 +776,6 @@ public final class InternalWorkbook {
      * make the tabid record look like the current situation.
      */
     private void fixTabIdRecord() {
-        Record rec = records.get(records.getTabpos());
 
         // see bug 55982, quite a number of documents do not have a TabIdRecord and
         // thus there is no way to do the fixup here,
@@ -784,6 +783,8 @@ public final class InternalWorkbook {
         if(records.getTabpos() <= 0) {
             return;
         }
+
+        Record rec = records.get(records.getTabpos());
 
         TabIdRecord tir = ( TabIdRecord ) rec;
         short[]     tia = new short[ boundsheets.size() ];

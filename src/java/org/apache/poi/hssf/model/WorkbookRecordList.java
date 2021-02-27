@@ -30,7 +30,7 @@ public final class WorkbookRecordList {
     /** holds the position of the last bound sheet */
 	private int bspos;
     /** holds the position of the tabid record */
-	private int tabpos;
+	private int tabpos = -1;
     /** hold the position of the last font record */
 	private int fontpos;
     /** hold the position of the last extended font record */
