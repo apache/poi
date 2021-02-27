@@ -34,6 +34,7 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.sl.image.ImageHeaderPNG;
@@ -512,56 +513,51 @@ public final class Picture {
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        switch ( escherRecord.getRecordId() )
-        {
-        case (short) 0xF007:
-        {
+        short recordId = escherRecord.getRecordId();
+        if (recordId == EscherRecordTypes.BSE.typeID) {
             EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
-            switch ( bseRecord.getBlipTypeWin32() )
-            {
-            case 0x00:
-                return PictureType.UNKNOWN;
-            case 0x01:
-                return PictureType.UNKNOWN;
-            case 0x02:
-                return PictureType.EMF;
-            case 0x03:
-                return PictureType.WMF;
-            case 0x04:
-                return PictureType.PICT;
-            case 0x05:
-                return PictureType.JPEG;
-            case 0x06:
-                return PictureType.PNG;
-            case 0x07:
-                return PictureType.BMP;
-            case 0x11:
-                return PictureType.TIFF;
-            case 0x12:
-                return PictureType.JPEG;
-            default:
-                return PictureType.UNKNOWN;
+            switch (bseRecord.getBlipTypeWin32()) {
+                case 0x00:
+                    return PictureType.UNKNOWN;
+                case 0x01:
+                    return PictureType.UNKNOWN;
+                case 0x02:
+                    return PictureType.EMF;
+                case 0x03:
+                    return PictureType.WMF;
+                case 0x04:
+                    return PictureType.PICT;
+                case 0x05:
+                    return PictureType.JPEG;
+                case 0x06:
+                    return PictureType.PNG;
+                case 0x07:
+                    return PictureType.BMP;
+                case 0x11:
+                    return PictureType.TIFF;
+                case 0x12:
+                    return PictureType.JPEG;
+                default:
+                    return PictureType.UNKNOWN;
             }
-        }
-        case (short) 0xF01A:
+        } else if (recordId == (short) 0xF01A) {
             return PictureType.EMF;
-        case (short) 0xF01B:
+        } else if (recordId == (short) 0xF01B) {
             return PictureType.WMF;
-        case (short) 0xF01C:
+        } else if (recordId == (short) 0xF01C) {
             return PictureType.PICT;
-        case (short) 0xF01D:
+        } else if (recordId == (short) 0xF01D) {
             return PictureType.JPEG;
-        case (short) 0xF01E:
+        } else if (recordId == (short) 0xF01E) {
             return PictureType.PNG;
-        case (short) 0xF01F:
+        } else if (recordId == (short) 0xF01F) {
             return PictureType.BMP;
-        case (short) 0xF029:
+        } else if (recordId == (short) 0xF029) {
             return PictureType.TIFF;
-        case (short) 0xF02A:
+        } else if (recordId == (short) 0xF02A) {
             return PictureType.JPEG;
-        default:
-            return PictureType.UNKNOWN;
         }
+        return PictureType.UNKNOWN;
     }
 
     /**

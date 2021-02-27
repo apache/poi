@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -380,7 +381,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
                 // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
                 //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
-                if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117))) {
+                if (!((type == EscherRecordTypes.BSE.typeID) || (type >= 0xf018 && type <= 0xf117))) {
                     break;
                 }
 

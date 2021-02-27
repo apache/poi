@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hwpf.model.types.PICFAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -71,7 +72,7 @@ public class PICFAndOfficeArtData
         {
             EscherRecord nextRecord = escherRecordFactory.createRecord(
                     dataStream, offset );
-            if ( nextRecord.getRecordId() != (short) 0xF007
+            if ( nextRecord.getRecordId() != EscherRecordTypes.BSE.typeID
                     && ( nextRecord.getRecordId() < (short) 0xF018 || nextRecord
                             .getRecordId() > (short) 0xF117 ) )
                 break;
