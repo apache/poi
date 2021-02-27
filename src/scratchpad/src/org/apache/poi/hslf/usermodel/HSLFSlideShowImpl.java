@@ -381,7 +381,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
                 // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
                 //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
-                if (!((type == EscherRecordTypes.BSE.typeID) || (type >= 0xf018 && type <= 0xf117))) {
+                if (!((type == EscherRecordTypes.BSE.typeID) || (type >= EscherRecordTypes.BLIP_START.typeID && type <= 0xf117))) {
                     break;
                 }
 
@@ -392,8 +392,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                     throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
                 }
 
-                // If they type (including the bonus 0xF018) is 0, skip it
-                PictureType pt = PictureType.forNativeID(type - 0xF018);
+                // If the type (including the bonus 0xF018) is 0, skip it
+                PictureType pt = PictureType.forNativeID(type - EscherRecordTypes.BLIP_START.typeID);
                 if (pt == null) {
                     LOG.atError().log("Problem reading picture: Invalid image type 0, on picture with length {}.\nYour document will probably become corrupted if you save it! Position: {}", box(imgsize),box(pos));
                 } else {

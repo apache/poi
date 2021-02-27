@@ -73,7 +73,7 @@ public class PICFAndOfficeArtData
             EscherRecord nextRecord = escherRecordFactory.createRecord(
                     dataStream, offset );
             if ( nextRecord.getRecordId() != EscherRecordTypes.BSE.typeID
-                    && ( nextRecord.getRecordId() < (short) 0xF018 || nextRecord
+                    && ( nextRecord.getRecordId() < EscherRecordTypes.BLIP_START.typeID || nextRecord
                             .getRecordId() > (short) 0xF117 ) )
                 break;
 

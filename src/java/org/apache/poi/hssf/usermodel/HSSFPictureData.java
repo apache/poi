@@ -72,7 +72,7 @@ public class HSSFPictureData implements PictureData
      * @see HSSFWorkbook#PICTURE_TYPE_PICT
      */
     public int getFormat(){
-        return blip.getRecordId() - (short)0xF018;
+        return blip.getRecordId() - EscherRecordTypes.BLIP_START.typeID;
     }
 
     /**

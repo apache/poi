@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hslf.blip.DIB;
 import org.apache.poi.hslf.blip.EMF;
 import org.apache.poi.hslf.blip.JPEG;
@@ -159,7 +160,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
 
         data = new byte[LittleEndianConsts.SHORT_SIZE];
         PictureType pt = getType();
-        LittleEndian.putUShort(data, 0, pt.nativeId + 0xF018);
+        LittleEndian.putUShort(data, 0, pt.nativeId + EscherRecordTypes.BLIP_START.typeID);
         out.write(data);
 
         byte[] rd = getRawData();
