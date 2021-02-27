@@ -28,7 +28,6 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
@@ -221,7 +220,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             offset += 8;
             int endOffset = offset + rlen;
 
-            if (recType == EscherRecordTypes.BSE.typeID) {
+            if (recType == 0xF007) {
                 // TOOD: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
@@ -299,7 +298,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             offset += 8;
             int endOffset = offset + rlen;
 
-            if (recType == EscherRecordTypes.BSE.typeID) {
+            if (recType == 0xF007) {
                 // TOOD: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
