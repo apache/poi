@@ -44,6 +44,12 @@ public enum EscherRecordTypes {
      * Referred to as an {@code OfficeArtBStoreContainer} in {@code [MS-ODRAW].pdf v20201117}.
      */
     BSTORE_CONTAINER(0xf001, "BStoreContainer", null, EscherContainerRecord::new),
+
+    /**
+     * {@link EscherContainerRecord Container} for all the file records for the objects in a drawing.
+     * <p>
+     * Referred to as an {@code OfficeArtDgContainer} in {@code [MS-ODRAW].pdf v20201117}.
+     */
     DG_CONTAINER(0xf002, "DgContainer", null, EscherContainerRecord::new),
     SPGR_CONTAINER(0xf003, "SpgrContainer", null, EscherContainerRecord::new),
     SP_CONTAINER(0xf004, "SpContainer", null, EscherContainerRecord::new),
