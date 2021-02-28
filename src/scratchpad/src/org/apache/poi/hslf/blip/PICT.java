@@ -26,9 +26,14 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -39,6 +44,28 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class PICT extends Metafile {
     private static final Logger LOG = LogManager.getLogger(PICT.class);
 
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link PICT}. This API led to detached {@link PICT} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public PICT() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    public PICT(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     @Override
     public byte[] getData(){
@@ -93,7 +120,7 @@ public final class PICT extends Metafile {
     }
 
     @Override
-    public void setData(byte[] data) throws IOException {
+    protected byte[] formatImageForSlideshow(byte[] data) {
         // skip the first 512 bytes - they are MAC specific crap
         final int nOffset = ImageHeaderPICT.PICT_HEADER_OFFSET;
         ImageHeaderPICT nHeader = new ImageHeaderPICT(data, nOffset);
@@ -108,15 +135,22 @@ public final class PICT extends Metafile {
         header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
 
         byte[] checksum = getChecksum(data);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(checksum);
-        if (getUIDInstanceCount() == 2) {
-            out.write(checksum);
-        }
-        header.write(out);
-        out.write(compressed);
+        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        int offset = 0;
 
-        setRawData(out.toByteArray());
+        System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+        offset += checksum.length;
+
+        if (getUIDInstanceCount() == 2) {
+            System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+            offset += checksum.length;
+        }
+
+        header.write(rawData, offset);
+        offset += header.getSize();
+        System.arraycopy(compressed, 0, rawData, offset, compressed.length);
+
+        return rawData;
     }
 
     @Override

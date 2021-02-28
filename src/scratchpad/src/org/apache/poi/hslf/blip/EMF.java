@@ -24,15 +24,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.
  */
 public final class EMF extends Metafile {
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link EMF}. This API led to detached {@link EMF} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public EMF() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    public EMF(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     @Override
     public byte[] getData(){
@@ -60,11 +88,11 @@ public final class EMF extends Metafile {
     }
 
     @Override
-    public void setData(byte[] data) throws IOException {
+    protected byte[] formatImageForSlideshow(byte[] data) {
         byte[] compressed = compress(data, 0, data.length);
 
         ImageHeaderEMF nHeader = new ImageHeaderEMF(data, 0);
-        
+
         Header header = new Header();
         header.setWmfSize(data.length);
         header.setBounds(nHeader.getBounds());
@@ -73,15 +101,22 @@ public final class EMF extends Metafile {
         header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(checksum);
-        if (getUIDInstanceCount() == 2) {
-            out.write(checksum);
-        }
-        header.write(out);
-        out.write(compressed);
+        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        int offset = 0;
 
-        setRawData(out.toByteArray());
+        System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+        offset += checksum.length;
+
+        if (getUIDInstanceCount() == 2) {
+            System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+            offset += checksum.length;
+        }
+
+        header.write(rawData, offset);
+        offset += header.getSize();
+        System.arraycopy(compressed, 0, rawData, offset, compressed.length);
+
+        return rawData;
     }
 
     @Override

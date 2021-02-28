@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -87,16 +88,19 @@ public final class TestPicture {
     }
 
     /**
-     * Picture#getEscherBSERecord threw NullPointerException if EscherContainerRecord.BSTORE_CONTAINER
-     * was not found. The correct behaviour is to return null.
+     * {@link HSLFPictureShape#getEscherBSERecord()} threw {@link NullPointerException} if
+     * {@link EscherContainerRecord#BSTORE_CONTAINER} was not found. The correct behaviour is to return null.
      */
     @Test
     void bug46122() throws IOException {
+        HSLFPictureData detachedData;
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            detachedData = ppt.addPicture(new byte[0], PictureType.PNG);
+        }
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
-            HSLFPictureData pd = HSLFPictureData.create(PictureType.PNG);
 
-            HSLFPictureShape pict = new HSLFPictureShape(pd); //index to non-existing picture data
+            HSLFPictureShape pict = new HSLFPictureShape(detachedData); //index to non-existing picture data
             pict.setAnchor(new Rectangle2D.Double(50, 50, 100, 100));
             pict.setSheet(slide);
             HSLFPictureData data = pict.getPictureData();

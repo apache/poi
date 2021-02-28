@@ -30,21 +30,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.ExOleObjStg;
 import org.apache.poi.hslf.record.PersistPtrHolder;
@@ -59,6 +71,7 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -347,23 +360,26 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * This is lazily called as and when we want to touch pictures.
      */
     private void readPictures() throws IOException {
-        _pictures = new ArrayList<>();
 
-        // if the presentation doesn't contain pictures - will use a null set instead
+        // if the presentation doesn't contain pictures, will use an empty collection instead
         if (!getDirectory().hasEntry("Pictures")) {
+            _pictures = new ArrayList<>();
             return;
         }
 
         DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
-        DocumentInputStream is = getDirectory().createDocumentInputStream(entry);
-        byte[] pictstream = IOUtils.toByteArray(is, entry.getSize());
-        is.close();
+        EscherContainerRecord blipStore = getBlipStore();
+        byte[] pictstream;
+        try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {
+            pictstream = IOUtils.toByteArray(is, entry.getSize());
+        }
 
+        List<PictureFactory> factories = new ArrayList<>();
         try (HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
 
             int pos = 0;
             // An empty picture record (length 0) will take up 8 bytes
-            while (pos <= (pictstream.length - 8)) {
+            while (pos <= (pictstream.length - HSLFPictureData.PREAMBLE_SIZE)) {
                 int offset = pos;
 
                 decryptData.decryptPicture(pictstream, offset);
@@ -388,7 +404,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 // (0 is allowed, but odd, since we do wind on by the header each
                 //  time, so we won't get stuck)
                 if (imgsize < 0) {
-                    throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
+                    throw new CorruptPowerPointFileException("The file contains a picture, at position " + factories.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
                 }
 
                 // If the type (including the bonus 0xF018) is 0, skip it
@@ -404,26 +420,127 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                                 "in others, this could indicate a corrupt file");
                         break;
                     }
-                    // Build the PictureData object from the data
-                    try {
-                        HSLFPictureData pict = HSLFPictureData.create(pt);
-                        pict.setSignature(signature);
 
-                        // Copy the data, ready to pass to PictureData
-                        byte[] imgdata = IOUtils.safelyClone(pictstream, pos, imgsize, MAX_RECORD_LENGTH);
-                        pict.setRawData(imgdata);
+                    // Copy the data, ready to pass to PictureData
+                    byte[] imgdata = IOUtils.safelyClone(pictstream, pos, imgsize, MAX_RECORD_LENGTH);
 
-                        pict.setOffset(offset);
-                        pict.setIndex(_pictures.size() + 1);        // index is 1-based
-                        _pictures.add(pict);
-                    } catch (IllegalArgumentException e) {
-                        LOG.atError().withThrowable(e).log("Problem reading picture. Your document will probably become corrupted if you save it!");
-                    }
+                    factories.add(new PictureFactory(blipStore, pt, imgdata, offset, signature));
                 }
 
                 pos += imgsize;
             }
         }
+
+        matchPicturesAndRecords(factories, blipStore);
+
+        List<HSLFPictureData> pictures = new ArrayList<>();
+        for (PictureFactory it : factories)      {
+            try {
+                HSLFPictureData pict = it.build();
+
+                pict.setIndex(pictures.size() + 1);        // index is 1-based
+                pictures.add(pict);
+            } catch (IllegalArgumentException e) {
+                LOG.atError().withThrowable(e).log("Problem reading picture. Your document will probably become corrupted if you save it!");
+            }
+        }
+
+        _pictures = pictures;
+    }
+
+    /**
+     * Matches all of the {@link PictureFactory PictureFactories} for a slideshow with {@link EscherBSERecord}s in the
+     * Blip Store for the slideshow.
+     * <p>
+     * When reading a slideshow into memory, we have to match the records in the Blip Store with the factories
+     * representing picture in the pictures stream. This can be difficult, as presentations might have incorrectly
+     * formatted data. This function attempts to perform matching using multiple heuristics to increase the likelihood
+     * of finding all pairs, while aiming to reduce the likelihood of associating incorrect pairs.
+     *
+     * @param factories Factories for creating {@link HSLFPictureData} out of the pictures stream.
+     * @param blipStore Blip Store of the presentation being loaded.
+     */
+    private static void matchPicturesAndRecords(List<PictureFactory> factories, EscherContainerRecord blipStore) {
+        // LinkedList because we're sorting and removing.
+        LinkedList<PictureFactory> unmatchedFactories = new LinkedList<>(factories);
+        unmatchedFactories.sort(Comparator.comparingInt(PictureFactory::getOffset));
+
+        // Arrange records by offset. In the common case of a well-formed slideshow, where every factory has a
+        //  matching record, this is somewhat wasteful, but is necessary to handle the uncommon case where multiple
+        //  records share an offset.
+        Map<Integer, List<EscherBSERecord>> unmatchedRecords = new HashMap<>();
+        for (EscherRecord child : blipStore) {
+            EscherBSERecord record = (EscherBSERecord) child;
+            unmatchedRecords.computeIfAbsent(record.getOffset(), k -> new ArrayList<>()).add(record);
+        }
+
+        // The first pass through the factories only pairs a factory with a record if we're very confident that they
+        //  are a match. Confidence comes from a perfect match on the offset, and if necessary, the UID. Matched
+        //  factories and records are removed from the unmatched collections.
+        for (Iterator<PictureFactory> iterator = unmatchedFactories.iterator(); iterator.hasNext(); ) {
+            PictureFactory factory = iterator.next();
+            int physicalOffset = factory.getOffset();
+            List<EscherBSERecord> recordsAtOffset = unmatchedRecords.get(physicalOffset);
+
+            if (recordsAtOffset == null || recordsAtOffset.isEmpty()) {
+                // There are no records that have an offset matching the physical offset in the stream. We'll do
+                //  more complicated and less reliable matching for this factory after all "well known"
+                //  image <-> record pairs have been found.
+                LOG.atDebug().log("No records with offset {}", box(physicalOffset));
+            } else if (recordsAtOffset.size() == 1) {
+                // Only 1 record has the same offset as the target image. Assume these are a pair.
+                factory.setRecord(recordsAtOffset.get(0));
+                unmatchedRecords.remove(physicalOffset);
+                iterator.remove();
+            } else {
+
+                // Multiple records share an offset. Perform additional matching based on UID.
+                for (int i = 0; i < recordsAtOffset.size(); i++) {
+                    EscherBSERecord record = recordsAtOffset.get(i);
+                    byte[] recordUid = record.getUid();
+                    byte[] imageHeader = Arrays.copyOf(factory.imageData, HSLFPictureData.CHECKSUM_SIZE);
+                    if (Arrays.equals(recordUid, imageHeader)) {
+                        factory.setRecord(record);
+                        recordsAtOffset.remove(i);
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // At this point, any factories remaining didn't have a record with a matching offset. The second pass
+        // through the factories pairs based on the UID. Factories for which a record with a matching UID cannot be
+        // found will get a new record.
+        List<EscherBSERecord> remainingRecords = unmatchedRecords.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        for (PictureFactory factory : unmatchedFactories) {
+
+            boolean matched = false;
+            for (int i = remainingRecords.size() - 1; i >= 0; i--) {
+                EscherBSERecord record = remainingRecords.get(i);
+                byte[] recordUid = record.getUid();
+                byte[] imageHeader = Arrays.copyOf(factory.imageData, HSLFPictureData.CHECKSUM_SIZE);
+                if (Arrays.equals(recordUid, imageHeader)) {
+                    remainingRecords.remove(i);
+                    factory.setRecord(record);
+                    record.setOffset(factory.getOffset());
+                    matched = true;
+                }
+            }
+
+            if (!matched) {
+                // Synthesize a new record
+                LOG.atDebug().log("No record found for picture at offset {}", box(factory.offset));
+                EscherBSERecord record = HSLFSlideShow.addNewEscherBseRecord(blipStore, factory.type, factory.imageData, factory.offset);
+                factory.setRecord(record);
+            }
+        }
+
+        LOG.atDebug().log("Found {} unmatched records.", box(remainingRecords.size()));
     }
 
     /**
@@ -756,9 +873,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         int offset = 0;
         if (_pictures.size() > 0) {
             HSLFPictureData prev = _pictures.get(_pictures.size() - 1);
-            offset = prev.getOffset() + prev.getRawData().length + 8;
+            offset = prev.getOffset() + prev.getBseSize();
         }
-        img.setOffset(offset);
         img.setIndex(_pictures.size() + 1);        // index is 1-based
         _pictures.add(img);
         return offset;
@@ -823,6 +939,32 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             _objects = objects.toArray(new HSLFObjectData[0]);
         }
         return _objects;
+    }
+
+    private EscherContainerRecord getBlipStore() {
+        Document documentRecord = null;
+        for (Record record : _records) {
+            if (record.getRecordType() == RecordTypes.Document.typeID) {
+                documentRecord = (Document) record;
+                break;
+            }
+        }
+
+        if (documentRecord == null) {
+            throw new CorruptPowerPointFileException("Document record is missing");
+        }
+
+        EscherContainerRecord blipStore;
+
+        EscherContainerRecord dggContainer = documentRecord.getPPDrawingGroup().getDggContainer();
+        blipStore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        if (blipStore == null) {
+            blipStore = new EscherContainerRecord();
+            blipStore.setRecordId(EscherContainerRecord.BSTORE_CONTAINER);
+
+            dggContainer.addChildBefore(blipStore, EscherOptRecord.RECORD_ID);
+        }
+        return blipStore;
     }
 
     @Override
@@ -901,6 +1043,57 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         public int size() {
             return count;
+        }
+    }
+
+    /**
+     * Assists in creating {@link HSLFPictureData} when parsing a slideshow.
+     *
+     * This class is relied upon heavily by {@link #matchPicturesAndRecords(List, EscherContainerRecord)}.
+     */
+    static final class PictureFactory {
+        final byte[] imageData;
+
+        private final EscherContainerRecord recordContainer;
+        private final PictureData.PictureType type;
+        private final int offset;
+        private final int signature;
+        private EscherBSERecord record;
+
+        PictureFactory(
+                EscherContainerRecord recordContainer,
+                PictureData.PictureType type,
+                byte[] imageData,
+                int offset,
+                int signature
+        ) {
+            this.recordContainer = Objects.requireNonNull(recordContainer);
+            this.type = Objects.requireNonNull(type);
+            this.imageData = Objects.requireNonNull(imageData);
+            this.offset = offset;
+            this.signature = signature;
+        }
+
+        int getOffset() {
+            return offset;
+        }
+
+        /**
+         * Constructs a new {@link HSLFPictureData}.
+         * <p>
+         * The {@link EscherBSERecord} must have been set via {@link #setRecord(EscherBSERecord)} prior to invocation.
+         */
+        HSLFPictureData build() {
+            Objects.requireNonNull(record, "Can't build an instance until the record has been assigned.");
+            return HSLFPictureData.createFromSlideshowData(type, recordContainer, record, imageData, signature);
+        }
+
+        /**
+         * Sets the {@link EscherBSERecord} with which this factory should create a {@link HSLFPictureData}.
+         */
+        PictureFactory setRecord(EscherBSERecord bse) {
+            record = bse;
+            return this;
         }
     }
 }

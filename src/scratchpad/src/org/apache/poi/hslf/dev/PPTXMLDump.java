@@ -173,7 +173,6 @@ public final class PPTXMLDump {
                 return;
             }
 
-            byte[] pictdata = IOUtils.safelyClone(data, pos + PICT_HEADER_SIZE, size, MAX_RECORD_LENGTH);
             pos += PICT_HEADER_SIZE + size;
 
             padding++;
@@ -183,7 +182,7 @@ public final class PPTXMLDump {
             dump(out, header, 0, header.length, padding, true);
             write(out, "</header>" + CR, padding);
             write(out, "<imgdata>" + CR, padding);
-            dump(out, pictdata, 0, Math.min(pictdata.length, 100), padding, true);
+            dump(out, data, 0, Math.min(size, 100), padding, true);
             write(out, "</imgdata>" + CR, padding);
             padding--;
             write(out, "</picture>" + CR, padding);

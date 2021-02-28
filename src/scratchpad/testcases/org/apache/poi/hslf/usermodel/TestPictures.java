@@ -27,9 +27,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.blip.DIB;
 import org.apache.poi.hslf.blip.EMF;
@@ -37,6 +42,7 @@ import org.apache.poi.hslf.blip.JPEG;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.sl.image.ImageHeaderWMF;
@@ -512,9 +518,8 @@ public final class TestPictures {
 
         int streamSize = out.size();
 
-        HSLFPictureData data = HSLFPictureData.create(PictureType.JPEG);
-        data.setData(new byte[100]);
-        int offset = hslf.addPicture(data);
+        HSLFPictureData data = ppt.addPicture(new byte[100], PictureType.JPEG);
+        int offset = data.getOffset();
         assertEquals(streamSize, offset);
         assertEquals(3, ppt.getPictureData().size());
 
@@ -558,6 +563,174 @@ public final class TestPictures {
         try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt")) {
             HSLFPictureData picture = ppt.getPictureData().get(0);
             assertEquals(1, picture.getIndex());
+        }
+    }
+
+    /**
+     * Verify that it is possible for a user to change the contents of a {@link HSLFPictureData} using
+     * {@link HSLFPictureData#setData(byte[])}, and that the changes are saved to the slideshow.
+     */
+    @Test
+    void testEditPictureData() throws IOException {
+        byte[] newImage = slTests.readFile("tomcat.png");
+        ByteArrayOutputStream modifiedSlideShow = new ByteArrayOutputStream();
+
+        // Load an existing slideshow and modify the image
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt")) {
+            HSLFPictureData picture = ppt.getPictureData().get(0);
+            picture.setData(newImage);
+            ppt.write(modifiedSlideShow);
+        }
+
+        // Load the modified slideshow and verify the image content
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(modifiedSlideShow.toByteArray()))) {
+            HSLFPictureData picture = ppt.getPictureData().get(0);
+            byte[] modifiedImageData = picture.getData();
+            assertArrayEquals(newImage, modifiedImageData);
+        }
+    }
+
+    /**
+     * Verify that it is possible for a user to change the contents of an encrypted {@link HSLFPictureData} using
+     * {@link HSLFPictureData#setData(byte[])}, and that the changes are saved to the slideshow.
+     */
+    @Test
+    void testEditPictureDataEncrypted() throws IOException {
+        byte[] newImage = slTests.readFile("tomcat.png");
+        ByteArrayOutputStream modifiedSlideShow = new ByteArrayOutputStream();
+
+        Biff8EncryptionKey.setCurrentUserPassword("password");
+        try {
+            // Load an existing slideshow and modify the image
+            try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png_encrypted.ppt")) {
+                HSLFPictureData picture = ppt.getPictureData().get(0);
+                picture.setData(newImage);
+                ppt.write(modifiedSlideShow);
+            }
+
+            // Load the modified slideshow and verify the image content
+            try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(modifiedSlideShow.toByteArray()))) {
+                HSLFPictureData picture = ppt.getPictureData().get(0);
+                byte[] modifiedImageData = picture.getData();
+                assertArrayEquals(newImage, modifiedImageData);
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
+    }
+
+    /**
+     * Verify that the {@link EscherBSERecord#getOffset()} values are modified for all images after the image being
+     * changed.
+     */
+    @Test
+    void testEditPictureDataRecordOffsetsAreShifted() throws IOException {
+        int[] originalOffsets = {0, 12013, 15081, 34162, 59563};
+        int[] modifiedOffsets = {0, 35, 3103, 22184, 47585};
+
+        ByteArrayOutputStream inMemory = new ByteArrayOutputStream();
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("pictures.ppt")) {
+            int[] offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            assertArrayEquals(originalOffsets, offsets);
+
+            HSLFPictureData imageBeingChanged = ppt.getPictureData().get(0);
+            // It doesn't matter that this isn't a valid image. We are just testing offsets here.
+            imageBeingChanged.setData(new byte[10]);
+
+            // Verify that the in-memory representations have all been updated
+            offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            assertArrayEquals(modifiedOffsets, offsets);
+
+            ppt.write(inMemory);
+        }
+
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(inMemory.toByteArray()))) {
+
+            // Verify that the persisted representations have all been updated
+            int[] offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            assertArrayEquals(modifiedOffsets, offsets);
+        }
+    }
+
+    /**
+     * Verify that the {@link EscherBSERecord#getOffset()} values are modified for all images after the image being
+     * changed, but assuming that the records are not stored in a sorted-by-offset fashion.
+     *
+     * We have not encountered a file that has meaningful data that is not sorted. However, we have encountered files
+     * that have records with an offset of 0 interspersed between meaningful records. See {@code 53446.ppt} and
+     * {@code alterman_security.ppt} for examples.
+     */
+    @Test
+    void testEditPictureDataOutOfOrderRecords() throws IOException {
+        int[] modifiedOffsets = {0, 35, 3103, 22184, 47585};
+
+        ByteArrayOutputStream inMemory = new ByteArrayOutputStream();
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("pictures.ppt")) {
+
+            // For this test we're going to intentionally manipulate the records into a shuffled order.
+            EscherContainerRecord container = ppt.getPictureData().get(0).bStore;
+            List<EscherRecord> children = container.getChildRecords();
+            for (EscherRecord child : children) {
+                container.removeChildRecord(child);
+            }
+            Collections.shuffle(children);
+            for (EscherRecord child : children) {
+                container.addChildRecord(child);
+            }
+
+            HSLFPictureData imageBeingChanged = ppt.getPictureData().get(0);
+            // It doesn't matter that this isn't a valid image. We are just testing offsets here.
+            imageBeingChanged.setData(new byte[10]);
+
+            // Verify that the in-memory representations have all been updated
+            int[] offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            Arrays.sort(offsets);
+            assertArrayEquals(modifiedOffsets, offsets);
+
+            ppt.write(inMemory);
+        }
+
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(inMemory.toByteArray()))) {
+
+            // Verify that the persisted representations have all been updated
+            int[] offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            Arrays.sort(offsets);
+            assertArrayEquals(modifiedOffsets, offsets);
+        }
+    }
+
+    /**
+     * Verify that a slideshow with records that have offsets not matching those of the pictures in the stream still
+     * correctly pairs the records and pictures.
+     */
+    @Test
+    void testSlideshowWithIncorrectOffsets() throws IOException {
+        int[] originalOffsets;
+        int originalNumberOfRecords;
+
+        // Create a presentation that has records with unmatched offsets, but with matched UIDs.
+        ByteArrayOutputStream inMemory = new ByteArrayOutputStream();
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("pictures.ppt")) {
+            originalOffsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            originalNumberOfRecords = ppt.getPictureData().get(0).bStore.getChildRecords().size();
+
+            Random random = new Random();
+            for (HSLFPictureData picture : ppt.getPictureData()) {
+                // Bound is arbitrary and irrelevant to the test.
+                picture.bse.setOffset(random.nextInt(500_000));
+            }
+            ppt.write(inMemory);
+        }
+
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(inMemory.toByteArray()))) {
+
+            // Verify that the offsets all got fixed.
+            int[] offsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
+            assertArrayEquals(originalOffsets, offsets);
+
+            // Verify that there are the same number of records as in the original slideshow.
+            int numberOfRecords = ppt.getPictureData().get(0).bStore.getChildRecords().size();
+            assertEquals(originalNumberOfRecords, numberOfRecords);
         }
     }
 }

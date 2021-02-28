@@ -55,6 +55,7 @@ public abstract class BaseTestPPTIterating {
         ENCRYPTED_FILES.add("Password_Protected-np-hello.ppt");
         ENCRYPTED_FILES.add("Password_Protected-56-hello.ppt");
         ENCRYPTED_FILES.add("Password_Protected-hello.ppt");
+        ENCRYPTED_FILES.add("ppt_with_png_encrypted.ppt");
     }
 
     protected static final Map<String,Class<? extends Throwable>> EXCLUDED =

@@ -794,36 +794,11 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 			dggContainer.addChildBefore(bstore, EscherOptRecord.RECORD_ID);
 		}
 
-		HSLFPictureData pict = HSLFPictureData.create(format);
-		pict.setData(data);
+		EscherBSERecord bse = addNewEscherBseRecord(bstore, format, data, 0);
+		HSLFPictureData pict = HSLFPictureData.createFromImageData(format, bstore, bse, data);
 
 		int offset = _hslfSlideShow.addPicture(pict);
-
-		EscherBSERecord bse = new EscherBSERecord();
-		bse.setRecordId(EscherBSERecord.RECORD_ID);
-		bse.setOptions((short) (0x0002 | (format.nativeId << 4)));
-		bse.setSize(pict.getRawData().length + 8);
-		byte[] uid = HSLFPictureData.getChecksum(data);
-		bse.setUid(uid);
-
-		bse.setBlipTypeMacOS((byte) format.nativeId);
-		bse.setBlipTypeWin32((byte) format.nativeId);
-
-		if (format == PictureType.EMF) {
-			bse.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
-		} else if (format == PictureType.WMF) {
-			bse.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
-		} else if (format == PictureType.PICT) {
-			bse.setBlipTypeWin32((byte) PictureType.WMF.nativeId);
-		}
-
-		bse.setRef(0);
 		bse.setOffset(offset);
-		bse.setRemainingData(new byte[0]);
-
-		bstore.addChildRecord(bse);
-		int count = bstore.getChildRecords().size();
-		bstore.setOptions((short) ((count << 4) | 0xF));
 
 		return pict;
 	}
@@ -1272,5 +1247,32 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	@Override
 	public EncryptionInfo getEncryptionInfo() throws IOException {
 		return getSlideShowImpl().getEncryptionInfo();
+	}
+
+	static EscherBSERecord addNewEscherBseRecord(EscherContainerRecord blipStore, PictureType type, byte[] imageData, int offset) {
+		EscherBSERecord record = new EscherBSERecord();
+		record.setRecordId(EscherBSERecord.RECORD_ID);
+		record.setOptions((short) (0x0002 | (type.nativeId << 4)));
+		record.setSize(imageData.length + HSLFPictureData.PREAMBLE_SIZE);
+		record.setUid(Arrays.copyOf(imageData, HSLFPictureData.CHECKSUM_SIZE));
+
+		record.setBlipTypeMacOS((byte) type.nativeId);
+		record.setBlipTypeWin32((byte) type.nativeId);
+
+		if (type == PictureType.EMF) {
+			record.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
+		} else if (type == PictureType.WMF) {
+			record.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
+		} else if (type == PictureType.PICT) {
+			record.setBlipTypeWin32((byte) PictureType.WMF.nativeId);
+		}
+
+		record.setOffset(offset);
+
+		blipStore.addChildRecord(record);
+		int count = blipStore.getChildRecords().size();
+		blipStore.setOptions((short) ((count << 4) | 0xF));
+
+		return record;
 	}
 }

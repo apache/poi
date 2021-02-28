@@ -105,6 +105,10 @@ public interface PictureData {
 
     /**
      * Sets the binary picture data
+     * <p>
+     * The format of the data must match the format of {@link #getType()}. Failure to match the picture data may result
+     * in data loss.
+     *
      * @param data picture data
      */
 	void setData(byte[] data) throws IOException;
