@@ -18,14 +18,17 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.util.Internal;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Based on AbstractEscherRecordHolder from HSSF.
@@ -34,7 +37,27 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class EscherRecordHolder {
-	private final ArrayList<EscherRecord> escherRecords = new ArrayList<>();
+
+	/**
+	 * {@link EscherRecordTypes#DGG_CONTAINER} containing drawing group information for the document.
+	 */
+	private final EscherContainerRecord drawingGroupData = new EscherContainerRecord();
+
+	/**
+	 * {@link EscherRecordTypes#DG_CONTAINER} for drawings in the Main Document.
+	 * <p>
+	 * {@code null} to indicate that the document does not have a {@link EscherRecordTypes#DG_CONTAINER} for the Main
+	 * Document.
+	 */
+	private EscherContainerRecord mainDocumentDgContainer;
+
+	/**
+	 * {@link EscherRecordTypes#DG_CONTAINER} for drawings in the Header Document.
+	 * <p>
+	 * {@code null} to indicate that the document does not have a {@link EscherRecordTypes#DG_CONTAINER} for the Header
+	 * Document.
+	 */
+	private EscherContainerRecord headerDocumentDgContainer;
 
 	public EscherRecordHolder(byte[] data, int offset, int size) {
 		fillEscherRecords(data, offset, size);
@@ -47,129 +70,77 @@ public final class EscherRecordHolder {
 	 *
 	 * @see FileInformationBlock#getLcbDggInfo()
 	 */
-	private void fillEscherRecords(byte[] data, int offset, int size)
-	{
+	private void fillEscherRecords(byte[] data, int offset, int size) {
 		if (size == 0) return;
 
 		EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
 		int pos = offset;
-		while ( pos < offset + size)
-		{
-			EscherRecord r = recordFactory.createRecord(data, pos);
-			escherRecords.add(r);
-			int bytesRead = r.fillFields(data, pos, recordFactory);
-			pos += bytesRead + 1; // There is an empty byte between each top-level record in a Word doc
+		pos += drawingGroupData.fillFields(data, pos, recordFactory);
+		assert drawingGroupData.getRecordId() == EscherRecordTypes.DGG_CONTAINER.typeID;
+
+		/*
+		 * After the drawingGroupData there is an array (2 slots max) that has data about drawings. According to the
+		 * spec, the first slot is for the Main Document, the second for the Header Document. Additionally, the
+		 * OfficeArtWordDrawing structure has a byte (dgglbl) that indicates whether the structure is for the Main or
+		 * Header Document. In practice we've seen documents such as 61911.doc where the order of array entries does not
+		 * match the dgglbl byte. As the byte is more likely to be reliable, we base the parsing off of that rather than
+		 * array order.
+		 */
+
+		// This should loop at most twice
+		while (pos < offset + size) {
+
+			// Named this way to match section 2.9.172 of [MS-DOC] - v20191119.
+			byte dgglbl = data[pos];
+			assert dgglbl == 0x00 || dgglbl == 0x01;
+			pos++;
+
+			EscherContainerRecord dgContainer = new EscherContainerRecord();
+			pos+= dgContainer.fillFields(data, pos, recordFactory);
+			assert dgContainer.getRecordId() == EscherRecordTypes.DG_CONTAINER.typeID;
+
+			switch (dgglbl) {
+				case 0x00:
+					mainDocumentDgContainer = dgContainer;
+					break;
+				case 0x01:
+					headerDocumentDgContainer = dgContainer;
+					break;
+				default:
+					LogManager.getLogger(EscherRecordHolder.class).atWarn()
+							.log("dgglbl {} for OfficeArtWordDrawing is out of bounds [0, 1]", box(dgglbl));
+			}
 		}
+
+		assert pos == offset + size;
 	}
 
 	public List<EscherRecord> getEscherRecords() {
-		return escherRecords;
+		return drawingGroupData.getChildRecords();
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		if (escherRecords.size() == 0) {
-			buffer.append("No Escher Records Decoded").append("\n");
-		}
-		Iterator<EscherRecord> iterator = escherRecords.iterator();
-		while (iterator.hasNext()) {
-			EscherRecord r = iterator.next();
-			buffer.append(r);
-		}
-		return buffer.toString();
-	}
-
-	/**
-	 * If we have a EscherContainerRecord as one of our
-	 *  children (and most top level escher holders do),
-	 *  then return that.
-	 */
-	public EscherContainerRecord getEscherContainer() {
-		for(Iterator<EscherRecord> it = escherRecords.iterator(); it.hasNext();) {
-			Object er = it.next();
-			if(er instanceof EscherContainerRecord) {
-				return (EscherContainerRecord)er;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Descends into all our children, returning the
-	 *  first EscherRecord with the given id, or null
-	 *  if none found
-	 */
-	public EscherRecord findFirstWithId(short id) {
-		return findFirstWithId(id, getEscherRecords());
-	}
-	private static EscherRecord findFirstWithId(short id, List<EscherRecord> records) {
-		// Check at our level
-		for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
-			EscherRecord r = it.next();
-			if(r.getRecordId() == id) {
-				return r;
-			}
-		}
-
-		// Then check our children in turn
-		for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
-			EscherRecord r = it.next();
-			if(r.isContainerRecord()) {
-				EscherRecord found = findFirstWithId(id, r.getChildRecords());
-				if(found != null) {
-					return found;
-				}
-			}
-		}
-
-		// Not found in this lot
-		return null;
-	}
-
-    public List<? extends EscherContainerRecord> getDgContainers()
-    {
-        List<EscherContainerRecord> dgContainers = new ArrayList<>(
-                1);
-        for ( EscherRecord escherRecord : getEscherRecords() )
-        {
-            if ( escherRecord.getRecordId() == (short) 0xF002 )
-            {
-                dgContainers.add( (EscherContainerRecord) escherRecord );
-            }
+    public List<? extends EscherContainerRecord> getDgContainers() {
+        List<EscherContainerRecord> dgContainers = new ArrayList<>(2);
+        if (mainDocumentDgContainer != null) {
+            dgContainers.add(mainDocumentDgContainer);
+        }
+        if (headerDocumentDgContainer != null) {
+            dgContainers.add(headerDocumentDgContainer);
         }
         return dgContainers;
-    }
-
-    public List<? extends EscherContainerRecord> getDggContainers()
-    {
-        List<EscherContainerRecord> dggContainers = new ArrayList<>(
-                1);
-        for ( EscherRecord escherRecord : getEscherRecords() )
-        {
-            if ( escherRecord.getRecordId() == (short) 0xF000 )
-            {
-                dggContainers.add( (EscherContainerRecord) escherRecord );
-            }
-        }
-        return dggContainers;
     }
 
     public List<? extends EscherContainerRecord> getBStoreContainers()
     {
         List<EscherContainerRecord> bStoreContainers = new ArrayList<>(
                 1);
-        for ( EscherContainerRecord dggContainer : getDggContainers() )
-        {
-            for ( EscherRecord escherRecord : dggContainer.getChildRecords() )
-            {
-                if ( escherRecord.getRecordId() == (short) 0xF001 )
-                {
-                    bStoreContainers.add( (EscherContainerRecord) escherRecord );
-                }
-            }
-        }
+		for ( EscherRecord escherRecord : drawingGroupData.getChildRecords() )
+		{
+			if ( escherRecord.getRecordId() == (short) 0xF001 )
+			{
+				bStoreContainers.add( (EscherContainerRecord) escherRecord );
+			}
+		}
         return bStoreContainers;
     }
 
@@ -206,4 +177,13 @@ public final class EscherRecordHolder {
         }
         return spContainers;
     }
+
+	@Override
+	public String toString() {
+		return "EscherRecordHolder{" +
+				"drawingGroupData=" + drawingGroupData +
+				", mainDocumentDgContainer=" + mainDocumentDgContainer +
+				", headerDocumentDgContainer=" + headerDocumentDgContainer +
+				'}';
+	}
 }
