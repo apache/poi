@@ -270,9 +270,10 @@ project('ooxml') {
         antdep 'org.apache.ant:ant:1.10.9'
     }
 
-    task downloadJarsToLibs(){
-        def f = new File('lib/ooxml/xmlbeans-4.0.1.jar')
+    task downloadJarsToLibs() {
+        def f = new File("$projectDir/../../lib/ooxml/xmlbeans-4.0.1.jar")
         if (!f.exists()) {
+            println 'writing file ' + f.getAbsolutePath()
             new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
         }
     }
