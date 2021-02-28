@@ -1005,7 +1005,7 @@ public final class FileInformationBlock {
     }
 
     /**
-     * @return Offset in the Table Stream at which the {@link EscherRecordHolder} exists.
+     * @return Offset in the Table Stream at which the {@link OfficeArtContent} exists.
      */
     public int getFcDggInfo()
     {
@@ -1013,11 +1013,11 @@ public final class FileInformationBlock {
     }
 
     /**
-     * Returns the size, in bytes, of the {@link EscherRecordHolder} at the offset {@link #getFcDggInfo()}.
+     * Returns the size, in bytes, of the {@link OfficeArtContent} at the offset {@link #getFcDggInfo()}.
      * <p>
      * If {@code 0}, there MUST NOT be any drawings in the document.
      *
-     * @return Size, in bytes, of the {@link EscherRecordHolder} at the offset {@link #getFcDggInfo()}.
+     * @return Size, in bytes, of the {@link OfficeArtContent} at the offset {@link #getFcDggInfo()}.
      */
     public int getLcbDggInfo()
     {

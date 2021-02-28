@@ -64,7 +64,6 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -367,7 +366,7 @@ public final class HWPFLister {
             return;
         }
 
-        System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
+        System.out.println( ( (HWPFDocument) _doc ).getOfficeArtContent() );
     }
 
     public void dumpFIB() {

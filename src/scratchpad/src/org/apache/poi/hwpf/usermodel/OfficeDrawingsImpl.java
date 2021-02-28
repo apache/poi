@@ -32,27 +32,27 @@ import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherTertiaryOptRecord;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
 import org.apache.poi.hwpf.model.FSPA;
 import org.apache.poi.hwpf.model.FSPATable;
+import org.apache.poi.hwpf.model.OfficeArtContent;
 
 public class OfficeDrawingsImpl implements OfficeDrawings
 {
-    private final EscherRecordHolder _escherRecordHolder;
+    private final OfficeArtContent officeArtContent;
     private final FSPATable _fspaTable;
     private final byte[] _mainStream;
 
-    public OfficeDrawingsImpl( FSPATable fspaTable,
-            EscherRecordHolder escherRecordHolder, byte[] mainStream )
+    public OfficeDrawingsImpl(FSPATable fspaTable,
+                              OfficeArtContent officeArtContent, byte[] mainStream )
     {
         this._fspaTable = fspaTable;
-        this._escherRecordHolder = escherRecordHolder;
+        this.officeArtContent = officeArtContent;
         this._mainStream = mainStream;
     }
 
     private EscherBlipRecord getBitmapRecord( int bitmapIndex )
     {
-        List<? extends EscherContainerRecord> bContainers = _escherRecordHolder
+        List<? extends EscherContainerRecord> bContainers = officeArtContent
                 .getBStoreContainers();
         if ( bContainers == null || bContainers.size() != 1 )
             return null;
@@ -105,7 +105,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
     private EscherContainerRecord getEscherShapeRecordContainer(
             final int shapeId )
     {
-        for ( EscherContainerRecord spContainer : _escherRecordHolder
+        for ( EscherContainerRecord spContainer : officeArtContent
                 .getSpContainers() )
         {
             EscherSpRecord escherSpRecord = spContainer

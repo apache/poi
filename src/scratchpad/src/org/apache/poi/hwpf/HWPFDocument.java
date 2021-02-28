@@ -31,7 +31,6 @@ import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.DocumentProperties;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
 import org.apache.poi.hwpf.model.FSPADocumentPart;
 import org.apache.poi.hwpf.model.FSPATable;
 import org.apache.poi.hwpf.model.FieldsTables;
@@ -39,6 +38,7 @@ import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.NoteType;
 import org.apache.poi.hwpf.model.NotesTables;
+import org.apache.poi.hwpf.model.OfficeArtContent;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
@@ -134,9 +134,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private FSPATable _fspaMain;
 
     /**
-     * Escher Drawing Group information
+     * Office Art (Escher records) information
      */
-    private EscherRecordHolder _escherRecordHolder;
+    private final OfficeArtContent officeArtContent;
 
     /**
      * Holds pictures table
@@ -309,14 +309,14 @@ public final class HWPFDocument extends HWPFDocumentCore {
                 FSPADocumentPart.HEADER);
         _fspaMain = new FSPATable(_tableStream, _fib, FSPADocumentPart.MAIN);
 
-        _escherRecordHolder = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
+        officeArtContent = new OfficeArtContent(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
 
         // read in the pictures stream
-        _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspaMain, _escherRecordHolder);
+        _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspaMain, officeArtContent);
 
         // And escher pictures
-        _officeDrawingsHeaders = new OfficeDrawingsImpl(_fspaHeaders, _escherRecordHolder, _mainStream);
-        _officeDrawingsMain = new OfficeDrawingsImpl(_fspaMain, _escherRecordHolder, _mainStream);
+        _officeDrawingsHeaders = new OfficeDrawingsImpl(_fspaHeaders, officeArtContent, _mainStream);
+        _officeDrawingsMain = new OfficeDrawingsImpl(_fspaMain, officeArtContent, _mainStream);
 
         _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _fib.getSubdocumentTextStreamLength(SubdocumentType.MAIN));
         _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
@@ -513,8 +513,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
     }
 
     @Internal
-    public EscherRecordHolder getEscherRecordHolder() {
-        return _escherRecordHolder;
+    public OfficeArtContent getOfficeArtContent() {
+        return officeArtContent;
     }
 
     public OfficeDrawings getOfficeDrawingsHeaders() {

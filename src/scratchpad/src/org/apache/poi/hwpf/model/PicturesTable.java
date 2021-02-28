@@ -72,7 +72,7 @@ public final class PicturesTable {
   @Deprecated
   private FSPATable _fspa;
   @Deprecated
-  private EscherRecordHolder _dgg;
+  private OfficeArtContent _dgg;
 
   /** @link dependency
    * @stereotype instantiate*/
@@ -84,7 +84,7 @@ public final class PicturesTable {
    * @param _dataStream
    */
   @Deprecated
-  public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)
+  public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, OfficeArtContent dgg)
   {
     this._document = _document;
     this._dataStream = _dataStream;

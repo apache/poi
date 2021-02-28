@@ -31,12 +31,14 @@ import org.apache.poi.util.Internal;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
- * Based on AbstractEscherRecordHolder from HSSF.
+ * Information about drawings in the document.
+ * <p>
+ * The {@code delay stream} referenced in {@code [MS-ODRAW]} is the {@code WordDocument} stream.
  *
  * @author Squeeself
  */
 @Internal
-public final class EscherRecordHolder {
+public final class OfficeArtContent {
 
 	/**
 	 * {@link EscherRecordTypes#DGG_CONTAINER} containing drawing group information for the document.
@@ -59,7 +61,7 @@ public final class EscherRecordHolder {
 	 */
 	private EscherContainerRecord headerDocumentDgContainer;
 
-	public EscherRecordHolder(byte[] data, int offset, int size) {
+	public OfficeArtContent(byte[] data, int offset, int size) {
 		fillEscherRecords(data, offset, size);
 	}
 
@@ -107,7 +109,7 @@ public final class EscherRecordHolder {
 					headerDocumentDgContainer = dgContainer;
 					break;
 				default:
-					LogManager.getLogger(EscherRecordHolder.class).atWarn()
+					LogManager.getLogger(OfficeArtContent.class).atWarn()
 							.log("dgglbl {} for OfficeArtWordDrawing is out of bounds [0, 1]", box(dgglbl));
 			}
 		}
@@ -180,7 +182,7 @@ public final class EscherRecordHolder {
 
 	@Override
 	public String toString() {
-		return "EscherRecordHolder{" +
+		return "OfficeArtContent{" +
 				"drawingGroupData=" + drawingGroupData +
 				", mainDocumentDgContainer=" + mainDocumentDgContainer +
 				", headerDocumentDgContainer=" + headerDocumentDgContainer +
