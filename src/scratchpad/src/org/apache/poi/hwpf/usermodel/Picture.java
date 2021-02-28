@@ -113,11 +113,7 @@ public final class Picture {
 
         this.dataBlockStartOfsset = dataBlockStartOfsset;
 
-        if ( _picfAndOfficeArtData.getBlipRecords() != null) {
-            _blipRecords = _picfAndOfficeArtData.getBlipRecords();
-        } else {
-            _blipRecords = Collections.emptyList();
-        }
+        _blipRecords = _picfAndOfficeArtData.getBlipRecords();
 
         if ( fillBytes ) {
             fillImageContent();
@@ -398,7 +394,7 @@ public final class Picture {
      */
     public byte[] getRawContent()
     {
-        if (_blipRecords == null || _blipRecords.size() != 1) {
+        if (_blipRecords.size() != 1) {
            return new byte[0];
         }
 
@@ -507,7 +503,7 @@ public final class Picture {
 
     public PictureType suggestPictureType()
     {
-        if (_blipRecords == null || _blipRecords.size() != 1 ) {
+        if (_blipRecords.size() != 1 ) {
             return PictureType.UNKNOWN;
         }
 
