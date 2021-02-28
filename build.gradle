@@ -71,25 +71,8 @@ task adjustWrapperPropertiesFile {
 }
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
-
-// helper method to download a jar file manually from an URL, e.g. XMLBeans 4.0.0
-def urlFile = { url, name ->
-    File file = new File("$buildDir/download/${name}.jar")
-    file.parentFile.mkdirs()
-    if (!file.exists()) {
-        new URL(url).withInputStream { downloadStream ->
-            file.withOutputStream { fileOut ->
-                fileOut << downloadStream
-            }
-        }
-    }
-    files(file.absolutePath)
-}
-
 /**
-
  Define properties for all projects, including this one
-
  */
 allprojects {
     apply plugin: 'eclipse'
@@ -119,7 +102,7 @@ subprojects {
         log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '4.0.0'
+        xmlbeansVersion = '4.0.1'
     }
 
     tasks.withType(JavaCompile) {
@@ -287,6 +270,13 @@ project('ooxml') {
         antdep 'org.apache.ant:ant:1.10.9'
     }
 
+    task downloadJarsToLibs(){
+        def f = new File('lib/ooxml/xmlbeans-4.0.1.jar')
+        if (!f.exists()) {
+            new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+        }
+    }
+
     // we need to ensure that the custom ant tasks are compiled before we import the build.xml file
     ant.mkdir(dir: "../../build/poi-ant-contrib")
     ant.javac(srcdir: "../../src/excelant/poi-ant-contrib"
@@ -302,9 +292,11 @@ project('ooxml') {
         'ant-' + antTargetName
     }
     compileJava.dependsOn 'ant-compile-ooxml-xsds'
+    compileJava.dependsOn 'downloadJarsToLibs'
 
     dependencies {
-        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        //compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile files("../../lib/ooxml/xmlbeans-${xmlbeansVersion}.jar")
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
@@ -360,7 +352,8 @@ project('examples') {
         compile project(':ooxml')
         compile project(':scratchpad')
 
-        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        //compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile files("../../lib/ooxml/xmlbeans-${xmlbeansVersion}.jar")
         compile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 
         compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
@@ -407,7 +400,8 @@ project('integrationtest') {
         compile project(':scratchpad')
         compile project(':examples')
 
-        testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        //testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        testCompile files("../../lib/ooxml/xmlbeans-${xmlbeansVersion}.jar")
 
         testCompile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
         testCompile files(this.project(':ooxml').sourceSets.test.runtimeClasspath)
