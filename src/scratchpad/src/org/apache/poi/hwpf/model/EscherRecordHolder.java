@@ -34,19 +34,23 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class EscherRecordHolder {
-	private final ArrayList<EscherRecord> escherRecords;
-
-	public EscherRecordHolder() {
-		escherRecords = new ArrayList<>();
-	}
+	private final ArrayList<EscherRecord> escherRecords = new ArrayList<>();
 
 	public EscherRecordHolder(byte[] data, int offset, int size) {
-		this();
 		fillEscherRecords(data, offset, size);
 	}
 
+	/**
+	 * Parses the records out of the given data.
+	 *
+	 * The thing to be aware of here is that if {@code size} is {@code 0}, the document does not contain images.
+	 *
+	 * @see FileInformationBlock#getLcbDggInfo()
+	 */
 	private void fillEscherRecords(byte[] data, int offset, int size)
 	{
+		if (size == 0) return;
+
 		EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
 		int pos = offset;
 		while ( pos < offset + size)
@@ -62,6 +66,7 @@ public final class EscherRecordHolder {
 		return escherRecords;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 

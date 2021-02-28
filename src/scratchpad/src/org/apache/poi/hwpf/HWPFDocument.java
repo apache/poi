@@ -309,11 +309,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
                 FSPADocumentPart.HEADER);
         _fspaMain = new FSPATable(_tableStream, _fib, FSPADocumentPart.MAIN);
 
-        if (_fib.getFcDggInfo() != 0) {
-            _escherRecordHolder = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
-        } else {
-            _escherRecordHolder = new EscherRecordHolder();
-        }
+        _escherRecordHolder = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
 
         // read in the pictures stream
         _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspaMain, _escherRecordHolder);
