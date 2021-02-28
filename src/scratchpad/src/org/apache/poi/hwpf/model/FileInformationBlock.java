@@ -1004,11 +1004,21 @@ public final class FileInformationBlock {
         return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
     }
 
+    /**
+     * @return Offset in the Table Stream at which the {@link EscherRecordHolder} exists.
+     */
     public int getFcDggInfo()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.DGGINFO);
     }
 
+    /**
+     * Returns the size, in bytes, of the {@link EscherRecordHolder} at the offset {@link #getFcDggInfo()}.
+     * <p>
+     * If {@code 0}, there MUST NOT be any drawings in the document.
+     *
+     * @return Size, in bytes, of the {@link EscherRecordHolder} at the offset {@link #getFcDggInfo()}.
+     */
     public int getLcbDggInfo()
     {
         return _fieldHandler.getFieldSize(FIBFieldHandler.DGGINFO);
