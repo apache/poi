@@ -52,12 +52,10 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
     private EscherBlipRecord getBitmapRecord( int bitmapIndex )
     {
-        List<? extends EscherContainerRecord> bContainers = officeArtContent
-                .getBStoreContainers();
-        if ( bContainers == null || bContainers.size() != 1 )
+        EscherContainerRecord bContainer = officeArtContent.getBStoreContainer();
+        if (bContainer == null)
             return null;
 
-        EscherContainerRecord bContainer = bContainers.get( 0 );
         final List<EscherRecord> bitmapRecords = bContainer.getChildRecords();
 
         if ( bitmapRecords.size() < bitmapIndex )

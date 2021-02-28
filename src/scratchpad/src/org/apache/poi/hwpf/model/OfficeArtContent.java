@@ -121,7 +121,7 @@ public final class OfficeArtContent {
 		return drawingGroupData.getChildRecords();
 	}
 
-    public List<? extends EscherContainerRecord> getDgContainers() {
+    private List<? extends EscherContainerRecord> getDgContainers() {
         List<EscherContainerRecord> dgContainers = new ArrayList<>(2);
         if (mainDocumentDgContainer != null) {
             dgContainers.add(mainDocumentDgContainer);
@@ -132,18 +132,11 @@ public final class OfficeArtContent {
         return dgContainers;
     }
 
-    public List<? extends EscherContainerRecord> getBStoreContainers()
-    {
-        List<EscherContainerRecord> bStoreContainers = new ArrayList<>(
-                1);
-		for ( EscherRecord escherRecord : drawingGroupData.getChildRecords() )
-		{
-			if ( escherRecord.getRecordId() == (short) 0xF001 )
-			{
-				bStoreContainers.add( (EscherContainerRecord) escherRecord );
-			}
-		}
-        return bStoreContainers;
+	/**
+	 * @return The {@link EscherRecordTypes#BSTORE_CONTAINER} or {@code null} if the document doesn't have one.
+	 */
+	public EscherContainerRecord getBStoreContainer() {
+    	return drawingGroupData.getChildById(EscherRecordTypes.BSTORE_CONTAINER.typeID);
     }
 
     public List<? extends EscherContainerRecord> getSpgrContainers()
