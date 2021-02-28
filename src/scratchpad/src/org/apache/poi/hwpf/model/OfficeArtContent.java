@@ -117,10 +117,6 @@ public final class OfficeArtContent {
 		assert pos == offset + size;
 	}
 
-	public List<EscherRecord> getEscherRecords() {
-		return drawingGroupData.getChildRecords();
-	}
-
     private List<? extends EscherContainerRecord> getDgContainers() {
         List<EscherContainerRecord> dgContainers = new ArrayList<>(2);
         if (mainDocumentDgContainer != null) {

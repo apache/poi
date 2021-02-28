@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -166,7 +167,7 @@ public final class PicturesTable {
   }
 
   /**
-     * Performs a recursive search for pictures in the given list of escher records.
+     * Performs a search for pictures in the given list of escher records.
      *
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
@@ -205,9 +206,6 @@ public final class PicturesTable {
                     }
                 }
           }
-
-          // Recursive call.
-          searchForPictures(escherRecord.getChildRecords(), pictures);
        }
     }
 
@@ -234,9 +232,12 @@ public final class PicturesTable {
     	}
 	}
 
-    searchForPictures(_dgg.getEscherRecords(), pictures);
+      EscherContainerRecord bStore = _dgg.getBStoreContainer();
+      if (bStore != null) {
+          searchForPictures(bStore.getChildRecords(), pictures);
+      }
 
-    return pictures;
+      return pictures;
   }
 
   private boolean isBlockContainsImage(int i)
