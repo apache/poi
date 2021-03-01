@@ -237,23 +237,13 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * Write this picture into <code>OutputStream</code>
      */
     public void write(OutputStream out) throws IOException {
-        byte[] data;
+        LittleEndian.putUShort(getSignature(), out);
 
-        data = new byte[LittleEndianConsts.SHORT_SIZE];
-        LittleEndian.putUShort(data, 0, getSignature());
-        out.write(data);
-
-        data = new byte[LittleEndianConsts.SHORT_SIZE];
         PictureType pt = getType();
-        LittleEndian.putUShort(data, 0, pt.nativeId + EscherRecordTypes.BLIP_START.typeID);
-        out.write(data);
+        LittleEndian.putUShort(pt.nativeId + EscherRecordTypes.BLIP_START.typeID, out);
 
         byte[] rd = getRawData();
-
-        data = new byte[LittleEndianConsts.INT_SIZE];
-        LittleEndian.putInt(data, 0, rd.length);
-        out.write(data);
-
+        LittleEndian.putInt(rd.length, out);
         out.write(rd);
     }
 
