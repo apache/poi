@@ -42,7 +42,7 @@ public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord
     public DrawingRecordForBiffViewer(DrawingRecord r)
     {
     	super(convertToInputStream(r));
-    	convertRawBytesToEscherRecords();
+    	decode();
     }
     private static RecordInputStream convertToInputStream(DrawingRecord r)
     {

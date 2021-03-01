@@ -27,6 +27,7 @@ import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.hssf.util.LazilyConcatenatedByteArray;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * The escher container record is used to hold escher records.  It is abstract and
@@ -63,10 +64,17 @@ public abstract class AbstractEscherHolderRecord extends Record {
         }
     }
 
+    /**
+     * @deprecated Call {@link #decode()} instead.
+     */
+    @Removal(version = "5.3")
+    @Deprecated
     protected void convertRawBytesToEscherRecords() {
+        // decode() does a check to see if raw bytes have already been interpreted. In the case that we did not eagerly
+        //  interpret the bytes due to DESERIALIZE being false, decode() will interpret the bytes. If we did already
+        //  interpret the bytes due to DESERIALIZE being true, decode skips doing the work again.
         if (!DESERIALIZE) {
-            byte[] rawData = getRawData();
-        	convertToEscherRecords(0, rawData.length, rawData);
+            decode();
         }
     }
     private void convertToEscherRecords( int offset, int size, byte[] data )

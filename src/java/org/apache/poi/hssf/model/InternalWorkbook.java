@@ -1840,7 +1840,7 @@ public final class InternalWorkbook {
                 continue;
             }
             DrawingGroupRecord dg = (DrawingGroupRecord)r;
-            dg.processChildRecords();
+            dg.decode();
             drawingManager = findDrawingManager(dg, escherBSERecords);
             if (drawingManager != null) {
                 return drawingManager;
