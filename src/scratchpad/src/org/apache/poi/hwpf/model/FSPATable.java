@@ -58,14 +58,14 @@ public final class FSPATable
         return new FSPA( propertyNode.getBytes(), 0 );
     }
 
-    public FSPA[] getShapes()
+    public List<FSPA> getShapes()
     {
         List<FSPA> result = new ArrayList<>(_byStart.size());
         for ( GenericPropertyNode propertyNode : _byStart.values() )
         {
             result.add( new FSPA( propertyNode.getBytes(), 0 ) );
         }
-        return result.toArray(new FSPA[0]);
+        return result;
     }
 
     public String toString() {
