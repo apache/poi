@@ -1880,7 +1880,7 @@ public final class InternalWorkbook {
 
         DrawingManager2 dm = new DrawingManager2(dgg);
         if(bStore != null){
-            for(EscherRecord bs : bStore.getChildRecords()){
+            for (EscherRecord bs : bStore) {
                 if(bs instanceof EscherBSERecord) {
                     escherBSERecords.add((EscherBSERecord)bs);
                 }

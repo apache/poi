@@ -315,7 +315,7 @@ class TestDrawingShapes {
         EscherContainerRecord spgrContainer =
                 agg1.getEscherContainer().getChildContainers().get(0);
         // root spContainer + 2 spContainers for shapes
-        assertEquals(3, spgrContainer.getChildRecords().size());
+        assertEquals(3, spgrContainer.getChildCount());
 
         EscherSpRecord sp0 =
                 ((EscherContainerRecord) spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);

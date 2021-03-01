@@ -459,8 +459,7 @@ public final class HSLFFill {
             LOG.atDebug().log("EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
-        List<EscherRecord> lst = bstore.getChildRecords();
-        return (EscherBSERecord)lst.get(idx-1);
+        return (EscherBSERecord) bstore.getChild(idx-1);
     }
 
     /**
@@ -563,12 +562,11 @@ public final class HSLFFill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
-        List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
         if (idx == 0){
             LOG.atWarn().log("no reference to picture data found ");
         } else {
-            EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
+            EscherBSERecord bse = (EscherBSERecord) bstore.getChild(idx - 1);
             for (HSLFPictureData pd : pict) {
 
                 // Reference equals is safe because these BSE belong to the same slideshow

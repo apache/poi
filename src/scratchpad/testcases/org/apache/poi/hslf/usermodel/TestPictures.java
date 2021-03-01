@@ -712,7 +712,7 @@ public final class TestPictures {
         ByteArrayOutputStream inMemory = new ByteArrayOutputStream();
         try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("pictures.ppt")) {
             originalOffsets = ppt.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
-            originalNumberOfRecords = ppt.getPictureData().get(0).bStore.getChildRecords().size();
+            originalNumberOfRecords = ppt.getPictureData().get(0).bStore.getChildCount();
 
             Random random = new Random();
             for (HSLFPictureData picture : ppt.getPictureData()) {
@@ -729,7 +729,7 @@ public final class TestPictures {
             assertArrayEquals(originalOffsets, offsets);
 
             // Verify that there are the same number of records as in the original slideshow.
-            int numberOfRecords = ppt.getPictureData().get(0).bStore.getChildRecords().size();
+            int numberOfRecords = ppt.getPictureData().get(0).bStore.getChildCount();
             assertEquals(originalNumberOfRecords, numberOfRecords);
         }
     }

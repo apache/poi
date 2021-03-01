@@ -158,6 +158,10 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         return new ArrayList<>(_childRecords);
     }
 
+    public int getChildCount() {
+        return _childRecords.size();
+    }
+
     /**
      * @return an iterator over the child records
      */

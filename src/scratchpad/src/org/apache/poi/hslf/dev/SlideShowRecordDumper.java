@@ -213,11 +213,10 @@ public final class SlideShowRecordDumper {
         ps.println(ind + "  options: 0x" + HexDump.toHex( ecr.getOptions() ));
         ps.println(ind + "  recordId: 0x" + HexDump.toHex( ecr.getRecordId() ));
         
-        List<EscherRecord> childRecords = ecr.getChildRecords();
-        ps.println(ind + "  numchildren: " + childRecords.size());
+        ps.println(ind + "  numchildren: " + ecr.getChildCount());
         ps.println(ind + "  children: ");
         int count = 0;
-        for ( EscherRecord record : childRecords ) {
+        for ( EscherRecord record : ecr ) {
             ps.println(ind + "   Child " + count + ":");
             printEscherRecord(record, indent+1);
             count++;

@@ -56,12 +56,10 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         if (bContainer == null)
             return null;
 
-        final List<EscherRecord> bitmapRecords = bContainer.getChildRecords();
-
-        if ( bitmapRecords.size() < bitmapIndex )
+        if ( bContainer.getChildCount() < bitmapIndex )
             return null;
 
-        EscherRecord imageRecord = bitmapRecords.get( bitmapIndex - 1 );
+        EscherRecord imageRecord = bContainer.getChild( bitmapIndex - 1 );
 
         if ( imageRecord instanceof EscherBlipRecord )
         {

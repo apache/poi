@@ -41,7 +41,7 @@ class TestText {
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
 
-        assertEquals(textbox.getEscherContainer().getChildRecords().size(), 5);
+        assertEquals(textbox.getEscherContainer().getChildCount(), 5);
 
         //sp record
         byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");

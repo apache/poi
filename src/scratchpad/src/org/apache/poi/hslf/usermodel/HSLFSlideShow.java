@@ -1270,7 +1270,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		record.setOffset(offset);
 
 		blipStore.addChildRecord(record);
-		int count = blipStore.getChildRecords().size();
+		int count = blipStore.getChildCount();
 		blipStore.setOptions((short) ((count << 4) | 0xF));
 
 		return record;

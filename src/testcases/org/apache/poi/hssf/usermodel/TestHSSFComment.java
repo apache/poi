@@ -213,7 +213,7 @@ final class TestHSSFComment extends BaseTestCellComment {
         HSSFCell cell = row.createCell(0);
         cell.setCellComment(comment);
 
-        assertEquals(comment.getEscherContainer().getChildRecords().size(), 5);
+        assertEquals(comment.getEscherContainer().getChildCount(), 5);
 
         //sp record
         byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");

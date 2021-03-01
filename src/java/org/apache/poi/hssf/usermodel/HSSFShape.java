@@ -186,9 +186,9 @@ public abstract class HSSFShape implements Shape {
                 throw new IllegalArgumentException("Must use client anchors for shapes directly attached to sheet.");
             EscherClientAnchorRecord anch = _escherContainer.getChildById(EscherClientAnchorRecord.RECORD_ID);
             if (null != anch) {
-                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
+                for (i=0; i< _escherContainer.getChildCount(); i++){
                     if (_escherContainer.getChild(i).getRecordId() == EscherClientAnchorRecord.RECORD_ID){
-                        if (i != _escherContainer.getChildRecords().size() -1){
+                        if (i != _escherContainer.getChildCount() -1){
                             recordId = _escherContainer.getChild(i+1).getRecordId();
                         }
                     }
@@ -200,9 +200,9 @@ public abstract class HSSFShape implements Shape {
                 throw new IllegalArgumentException("Must use child anchors for shapes attached to groups.");
             EscherChildAnchorRecord anch = _escherContainer.getChildById(EscherChildAnchorRecord.RECORD_ID);
             if (null != anch) {
-                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
+                for (i=0; i< _escherContainer.getChildCount(); i++){
                     if (_escherContainer.getChild(i).getRecordId() == EscherChildAnchorRecord.RECORD_ID){
-                        if (i != _escherContainer.getChildRecords().size() -1){
+                        if (i != _escherContainer.getChildCount() -1){
                             recordId = _escherContainer.getChild(i+1).getRecordId();
                         }
                     }

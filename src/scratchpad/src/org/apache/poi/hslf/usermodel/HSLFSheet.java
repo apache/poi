@@ -236,10 +236,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             return false;
         }
 
-        List<EscherRecord> lst = spgr.getChildRecords();
-        boolean result = lst.remove(shape.getSpContainer());
-        spgr.setChildRecords(lst);
-        return result;
+        return spgr.removeChildRecord(shape.getSpContainer());
     }
 
     /**

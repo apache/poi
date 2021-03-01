@@ -141,7 +141,7 @@ public final class OfficeArtContent {
                 1);
         for ( EscherContainerRecord dgContainer : getDgContainers() )
         {
-            for ( EscherRecord escherRecord : dgContainer.getChildRecords() )
+            for ( EscherRecord escherRecord : dgContainer )
             {
                 if ( escherRecord.getRecordId() == (short) 0xF003 )
                 {
@@ -158,7 +158,7 @@ public final class OfficeArtContent {
                 1);
         for ( EscherContainerRecord spgrContainer : getSpgrContainers() )
         {
-            for ( EscherRecord escherRecord : spgrContainer.getChildRecords() )
+            for ( EscherRecord escherRecord : spgrContainer )
             {
                 if ( escherRecord.getRecordId() == (short) 0xF004 )
                 {

@@ -146,13 +146,13 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
             LOG.atDebug().log("EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
-        List<EscherRecord> lst = bstore.getChildRecords();
+
         int idx = getPictureIndex();
         if (idx == 0){
             LOG.atDebug().log("picture index was not found, returning ");
             return null;
         }
-        return (EscherBSERecord)lst.get(idx-1);
+        return (EscherBSERecord) bstore.getChild(idx - 1);
     }
 
     /**

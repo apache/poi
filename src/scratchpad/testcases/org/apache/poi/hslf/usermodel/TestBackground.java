@@ -211,8 +211,7 @@ public final class TestBackground {
             Document doc = ppt.getDocumentRecord();
             EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
             EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
-            List<EscherRecord> lst = bstore.getChildRecords();
-            return ((EscherBSERecord)lst.get(idx-1)).getRef();
+            return ((EscherBSERecord) bstore.getChild(idx - 1)).getRef();
         }
         return 0;
     }

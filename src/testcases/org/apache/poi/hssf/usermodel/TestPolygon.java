@@ -43,7 +43,7 @@ class TestPolygon {
         polygon.setPoints( new int[]{0, 90, 50}, new int[]{5, 5, 44} );
         polygon.setShapeId(1024);
 
-        assertEquals(polygon.getEscherContainer().getChildRecords().size(), 4);
+        assertEquals(polygon.getEscherContainer().getChildCount(), 4);
 
         //sp record
         byte[] expected = decompress("H4sIAAAAAAAAAGNi4PrAwQAELEDMxcAAAAU6ZlwQAAAA");
