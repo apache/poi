@@ -48,23 +48,6 @@ public final class FSPATable
         }
     }
 
-    @Deprecated
-    public FSPATable( byte[] tableStream, int fcPlcspa, int lcbPlcspa,
-            List<TextPiece> tpt )
-    {
-        // Will be 0 if no drawing objects in document
-        if ( fcPlcspa == 0 )
-            return;
-
-        PlexOfCps plex = new PlexOfCps( tableStream, fcPlcspa, lcbPlcspa,
-                FSPA.FSPA_SIZE );
-        for ( int i = 0; i < plex.length(); i++ )
-        {
-            GenericPropertyNode property = plex.getProperty( i );
-            _byStart.put(property.getStart(), property );
-        }
-    }
-
     public FSPA getFspaFromCp( int cp )
     {
         GenericPropertyNode propertyNode = _byStart.get(cp);

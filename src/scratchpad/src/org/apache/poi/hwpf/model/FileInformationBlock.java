@@ -992,18 +992,6 @@ public final class FileInformationBlock {
         _fieldHandler.setFieldSize( part.getFibFieldsField(), length );
     }
 
-    @Deprecated
-    public int getFcPlcspaMom()
-    {
-        return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCSPAMOM);
-    }
-
-    @Deprecated
-    public int getLcbPlcspaMom()
-    {
-        return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
-    }
-
     /**
      * @return Offset in the Table Stream at which the {@link OfficeArtContent} exists.
      */
