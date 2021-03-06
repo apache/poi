@@ -27,23 +27,23 @@ import java.io.IOException;
 
 public class DeferredGeneration {
 
-	public static void main(String[] args) throws IOException {
-		try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
-			DeferredSXSSFSheet sheet1 = wb.createSheet("new sheet");
+    public static void main(String[] args) throws IOException {
+        try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
+            DeferredSXSSFSheet sheet1 = wb.createSheet("new sheet");
 
-			sheet1.setRowGenerator((ssxSheet) -> {
-				for (int i = 0; i < 10; i++) {
-					Row row = ssxSheet.createRow(i);
-					Cell cell = row.createCell(1);
-					cell.setCellValue("value " + i);
-				}
-			});
+            sheet1.setRowGenerator((ssxSheet) -> {
+                for (int i = 0; i < 10; i++) {
+                    Row row = ssxSheet.createRow(i);
+                    Cell cell = row.createCell(1);
+                    cell.setCellValue("value " + i);
+                }
+            });
 
-			try (FileOutputStream fileOut = new FileOutputStream("DeferredGeneration.xlsx")) {
-				wb.write(fileOut);
-			} finally {
-				wb.dispose();
-			}
-		}
-	}
+            try (FileOutputStream fileOut = new FileOutputStream("DeferredGeneration.xlsx")) {
+                wb.write(fileOut);
+            } finally {
+                wb.dispose();
+            }
+        }
+    }
 }
