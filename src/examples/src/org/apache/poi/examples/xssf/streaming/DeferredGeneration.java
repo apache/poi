@@ -25,6 +25,11 @@ import org.apache.poi.xssf.streaming.DeferredSXSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This sample demonstrates how to use DeferredSXSSFWorkbook to generate workbooks in a streaming way.
+ * This approach avoids the use of temporary files and can be used to output to streams like
+ * HTTP response streams.
+ */
 public class DeferredGeneration {
 
     public static void main(String[] args) throws IOException {
