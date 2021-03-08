@@ -675,7 +675,7 @@ under the License.
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bc*-1.65.jar"/>
                 <include name="bc*-1.66.jar"/>
-                <include name="batik*-1.13.jar"/>
+                <include name="batik*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
