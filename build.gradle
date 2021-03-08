@@ -102,7 +102,7 @@ subprojects {
         log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '4.0.1'
+        xmlbeansVersion = '5.0.0'
     }
 
     tasks.withType(JavaCompile) {
@@ -271,10 +271,10 @@ project('ooxml') {
     }
 
     task downloadJarsToLibs() {
-        def f = new File("$projectDir/../../lib/ooxml/xmlbeans-4.0.1.jar")
+        def f = new File("$projectDir/../../lib/ooxml/xmlbeans-5.0.0.jar")
         if (!f.exists()) {
             println 'writing file ' + f.getAbsolutePath()
-            new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+            new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
         }
     }
 
