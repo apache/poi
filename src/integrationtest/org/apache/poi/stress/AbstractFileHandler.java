@@ -88,10 +88,12 @@ public abstract class AbstractFileHandler implements FileHandler {
         POITextExtractor extractor = null;
         String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
+            // fix windows absolute paths for exception message tracking
+            String relPath = file.getPath().replace(".*test-data", "test-data").replace('\\', '/');
             extractor = ExtractorFactory.createExtractor(file);
-            assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + file);
+            assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + relPath);
 
-            assertNotNull(extractor.getText(), "Should get some text but had none for file " + file);
+            assertNotNull(extractor.getText(), "Should get some text but had none for file " + relPath);
 
             // also try metadata
             @SuppressWarnings("resource")
@@ -99,7 +101,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             assertNotNull(metadataExtractor.getText());
 
             assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
-                "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!");
+                "Expected Extraction to fail for file " + relPath + " and handler " + this + ", but did not fail!");
 
             assertEquals(length, file.length(), "File should not be modified by extractor");
             assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
