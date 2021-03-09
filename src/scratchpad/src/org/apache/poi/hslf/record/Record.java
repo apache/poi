@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -169,13 +170,17 @@ public abstract class Record implements GenericRecord
 		// A spot of reflection gets us the (byte[],int,int) constructor
 		// From there, we instanciate the class
 		// Any special record handling occurs once we have the class
-		RecordConstructor c = RecordTypes.forTypeID((short)type).recordConstructor;
+		RecordTypes recordType = RecordTypes.forTypeID((short) type);
+		RecordConstructor c = recordType.recordConstructor;
 		if (c == null) {
 			// How odd. RecordTypes normally substitutes in
 			//  a default handler class if it has heard of the record
 			//  type but there's no support for it. Explicitly request
 			//  that now
+			LOG.atDebug().log(() -> new StringFormattedMessage("Known but unhandled record type %d (0x%04x) at offset %d", type, type, start));
 			c = RecordTypes.UnknownRecordPlaceholder.recordConstructor;
+		} else if (recordType == RecordTypes.UnknownRecordPlaceholder) {
+			LOG.atDebug().log(() -> new StringFormattedMessage("Unknown placeholder type %d (0x%04x) at offset %d", type, type, start));
 		}
 
 		final Record toReturn;
