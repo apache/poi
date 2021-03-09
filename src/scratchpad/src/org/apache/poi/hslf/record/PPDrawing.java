@@ -19,8 +19,8 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +46,7 @@ import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * These are actually wrappers onto Escher drawings. Make use of
@@ -58,22 +55,21 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  PowerPoint (hslf) records found within the EscherTextboxRecord
  *  (msofbtClientTextbox) records.
  * Also provides easy access to the EscherTextboxRecords, so that their
- *  text may be extracted and used in Sheets
+ *  text may be extracted and used in Sheets.
+ * <p>
+ * {@code [MS-PPT] - v20210216} refers to this as a {@code DrawingContainer}.
  */
 
 // For now, pretending to be an atom. Might not always be, but that
 //  would require a wrapping class
 public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord> {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 10_485_760;
-
-
-	private byte[] _header;
+	private final byte[] _header;
 	private long _type;
 
-	private final List<EscherRecord> childRecords = new ArrayList<>();
 	private EscherTextboxWrapper[] textboxWrappers;
+
+	private final EscherContainerRecord dgContainer = new EscherContainerRecord();
 
 	//cached EscherDgRecord
 	private EscherDgRecord dg;
@@ -82,11 +78,11 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	 * Get access to the underlying Escher Records
 	 */
 	@SuppressWarnings("WeakerAccess")
-	public List<EscherRecord> getEscherRecords() { return childRecords; }
+	public List<EscherRecord> getEscherRecords() { return Collections.singletonList(dgContainer); }
 
 	@Override
 	public Iterator<EscherRecord> iterator() {
-		return childRecords.iterator();
+		return getEscherRecords().iterator();
 	}
 
 	/**
@@ -121,26 +117,17 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		// Get the type
 		_type = LittleEndian.getUShort(_header,2);
 
-		// Get the contents for now
-		final byte[] contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
-
 		// Build up a tree of Escher records contained within
 		final DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
-		findEscherChildren(erf, contents, 8, len-8, childRecords);
-		EscherContainerRecord dgContainer = getDgContainer();
+		dgContainer.fillFields(source, start + 8, erf);
+		assert dgContainer.getRecordId() == EscherRecordTypes.DG_CONTAINER.typeID;
+		dg = dgContainer.getChildById(EscherRecordTypes.DG.typeID);
 
-		if (dgContainer != null) {
-			textboxWrappers = Stream.of(dgContainer).
-				flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
-				flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
-				flatMap(PPDrawing::getTextboxHelper).
-				toArray(EscherTextboxWrapper[]::new);
-		} else {
-			// Find and EscherTextboxRecord's, and wrap them up
-			final List<EscherTextboxWrapper> textboxes = new ArrayList<>();
-			findEscherTextboxRecord(childRecords, textboxes);
-			this.textboxWrappers = textboxes.toArray(new EscherTextboxWrapper[0]);
-		}
+		textboxWrappers = Stream.of(dgContainer).
+			flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
+			flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
+			flatMap(PPDrawing::getTextboxHelper).
+			toArray(EscherTextboxWrapper[]::new);
 	}
 
 	private static Stream<EscherTextboxWrapper> getTextboxHelper(EscherContainerRecord spContainer) {
@@ -186,66 +173,6 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	}
 
 	/**
-	 * Tree walking way of finding Escher Child Records
-	 */
-	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, List<EscherRecord> found) {
-
-		int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
-
-		// Find the record
-		EscherRecord r = erf.createRecord(source,startPos);
-		// Fill it in
-		r.fillFields( source, startPos, erf );
-		// Save it
-		found.add(r);
-
-		// Wind on
-		int size = r.getRecordSize();
-		if(size < 8) {
-			LOG.atWarn().log("Hit short DDF record at {} - {}", box(startPos),box(size));
-		}
-
-		/*
-		 * Sanity check. Always advance the cursor by the correct value.
-		 *
-		 * getRecordSize() must return exactly the same number of bytes that was written in fillFields.
-		 * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
-		 */
-		if(size != escherBytes){
-			LOG.atWarn().log("Record length={} but getRecordSize() returned {}; record: {}", box(escherBytes),box(r.getRecordSize()),r.getClass());
-			size = escherBytes;
-		}
-		startPos += size;
-		lenToGo -= size;
-		if(lenToGo >= 8) {
-			findEscherChildren(erf, source, startPos, lenToGo, found);
-		}
-	}
-
-	/**
-	 * Look for EscherTextboxRecords
-	 */
-	private void findEscherTextboxRecord(List<EscherRecord> toSearch, List<EscherTextboxWrapper> found) {
-	    EscherSpRecord sp = null;
-	    for (EscherRecord r : toSearch) {
-	        if (r instanceof EscherSpRecord) {
-	            sp = (EscherSpRecord)r;
-	        } else if (r instanceof EscherTextboxRecord) {
-				EscherTextboxRecord tbr = (EscherTextboxRecord)r;
-				EscherTextboxWrapper w = new EscherTextboxWrapper(tbr);
-				if (sp != null) {
-				    w.setShapeId(sp.getShapeId());
-				}
-				found.add(w);
-			} else if (r.isContainerRecord()) {
-				// If it has children, walk them
-				List<EscherRecord> children = r.getChildRecords();
-				findEscherTextboxRecord(children,found);
-			}
-		}
-	}
-
-	/**
 	 * We are type 1036
 	 */
 	public long getRecordType() { return _type; }
@@ -268,9 +195,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 
 		// Find the new size of the escher children;
 		int newSize = 0;
-		for(EscherRecord er : childRecords) {
-			newSize += er.getRecordSize();
-		}
+		newSize += dgContainer.getRecordSize();
 
 		// Update the size (header bytes 5-8)
 		LittleEndian.putInt(_header,4,newSize);
@@ -281,9 +206,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		// Now grab the children's data
 		byte[] b = new byte[newSize];
 		int done = 0;
-		for(EscherRecord r : childRecords) {
-		    done += r.serialize( done, b );
-		}
+		dgContainer.serialize(done, b);
 
 		// Finally, write out the children
 		out.write(b);
@@ -293,7 +216,6 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	 * Create the Escher records associated with a new PPDrawing
 	 */
 	private void create(){
-		EscherContainerRecord dgContainer = new EscherContainerRecord();
 		dgContainer.setRecordId( EscherContainerRecord.DG_CONTAINER );
 		dgContainer.setOptions((short)15);
 
@@ -342,8 +264,6 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		spContainer.addChildRecord(opt);
 
 		dgContainer.addChildRecord(spContainer);
-
-		childRecords.add(dgContainer);
 	}
 
 	/**
@@ -362,7 +282,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	 * @since POI 3.14-Beta2
 	 */
 	public EscherContainerRecord getDgContainer() {
-		return (EscherContainerRecord)firstEscherRecord(this, EscherRecordTypes.DG_CONTAINER).orElse(null);
+		return dgContainer;
 	}
 
 	/**
@@ -371,24 +291,17 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	 * @return EscherDgRecord
 	 */
 	public EscherDgRecord getEscherDgRecord(){
-		if (dg == null) {
-			firstEscherRecord(this, EscherRecordTypes.DG_CONTAINER).
-			flatMap(c -> firstEscherRecord((EscherContainerRecord)c, EscherRecordTypes.DG)).
-			ifPresent(c -> dg = (EscherDgRecord)c);
-		}
 		return dg;
 	}
 
     public StyleTextProp9Atom[] getNumberedListInfo() {
-		EscherContainerRecord dgContainer = getDgContainer();
-
-		return (dgContainer == null) ? new StyleTextProp9Atom[0] : Stream.of(dgContainer).
-			flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
-			flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
-			map(PPDrawing::findInSpContainer).
-			filter(Optional::isPresent).
-			map(Optional::get).
-			toArray(StyleTextProp9Atom[]::new);
+		return Stream.of(dgContainer).
+					flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
+					flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
+					map(PPDrawing::findInSpContainer).
+					filter(Optional::isPresent).
+					map(Optional::get).
+					toArray(StyleTextProp9Atom[]::new);
     }
 
 	@Override
