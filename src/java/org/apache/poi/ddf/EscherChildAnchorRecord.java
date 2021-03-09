@@ -25,10 +25,12 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The escher child achor record is used to specify the position of a shape under an
- * existing group.  The first level of shape records use a EscherClientAnchor record instead.
+ * The escher child anchor record is used to specify the position of a shape under an
+ * existing group.
+ * <p>
+ * The first level of shape records use a {@link EscherClientAnchorRecord} instead.
  *
- * @see EscherChildAnchorRecord
+ * @see EscherClientAnchorRecord
  */
 public class EscherChildAnchorRecord extends EscherRecord {
     public static final short RECORD_ID = EscherRecordTypes.CHILD_ANCHOR.typeID;

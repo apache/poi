@@ -29,7 +29,8 @@ import org.apache.poi.util.LittleEndian;
  * The escher client anchor specifies which rows and cells the shape is bound to as well as
  * the offsets within those cells.  Each cell is 1024 units wide by 256 units long regardless
  * of the actual size of the cell.  The EscherClientAnchorRecord only applies to the top-most
- * shapes.  Shapes contained in groups are bound using the EscherChildAnchorRecords.
+ * shapes. Shapes contained in groups are bound using the EscherChildAnchorRecords. Referred to as an
+ * {@code OfficeArtClientAnchor} by {@code [MS-PPT] - v20210216}.
  *
  * @see EscherChildAnchorRecord
  */
