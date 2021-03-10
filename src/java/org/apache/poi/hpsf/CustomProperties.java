@@ -219,9 +219,7 @@ public class CustomProperties implements Map<String,Object> {
      */
     public List<CustomProperty> properties() {
         List<CustomProperty> list = new ArrayList<>(props.size());
-        for (Long l : dictionary.keySet()) {
-            list.add(props.get(l));
-        }
+        list.addAll(props.values());
         return Collections.unmodifiableList(list);
     }
     
@@ -231,8 +229,8 @@ public class CustomProperties implements Map<String,Object> {
     @Override
     public Collection<Object> values() {
         List<Object> list = new ArrayList<>(props.size());
-        for (Long l : dictionary.keySet()) {
-            list.add(props.get(l).getValue());
+        for (CustomProperty property : props.values()) {
+            list.add(property.getValue());
         }
         return Collections.unmodifiableCollection(list);
     }
@@ -240,8 +238,8 @@ public class CustomProperties implements Map<String,Object> {
     @Override
     public Set<Entry<String, Object>> entrySet() {
         Map<String,Object> set = new LinkedHashMap<>(props.size());
-        for (Entry<Long,String> se : dictionary.entrySet()) {
-            set.put(se.getValue(), props.get(se.getKey()).getValue());
+        for (CustomProperty property : props.values()) {
+            set.put(property.getName(), property.getValue());
         }
         return Collections.unmodifiableSet(set.entrySet());
     }
