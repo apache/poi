@@ -274,6 +274,7 @@ project('ooxml') {
         def f = new File("$projectDir/../../lib/ooxml/xmlbeans-5.0.0.jar")
         if (!f.exists()) {
             println 'writing file ' + f.getAbsolutePath()
+            f.getParentFile().mkdirs()
             new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
         }
     }
