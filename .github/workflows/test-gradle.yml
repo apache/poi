@@ -40,3 +40,10 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew check
+
+    - name: Upload reports
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Gradle reports
+        path: 'build/**/reports/'
