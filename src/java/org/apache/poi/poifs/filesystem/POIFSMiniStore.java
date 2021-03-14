@@ -54,32 +54,28 @@ public class POIFSMiniStore extends BlockStore {
     /**
      * Load the block at the given offset.
      */
-    protected ByteBuffer getBlockAt(final int offset) {
+    protected ByteBuffer getBlockAt(final int offset) throws IOException {
         // Which big block is this?
         int byteOffset = offset * POIFSConstants.SMALL_BLOCK_SIZE;
         int bigBlockNumber = byteOffset / _filesystem.getBigBlockSize();
         int bigBlockOffset = byteOffset % _filesystem.getBigBlockSize();
 
         // Now locate the data block for it
-        Iterator<Integer> it = _mini_stream.getBlockOffsetIterator();
+        Iterator<ByteBuffer> it = _mini_stream.getBlockIterator();
         for (int i = 0; i < bigBlockNumber; i++) {
             it.next();
         }
 
-        try {
-            ByteBuffer dataBlock = _filesystem.getBlockAt(it.next());
-            assert(dataBlock != null);
+        ByteBuffer dataBlock = it.next();
+        assert(dataBlock != null);
 
-            // Position ourselves, and take a slice
-            dataBlock.position(
-                    dataBlock.position() + bigBlockOffset
-            );
-            ByteBuffer miniBuffer = dataBlock.slice();
-            miniBuffer.limit(POIFSConstants.SMALL_BLOCK_SIZE);
-            return miniBuffer;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Position ourselves, and take a slice
+        dataBlock.position(
+                dataBlock.position() + bigBlockOffset
+        );
+        ByteBuffer miniBuffer = dataBlock.slice();
+        miniBuffer.limit(POIFSConstants.SMALL_BLOCK_SIZE);
+        return miniBuffer;
     }
 
     /**
