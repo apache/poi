@@ -167,7 +167,7 @@ subprojects {
         // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
-        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'false'
     }
 
     jacoco {
