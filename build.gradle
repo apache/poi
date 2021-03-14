@@ -298,8 +298,7 @@ project('ooxml') {
     compileJava.dependsOn 'downloadJarsToLibs'
 
     dependencies {
-        //compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        compile files("../../lib/ooxml/xmlbeans-${xmlbeansVersion}.jar")
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
