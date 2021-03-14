@@ -96,6 +96,15 @@ public class POIFSStream implements Iterable<ByteBuffer>
       return new StreamBlockByteBufferIterator(startBlock);
    }
 
+   Iterator<Integer> getBlockOffsetIterator() {
+      if(startBlock == POIFSConstants.END_OF_CHAIN) {
+         throw new IllegalStateException(
+               "Can't read from a new stream before it has been written to"
+         );
+      }
+      return new StreamBlockOffsetIterator(startBlock);
+   }
+
    /**
     * Updates the contents of the stream to the new
     *  set of bytes.
@@ -140,11 +149,11 @@ public class POIFSStream implements Iterable<ByteBuffer>
    /**
     * Class that handles a streaming read of one stream
     */
-   private class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
+   private class StreamBlockOffsetIterator implements Iterator<Integer> {
       private final ChainLoopDetector loopDetector;
       private int nextBlock;
 
-      StreamBlockByteBufferIterator(int firstBlock) {
+       StreamBlockOffsetIterator(int firstBlock) {
          this.nextBlock = firstBlock;
          try {
             this.loopDetector = blockStore.getChainLoopDetector();
@@ -157,25 +166,53 @@ public class POIFSStream implements Iterable<ByteBuffer>
           return nextBlock != POIFSConstants.END_OF_CHAIN;
       }
 
-      public ByteBuffer next() {
+      public Integer next() {
          if (!hasNext()) {
             throw new NoSuchElementException("Can't read past the end of the stream");
          }
 
-         try {
-            loopDetector.claim(nextBlock);
-            ByteBuffer data = blockStore.getBlockAt(nextBlock);
-            nextBlock = blockStore.getNextBlock(nextBlock);
-            return data;
-         } catch(IOException e) {
-            throw new RuntimeException(e);
-         }
+          loopDetector.claim(nextBlock);
+          int currentBlock = nextBlock;
+          nextBlock = blockStore.getNextBlock(nextBlock);
+          return currentBlock;
       }
 
       public void remove() {
          throw new UnsupportedOperationException();
       }
    }
+
+    /**
+     * Class that handles a streaming read of one stream
+     */
+    private class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
+        private final StreamBlockOffsetIterator offsetIterator;
+
+        StreamBlockByteBufferIterator(int firstBlock) {
+            offsetIterator = new StreamBlockOffsetIterator(firstBlock);
+        }
+
+        public boolean hasNext() {
+            return offsetIterator.hasNext();
+        }
+
+        public ByteBuffer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Can't read past the end of the stream");
+            }
+
+            try {
+                return blockStore.getBlockAt(offsetIterator.next());
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
 
    protected class StreamBlockByteBuffer extends OutputStream {
        byte[] oneByte = new byte[1];
