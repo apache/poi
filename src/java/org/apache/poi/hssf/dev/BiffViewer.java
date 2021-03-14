@@ -34,6 +34,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;

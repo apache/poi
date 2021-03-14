@@ -113,7 +113,7 @@
                 <configuration>
                     <printSummary>false</printSummary>
                     <systemPropertyVariables>
-                        <POI.testdata.path>../../test-data</POI.testdata.path>
+                        <POI.testdata.path>${basedir}/../../test-data</POI.testdata.path>
                         <java.awt.headless>true</java.awt.headless>
                     </systemPropertyVariables>
                     <!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
