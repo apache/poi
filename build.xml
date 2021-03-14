@@ -314,7 +314,6 @@ under the License.
     <dependency prefix="svg.batik-gvt" artifact="org.apache.xmlgraphics:batik-gvt:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-i18n" artifact="org.apache.xmlgraphics:batik-i18n:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-parser" artifact="org.apache.xmlgraphics:batik-parser:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-script" artifact="org.apache.xmlgraphics:batik-script:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-shared-resources" artifact="org.apache.xmlgraphics:batik-shared-resources:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-svg-dom" artifact="org.apache.xmlgraphics:batik-svg-dom:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-svggen" artifact="org.apache.xmlgraphics:batik-svggen:1.14" usage="ooxml-batik"/>
@@ -491,7 +490,6 @@ under the License.
         <pathelement location="${svg.batik-gvt.jar}"/>
         <pathelement location="${svg.batik-i18n.jar}"/>
         <pathelement location="${svg.batik-parser.jar}"/>
-        <pathelement location="${svg.batik-script.jar}"/>
         <pathelement location="${svg.batik-shared-resources.jar}"/>
         <pathelement location="${svg.batik-svg-dom.jar}"/>
         <pathelement location="${svg.batik-svggen.jar}"/>
@@ -805,7 +803,6 @@ under the License.
                     <available file="${svg.batik-gvt.jar}"/>
                     <available file="${svg.batik-i18n.jar}"/>
                     <available file="${svg.batik-parser.jar}"/>
-                    <available file="${svg.batik-script.jar}"/>
                     <available file="${svg.batik-shared-resources.jar}"/>
                     <available file="${svg.batik-svg-dom.jar}"/>
                     <available file="${svg.batik-svggen.jar}"/>
@@ -843,7 +840,6 @@ under the License.
         <downloadfile src="${svg.batik-gvt.url}" dest="${svg.batik-gvt.jar}"/>
         <downloadfile src="${svg.batik-i18n.url}" dest="${svg.batik-i18n.jar}"/>
         <downloadfile src="${svg.batik-parser.url}" dest="${svg.batik-parser.jar}"/>
-        <downloadfile src="${svg.batik-script.url}" dest="${svg.batik-script.jar}"/>
         <downloadfile src="${svg.batik-shared-resources.url}" dest="${svg.batik-shared-resources.jar}"/>
         <downloadfile src="${svg.batik-svg-dom.url}" dest="${svg.batik-svg-dom.jar}"/>
         <downloadfile src="${svg.batik-svggen.url}" dest="${svg.batik-svggen.jar}"/>
@@ -2679,7 +2675,6 @@ under the License.
             <auxClasspath path="${svg.batik-gvt.jar}"/>
             <auxClasspath path="${svg.batik-i18n.jar}"/>
             <auxClasspath path="${svg.batik-parser.jar}"/>
-            <auxClasspath path="${svg.batik-script.jar}"/>
             <auxClasspath path="${svg.batik-shared-resources.jar}"/>
             <auxClasspath path="${svg.batik-svg-dom.jar}"/>
             <auxClasspath path="${svg.batik-svggen.jar}"/>
