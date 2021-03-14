@@ -37,7 +37,9 @@ import org.apache.poi.ss.formula.functions.ImReal;
 import org.apache.poi.ss.formula.functions.Imaginary;
 import org.apache.poi.ss.formula.functions.Oct2Dec;
 import org.apache.poi.ss.formula.functions.Quotient;
+import org.apache.poi.ss.formula.functions.Single;
 import org.apache.poi.ss.formula.functions.Sumifs;
+import org.apache.poi.ss.formula.functions.TextFunction;
 import org.apache.poi.ss.formula.functions.WeekNum;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 
@@ -95,6 +97,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "BIN2HEX", null);
         r(m, "BIN2OCT", null);
         r(m, "COMPLEX", Complex.instance);
+        r(m, "CONCAT", TextFunction.CONCAT);
         r(m, "CONVERT", null);
         r(m, "COUNTIFS", Countifs.instance);
         r(m, "COUPDAYBS", null);
@@ -175,6 +178,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "RECEIVED", null);
         r(m, "RTD", null);
         r(m, "SERIESSUM", null);
+        r(m, "SINGLE", Single.instance);
         r(m, "SQRTPI", null);
         r(m, "SUMIFS", Sumifs.instance);
         r(m, "TBILLEQ", null);

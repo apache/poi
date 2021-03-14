@@ -19,6 +19,8 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.Locale;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -268,19 +270,41 @@ public abstract class TextFunction implements Function {
 	public static final Function LEFT = new LeftRight(true);
 	public static final Function RIGHT = new LeftRight(false);
 
+	public static final FreeRefFunction CONCAT = new FreeRefFunction() {
+	    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+	        StringBuilder sb = new StringBuilder();
+	        for (ValueEval arg : args) {
+	            try {
+	                if (arg instanceof AreaEval) {
+	                    AreaEval area = (AreaEval)arg;
+	                    for (int rn=0; rn<area.getHeight(); rn++) {
+	                        for (int cn=0; cn<area.getWidth(); cn++) {
+	                            ValueEval ve = area.getRelativeValue(rn, cn);
+	                            sb.append(evaluateStringArg(ve, ec.getRowIndex(), ec.getColumnIndex()));
+	                        }
+	                    }
+	                } else {
+	                    sb.append(evaluateStringArg(arg, ec.getRowIndex(), ec.getColumnIndex()));
+	                }
+	            } catch (EvaluationException e) {
+	                return e.getErrorEval();
+	            }
+	        }
+	        return new StringEval(sb.toString());
+	    }
+	};
 	public static final Function CONCATENATE = new Function() {
-
-		public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-			StringBuilder sb = new StringBuilder();
-			for (ValueEval arg : args) {
-				try {
-					sb.append(evaluateStringArg(arg, srcRowIndex, srcColumnIndex));
-				} catch (EvaluationException e) {
-					return e.getErrorEval();
-				}
-			}
-			return new StringEval(sb.toString());
-		}
+	    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+	        StringBuilder sb = new StringBuilder();
+	        for (ValueEval arg : args) {
+	            try {
+	                sb.append(evaluateStringArg(arg, srcRowIndex, srcColumnIndex));
+	            } catch (EvaluationException e) {
+	                return e.getErrorEval();
+	            }
+	        }
+	        return new StringEval(sb.toString());
+	    }
 	};
 
 	public static final Function EXACT = new Fixed2ArgFunction() {
