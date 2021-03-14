@@ -24,7 +24,10 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class TestRecordLister extends BaseTestIteratingXLS {
     @BeforeAll
     public static void setup() {
