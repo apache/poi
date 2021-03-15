@@ -399,7 +399,6 @@ project('integrationtest') {
 
     test {
         // exclude these from the normal test-run
-        exclude '**/TestAllFiles.class'
         exclude '**/*FileHandler.class'
     }
 
