@@ -96,6 +96,15 @@ public class POIFSStream implements Iterable<ByteBuffer>
         return new StreamBlockByteBufferIterator(startBlock);
     }
 
+    Iterator<Integer> getBlockOffsetIterator() {
+        if(startBlock == POIFSConstants.END_OF_CHAIN) {
+            throw new IllegalStateException(
+                    "Can't read from a new stream before it has been written to"
+            );
+        }
+        return new StreamBlockOffsetIterator(startBlock);
+    }
+
     /**
      * Updates the contents of the stream to the new
      *  set of bytes.
@@ -135,6 +144,42 @@ public class POIFSStream implements Iterable<ByteBuffer>
             blockStore.setNextBlock(thisBlock, POIFSConstants.UNUSED_BLOCK);
         }
         this.startBlock = POIFSConstants.END_OF_CHAIN;
+    }
+
+    /**
+     * Class that handles a streaming read of one stream
+     */
+    private class StreamBlockOffsetIterator implements Iterator<Integer> {
+        private final ChainLoopDetector loopDetector;
+        private int nextBlock;
+
+        StreamBlockOffsetIterator(int firstBlock) {
+            this.nextBlock = firstBlock;
+            try {
+                this.loopDetector = blockStore.getChainLoopDetector();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public boolean hasNext() {
+            return nextBlock != POIFSConstants.END_OF_CHAIN;
+        }
+
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Can't read past the end of the stream");
+            }
+
+            loopDetector.claim(nextBlock);
+            int currentBlock = nextBlock;
+            nextBlock = blockStore.getNextBlock(nextBlock);
+            return currentBlock;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
