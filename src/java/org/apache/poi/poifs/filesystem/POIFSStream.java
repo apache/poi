@@ -32,28 +32,29 @@ import org.apache.poi.poifs.storage.HeaderBlock;
 
 /**
  * This handles reading and writing a stream within a
- * {@link POIFSFileSystem}. It can supply an iterator
- * to read blocks, and way to write out to existing and
- * new blocks.
+ *  {@link POIFSFileSystem}. It can supply an iterator
+ *  to read blocks, and way to write out to existing and
+ *  new blocks.
  * Most users will want a higher level version of this,
- * which deals with properties to track which stream
- * this is.
+ *  which deals with properties to track which stream
+ *  this is.
  * This only works on big block streams, it doesn't
- * handle small block ones.
+ *  handle small block ones.
  * This uses the new NIO code
- * <p>
+ *
  * TODO Implement a streaming write method, and append
  */
 
-public class POIFSStream implements Iterable<ByteBuffer> {
+public class POIFSStream implements Iterable<ByteBuffer>
+{
     private final BlockStore blockStore;
     private int startBlock;
     private OutputStream outStream;
 
     /**
      * Constructor for an existing stream. It's up to you
-     * to know how to get the start block (eg from a
-     * {@link HeaderBlock} or a {@link Property})
+     *  to know how to get the start block (eg from a
+     *  {@link HeaderBlock} or a {@link Property})
      */
     public POIFSStream(BlockStore blockStore, int startBlock) {
         this.blockStore = blockStore;
@@ -62,7 +63,7 @@ public class POIFSStream implements Iterable<ByteBuffer> {
 
     /**
      * Constructor for a new stream. A start block won't
-     * be allocated until you begin writing to it.
+     *  be allocated until you begin writing to it.
      */
     public POIFSStream(BlockStore blockStore) {
         this.blockStore = blockStore;
@@ -72,7 +73,7 @@ public class POIFSStream implements Iterable<ByteBuffer> {
     /**
      * What block does this stream start at?
      * Will be {@link POIFSConstants#END_OF_CHAIN} for a
-     * new stream that hasn't been written to yet.
+     *  new stream that hasn't been written to yet.
      */
     public int getStartBlock() {
         return startBlock;
@@ -80,14 +81,14 @@ public class POIFSStream implements Iterable<ByteBuffer> {
 
     /**
      * Returns an iterator that'll supply one {@link ByteBuffer}
-     * per block in the stream.
+     *  per block in the stream.
      */
     public Iterator<ByteBuffer> iterator() {
         return getBlockIterator();
     }
 
     Iterator<ByteBuffer> getBlockIterator() {
-        if (startBlock == POIFSConstants.END_OF_CHAIN) {
+        if(startBlock == POIFSConstants.END_OF_CHAIN) {
             throw new IllegalStateException(
                     "Can't read from a new stream before it has been written to"
             );
@@ -95,20 +96,11 @@ public class POIFSStream implements Iterable<ByteBuffer> {
         return new StreamBlockByteBufferIterator(startBlock);
     }
 
-    Iterator<Integer> getBlockOffsetIterator() {
-        if (startBlock == POIFSConstants.END_OF_CHAIN) {
-            throw new IllegalStateException(
-                    "Can't read from a new stream before it has been written to"
-            );
-        }
-        return new StreamBlockOffsetIterator(startBlock);
-    }
-
     /**
      * Updates the contents of the stream to the new
-     * set of bytes.
+     *  set of bytes.
      * Note - if this is property based, you'll still
-     * need to update the size in the property yourself
+     *  need to update the size in the property yourself
      */
     void updateContents(byte[] contents) throws IOException {
         OutputStream os = getOutputStream();
@@ -134,10 +126,9 @@ public class POIFSStream implements Iterable<ByteBuffer> {
         ChainLoopDetector loopDetector = blockStore.getChainLoopDetector();
         free(loopDetector);
     }
-
     private void free(ChainLoopDetector loopDetector) {
         int nextBlock = startBlock;
-        while (nextBlock != POIFSConstants.END_OF_CHAIN) {
+        while(nextBlock != POIFSConstants.END_OF_CHAIN) {
             int thisBlock = nextBlock;
             loopDetector.claim(thisBlock);
             nextBlock = blockStore.getNextBlock(thisBlock);
@@ -149,15 +140,15 @@ public class POIFSStream implements Iterable<ByteBuffer> {
     /**
      * Class that handles a streaming read of one stream
      */
-    private class StreamBlockOffsetIterator implements Iterator<Integer> {
+    private class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
         private final ChainLoopDetector loopDetector;
         private int nextBlock;
 
-        StreamBlockOffsetIterator(int firstBlock) {
+        StreamBlockByteBufferIterator(int firstBlock) {
             this.nextBlock = firstBlock;
             try {
                 this.loopDetector = blockStore.getChainLoopDetector();
-            } catch (IOException e) {
+            } catch(IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -166,44 +157,17 @@ public class POIFSStream implements Iterable<ByteBuffer> {
             return nextBlock != POIFSConstants.END_OF_CHAIN;
         }
 
-        public Integer next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Can't read past the end of the stream");
-            }
-
-            loopDetector.claim(nextBlock);
-            int currentBlock = nextBlock;
-            nextBlock = blockStore.getNextBlock(nextBlock);
-            return currentBlock;
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * Class that handles a streaming read of one stream
-     */
-    private class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
-        private final StreamBlockOffsetIterator offsetIterator;
-
-        StreamBlockByteBufferIterator(int firstBlock) {
-            offsetIterator = new StreamBlockOffsetIterator(firstBlock);
-        }
-
-        public boolean hasNext() {
-            return offsetIterator.hasNext();
-        }
-
         public ByteBuffer next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("Can't read past the end of the stream");
             }
 
             try {
-                return blockStore.getBlockAt(offsetIterator.next());
-            } catch (IOException e) {
+                loopDetector.claim(nextBlock);
+                ByteBuffer data = blockStore.getBlockAt(nextBlock);
+                nextBlock = blockStore.getNextBlock(nextBlock);
+                return data;
+            } catch(IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -212,7 +176,6 @@ public class POIFSStream implements Iterable<ByteBuffer> {
             throw new UnsupportedOperationException();
         }
     }
-
 
     protected class StreamBlockByteBuffer extends OutputStream {
         byte[] oneByte = new byte[1];
@@ -235,7 +198,7 @@ public class POIFSStream implements Iterable<ByteBuffer> {
 
             // Allocate a block if needed, otherwise figure
             //  out what the next block will be
-            if (thisBlock == POIFSConstants.END_OF_CHAIN) {
+            if(thisBlock == POIFSConstants.END_OF_CHAIN) {
                 thisBlock = blockStore.getFreeBlock();
                 loopDetector.claim(thisBlock);
 
@@ -243,14 +206,14 @@ public class POIFSStream implements Iterable<ByteBuffer> {
                 nextBlock = POIFSConstants.END_OF_CHAIN;
 
                 // Mark the previous block as carrying on to us if needed
-                if (prevBlock != POIFSConstants.END_OF_CHAIN) {
+                if(prevBlock != POIFSConstants.END_OF_CHAIN) {
                     blockStore.setNextBlock(prevBlock, thisBlock);
                 }
                 blockStore.setNextBlock(thisBlock, POIFSConstants.END_OF_CHAIN);
 
                 // If we've just written the first block on a
                 //  new stream, save the start block offset
-                if (startBlock == POIFSConstants.END_OF_CHAIN) {
+                if(startBlock == POIFSConstants.END_OF_CHAIN) {
                     startBlock = thisBlock;
                 }
             } else {
@@ -269,7 +232,7 @@ public class POIFSStream implements Iterable<ByteBuffer> {
 
         @Override
         public void write(int b) throws IOException {
-            oneByte[0] = (byte) (b & 0xFF);
+            oneByte[0] = (byte)(b & 0xFF);
             write(oneByte);
         }
 
@@ -303,4 +266,3 @@ public class POIFSStream implements Iterable<ByteBuffer> {
         }
     }
 }
-
