@@ -167,7 +167,7 @@ public abstract class POIDocument implements Closeable {
             } else if (ps != null) {
                 LOG.atWarn().log("{} property set came back with wrong class - {}", localName, ps.getClass().getName());
             } else {
-                LOG.atWarn().log("{} property set came back as null {}", localName, box(5));
+                LOG.atWarn().log("{} property set came back as null", localName);
             }
         } catch (IOException e) {
             LOG.atError().withThrowable(e).log("can't retrieve property set");
