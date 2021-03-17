@@ -23,23 +23,34 @@ import static org.apache.poi.POIDataSamples.getSpreadSheetInstance;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
+
+import org.apache.poi.hssf.model.WorkbookRecordList;
+import org.apache.poi.hssf.record.FilePassRecord;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.binaryrc4.BinaryRC4EncryptionHeader;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -165,6 +176,40 @@ class TestHxxFEncryption {
             }
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
+    }
+
+    @Test
+    public void changeEncryptionMode() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(10_000);
+
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet().createRow(1).createCell(1).setCellValue("Test");
+            Biff8EncryptionKey.setCurrentUserPassword("test1");
+            wb.write(bos);
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+            assertEquals(EncryptionMode.cryptoAPI, wb.getEncryptionMode());
+            wb.setEncryptionMode(EncryptionMode.binaryRC4);
+            Biff8EncryptionKey.setCurrentUserPassword("test2");
+            bos.reset();
+            wb.write(bos);
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+            assertEquals(EncryptionMode.binaryRC4, wb.getEncryptionMode());
+            wb.setEncryptionMode(null);
+            bos.reset();
+            wb.write(bos);
+        }
+
+        assertNull(Biff8EncryptionKey.getCurrentUserPassword());
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+            assertNull(wb.getEncryptionMode());
+            wb.setEncryptionMode(null);
+            assertEquals("Test", wb.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());
         }
     }
 }

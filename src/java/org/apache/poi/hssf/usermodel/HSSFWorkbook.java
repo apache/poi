@@ -2255,4 +2255,46 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public HSSFEvaluationWorkbook createEvaluationWorkbook() {
         return HSSFEvaluationWorkbook.create(this);
     }
+
+    /**
+     * Sets the encryption mode - if not set, defaults to {@link EncryptionMode#cryptoAPI}.
+     * Allowed modes are {@code null} = remove encryption - same as {@code Biff8EncryptionKey.setCurrentUserPassword(null)},
+     * {@link EncryptionMode#cryptoAPI}, {@link EncryptionMode#binaryRC4}, {@link EncryptionMode#xor}.
+     * Use {@link EncryptionMode#binaryRC4} for Libre Office, but better use OOXML format/encryption for real security.
+     *
+     * @param mode the encryption mode
+     */
+    public void setEncryptionMode(EncryptionMode mode) {
+        if (mode == null) {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+            return;
+        }
+        if (mode != EncryptionMode.xor && mode != EncryptionMode.binaryRC4 && mode != EncryptionMode.cryptoAPI) {
+            throw new IllegalArgumentException("Only xor, binaryRC4 and cryptoAPI are supported.");
+        }
+
+        FilePassRecord oldFPR = (FilePassRecord)getInternalWorkbook().findFirstRecordBySid(FilePassRecord.sid);
+        EncryptionMode oldMode = (oldFPR == null) ? null : oldFPR.getEncryptionInfo().getEncryptionMode();
+        if (mode == oldMode) {
+            return;
+        }
+
+        // Properties need to be cached, when we change the encryption mode
+        readProperties();
+        WorkbookRecordList wrl = getInternalWorkbook().getWorkbookRecordList();
+        if (oldFPR != null) {
+            wrl.remove(oldFPR);
+        }
+
+        FilePassRecord newFPR = new FilePassRecord(mode);
+        wrl.add(1, newFPR);
+    }
+
+    /**
+     * @return the encryption mode or {@code null} if unset
+     */
+    public EncryptionMode getEncryptionMode() {
+        FilePassRecord r = (FilePassRecord)getInternalWorkbook().findFirstRecordBySid(FilePassRecord.sid);
+        return (r == null) ? null : r.getEncryptionInfo().getEncryptionMode();
+    }
 }

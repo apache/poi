@@ -271,7 +271,8 @@ public abstract class POIDocument implements Closeable {
      */
     protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         final EncryptionInfo ei = getEncryptionInfo();
-        final boolean encryptProps = (ei != null && ei.isDocPropsEncrypted());
+        Encryptor encGen = (ei == null) ? null : ei.getEncryptor();
+        final boolean encryptProps = (ei != null && ei.isDocPropsEncrypted() && encGen instanceof CryptoAPIEncryptor);
         try (POIFSFileSystem tmpFS = new POIFSFileSystem()) {
             final POIFSFileSystem fs = (encryptProps) ? tmpFS : outFS;
 
@@ -282,17 +283,14 @@ public abstract class POIDocument implements Closeable {
                 return;
             }
 
+            // Only CryptoAPI encryption supports encrypted property sets
+
             // create empty document summary
             writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, newDocumentSummaryInformation(), outFS);
 
             // remove summary, if previously available
             if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
                 outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
-            }
-            Encryptor encGen = ei.getEncryptor();
-            if (!(encGen instanceof CryptoAPIEncryptor)) {
-                throw new EncryptedDocumentException(
-                    "Using " + ei.getEncryptionMode() + " encryption. Only CryptoAPI encryption supports encrypted property sets!");
             }
             CryptoAPIEncryptor enc = (CryptoAPIEncryptor) encGen;
             try {
