@@ -86,6 +86,7 @@ public class TestAllFiles {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
         scanner.setExcludes(SCAN_EXCLUDES);
+        scanner.setIncludes(new String[]{"**/unknown_properties.msg"});
 
         scanner.scan();
 

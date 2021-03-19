@@ -61,12 +61,12 @@ public class POIFSMiniStore extends BlockStore {
         int bigBlockOffset = byteOffset % _filesystem.getBigBlockSize();
 
         // Now locate the data block for it
-        Iterator<ByteBuffer> it = _mini_stream.getBlockIterator();
+        Iterator<Integer> it = _mini_stream.getBlockOffsetIterator();
         for (int i = 0; i < bigBlockNumber; i++) {
             it.next();
         }
 
-        ByteBuffer dataBlock = it.next();
+        ByteBuffer dataBlock = _filesystem.getBlockAt(it.next());
         assert(dataBlock != null);
 
         // Position ourselves, and take a slice
