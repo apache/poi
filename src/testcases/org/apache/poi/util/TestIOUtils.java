@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
@@ -42,29 +44,25 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-/**
- * Class to test IOUtils
- */
 final class TestIOUtils {
-
     private static File TMP;
-    private static final long LENGTH = 300+new Random().nextInt(9000);
+    private static final long LENGTH = 300 + new Random().nextInt(9000);
 
     @BeforeAll
     public static void setUp() throws IOException {
         TMP = File.createTempFile("poi-ioutils-", "");
-        OutputStream os = new FileOutputStream(TMP);
-        for (int i = 0; i < LENGTH; i++) {
-            os.write(0x01);
+        try (OutputStream os = new FileOutputStream(TMP)) {
+            for (int i = 0; i < LENGTH; i++) {
+                os.write(0x01);
+            }
         }
-        os.flush();
-        os.close();
-
     }
 
     @AfterAll
     public static void tearDown() {
-        if (TMP != null) assertTrue(TMP.delete());
+        if (TMP != null) {
+            assertTrue(TMP.delete());
+        }
     }
 
     private static InputStream data123() {
@@ -163,7 +161,7 @@ final class TestIOUtils {
     void testSkipFullyByteArray() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
-            IOUtils.copy(is, bos);
+            assertEquals(LENGTH, IOUtils.copy(is, bos));
             long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
             assertEquals(LENGTH, skipped);
         }
@@ -173,9 +171,38 @@ final class TestIOUtils {
     void testSkipFullyByteArrayGtIntMax() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
-            IOUtils.copy(is, bos);
+            assertEquals(LENGTH, IOUtils.copy(is, bos));
             long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE + 20000L);
             assertEquals(LENGTH, skipped);
+        }
+    }
+
+    @Test
+    void testCopyToFile() throws IOException {
+        File dest = File.createTempFile("poi-ioutils-", "");
+        try {
+            try (InputStream is = new FileInputStream(TMP)) {
+                assertEquals(LENGTH, IOUtils.copy(is, dest));
+            }
+
+            try (FileInputStream strOrig = new FileInputStream(TMP);
+                FileInputStream strDest = new FileInputStream(dest)) {
+                byte[] bytesOrig = new byte[(int)LENGTH];
+                byte[] bytesDest = new byte[(int)LENGTH];
+                IOUtils.readFully(strOrig, bytesOrig);
+                IOUtils.readFully(strDest, bytesDest);
+                assertArrayEquals(bytesOrig, bytesDest);
+            }
+        } finally {
+            assertTrue(dest.delete());
+        }
+    }
+
+    @Test
+    void testCopyToInvalidFile() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            assertThrows(RuntimeException.class,
+                    () -> IOUtils.copy(is, new File("/notexisting/directory/structure")));
         }
     }
 
@@ -292,7 +319,7 @@ final class TestIOUtils {
     }
 
     @Test
-    void testSetMaxOverrideOverLimitWithLength() throws IOException {
+    void testSetMaxOverrideOverLimitWithLength() {
         IOUtils.setByteArrayMaxOverride(2);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
@@ -324,29 +351,90 @@ final class TestIOUtils {
     @Test
     void testReadFully() throws IOException {
         byte[] bytes = new byte[2];
-        IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 2);
+        assertEquals(2, IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 2));
         assertArrayEquals(new byte[] {1,2}, bytes);
+    }
+
+    @Test
+    void testReadFullyEOF() throws IOException {
+        byte[] bytes = new byte[2];
+        assertEquals(2, IOUtils.readFully(new NullInputStream(2), bytes, 0, 4));
+        assertArrayEquals(new byte[] {0,0}, bytes);
+    }
+
+    @Test
+    void testReadFullyEOFZero() throws IOException {
+        byte[] bytes = new byte[2];
+        assertEquals(-1, IOUtils.readFully(new NullInputStream(0), bytes, 0, 4));
+        assertArrayEquals(new byte[] {0,0}, bytes);
     }
 
     @Test
     void testReadFullySimple() throws IOException {
         byte[] bytes = new byte[2];
-        IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes);
+        assertEquals(2, IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes));
         assertArrayEquals(new byte[] {1,2}, bytes);
     }
 
     @Test
     void testReadFullyOffset() throws IOException {
         byte[] bytes = new byte[3];
-        IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 1, 2);
+        assertEquals(2, IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 1, 2));
         assertArrayEquals(new byte[] {0, 1,2}, bytes);
     }
 
     @Test
     void testReadFullyAtLength() throws IOException {
         byte[] bytes = new byte[3];
-        IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 3);
+        assertEquals(3, IOUtils.readFully(new ByteArrayInputStream(new byte[] {1, 2, 3}), bytes, 0, 3));
         assertArrayEquals(new byte[] {1,2, 3}, bytes);
+    }
+
+
+    @Test
+    void testReadFullyChannel() throws IOException {
+        ByteBuffer bytes = ByteBuffer.allocate(2);
+        assertEquals(2, IOUtils.readFully(new SimpleByteChannel(new byte[]{1, 2, 3}), bytes));
+        assertArrayEquals(new byte[] {1,2}, bytes.array());
+        assertEquals(2, bytes.position());
+    }
+
+    @Test
+    void testReadFullyChannelEOF() throws IOException {
+        ByteBuffer bytes = ByteBuffer.allocate(2);
+        assertEquals(-1, IOUtils.readFully(new EOFByteChannel(false), bytes));
+        assertArrayEquals(new byte[] {0,0}, bytes.array());
+        assertEquals(0, bytes.position());
+    }
+
+    @Test
+    void testReadFullyChannelEOFException() {
+        ByteBuffer bytes = ByteBuffer.allocate(2);
+        assertThrows(IOException.class,
+                () -> IOUtils.readFully(new EOFByteChannel(true), bytes));
+    }
+
+    @Test
+    void testReadFullyChannelSimple() throws IOException {
+        ByteBuffer bytes = ByteBuffer.allocate(2);
+        assertEquals(2, IOUtils.readFully(new SimpleByteChannel(new byte[] {1, 2, 3}), bytes));
+        assertArrayEquals(new byte[] {1,2}, bytes.array());
+        assertEquals(2, bytes.position());
+    }
+
+    @Test
+    public void testChecksum() {
+        assertEquals(0L, IOUtils.calculateChecksum(new byte[0]));
+        assertEquals(3057449933L, IOUtils.calculateChecksum(new byte[] { 1, 2, 3, 4}));
+    }
+
+    @Test
+    public void testChecksumStream() throws IOException {
+        assertEquals(0L, IOUtils.calculateChecksum(new NullInputStream(0)));
+        assertEquals(0L, IOUtils.calculateChecksum(new NullInputStream(1)));
+        assertEquals(3057449933L, IOUtils.calculateChecksum(new ByteArrayInputStream(new byte[] { 1, 2, 3, 4})));
+        assertThrows(EOFException.class,
+                () -> IOUtils.calculateChecksum(new NullInputStream(1, true)));
     }
 
     /**
@@ -384,6 +472,104 @@ final class TestIOUtils {
         @Override
         public int available() {
             return 100000;
+        }
+    }
+
+    private static class EOFByteChannel implements ReadableByteChannel {
+        private final boolean throwException;
+
+        public EOFByteChannel(boolean throwException) {
+            this.throwException = throwException;
+        }
+
+        @Override
+        public int read(ByteBuffer dst) throws IOException {
+            if (throwException) {
+                throw new IOException("EOF");
+            }
+
+            return -1;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return false;
+        }
+
+        @Override
+        public void close() throws IOException {
+
+        }
+    }
+
+    private static class SimpleByteChannel extends InputStream implements ReadableByteChannel {
+        private final byte[] bytes;
+
+        public SimpleByteChannel(byte[] bytes) {
+            this.bytes = bytes;
+        }
+
+        @Override
+        public int read() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int read(ByteBuffer dst) throws IOException {
+            int toRead = Math.min(bytes.length, dst.capacity());
+            dst.put(bytes, 0, toRead);
+            return toRead;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return false;
+        }
+    }
+
+    public class NullInputStream extends InputStream {
+        private final int bytes;
+        private final boolean exception;
+
+        private int position;
+
+        public NullInputStream(int bytes) {
+            this(bytes, false);
+        }
+
+        public NullInputStream(int bytes, boolean exception) {
+            this.bytes = bytes;
+            this.exception = exception;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (position >= bytes) {
+                return handleReturn();
+            }
+
+            position++;
+            return 0;
+        }
+
+        private int handleReturn() throws EOFException {
+            if (exception) {
+                throw new EOFException();
+            } else {
+                return -1;
+            }
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int toRead = Math.min(b.length, len);
+            if (toRead > (bytes - position)) {
+                return handleReturn();
+            }
+            toRead = Math.min(toRead, (bytes - position));
+
+            position += toRead;
+            return toRead;
         }
     }
 }

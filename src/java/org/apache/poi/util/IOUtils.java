@@ -232,6 +232,13 @@ public final class IOUtils {
 
     /**
      * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
+     *
+     * @param in the stream from which the data is read.
+     * @param b the buffer into which the data is read.
+     *
+     * @return the number of bytes read or -1 if no bytes were read
+     *
+     * @throws IOException if reading from the stream fails
      */
     public static int readFully(InputStream in, byte[] b) throws IOException {
         return readFully(in, b, 0, b.length);
@@ -250,6 +257,10 @@ public final class IOUtils {
      * @param b the buffer into which the data is read.
      * @param off the start offset in array <tt>b</tt> at which the data is written.
      * @param len the maximum number of bytes to read.
+     *
+     * @return the number of bytes read or -1 if no bytes were read
+     *
+     * @throws IOException if reading from the stream fails
      */
     public static int readFully(InputStream in, byte[] b, int off, int len) throws IOException {
         int total = 0;
@@ -275,6 +286,13 @@ public final class IOUtils {
      * number of bytes read. If the end of the file isn't reached before the
      * buffer has no more remaining capacity, will return the number of bytes
      * that were read.
+     *
+     * @param channel The byte-channel to read data from
+     * @param b the buffer into which the data is read.
+     *
+     * @return the number of bytes read or -1 if no bytes were read
+     *
+     * @throws IOException if reading from the stream fails
      */
     public static int readFully(ReadableByteChannel channel, ByteBuffer b) throws IOException {
         int total = 0;
