@@ -19,21 +19,21 @@ package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
+import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests to verify that we can perform basic opperations on
+ * Tests to verify that we can perform basic operations on
  *  a range of files
  */
 public final class TestBasics {
@@ -240,5 +240,29 @@ public final class TestBasics {
       // But after guessing goes to the correct one, cp950 (Windows Traditional Chinese)
       chinese.guess7BitEncoding();
       assertEquals("cp950", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
+   }
+
+   @Disabled(value = "expected to fail")
+   @Test
+   void testCorruptFile() throws Exception {
+      POIDataSamples testData = POIDataSamples.getPOIFSInstance();
+      try(MAPIMessage mapi = new MAPIMessage(testData.openResourceAsStream("unknown_properties.msg"))) {
+         assertNotNull(mapi.getAttachmentFiles());
+         assertNotNull(mapi.getDisplayBCC());
+         assertNotNull(mapi.getMessageDate());
+
+         AttachmentChunks[] attachments = mapi.getAttachmentFiles();
+
+         for(AttachmentChunks attachment : attachments) {
+
+            DirectoryChunk chunkDirectory = attachment.getAttachmentDirectory();
+            if(chunkDirectory != null) {
+               MAPIMessage attachmentMSG = chunkDirectory.getAsEmbeddedMessage();
+               assertNotNull(attachmentMSG);
+               String body = attachmentMSG.getTextBody();
+               assertNotNull(body);
+            }
+         }
+      }
    }
 }
