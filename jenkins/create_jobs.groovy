@@ -99,6 +99,10 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA now
+          disabled: true
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
