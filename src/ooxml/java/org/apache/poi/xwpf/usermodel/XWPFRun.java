@@ -1082,6 +1082,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
+        } else if (parent.getPart() instanceof XWPFComments) {
+            XWPFComments comments = (XWPFComments) parent.getPart();
+            relationId = comments.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) comments.getRelationById(relationId);
         } else {
             @SuppressWarnings("resource")
             XWPFDocument doc = parent.getDocument();

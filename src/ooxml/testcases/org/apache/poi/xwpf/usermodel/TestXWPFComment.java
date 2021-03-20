@@ -16,14 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Calendar;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXWPFComment {
+
     @Test
     void testText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("comment.docx")) {
@@ -32,6 +37,85 @@ class TestXWPFComment {
             assertEquals("Unbekannter Autor", comment.getAuthor());
             assertEquals("0", comment.getId());
             assertEquals("This is the first line\n\nThis is the second line", comment.getText());
+        }
+    }
+
+    @Test
+    public void testAddComment() throws IOException {
+        BigInteger cId = BigInteger.valueOf(0);
+        Calendar date = Calendar.getInstance();
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            assertNull(docOut.getDocComments());
+
+            XWPFComments comments = docOut.createComments();
+            XWPFComment comment = comments.createComment(cId);
+            comment.setAuthor("Author");
+            comment.setInitials("s");
+            comment.setDate(date);
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+            assertEquals(1, docIn.getComments().length);
+            comment = docIn.getCommentByID(cId.toString());
+            assertNotNull(comment);
+            assertEquals("Author", comment.getAuthor());
+            assertEquals("s", comment.getInitials());
+            assertEquals(date.getTimeInMillis(), comment.getDate().getTimeInMillis());
+        }
+    }
+
+    @Test
+    void testRemoveComment() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("comment.docx")) {
+            assertEquals(1, doc.getComments().length);
+
+            doc.getDocComments().removeComment(0);
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
+            assertEquals(0, docIn.getComments().length);
+        }
+    }
+
+    @Test
+    void testCreateParagraph() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFComments comments = doc.createComments();
+            XWPFComment comment = comments.createComment(BigInteger.ONE);
+            XWPFParagraph paragraph = comment.createParagraph();
+            paragraph.createRun().setText("comment paragraph text");
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
+            XWPFComment xwpfComment = docIn.getCommentByID("1");
+            assertEquals(1, xwpfComment.getParagraphs().size());
+            String text = xwpfComment.getParagraphArray(0).getText();
+            assertEquals("comment paragraph text", text);
+        }
+    }
+
+    @Test
+    void testAddPicture() throws IOException, InvalidFormatException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFComments comments = doc.createComments();
+            XWPFComment comment = comments.createComment(BigInteger.ONE);
+            XWPFParagraph paragraph = comment.createParagraph();
+            XWPFRun r = paragraph.createRun();
+            r.addPicture(new ByteArrayInputStream(new byte[0]),
+                    Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+
+            assertEquals(1, comments.getAllPictures().size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+        }
+    }
+
+    @Test
+    void testCreateTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFComments comments = doc.createComments();
+            XWPFComment comment = comments.createComment(BigInteger.ONE);
+            comment.createTable(1, 1);
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
+            XWPFComment xwpfComment = docIn.getCommentByID("1");
+            assertEquals(1, xwpfComment.getTables().size());
         }
     }
 }

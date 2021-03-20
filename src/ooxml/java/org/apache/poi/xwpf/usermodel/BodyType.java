@@ -26,5 +26,6 @@ public enum BodyType {
     HEADER,
     FOOTER,
     FOOTNOTE,
-    TABLECELL
+    TABLECELL,
+    COMMENT
 }

@@ -85,7 +85,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     protected List<XWPFFooter> footers = new ArrayList<>();
     protected List<XWPFHeader> headers = new ArrayList<>();
-    protected List<XWPFComment> comments = new ArrayList<>();
     protected List<XWPFHyperlink> hyperlinks = new ArrayList<>();
     protected List<XWPFParagraph> paragraphs = new ArrayList<>();
     protected List<XWPFTable> tables = new ArrayList<>();
@@ -99,6 +98,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected XWPFFootnotes footnotes;
     private CTDocument1 ctDocument;
     private XWPFSettings settings;
+    private XWPFComments comments;
     protected final List<XWPFChart> charts = new ArrayList<>();
     /**
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
@@ -217,11 +217,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     headers.add(header);
                     header.onDocumentRead();
                 } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
-                    // TODO Create according XWPFComment class, extending POIXMLDocumentPart
-                    CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-                    for (CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
-                        comments.add(new XWPFComment(ctcomment, this));
-                    }
+                    this.comments = (XWPFComments) p;
+                    this.comments.onDocumentRead();
                 } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
                     settings = (XWPFSettings) p;
                     settings.onDocumentRead();
@@ -431,18 +428,27 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return hyperlinks.toArray(new XWPFHyperlink[0]);
     }
 
-    public XWPFComment getCommentByID(String id) {
-        for (XWPFComment comment : comments) {
-            if (comment.getId().equals(id)) {
-                return comment;
-            }
-        }
+    /**
+     * Get Comments
+     *
+     * @return comments
+     */
+    public XWPFComments getDocComments() {
+        return comments;
+    }
 
-        return null;
+    public XWPFComment getCommentByID(String id) {
+        if (null == comments) {
+            return null;
+        }
+        return comments.getCommentByID(id);
     }
 
     public XWPFComment[] getComments() {
-        return comments.toArray(new XWPFComment[0]);
+        if (null == comments) {
+            return null;
+        }
+        return comments.getComments().toArray(new XWPFComment[0]);
     }
 
     /**
@@ -836,6 +842,27 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         bodyElements.add(p);
         paragraphs.add(p);
         return p;
+    }
+    
+    
+    /**
+     * Creates an empty comments for the document if one does not already exist
+     * 
+     * @return comments
+     */
+    public XWPFComments createComments() {
+        if (comments == null) {
+            CommentsDocument commentsDoc = CommentsDocument.Factory.newInstance();
+
+            XWPFRelation relation = XWPFRelation.COMMENT;
+            int i = getRelationIndex(relation);
+
+            XWPFComments wrapper = (XWPFComments) createRelationship(relation, XWPFFactory.getInstance(), i);
+            wrapper.setCtComments(commentsDoc.addNewComments());
+            wrapper.setXWPFDocument(getXWPFDocument());
+            comments = wrapper;
+        }
+        return comments;
     }
 
     /**

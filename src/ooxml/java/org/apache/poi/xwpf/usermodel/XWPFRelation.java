@@ -137,9 +137,10 @@ public final class XWPFRelation extends POIXMLRelation {
         null
     );
     public static final XWPFRelation COMMENT = new XWPFRelation(
-        null,
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
-        null
+        "/word/comments.xml",
+        XWPFComments::new, XWPFComments::new
     );
     public static final XWPFRelation FOOTNOTE = new XWPFRelation(
         "application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml",
