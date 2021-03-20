@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ class TestXWPFComment {
     @Test
     public void testAddComment() throws IOException {
         BigInteger cId = BigInteger.valueOf(0);
-        Calendar date = Calendar.getInstance();
+        Calendar date = LocaleUtil.getLocaleCalendar();
         try (XWPFDocument docOut = new XWPFDocument()) {
             assertNull(docOut.getDocComments());
 
