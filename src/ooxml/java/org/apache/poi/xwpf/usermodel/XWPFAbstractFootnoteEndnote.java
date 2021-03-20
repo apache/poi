@@ -28,7 +28,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
@@ -269,10 +268,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     private boolean isCursorInFtn(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
         verify.toParent();
-        if (verify.getObject() == this.ctFtnEdn) {
-            return true;
-        }
-        return false;
+        boolean result = (verify.getObject() == this.ctFtnEdn);
+        verify.dispose();
+        return result;
     }
 
     /**
