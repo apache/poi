@@ -34,6 +34,7 @@ class XWPFFileHandler extends AbstractFileHandler {
         try (XWPFDocument doc = new XWPFDocument(stream)) {
 
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
+            POIXMLDocumentHandler.cursorRecursive(doc.getDocument());
         } catch (POIXMLException e) {
             Exception cause = (Exception)e.getCause();
             throw cause == null ? e : cause;

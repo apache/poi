@@ -25,6 +25,8 @@ import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 
 public final class POIXMLDocumentHandler {
 	protected void handlePOIXMLDocument(POIXMLDocument doc) throws Exception {
@@ -45,5 +47,26 @@ public final class POIXMLDocumentHandler {
             throw new IOException("Wrong file format or file extension for OO XML file");
         }
         return false;
+    }
+
+    /**
+     * Recurse through the document and convert all elements so they are available in the ooxml-lite jar.
+     * This method only makes sense for hierarchical documents like .docx.
+     * If the document is split up in different parts like in .pptx, each part needs to be provided.
+     *
+     * @param base the entry point
+     */
+    protected static void cursorRecursive(XmlObject base) {
+        XmlCursor cur = base.newCursor();
+        try {
+            if (!cur.toFirstChild()) {
+                return;
+            }
+            do {
+                cursorRecursive(cur.getObject());
+            } while (cur.toNextSibling());
+        } finally {
+            cur.dispose();
+        }
     }
 }

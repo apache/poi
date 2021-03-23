@@ -48,11 +48,13 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -105,6 +107,11 @@ class XSSFFileHandler extends SpreadsheetHandler {
 
         // also verify general POIFS-stuff
         new POIXMLDocumentHandler().handlePOIXMLDocument(wb);
+
+        POIXMLDocumentHandler.cursorRecursive(wb.getCTWorkbook());
+        for (Sheet sh : wb) {
+            POIXMLDocumentHandler.cursorRecursive(((XSSFSheet)sh).getCTWorksheet());
+        }
 
         // and finally ensure that exporting to XML works
         exportToXML(wb);

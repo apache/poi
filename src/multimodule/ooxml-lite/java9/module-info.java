@@ -29,6 +29,7 @@ open module org.apache.poi.ooxml.schemas {
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;
     exports com.microsoft.schemas.office.visio.x2012.main;
+    exports com.microsoft.schemas.office.word;
     exports com.microsoft.schemas.office.x2006.digsig;
     exports com.microsoft.schemas.vml;
     exports org.apache.poi.schemas.ooxml.system.ooxml;
