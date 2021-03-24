@@ -223,6 +223,11 @@ class XSSFFileHandler extends SpreadsheetHandler {
     }
 
     @Test
+    void testExtracting() throws Exception {
+        handleExtracting(new File("test-data/spreadsheet/ref-56737.xlsx"));
+    }
+
+    @Test
     void testAdditional() throws Exception {
         handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
     }

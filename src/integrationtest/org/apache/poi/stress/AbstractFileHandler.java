@@ -89,7 +89,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
             // fix windows absolute paths for exception message tracking
-            String relPath = file.getPath().replace(".*test-data", "test-data").replace('\\', '/');
+            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
             extractor = ExtractorFactory.createExtractor(file);
             assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + relPath);
 
