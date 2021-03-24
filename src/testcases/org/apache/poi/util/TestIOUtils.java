@@ -202,7 +202,11 @@ final class TestIOUtils {
     void testCopyToInvalidFile() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
             assertThrows(RuntimeException.class,
-                    () -> IOUtils.copy(is, new File("/notexisting/directory/structure")));
+                    () -> {
+                        // try with two different paths so we fail on both Unix and Windows
+                        IOUtils.copy(is, new File("/notexisting/directory/structure"));
+                        IOUtils.copy(is, new File("c:\\note&/()\"§=§%&!§$81§0_:;,.-'#*+~`?ß´ß0´ß9243xisting\\directory\\structure"));
+                    });
         }
     }
 
