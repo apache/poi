@@ -20,16 +20,19 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -83,14 +86,19 @@ class TestXDDFChart {
 
             chart.plot(data);
 
-            try (OutputStream out = new FileOutputStream("/tmp/chart20201220.xlsx")) {
-                wb.write(out);
+            File file = TempFile.createTempFile("chart20201220", ".xlsx");
+            try {
+                try (OutputStream out = new FileOutputStream(file)) {
+                    wb.write(out);
+                }
+            } finally {
+                assertTrue(!file.exists() || file.delete());
             }
         }
     }
 
     private XDDFChart newXDDFChart() {
-        XDDFChart xddfChart = new XDDFChart() {
+        return new XDDFChart() {
             @Override
             protected POIXMLRelation getChartRelation() {
                 return null;
@@ -106,6 +114,5 @@ class TestXDDFChart {
                 return null;
             }
         };
-        return xddfChart;
     }
 }
