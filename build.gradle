@@ -312,7 +312,7 @@ project('ooxml') {
         }
         implementation "org.apache.xmlgraphics:batik-codec:${batikVersion}"
 
-        api 'de.rototor.pdfbox:graphics2d:0.30'
+        api 'de.rototor.pdfbox:graphics2d:0.31'
 
         api project(':main')
         api files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
