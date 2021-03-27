@@ -259,6 +259,8 @@ poijobs.each { poijob ->
                 includePattern('sonar/*/target/**')
                 /* remove ooxml-schemas while the builds migrate to 5th edition */
                 includePattern('build/xmlbean-*/**')
+                /* remove remaining src debris */
+                includePattern('src/*/build/**')
             }
             if(poijob.sonar) {
                 credentialsBinding {
