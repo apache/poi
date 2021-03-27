@@ -17,7 +17,7 @@
         <!-- Exclude some generated code from Sonar analysis -->
         <sonar.exclusions>src/main/java/org/apache/poi/hwpf/model/types/*,src/main/java/org/apache/poi/hdf/model/hdftypes/definitions/*</sonar.exclusions>
     </properties>
- 
+
 
     <build>
         <plugins>
@@ -37,7 +37,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/scratchpad/src</directory>
+                                    <directory>../../scratchpad/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -53,7 +53,7 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/resources/scratchpad</directory>
+                                    <directory>../../scratchpad/src/main/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -69,10 +69,10 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/scratchpad/testcases</directory>
+                                    <directory>../../scratchpad/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../src/resources/test</directory>
+                                    <directory>../../scratchpad/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -91,7 +91,7 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>			
+            </plugin>
         </plugins>
     </build>
 

@@ -30,7 +30,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/java</directory>
+                                    <directory>../../main/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -45,7 +45,7 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/resources/main</directory>
+                                    <directory>../../main/src/main/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -61,10 +61,10 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/testcases</directory>
+                                    <directory>../../main/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../src/resources/test</directory>
+                                    <directory>../../main/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

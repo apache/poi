@@ -89,9 +89,9 @@ under the License.
         <attribute name="name"/>
         <attribute name="value"/>
         <sequential>
-            <mkdir dir="build/poi-ant-contrib"/>
-            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib" includeantruntime="true" excludes="Junit5Progress.java"/>
-            <taskdef name="PropertyResetHelper" classname="PropertyReset" classpath="build/poi-ant-contrib"/>
+            <mkdir dir="excelant/build/poi-ant-contrib"/>
+            <javac srcdir="excelant/src//poi-ant-contrib/java" destdir="excelant/build/poi-ant-contrib" includeantruntime="true" excludes="Junit5Progress.java"/>
+            <taskdef name="PropertyResetHelper" classname="PropertyReset" classpath="excelant/build/poi-ant-contrib"/>
             <PropertyResetHelper name="@{name}" value="@{value}" />
         </sequential>
     </macrodef>
@@ -115,66 +115,65 @@ under the License.
     <property name="tempdir" value="build/tmp"/>
 
     <!-- Main: -->
-    <property name="main.resource1.dir" value="src/resources/main"/>
-    <property name="main.src" location="src/java"/>
-    <property name="main.src.test" location="src/testcases"/>
-    <property name="main.resources.test" location="src/resources/test"/>
+    <property name="main.resources.main" value="main/src/main/resources"/>
+    <property name="main.src" location="main/src/main/java"/>
+    <property name="main.src.test" location="main/src/test/java"/>
+    <property name="main.resources.test" location="main/src/test/resources"/>
     <property name="main.documentation" value="src/documentation"/>
-    <property name="main.output.dir" location="build/classes"/>
-    <property name="main.output.test.dir" location="build/test-classes"/>
-    <property name="main.reports.test" location="build/test-results"/>
-    <property name="main.testokfile" location="build/main-testokfile.txt"/>
+    <property name="main.output.dir" location="main/build/classes"/>
+    <property name="main.output.test.dir" location="main/build/test-classes"/>
+    <property name="main.reports.test" location="main/build/test-results"/>
+    <property name="main.testokfile" location="main/build/testokfile.txt"/>
+    <property name="main.output.gen-sources.dir" location="main/build/generated-sources"/>
+    <property name="main.version.template" location="main/src/main/version/Version.java.template"/>
+    <property name="main.version.java" location="${main.output.gen-sources.dir}/org/apache/poi/Version.java"/>
 
     <!-- Scratchpad: -->
-    <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
-    <property name="scratchpad.src" location="src/scratchpad/src"/>
-    <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
-    <property name="scratchpad.resources.test" location="src/resources/test"/>
-    <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
-    <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
-    <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
-    <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
-
-    <!-- Scratchpad/Geometry -->
-    <property name="geometry.pkg" value="org.apache.poi.sl.draw.binding"/>
-    <property name="geometry.output.tmpdir" value="build/geometry-java"/>
+    <property name="scratchpad.resources.main" value="scratchpad/src/main/resources"/>
+    <property name="scratchpad.src" location="scratchpad/src/main/java"/>
+    <property name="scratchpad.src.test" location="scratchpad/src/test/java"/>
+    <property name="scratchpad.resources.test" location="scratchpad/src/main/resources"/>
+    <property name="scratchpad.reports.test" location="scratchpad/build/test-results"/>
+    <property name="scratchpad.output.dir" location="scratchpad/build/classes"/>
+    <property name="scratchpad.output.test.dir" location="scratchpad/build/test-classes"/>
+    <property name="scratchpad.testokfile" location="scratchpad/build/testokfile.txt"/>
 
     <!-- Examples: -->
-    <property name="examples.src" location="src/examples/src"/>
-    <property name="examples.output.dir" location="build/examples-classes"/>
+    <property name="examples.src" location="examples/src/main/java"/>
+    <property name="examples.output.dir" location="examples/build/classes"/>
 
     <!-- OOXML support: -->
-    <property name="ooxml.src" location="src/ooxml/java"/>
-    <property name="ooxml.resource1.dir" value="src/resources/ooxml"/>
-    <property name="ooxml.src.test" location="src/ooxml/testcases"/>
-    <property name="ooxml.resources.test" location="src/resources/test"/>
-    <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
-    <property name="ooxml.output.dir" location="build/ooxml-classes"/>
-    <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
-    <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
+    <property name="ooxml.src" location="ooxml/src/main/java"/>
+    <property name="ooxml.resources.main" value="ooxml/src/main/resources"/>
+    <property name="ooxml.src.test" location="ooxml/src/test/java"/>
+    <property name="ooxml.resources.test" location="ooxml/src/test/resources"/>
+    <property name="ooxml.reports.test" location="ooxml/build/test-results"/>
+    <property name="ooxml.output.dir" location="ooxml/build/classes"/>
+    <property name="ooxml.output.test.dir" location="ooxml/build/test-classes"/>
+    <property name="ooxml.testokfile" location="ooxml/build/testokfile.txt"/>
 
     <property name="ooxml.lite.agent" location="lib/ooxml-tests/ooxml-lite-agent.jar"/>
-    <property name="ooxml.lite.report" location="build/ooxml-lite-report"/>
+    <property name="ooxml.lite.report" location="ooxml-schema/build/ooxml-lite-report"/>
     <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
 
 
     <!-- Integration testing: -->
-    <property name="integration.src.test" location="src/integrationtest"/>
-    <property name="integration.resources.test" location="src/resources/integrationtest"/>
-    <property name="integration.reports.test" location="build/integration-test-results"/>
-    <property name="integration.output.test.dir" location="build/integration-test-classes"/>
-    <property name="integration.testokfile" location="build/integration-testokfile.txt"/>
+    <property name="integration.src.test" location="integrationtest/src/test/java"/>
+    <property name="integration.resources.test" location="integrationtest/src/test/resources"/>
+    <property name="integration.reports.test" location="integrationtest/build/test-results"/>
+    <property name="integration.output.test.dir" location="integrationtest/build/test-classes"/>
+    <property name="integration.testokfile" location="integrationtest/build/testokfile.txt"/>
 
     <!-- Excelant: -->
-    <property name="excelant.resource.dir" value="src/excelant/resources"/>
-    <property name="excelant.src" location="src/excelant/java"/>
-    <property name="excelant.src.test" location="src/excelant/testcases"/>
-    <property name="excelant.resources.test" location="src/resources/test"/>
-    <property name="excelant.reports.test" location="build/excelant-test-results"/>
-    <property name="excelant.output.dir" location="build/excelant-classes"/>
-    <property name="excelant.output.test.dir" location="build/excelant-test-classes"/>
-    <property name="excelant.testokfile" location="build/excelant-testokfile.txt"/>
+    <property name="excelant.resource.main" value="excelant/src/main/resources"/>
+    <property name="excelant.src" location="excelant/src/main/java"/>
+    <property name="excelant.src.test" location="excelant/src/test/java"/>
+    <property name="excelant.resources.test" location="excelant/src/test/resources"/>
+    <property name="excelant.reports.test" location="excelant/build/test-results"/>
+    <property name="excelant.output.dir" location="excelant/build/classes"/>
+    <property name="excelant.output.test.dir" location="excelant/build/test-classes"/>
+    <property name="excelant.testokfile" location="excelant/build/testokfile.txt"/>
 
     <macrodef name="dependency">
         <attribute name="prefix"/>
@@ -348,18 +347,21 @@ under the License.
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
-    <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
-    <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
+    <property name="ooxml-schema.output.dir" location="ooxml-schema/build/classes"/>
+    <property name="ooxml-schema.output.test.dir" location="ooxml-schema/build/test-classes"/>
+    <property name="ooxml-schema.output.gen-sources.dir" location="ooxml-schema/build/generated-sources"/>
+    <property name="ooxml-schema.output.gen-classes.dir" location="ooxml-schema/build/generated-classes"/>
+    <property name="ooxml.xsds.izip.1" value="${basedir}/ooxml-schema/src/main/xmlschema/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
+    <property name="ooxml.xsds.src.dir" location="ooxml-schema/build/xsds"/>
     <property name="ooxml.xsds.src.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}-sources.jar"/>
     <property name="ooxml.xsds.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a separate versioning of the original ooxml schemas -->
-    <property name="ooxml.xsds.izip.2" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip"/>
-    <property name="ooxml.security.src.dir" location="build/ooxml-security-src"/>
-    <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
-    <property name="ooxml.visio.xsd.dir" location="src/ooxml/resources/org/apache/poi/xdgf"/>
-    <property name="ooxml.schema.xsdconfig.dir" location="src/ooxml/resources/org/apache/poi/schemas"/>
+    <property name="ooxml.xsds.izip.2" value="${basedir}/ooxml-schema/src/main/xmlschema/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip"/>
+    <property name="ooxml.security.xsd.dir" location="ooxml-schema/src/main/xmlschema/org/apache/poi/poifs/crypt"/>
+    <property name="ooxml.visio.xsd.dir" location="ooxml-schema/src/main/xmlschema/org/apache/poi/xdgf"/>
+    <property name="ooxml.schema.xsdconfig.dir" location="ooxml-schema/src/main/xmlschema/org/apache/poi/schemas"/>
 
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
@@ -591,9 +593,12 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
-        <mkdir dir="${geometry.output.tmpdir}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
+        <mkdir dir="${ooxml-schema.output.dir}"/>
+        <mkdir dir="${ooxml-schema.output.test.dir}"/>
+        <mkdir dir="${ooxml-schema.output.gen-sources.dir}"/>
+        <mkdir dir="${ooxml-schema.output.gen-classes.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
         <mkdir dir="${excelant.output.dir}"/>
         <mkdir dir="${excelant.output.test.dir}"/>
@@ -618,6 +623,13 @@ under the License.
 
     <target name="clean" description="Remove generated artefacts">
         <delete dir="build"/>
+        <delete dir="examples/build"/>
+        <delete dir="excelant/build"/>
+        <delete dir="integrationtest/build"/>
+        <delete dir="main/build"/>
+        <delete dir="ooxml/build"/>
+        <delete dir="ooxml-schema/build"/>
+        <delete dir="scratchpad/build"/>
         <delete includeemptydirs="true">
             <fileset dir="sonar">
                 <include name="*/target/**"/>
@@ -908,11 +920,9 @@ under the License.
             <equals arg1="${sun.arch.data.model}" arg2="64" />
         </condition>
 
-        <local name="xmlbean.xsds.dir"/>
-        <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
-        <mkdir dir="${xmlbean.xsds.dir}"/>
+        <mkdir dir="${ooxml.xsds.src.dir}"/>
 
-        <copy todir="${xmlbean.xsds.dir}">
+        <copy todir="${ooxml.xsds.src.dir}">
             <zipfileset src="${ooxml.xsds.izip.1}"/>
             <fileset dir="${ooxml.visio.xsd.dir}"/>
             <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="ooxmlSchemas.xsdconfig,markup-compatibility.xsd,vmlDrawing.xsd"/>
@@ -920,13 +930,6 @@ under the License.
             <fileset dir="${ooxml.security.xsd.dir}" includes="signatureInfo.xsd"/>
             <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="XAdES*.xsd,*.xsdconfig,xmldsig*.xsd"/>
         </copy>
-
-        <local name="xmlbean.sources.dir"/>
-        <local name="xmlbean.classes.dir"/>
-        <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
-        <property name="xmlbean.classes.dir" location="build/xmlbean-classes"/>
-        <mkdir dir="${xmlbean.sources.dir}"/>
-        <mkdir dir="${xmlbean.classes.dir}"/>
 
         <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
             <classpath>
@@ -937,10 +940,10 @@ under the License.
         </taskdef>
 
         <xmlbean
-            schema="${xmlbean.xsds.dir}"
-            srcgendir="${xmlbean.sources.dir}"
-            classgendir="${xmlbean.classes.dir}"
-            destfile="${xmlbean.xsds.dir}.jar"
+            schema="${ooxml.xsds.src.dir}"
+            srcgendir="${ooxml-schema.output.gen-sources.dir}"
+            classgendir="${ooxml-schema.output.gen-classes.dir}"
+            destfile="${ooxml.xsds.src.dir}.jar"
             srconly="true"
             failonerror="true"
             fork="true"
@@ -955,31 +958,35 @@ under the License.
         <javac release="8"
                target="${jdk.version.class}"
                source="${jdk.version.source}"
-               srcdir="${xmlbean.sources.dir}"
-               destdir="${xmlbean.classes.dir}"
+               srcdir="${ooxml-schema.output.gen-sources.dir}"
+               destdir="${ooxml-schema.output.dir}"
                encoding="${java.source.encoding}"
                fork="yes"
                debug="${compile.debug}"
                memoryMaximumSize="${ooxml.memory}"
                includeantruntime="false">
             <classpath refid="ooxml.classpath"/>
+            <classpath>
+                <pathelement path="${ooxml-schema.output.gen-classes.dir}"/>
+            </classpath>
         </javac>
 
         <javac release="9"
-               srcdir="${basedir}/src/multimodule/ooxml-full/java9"
-               destdir="${basedir}/src/multimodule/ooxml-full/java9"
+               srcdir="${basedir}/ooxml-schema/src/ooxml-full/java9"
+               destdir="${basedir}/ooxml-schema/src/ooxml-full/java9"
                includeantruntime="false"
                fork="true"
                modulepath="lib/ooxml"
                unless:true="${isJava8}">
-            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${xmlbean.classes.dir}"/>
+            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}"/>
         </javac>
 
         <mkdir dir="build/dist/maven/poi-ooxml-full"/>
 
         <jar destfile="${ooxml.xsds.jar}">
-            <fileset dir="${xmlbean.classes.dir}"/>
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml-schema.output.dir}"/>
+            <fileset dir="${ooxml-schema.output.gen-classes.dir}"/>
+            <zipfileset dir="${basedir}/ooxml-schema/src/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <metainf dir="legal/"/>
             <manifest>
                 <attribute name="Multi-Release" value="true"/>
@@ -996,8 +1003,8 @@ under the License.
         </jar>
 
         <jar destfile="${ooxml.xsds.src.jar}">
-            <fileset dir="${xmlbean.sources.dir}"/>
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
+            <fileset dir="${ooxml-schema.output.gen-sources.dir}"/>
+            <zipfileset dir="${basedir}/ooxml-schema/src/ooxml-full/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
             <metainf dir="legal"/>
         </jar>
     </target>
@@ -1032,7 +1039,7 @@ under the License.
                 <string>@{module}</string>
                 <filterchain>
                     <prefixlines prefix="poi-"/>
-                    <replacestring from="poi-poi" to="poi"/>
+                    <replacestring from="poi-main" to="poi"/>
                 </filterchain>
             </loadresource>
 
@@ -1053,8 +1060,8 @@ under the License.
 
             <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
             <javac release="9"
-                   srcdir="${basedir}/src/multimodule/@{module}/java9"
-                   destdir="${basedir}/src/multimodule/@{module}/java9"
+                   srcdir="${basedir}/@{module}/src/main/java9"
+                   destdir="${basedir}/@{module}/src/main/java9"
                    includeantruntime="false"
                    fork="true"
                    unless:true="${isJava8}">
@@ -1070,7 +1077,7 @@ under the License.
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
                 <fileset dir="@{classes}"/>
                 <resources/>
-                <zipfileset dir="${basedir}/src/multimodule/@{module}/java9"
+                <zipfileset dir="${basedir}/@{module}/src/main/java9"
                             prefix="META-INF/versions/9"
                             excludes="*.java"/>
                 <metainf dir="legal/"/>
@@ -1112,8 +1119,8 @@ under the License.
             </pathconvert>
 
             <javac release="9"
-                   srcdir="${basedir}/src/multimodule/@{module}/test9"
-                   destdir="${basedir}/src/multimodule/@{module}/test9"
+                   srcdir="${basedir}/@{module}/src/test/java9"
+                   destdir="${basedir}/@{module}/src/test/java9"
                    includeantruntime="false"
                    fork="true"
                    unless:true="${isJava8}" unless:blank="@{test}">
@@ -1131,7 +1138,7 @@ under the License.
                 </fileset>
                 <resources/>
                 <test-resources/>
-                <zipfileset dir="${basedir}/src/multimodule/@{module}/test9" prefix="META-INF/versions/9" excludes="*.java"/>
+                <zipfileset dir="${basedir}/@{module}/src/test/java9" prefix="META-INF/versions/9" excludes="*.java"/>
                 <metainf dir="legal/"/>
                 <manifest>
                     <attribute name="Multi-Release" value="true"/>
@@ -1151,8 +1158,6 @@ under the License.
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}-sources.jar">
                 <fileset dir="@{java}"/>
                 <metainf dir="legal/"/>
-<!--                <resources/>-->
-<!--                <zipfileset dir="src/multimodule/@{module}/java9" prefix="META-INF/versions/9" excludes="*.class"/>-->
                 <manifest>
                     <attribute name="Built-By" value="${user.name}"/>
                     <attribute name="Specification-Title" value="Apache POI"/>
@@ -1168,7 +1173,7 @@ under the License.
     </macrodef>
 
     <target name="compile-main" depends="init, compile-version">
-        <compile-jar module="poi"
+        <compile-jar module="main"
             java="${main.src}" classes="${main.output.dir}"
             test="${main.src.test}" test-classes="${main.output.test.dir}">
             <lib>
@@ -1176,7 +1181,7 @@ under the License.
                 <pathelement path="lib/main-tests"/>
             </lib>
             <resources>
-                <fileset dir="${main.resource1.dir}"/>
+                <fileset dir="${main.resources.main}"/>
             </resources>
             <test-resources>
                 <fileset dir="${main.resources.test}" />
@@ -1194,7 +1199,7 @@ under the License.
                 <pathelement path="lib/main-tests"/>
             </lib>
             <resources>
-                <fileset dir="${scratchpad.resource1.dir}"/>
+                <fileset dir="${scratchpad.resources.main}"/>
             </resources>
             <test-resources>
                 <fileset dir="${scratchpad.resources.test}" />
@@ -1232,17 +1237,14 @@ under the License.
                 <pathelement path="lib/ooxml-batik"/>
             </lib>
             <resources>
-                <fileset dir="${ooxml.resource1.dir}"/>
+                <fileset dir="${ooxml.resources.main}"/>
             </resources>
-            <test-resources>
-                <fileset dir="${ooxml.resources.test}" />
-            </test-resources>
         </compile-jar>
 
         <!-- create ooxml-lite-agent jar -->
         <javac release="9"
-               srcdir="${basedir}/src/multimodule/ooxml-lite-agent/java9"
-               destdir="${basedir}/src/multimodule/ooxml-lite-agent/java9"
+               srcdir="${basedir}/ooxml/src/ooxml-lite-agent/java9"
+               destdir="${basedir}/ooxml/src/ooxml-lite-agent/java9"
                includeantruntime="false"
                fork="true"
                modulepath="${basedir}/lib/main-tests"
@@ -1252,7 +1254,7 @@ under the License.
 
         <jar destfile="${ooxml.lite.agent}">
             <fileset dir="${ooxml.output.test.dir}" includes="org/apache/poi/ooxml/lite/**"/>
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-lite-agent/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <zipfileset dir="${basedir}/ooxml/src/ooxml-lite-agent/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <manifest>
                 <attribute name="Multi-Release" value="true"/>
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml_lite"/>
@@ -1302,8 +1304,8 @@ under the License.
             </path>
 
 
-            <mkdir dir="build/poi-ant-contrib"/>
-            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib"
+            <mkdir dir="excelant/build/poi-ant-contrib"/>
+            <javac srcdir="excelant/src/poi-ant-contrib/java" destdir="excelant/build/poi-ant-contrib"
                    includeantruntime="true" includes="Junit5Progress.java" classpathref="junit-jars"/>
 
 
@@ -1338,7 +1340,7 @@ under the License.
                 <classpath>
                     <path refid="junit-jars" if:true="${isJava8}"/>
                     <fileset dir="${basedir}" includes="${cp_java}" if:true="${isJava8}"/>
-                    <pathelement location="build/poi-ant-contrib"/>
+                    <pathelement location="excelant/build/poi-ant-contrib"/>
                 </classpath>
 
                 <testclasses outputDir="@{outputDir}">
@@ -1424,7 +1426,7 @@ under the License.
                 <pathelement path="lib/excelant"/>
             </lib>
             <resources>
-                <fileset dir="${excelant.resource.dir}"/>
+                <fileset dir="${excelant.resource.main}"/>
             </resources>
         </compile-jar>
     </target>
@@ -1457,7 +1459,7 @@ under the License.
         <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
 
         <javac release="9"
-               srcdir="${basedir}/src/multimodule/integration/java9"
+               srcdir="${basedir}/integrationtest/src/test/java9"
                destdir="${integration.output.test.dir}/META-INF/versions/9"
                includeantruntime="false"
                fork="true"
@@ -1476,20 +1478,20 @@ under the License.
             </modulepath>
         </javac>
 
-        <manifest file="build/poi-manifest.mf">
+        <manifest file="integrationtest/build/poi-manifest.mf">
             <attribute name="Multi-Release" value="true"/>
             <attribute name="Automatic-Module-Name" value="org.apache.poi.stress"/>
         </manifest>
 
         <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"
              basedir="${integration.output.test.dir}"
-             manifest="build/poi-manifest.mf"/>
+             manifest="integrationtest/build/poi-manifest.mf"/>
     </target>
 
     <target name="-version-java-check">
 		<!-- recompile Version.java from the template whenever source or the version in build.xml changes -->
         <uptodate property="version.java.notRequired" targetfile="${main.output.dir}/org/apache/poi/Version.class">
-            <srcfiles file="src/resources/version/Version.java.template"/>
+            <srcfiles file="main/src/main/version/Version.java.template"/>
             <srcfiles file="build.xml"/>
         </uptodate>
     </target>
@@ -1499,11 +1501,11 @@ under the License.
 			depends="init, -version-java-check"
             description="Compiles the version class">
         <!-- Generate the .java file -->
-        <property name="version.java" value="${main.output.dir}/org/apache/poi/Version.java"/>
-        <delete file="${version.java}"/>
-        <copy
-                file="src/resources/version/Version.java.template"
-                tofile="${version.java}">
+        <local name="version.dir"/>
+        <dirname property="version.dir" file="${main.version.java}"/>
+        <mkdir dir="${version.dir}"/>
+        <delete file="${main.version.java}"/>
+        <copy file="${main.version.template}" tofile="${main.version.java}" overwrite="true">
             <filterset>
                 <filter token="VERSION" value="${version.id}"/>
                 <filter token="DSTAMP" value="${DSTAMP}"/>
@@ -1513,12 +1515,9 @@ under the License.
         <!-- Compile -->
         <javac target="${jdk.version.class}" source="${jdk.version.source}"
                failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
-               srcdir="${main.output.dir}"
+               srcdir="${main.output.gen-sources.dir}"
                encoding="${java.source.encoding}" includeantruntime="false">
         </javac>
-
-        <!-- Tidy up -->
-        <delete file="${version.java}"/>
     </target>
 
     <target name="jacocotask" depends="">
@@ -1653,8 +1652,8 @@ under the License.
     <target name="test-report" depends="init">
         <mkdir dir="build/report"/>
         <junitreport todir="build/report">
-          <fileset dir="build">
-            <include name="*results/**/TEST-*.xml"/>
+          <fileset dir=".">
+            <include name="**/build/test-results/**/TEST-*.xml"/>
           </fileset>
           <report format="frames" todir="build/report"/>
         </junitreport>
@@ -1822,7 +1821,7 @@ under the License.
 
         <local name="full.schema"/>
         <loadresource property="full.schema">
-            <file file="${basedir}/src/multimodule/ooxml-full/java9/module-info.java"/>
+            <file file="${basedir}/ooxml-schema/src/ooxml-full/java9/module-info.java"/>
             <filterchain>
                 <linecontains negate="true" matchany="true">
                     <contains value="exports"/>
@@ -1831,11 +1830,11 @@ under the License.
             </filterchain>
         </loadresource>
 
-        <echo output="${basedir}/src/multimodule/ooxml-lite/java9/module-info.java">${full.schema}${lite.exports}}</echo>
+        <echo output="${basedir}/ooxml-schema/src/ooxml-lite/java9/module-info.java">${full.schema}${lite.exports}}</echo>
 
         <javac release="9"
-               srcdir="${basedir}/src/multimodule/ooxml-lite/java9"
-               destdir="${basedir}/src/multimodule/ooxml-lite/java9"
+               srcdir="${basedir}/ooxml-schema/src/ooxml-lite/java9"
+               destdir="${basedir}/ooxml-schema/src/ooxml-lite/java9"
                includeantruntime="false"
                fork="true"
                unless:true="${isJava8}">
@@ -1870,7 +1869,7 @@ under the License.
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="fail">
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <zipfileset dir="${basedir}/ooxml-schema/src/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <zipfileset src="${ooxml.xsds.jar}">
                 <patternset>
                     <includesfile name="${ooxml.lite.report}.clazz1"/>
@@ -2141,20 +2140,6 @@ under the License.
         <echo>Use ant dist-nexus to deploy the artifacts in the remote repository</echo>
     </target>
 
-    <target name="-manifest">
-        <manifest file="build/poi-manifest.mf">
-            <attribute name="Multi-Release" value="true"/>
-            <attribute name="Built-By" value="${user.name}"/>
-            <attribute name="Specification-Title" value="Apache POI"/>
-            <attribute name="Specification-Version" value="${version.id}"/>
-            <attribute name="Specification-Vendor" value="The Apache Software Foundation"/>
-            <attribute name="Implementation-Title" value="Apache POI"/>
-            <attribute name="Implementation-Version" value="${version.id}"/>
-            <attribute name="Implementation-Vendor-Id" value="org.apache.poi"/>
-            <attribute name="Implementation-Vendor" value="The Apache Software Foundation"/>
-        </manifest>
-    </target>
-
     <macrodef name="maven-jar">
         <attribute name="src"/>
         <attribute name="module"/>
@@ -2187,7 +2172,7 @@ under the License.
             <mkdir dir="@{src}/META-INF/versions/9"/>
 
             <javac release="9"
-                   srcdir="${basedir}/src/multimodule/@{module}/java9"
+                   srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="@{src}/META-INF/versions/9"
                    includeantruntime="false"
                    fork="true"
@@ -2232,8 +2217,20 @@ under the License.
         <antcall target="javadocs"/>
     </target>
 
-    <target name="jar-javadocs" description="JavaDocs for Maven" depends="compile,-manifest,-do-jar-create-javadocs-package-list">
+    <target name="jar-javadocs" description="JavaDocs for Maven" depends="compile,-do-jar-create-javadocs-package-list">
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
+
+        <manifest file="build/poi-manifest.mf">
+            <attribute name="Multi-Release" value="true"/>
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Specification-Title" value="Apache POI"/>
+            <attribute name="Specification-Version" value="${version.id}"/>
+            <attribute name="Specification-Vendor" value="The Apache Software Foundation"/>
+            <attribute name="Implementation-Title" value="Apache POI"/>
+            <attribute name="Implementation-Version" value="${version.id}"/>
+            <attribute name="Implementation-Vendor-Id" value="org.apache.poi"/>
+            <attribute name="Implementation-Vendor" value="The Apache Software Foundation"/>
+        </manifest>
 
         <!-- Build and package the main javadocs -->
         <maven-javadocs src="${main.src}" dest="${jar.name}"/>
@@ -2329,7 +2326,7 @@ under the License.
         <union id="src-files" cache="true">
             <mappedresources refid="legal-files"/>
             <mappedresources cache="true">
-                <fileset dir="." excludes="build/**,
+                <fileset dir="." excludes="*/build/**,build/**,
                       dist*/**,
                       lib/**,
                       bin/**,
@@ -2440,27 +2437,30 @@ under the License.
              uri="antlib:org.apache.rat.anttasks"
              classpath="${rat.jar}" />
         <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
-            <fileset dir="src/">
+            <fileset dir="examples/src" excludes="main/java/org/apache/poi/**/*-chart-data.txt"/>
+            <fileset dir="excelant/src"/>
+            <fileset dir="integrationtest/src"/>
+            <fileset dir="main/src">
+                <exclude name="main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
+            </fileset>
+            <fileset dir="ooxml/src">
+                <exclude name="main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml" />
+                <exclude name="main/resources/org/apache/poi/xslf/usermodel/empty.pptx" />
+                <exclude name="main/resources/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
+            </fileset>
+            <fileset dir="ooxml-schema/src">
+                <exclude name="main/xmlschema/org/apache/poi/xdgf/visio.xsd" />
+                <exclude name="main/xmlschema/org/apache/poi/schemas/XAdES*.xsd" />
+                <exclude name="main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd" />
+                <exclude name="main/xmlschema/org/apache/poi/schemas/*.zip" />
+            </fileset>
+            <fileset dir="scratchpad/src"/>
+
+            <fileset dir="src">
                 <exclude name="documentation/*.txt" />
                 <exclude name="documentation/content/xdocs/dtd/" />
                 <exclude name="documentation/content/xdocs/entity/" />
-                <exclude name="scratchpad/testcases/dummy.txt" />
-                <exclude name="contrib/testcases/dummy.txt" />
-                <exclude name="examples/lib/dummy.txt" />
-                <exclude name="examples/src/org/apache/poi/**/*-chart-data.txt" />
-                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
-                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
-                <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
-                <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
-                <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
-                <exclude name="ooxml/resources/org/apache/poi/schemas/XAdES*.xsd" />
-                <exclude name="ooxml/resources/org/apache/poi/schemas/xmldsig-core-schema.xsd" />
-                <exclude name="ooxml/resources/org/apache/poi/schemas/*.zip" />
-                <exclude name="**/*.iml" />
                 <exclude name="documentation/resources/images/pb-poi.cdr"/>
-                <exclude name="scratchpad/models/poi-hdf.zargo"/>
-                <exclude name="integrationtest/build/**"/>
-                <exclude name="integrationtest/.ant-targets-build.xml" />
             </fileset>
         </rat:report>
 
@@ -2525,13 +2525,17 @@ under the License.
             <bundledsignatures name="jdk-system-out"/>
             -->
             <signaturesFileset file="src/resources/devtools/forbidden-signatures.txt"/>
-            <!-- test-sources (incl. sources) -->
-            <zipfileset src="build/dist/maven/poi-tests/poi-${version.id}-tests.jar"/>
-            <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar"/>
-            <zipfileset src="build/dist/maven/poi-scratchpad-tests/poi-scratchpad-${version.id}-tests.jar"/>
-            <zipfileset src="build/dist/maven/poi-excelant-tests/poi-excelant-${version.id}-tests.jar"/>
-            <zipfileset src="build/dist/maven/poi-examples/poi-examples-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"/>
+            <!-- use the plain test-/classes instead of the dist-zips, otherwise forbidden-apis is soo slow ... -->
+            <fileset dir="${main.output.dir}"/>
+            <fileset dir="${main.output.test.dir}"/>
+            <fileset dir="${scratchpad.output.dir}"/>
+            <fileset dir="${scratchpad.output.test.dir}"/>
+            <fileset dir="${examples.output.dir}"/>
+            <fileset dir="${ooxml.output.dir}"/>
+            <fileset dir="${ooxml.output.test.dir}"/>
+            <fileset dir="${excelant.output.dir}"/>
+            <fileset dir="${excelant.output.test.dir}"/>
+            <fileset dir="${integration.output.test.dir}"/>
         </forbiddenapis>
 
         <!-- then check some advanced rules which we only apply to the core code and not tests or examples -->
@@ -2542,11 +2546,11 @@ under the License.
             >
             <signaturesFileset file="src/resources/devtools/forbidden-signatures-prod.txt"/>
             <!-- sources -->
-            <zipfileset src="build/dist/maven/poi/poi-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"/>
+            <fileset dir="${main.output.dir}"/>
+            <fileset dir="${ooxml.output.dir}"/>
+            <fileset dir="${scratchpad.output.dir}"/>
+            <fileset dir="${excelant.output.dir}"/>
+            <fileset dir="${integration.output.test.dir}"/>
         </forbiddenapis>
     </target>
 
@@ -2686,9 +2690,11 @@ under the License.
             <auxClasspath path="${pdf.pdfbox.jar}"/>
             <auxClasspath path="${pdf.fontbox.jar}"/>
             <auxClasspath path="${pdf.graphics2d.jar}"/>
-            <sourcePath path="src/java" />
-            <sourcePath path="src/ooxml/java" />
-            <sourcePath path="src/scratchpad/src" />
+            <sourcePath path="main/src/main/java" />
+            <sourcePath path="excelant/src/main/java" />
+            <sourcePath path="examples/src/main/java" />
+            <sourcePath path="ooxml/src/main/java" />
+            <sourcePath path="scratchpad/src/main/java" />
         </spotbugs>
 
         <!-- instead of calling findbugs again, we simply transform the xml -->
@@ -2914,7 +2920,7 @@ under the License.
             <format property="tstamp_next" pattern="yyyy-MM" offset="3" unit="month"/>
         </tstamp>
 
-        <taskdef name="NextRelease" classname="NextRelease" classpath="build/poi-ant-contrib"/>
+        <taskdef name="NextRelease" classname="NextRelease" classpath="excelant/build/poi-ant-contrib"/>
         <NextRelease property="rel_next"/>
 
         <antcall target="-update-build.xml">
@@ -3038,7 +3044,7 @@ under the License.
         </tstamp>
 
 
-        <taskdef name="NextRelease" classname="NextRelease" classpath="build/poi-ant-contrib"/>
+        <taskdef name="NextRelease" classname="NextRelease" classpath="excelant/build/poi-ant-contrib"/>
         <NextRelease property="rel_prev" increment="-1"/>
 
         <!-- we don't simply generate a new iso file date with tstamp,
@@ -3052,8 +3058,8 @@ under the License.
 
         <replaceregexp file="build.gradle" match="( +version += +)'[^']+'" replace="\1'${version.id}'"/>
         <replaceregexp file="build.gradle" match="(japicmpversion += +)'[^']+'" replace="\1'${rel_prev}'"/>
-        <replaceregexp file="src/examples/groovy/build.gradle" match="( *compile 'org.apache.poi:[^0-9]+)([0-9.]+)'" replace="\1${rel_prev}'" byline="true"/>
-        <replaceregexp file="src/examples/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
+        <replaceregexp file="examples/src/main/groovy/build.gradle" match="( *compile 'org.apache.poi:[^0-9]+)([0-9.]+)'" replace="\1${rel_prev}'" byline="true"/>
+        <replaceregexp file="examples/src/main/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
         <replaceregexp file="osgi/pom.xml" match="version>${rel_prev}[^&lt;]+" replace="version>${version.id}"/>
         <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
 
@@ -3141,7 +3147,7 @@ under the License.
                 </filterchain>
             </loadfile>
 
-            <taskdef name="bytes2mega" classname="Bytes2Mega" classpath="build/poi-ant-contrib"/>
+            <taskdef name="bytes2mega" classname="Bytes2Mega" classpath="excelant/build/poi-ant-contrib"/>
             <local name="fileSizeMb"/>
             <bytes2mega property="fileSizeMb" bytes="${fileSize}"/>
 

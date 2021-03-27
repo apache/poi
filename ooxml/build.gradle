@@ -1,0 +1,58 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+dependencies {
+    api project(":ooxml-schema")
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    api "org.apache.commons:commons-compress:${commonsCompressVersion}"
+    api 'org.apache.santuario:xmlsec:2.2.1'
+    api "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    api 'com.github.virtuald:curvesapi:1.06'
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+
+    api "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
+    implementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+        exclude group: 'org.apache.xmlgraphics', module: 'batik-script'
+    }
+    implementation "org.apache.xmlgraphics:batik-codec:${batikVersion}"
+
+    api 'de.rototor.pdfbox:graphics2d:0.30'
+
+    api project(':main')
+    api files("../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
+
+    testRuntime project(':scratchpad')
+    testImplementation 'org.xmlunit:xmlunit-core:2.8.0'
+    testImplementation 'org.reflections:reflections:0.9.12'
+    testImplementation project(path: ':main', configuration: 'tests')
+    testImplementation 'org.openjdk.jmh:jmh-core:1.26'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.26'
+    testImplementation 'com.google.guava:guava:30.0-jre'
+}
+
+jar {
+    manifest {
+        attributes 'Automatic-Module-Name': 'org.apache.poi.ooxml'
+    }
+}
+
+japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
+
+test {
+    // for some reason catching the OOM does not work when run from Gradle
+    exclude '**/MemoryUsage.class'
+}

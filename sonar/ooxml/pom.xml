@@ -28,7 +28,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/ooxml/java</directory>
+                                    <directory>../../ooxml/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -43,7 +43,7 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/resources/ooxml</directory>
+                                    <directory>../../ooxml/src/main/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -58,10 +58,10 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/ooxml/testcases</directory>
+                                    <directory>../../ooxml/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../src/resources/test</directory>
+                                    <directory>../../ooxml/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

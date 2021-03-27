@@ -34,7 +34,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <property name="xsdir" value="${basedir}/../../src/ooxml/resources/org/apache/poi"/>
+                                <property name="xsdir" value="${basedir}/../../ooxml-schema/src/main/xmlschema/org/apache/poi"/>
                                 <copy todir="${basedir}/target/schemas">
                                     <zipfileset src="${xsdir}/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
                                     <zipfileset src="${xsdir}/schemas/OpenPackagingConventions-XMLSchema.zip" includes="opc-digSig.xsd,opc-relationships.xsd"/>
@@ -80,11 +80,6 @@
                         <argument>${basedir}/target/generated-sources</argument>
                         <argument>${basedir}/target/schemas</argument>
                     </arguments>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>
-                            ${basedir}/../../lib/ooxml/xmlbeans-4.0.0.jar
-                        </additionalClasspathElement>
-                    </additionalClasspathElements>
                 </configuration>
             </plugin>
 
@@ -105,7 +100,7 @@
                                     <directory>${basedir}/target/generated-resources</directory>
                                 </resource>
                                 <resource>
-                                    <directory>${basedir}/../../src/multimodule/ooxml-full/java9</directory>
+                                    <directory>${basedir}/../../ooxml-schema/src/ooxml-full/java9</directory>
                                     <targetPath>META-INF/versions/9</targetPath>
                                     <includes>
                                         <include>*.class</include>
