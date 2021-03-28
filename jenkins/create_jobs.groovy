@@ -455,7 +455,7 @@ poijobs.each { poijob ->
                     }
                     ant {
                         targets(['run'] + (poijob.properties ?: []))
-                        buildFile('src/integrationtest/build.xml')
+                        buildFile('integrationtest/build.xml')
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
@@ -472,19 +472,19 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,lib/ooxml/**,build/*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,integrationtest/build/test-results/**,*/build/libs/*.jar')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
-                archiveJunit('build/ooxml-test-results/*.xml,build/scratchpad-test-results/*.xml,build/test-results/*.xml,build/excelant-test-results/*.xml,build/integration-test-results/*.xml,build/*/build/test-results/test/TEST-*.xml,build/*/build/test-results/TEST-*.xml') {
+                archiveJunit('*/build/test-results/*.xml') {
                     testDataPublishers {
                         publishTestStabilityData()
                     }
                 }
                 jacocoCodeCoverage {
-                    classPattern('build/classes,build/excelant-classes,build/ooxml-classes,build/scratchpad-classes,build/*/build/classes')
-                    execPattern('build/*.exec,build/*/build/jacoco/*.exec')
-                    sourcePattern('src/java,src/excelant/java,src/ooxml/java,src/scratchpad/src')
+                    classPattern('*/build/classes')
+                    execPattern('*/build/*.exec,*/build/jacoco/*.exec')
+                    sourcePattern('*/src/main/java')
                     exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
                 }
 
