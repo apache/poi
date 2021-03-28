@@ -28,5 +28,3 @@ jar {
         attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
     }
 }
-
-japicmp.baseline = "org.apache.poi:poi-excelant:${japicmpversion}@jar"

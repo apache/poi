@@ -35,5 +35,3 @@ test {
     // exclude these from the normal test-run
     exclude '**/*FileHandler.class'
 }
-
-japicmp.enabled = false

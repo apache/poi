@@ -56,7 +56,8 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
-        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true
+        // it was impossible to make this run stable in Gradle, thus disabling this for now
+        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
         [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
           // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
@@ -374,23 +375,6 @@ poijobs.each { poijob ->
                 shellEx(delegate, 'zip -r build/javadocs.zip build/site/apidocs', poijob)
             }
             publishers {
-                if (!poijob.skipcigame) {
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
-                    }
-                }
-                mailer(email, false, false)
-            }
-        } else if (poijob.apicheck) {
-            steps {
-                shellEx(delegate, shellcmds, poijob)
-                gradle {
-                    tasks('japicmp')
-                    useWrapper(true)
-                }
-            }
-            publishers {
-                archiveArtifacts('build/*/build/reports/japi.html')
                 if (!poijob.skipcigame) {
                     configure { project ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}

@@ -66,5 +66,3 @@ jar {
         attributes 'Automatic-Module-Name': 'org.apache.poi.ooxml.schemas'
     }
 }
-
-japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"

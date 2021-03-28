@@ -29,5 +29,3 @@ jar {
         attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
     }
 }
-
-japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"

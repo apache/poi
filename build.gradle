@@ -20,8 +20,6 @@ buildscript {
     }
 
     dependencies {
-        // 2.x fails with "Could not get unknown property 'me'"
-        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.0"
     }
 }
@@ -88,16 +86,12 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'jacoco'
 
-    // See https://github.com/melix/japicmp-gradle-plugin
-    apply plugin: 'me.champeau.gradle.japicmp'
-
     version = '5.0.1-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.68'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
-        japicmpversion = '5.0.0'
         junitVersion = '5.7.0'
         log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
@@ -203,14 +197,5 @@ subprojects {
                 property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
             }
         }
-    }
-
-    task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
     }
 }

@@ -50,8 +50,6 @@ jar {
     }
 }
 
-japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
-
 test {
     // for some reason catching the OOM does not work when run from Gradle
     exclude '**/MemoryUsage.class'

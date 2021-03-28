@@ -46,5 +46,3 @@ configurations {
 artifacts {
     tests testJar
 }
-
-japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
