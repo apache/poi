@@ -33,6 +33,7 @@ sonar/*/target
 
 # IntelliJ
 /out/
+/*/out/
 .idea
 *.iml
 *.iws
@@ -43,6 +44,7 @@ sonar/*/target
 
 # Ant
 .ant-targets-build.xml
-build
+/build/
+/*/build/
 dist
 lib/
