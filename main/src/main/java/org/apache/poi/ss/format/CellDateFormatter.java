@@ -44,7 +44,7 @@ public class CellDateFormatter extends CellFormatter {
 
     private static /* final */ CellDateFormatter SIMPLE_DATE;
 
-    private class DatePartHandler implements CellFormatPart.PartHandler {
+    class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;
         private int mLen;
         private int hStart = -1;
@@ -129,7 +129,6 @@ public class CellDateFormatter extends CellFormatter {
             }
         }
 
-        @Override
         public void updatePositions(int pos, int offset) {
             if (pos < hStart) {
                 hStart += offset;

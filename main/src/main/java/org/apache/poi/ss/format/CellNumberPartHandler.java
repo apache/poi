@@ -101,11 +101,6 @@ public class CellNumberPartHandler implements PartHandler {
         return part;
     }
 
-    @Override
-    public void updatePositions(int pos, int offset) {
-        // no-op
-    }
-
     public double getScale() {
         return scale;
     }
