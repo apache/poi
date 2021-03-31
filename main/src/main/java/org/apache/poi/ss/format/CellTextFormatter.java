@@ -17,6 +17,7 @@
 package org.apache.poi.ss.format;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
 
 /**
  * This class implements printing out text.
@@ -35,12 +36,20 @@ public class CellTextFormatter extends CellFormatter {
         final int[] numPlaces = new int[1];
 
         desc = CellFormatPart.parseFormat(format, CellFormatType.TEXT,
-                (m, part, type, desc) -> {
-                    if (part.equals("@")) {
-                        numPlaces[0]++;
-                        return "\u0000";
+                new CellFormatPart.PartHandler() {
+                    @Override
+                    public String handlePart(Matcher m, String part, CellFormatType type, StringBuffer desc) {
+                        if (part.equals("@")) {
+                            numPlaces[0]++;
+                            return "\u0000";
+                        }
+                        return null;
                     }
-                    return null;
+
+                    @Override
+                    public void updatePositions(int pos, int offset) {
+                        // no-op
+                    }
                 }).toString();
 
         // Remember the "@" positions in last-to-first order (to make insertion easier)

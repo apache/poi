@@ -96,6 +96,10 @@ public class CellDateFormatter extends CellFormatter {
                 mStart = -1;
                 if (part.length() == 3)
                     part = "yyyy";
+                // tweak the format pattern to pass tests on JDK 1.7,
+                // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
+                if (part.length() == 1)
+                    part = "yy";
                 return part.toLowerCase(Locale.ROOT);
 
             case '0':
@@ -122,6 +126,16 @@ public class CellDateFormatter extends CellFormatter {
 
             default:
                 return null;
+            }
+        }
+
+        @Override
+        public void updatePositions(int pos, int offset) {
+            if (pos < hStart) {
+                hStart += offset;
+            }
+            if (pos < mStart) {
+                mStart += offset;
             }
         }
 
@@ -155,10 +169,7 @@ public class CellDateFormatter extends CellFormatter {
         StringBuffer descBuf = CellFormatPart.parseFormat(format,
                 CellFormatType.DATE, partHandler);
         partHandler.finish(descBuf);
-        // tweak the format pattern to pass tests on JDK 1.7,
-        // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
-        String ptrn = descBuf.toString().replaceAll("((y)(?!y))(?<!yy)", "yy");
-        dateFmt = new SimpleDateFormat(ptrn, locale);
+        dateFmt = new SimpleDateFormat(descBuf.toString(), locale);
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
 

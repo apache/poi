@@ -122,6 +122,11 @@ public class CellElapsedFormatter extends CellFormatter {
             // Replace ever "%" with a "%%" so we can use printf
             return PERCENTS.matcher(part).replaceAll("%%");
         }
+
+        @Override
+        public void updatePositions(int pos, int offset) {
+            // no-op
+        }
     }
 
     /**
