@@ -59,26 +59,29 @@ public interface AreaEval extends TwoDEval, ThreeDEval {
      * returns true if the cell at row and col specified
      * as absolute indexes in the sheet is contained in
      * this area.
-     * @param row
-     * @param col
+     * @param row 0-based row index
+     * @param col 0-based column index
      */
     boolean contains(int row, int col);
 
     /**
      * returns true if the specified col is in range
-     * @param col
+     * @param col 0-based column index
      */
     boolean containsColumn(int col);
 
     /**
      * returns true if the specified row is in range
-     * @param row
+     * @param row 0-based row index
      */
     boolean containsRow(int row);
 
     int getWidth();
     int getHeight();
     /**
+     * @param relativeRowIndex 0-based row index relative to this area
+     * @param relativeColumnIndex 0-based column index relative to this area
+     *
      * @return the ValueEval from within this area at the specified relativeRowIndex and
      * relativeColumnIndex. Never <code>null</code> (possibly {@link BlankEval}). The
      * specified indexes should relative to the top left corner of this area.

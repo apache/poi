@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
 import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
 
 /**
- * Base class for SUMIFS() and COUNTIFS() functions, as they share much of the same logic, 
+ * Base class for SUMIFS() and COUNTIFS() functions, as they share much of the same logic,
  * the difference being the source of the totals.
  */
 /*package*/ abstract class Baseifs implements FreeRefFunction {
@@ -40,11 +40,11 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
      * @return true if there should be a range argument before the criteria pairs
      */
     protected abstract boolean hasInitialRange();
-        
+
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         final boolean hasInitialRange = hasInitialRange();
         final int firstCriteria = hasInitialRange ? 1 : 0;
-        
+
         if( args.length < (2+firstCriteria) || args.length % 2 != firstCriteria ) {
             return ErrorEval.VALUE_INVALID;
         }
@@ -54,13 +54,13 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
             if (hasInitialRange) {
                 sumRange = convertRangeArg(args[0]);
             }
-            
+
             // collect pairs of ranges and criteria
             AreaEval[] ae = new AreaEval[(args.length - firstCriteria)/2];
             I_MatchPredicate[] mp = new I_MatchPredicate[ae.length];
             for(int i = firstCriteria, k=0; i < args.length; i += 2, k++){
                 ae[k] = convertRangeArg(args[i]);
-                
+
                 mp[k] = Countif.createCriteriaPredicate(args[i+1], ec.getRowIndex(), ec.getColumnIndex());
             }
 
@@ -84,13 +84,13 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
     private static void validateCriteriaRanges(AreaEval sumRange, AreaEval[] criteriaRanges) throws EvaluationException {
         int h = criteriaRanges[0].getHeight();
         int w = criteriaRanges[0].getWidth();
-        
-        if (sumRange != null 
-                && (sumRange.getHeight() != h 
+
+        if (sumRange != null
+                && (sumRange.getHeight() != h
                     || sumRange.getWidth() != w) ) {
             throw EvaluationException.invalidValue();
         }
-        
+
         for(AreaEval r : criteriaRanges){
             if(r.getHeight() != h ||
                r.getWidth() != w ) {
@@ -107,7 +107,7 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
      */
     private static void validateCriteria(I_MatchPredicate[] criteria) throws EvaluationException {
         for(I_MatchPredicate predicate : criteria) {
-            
+
             // check for errors in predicate and return immediately using this error code
             if(predicate instanceof ErrorMatcher) {
                 throw new EvaluationException(ErrorEval.valueOf(((ErrorMatcher)predicate).getValue()));
@@ -154,14 +154,16 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
     /**
      * For counts, this would return 1, for sums it returns a cell value or zero.
      * This is only called after all the criteria are confirmed true for the coordinates.
+     *
      * @param sumRange if used
-     * @param relRowIndex
-     * @param relColIndex
+     * @param relRowIndex 0-based row index relative to the sumRange area
+     * @param relColIndex 0-based column index relative to the sumRange area
+     *
      * @return the aggregate input value corresponding to the given range coordinates
      */
     private static double accumulate(AreaEval sumRange, int relRowIndex, int relColIndex) {
         if (sumRange == null) return 1.0; // count
-        
+
         ValueEval addend = sumRange.getRelativeValue(relRowIndex, relColIndex);
         if (addend instanceof NumberEval) {
             return ((NumberEval)addend).getNumberValue();

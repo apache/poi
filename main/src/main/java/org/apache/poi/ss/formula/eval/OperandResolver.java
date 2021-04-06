@@ -43,7 +43,7 @@ public final class OperandResolver {
                  "(\\."+Digits+"("+Exp+")?))"+
                  "[\\x00-\\x20]*");
     private static final Pattern fpPattern = Pattern.compile(fpRegex);
-    
+
     private OperandResolver() {
         // no instances of this class
     }
@@ -75,7 +75,7 @@ public final class OperandResolver {
         }
         return result;
     }
-    
+
     /**
      * Retrieves a single value from an area evaluation utilizing the 2D indices of the cell
      * within its own area reference to index the value in the area evaluation.
@@ -105,7 +105,7 @@ public final class OperandResolver {
         else if (ae.isRow() && relativeColIndex < ae.getWidth()) {
             return ae.getRelativeValue(0, relativeColIndex);
         }
-        
+
         return ErrorEval.NA;
     }
 
@@ -212,7 +212,7 @@ public final class OperandResolver {
         }
         return ae.getAbsoluteValue(ae.getFirstRow(), srcCellCol);
     }
-    
+
     private static ValueEval chooseSingleElementFromRef(RefEval ref) {
         return ref.getInnerValueEval( ref.getFirstSheetIndex() );
     }
@@ -251,7 +251,6 @@ public final class OperandResolver {
      * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
      */
     public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
-
         if (ev == BlankEval.instance) {
             return 0.0;
         }
@@ -266,7 +265,7 @@ public final class OperandResolver {
             if (dd == null) {
                 throw EvaluationException.invalidValue();
             }
-            return dd.doubleValue();
+            return dd;
         }
         throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
     }
@@ -274,8 +273,8 @@ public final class OperandResolver {
     /**
      * Converts a string to a double using standard rules that Excel would use.<br>
      * Tolerates leading and trailing spaces, <p>
-     * 
-     * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.  
+     *
+     * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.
      *
      *  Some examples:<br>
      *  " 123 " -&gt; 123.0<br>
@@ -301,7 +300,7 @@ public final class OperandResolver {
         else {
             return null;
         }
-        
+
     }
 
     public static Double parseDateTime(String pText) {
@@ -340,7 +339,7 @@ public final class OperandResolver {
             return null;
         }
         if (ve instanceof BoolEval) {
-            return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
+            return ((BoolEval) ve).getBooleanValue();
         }
 
         if (ve instanceof StringEval) {
@@ -364,7 +363,7 @@ public final class OperandResolver {
             if (Double.isNaN(d)) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
-            return Boolean.valueOf(d != 0);
+            return d != 0;
         }
         if (ve instanceof ErrorEval) {
             throw new EvaluationException((ErrorEval) ve);

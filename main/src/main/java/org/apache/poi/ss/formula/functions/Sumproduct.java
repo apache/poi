@@ -81,17 +81,13 @@ public final class Sumproduct implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		throw new RuntimeException("Invalid arg type for SUMPRODUCT: ("
-				+ firstArg.getClass().getName() + ")");
+		throw new RuntimeException("Invalid arg type for SUMPRODUCT: " + firstArg);
 	}
 
 	private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
-		int maxN = evalArgs.length;
-
 		double term = 1D;
-		for(int n=0; n<maxN; n++) {
-			double val = getScalarValue(evalArgs[n]);
-			term *= val;
+		for (ValueEval evalArg : evalArgs) {
+			term *= getScalarValue(evalArg);
 		}
 		return new NumberEval(term);
 	}
@@ -180,13 +176,12 @@ public final class Sumproduct implements Function {
 	}
 
 	private static boolean areasAllSameSize(TwoDEval[] args, int height, int width) {
-		for (int i = 0; i < args.length; i++) {
-			TwoDEval areaEval = args[i];
+		for (TwoDEval areaEval : args) {
 			// check that height and width match
-			if(areaEval.getHeight() != height) {
+			if (areaEval.getHeight() != height) {
 				return false;
 			}
-			if(areaEval.getWidth() != width) {
+			if (areaEval.getWidth() != width) {
 				return false;
 			}
 		}

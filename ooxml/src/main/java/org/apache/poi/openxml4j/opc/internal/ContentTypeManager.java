@@ -79,7 +79,7 @@ public abstract class ContentTypeManager {
     /**
      * Default content type tree. <Extension, ContentType>
      */
-    private TreeMap<String, String> defaultContentType;
+    private final TreeMap<String, String> defaultContentType;
 
     /**
      * Override content type tree.
@@ -286,7 +286,7 @@ public abstract class ContentTypeManager {
             throw new IllegalArgumentException("contentType");
         }
 
-        return (this.defaultContentType.containsValue(contentType) || 
+        return (this.defaultContentType.containsValue(contentType) ||
                 (this.overrideContentType != null && this.overrideContentType.containsValue(contentType)));
     }
 
@@ -353,9 +353,9 @@ public abstract class ContentTypeManager {
          */
         if (this.container != null && this.container.getPart(partName) != null) {
             throw new OpenXML4JRuntimeException(
-                "Rule M2.4 exception : Part \'"
+                "Rule M2.4 exception : Part '"
                 + partName
-                + "\' not found - this error should NEVER happen!\n"
+                + "' not found - this error should NEVER happen!\n"
                 + "Check that your code is closing the open resources in the correct order prior to filing a bug report.\n"
                 + "If you can provide the triggering file, then please raise a bug at https://bz.apache.org/bugzilla/enter_bug.cgi?product=POI and attach the file that triggers it, thanks!");
         }

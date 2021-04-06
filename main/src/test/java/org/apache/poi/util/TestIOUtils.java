@@ -531,7 +531,7 @@ final class TestIOUtils {
         }
     }
 
-    public class NullInputStream extends InputStream {
+    public static class NullInputStream extends InputStream {
         private final int bytes;
         private final boolean exception;
 

@@ -138,11 +138,9 @@ public final class Countif extends Fixed2ArgFunction {
         }
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append(getClass().getName());
-            sb.append(" [").append(_representation).append("]");
-            return sb.toString();
+            return getClass().getName() + " [" + _representation + "]";
         }
+
         public String getRepresentation() {
             return _representation;
         }
@@ -208,7 +206,7 @@ public final class Countif extends Fixed2ArgFunction {
                     // x is text that is not a number
                     return false;
                 }
-                return _value == val.doubleValue();
+                return _value == val;
             } else if((x instanceof NumberEval)) {
                 NumberEval ne = (NumberEval) x;
                 testValue = ne.getNumberValue();
@@ -304,7 +302,7 @@ public final class Countif extends Fixed2ArgFunction {
             }
             return false;
         }
-        
+
         public int getValue() {
             return _value;
         }
@@ -505,12 +503,12 @@ public final class Countif extends Fixed2ArgFunction {
 
         Boolean booleanVal = parseBoolean(value);
         if(booleanVal != null) {
-            return new BooleanMatcher(booleanVal.booleanValue(), operator);
+            return new BooleanMatcher(booleanVal, operator);
         }
 
         Double doubleVal = OperandResolver.parseDouble(value);
         if(doubleVal != null) {
-            return new NumberMatcher(doubleVal.doubleValue(), operator);
+            return new NumberMatcher(doubleVal, operator);
         }
         ErrorEval ee = parseError(value);
         if (ee != null) {
