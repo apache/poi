@@ -120,7 +120,7 @@ under the License.
     <property name="main.src.test" location="main/src/test/java"/>
     <property name="main.resources.test" location="main/src/test/resources"/>
     <property name="main.documentation" value="src/documentation"/>
-    <property name="main.output.dir" location="main/build/classes"/>
+    <property name="main.output.dir" location="main/build/classes/ant/java"/>
     <property name="main.output.test.dir" location="main/build/test-classes"/>
     <property name="main.reports.test" location="main/build/test-results"/>
     <property name="main.testokfile" location="main/build/testokfile.txt"/>
@@ -134,13 +134,13 @@ under the License.
     <property name="scratchpad.src.test" location="scratchpad/src/test/java"/>
     <property name="scratchpad.resources.test" location="scratchpad/src/main/resources"/>
     <property name="scratchpad.reports.test" location="scratchpad/build/test-results"/>
-    <property name="scratchpad.output.dir" location="scratchpad/build/classes"/>
+    <property name="scratchpad.output.dir" location="scratchpad/build/classes/ant/java"/>
     <property name="scratchpad.output.test.dir" location="scratchpad/build/test-classes"/>
     <property name="scratchpad.testokfile" location="scratchpad/build/testokfile.txt"/>
 
     <!-- Examples: -->
     <property name="examples.src" location="examples/src/main/java"/>
-    <property name="examples.output.dir" location="examples/build/classes"/>
+    <property name="examples.output.dir" location="examples/build/classes/ant/java"/>
 
     <!-- OOXML support: -->
     <property name="ooxml.src" location="ooxml/src/main/java"/>
@@ -148,7 +148,7 @@ under the License.
     <property name="ooxml.src.test" location="ooxml/src/test/java"/>
     <property name="ooxml.resources.test" location="ooxml/src/test/resources"/>
     <property name="ooxml.reports.test" location="ooxml/build/test-results"/>
-    <property name="ooxml.output.dir" location="ooxml/build/classes"/>
+    <property name="ooxml.output.dir" location="ooxml/build/classes/ant/java"/>
     <property name="ooxml.output.test.dir" location="ooxml/build/test-classes"/>
     <property name="ooxml.testokfile" location="ooxml/build/testokfile.txt"/>
 
@@ -171,7 +171,7 @@ under the License.
     <property name="excelant.src.test" location="excelant/src/test/java"/>
     <property name="excelant.resources.test" location="excelant/src/test/resources"/>
     <property name="excelant.reports.test" location="excelant/build/test-results"/>
-    <property name="excelant.output.dir" location="excelant/build/classes"/>
+    <property name="excelant.output.dir" location="excelant/build/classes/ant/java"/>
     <property name="excelant.output.test.dir" location="excelant/build/test-classes"/>
     <property name="excelant.testokfile" location="excelant/build/testokfile.txt"/>
 
@@ -347,7 +347,7 @@ under the License.
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
-    <property name="ooxml-schema.output.dir" location="ooxml-schema/build/classes"/>
+    <property name="ooxml-schema.output.dir" location="ooxml-schema/build/classes/ant/java"/>
     <property name="ooxml-schema.output.test.dir" location="ooxml-schema/build/test-classes"/>
     <property name="ooxml-schema.output.gen-sources.dir" location="ooxml-schema/build/generated-sources"/>
     <property name="ooxml-schema.output.gen-classes.dir" location="ooxml-schema/build/generated-classes"/>
