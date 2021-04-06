@@ -20,4 +20,7 @@ dependencies {
     implementation project(':scratchpad')
 
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+	testImplementation project(path: ':ooxml', configuration: 'tests')
+	testImplementation project(path: ':main', configuration: 'tests')
 }

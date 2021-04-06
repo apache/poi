@@ -50,7 +50,17 @@ jar {
     }
 }
 
-test {
-    // for some reason catching the OOM does not work when run from Gradle
-    exclude '**/MemoryUsage.class'
+// Create a separate jar for test-code to depend on it in other projects
+// See http://stackoverflow.com/questions/5144325/gradle-test-dependency
+task testJar(type: Jar, dependsOn: testClasses) {
+	baseName = "test-${project.archivesBaseName}"
+	from sourceSets.test.output
+}
+
+configurations {
+	tests
+}
+
+artifacts {
+	tests testJar
 }

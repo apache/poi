@@ -128,6 +128,12 @@ public class XLSX2CSV {
             for (int i=0; i<missedCols; i++) {
                 output.append(',');
             }
+
+            // no need to append anything if we do not have a value
+            if (formattedValue == null) {
+                return;
+            }
+
             currentCol = thisCol;
 
             // Number or string?
@@ -136,8 +142,14 @@ public class XLSX2CSV {
                 Double.parseDouble(formattedValue);
                 output.append(formattedValue);
             } catch (Exception e) {
+                // let's remove quotes if they are already there
+                if (formattedValue.startsWith("\"") && formattedValue.endsWith("\"")) {
+                    formattedValue = formattedValue.substring(1, formattedValue.length()-1);
+                }
+
                 output.append('"');
-                output.append(formattedValue);
+                // encode double-quote with two double-quotes to produce a valid CSV format
+                output.append(formattedValue.replace("\"", "\"\""));
                 output.append('"');
             }
         }
