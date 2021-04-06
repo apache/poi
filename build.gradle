@@ -223,6 +223,47 @@ if (JavaVersion.current().isJava8Compatible()) {
 	}
 }
 
+// initial try to provide a combined JavaDoc, grouping is still missing here, though!
+task allJavaDoc(type: Javadoc) {
+	source subprojects.collect { it.sourceSets.main.allJava }
+
+	// for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
+	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+	destinationDir = file("${buildDir}/docs/javadoc")
+	maxMemory="384M"
+
+	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
+	options.use = true
+	options.splitIndex = true
+
+	title = 'POI API Documentation'
+	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or\n' +
+			'its licensors, as applicable.</i>]]>'
+
+	options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
+	options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
+	options.group('SS - Common Spreadsheet Format', 'org.apache.poi.ss*')
+	options.group('HSSF - Horrible Spreadsheet Format', 'org.apache.poi.hssf*')
+	options.group('XSSF - Open Office XML Spreadsheet Format', 'org.apache.poi.xssf*')
+	options.group('SL - Common Slideshow Format',  'org.apache.poi.sl*')
+	options.group('HSLF - Horrible Slideshow Format', 'org.apache.poi.hslf*', 'org.apache.poi.hwmf*', 'org.apache.poi.hemf*')
+	options.group('XSLF - Open Office XML Slideshow Format', 'org.apache.poi.xslf*')
+	options.group('HWPF - Horrible Word Processor Format', 'org.apache.poi.hwpf*')
+	options.group('XWPF - Open Office XML Word Processor Format', 'org.apache.poi.xwpf*')
+	options.group('HDGF - Horrible Diagram Format', 'org.apache.poi.hdgf*')
+	options.group('XDGF - Open Office XML Diagram Format', 'org.apache.poi.xdgf*')
+	options.group('HMEF - Transport Neutral Encoding Files (TNEF)', 'org.apache.poi.hmef*')
+	options.group('HSMF Outlook message file format', 'org.apache.poi.hsmf*')
+	options.group('HPBF - Publisher Format Files', 'org.apache.poi.hpbf*')
+	options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
+	options.group('Utilities', 'org.apache.poi.util*')
+	options.group('Excelant', 'org.apache.poi.ss.excelant**')
+	options.group('Examples', 'org.apache.poi.examples*')
+}
+
+task jenkins
+jenkins.dependsOn allJavaDoc
+
 rat {
     // Input directory, defaults to '.'
     inputDir.set(file("."))
