@@ -395,7 +395,7 @@ poijobs.each { poijob ->
                     tasks('check')
                     tasks('jacocoTestReport')
                     tasks('sonarqube')
-                    useWrapper(false)
+                    useWrapper(true)
                 }
             }
             publishers {
@@ -416,7 +416,7 @@ poijobs.each { poijob ->
                 if(poijob.gradle) {
                     gradle {
                         tasks('check')
-                        useWrapper(false)
+                        useWrapper(true)
                     }
                 } else if (poijob.noScratchpad) {
                     ant {
