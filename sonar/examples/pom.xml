@@ -36,7 +36,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../src/examples/src</directory>
+                                    <directory>../../examples/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
