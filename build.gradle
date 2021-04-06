@@ -211,6 +211,18 @@ subprojects {
     jenkins.dependsOn rat
 }
 
+// Make JavaDoc behave similar to Ant, i.e. be a bit more lenient
+// and define amount of memory
+// https://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+if (JavaVersion.current().isJava8Compatible()) {
+	allprojects {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+			maxMemory="384M"
+		}
+	}
+}
+
 rat {
     // Input directory, defaults to '.'
     inputDir.set(file("."))
