@@ -120,7 +120,7 @@ public final class POIDataSamples {
         if(_instXmlDSign == null) _instXmlDSign = new POIDataSamples("xmldsign");
         return _instXmlDSign;
     }
-    
+
     /**
      * Opens a sample file from the test data directory
      *
@@ -197,8 +197,10 @@ public final class POIDataSamples {
                 return;
             }
 
-            if(new File("test-data").exists()) {
-               dataDirName = "test-data";
+            if (new File("test-data").exists()) {
+				dataDirName = "test-data";
+			} else if (new File("../test-data").exists()) {
+               dataDirName = "../test-data";
             } else {
                throw new RuntimeException("Must set system property '" +
                        TEST_PROPERTY + "' before running tests");
