@@ -35,7 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * <p><ul>
  * <li>The example demonstrates that all temp files are removed.
  * <li><code>AesZipFileZipEntrySource</code> is used to ensure that temp files are encrypted.
- * </ul><p>
+ * </ul></p>
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class LoadPasswordProtectedXlsx {

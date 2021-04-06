@@ -48,7 +48,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- * A XLS -> CSV processor, that uses the MissingRecordAware
+ * A XLS -&gt; CSV processor, that uses the MissingRecordAware
  *  EventModel code to ensure it outputs all columns and rows.
  * @author Nick Burch
  */
@@ -83,7 +83,7 @@ public class XLS2CSVmra implements HSSFListener {
 	private boolean outputNextStringRecord;
 
 	/**
-	 * Creates a new XLS -> CSV converter
+	 * Creates a new XLS -&gt; CSV converter
 	 * @param fs The POIFSFileSystem to process
 	 * @param output The PrintStream to output the CSV to
 	 * @param minColumns The minimum number of columns to output, or -1 for no minimum
@@ -95,9 +95,11 @@ public class XLS2CSVmra implements HSSFListener {
 	}
 
 	/**
-	 * Creates a new XLS -> CSV converter
+	 * Creates a new XLS -&gt; CSV converter
 	 * @param filename The file to process
 	 * @param minColumns The minimum number of columns to output, or -1 for no minimum
+	 *
+	 * @throws IOException if the file cannot be read or parsing the file fails
 	 */
 	public XLS2CSVmra(String filename, int minColumns) throws IOException {
 		this(
@@ -108,6 +110,8 @@ public class XLS2CSVmra implements HSSFListener {
 
 	/**
 	 * Initiates the processing of the XLS file to CSV
+	 *
+	 * @throws IOException if the workbook contained errors
 	 */
 	public void process() throws IOException {
 		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(this);

@@ -45,7 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * <pre>
  * Usage:
- * CalendarDemo <year>
+ * CalendarDemo &lt;year&gt;
  * </pre>
  *
  * @author Yegor Kozlov

@@ -63,7 +63,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * <li><p>Write the POI filesystem back to the original file.</p></li>
  *
- * </ol>
+ * </ul>
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public final class ModifyDocumentSummaryInformation {

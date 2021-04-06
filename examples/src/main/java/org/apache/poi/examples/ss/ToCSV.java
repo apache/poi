@@ -40,7 +40,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 /**
  * Demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV
  * file. This class makes the following assumptions;
- * <list>
+ * <ul>
  * <li>1. Where the Excel workbook contains more than one worksheet, then a single
  *    CSV file will contain the data from all of the worksheets.</li>
  * <li>2. The data matrix contained in the CSV file will be square. This means that
@@ -51,7 +51,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * <li>3. Empty fields will represent missing cells.</li>
  * <li>4. A record consisting of empty fields will be used to represent an empty row
  *    in the Excel workbook.</li>
- * </list>
+ * </ul>
  * Therefore, if the worksheet looked like this;
  *
  * <pre>

@@ -43,7 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * A  monthly calendar created using Apache POI. Each month is on a separate sheet.
  * <pre>
  * Usage:
- * CalendarDemo -xls|xlsx <year>
+ * CalendarDemo -xls|xlsx &lt;year&gt;
  * </pre>
  *
  * @author Yegor Kozlov

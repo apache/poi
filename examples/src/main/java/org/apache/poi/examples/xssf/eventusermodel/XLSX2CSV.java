@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
- * A rudimentary XLSX -> CSV processor modeled on the
+ * A rudimentary XLSX -&gt; CSV processor modeled on the
  * POI sample program XLS2CSVmra from the package
  * org.apache.poi.hssf.eventusermodel.examples.
  * As with the HSSF version, this tries to spot missing
@@ -171,7 +171,7 @@ public class XLSX2CSV {
     private final PrintStream output;
 
     /**
-     * Creates a new XLSX -> CSV examples
+     * Creates a new XLSX -&gt; CSV examples
      *
      * @param pkg        The XLSX package to process
      * @param output     The PrintStream to output the CSV to
