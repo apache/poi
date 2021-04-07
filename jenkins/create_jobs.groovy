@@ -474,7 +474,7 @@ poijobs.each { poijob ->
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
-                archiveJunit('*/build/test-results/*.xml') {
+                archiveJunit('*/build/test-results/**/TEST-*.xml') {
                     testDataPublishers {
                         publishTestStabilityData()
                     }
@@ -580,7 +580,7 @@ xmlbeansjobs.each { xjob ->
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
             }
-            archiveJunit('build/test-results/TEST-*.xml') {
+            archiveJunit('build/test-results/**/TEST-*.xml') {
                 testDataPublishers {
                     publishTestStabilityData()
                 }
