@@ -25,6 +25,7 @@ buildscript {
 }
 
 plugins {
+    id 'base'
     id("org.nosphere.apache.rat") version "0.7.0"
 }
 
@@ -59,6 +60,7 @@ ant.taskdef(name: "junit",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
+    // https://stackoverflow.com/a/54741656/2066598
     gradleVersion = '6.8'
 }
 
@@ -78,6 +80,7 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
  */
 allprojects {
     apply plugin: 'eclipse'
+//    apply plugin: 'idea'
 }
 
 /**
@@ -89,6 +92,7 @@ subprojects {
     //Put instructions for each sub project, but not the master
     apply plugin: 'java-library'
     apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
 
     version = '5.0.1-SNAPSHOT'
     ext {
@@ -106,6 +110,10 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Jar) {
+        duplicatesStrategy = 'fail'
     }
 
     sourceCompatibility = 1.8
@@ -127,7 +135,7 @@ subprojects {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': version
+            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': project.version
         }
     }
 
@@ -209,6 +217,56 @@ subprojects {
     jenkins.dependsOn javadoc
     jenkins.dependsOn jacocoTestReport
     jenkins.dependsOn rat
+
+    publishing {
+        publications {
+            POI(MavenPublication) {
+                groupId 'org.apache.poi'
+
+                pom {
+                    packaging = 'jar'
+                    url = 'https://poi.apache.org/'
+
+                    mailingLists {
+                        mailingList {
+                            name = 'POI Users List'
+                            subscribe = 'user-subscribe@poi.apache.org'
+                            unsubscribe = 'user-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-user/'
+                        }
+                        mailingList {
+                            name = 'POI Developer List'
+                            subscribe = 'dev-subscribe@poi.apache.org'
+                            unsubscribe = 'dev-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-dev/'
+                        }
+                    }
+
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    organization {
+                        name = 'Apache Software Foundation'
+                        url = 'http://www.apache.org/'
+                    }
+
+                    withXml {
+                        def r = asElement()
+                        def doc = r.getOwnerDocument()
+                        def asl = doc.createComment(new File('../legal/HEADER').text)
+                        // adding ASF header before root node is ignored
+                        // doc.insertBefore(asl, doc.getDocumentElement())
+                        r.insertBefore(asl, r.getFirstChild())
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Make JavaDoc behave similar to Ant, i.e. be a bit more lenient
@@ -264,6 +322,10 @@ task allJavaDoc(type: Javadoc) {
 task jenkins
 jenkins.dependsOn allJavaDoc
 
+clean {
+    delete "${rootDir}/build/dist"
+}
+
 rat {
     // Input directory, defaults to '.'
     inputDir.set(file("."))
@@ -306,3 +368,14 @@ rat {
     // Prints the list of files with unapproved licences to the console, defaults to false
     verbose.set(true)
 }
+
+/*task downloadJarsToLibs() {
+    def f = new File("$projectDir/../lib/ooxml/xmlbeans-5.0.0.jar")
+    if (!f.exists()) {
+    println 'writing file ' + f.getAbsolutePath()
+    f.getParentFile().mkdirs()
+    new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}*/
+
+//compileJava.dependsOn 'downloadJarsToLibs'
