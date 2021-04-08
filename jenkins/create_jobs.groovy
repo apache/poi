@@ -156,10 +156,10 @@ def apicheckDesc = '''
 <p>
 <b><a href="https://sonarcloud.io/dashboard?id=poi-parent" target="_blank">Sonar reports</a></b> -
 <p>
-<b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/excelant/build/reports/japi.html">API Check POI-Excelant</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/scratchpad/build/reports/japi.html">API Check POI-Scratchpad</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/poi/build/reports/japi.html">API Check POI</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/poi-ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/poi-excelant/build/reports/japi.html">API Check POI-Excelant</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/poi-scratchpad/build/reports/japi.html">API Check POI-Scratchpad</a></b>
 
 </p>
 '''

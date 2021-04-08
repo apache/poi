@@ -34,7 +34,7 @@
                                     <directory>../../poi-integration/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../main/src/test/java</directory>
+                                    <directory>../../poi/src/test/java</directory>
                                     <includes>
                                         <include>org/apache/poi/POIDataSamples.java</include>
                                         <include>org/apache/poi/util/NullPrintStream.java</include>

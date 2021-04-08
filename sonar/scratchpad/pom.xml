@@ -37,7 +37,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../scratchpad/src/main/java</directory>
+                                    <directory>../../poi-scratchpad/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -53,7 +53,7 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../scratchpad/src/main/resources</directory>
+                                    <directory>../../poi-scratchpad/src/main/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -69,10 +69,10 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../scratchpad/src/test/java</directory>
+                                    <directory>../../poi-scratchpad/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../scratchpad/src/test/resources</directory>
+                                    <directory>../../poi-scratchpad/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

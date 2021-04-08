@@ -31,7 +31,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../excelant/src/main/java</directory>
+                                    <directory>../../poi-excelant/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -47,10 +47,10 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../excelant/src/main/resources</directory>
+                                    <directory>../../poi-excelant/src/main/resources</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../excelant/src/test/resources</directory>
+                                    <directory>../../poi-excelant/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -66,7 +66,7 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../excelant/src/test/java</directory>
+                                    <directory>../../poi-excelant/src/test/java</directory>
                                 </resource>
                             </resources>
                         </configuration>

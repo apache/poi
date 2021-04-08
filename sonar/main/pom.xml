@@ -30,7 +30,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../main/src/main/java</directory>
+                                    <directory>../../poi/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -45,7 +45,7 @@
                             <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../main/src/main/resources</directory>
+                                    <directory>../../poi/src/main/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -61,10 +61,10 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../main/src/test/java</directory>
+                                    <directory>../../poi/src/test/java</directory>
                                 </resource>
                                 <resource>
-                                    <directory>../../main/src/test/resources</directory>
+                                    <directory>../../poi/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -128,5 +128,11 @@
             <artifactId>SparseBitSet</artifactId>
             <version>1.2</version>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.10.9</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

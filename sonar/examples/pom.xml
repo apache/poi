@@ -36,7 +36,7 @@
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../examples/src/main/java</directory>
+                                    <directory>../../poi-examples/src/main/java</directory>
                                 </resource>
                             </resources>
                         </configuration>

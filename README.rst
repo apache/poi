@@ -70,17 +70,17 @@ Contributing
 
 * Write a unit test:
 
-  * Binary formats and Common APIs: src/testcases/org/apache/poi/
-  * OOXML APIs only: src/ooxml/testcases/org/apache/poi/
-  * Scratchpad (Binary formats): src/scratchpad/testcases/org/apache/poi/
+  * Binary formats and Common APIs: poi/src/test/java/org/apache/poi/
+  * OOXML APIs only: poi-ooxml/src/test/java/org/apache/poi/
+  * Scratchpad (Binary formats): poi-scratchpad/src/test/java/org/apache/poi/
   * Test files: test-data/
 
 * Navigate the source, make changes, and run unit tests to verify
 
-  * Binary formats and Common APIs: src/java/org/apache/poi/
-  * OOXML APIs only: src/ooxml/java/org/apache/poi/
-  * Scratchpad (Binary formats): src/scratchpad/src/org/apache/poi/
-  * Examples: src/examples/src/org/apache/poi/
+  * Binary formats and Common APIs: poi/src/main/java/org/apache/poi/
+  * OOXML APIs only: poi-ooxml/src/main/java/org/apache/poi/
+  * Scratchpad (Binary formats): poi-scratchpad/src/main/java/org/apache/poi/
+  * Examples: poi-examples/src/main/java/org/apache/poi/
 
 * More info: `How To Build page`_  at apache.org
 
