@@ -333,7 +333,7 @@ rat {
     // include all directories which contain files that are included in releases
     includes.add("examples/**")
     includes.add("excelant/**")
-    includes.add("integrationtest/**")
+    includes.add("poi-integration/**")
     includes.add("legal/**")
     includes.add("main/**")
     includes.add("maven/**")

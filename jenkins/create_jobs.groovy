@@ -453,7 +453,7 @@ poijobs.each { poijob ->
                     }
                     ant {
                         targets(['run'] + (poijob.properties ?: []))
-                        buildFile('integrationtest/build.xml')
+                        buildFile('poi-integration/build.xml')
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
@@ -470,7 +470,7 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,integrationtest/build/test-results/**,*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }

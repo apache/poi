@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Title: FeatFormulaErr2 (Formula Evaluation Shared Feature) common record part
  * <P>
- * This record part specifies Formula Evaluation & Error Ignoring data
+ * This record part specifies Formula Evaluation &amp; Error Ignoring data
  *  for a sheet, stored as part of a Shared Feature. It can be found in
  *  records such as {@link FeatRecord}.
  * For the full meanings of the flags, see pages 669 and 670
