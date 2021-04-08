@@ -82,6 +82,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -169,7 +170,12 @@ class TestSignatureInfo {
     private KeyPair keyPair;
     private X509Certificate x509;
 
-    @AfterAll
+	@BeforeAll
+	public static void setUpClass() {
+		POITestCase.setImageIOCacheDir();
+	}
+
+	@AfterAll
     public static void removeUserLocale() {
         LocaleUtil.resetUserLocale();
     }
@@ -922,6 +928,8 @@ class TestSignatureInfo {
             try (OPCPackage pkg = OPCPackage.open(signDoc, PackageAccess.READ)) {
                 SignatureLine line2 = sup.get();
                 try (POIXMLDocument doc = reinit.init(line2, pkg)) {
+                	assertNotNull(doc);
+
                     line2.parse();
                     assertEquals(line.getSuggestedSigner(), line2.getSuggestedSigner());
                     assertEquals(line.getSuggestedSigner2(), line2.getSuggestedSigner2());
@@ -1018,7 +1026,7 @@ class TestSignatureInfo {
         final String alias = "Test";
         final char[] password = "test".toCharArray();
         File file = new File("build/test.pfx");
-        file.getParentFile().mkdir();
+        assertTrue(file.getParentFile().exists() || file.getParentFile().mkdir());
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");
 

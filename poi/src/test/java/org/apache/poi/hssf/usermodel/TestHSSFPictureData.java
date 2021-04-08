@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,21 +39,12 @@ import org.junit.jupiter.api.Test;
  * The code to retrieve images from a workbook provided by Trejkaz (trejkaz at trypticon dot org) in Bug 41223.
  */
 final class TestHSSFPictureData {
-    @BeforeAll
+	@BeforeAll
     public static void setUpClass() {
-        final String tmpDirProperty = System.getProperty("java.io.tmpdir");
-        if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
-            return;
-        }
-        // ensure that temp-dir exists because ImageIO requires it
-        final File tmpDir = new File(tmpDirProperty);
-        if(!tmpDir.exists() && !tmpDir.mkdirs()) {
-            throw new IllegalStateException("Could not create temporary directory " + tmpDirProperty + ", full path " + tmpDir.getAbsolutePath());
-        }
-        ImageIO.setCacheDirectory(tmpDir);
-    }
+		POITestCase.setImageIOCacheDir();
+	}
 
-    @Test
+	@Test
 	void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
