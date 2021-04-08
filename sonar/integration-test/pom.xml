@@ -31,7 +31,7 @@
                             <outputDirectory>${basedir}/src/test/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../../integrationtest/src/test/java</directory>
+                                    <directory>../../poi-integration/src/test/java</directory>
                                 </resource>
                                 <resource>
                                     <directory>../../main/src/test/java</directory>
@@ -43,7 +43,7 @@
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <directory>../../integrationtest/src/test/resources</directory>
+                                    <directory>../../poi-integration/src/test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

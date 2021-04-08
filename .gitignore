@@ -28,11 +28,13 @@ sonar/scratchpad/src/
 sonar/ooxml-full/src/
 sonar/examples/src/
 sonar/excelant/src/
+sonar/integration-test/src/
 sonar/target
 sonar/*/target
 
 # IntelliJ
 /out/
+/*/out/
 .idea
 *.iml
 *.iws
@@ -43,6 +45,7 @@ sonar/*/target
 
 # Ant
 .ant-targets-build.xml
-build
+/build/
+/*/build/
 dist
 lib/

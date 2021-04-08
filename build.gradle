@@ -24,6 +24,11 @@ buildscript {
     }
 }
 
+plugins {
+    id 'base'
+    id("org.nosphere.apache.rat") version "0.7.0"
+}
+
 repositories {
     mavenCentral()
 }
@@ -46,7 +51,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.7.0")
+    antLibs("org.junit.jupiter:junit-jupiter:5.7.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.9")
 }
 
@@ -55,6 +60,7 @@ ant.taskdef(name: "junit",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
+    // https://stackoverflow.com/a/54741656/2066598
     gradleVersion = '6.8'
 }
 
@@ -74,6 +80,7 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
  */
 allprojects {
     apply plugin: 'eclipse'
+//    apply plugin: 'idea'
 }
 
 /**
@@ -85,6 +92,7 @@ subprojects {
     //Put instructions for each sub project, but not the master
     apply plugin: 'java-library'
     apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
 
     version = '5.0.1-SNAPSHOT'
     ext {
@@ -92,7 +100,7 @@ subprojects {
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.7.0'
+        junitVersion = '5.7.1'
         log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'
@@ -102,6 +110,10 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Jar) {
+        duplicatesStrategy = 'fail'
     }
 
     sourceCompatibility = 1.8
@@ -123,7 +135,7 @@ subprojects {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': version
+            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': project.version
         }
     }
 
@@ -198,4 +210,172 @@ subprojects {
             }
         }
     }
+
+    task jenkins
+    jenkins.dependsOn build
+    jenkins.dependsOn check
+    jenkins.dependsOn javadoc
+    jenkins.dependsOn jacocoTestReport
+    jenkins.dependsOn rat
+
+    publishing {
+        publications {
+            POI(MavenPublication) {
+                groupId 'org.apache.poi'
+
+                pom {
+                    packaging = 'jar'
+                    url = 'https://poi.apache.org/'
+
+                    mailingLists {
+                        mailingList {
+                            name = 'POI Users List'
+                            subscribe = 'user-subscribe@poi.apache.org'
+                            unsubscribe = 'user-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-user/'
+                        }
+                        mailingList {
+                            name = 'POI Developer List'
+                            subscribe = 'dev-subscribe@poi.apache.org'
+                            unsubscribe = 'dev-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-dev/'
+                        }
+                    }
+
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    organization {
+                        name = 'Apache Software Foundation'
+                        url = 'http://www.apache.org/'
+                    }
+
+                    withXml {
+                        def r = asElement()
+                        def doc = r.getOwnerDocument()
+                        def asl = doc.createComment(new File('../legal/HEADER').text)
+                        // adding ASF header before root node is ignored
+                        // doc.insertBefore(asl, doc.getDocumentElement())
+                        r.insertBefore(asl, r.getFirstChild())
+                    }
+                }
+            }
+        }
+    }
 }
+
+// Make JavaDoc behave similar to Ant, i.e. be a bit more lenient
+// and define amount of memory
+// https://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+if (JavaVersion.current().isJava8Compatible()) {
+	allprojects {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+			maxMemory="384M"
+		}
+	}
+}
+
+// initial try to provide a combined JavaDoc, grouping is still missing here, though!
+task allJavaDoc(type: Javadoc) {
+	source subprojects.collect { it.sourceSets.main.allJava }
+
+	// for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
+	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+	destinationDir = file("${buildDir}/docs/javadoc")
+	maxMemory="384M"
+
+	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
+	options.use = true
+	options.splitIndex = true
+
+	title = 'POI API Documentation'
+	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or\n' +
+			'its licensors, as applicable.</i>]]>'
+
+	options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
+	options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
+	options.group('SS - Common Spreadsheet Format', 'org.apache.poi.ss*')
+	options.group('HSSF - Horrible Spreadsheet Format', 'org.apache.poi.hssf*')
+	options.group('XSSF - Open Office XML Spreadsheet Format', 'org.apache.poi.xssf*')
+	options.group('SL - Common Slideshow Format',  'org.apache.poi.sl*')
+	options.group('HSLF - Horrible Slideshow Format', 'org.apache.poi.hslf*', 'org.apache.poi.hwmf*', 'org.apache.poi.hemf*')
+	options.group('XSLF - Open Office XML Slideshow Format', 'org.apache.poi.xslf*')
+	options.group('HWPF - Horrible Word Processor Format', 'org.apache.poi.hwpf*')
+	options.group('XWPF - Open Office XML Word Processor Format', 'org.apache.poi.xwpf*')
+	options.group('HDGF - Horrible Diagram Format', 'org.apache.poi.hdgf*')
+	options.group('XDGF - Open Office XML Diagram Format', 'org.apache.poi.xdgf*')
+	options.group('HMEF - Transport Neutral Encoding Files (TNEF)', 'org.apache.poi.hmef*')
+	options.group('HSMF Outlook message file format', 'org.apache.poi.hsmf*')
+	options.group('HPBF - Publisher Format Files', 'org.apache.poi.hpbf*')
+	options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
+	options.group('Utilities', 'org.apache.poi.util*')
+	options.group('Excelant', 'org.apache.poi.ss.excelant**')
+	options.group('Examples', 'org.apache.poi.examples*')
+}
+
+task jenkins
+jenkins.dependsOn allJavaDoc
+
+clean {
+    delete "${rootDir}/build/dist"
+}
+
+rat {
+    // Input directory, defaults to '.'
+    inputDir.set(file("."))
+
+    // include all directories which contain files that are included in releases
+    includes.add("examples/**")
+    includes.add("excelant/**")
+    includes.add("poi-integration/**")
+    includes.add("legal/**")
+    includes.add("main/**")
+    includes.add("maven/**")
+    includes.add("ooxml/**")
+    includes.add("ooxml-schema/**")
+    //includes.add("osgi/**")
+    includes.add("scratchpad/**")
+    includes.add("src/**")
+    //includes.add("sonar/**")
+    includes.add("build.*")
+
+    // List of Gradle exclude directives, defaults to ['**/.gradle/**']
+    //excludes.add("main/java/org/apache/poi/**/*-chart-data.txt")
+    excludes.add("**/build/**")
+    excludes.add("**/out/**")
+    excludes.add("**/*.iml")
+    excludes.add("**/*.log")
+    excludes.add("**/main/java/org/apache/poi/**/*-chart-data.txt")
+    excludes.add("main/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml")
+    excludes.add("ooxml/src/main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml")
+    excludes.add("ooxml/src/main/resources/org/apache/poi/xssf/usermodel/presetTableStyles.xml")
+    excludes.add("ooxml-schema/src/main/xmlschema/org/apache/poi/schemas/XAdES*.xsd")
+    excludes.add("ooxml-schema/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd")
+    excludes.add("ooxml-schema/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd")
+    /*
+    <exclude name="documentation/*.txt" />
+    <exclude name="documentation/content/xdocs/dtd/" />
+    <exclude name="documentation/content/xdocs/entity/" />
+    <exclude name="documentation/resources/images/pb-poi.cdr"/>
+    */
+
+    // Prints the list of files with unapproved licences to the console, defaults to false
+    verbose.set(true)
+}
+
+/*task downloadJarsToLibs() {
+    def f = new File("$projectDir/../lib/ooxml/xmlbeans-5.0.0.jar")
+    if (!f.exists()) {
+    println 'writing file ' + f.getAbsolutePath()
+    f.getParentFile().mkdirs()
+    new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}*/
+
+//compileJava.dependsOn 'downloadJarsToLibs'

@@ -386,6 +386,13 @@ poijobs.each { poijob ->
             steps {
                 shellEx(delegate, shellcmds, poijob)
 
+                // this is a workaround until the Gradle build can do this compilation before invoking any
+                // Ant script or when building via Ant is removed completely
+                ant {
+                    targets(['init'] + (poijob.properties ?: []))
+                    antInstallation(antRT)
+                }
+
                 gradle {
                     switches('-PenableSonar')
                     switches('-Dsonar.login=${POI_SONAR_TOKEN}')
@@ -395,7 +402,7 @@ poijobs.each { poijob ->
                     tasks('check')
                     tasks('jacocoTestReport')
                     tasks('sonarqube')
-                    useWrapper(false)
+                    useWrapper(true)
                 }
             }
             publishers {
@@ -414,9 +421,16 @@ poijobs.each { poijob ->
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
                 if(poijob.gradle) {
+                    // this is a workaround until the Gradle build can do this compilation before invoking any
+                    // Ant script or when building via Ant is removed completely
+                    ant {
+                        targets(['init'] + (poijob.properties ?: []))
+                        antInstallation(antRT)
+                    }
+
                     gradle {
                         tasks('check')
-                        useWrapper(false)
+                        useWrapper(true)
                     }
                 } else if (poijob.noScratchpad) {
                     ant {
@@ -439,7 +453,7 @@ poijobs.each { poijob ->
                     }
                     ant {
                         targets(['run'] + (poijob.properties ?: []))
-                        buildFile('integrationtest/build.xml')
+                        buildFile('poi-integration/build.xml')
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
@@ -456,11 +470,11 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,integrationtest/build/test-results/**,*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
-                archiveJunit('*/build/test-results/*.xml') {
+                archiveJunit('*/build/test-results/**/TEST-*.xml') {
                     testDataPublishers {
                         publishTestStabilityData()
                     }
@@ -566,7 +580,7 @@ xmlbeansjobs.each { xjob ->
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
             }
-            archiveJunit('build/test-results/TEST-*.xml') {
+            archiveJunit('build/test-results/**/TEST-*.xml') {
                 testDataPublishers {
                     publishTestStabilityData()
                 }
