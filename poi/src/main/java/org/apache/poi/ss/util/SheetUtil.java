@@ -160,18 +160,20 @@ public class SheetUtil {
         double width = -1;
         if (cellType == CellType.STRING) {
             RichTextString rt = cell.getRichStringCellValue();
-            String[] lines = rt.getString().split("\\n");
-            for (String line : lines) {
-                String txt = line + defaultChar;
+            if (rt != null && rt.getString() != null) {
+                String[] lines = rt.getString().split("\\n");
+                for (String line : lines) {
+                    String txt = line + defaultChar;
 
-                AttributedString str = new AttributedString(txt);
-                copyAttributes(font, str, 0, txt.length());
+                    AttributedString str = new AttributedString(txt);
+                    copyAttributes(font, str, 0, txt.length());
 
-                /*if (rt.numFormattingRuns() > 0) {
-                    // TODO: support rich text fragments
-                }*/
+                    /*if (rt.numFormattingRuns() > 0) {
+                        // TODO: support rich text fragments
+                    }*/
 
-                width = getCellWidth(defaultCharWidth, colspan, style, width, str);
+                    width = getCellWidth(defaultCharWidth, colspan, style, width, str);
+                }
             }
         } else {
             String sval = null;
