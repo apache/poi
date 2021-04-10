@@ -51,7 +51,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
  *  the XLS2CSVmra example
  * </p>
  *
- * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
+ * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
  */
 public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
 	private final HSSFWorkbook _wb;

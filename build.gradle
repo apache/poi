@@ -382,3 +382,55 @@ rat {
 }*/
 
 //compileJava.dependsOn 'downloadJarsToLibs'
+
+task site(type:Exec) {
+    if (System.env.FORREST_HOME == null) {
+        throw new InvalidUserDataException(
+            'Apache Forrest is not installed.\n' +
+            'Please install Apache Forrest (see https://forrest.apache.org/index.html) and set the\n' +
+            'FORREST_HOME environment variable!')
+    }
+
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        // maybe Java 9-11 works too?
+        throw new GradleScriptException("Apache Forrest must be executed with Java 8!")
+    }
+
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', "${System.env.FORREST_HOME}/bin/forrest.bat"
+    } else {
+        commandLine "${System.env.FORREST_HOME}/bin/forrest"
+    }
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+
+    doLast {
+        println 'Broken links:'
+        println file("${buildDir}/tmp/brokenlinks.xml").text
+
+        /* Apache Forrest is dead, so we cannot expect fixes there however it does not handle "https" in "credits"
+        currently if the *.xml file is in a sub-directory, see Apache Forrest code at
+        main/webapp/skins/pelt/xslt/html/site-to-xhtml.xsl:350
+
+        So we need to replace the links afterwards to have a fully "https" website and avoid browser warning about
+        a "mixed content" website */
+        def buildSite = "${buildDir}/site"
+
+        println "Fix https in ${buildSite}"
+
+        ant.replace(dir: buildSite, summary:'true', includes:'**/*.html',
+            token:'http://www.apache.org/events/current-event-125x125.png',
+            value:'https://www.apache.org/events/current-event-125x125.png')
+
+        ant.replace(dir: buildSite, summary:'true', includes:'**/*.html',
+            token:'http://www.google.com/search',
+            value:'https://www.google.com/search')
+
+        ant.fixcrlf(srcdir: buildSite, includes:'**/*.html,**/*.css', eol:'unix', eof:'remove')
+    }
+}

@@ -139,7 +139,7 @@ Before running this, you should execute the "assemble" target in the main build.
         </pathconvert>
 
         <echo message="Compiling all examples with the additional scratchpad.jar"/>
-        <javac srcdir="../examples/src/main/java" destdir="${build}"
+        <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
                target="1.8" source="1.8" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
                classpath="${jarpackagescratchpad}" classpathref="libs">

@@ -535,7 +535,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        *
        * Sheets that have missing or empty cells may result in
        * sparse calls to <code>cell</code>. See the code in
-       * <code>src/examples/src/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
+       * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
        * for an example of how to handle this scenario.
        */
       void cell(String cellReference, String formattedValue, XSSFComment comment);

@@ -916,7 +916,7 @@ public class SXSSFCell extends CellBase {
         }
     }
 
-//COPIED FROM https://svn.apache.org/repos/asf/poi/trunk/src/ooxml/java/org/apache/poi/xssf/usermodel/XSSFCell.java since the functions are declared private there
+//COPIED FROM https://svn.apache.org/repos/asf/poi/trunk/poi-ooxml/src/main/java/org/apache/poi/xssf/usermodel/XSSFCell.java since the functions are declared private there
     /**
      * Used to help format error messages
      */
