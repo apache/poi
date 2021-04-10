@@ -384,16 +384,18 @@ rat {
 //compileJava.dependsOn 'downloadJarsToLibs'
 
 task site(type:Exec) {
-    if (System.env.FORREST_HOME == null) {
-        throw new InvalidUserDataException(
-            'Apache Forrest is not installed.\n' +
-            'Please install Apache Forrest (see https://forrest.apache.org/index.html) and set the\n' +
-            'FORREST_HOME environment variable!')
-    }
+    doFirst {
+        if (System.env.FORREST_HOME == null) {
+            throw new InvalidUserDataException(
+                'Apache Forrest is not installed.\n' +
+                    'Please install Apache Forrest (see https://forrest.apache.org/index.html) and set the\n' +
+                    'FORREST_HOME environment variable!')
+        }
 
-    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-        // maybe Java 9-11 works too?
-        throw new GradleScriptException("Apache Forrest must be executed with Java 8!")
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            // maybe Java 9-11 works too?
+            throw new GradleException("Apache Forrest must be executed with Java 8!")
+        }
     }
 
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
