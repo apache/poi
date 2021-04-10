@@ -90,7 +90,7 @@ under the License.
         <attribute name="value"/>
         <sequential>
             <mkdir dir="poi-excelant/build/poi-ant-contrib"/>
-            <javac srcdir="poi-excelant/src//poi-ant-contrib/java" destdir="poi-excelant/build/poi-ant-contrib" includeantruntime="true" excludes="Junit5Progress.java"/>
+            <javac srcdir="poi-excelant/src/poi-ant-contrib/java" destdir="poi-excelant/build/poi-ant-contrib" includeantruntime="true" excludes="Junit5Progress.java"/>
             <taskdef name="PropertyResetHelper" classname="PropertyReset" classpath="poi-excelant/build/poi-ant-contrib"/>
             <PropertyResetHelper name="@{name}" value="@{value}" />
         </sequential>
@@ -887,10 +887,9 @@ under the License.
     </target>
     <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
 		<!-- some jars are gone since bintray.dl is shutting down, so we started to include them in the sources for now -->
-        <downloadfile src="file://${basedir}/lib.stored/svnant-1.3.1.jar" dest="${dist.svnant.jar}"/>
-        <downloadfile src="file://${basedir}/lib.stored/adapter-base-1.12.0.jar" dest="${dist.svnclientadapter-base.jar}"/>
-        <downloadfile src="file://${basedir}/lib.stored/adapter-javahl-1.12.0.jar" dest="${dist.svnclientadapter-svnkit.jar}"/>
-        <downloadfile src="file://${basedir}/lib.stored/adapter-svnkit-1.12.0.jar" dest="${dist.svnclientadapter-javahl.jar}"/>
+		<copy todir="lib/util">
+			<fileset dir="lib.stored/" includes="*.jar"/>
+		</copy>
         <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
         <downloadfile src="${dist.svnkit-javahl16.url}" dest="${dist.svnkit-javahl16.jar}"/>
         <downloadfile src="${dist.sqljet.url}" dest="${dist.sqljet.jar}"/>

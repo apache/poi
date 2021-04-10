@@ -349,7 +349,7 @@ rat {
 
     // List of Gradle exclude directives, defaults to ['**/.gradle/**']
     //excludes.add("main/java/org/apache/poi/**/*-chart-data.txt")
-    includes.add("build.javacheck.xml")
+    excludes.add("build.javacheck.xml")
     excludes.add("**/build/**")
     excludes.add("**/out/**")
     excludes.add("**/*.iml")
