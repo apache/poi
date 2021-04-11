@@ -20,18 +20,18 @@ package org.apache.poi.ss.usermodel;
 /**
  * Interface for classes providing differential style definitions, such as conditional format rules
  * and table/pivot table styles.
- * 
+ *
  * @since 3.17 beta 1
  */
 public interface DifferentialStyleProvider {
 
     /**
-     * @return - border formatting object  if defined,  <code>null</code> otherwise
+     * @return - border formatting object  if defined,  {@code null} otherwise
      */
     BorderFormatting getBorderFormatting();
 
     /**
-     * @return - font formatting object  if defined,  <code>null</code> otherwise
+     * @return - font formatting object  if defined,  {@code null} otherwise
      */
     FontFormatting getFontFormatting();
 
@@ -42,15 +42,15 @@ public interface DifferentialStyleProvider {
     ExcelNumberFormat getNumberFormat();
 
     /**
-     * @return - pattern formatting object if defined, <code>null</code> otherwise
+     * @return - pattern formatting object if defined, {@code null} otherwise
      */
     PatternFormatting getPatternFormatting();
 
     /**
      * This is the number of rows or columns in a band or stripe.
-     * For styles that represent stripes, it must be > 1, for all others it is 0.
+     * For styles that represent stripes, it must be &gt; 1, for all others it is 0.
      * Not the greatest overloading by the OOXML spec.
-     * @return number of rows/columns in a stripe for stripe styles, 0 for all others 
+     * @return number of rows/columns in a stripe for stripe styles, 0 for all others
      */
     int getStripeSize();
 }

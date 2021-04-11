@@ -49,11 +49,11 @@ public abstract class CellFormatCondition {
     /**
      * Returns an instance of a condition object.
      *
-     * @param opString The operator as a string.  One of <tt>"&lt;"</tt>,
-     *                 <tt>"&lt;="</tt>, <tt>">"</tt>, <tt>">="</tt>,
-     *                 <tt>"="</tt>, <tt>"=="</tt>, <tt>"!="</tt>, or
-     *                 <tt>"&lt;>"</tt>.
-     * @param constStr The constant (such as <tt>"12"</tt>).
+     * @param opString The operator as a string.  One of {@code <},
+     *                 {@code <=}, {@code >}, {@code >=},
+     *                 {@code =}, {@code ==}, {@code !=} or
+     *                 {@code <>}.
+     * @param constStr The constant (such as {@code 12}).
      *
      * @return A condition object for the given condition.
      */

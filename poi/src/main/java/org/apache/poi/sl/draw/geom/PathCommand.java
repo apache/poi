@@ -26,11 +26,11 @@ import java.awt.geom.Path2D;
  *
  *<ul>
  *     <li>arcTo</li>
- *      <li>moveTo/li>
- *      <li>lineTo/li>
- *      <li>cubicBezTo/li>
- *      <li>quadBezTo/li>
- *      <li>close/li>
+ *      <li>moveTo</li>
+ *      <li>lineTo</li>
+ *      <li>cubicBezTo</li>
+ *      <li>quadBezTo</li>
+ *      <li>close</li>
  * </ul>
  */
 public interface PathCommand {

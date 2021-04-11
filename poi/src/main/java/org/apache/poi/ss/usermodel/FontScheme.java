@@ -23,7 +23,7 @@ package org.apache.poi.ss.usermodel;
  * When a font definition is part of a theme definition, then the font is categorized as either a major or minor font scheme component.
  * When a new theme is chosen, every font that is part of a theme definition is updated to use the new major or minor font definition for that
  * theme.
- * Usually major fonts are used for styles like headings, and minor fonts are used for body & paragraph text.
+ * Usually major fonts are used for styles like headings, and minor fonts are used for body &amp; paragraph text.
  *
  * @author Gisella Bronzetti
  */
@@ -34,9 +34,9 @@ public enum FontScheme {
     MAJOR(2),
     MINOR(3);
 
-    private int value;
+    private final int value;
 
-    private FontScheme(int val) {
+    FontScheme(int val) {
         value = val;
     }
 
@@ -44,12 +44,9 @@ public enum FontScheme {
         return value;
     }
 
-    private static FontScheme[] _table = new FontScheme[4];
-    static {
-        for (FontScheme c : values()) {
-            _table[c.getValue()] = c;
-        }
-    }
+    private static final FontScheme[] _table = {
+        null, NONE, MAJOR, MINOR
+    };
 
     public static FontScheme valueOf(int value){
         return _table[value];

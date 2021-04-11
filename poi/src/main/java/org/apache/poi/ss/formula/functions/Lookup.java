@@ -32,17 +32,15 @@ import org.apache.poi.ss.formula.TwoDEval;
  * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>lookup_vector</b>, result_vector)<p>
  *
  * <b>lookup_value</b>  The value to be found in the lookup vector.<br>
- * <b>lookup_vector</> An area reference for the lookup data. <br>
+ * <b>lookup_vector</b> An area reference for the lookup data. <br>
  * <b>result_vector</b> Single row or single column area reference from which the result value is chosen.<br>
- *
- * @author Josh Micich
  */
 public final class Lookup extends Var2or3ArgFunction {
 
 	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		// complex rules to choose lookupVector and resultVector from the single area ref
-		
+
 		try {
 			/*
 			The array form of LOOKUP is very similar to the HLOOKUP and VLOOKUP functions. The difference is that HLOOKUP searches for the value of lookup_value in the first row, VLOOKUP searches in the first column, and LOOKUP searches according to the dimensions of array.
@@ -54,7 +52,7 @@ public final class Lookup extends Var2or3ArgFunction {
 			TwoDEval lookupArray = LookupUtils.resolveTableArrayArg(arg1);
 			ValueVector lookupVector;
 			ValueVector resultVector;
-	
+
 			if (lookupArray.getWidth() > lookupArray.getHeight()) {
 				// If array covers an area that is wider than it is tall (more columns than rows), LOOKUP searches for the value of lookup_value in the first row.
 				lookupVector = createVector(lookupArray.getRow(0));
@@ -66,7 +64,7 @@ public final class Lookup extends Var2or3ArgFunction {
 			}
 			// if a rectangular area reference was passed in as arg1, lookupVector and resultVector should be the same size
 			assert (lookupVector.getSize() == resultVector.getSize());
-			
+
 			int index = LookupUtils.lookupIndexOfValue(lookupValue, lookupVector, true);
 			return resultVector.getItem(index);
 		} catch (final EvaluationException e) {

@@ -54,9 +54,10 @@ public class POIFSDocumentPath {
      * @param components the Strings making up the path to a document.
      *      The Strings must be ordered as they appear in the directory hierarchy of the the document.
      *      The first string must be the name of a directory in the root of the POIFSFileSystem, and
-     *      every Nth (for N > 1) string thereafter must be the name of a directory in the directory
-     *      identified by the (N-1)th string. <p> If the components parameter is null or has zero length,
-     *      the POIFSDocumentPath is appropriate for a document that is in the root of a POIFSFileSystem
+     *      every Nth (for N &gt; 1) string thereafter must be the name of a directory in the directory
+     *      identified by the (N-1)th string.<p>
+     *      If the components parameter is null or has zero length, the POIFSDocumentPath is appropriate
+     *      for a document that is in the root of a POIFSFileSystem
      *
      * @exception IllegalArgumentException
      *      if any of the elements in the components parameter are null or have zero length
@@ -133,7 +134,7 @@ public class POIFSDocumentPath {
      *
      * @return the nth component;
      *
-     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n >= length()
+     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n &gt;= length()
      */
     public String getComponent(int n) throws ArrayIndexOutOfBoundsException {
         return components[ n ];

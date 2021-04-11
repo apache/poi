@@ -33,13 +33,16 @@ package org.apache.poi.ss.formula.functions;
  * </ul>
  * For more info on the terms/abbreviations please use the references below
  * (hyperlinks are subject to change):
- * </br>Online References:
+ * <p>
+ * Online References:
  * <ol>
  * <li>GNU Emacs Calc 2.02 Manual: http://theory.uwinnipeg.ca/gnu/calc/calc_203.html</li>
  * <li>Yahoo Financial Glossary: http://biz.yahoo.com/f/g/nn.html#y</li>
  * <li>MS Excel function reference: http://office.microsoft.com/en-us/assistance/CH062528251033.aspx</li>
  * </ol>
- * <h3>Implementation Notes:</h3>
+ *
+ * Implementation Notes:<p>
+ *
  * Symbols used in the formulae that follow:<br>
  * <ul>
  * <li>p: present value</li>
@@ -66,7 +69,7 @@ public final class FinanceLib {
      * Future value of an amount given the number of payments, rate, amount
      * of individual payment, present value and boolean value indicating whether
      * payments are due at the beginning of period
-     * (false => payments are due at end of period)
+     * (false =&gt; payments are due at end of period)
      * @param r rate
      * @param n num of periods
      * @param y pmt per period
@@ -88,7 +91,7 @@ public final class FinanceLib {
      * Present value of an amount given the number of future payments, rate, amount
      * of individual payment, future value and boolean value indicating whether
      * payments are due at the beginning of period
-     * (false => payments are due at end of period)
+     * (false =&gt; payments are due at end of period)
      * @param r rate
      * @param n num of periods
      * @param y pmt per period

@@ -106,7 +106,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param column - the column number this cell represents
      *
      * @return HSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
+     * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than 255,
      *   the maximum number of columns supported by the Excel binary format (.xls)
      */
     @Override
@@ -126,7 +126,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param columnIndex - the column number this cell represents
      *
      * @return HSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
+     * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than 255,
      *   the maximum number of columns supported by the Excel binary format (.xls)
      */
     @Override

@@ -54,7 +54,7 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 	 *
 	 * Blank &gt; Negative numbers
 	 * Blank == 0
-	 * Blank < Positive numbers
+	 * Blank &lt; Positive numbers
 	 * </pre>
 	 */
 

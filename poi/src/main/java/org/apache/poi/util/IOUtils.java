@@ -58,7 +58,7 @@ public final class IOUtils {
     }
 
     /**
-     * If this value is set to > 0, {@link #safelyAllocate(long, int)} will ignore the
+     * If this value is set to &gt; 0, {@link #safelyAllocate(long, int)} will ignore the
      * maximum record length parameter.
      *
      * This is designed to allow users to bypass the hard-coded maximum record lengths

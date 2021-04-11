@@ -21,9 +21,9 @@ package org.apache.poi.ss.formula.eval;
  * This class is used to simplify error handling logic <i>within</i> operator and function
  * implementations.   Note - <tt>OperationEval.evaluate()</tt> and <tt>Function.evaluate()</tt>
  * method signatures do not throw this exception so it cannot propagate outside.<p>
- * 
+ *
  * Here is an example coded without <tt>EvaluationException</tt>, to show how it can help:
- * <pre>
+ * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
  *	// ...
  *	Eval arg0 = args[0];
@@ -47,14 +47,14 @@ package org.apache.poi.ss.formula.eval;
  *		temp += ((NumericValueEval)ve).getNumberValue();
  *	}
  *	// ...
- * }	 
- * </pre>
- * In this example, if any error is encountered while processing the arguments, an error is 
+ * }
+ * }</pre>
+ * In this example, if any error is encountered while processing the arguments, an error is
  * returned immediately. This code is difficult to refactor due to all the points where errors
  * are returned.<br>
  * Using <tt>EvaluationException</tt> allows the error returning code to be consolidated to one
  * place.<p>
- * <pre>
+ * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
  *	try {
  *		// ...
@@ -90,21 +90,21 @@ package org.apache.poi.ss.formula.eval;
  *	}
  *	return temp;
  *}
- * </pre>   
+ * }</pre>
  * It is not mandatory to use EvaluationException, doing so might give the following advantages:<br>
  *  - Methods can more easily be extracted, allowing for re-use.<br>
  *  - Type management (typecasting etc) is simpler because error conditions have been separated from
  * intermediate calculation values.<br>
  *  - Fewer local variables are required. Local variables can have stronger types.<br>
- *  - It is easier to mimic common Excel error handling behaviour (exit upon encountering first 
- *  error), because exceptions conveniently propagate up the call stack regardless of execution 
+ *  - It is easier to mimic common Excel error handling behaviour (exit upon encountering first
+ *  error), because exceptions conveniently propagate up the call stack regardless of execution
  *  points or the number of levels of nested calls.<p>
- *  
+ *
  * <b>Note</b> - Only standard evaluation errors are represented by <tt>EvaluationException</tt> (
  * i.e. conditions expected to be encountered when evaluating arbitrary Excel formulas). Conditions
  * that could never occur in an Excel spreadsheet should result in runtime exceptions. Care should
- * be taken to not translate any POI internal error into an Excel evaluation error code.   
- * 
+ * be taken to not translate any POI internal error into an Excel evaluation error code.
+ *
  * @author Josh Micich
  */
 public final class EvaluationException extends Exception {
@@ -127,7 +127,7 @@ public final class EvaluationException extends Exception {
 	public static EvaluationException numberError() {
 		return new EvaluationException(ErrorEval.NUM_ERROR);
 	}
-	
+
 	public ErrorEval getErrorEval() {
 		return _errorEval;
 	}

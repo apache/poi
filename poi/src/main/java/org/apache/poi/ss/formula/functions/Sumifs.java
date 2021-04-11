@@ -22,9 +22,9 @@ package org.apache.poi.ss.formula.functions;
 /**
  * Implementation for the Excel function SUMIFS<p>
  *
- * Syntax : <br>
- *  SUMIFS ( <b>sum_range</b>, <b>criteria_range1</b>, <b>criteria1</>,
- *  [<b>criteria_range2</b>,  <b>criteria2</b>], ...) <br>
+ * Syntax : <p>
+ *  SUMIFS ( <b>sum_range</b>, <b>criteria_range1</b>, <b>criteria1</b>,
+ *  [<b>criteria_range2</b>,  <b>criteria2</b>], ...)
  *    <ul>
  *      <li><b>sum_range</b> Required. One or more cells to sum, including numbers or names, ranges,
  *      or cell references that contain numbers. Blank and text values are ignored.</li>
@@ -36,8 +36,6 @@ package org.apache.poi.ss.formula.functions;
  *      <li><b> criteria_range2, criteria2, ...</b>    Optional. Additional ranges and their associated criteria.
  *      Up to 127 range/criteria pairs are allowed.
  *    </ul>
- * </p>
- *
  */
 public final class Sumifs extends Baseifs {
     /**
@@ -49,7 +47,6 @@ public final class Sumifs extends Baseifs {
      * https://support.office.com/en-us/article/SUMIFS-function-c9e748f5-7ea7-455d-9406-611cebce642b
      * COUNTIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...
      * need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
-     * @see org.apache.poi.ss.formula.functions.Baseifs#hasInitialRange()
      */
     @Override
     protected boolean hasInitialRange() {

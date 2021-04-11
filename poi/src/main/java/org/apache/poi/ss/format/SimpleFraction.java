@@ -26,7 +26,7 @@ public class SimpleFraction {
     private final int numerator;
     /**
      * Create a fraction given a double value and a denominator.
-     * 
+     *
      * @param val double value of fraction
      * @param exactDenom the exact denominator
      * @return a SimpleFraction with the given values set.
@@ -35,17 +35,17 @@ public class SimpleFraction {
         int num =  (int)Math.round(val*exactDenom);
         return new SimpleFraction(num,exactDenom);
     }
-    
+
     /**
      * Create a fraction given the double value and either the maximum error
      * allowed or the maximum number of denominator digits.
      *
      * @param value the double value to convert to a fraction.
      * @param maxDenominator maximum denominator value allowed.
-     * 
+     *
      * @throws RuntimeException if the continued fraction failed to
      *      converge.
-     * @throws IllegalArgumentException if value > Integer.MAX_VALUE
+     * @throws IllegalArgumentException if value &gt; Integer.MAX_VALUE
      */
     public static SimpleFraction buildFractionMaxDenominator(double value, int maxDenominator){
         return buildFractionMaxDenominator(value, 0, maxDenominator, 100);

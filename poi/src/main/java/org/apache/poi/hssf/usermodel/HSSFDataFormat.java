@@ -34,10 +34,8 @@ import org.apache.poi.ss.usermodel.DataFormat;
  * <b>International Formats</b><br>
  * Since version 2003 Excel has supported international formats.  These are denoted
  * with a prefix "[$-xxx]" (where xxx is a 1-7 digit hexadecimal number).
- * See the Microsoft article
- * <a href="http://office.microsoft.com/assistance/hfws.aspx?AssetID=HA010346351033&CTT=6&Origin=EC010272491033">
- *   Creating international number formats
- * </a> for more details on these codes.
+ *
+ * @see <a href="https://support.microsoft.com/en-us/office/review-guidelines-for-customizing-a-number-format-c0a1d1fa-d3f4-4018-96b7-9c9354dd99f5">Review guidelines for customizing a number format</a>
  */
 public final class HSSFDataFormat implements DataFormat {
 	private static final String[] _builtinFormats = BuiltinFormats.getAll();
@@ -107,7 +105,7 @@ public final class HSSFDataFormat implements DataFormat {
 			}
 			_movedBuiltins = true;
 		}
-		
+
 		// See if we can find it
 		for(int i=0; i<_formats.size(); i++) {
 		   if(format.equals(_formats.get(i))) {
@@ -168,7 +166,7 @@ public final class HSSFDataFormat implements DataFormat {
 	public static int getNumberOfBuiltinBuiltinFormats() {
 		return _builtinFormats.length;
 	}
-	
+
 	/**
 	 * Ensures that the formats list can hold entries
 	 *  up to and including the entry with this index

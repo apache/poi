@@ -24,7 +24,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel Bin2Dec() function.<p>
+ * Implementation for Excel Bin2Dec() function.
  * <p>
  * <b>Syntax</b>:<br> <b>Bin2Dec  </b>(<b>number</b>,<b>[places]</b> )<br>
  * <p>
@@ -38,7 +38,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <p>
  * Remarks
  * <ul>
- * <li>If number < -512 or if number > 511, DEC2BIN returns the #NUM! error value.</li>
+ * <li>If number &lt; -512 or if number &gt; 511, DEC2BIN returns the #NUM! error value.</li>
  * <li>If number is nonnumeric, DEC2BIN returns the #VALUE! error value.</li>
  * <li>If DEC2BIN requires more than places characters, it returns the #NUM! error value.</li>
  * <li>If places is not an integer, it is truncated.</li>

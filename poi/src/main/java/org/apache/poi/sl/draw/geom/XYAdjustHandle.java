@@ -67,11 +67,6 @@ public final class XYAdjustHandle implements AdjustHandle {
 
     /**
      * Gets the value of the pos property.
-     *
-     * @return
-     *     possible object is
-     *     {@link CTAdjPoint2D }
-     *
      */
     public AdjustPoint getPos() {
         return pos;
@@ -79,11 +74,6 @@ public final class XYAdjustHandle implements AdjustHandle {
 
     /**
      * Sets the value of the pos property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link CTAdjPoint2D }
-     *
      */
     public void setPos(AdjustPoint value) {
         this.pos = value;

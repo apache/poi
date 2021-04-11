@@ -24,13 +24,13 @@ import java.util.HashMap;
 
 /**
  * Enumerates error values in SpreadsheetML formula calculations.
- * 
+ *
  * See also OOO's excelfileformat.pdf (2.5.6)
  */
 public enum FormulaError {
     @Internal
     _NO_ERROR(-1, "(no error)"),
-    
+
     /**
      * Intended to indicate when two areas are required to intersect, but do not.
      * <p>Example:
@@ -68,10 +68,12 @@ public enum FormulaError {
     /**
      * Intended to indicate when what looks like a name is used, but no such name has been defined.
      * <p>Example:
-     * XYZ/3, where XYZ is not a defined name. Total is & A10,
-     * where neither Total nor is is a defined name. Presumably, "Total is " & A10
-     * was intended. SUM(A1C10), where the range A1:C10 was intended.
-     * </p>
+     * <ul>
+     * <li>XYZ/3, where XYZ is not a defined name.</li>
+     * <li>{@code Total is &amp; A10}, where neither {@code Total} nor {@code is} is a defined name.
+     *      Presumably, {@code "Total is " &amp; A10} was intended.</li>
+     * <li>SUM(A1C10), where the range A1:C10 was intended.</li>
+     * </ul>
      */
     NAME(0x1D, "#NAME?"),
 
@@ -100,12 +102,12 @@ public enum FormulaError {
      * This error value can be produced by calling the function NA
      */
     NA(0x2A, "#N/A"),
-    
+
     // These are POI-specific error codes
     // It is desirable to make these (arbitrary) strings look clearly different from any other
     // value expression that might appear in a formula.  In addition these error strings should
     // look unlike the standard Excel errors.  Hence tilde ('~') was used.
-    
+
     /**
      * POI specific code to indicate that there is a circular reference
      *  in the formula
@@ -157,7 +159,7 @@ public enum FormulaError {
             smap.put(error.getString(), error);
         }
     }
-    
+
     public static boolean isValidCode(int errorCode) {
         for (FormulaError error : values()) {
             if (error.getCode() == errorCode) return true;

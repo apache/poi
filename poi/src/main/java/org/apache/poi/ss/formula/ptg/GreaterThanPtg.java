@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.ptg;
 
 
 /**
- * Greater than operator PTG ">"
+ * Greater than operator PTG "&gt;"
  */
 public final class GreaterThanPtg extends ValueOperatorPtg {
     public static final byte sid  = 0x0D;

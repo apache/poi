@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Utility class that builds on {@link CellRangeAddress}
- * 
+ *
  * Portions of this class may be moved to {@link CellRangeAddressBase}
  */
 public final class CellRangeUtil {
@@ -40,12 +40,12 @@ public final class CellRangeUtil {
 
     /**
      * Get the type of intersection between two cell ranges
-     * 
+     *
      * @param crB - the specified range
      * @return code which reflects how the specified range is related to this range.<br>
      * Possible return codes are:
      * <ul>
-     *     <li>{@link #NO_INTERSECTION} - the specified range is outside of this range;</li> 
+     *     <li>{@link #NO_INTERSECTION} - the specified range is outside of this range;</li>
      *     <li>{@link #OVERLAP} - both ranges partially overlap</li>
      *     <li>{@link #INSIDE} - the specified range is inside of this one</li>
      *     <li>{@link #ENCLOSES} - the specified range encloses (possibly exactly the same as) this range</li>
@@ -60,9 +60,9 @@ public final class CellRangeUtil {
         int firstCol = crB.getFirstColumn();
         int lastCol  = crB.getLastColumn();
 
-        if ( 
+        if (
             gt(crA.getFirstRow(),    lastRow) || lt(crA.getLastRow(),    firstRow) ||
-            gt(crA.getFirstColumn(), lastCol) || lt(crA.getLastColumn(), firstCol) 
+            gt(crA.getFirstColumn(), lastCol) || lt(crA.getLastColumn(), firstCol)
         )
         {
             return NO_INTERSECTION;
@@ -145,12 +145,12 @@ public final class CellRangeUtil {
         int x = intersect(range1, range2);
         switch(x)
         {
-            case CellRangeUtil.NO_INTERSECTION: 
-                // nothing in common: at most they could be adjacent to each other and thus form a single bigger area  
+            case CellRangeUtil.NO_INTERSECTION:
+                // nothing in common: at most they could be adjacent to each other and thus form a single bigger area
                 if(hasExactSharedBorder(range1, range2)) {
                     return new CellRangeAddress[] { createEnclosingCellRange(range1, range2), };
                 }
-                // else - No intersection and no shared border: do nothing 
+                // else - No intersection and no shared border: do nothing
                 return null;
             case CellRangeUtil.OVERLAP:
                 // commented out the cells overlap implementation, it caused endless loops, see Bug 55380
@@ -179,10 +179,10 @@ public final class CellRangeUtil {
     }
 
     /**
-     * Check if cell range A contains cell range B (B <= A)
-     * 
+     * Check if cell range A contains cell range B (B &lt;= A)
+     *
      * TODO: move this into {@link CellRangeAddressBase}
-     * 
+     *
      * @param crA cell range A
      * @param crB cell range B
      * @return true if cell range A contains cell range B
@@ -197,7 +197,7 @@ public final class CellRangeUtil {
 
     /**
      * Check if the two cell ranges have a shared border.
-     * 
+     *
      * @return <code>true</code> if the ranges have a complete shared border (i.e.
      * the two ranges together make a simple rectangular region.
      */
@@ -207,7 +207,7 @@ public final class CellRangeUtil {
         int oFirstCol = crB.getFirstColumn();
         int oLastCol  = crB.getLastColumn();
 
-        if (crA.getFirstRow() > 0 && crA.getFirstRow()-1 == oLastRow || 
+        if (crA.getFirstRow() > 0 && crA.getFirstRow()-1 == oLastRow ||
                 oFirstRow > 0 && oFirstRow-1 == crA.getLastRow()) {
             // ranges have a horizontal border in common
             // make sure columns are identical:
@@ -225,14 +225,14 @@ public final class CellRangeUtil {
 
     /**
      * Create an enclosing CellRange for the two cell ranges.
-     * 
+     *
      * @return enclosing CellRange
      */
     public static CellRangeAddress createEnclosingCellRange(CellRangeAddress crA, CellRangeAddress crB) {
         if( crB == null) {
             return crA.copy();
         }
-        
+
         int minRow = lt(crB.getFirstRow(),   crA.getFirstRow())   ?crB.getFirstRow()   :crA.getFirstRow();
         int maxRow = gt(crB.getLastRow(),    crA.getLastRow())    ?crB.getLastRow()    :crA.getLastRow();
         int minCol = lt(crB.getFirstColumn(),crA.getFirstColumn())?crB.getFirstColumn():crA.getFirstColumn();

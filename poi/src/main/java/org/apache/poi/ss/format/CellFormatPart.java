@@ -38,15 +38,13 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  * values.
  * <p>
  * Each format part can contain a color, a condition, and will always contain a
- * format specification.  For example <tt>"[Red][>=10]#"</tt> has a color
- * (<tt>[Red]</tt>), a condition (<tt>>=10</tt>) and a format specification
- * (<tt>#</tt>).
+ * format specification.  For example {@code "[Red][>=10]#"} has a color
+ * ({@code [Red]}), a condition ({@code >=10}) and a format specification
+ * ({@code #}).
  * <p>
  * This class also contains patterns for matching the subparts of format
  * specification.  These are used internally, but are made public in case other
  * code has use for them.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellFormatPart {
     private static final Logger LOG = Logger.getLogger(CellFormat.class.getName());

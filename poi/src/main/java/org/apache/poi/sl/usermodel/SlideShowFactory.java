@@ -151,7 +151,7 @@ public final class SlideShowFactory {
      *  @return The created SlideShow
      *
      *  @throws IOException if an error occurs while reading the data
-     *  @throws EncryptedDocumentException If the SlideShow<?,?> given is password protected
+     *  @throws EncryptedDocumentException If the SlideShow given is password protected
      */
     public static SlideShow<?,?> create(InputStream inp) throws IOException, EncryptedDocumentException {
         return create(inp, null);

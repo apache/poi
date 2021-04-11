@@ -24,7 +24,7 @@ package org.apache.poi.ss.usermodel;
  * cell reference, constant or a formula.
  * </p>
  * Examples:
- * <pre><blockquote>
+ * <pre>{@code
  *  Sheet sheet = workbook.createSheet("Loan Calculator");
  *  Name name;
  *
@@ -46,9 +46,9 @@ package org.apache.poi.ss.usermodel;
  *
  *  name = wb.createName();
  *  name.setNameName("Values_Entered");
- *  name.setRefersToFormula("IF(Loan_Amount*Interest_Rate>0,1,0)");
+ *  name.setRefersToFormula("IF(Loan_Amount*Interest_Rate > 0,1,0)");
  *
- * </blockquote></pre>
+ * }</pre>
  */
 public interface Name {
 

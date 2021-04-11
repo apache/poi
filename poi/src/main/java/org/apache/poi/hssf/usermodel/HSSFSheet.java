@@ -1748,7 +1748,7 @@ public final class HSSFSheet implements Sheet {
 
     /**
      * Shifts columns in range [startColumn, endColumn] for n places to the right.
-     * For n < 0, it will shift columns left.
+     * For n &lt; 0, it will shift columns left.
      * Additionally adjusts formulas.
      * Probably should also process other features (hyperlinks, comments...) in the way analog to shiftRows method
      * @param startColumn   the column to start shifting

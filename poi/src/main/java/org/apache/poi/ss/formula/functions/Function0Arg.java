@@ -18,12 +18,15 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.Removal;
 
 /**
  * Implemented by all functions that can be called with zero arguments
  *
- * @author Josh Micich
+ * @deprecated replaced by lambda expressions in 5.0.1
  */
+@Deprecated
+@Removal(version = "6.0.0")
 public interface Function0Arg extends Function {
 	/**
 	 * see {@link Function#evaluate(ValueEval[], int, int)}

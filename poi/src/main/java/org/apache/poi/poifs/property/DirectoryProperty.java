@@ -33,10 +33,10 @@ import java.util.Set;
 public class DirectoryProperty extends Property implements Parent, Iterable<Property> {
 
     /** List of Property instances */
-    private List<Property> _children;
+    private final List<Property> _children = new ArrayList<>();
 
     /** set of children's names */
-    private Set<String>  _children_names;
+    private final Set<String>  _children_names = new HashSet<>();
 
     /**
      * Default constructor
@@ -46,8 +46,6 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
     public DirectoryProperty(String name)
     {
         super();
-        _children       = new ArrayList<>();
-        _children_names = new HashSet<>();
         setName(name);
         setSize(0);
         setPropertyType(PropertyConstants.DIRECTORY_TYPE);
@@ -66,8 +64,6 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
                                 final int offset)
     {
         super(index, array, offset);
-        _children       = new ArrayList<>();
-        _children_names = new HashSet<>();
     }
 
     /**
@@ -121,7 +117,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
     }
 
     public static class PropertyComparator implements Comparator<Property>, Serializable {
-        
+
         /**
          * compare method. Assumes both parameters are non-null
          * instances of Property. One property is less than another if
@@ -133,9 +129,9 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
          * @param o1 first object to compare, better be a Property
          * @param o2 second object to compare, better be a Property
          *
-         * @return negative value if o1 <  o2,
+         * @return negative value if o1 &lt;  o2,
          *         zero           if o1 == o2,
-         *         positive value if o1 >  o2.
+         *         positive value if o1 &gt;  o2.
          */
         public int compare(Property o1, Property o2)
         {
