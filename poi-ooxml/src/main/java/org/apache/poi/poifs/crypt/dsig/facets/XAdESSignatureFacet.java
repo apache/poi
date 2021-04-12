@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -45,6 +46,7 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.namespace.QName;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +56,7 @@ import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.etsi.uri.x01903.v13.AnyType;
@@ -74,8 +77,6 @@ import org.w3.x2000.x09.xmldsig.DigestMethodType;
 import org.w3.x2000.x09.xmldsig.X509IssuerSerialType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * XAdES Signature Facet. Implements XAdES v1.4.1 which is compatible with XAdES
@@ -233,13 +234,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
     }
 
     private XMLObject addXadesObject(SignatureInfo signatureInfo, Document document, QualifyingPropertiesType qualifyingProperties) {
-        Node qualDocElSrc = qualifyingProperties.getDomNode();
-        Element qualDocEl = (Element)document.importNode(qualDocElSrc, true);
-
-        NodeList nl = qualDocEl.getElementsByTagNameNS(SignatureFacet.XADES_132_NS, "SignedProperties");
-        assert(nl.getLength() == 1);
-        ((Element)nl.item(0)).setIdAttribute("Id", true);
-
+        Element qualDocEl = importNode(document, qualifyingProperties);
         List<XMLStructure> xadesObjectContent = singletonList(new DOMStructure(qualDocEl));
         XMLObject xo = signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
         return xo;
@@ -309,8 +304,8 @@ public class XAdESSignatureFacet implements SignatureFacet {
      * Adds a mime-type for the given ds:Reference (referred via its @URI). This
      * information is added via the xades:DataObjectFormat element.
      *
-     * @param dsReferenceUri
-     * @param mimetype
+     * @param dsReferenceUri the reference uri
+     * @param mimetype the mimetype
      */
     public void addMimeType(String dsReferenceUri, String mimetype) {
         this.dataObjectFormatMimeTypes.put(dsReferenceUri, mimetype);
@@ -326,4 +321,63 @@ public class XAdESSignatureFacet implements SignatureFacet {
         rootCursor.dispose();
     }
 
+    /**
+     * Workaround for Document.importNode, which causes SIGSEGV in JDK14 (Ubuntu)
+     */
+    private static Element importNode(Document document, XmlObject xo) {
+        XmlCursor cur = xo.newCursor();
+        try {
+            QName elName = cur.getName();
+            Element lastNode = document.createElementNS(elName.getNamespaceURI(), elName.getLocalPart());
+            while (cur.hasNextToken()) {
+                TokenType nextToken = cur.toNextToken();
+                switch (nextToken.intValue()) {
+                    default:
+                    case TokenType.INT_NONE:
+                    case TokenType.INT_STARTDOC:
+                    case TokenType.INT_ENDDOC:
+                    case TokenType.INT_PROCINST:
+                        // ignore
+                        break;
+                    case TokenType.INT_START: {
+                        QName name = cur.getName();
+                        Element el = document.createElementNS(name.getNamespaceURI(), name.getLocalPart());
+                        lastNode = (Element)lastNode.appendChild(el);
+                        break;
+                    }
+                    case TokenType.INT_END: {
+                        Element parent = (Element)lastNode.getParentNode();
+                        if (parent != null) {
+                            lastNode = parent;
+                        }
+                        break;
+                    }
+                    case TokenType.INT_TEXT:
+                        lastNode.appendChild(document.createTextNode(cur.getTextValue()));
+                        break;
+                    case TokenType.INT_ATTR: {
+                        QName name = cur.getName();
+                        lastNode.setAttributeNS(name.getNamespaceURI(), name.getLocalPart(), cur.getTextValue());
+                        if ("Id".equals(name.getLocalPart())) {
+                            lastNode.setIdAttribute("Id", true);
+                        }
+                        break;
+                    }
+                    case TokenType.INT_NAMESPACE: {
+                        // TODO: validate namespace creation
+                        QName name = cur.getName();
+                        lastNode.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:"+name.getPrefix(), name.getNamespaceURI());
+                        break;
+                    }
+                    case TokenType.INT_COMMENT: {
+                        lastNode.appendChild(document.createComment(cur.getTextValue()));
+                        break;
+                    }
+                }
+            }
+            return lastNode;
+        } finally {
+            cur.dispose();
+        }
+    }
 }
