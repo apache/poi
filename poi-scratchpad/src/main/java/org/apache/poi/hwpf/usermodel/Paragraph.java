@@ -547,11 +547,9 @@ public class Paragraph extends Range implements Duplicatable {
   }
 
     /**
-     * Returns number of tabs stops defined for paragraph. Must be >= 0 and <=
-     * 64.
+     * Returns number of tabs stops defined for paragraph. Must be &gt;= 0 and &lt;= 64.
      *
-     * @return number of tabs stops defined for paragraph. Must be >= 0 and <=
-     *         64
+     * @return number of tabs stops defined for paragraph. Must be &gt;= 0 and &lt;= 64
      */
     public int getTabStopsNumber()
     {

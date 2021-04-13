@@ -24,8 +24,10 @@ import java.util.Map;
  * List of all known record types in a PowerPoint document, and the
  *  classes that handle them.
  * There are two categories of records:
- * <li> PowerPoint records: 0 <= info <= 10002 (will carry class info)
- * <li> Escher records: info >= 0xF000 (handled by DDF, so no class info)
+ * <ul>
+ * <li> PowerPoint records: {@code 0 <= info <= 10002} (will carry class info)
+ * <li> Escher records: {@code info >= 0xF000} (handled by DDF, so no class info)
+ * </ul>
  */
 public enum RecordTypes {
     Unknown(0,null),
@@ -183,12 +185,12 @@ public enum RecordTypes {
         for(RecordTypes s : values()) {
             LOOKUP.put(s.typeID, s);
         }
-    }    
-    
-    public final short typeID;
-    public final RecordConstructor recordConstructor;
+    }
 
-    RecordTypes(int typeID, RecordConstructor recordConstructor) {
+    public final short typeID;
+    public final RecordConstructor<?> recordConstructor;
+
+    RecordTypes(int typeID, RecordConstructor<?> recordConstructor) {
         this.typeID = (short)typeID;
         this.recordConstructor = recordConstructor;
     }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +38,11 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
-import static org.apache.logging.log4j.util.Unbox.box;
-
 /**
- * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
+ * Holds information about all pictures embedded in Word Document either via "Insert -&gt; Picture -&gt; From File" or via
  * clipboard. Responsible for images extraction and determining whether some document's piece contains embedded image.
  * Analyzes raw data bytestream 'Data' (where Word stores all embedded objects) provided by HWPFDocument.
- *
+ * <p>
  * Word stores images as is within so called "Data stream" - the stream within a Word docfile containing various data
  * that hang off of characters in the main stream. For example, binary data describing in-line pictures and/or
  * formfields an also embedded objects-native data. Word picture structures are concatenated one after the other in
@@ -60,194 +60,171 @@ public final class PicturesTable {
     private static final Logger LOG = LogManager.getLogger(PicturesTable.class);
 
     static final int TYPE_IMAGE = 0x08;
-  static final int TYPE_IMAGE_WORD2000 = 0x00;
-  static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD = 0xA;
-  static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD_WORD2000 = 0x2;
-  static final int TYPE_HORIZONTAL_LINE = 0xE;
-  static final int BLOCK_TYPE_OFFSET = 0xE;
-  static final int MM_MODE_TYPE_OFFSET = 0x6;
+    static final int TYPE_IMAGE_WORD2000 = 0x00;
+    static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD = 0xA;
+    static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD_WORD2000 = 0x2;
+    static final int TYPE_HORIZONTAL_LINE = 0xE;
+    static final int BLOCK_TYPE_OFFSET = 0xE;
+    static final int MM_MODE_TYPE_OFFSET = 0x6;
 
-  private HWPFDocument _document;
-  private byte[] _dataStream;
-  private byte[] _mainStream;
-  @Deprecated
-  private FSPATable _fspa;
-  @Deprecated
-  private OfficeArtContent _dgg;
+    private final HWPFDocument _document;
+    private final byte[] _dataStream;
+    private final byte[] _mainStream;
+    @Deprecated
+    private FSPATable _fspa;
+    @Deprecated
+    private OfficeArtContent _dgg;
 
-  /** @link dependency
-   * @stereotype instantiate*/
-  /*# Picture lnkPicture; */
+    @Deprecated
+    public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, OfficeArtContent dgg) {
+        this._document = _document;
+        this._dataStream = _dataStream;
+        this._mainStream = _mainStream;
+        this._fspa = fspa;
+        this._dgg = dgg;
+    }
 
-  /**
-   *
-   * @param _document
-   * @param _dataStream
-   */
-  @Deprecated
-  public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, OfficeArtContent dgg)
-  {
-    this._document = _document;
-    this._dataStream = _dataStream;
-    this._mainStream = _mainStream;
-    this._fspa = fspa;
-    this._dgg = dgg;
-  }
-
-    public PicturesTable( HWPFDocument _document, byte[] _dataStream,
-            byte[] _mainStream )
-    {
+    public PicturesTable(HWPFDocument _document, byte[] _dataStream,
+        byte[] _mainStream) {
         this._document = _document;
         this._dataStream = _dataStream;
         this._mainStream = _mainStream;
     }
 
-  /**
-   * determines whether specified CharacterRun contains reference to a picture
-   * @param run
-   */
-  public boolean hasPicture(CharacterRun run) {
-    if (run==null) {
+    /**
+     * determines whether specified CharacterRun contains reference to a picture
+     */
+    public boolean hasPicture(CharacterRun run) {
+        if (run == null) {
+            return false;
+        }
+
+        if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData()) {
+            // Image should be in it's own run, or in a run with the end-of-special marker
+            if ("\u0001".equals(run.text()) || "\u0001\u0015".equals(run.text())) {
+                return isBlockContainsImage(run.getPicOffset());
+            }
+        }
         return false;
     }
 
-    if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData()) {
-       // Image should be in it's own run, or in a run with the end-of-special marker
-       if("\u0001".equals(run.text()) || "\u0001\u0015".equals(run.text())) {
-          return isBlockContainsImage(run.getPicOffset());
-       }
+    public boolean hasEscherPicture(CharacterRun run) {
+        return run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && run.text().startsWith("\u0008");
     }
-    return false;
-  }
 
-  public boolean hasEscherPicture(CharacterRun run) {
-    if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && run.text().startsWith("\u0008")) {
-      return true;
+    /**
+     * determines whether specified CharacterRun contains reference to a picture
+     */
+    public boolean hasHorizontalLine(CharacterRun run) {
+        if (run.isSpecialCharacter() && "\u0001".equals(run.text())) {
+            return isBlockContainsHorizontalLine(run.getPicOffset());
+        }
+        return false;
     }
-    return false;
-  }
 
-  /**
-   * determines whether specified CharacterRun contains reference to a picture
-   * @param run
-  */
-  public boolean hasHorizontalLine(CharacterRun run) {
-    if (run.isSpecialCharacter() && "\u0001".equals(run.text())) {
-      return isBlockContainsHorizontalLine(run.getPicOffset());
+    private boolean isPictureRecognized(short blockType, short mappingModeOfMETAFILEPICT) {
+        return blockType == TYPE_IMAGE
+            || blockType == TYPE_IMAGE_PASTED_FROM_CLIPBOARD
+            || blockType == TYPE_IMAGE_WORD2000 && mappingModeOfMETAFILEPICT == 0x64
+            || blockType == TYPE_IMAGE_PASTED_FROM_CLIPBOARD_WORD2000 && mappingModeOfMETAFILEPICT == 0x64;
     }
-    return false;
-  }
 
-  private boolean isPictureRecognized(short blockType, short mappingModeOfMETAFILEPICT) {
-    return (blockType == TYPE_IMAGE || blockType == TYPE_IMAGE_PASTED_FROM_CLIPBOARD || (blockType==TYPE_IMAGE_WORD2000 && mappingModeOfMETAFILEPICT==0x64) || (blockType==TYPE_IMAGE_PASTED_FROM_CLIPBOARD_WORD2000 && mappingModeOfMETAFILEPICT==0x64));
-  }
-
-  private static short getBlockType(byte[] dataStream, int pictOffset) {
-    return LittleEndian.getShort(dataStream, pictOffset + BLOCK_TYPE_OFFSET);
-  }
-
-  private static short getMmMode(byte[] dataStream, int pictOffset) {
-    return LittleEndian.getShort(dataStream, pictOffset + MM_MODE_TYPE_OFFSET);
-  }
-
-  /**
-   * Returns picture object tied to specified CharacterRun
-   * @param run
-   * @param fillBytes if true, Picture will be returned with filled byte array that represent picture's contents. If you don't want
-   * to have that byte array in memory but only write picture's contents to stream, pass false and then use Picture.writeImageContent
-   * @see Picture#writeImageContent(OutputStream)
-   * @return a Picture object if picture exists for specified CharacterRun, null otherwise. PicturesTable.hasPicture is used to determine this.
-   * @see #hasPicture(CharacterRun)
-   */
-  public Picture extractPicture(CharacterRun run, boolean fillBytes) {
-    if (hasPicture(run)) {
-      return new Picture(run.getPicOffset(), _dataStream, fillBytes);
+    private static short getBlockType(byte[] dataStream, int pictOffset) {
+        return LittleEndian.getShort(dataStream, pictOffset + BLOCK_TYPE_OFFSET);
     }
-    return null;
-  }
 
-  /**
+    private static short getMmMode(byte[] dataStream, int pictOffset) {
+        return LittleEndian.getShort(dataStream, pictOffset + MM_MODE_TYPE_OFFSET);
+    }
+
+    /**
+     * Returns picture object tied to specified CharacterRun
+     *
+     * @param fillBytes if true, Picture will be returned with filled byte array that represent picture's contents. If you don't want
+     *                  to have that byte array in memory but only write picture's contents to stream, pass false and then use Picture.writeImageContent
+     * @return a Picture object if picture exists for specified CharacterRun, null otherwise. PicturesTable.hasPicture is used to determine this.
+     * @see Picture#writeImageContent(OutputStream)
+     * @see #hasPicture(CharacterRun)
+     */
+    public Picture extractPicture(CharacterRun run, boolean fillBytes) {
+        if (hasPicture(run)) {
+            return new Picture(run.getPicOffset(), _dataStream, fillBytes);
+        }
+        return null;
+    }
+
+    /**
      * Performs a search for pictures in the given list of escher records.
      *
      * @param escherRecords the escher records.
-     * @param pictures the list to populate with the pictures.
+     * @param pictures      the list to populate with the pictures.
      */
-    private void searchForPictures(List<EscherRecord> escherRecords, List<Picture> pictures)
-    {
-       for(EscherRecord escherRecord : escherRecords) {
-          if (escherRecord instanceof EscherBSERecord) {
-              EscherBSERecord bse = (EscherBSERecord) escherRecord;
-              EscherBlipRecord blip = bse.getBlipRecord();
-              if (blip != null)
-              {
-                  pictures.add(new Picture(blip));
-              }
-                else if ( bse.getOffset() > 0 )
-                {
-                    try
-                    {
+    private void searchForPictures(List<EscherRecord> escherRecords, List<Picture> pictures) {
+        for (EscherRecord escherRecord : escherRecords) {
+            if (escherRecord instanceof EscherBSERecord) {
+                EscherBSERecord bse = (EscherBSERecord) escherRecord;
+                EscherBlipRecord blip = bse.getBlipRecord();
+                if (blip != null) {
+                    pictures.add(new Picture(blip));
+                } else if (bse.getOffset() > 0) {
+                    try {
                         // Blip stored in delay stream, which in a word doc, is
                         // the main stream
                         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
                         EscherRecord record = recordFactory.createRecord(
-                                _mainStream, bse.getOffset() );
+                            _mainStream, bse.getOffset());
 
-                        if ( record instanceof EscherBlipRecord )
-                        {
-                            record.fillFields( _mainStream, bse.getOffset(),
-                                    recordFactory );
+                        if (record instanceof EscherBlipRecord) {
+                            record.fillFields(_mainStream, bse.getOffset(),
+                                recordFactory);
                             blip = (EscherBlipRecord) record;
-                            pictures.add( new Picture( blip ) );
+                            pictures.add(new Picture(blip));
                         }
-                    }
-                    catch ( Exception exc )
-                    {
+                    } catch (Exception exc) {
                         LOG.atWarn().withThrowable(exc).log("Unable to load picture from BLIP record at offset #{}", box(bse.getOffset()));
                     }
                 }
-          }
-       }
+            }
+        }
     }
 
-  /**
-   * Not all documents have all the images concatenated in the data stream
-   * although MS claims so. The best approach is to scan all character runs.
-   *
-   * @return a list of Picture objects found in current document
-   */
-  public List<Picture> getAllPictures() {
-    ArrayList<Picture> pictures = new ArrayList<>();
+    /**
+     * Not all documents have all the images concatenated in the data stream
+     * although MS claims so. The best approach is to scan all character runs.
+     *
+     * @return a list of Picture objects found in current document
+     */
+    public List<Picture> getAllPictures() {
+        ArrayList<Picture> pictures = new ArrayList<>();
 
-    Range range = _document.getOverallRange();
-    for (int i = 0; i < range.numCharacterRuns(); i++) {
-    	CharacterRun run = range.getCharacterRun(i);
+        Range range = _document.getOverallRange();
+        for (int i = 0; i < range.numCharacterRuns(); i++) {
+            CharacterRun run = range.getCharacterRun(i);
 
-        if (run==null) {
-            continue;
+            if (run == null) {
+                continue;
+            }
+
+            Picture picture = extractPicture(run, false);
+            if (picture != null) {
+                pictures.add(picture);
+            }
         }
 
-    	Picture picture = extractPicture(run, false);
-    	if (picture != null) {
-    		pictures.add(picture);
-    	}
-	}
+        EscherContainerRecord bStore = _dgg.getBStoreContainer();
+        if (bStore != null) {
+            searchForPictures(bStore.getChildRecords(), pictures);
+        }
 
-      EscherContainerRecord bStore = _dgg.getBStoreContainer();
-      if (bStore != null) {
-          searchForPictures(bStore.getChildRecords(), pictures);
-      }
+        return pictures;
+    }
 
-      return pictures;
-  }
+    private boolean isBlockContainsImage(int i) {
+        return isPictureRecognized(getBlockType(_dataStream, i), getMmMode(_dataStream, i));
+    }
 
-  private boolean isBlockContainsImage(int i)
-  {
-    return isPictureRecognized(getBlockType(_dataStream, i), getMmMode(_dataStream, i));
-  }
-
-  private boolean isBlockContainsHorizontalLine(int i)
-  {
-    return getBlockType(_dataStream, i)==TYPE_HORIZONTAL_LINE && getMmMode(_dataStream, i)==0x64;
-  }
+    private boolean isBlockContainsHorizontalLine(int i) {
+        return getBlockType(_dataStream, i) == TYPE_HORIZONTAL_LINE && getMmMode(_dataStream, i) == 0x64;
+    }
 
 }

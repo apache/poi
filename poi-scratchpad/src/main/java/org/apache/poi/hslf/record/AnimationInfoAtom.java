@@ -97,7 +97,7 @@ public final class AnimationInfoAtom extends RecordAtom {
     /**
      * Record header.
      */
-    private byte[] _header;
+    private final byte[] _header;
 
     /**
      * record data
@@ -246,7 +246,7 @@ public final class AnimationInfoAtom extends RecordAtom {
      * A signed integer that specifies the order of the animation in the slide.
      * It MUST be greater than or equal to -2. The value -2 specifies that this animation follows the order of
      * the corresponding placeholder shape on the main master slide or title master slide.
-     * The value -1 SHOULD NOT <105> be used.
+     * The value -1 SHOULD NOT be used.
      */
     public int getOrderID(){
         return LittleEndian.getInt(_recdata, 16);
@@ -256,7 +256,7 @@ public final class AnimationInfoAtom extends RecordAtom {
      * A signed integer that specifies the order of the animation in the slide.
      * It MUST be greater than or equal to -2. The value -2 specifies that this animation follows the order of
      * the corresponding placeholder shape on the main master slide or title master slide.
-     * The value -1 SHOULD NOT <105> be used.
+     * The value -1 SHOULD NOT be used.
      */
     public void setOrderID(int id){
          LittleEndian.putInt(_recdata, 16, id);

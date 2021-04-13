@@ -137,7 +137,7 @@ public final class ListTables
 
     /**
      * Get the ListLevel for a given lsid and level
-     * @return ListLevel if found, or <code>null</code> if ListData can't be found or if level is > that available
+     * @return ListLevel if found, or {@code null} if ListData can't be found or if level is &gt; that available
      */
   public ListLevel getLevel(int lsid, int level)
   {

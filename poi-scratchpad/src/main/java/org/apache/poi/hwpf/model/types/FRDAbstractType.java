@@ -56,17 +56,13 @@ public abstract class FRDAbstractType {
 
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "[FRD]\n" );
-        builder.append( "    .nAuto                = " );
-        builder.append( " (" ).append( getNAuto() ).append( " )\n" );
-
-        builder.append( "[/FRD]\n" );
-        return builder.toString();
+        return "[FRD]\n" +
+            "    .nAuto                =  (" + getNAuto() + " )\n" +
+            "[/FRD]\n";
     }
 
     /**
-     * If > 0, the note is an automatically numbered note, otherwise it has a
+     * If &gt; 0, the note is an automatically numbered note, otherwise it has a
      * custom mark.
      */
     public short getNAuto()
@@ -75,7 +71,7 @@ public abstract class FRDAbstractType {
     }
 
     /**
-     * If > 0, the note is an automatically numbered note, otherwise it has a
+     * If &gt; 0, the note is an automatically numbered note, otherwise it has a
      * custom mark.
      */
     public void setNAuto( short field_1_nAuto )
@@ -83,4 +79,4 @@ public abstract class FRDAbstractType {
         this.field_1_nAuto = field_1_nAuto;
     }
 
-} // END OF CLASS
+}

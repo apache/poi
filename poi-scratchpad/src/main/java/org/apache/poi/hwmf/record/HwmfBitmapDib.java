@@ -58,7 +58,7 @@ public class HwmfBitmapDib implements GenericRecord {
 
     public enum BitCount {
         /**
-         * The image SHOULD be in either JPEG or PNG format. <6> Neither of these formats includes
+         * The image SHOULD be in either JPEG or PNG format. Neither of these formats includes
          *  a color table, so this value specifies that no color table is present. See [JFIF] and [RFC2083]
          *  for more information concerning JPEG and PNG compression formats.
          */
@@ -257,7 +257,7 @@ public class HwmfBitmapDib implements GenericRecord {
             headerCompression == Compression.BI_RGB ||
             headerCompression == Compression.BI_BITFIELDS ||
             headerCompression == Compression.BI_CMYK) {
-            int fileSize = (int)Math.min(introSize+bodySize,recordSize);
+            int fileSize = Math.min(introSize+bodySize,recordSize);
             imageData = IOUtils.safelyAllocate(fileSize, MAX_RECORD_LENGTH);
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
@@ -271,10 +271,10 @@ public class HwmfBitmapDib implements GenericRecord {
         }
     }
 
-    protected int readHeader(LittleEndianInputStream leis) throws IOException {
+    protected int readHeader(LittleEndianInputStream leis) {
         int size = 0;
 
-        /**
+        /*
          * DIBHeaderInfo (variable): Either a BitmapCoreHeader Object or a
          * BitmapInfoHeader Object that specifies information about the image.
          *

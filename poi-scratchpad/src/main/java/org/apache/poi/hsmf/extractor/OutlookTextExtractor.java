@@ -101,8 +101,8 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
         }
 
         try {
-            s.append("From: " + msg.getDisplayFrom() + "\n");
-        } catch (ChunkNotFoundException e) {
+            s.append("From: ").append(msg.getDisplayFrom()).append("\n");
+        } catch (ChunkNotFoundException ignored) {
         }
 
         // For To, CC and BCC, try to match the names
@@ -111,15 +111,15 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
         //  people in To + CC + BCC.
         try {
             handleEmails(s, "To", msg.getDisplayTo(), emails);
-        } catch (ChunkNotFoundException e) {
+        } catch (ChunkNotFoundException ignored) {
         }
         try {
             handleEmails(s, "CC", msg.getDisplayCC(), emails);
-        } catch (ChunkNotFoundException e) {
+        } catch (ChunkNotFoundException ignored) {
         }
         try {
             handleEmails(s, "BCC", msg.getDisplayBCC(), emails);
-        } catch (ChunkNotFoundException e) {
+        } catch (ChunkNotFoundException ignored) {
         }
 
         // Date - try two ways to find it
@@ -145,7 +145,7 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
 
         try {
             s.append("Subject: ").append(msg.getSubject()).append("\n");
-        } catch (ChunkNotFoundException e) {
+        } catch (ChunkNotFoundException ignored) {
         }
 
         // Display attachment names
@@ -164,7 +164,7 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
 
         try {
             s.append("\n").append(msg.getTextBody()).append("\n");
-        } catch (ChunkNotFoundException e) {
+        } catch (ChunkNotFoundException ignored) {
         }
 
         return s.toString();
@@ -173,7 +173,7 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
     /**
      * Takes a Display focused string, eg "Nick; Jim" and an iterator
      * of emails, and does its best to return something like
-     * "Nick <nick@example.com>; Jim <jim@example.com>"
+     * {@code "Nick <nick@example.com>; Jim <jim@example.com>"}
      */
     protected void handleEmails(StringBuilder s, String type, String displayText, Iterator<String> emails) {
         if (displayText == null || displayText.length() == 0) {

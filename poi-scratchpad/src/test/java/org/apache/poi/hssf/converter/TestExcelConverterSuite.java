@@ -65,7 +65,7 @@ public class TestExcelConverterSuite
     {
         HSSFWorkbook workbook;
         try {
-            workbook = ExcelToHtmlUtils.loadXls( child );
+            workbook = AbstractExcelUtils.loadXls( child );
         } catch ( Exception exc ) {
             // unable to parse file -- not ExcelToFoConverter fault
             return;
@@ -91,7 +91,7 @@ public class TestExcelConverterSuite
     {
         HSSFWorkbook workbook;
         try {
-            workbook = ExcelToHtmlUtils.loadXls( child );
+            workbook = AbstractExcelUtils.loadXls( child );
         } catch ( Exception exc ) {
             // unable to parse file -- not ExcelToFoConverter fault
             return;

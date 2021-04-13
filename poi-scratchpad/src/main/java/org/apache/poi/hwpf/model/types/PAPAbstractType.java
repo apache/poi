@@ -247,174 +247,91 @@ public abstract class PAPAbstractType {
 
     }
 
-    public String toString()
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[PAP]\n");
-        builder.append("    .istd                 = ");
-        builder.append(" (").append(getIstd()).append(" )\n");
-        builder.append("    .fSideBySide          = ");
-        builder.append(" (").append(getFSideBySide()).append(" )\n");
-        builder.append("    .fKeep                = ");
-        builder.append(" (").append(getFKeep()).append(" )\n");
-        builder.append("    .fKeepFollow          = ");
-        builder.append(" (").append(getFKeepFollow()).append(" )\n");
-        builder.append("    .fPageBreakBefore     = ");
-        builder.append(" (").append(getFPageBreakBefore()).append(" )\n");
-        builder.append("    .brcl                 = ");
-        builder.append(" (").append(getBrcl()).append(" )\n");
-        builder.append("    .brcp                 = ");
-        builder.append(" (").append(getBrcp()).append(" )\n");
-        builder.append("    .ilvl                 = ");
-        builder.append(" (").append(getIlvl()).append(" )\n");
-        builder.append("    .ilfo                 = ");
-        builder.append(" (").append(getIlfo()).append(" )\n");
-        builder.append("    .fNoLnn               = ");
-        builder.append(" (").append(getFNoLnn()).append(" )\n");
-        builder.append("    .lspd                 = ");
-        builder.append(" (").append(getLspd()).append(" )\n");
-        builder.append("    .dyaBefore            = ");
-        builder.append(" (").append(getDyaBefore()).append(" )\n");
-        builder.append("    .dyaAfter             = ");
-        builder.append(" (").append(getDyaAfter()).append(" )\n");
-        builder.append("    .fInTable             = ");
-        builder.append(" (").append(getFInTable()).append(" )\n");
-        builder.append("    .finTableW97          = ");
-        builder.append(" (").append(getFinTableW97()).append(" )\n");
-        builder.append("    .fTtp                 = ");
-        builder.append(" (").append(getFTtp()).append(" )\n");
-        builder.append("    .dxaAbs               = ");
-        builder.append(" (").append(getDxaAbs()).append(" )\n");
-        builder.append("    .dyaAbs               = ");
-        builder.append(" (").append(getDyaAbs()).append(" )\n");
-        builder.append("    .dxaWidth             = ");
-        builder.append(" (").append(getDxaWidth()).append(" )\n");
-        builder.append("    .fBrLnAbove           = ");
-        builder.append(" (").append(getFBrLnAbove()).append(" )\n");
-        builder.append("    .fBrLnBelow           = ");
-        builder.append(" (").append(getFBrLnBelow()).append(" )\n");
-        builder.append("    .pcVert               = ");
-        builder.append(" (").append(getPcVert()).append(" )\n");
-        builder.append("    .pcHorz               = ");
-        builder.append(" (").append(getPcHorz()).append(" )\n");
-        builder.append("    .wr                   = ");
-        builder.append(" (").append(getWr()).append(" )\n");
-        builder.append("    .fNoAutoHyph          = ");
-        builder.append(" (").append(getFNoAutoHyph()).append(" )\n");
-        builder.append("    .dyaHeight            = ");
-        builder.append(" (").append(getDyaHeight()).append(" )\n");
-        builder.append("    .fMinHeight           = ");
-        builder.append(" (").append(getFMinHeight()).append(" )\n");
-        builder.append("    .dcs                  = ");
-        builder.append(" (").append(getDcs()).append(" )\n");
-        builder.append("    .dyaFromText          = ");
-        builder.append(" (").append(getDyaFromText()).append(" )\n");
-        builder.append("    .dxaFromText          = ");
-        builder.append(" (").append(getDxaFromText()).append(" )\n");
-        builder.append("    .fLocked              = ");
-        builder.append(" (").append(getFLocked()).append(" )\n");
-        builder.append("    .fWidowControl        = ");
-        builder.append(" (").append(getFWidowControl()).append(" )\n");
-        builder.append("    .fKinsoku             = ");
-        builder.append(" (").append(getFKinsoku()).append(" )\n");
-        builder.append("    .fWordWrap            = ");
-        builder.append(" (").append(getFWordWrap()).append(" )\n");
-        builder.append("    .fOverflowPunct       = ");
-        builder.append(" (").append(getFOverflowPunct()).append(" )\n");
-        builder.append("    .fTopLinePunct        = ");
-        builder.append(" (").append(getFTopLinePunct()).append(" )\n");
-        builder.append("    .fAutoSpaceDE         = ");
-        builder.append(" (").append(getFAutoSpaceDE()).append(" )\n");
-        builder.append("    .fAutoSpaceDN         = ");
-        builder.append(" (").append(getFAutoSpaceDN()).append(" )\n");
-        builder.append("    .wAlignFont           = ");
-        builder.append(" (").append(getWAlignFont()).append(" )\n");
-        builder.append("    .fontAlign            = ");
-        builder.append(" (").append(getFontAlign()).append(" )\n");
-        builder.append("         .fVertical                = ").append(isFVertical()).append('\n');
-        builder.append("         .fBackward                = ").append(isFBackward()).append('\n');
-        builder.append("         .fRotateFont              = ").append(isFRotateFont()).append('\n');
-        builder.append("    .lvl                  = ");
-        builder.append(" (").append(getLvl()).append(" )\n");
-        builder.append("    .fBiDi                = ");
-        builder.append(" (").append(getFBiDi()).append(" )\n");
-        builder.append("    .fNumRMIns            = ");
-        builder.append(" (").append(getFNumRMIns()).append(" )\n");
-        builder.append("    .fCrLf                = ");
-        builder.append(" (").append(getFCrLf()).append(" )\n");
-        builder.append("    .fUsePgsuSettings     = ");
-        builder.append(" (").append(getFUsePgsuSettings()).append(" )\n");
-        builder.append("    .fAdjustRight         = ");
-        builder.append(" (").append(getFAdjustRight()).append(" )\n");
-        builder.append("    .itap                 = ");
-        builder.append(" (").append(getItap()).append(" )\n");
-        builder.append("    .fInnerTableCell      = ");
-        builder.append(" (").append(getFInnerTableCell()).append(" )\n");
-        builder.append("    .fOpenTch             = ");
-        builder.append(" (").append(getFOpenTch()).append(" )\n");
-        builder.append("    .fTtpEmbedded         = ");
-        builder.append(" (").append(getFTtpEmbedded()).append(" )\n");
-        builder.append("    .dxcRight             = ");
-        builder.append(" (").append(getDxcRight()).append(" )\n");
-        builder.append("    .dxcLeft              = ");
-        builder.append(" (").append(getDxcLeft()).append(" )\n");
-        builder.append("    .dxcLeft1             = ");
-        builder.append(" (").append(getDxcLeft1()).append(" )\n");
-        builder.append("    .fDyaBeforeAuto       = ");
-        builder.append(" (").append(getFDyaBeforeAuto()).append(" )\n");
-        builder.append("    .fDyaAfterAuto        = ");
-        builder.append(" (").append(getFDyaAfterAuto()).append(" )\n");
-        builder.append("    .dxaRight             = ");
-        builder.append(" (").append(getDxaRight()).append(" )\n");
-        builder.append("    .dxaLeft              = ");
-        builder.append(" (").append(getDxaLeft()).append(" )\n");
-        builder.append("    .dxaLeft1             = ");
-        builder.append(" (").append(getDxaLeft1()).append(" )\n");
-        builder.append("    .jc                   = ");
-        builder.append(" (").append(getJc()).append(" )\n");
-        builder.append("    .brcTop               = ");
-        builder.append(" (").append(getBrcTop()).append(" )\n");
-        builder.append("    .brcLeft              = ");
-        builder.append(" (").append(getBrcLeft()).append(" )\n");
-        builder.append("    .brcBottom            = ");
-        builder.append(" (").append(getBrcBottom()).append(" )\n");
-        builder.append("    .brcRight             = ");
-        builder.append(" (").append(getBrcRight()).append(" )\n");
-        builder.append("    .brcBetween           = ");
-        builder.append(" (").append(getBrcBetween()).append(" )\n");
-        builder.append("    .brcBar               = ");
-        builder.append(" (").append(getBrcBar()).append(" )\n");
-        builder.append("    .shd                  = ");
-        builder.append(" (").append(getShd()).append(" )\n");
-        builder.append("    .anld                 = ");
-        builder.append(" (").append(Arrays.toString(getAnld())).append(" )\n");
-        builder.append("    .phe                  = ");
-        builder.append(" (").append(Arrays.toString(getPhe())).append(" )\n");
-        builder.append("    .fPropRMark           = ");
-        builder.append(" (").append(getFPropRMark()).append(" )\n");
-        builder.append("    .ibstPropRMark        = ");
-        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
-        builder.append("    .dttmPropRMark        = ");
-        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
-        builder.append("    .itbdMac              = ");
-        builder.append(" (").append(getItbdMac()).append(" )\n");
-        builder.append("    .rgdxaTab             = ");
-        builder.append(" (").append(Arrays.toString(getRgdxaTab())).append(" )\n");
-        builder.append("    .rgtbd                = ");
-        builder.append(" (").append(Arrays.toString(getRgtbd())).append(" )\n");
-        builder.append("    .numrm                = ");
-        builder.append(" (").append(Arrays.toString(getNumrm())).append(" )\n");
-        builder.append("    .ptap                 = ");
-        builder.append(" (").append(Arrays.toString(getPtap())).append(" )\n");
-        builder.append("    .fNoAllowOverlap      = ");
-        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
-        builder.append("    .ipgp                 = ");
-        builder.append(" (").append(getIpgp()).append(" )\n");
-        builder.append("    .rsid                 = ");
-        builder.append(" (").append(getRsid()).append(" )\n");
-
-        builder.append("[/PAP]\n");
-        return builder.toString();
+    public String toString() {
+        return "[PAP]\n" +
+            "    .istd                 =  (" + getIstd() + " )\n" +
+            "    .fSideBySide          =  (" + getFSideBySide() + " )\n" +
+            "    .fKeep                =  (" + getFKeep() + " )\n" +
+            "    .fKeepFollow          =  (" + getFKeepFollow() + " )\n" +
+            "    .fPageBreakBefore     =  (" + getFPageBreakBefore() + " )\n" +
+            "    .brcl                 =  (" + getBrcl() + " )\n" +
+            "    .brcp                 =  (" + getBrcp() + " )\n" +
+            "    .ilvl                 =  (" + getIlvl() + " )\n" +
+            "    .ilfo                 =  (" + getIlfo() + " )\n" +
+            "    .fNoLnn               =  (" + getFNoLnn() + " )\n" +
+            "    .lspd                 =  (" + getLspd() + " )\n" +
+            "    .dyaBefore            =  (" + getDyaBefore() + " )\n" +
+            "    .dyaAfter             =  (" + getDyaAfter() + " )\n" +
+            "    .fInTable             =  (" + getFInTable() + " )\n" +
+            "    .finTableW97          =  (" + getFinTableW97() + " )\n" +
+            "    .fTtp                 =  (" + getFTtp() + " )\n" +
+            "    .dxaAbs               =  (" + getDxaAbs() + " )\n" +
+            "    .dyaAbs               =  (" + getDyaAbs() + " )\n" +
+            "    .dxaWidth             =  (" + getDxaWidth() + " )\n" +
+            "    .fBrLnAbove           =  (" + getFBrLnAbove() + " )\n" +
+            "    .fBrLnBelow           =  (" + getFBrLnBelow() + " )\n" +
+            "    .pcVert               =  (" + getPcVert() + " )\n" +
+            "    .pcHorz               =  (" + getPcHorz() + " )\n" +
+            "    .wr                   =  (" + getWr() + " )\n" +
+            "    .fNoAutoHyph          =  (" + getFNoAutoHyph() + " )\n" +
+            "    .dyaHeight            =  (" + getDyaHeight() + " )\n" +
+            "    .fMinHeight           =  (" + getFMinHeight() + " )\n" +
+            "    .dcs                  =  (" + getDcs() + " )\n" +
+            "    .dyaFromText          =  (" + getDyaFromText() + " )\n" +
+            "    .dxaFromText          =  (" + getDxaFromText() + " )\n" +
+            "    .fLocked              =  (" + getFLocked() + " )\n" +
+            "    .fWidowControl        =  (" + getFWidowControl() + " )\n" +
+            "    .fKinsoku             =  (" + getFKinsoku() + " )\n" +
+            "    .fWordWrap            =  (" + getFWordWrap() + " )\n" +
+            "    .fOverflowPunct       =  (" + getFOverflowPunct() + " )\n" +
+            "    .fTopLinePunct        =  (" + getFTopLinePunct() + " )\n" +
+            "    .fAutoSpaceDE         =  (" + getFAutoSpaceDE() + " )\n" +
+            "    .fAutoSpaceDN         =  (" + getFAutoSpaceDN() + " )\n" +
+            "    .wAlignFont           =  (" + getWAlignFont() + " )\n" +
+            "    .fontAlign            =  (" + getFontAlign() + " )\n" +
+            "         .fVertical                = " + isFVertical() + '\n' +
+            "         .fBackward                = " + isFBackward() + '\n' +
+            "         .fRotateFont              = " + isFRotateFont() + '\n' +
+            "    .lvl                  =  (" + getLvl() + " )\n" +
+            "    .fBiDi                =  (" + getFBiDi() + " )\n" +
+            "    .fNumRMIns            =  (" + getFNumRMIns() + " )\n" +
+            "    .fCrLf                =  (" + getFCrLf() + " )\n" +
+            "    .fUsePgsuSettings     =  (" + getFUsePgsuSettings() + " )\n" +
+            "    .fAdjustRight         =  (" + getFAdjustRight() + " )\n" +
+            "    .itap                 =  (" + getItap() + " )\n" +
+            "    .fInnerTableCell      =  (" + getFInnerTableCell() + " )\n" +
+            "    .fOpenTch             =  (" + getFOpenTch() + " )\n" +
+            "    .fTtpEmbedded         =  (" + getFTtpEmbedded() + " )\n" +
+            "    .dxcRight             =  (" + getDxcRight() + " )\n" +
+            "    .dxcLeft              =  (" + getDxcLeft() + " )\n" +
+            "    .dxcLeft1             =  (" + getDxcLeft1() + " )\n" +
+            "    .fDyaBeforeAuto       =  (" + getFDyaBeforeAuto() + " )\n" +
+            "    .fDyaAfterAuto        =  (" + getFDyaAfterAuto() + " )\n" +
+            "    .dxaRight             =  (" + getDxaRight() + " )\n" +
+            "    .dxaLeft              =  (" + getDxaLeft() + " )\n" +
+            "    .dxaLeft1             =  (" + getDxaLeft1() + " )\n" +
+            "    .jc                   =  (" + getJc() + " )\n" +
+            "    .brcTop               =  (" + getBrcTop() + " )\n" +
+            "    .brcLeft              =  (" + getBrcLeft() + " )\n" +
+            "    .brcBottom            =  (" + getBrcBottom() + " )\n" +
+            "    .brcRight             =  (" + getBrcRight() + " )\n" +
+            "    .brcBetween           =  (" + getBrcBetween() + " )\n" +
+            "    .brcBar               =  (" + getBrcBar() + " )\n" +
+            "    .shd                  =  (" + getShd() + " )\n" +
+            "    .anld                 =  (" + Arrays.toString(getAnld()) + " )\n" +
+            "    .phe                  =  (" + Arrays.toString(getPhe()) + " )\n" +
+            "    .fPropRMark           =  (" + getFPropRMark() + " )\n" +
+            "    .ibstPropRMark        =  (" + getIbstPropRMark() + " )\n" +
+            "    .dttmPropRMark        =  (" + getDttmPropRMark() + " )\n" +
+            "    .itbdMac              =  (" + getItbdMac() + " )\n" +
+            "    .rgdxaTab             =  (" + Arrays.toString(getRgdxaTab()) + " )\n" +
+            "    .rgtbd                =  (" + Arrays.toString(getRgtbd()) + " )\n" +
+            "    .numrm                =  (" + Arrays.toString(getNumrm()) + " )\n" +
+            "    .ptap                 =  (" + Arrays.toString(getPtap()) + " )\n" +
+            "    .fNoAllowOverlap      =  (" + getFNoAllowOverlap() + " )\n" +
+            "    .ipgp                 =  (" + getIpgp() + " )\n" +
+            "    .rsid                 =  (" + getRsid() + " )\n" +
+            "[/PAP]\n";
     }
 
     /**
@@ -1785,7 +1702,7 @@ public abstract class PAPAbstractType {
     }
 
     /**
-     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
+     * Number of tabs stops defined for paragraph. Must be &gt;= 0 and &lt;= 64..
      */
     @Internal
     public int getItbdMac()
@@ -1794,7 +1711,7 @@ public abstract class PAPAbstractType {
     }
 
     /**
-     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
+     * Number of tabs stops defined for paragraph. Must be &gt;= 0 and &lt;= 64..
      */
     @Internal
     public void setItbdMac( int field_72_itbdMac )

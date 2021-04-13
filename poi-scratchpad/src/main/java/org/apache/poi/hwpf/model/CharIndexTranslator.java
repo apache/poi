@@ -23,7 +23,7 @@ import org.apache.poi.util.Internal;
 public interface CharIndexTranslator {
     /**
      * Calculates the byte index of the given char index.
-     * 
+     *
      * @param charPos
      *            The char position
      * @return The byte index
@@ -32,7 +32,7 @@ public interface CharIndexTranslator {
 
     /**
      * Finds character ranges that includes specified byte range.
-     * 
+     *
      * @param startBytePosInclusive
      *            start byte range
      * @param endBytePosExclusive
@@ -43,14 +43,14 @@ public interface CharIndexTranslator {
 
     /**
      * Check if index is in table
-     * 
+     *
      * @param bytePos
      * @return true if index in table, false if not
      */
     boolean isIndexInTable(int bytePos);
 
     /**
-     * Return first index >= bytePos that is in table
+     * Return first index &gt;= bytePos that is in table
      *
      * @param bytePos
      * @return  first index greater or equal to bytePos that is in table
@@ -58,7 +58,7 @@ public interface CharIndexTranslator {
     int lookIndexForward(int bytePos);
 
     /**
-     * Return last index <= bytePos that is in table
+     * Return last index &lt;= bytePos that is in table
      *
      * @param bytePos
      * @return last index less of equal to bytePos that is in table

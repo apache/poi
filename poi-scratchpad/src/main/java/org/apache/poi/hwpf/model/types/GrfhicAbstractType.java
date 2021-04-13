@@ -81,7 +81,7 @@ public abstract class GrfhicAbstractType
      */
     public static int getSize()
     {
-        return 0 + 1;
+        return 1;
     }
 
     @Override
@@ -94,9 +94,7 @@ public abstract class GrfhicAbstractType
         if ( getClass() != obj.getClass() )
             return false;
         GrfhicAbstractType other = (GrfhicAbstractType) obj;
-        if ( field_1_grfhic != other.field_1_grfhic )
-            return false;
-        return true;
+        return field_1_grfhic == other.field_1_grfhic;
     }
 
     @Override
@@ -106,22 +104,19 @@ public abstract class GrfhicAbstractType
 
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("[Grfhic]\n");
-        builder.append( "    .grfhic               = " );
-        builder.append(" ( ").append( field_1_grfhic ).append( " )\n" );
-        builder.append("         .fHtmlChecked             = ").append(isFHtmlChecked()).append('\n');
-        builder.append("         .fHtmlUnsupported         = ").append(isFHtmlUnsupported()).append('\n');
-        builder.append("         .fHtmlListTextNotSharpDot     = ").append(isFHtmlListTextNotSharpDot()).append('\n');
-        builder.append("         .fHtmlNotPeriod           = ").append(isFHtmlNotPeriod()).append('\n');
-        builder.append("         .fHtmlFirstLineMismatch     = ").append(isFHtmlFirstLineMismatch()).append('\n');
-        builder.append("         .fHtmlTabLeftIndentMismatch     = ").append(isFHtmlTabLeftIndentMismatch()).append('\n');
-        builder.append("         .fHtmlHangingIndentBeneathNumber     = ").append(isFHtmlHangingIndentBeneathNumber()).append('\n');
-        builder.append("         .fHtmlBuiltInBullet       = ").append(isFHtmlBuiltInBullet()).append('\n');
-
-        builder.append("[/Grfhic]");
-        return builder.toString();
+        String builder = "[Grfhic]\n" +
+            "    .grfhic               = " +
+            " ( " + field_1_grfhic + " )\n" +
+            "         .fHtmlChecked             = " + isFHtmlChecked() + '\n' +
+            "         .fHtmlUnsupported         = " + isFHtmlUnsupported() + '\n' +
+            "         .fHtmlListTextNotSharpDot     = " + isFHtmlListTextNotSharpDot() + '\n' +
+            "         .fHtmlNotPeriod           = " + isFHtmlNotPeriod() + '\n' +
+            "         .fHtmlFirstLineMismatch     = " + isFHtmlFirstLineMismatch() + '\n' +
+            "         .fHtmlTabLeftIndentMismatch     = " + isFHtmlTabLeftIndentMismatch() + '\n' +
+            "         .fHtmlHangingIndentBeneathNumber     = " + isFHtmlHangingIndentBeneathNumber() + '\n' +
+            "         .fHtmlBuiltInBullet       = " + isFHtmlBuiltInBullet() + '\n' +
+            "[/Grfhic]";
+        return builder;
     }
 
     /**
@@ -164,7 +159,7 @@ public abstract class GrfhicAbstractType
 
     /**
      * Sets the fHtmlUnsupported field value.
-     * The numbering sequence or format is unsupported (includes tab & size)
+     * The numbering sequence or format is unsupported (includes tab &amp; size)
      */
     @Internal
     public void setFHtmlUnsupported( boolean value )
@@ -173,7 +168,7 @@ public abstract class GrfhicAbstractType
     }
 
     /**
-     * The numbering sequence or format is unsupported (includes tab & size)
+     * The numbering sequence or format is unsupported (includes tab &amp; size)
      * @return  the fHtmlUnsupported field value.
      */
     @Internal

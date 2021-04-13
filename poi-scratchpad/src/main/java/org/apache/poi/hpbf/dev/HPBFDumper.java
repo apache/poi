@@ -99,7 +99,7 @@ public final class HPBFDumper {
 
     /**
      * Dump out the escher parts of the file.
-     * Escher -> EscherStm and EscherDelayStm
+     * Escher -&gt; EscherStm and EscherDelayStm
      */
     public void dumpEscher() throws IOException {
         DirectoryNode escherDir = (DirectoryNode)

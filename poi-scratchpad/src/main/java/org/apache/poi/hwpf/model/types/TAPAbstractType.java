@@ -895,7 +895,7 @@ public abstract class TAPAbstractType {
     }
 
     /**
-     * Count of cells defined for this row. itcMac must be >= 0 and less than or equal to 64..
+     * Count of cells defined for this row. itcMac must be &gt;= 0 and less than or equal to 64..
      */
     @Internal
     public short getItcMac()
@@ -904,7 +904,7 @@ public abstract class TAPAbstractType {
     }
 
     /**
-     * Count of cells defined for this row. itcMac must be >= 0 and less than or equal to 64..
+     * Count of cells defined for this row. itcMac must be &gt;= 0 and less than or equal to 64..
      */
     @Internal
     public void setItcMac( short field_26_itcMac )

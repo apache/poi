@@ -205,7 +205,7 @@ public final class WordExtractor implements POIOLE2TextExtractor {
 
     /**
      * Grab the text out of the text pieces. Might also include various bits of
-     * crud, but will work in cases where the text piece -> paragraph mapping is
+     * crud, but will work in cases where the text piece -&gt; paragraph mapping is
      * broken. Fast too.
      */
     public String getTextFromPieces() {
