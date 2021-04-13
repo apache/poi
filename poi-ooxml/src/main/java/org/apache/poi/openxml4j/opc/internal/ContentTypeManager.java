@@ -114,7 +114,7 @@ public abstract class ContentTypeManager {
     }
 
     /**
-     * Build association extention-> content type (will be stored in
+     * Build association extension-&gt; content type (will be stored in
      * [Content_Types].xml) for example ContentType="image/png" Extension="png"
      * <p>
      * [M2.8]: When adding a new part to a package, the package implementer
@@ -286,7 +286,7 @@ public abstract class ContentTypeManager {
             throw new IllegalArgumentException("contentType");
         }
 
-        return (this.defaultContentType.containsValue(contentType) || 
+        return (this.defaultContentType.containsValue(contentType) ||
                 (this.overrideContentType != null && this.overrideContentType.containsValue(contentType)));
     }
 

@@ -215,7 +215,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * @return The {@link XWPFDocument} instance, this run belongs to, or
-     * <code>null</code> if parent structure (paragraph > document) is not properly set.
+     * {@code null} if parent structure (paragraph &gt; document) is not properly set.
      */
     public XWPFDocument getDocument() {
         if (parent != null) {
@@ -258,7 +258,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
      *
-     * @return <code>true</code> if the bold property is applied
+     * @return {@code true} if the bold property is applied
      */
     @Override
     public boolean isBold() {
@@ -275,7 +275,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * direct formatting. When used as part of a style definition, setting this
      * property shall toggle the current state of that property as specified up
      * to this point in the hierarchy (i.e. applied to not applied, and vice
-     * versa). Setting it to <code>false</code> (or an equivalent) shall
+     * versa). Setting it to {@code false} (or an equivalent) shall
      * result in the current setting remaining unchanged. However, when used as
      * direct formatting, setting this property to true or false shall set the
      * absolute state of the resulting property.
@@ -287,7 +287,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to non-complex script characters.
      * </p>
      *
-     * @param value <code>true</code> if the bold property is applied to
+     * @param value {@code true} if the bold property is applied to
      *              this run
      */
     @Override
@@ -326,7 +326,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Return the string content of this text run
      *
-     * @return the text of this text run or <code>null</code> if not set
+     * @return the text of this text run or {@code null} if not set
      */
     public String getText(int pos) {
         return run.sizeOfTArray() == 0 ? null : run.getTArray(pos)
@@ -368,7 +368,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the italic property should be applied to all non-complex script
      * characters in the contents of this run when displayed in a document.
      *
-     * @return <code>true</code> if the italic property is applied
+     * @return {@code true} if the italic property is applied
      */
     @Override
     public boolean isItalic() {
@@ -380,25 +380,22 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
      * <p>
-     * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
      * direct formatting. When used as part of a style definition, setting this
      * property shall toggle the current state of that property as specified up
      * to this point in the hierarchy (i.e. applied to not applied, and vice
-     * versa). Setting it to <code>false</code> (or an equivalent) shall
+     * versa). Setting it to {@code false} (or an equivalent) shall
      * result in the current setting remaining unchanged. However, when used as
      * direct formatting, setting this property to true or false shall set the
      * absolute state of the resulting property.
-     * </p>
      * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then bold shall not be
      * applied to non-complex script characters.
-     * </p>
      *
-     * @param value <code>true</code> if the italic property is applied to
+     * @param value {@code true} if the italic property is applied to
      *              this run
      */
     @Override
@@ -412,7 +409,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get the underline setting for the run.
      *
      * @return the Underline pattern applied to this run
-     * @see (@link UnderlinePatterns}
+     * @see UnderlinePatterns
      */
     public UnderlinePatterns getUnderline() {
         UnderlinePatterns value = UnderlinePatterns.NONE;
@@ -438,10 +435,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param value -
      *              underline type
-     * @see {@link UnderlinePatterns} : all possible patterns that could be applied
+     * @see UnderlinePatterns
      */
     public void setUnderline(UnderlinePatterns value) {
         CTUnderline underline = getCTUnderline(true);
+        assert(underline != null);
         underline.setVal(STUnderline.Enum.forInt(value.getValue()));
     }
 
@@ -463,7 +461,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setUnderlineColor(String color) {
         CTUnderline underline = getCTUnderline(true);
-        SimpleValue svColor = null;
+        assert(underline != null);
+        SimpleValue svColor;
         if (color.equals("auto")) {
             STHexColorAuto hexColor = STHexColorAuto.Factory.newInstance();
             hexColor.setEnumValue(STHexColorAuto.Enum.forString(color));
@@ -484,6 +483,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setUnderlineThemeColor(String themeColor) {
         CTUnderline underline = getCTUnderline(true);
+        assert(underline != null);
         STThemeColor.Enum val = STThemeColor.Enum.forString(themeColor);
         if (val != null) {
             underline.setThemeColor(val);
@@ -513,6 +513,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getUnderlineColor() {
         CTUnderline underline = getCTUnderline(true);
+        assert(underline != null);
         String colorName = "auto";
         Object rawValue = underline.getColor();
         if (rawValue != null) {
@@ -530,7 +531,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies that the contents of this run shall be displayed with a single
      * horizontal line through the center of the line.
      *
-     * @return <code>true</code> if the strike property is applied
+     * @return {@code true} if the strike property is applied
      */
     @Override
     public boolean isStrikeThrough() {
@@ -559,7 +560,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * not be applied to the contents of this run.
      * </p>
      *
-     * @param value <code>true</code> if the strike property is applied to
+     * @param value {@code true} if the strike property is applied to
      *              this run
      */
     @Override
@@ -583,7 +584,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies that the contents of this run shall be displayed with a double
      * horizontal line through the center of the line.
      *
-     * @return <code>true</code> if the double strike property is applied
+     * @return {@code true} if the double strike property is applied
      */
     @Override
     public boolean isDoubleStrikeThrough() {
@@ -714,10 +715,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             return false;
         }
         STHighlightColor.Enum val = pr.getHighlightArray(0).getVal();
-        if (val == null || val == STHighlightColor.NONE) {
-            return false;
-        }
-        return true;
+        return val != null && val != STHighlightColor.NONE;
     }
     // TODO Provide a wrapper round STHighlightColor, then expose getter/setter
     //  for the highlight colour. Ideally also then add to CharacterRun interface
@@ -1178,13 +1176,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * this method add chart template into document
      *
      * @param chartRelId relation id of chart in document relation file
-     * @throws InvalidFormatException
-     * @throws IOException
      * @since POI 4.0.0
      */
     @Internal
-    public CTInline addChart(String chartRelId)
-            throws InvalidFormatException, IOException {
+    public CTInline addChart(String chartRelId) throws InvalidFormatException, IOException {
         try {
             CTInline inline = run.addNewDrawing().addNewInline();
 
@@ -1422,7 +1417,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * @see <a href="http://msdn.microsoft.com/en-us/library/ff533743(v=office.12).aspx">[MS-OI29500] Run Fonts</a>
      */
-    public static enum FontCharRange {
+    public enum FontCharRange {
         ascii /* char 0-127 */,
         cs /* complex symbol */,
         eastAsia /* east asia */,
@@ -1461,7 +1456,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Set the highlight color for the run. Silently does nothing of colorName is not a recognized value.
      *
-     * @param colorName The name of the color as defined in the ST_HighlightColor simple type ({@link STHightlightColor})
+     * @param colorName The name of the color as defined in the ST_HighlightColor simple type ({@link STHighlightColor})
      * @since 4.0.0
      */
     public void setTextHighlightColor(String colorName) {

@@ -924,12 +924,7 @@ public abstract class CHPAbstractType {
     /**
      * Emphasis mark.
      *
-     * @return One of
-     * <li>{@link #KCD_NON}
-     * <li>{@link #KCD_DOT}
-     * <li>{@link #KCD_COMMA}
-     * <li>{@link #KCD_CIRCLE}
-     * <li>{@link #KCD_UNDER_DOT}
+     * @return One of {@link #KCD_NON},{@link #KCD_DOT},{@link #KCD_COMMA},{@link #KCD_CIRCLE},{@link #KCD_UNDER_DOT}
      */
     @Internal
     public byte getKcd()
@@ -940,13 +935,7 @@ public abstract class CHPAbstractType {
     /**
      * Emphasis mark.
      *
-     * @param field_13_kcd
-     *        One of
-     * <li>{@link #KCD_NON}
-     * <li>{@link #KCD_DOT}
-     * <li>{@link #KCD_COMMA}
-     * <li>{@link #KCD_CIRCLE}
-     * <li>{@link #KCD_UNDER_DOT}
+     * @param field_13_kcd One of {@link #KCD_NON}, {@link #KCD_DOT}, {@link #KCD_COMMA}, {@link #KCD_CIRCLE}, {@link #KCD_UNDER_DOT}
      */
     @Internal
     public void setKcd( byte field_13_kcd )
@@ -975,10 +964,7 @@ public abstract class CHPAbstractType {
     /**
      * Superscript/subscript indices.
      *
-     * @return One of
-     * <li>{@link #ISS_NONE}
-     * <li>{@link #ISS_SUPERSCRIPTED}
-     * <li>{@link #ISS_SUBSCRIPTED}
+     * @return One of {@link #ISS_NONE},{@link #ISS_SUPERSCRIPTED},{@link #ISS_SUBSCRIPTED}
      */
     @Internal
     public byte getIss()
@@ -989,11 +975,7 @@ public abstract class CHPAbstractType {
     /**
      * Superscript/subscript indices.
      *
-     * @param field_15_iss
-     *        One of
-     * <li>{@link #ISS_NONE}
-     * <li>{@link #ISS_SUPERSCRIPTED}
-     * <li>{@link #ISS_SUBSCRIPTED}
+     * @param field_15_iss One of {@link #ISS_NONE},{@link #ISS_SUPERSCRIPTED},{@link #ISS_SUBSCRIPTED}
      */
     @Internal
     public void setIss( byte field_15_iss )
@@ -1058,27 +1040,11 @@ public abstract class CHPAbstractType {
     /**
      * Underline code.
      *
-     * @return One of
-     * <li>{@link #KUL_NONE}
-     * <li>{@link #KUL_SINGLE}
-     * <li>{@link #KUL_BY_WORD}
-     * <li>{@link #KUL_DOUBLE}
-     * <li>{@link #KUL_DOTTED}
-     * <li>{@link #KUL_HIDDEN}
-     * <li>{@link #KUL_THICK}
-     * <li>{@link #KUL_DASH}
-     * <li>{@link #KUL_DOT}
-     * <li>{@link #KUL_DOT_DASH}
-     * <li>{@link #KUL_DOT_DOT_DASH}
-     * <li>{@link #KUL_WAVE}
-     * <li>{@link #KUL_DOTTED_HEAVY}
-     * <li>{@link #KUL_DASHED_HEAVY}
-     * <li>{@link #KUL_DOT_DASH_HEAVY}
-     * <li>{@link #KUL_DOT_DOT_DASH_HEAVY}
-     * <li>{@link #KUL_WAVE_HEAVY}
-     * <li>{@link #KUL_DASH_LONG}
-     * <li>{@link #KUL_WAVE_DOUBLE}
-     * <li>{@link #KUL_DASH_LONG_HEAVY}
+     * @return One of {@link #KUL_NONE},{@link #KUL_SINGLE},{@link #KUL_BY_WORD},{@link #KUL_DOUBLE},
+     *      {@link #KUL_DOTTED},{@link #KUL_HIDDEN},{@link #KUL_THICK},{@link #KUL_DASH},{@link #KUL_DOT},
+     *      {@link #KUL_DOT_DASH},{@link #KUL_DOT_DOT_DASH},{@link #KUL_WAVE},{@link #KUL_DOTTED_HEAVY},
+     *      {@link #KUL_DASHED_HEAVY},{@link #KUL_DOT_DASH_HEAVY},{@link #KUL_DOT_DOT_DASH_HEAVY},
+     *      {@link #KUL_WAVE_HEAVY},{@link #KUL_DASH_LONG},{@link #KUL_WAVE_DOUBLE},{@link #KUL_DASH_LONG_HEAVY}
      */
     @Internal
     public byte getKul()
@@ -1089,28 +1055,11 @@ public abstract class CHPAbstractType {
     /**
      * Underline code.
      *
-     * @param field_19_kul
-     *        One of
-     * <li>{@link #KUL_NONE}
-     * <li>{@link #KUL_SINGLE}
-     * <li>{@link #KUL_BY_WORD}
-     * <li>{@link #KUL_DOUBLE}
-     * <li>{@link #KUL_DOTTED}
-     * <li>{@link #KUL_HIDDEN}
-     * <li>{@link #KUL_THICK}
-     * <li>{@link #KUL_DASH}
-     * <li>{@link #KUL_DOT}
-     * <li>{@link #KUL_DOT_DASH}
-     * <li>{@link #KUL_DOT_DOT_DASH}
-     * <li>{@link #KUL_WAVE}
-     * <li>{@link #KUL_DOTTED_HEAVY}
-     * <li>{@link #KUL_DASHED_HEAVY}
-     * <li>{@link #KUL_DOT_DASH_HEAVY}
-     * <li>{@link #KUL_DOT_DOT_DASH_HEAVY}
-     * <li>{@link #KUL_WAVE_HEAVY}
-     * <li>{@link #KUL_DASH_LONG}
-     * <li>{@link #KUL_WAVE_DOUBLE}
-     * <li>{@link #KUL_DASH_LONG_HEAVY}
+     * @param field_19_kul One of,{@link #KUL_NONE},{@link #KUL_SINGLE},{@link #KUL_BY_WORD},{@link #KUL_DOUBLE},
+     *      {@link #KUL_DOTTED},{@link #KUL_HIDDEN},{@link #KUL_THICK},{@link #KUL_DASH},{@link #KUL_DOT},
+     *      {@link #KUL_DOT_DASH},{@link #KUL_DOT_DOT_DASH},{@link #KUL_WAVE},{@link #KUL_DOTTED_HEAVY},
+     *      {@link #KUL_DASHED_HEAVY},{@link #KUL_DOT_DASH_HEAVY},{@link #KUL_DOT_DOT_DASH_HEAVY},
+     *      {@link #KUL_WAVE_HEAVY},{@link #KUL_DASH_LONG},{@link #KUL_WAVE_DOUBLE},{@link #KUL_DASH_LONG_HEAVY}
      */
     @Internal
     public void setKul( byte field_19_kul )
@@ -1229,14 +1178,9 @@ public abstract class CHPAbstractType {
     /**
      * Text animation.
      *
-     * @return One of
-     * <li>{@link #SFXTTEXT_NO}
-     * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
-     * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
-     * <li>{@link #SFXTTEXT_SPARKLE_TEXT}
-     * <li>{@link #SFXTTEXT_MARCHING_ANTS}
-     * <li>{@link #SFXTTEXT_MARCHING_RED_ANTS}
-     * <li>{@link #SFXTTEXT_SHIMMER}
+     * @return One of {@link #SFXTTEXT_NO},{@link #SFXTTEXT_LAS_VEGAS_LIGHTS},{@link #SFXTTEXT_BACKGROUND_BLINK},
+     *      {@link #SFXTTEXT_SPARKLE_TEXT},{@link #SFXTTEXT_MARCHING_ANTS},{@link #SFXTTEXT_MARCHING_RED_ANTS},
+     *      {@link #SFXTTEXT_SHIMMER}
      */
     @Internal
     public byte getSfxtText()
@@ -1247,15 +1191,7 @@ public abstract class CHPAbstractType {
     /**
      * Text animation.
      *
-     * @param field_26_sfxtText
-     *        One of
-     * <li>{@link #SFXTTEXT_NO}
-     * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
-     * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
-     * <li>{@link #SFXTTEXT_SPARKLE_TEXT}
-     * <li>{@link #SFXTTEXT_MARCHING_ANTS}
-     * <li>{@link #SFXTTEXT_MARCHING_RED_ANTS}
-     * <li>{@link #SFXTTEXT_SHIMMER}
+     * @param field_26_sfxtText One of {@link #SFXTTEXT_NO},{@link #SFXTTEXT_LAS_VEGAS_LIGHTS},{@link #SFXTTEXT_BACKGROUND_BLINK},{@link #SFXTTEXT_SPARKLE_TEXT},{@link #SFXTTEXT_MARCHING_ANTS},{@link #SFXTTEXT_MARCHING_RED_ANTS},{@link #SFXTTEXT_SHIMMER}
      */
     @Internal
     public void setSfxtText( byte field_26_sfxtText )
@@ -1932,11 +1868,7 @@ public abstract class CHPAbstractType {
     /**
      * Line BReak code for xchCRJ.
      *
-     * @return One of
-     * <li>{@link #LBRCRJ_NONE}
-     * <li>{@link #LBRCRJ_LEFT}
-     * <li>{@link #LBRCRJ_RIGHT}
-     * <li>{@link #LBRCRJ_BOTH}
+     * @return One of {@link #LBRCRJ_NONE},{@link #LBRCRJ_LEFT},{@link #LBRCRJ_RIGHT},{@link #LBRCRJ_BOTH}
      */
     @Internal
     public byte getLbrCRJ()
@@ -1947,12 +1879,7 @@ public abstract class CHPAbstractType {
     /**
      * Line BReak code for xchCRJ.
      *
-     * @param field_64_lbrCRJ
-     *        One of
-     * <li>{@link #LBRCRJ_NONE}
-     * <li>{@link #LBRCRJ_LEFT}
-     * <li>{@link #LBRCRJ_RIGHT}
-     * <li>{@link #LBRCRJ_BOTH}
+     * @param field_64_lbrCRJ One of {@link #LBRCRJ_NONE},{@link #LBRCRJ_LEFT},{@link #LBRCRJ_RIGHT},{@link #LBRCRJ_BOTH}
      */
     @Internal
     public void setLbrCRJ( byte field_64_lbrCRJ )

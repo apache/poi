@@ -29,18 +29,18 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
  * Style based on a dxf record - e.g. table style element or conditional formatting rule
  */
 public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
-    
+
     private final IndexedColorMap colorMap;
     private final BorderFormatting border;
     private final FontFormatting font;
     private final ExcelNumberFormat number;
     private final PatternFormatting fill;
     private final int stripeSize;
-    
+
     /**
      * @param dxf
-     * @param stripeSize 0 for non-stripe styles, > 1 for stripes
-     * @param colorMap 
+     * @param stripeSize 0 for non-stripe styles, &gt; 1 for stripes
+     * @param colorMap
      */
     public XSSFDxfStyleProvider(CTDxf dxf, int stripeSize, IndexedColorMap colorMap) {
         this.stripeSize = stripeSize;
@@ -51,15 +51,15 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
             number = null;
             fill = null;
         } else {
-            border = dxf.isSetBorder() ? new XSSFBorderFormatting(dxf.getBorder(), colorMap) : null; 
-            font = dxf.isSetFont() ? new XSSFFontFormatting(dxf.getFont(), colorMap) : null; 
+            border = dxf.isSetBorder() ? new XSSFBorderFormatting(dxf.getBorder(), colorMap) : null;
+            font = dxf.isSetFont() ? new XSSFFontFormatting(dxf.getFont(), colorMap) : null;
             if (dxf.isSetNumFmt()) {
                 CTNumFmt numFmt = dxf.getNumFmt();
                 number = new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
             } else {
                 number = null;
             }
-            fill = dxf.isSetFill() ? new XSSFPatternFormatting(dxf.getFill(), colorMap) : null; 
+            fill = dxf.isSetFill() ? new XSSFPatternFormatting(dxf.getFill(), colorMap) : null;
         }
     }
 
@@ -78,7 +78,7 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
     public PatternFormatting getPatternFormatting() {
         return fill;
     }
-    
+
     public int getStripeSize() {
         return stripeSize;
     }

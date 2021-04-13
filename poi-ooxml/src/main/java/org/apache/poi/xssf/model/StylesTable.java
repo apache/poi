@@ -89,8 +89,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * Changes the maximum number of data formats that may be in a style table
      *
      * @param num the upper limit on number of data formats in the styles table when adding new data formats
-     * @throws IllegalArgumentException if <code>num</code> < 0
-     * @throws IllegalStateException if <code>num</code> < current number of data formats in the style table.
+     * @throws IllegalArgumentException if {@code num < 0}
+     * @throws IllegalStateException if {@code num < current number of data formats in the style table}.
      * Data formats must be explicitly removed before the limit can be decreased.
      */
     public void setMaxNumberOfDataFormats(int num) {

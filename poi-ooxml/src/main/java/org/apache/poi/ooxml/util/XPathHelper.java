@@ -73,7 +73,7 @@ public final class XPathHelper {
     /**
      * Internal code - API may change any time!
      * <p>
-     * The {@link #selectProperty(Class, String)} xquery method has some performance penalties,
+     * The XSLFShape.selectProperty(Class, String) xquery method has some performance penalties,
      * which can be workaround by using {@link XmlCursor}. This method also takes into account
      * that {@code AlternateContent} tags can occur anywhere on the given path.
      * <p>
@@ -83,8 +83,7 @@ public final class XPathHelper {
      *     <li>searching for a AlternateContent.Choice child</li>
      *     <li>searching for a AlternateContent.Fallback child</li>
      * </ul>
-     * Currently POI OOXML is based on the first edition of the ECMA 376 schema, which doesn't
-     * allow AlternateContent tags to show up everywhere. The factory flag is
+     * The factory flag is
      * a workaround to process files based on a later edition. But it comes with the drawback:
      * any change on the returned XmlObject aren't saved back to the underlying document -
      * so it's a non updatable clone. If factory is null, a XmlException is

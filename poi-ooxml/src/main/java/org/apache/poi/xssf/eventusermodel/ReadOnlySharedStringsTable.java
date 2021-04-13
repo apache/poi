@@ -46,37 +46,37 @@ import org.xml.sax.helpers.DefaultHandler;
  * <p>Note that each SI entry can have multiple T elements, if the
  *  string is made up of bits with different formatting.
  * <p>Example input:
- * <pre>
-&lt;?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-&lt;sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
- &lt;si>
-   &lt;r>
-     &lt;rPr>
-       &lt;b />
-       &lt;sz val="11" />
-       &lt;color theme="1" />
-       &lt;rFont val="Calibri" />
-       &lt;family val="2" />
-       &lt;scheme val="minor" />
-     &lt;/rPr>
-     &lt;t>This:&lt;/t>
-   &lt;/r>
-   &lt;r>
-     &lt;rPr>
-       &lt;sz val="11" />
-       &lt;color theme="1" />
-       &lt;rFont val="Calibri" />
-       &lt;family val="2" />
-       &lt;scheme val="minor" />
-     &lt;/rPr>
-     &lt;t xml:space="preserve">Causes Problems&lt;/t>
-   &lt;/r>
- &lt;/si>
- &lt;si>
-   &lt;t>This does not&lt;/t>
- &lt;/si>
-&lt;/sst>
-* </pre>
+ * <pre>{@code
+ * <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+ *     <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
+ *         <si>
+ *             <r>
+ *                 <rPr>
+ *                     <b />
+ *                     <sz val="11" />
+ *                     <color theme="1" />
+ *                     <rFont val="Calibri" />
+ *                     <family val="2" />
+ *                     <scheme val="minor" />
+ *                 </rPr>
+ *                 <t>This:</t>
+ *             </r>
+ *             <r>
+ *                 <rPr>
+ *                     <sz val="11" />
+ *                     <color theme="1" />
+ *                     <rFont val="Calibri" />
+ *                     <family val="2" />
+ *                     <scheme val="minor" />
+ *                 </rPr>
+ *                 <t xml:space="preserve">Causes Problems</t>
+ *             </r>
+ *         </si>
+ *         <si>
+ *             <t>This does not</t>
+ *         </si>
+ *     </sst>
+ *  }</pre>
  *
  */
 public class ReadOnlySharedStringsTable extends DefaultHandler implements SharedStrings {
@@ -157,7 +157,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         this.includePhoneticRuns = includePhoneticRuns;
         readFrom(part.getInputStream());
     }
-    
+
     /**
      * Read this shared strings table from an XML file.
      *

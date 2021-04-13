@@ -442,7 +442,7 @@ public class XSSFRichTextString implements RichTextString {
 
     /**
      *
-     * CTRPrElt --> CTFont adapter
+     * CTRPrElt --&gt; CTFont adapter
      */
     protected static CTFont toCTFont(CTRPrElt pr){
         CTFont ctFont =  CTFont.Factory.newInstance();

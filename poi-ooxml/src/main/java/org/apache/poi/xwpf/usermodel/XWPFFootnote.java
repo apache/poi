@@ -31,12 +31,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
  * <p>Footnotes have IDs that are unique across all footnotes in the document. You use
  * the footnote ID to create a reference to a footnote from within a paragraph.</p>
  * <p>To create a reference to a footnote within a paragraph you create a run
- * with a CTFtnEdnRef that specifies the ID of the target paragraph. 
+ * with a CTFtnEdnRef that specifies the ID of the target paragraph.
  * The {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}
  * method does this for you.</p>
  */
 public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
-    
+
     @Internal
     public XWPFFootnote(CTFtnEdn note, XWPFAbstractFootnotesEndnotes xFootnotes) {
         super(note, xFootnotes);
@@ -46,13 +46,13 @@ public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
         super(document, body);
     }
-    
+
     /**
      * Ensure that the specified paragraph has a reference marker for this
      * footnote by adding a footnote reference if one is not found.
-     * <p>This method is for the first paragraph in the footnote, not 
+     * <p>This method is for the first paragraph in the footnote, not
      * paragraphs that will refer to the footnote. For references to
-     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFFootnote)}.
+     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}.
      * </p>
      * <p>The first run of the first paragraph in a footnote should
      * contain a {@link CTFtnEdnRef} object.</p>
@@ -61,7 +61,7 @@ public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
      * @since 4.0.0
        */
     public void ensureFootnoteRef(XWPFParagraph p) {
-        
+
         XWPFRun r = null;
         if (p.getRuns().size() > 0) {
             r = p.getRuns().get(0);
@@ -81,6 +81,6 @@ public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
             ctr.addNewRPr().addNewRStyle().setVal("FootnoteReference");
             ctr.addNewFootnoteRef();
         }
-        
+
     }
 }

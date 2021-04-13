@@ -262,8 +262,8 @@ public final class PackagingURIHelper {
      *         This flag violates [M1.4]: A part name shall start with a forward slash ('/') character, but
      *         allows generating URIs compatible with MS Office and OpenOffice.
      * @return A fully relativize part name URI ('word/media/image1.gif',
-     *         '/word/document.xml' => 'media/image1.gif') else
-     *         <code>null</code>.
+     *         '/word/document.xml' =&gt; 'media/image1.gif') else
+     *         {@code null}.
      */
     public static URI relativizeURI(URI sourceURI, URI targetURI, boolean msCompatible) {
         StringBuilder retVal = new StringBuilder();
@@ -390,8 +390,8 @@ public final class PackagingURIHelper {
      * @param targetURI
      *            The target part URI.
      * @return A fully relativize part name URI ('word/media/image1.gif',
-     *         '/word/document.xml' => 'media/image1.gif') else
-     *         <code>null</code>.
+     *         '/word/document.xml' =&gt; 'media/image1.gif') else
+     *         {@code null}.
      */
     public static URI relativizeURI(URI sourceURI, URI targetURI) {
         return relativizeURI(sourceURI, targetURI, false);
@@ -620,7 +620,7 @@ public final class PackagingURIHelper {
 
     /**
      * Build a part name where the relationship should be stored ((ex
-     * /word/document.xml -> /word/_rels/document.xml.rels)
+     * /word/document.xml -&gt; /word/_rels/document.xml.rels)
      *
      * @param partName
      *            Source part URI
@@ -728,10 +728,10 @@ public final class PackagingURIHelper {
      * percent-encode white spaces and characters above 0x80.
      * <p>
      *   Examples:
-     *   <blockquote><pre>
+     *   <pre>{@code
      *   'Apache POI' --> 'Apache%20POI'
      *   'Apache\u0410POI' --> 'Apache%04%10POI'
-     *   </pre></blockquote>
+     *   }</pre>
      * @param s the string to encode
      * @return  the encoded string
      */

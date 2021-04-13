@@ -49,10 +49,9 @@ configurations {
             exclude group: 'xml-apis', module: 'xml-apis'
         }
     }
-
     broken
-
     tests
+    javadocs
 }
 
 dependencies {
@@ -87,6 +86,9 @@ dependencies {
     testImplementation 'com.google.guava:guava:30.0-jre'
 
     broken "org.apache.xmlgraphics:batik-script:${batikVersion}"
+
+    javadocs project(':poi')
+    javadocs project(':poi-scratchpad')
 }
 
 final String MODULE_NAME = 'org.apache.poi.ooxml'
@@ -208,11 +210,20 @@ task fixBatik(type: Zip) {
 }
 
 javadoc {
-//    fails currently, need to fix the sources
-    failOnError = false
-//    if(JavaVersion.current().isJava9Compatible()) {
-//        options.addBooleanOption('html5', true)
-//    }
+    failOnError = true
+    doFirst {
+        options {
+            if (JavaVersion.current().isJava9Compatible()) {
+                addBooleanOption('html5', true)
+            }
+            links 'https://poi.apache.org/apidocs/dev/'
+            links 'https://docs.oracle.com/javase/8/docs/api/'
+            use = true
+            splitIndex = true
+            source = "1.8"
+            classpath += configurations.javadocs.files
+        }
+    }
 }
 
 artifacts {

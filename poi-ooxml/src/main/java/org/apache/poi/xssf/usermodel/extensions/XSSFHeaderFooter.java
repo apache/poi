@@ -37,84 +37,84 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  *</p>
  *
  * This example shows the text "Center Bold Header" on the first line (center
- * section), and the date on the second line (center section). &CCenter
- * &"-,Bold"Bold &"-,Regular"Header_x000A_&D
+ * section), and the date on the second line (center section). &amp;CCenter
+ * &amp;"-,Bold"Bold &amp;"-,Regular"Header_x000A_&amp;D
  *
  * <b>General Rules:</b> There is no required order in which these codes must
  * appear. The first occurrence of the following codes turns the formatting ON,
  * the second occurrence turns it OFF again:
  *
  * <dl>
- * <dt>&L</dt>
+ * <dt>&amp;L</dt>
  * <dd>code for "left section" (there are three header / footer locations,
  * "left", "center", and "right"). When two or more occurrences of this section
  * marker exist, the contents from all markers are concatenated, in the order of
  * appearance, and placed into the left section.</dd>
- * <dt>&P</dt>
+ * <dt>&amp;P</dt>
  * <dd>code for "current page #"</dd>
- * <dt>&N</dt>
+ * <dt>&amp;N</dt>
  * <dd>code for "total pages"</dd>
- * <dt>&font size</dt>
+ * <dt>&amp;font size</dt>
  * <dd>code for "text font size", where font size is a font size in points.</dd>
- * <dt>&K</dt>
+ * <dt>&amp;K</dt>
  * <dd>code for "text font color" RGB Color is specified as RRGGBB Theme Color
  * is specifed as TTSNN where TT is the theme color Id, S is either "+" or "-"
  * of the tint/shade value, NN is the tint/shade value.</dd>
- * <dt>&S</dt>
+ * <dt>&amp;S</dt>
  * <dd>code for "text strikethrough" on / off</dd>
- * <dt>&X</dt>
+ * <dt>&amp;X</dt>
  * <dd>code for "text super script" on / off</dd>
- * <dt>&Y</dt>
+ * <dt>&amp;Y</dt>
  * <dd>code for "text subscript" on / off</dd>
- * <dt>&C</dt>
+ * <dt>&amp;C</dt>
  * <dd>code for "center section". When two or more occurrences of this section
  * marker exist, the contents from all markers are concatenated, in the order of
  * appearance, and placed into the center section. SpreadsheetML Reference
  * Material - Worksheets 1966</dd>
- * <dt>&D</dt>
+ * <dt>&amp;D</dt>
  * <dd>code for "date"</dd>
- * <dt>&T</dt>
+ * <dt>&amp;T</dt>
  * <dd>code for "time"</dd>
- * <dt>&G</dt>
+ * <dt>&amp;G</dt>
  * <dd>code for "picture as background"</dd>
- * <dt>&U</dt>
+ * <dt>&amp;U</dt>
  * <dd>code for "text single underline"</dd>
- * <dt>&E</dt>
+ * <dt>&amp;E</dt>
  * <dd>code for "double underline"</dd>
- * <dt>&R</dt>
+ * <dt>&amp;R</dt>
  * <dd>code for "right section". When two or more occurrences of this section
  * marker exist, the contents from all markers are concatenated, in the order of
  * appearance, and placed into the right section.</dd>
- * <dt>&Z</dt>
+ * <dt>&amp;Z</dt>
  * <dd>code for "this workbook's file path"</dd>
- * <dt>&F</dt>
+ * <dt>&amp;F</dt>
  * <dd>code for "this workbook's file name"</dd>
- * <dt>&A</dt>
+ * <dt>&amp;A</dt>
  * <dd>code for "sheet tab name"</dd>
- * <dt>&+</dt>
+ * <dt>&amp;+</dt>
  * <dd>code for add to page #.</dd>
- * <dt>&-</dt>
+ * <dt>&amp;-</dt>
  * <dd>code for subtract from page #.</dd>
- * <dt>&"font name,font type" - code for "text font name" and "text font type",
+ * <dt>&amp;"font name,font type" - code for "text font name" and "text font type",
  * where font name and font type are strings specifying the name and type of the
  * font, separated by a comma. When a hyphen appears in font name, it means
  * "none specified". Both of font name and font type can be localized
- * values.</dd>
- * <dt>&"-,Bold"</dt>
+ * values.</dt>
+ * <dt>&amp;"-,Bold"</dt>
  * <dd>code for "bold font style"</dd>
- * <dt>&B</dt>
+ * <dt>&amp;B</dt>
  * <dd>also means "bold font style"</dd>
- * <dt>&"-,Regular"</dt>
+ * <dt>&amp;"-,Regular"</dt>
  * <dd>code for "regular font style"</dd>
- * <dt>&"-,Italic"</dt>
+ * <dt>&amp;"-,Italic"</dt>
  * <dd>code for "italic font style"</dd>
- * <dt>&I</dt>
+ * <dt>&amp;I</dt>
  * <dd>also means "italic font style"</dd>
- * <dt>&"-,Bold Italic"</dt>
+ * <dt>&amp;"-,Bold Italic"</dt>
  * <dd>code for "bold italic font style"</dd>
- * <dt>&O</dt>
+ * <dt>&amp;O</dt>
  * <dd>code for "outline style"</dd>
- * <dt>&H</dt>
+ * <dt>&amp;H</dt>
  * <dd>code for "shadow style"</dd>
  * </dl>
  *
@@ -125,7 +125,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	private CTHeaderFooter headerFooter;
 
 	private boolean stripFields;
-	
+
 	/**
 	 * Create an instance of XSSFAbstractHeaderFooter from the supplied XML bean
 	 *

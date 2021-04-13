@@ -244,7 +244,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 		String[] segments = partUri.toASCIIString()
 	        .replaceFirst("^"+PackagingURIHelper.FORWARD_SLASH_CHAR,"")
 	        .split(PackagingURIHelper.FORWARD_SLASH_STRING);
-		
+
 		if (segments.length < 1) {
             throw new InvalidFormatException(
 				"A part name shall not have empty segments [M1.3]: " + partUri.getPath());
@@ -306,13 +306,13 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             ) {
 			    continue;
 			}
-			
+
 
 			if (c != '%') {
 	            throw new InvalidFormatException(
                     "A segment shall not hold any characters other than pchar characters. [M1.6]");
-			}			    
-			    
+			}
+
 			// We certainly found an encoded character, check for length
 			// now ( '%' HEXDIGIT HEXDIGIT)
 			if ((length - i) < 2 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
@@ -341,7 +341,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 			}
 		}
 	}
-    
+
 	/**
 	 * Throws an exception if the specified part name doesn't start with a
 	 * forward slash character '/'. [M1.4]
@@ -415,7 +415,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	/**
 	 * Retrieves the extension of the part name if any. If there is no extension
-	 * returns an empty String. Example : '/document/content.xml' => 'xml'
+	 * returns an empty String. Example : '/document/content.xml' =&gt; 'xml'
 	 *
 	 * @return The extension of the part name.
 	 */
@@ -526,7 +526,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             // (non-null) > (null)
             return 1;
         }
-        
+
         if (str1.equalsIgnoreCase(str2)) {
             return 0;
         }
@@ -569,7 +569,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     private static boolean isDigitOrLetter(char c) {
         return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
     }
-    
+
     private static boolean isHexDigit(char c) {
         return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
     }

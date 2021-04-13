@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
 /**
  * Base class for both bottom-of-the-page footnotes {@link XWPFFootnote} and end
- * notes {@link XWPFEndnote}). 
+ * notes {@link XWPFEndnote}).
  * <p>The only significant difference between footnotes and
  * end notes is which part they go on. Footnotes are managed by the Footnotes part
  * {@link XWPFFootnotes} and end notes are managed by the Endnotes part {@link XWPFEndnotes}.</p>
@@ -43,10 +43,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
  */
 public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParagraph>, IBody {
 
-    private List<XWPFParagraph> paragraphs = new ArrayList<>();
-    private List<XWPFTable> tables = new ArrayList<>();
-    private List<XWPFPictureData> pictures = new ArrayList<>();
-    private List<IBodyElement> bodyElements = new ArrayList<>();
+    private final List<XWPFParagraph> paragraphs = new ArrayList<>();
+    private final List<XWPFTable> tables = new ArrayList<>();
+    private final List<XWPFPictureData> pictures = new ArrayList<>();
+    private final List<IBodyElement> bodyElements = new ArrayList<>();
     protected CTFtnEdn ctFtnEdn;
     protected XWPFAbstractFootnotesEndnotes footnotes;
     protected XWPFDocument document;
@@ -98,6 +98,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Get the list of {@link XWPFParagraph}s in the footnote.
      * @return List of paragraphs
      */
+    @Override
     public List<XWPFParagraph> getParagraphs() {
         return paragraphs;
     }
@@ -106,6 +107,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Get an iterator over the {@link XWPFParagraph}s in the footnote.
      * @return Iterator over the paragraph list.
      */
+    @Override
     public Iterator<XWPFParagraph> iterator() {
         return paragraphs.iterator();
     }
@@ -114,6 +116,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Get the list of {@link XWPFTable}s in the footnote.
      * @return List of tables
      */
+    @Override
     public List<XWPFTable> getTables() {
         return tables;
     }
@@ -130,6 +133,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Gets the body elements ({@link IBodyElement}) of the footnote.
      * @return List of body elements.
      */
+    @Override
     public List<IBodyElement> getBodyElements() {
         return bodyElements;
     }
@@ -144,7 +148,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
 
     /**
      * Set the underlying CTFtnEdn for the footnote.
-     * <p>Use {@link XWPFDocument#createFootnote()} to create new footnotes.</p> 
+     * <p>Use {@link XWPFDocument#createFootnote()} to create new footnotes.</p>
      * @param footnote The CTFtnEdn object that will underly the footnote.
      */
     public void setCTFtnEdn(CTFtnEdn footnote) {
@@ -155,8 +159,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Gets the {@link XWPFTable} at the specified position from the footnote's table array.
      * @param pos in table array
      * @return The {@link XWPFTable} at position pos, or null if there is no table at position pos.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
+    @Override
     public XWPFTable getTableArray(int pos) {
         if (pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
@@ -165,12 +169,12 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     }
 
     /**
-     * Inserts an existing {@link XWPFTable) into the arrays bodyElements and tables.
+     * Inserts an existing XWPFTable into the arrays bodyElements and tables.
      *
      * @param pos Position, in the bodyElements array, to insert the table
-     * @param table {@link XWPFTable) to be inserted
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
+     * @param table XWPFTable to be inserted
      */
+    @Override
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
@@ -185,14 +189,12 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     }
 
     /**
-     * if there is a corresponding {@link XWPFTable} of the parameter 
+     * if there is a corresponding {@link XWPFTable} of the parameter
      * ctTable in the tableList of this header
-     * the method will return this table, or null if there is no 
+     * the method will return this table, or null if there is no
      * corresponding {@link XWPFTable}.
-     *
-     * @param ctTable
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
      */
+    @Override
     public XWPFTable getTable(CTTbl ctTable) {
         for (XWPFTable table : tables) {
             if (table == null)
@@ -216,9 +218,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * Returns the {@link XWPFParagraph} at position pos in footnote's paragraph array.
      * @param pos Array position of the paragraph to get.
      * @return the {@link XWPFParagraph} at position pos, or null if there is no paragraph at that position.
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
      */
+    @Override
     public XWPFParagraph getParagraphArray(int pos) {
         if(pos >=0 && pos < paragraphs.size()) {
             return paragraphs.get(pos);
@@ -229,10 +230,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * get the {@link XWPFTableCell} that belongs to the CTTc cell.
      *
-     * @param cell
      * @return {@link XWPFTableCell} that corresponds to the CTTc cell, if there is one, otherwise null.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
      */
+    @Override
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
         cursor.toParent();
@@ -262,7 +262,6 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Verifies that cursor is on the right position.
      *
-     * @param cursor
      * @return true if the cursor is within a CTFtnEdn element.
      */
     private boolean isCursorInFtn(XmlCursor cursor) {
@@ -284,10 +283,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
 
     /**
      * Insert a table constructed from OOXML table markup.
-     * @param cursor
      * @return the inserted {@link XWPFTable}
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
      */
+    @Override
     public XWPFTable insertNewTbl(XmlCursor cursor) {
         if (isCursorInFtn(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
@@ -327,10 +325,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Add a new {@link XWPFParagraph} at position of the cursor.
      *
-     * @param cursor
      * @return The inserted {@link XWPFParagraph}
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
      */
+    @Override
     public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
         if (isCursorInFtn(cursor)) {
             String uri = CTP.type.getName().getNamespaceURI();
@@ -398,8 +395,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
 
     /**
      * Get the {@link XWPFDocument} the footnote is part of.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
+    @Override
     public XWPFDocument getXWPFDocument() {
         return document;
     }
@@ -407,9 +404,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Get the Part to which the footnote belongs, which you need for adding relationships to other parts
      * @return {@link POIXMLDocumentPart} that contains the footnote.
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         return footnotes;
     }
@@ -417,9 +413,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Get the part type  {@link BodyType} of the footnote.
      * @return The {@link BodyType} value.
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return BodyType.FOOTNOTE;
     }
@@ -447,7 +442,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
         paragraphs.add(p);
         bodyElements.add(p);
 
-        // If the paragraph is the first paragraph in the footnote, 
+        // If the paragraph is the first paragraph in the footnote,
         // ensure that it has a footnote reference run.
 
         if (p.equals(getParagraphs().get(0))) {
@@ -459,9 +454,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Ensure that the specified paragraph has a reference marker for this
      * footnote by adding a footnote reference if one is not found.
-     * <p>This method is for the first paragraph in the footnote, not 
+     * <p>This method is for the first paragraph in the footnote, not
      * paragraphs that will refer to the footnote. For references to
-     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFFootnote)}.
+     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}.
      * </p>
      * <p>The first run of the first paragraph in a footnote should
      * contain a {@link CTFtnEdnRef} object.</p>
@@ -491,7 +486,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     /**
      * Appends a new {@link XWPFTable} to this footnote
      * @param rows Number of rows to initialize the table with
-     * @param cols Number of columns to initialize the table with 
+     * @param cols Number of columns to initialize the table with
      * @return the new {@link XWPFTable} with the specified number of rows and columns
      * @since 4.0.0
      */

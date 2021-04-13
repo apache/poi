@@ -21,7 +21,7 @@ package org.apache.poi.xwpf.usermodel;
  * {@link XWPFTableCell}, {@link XWPFSDTCell}
  * <p>
  * Schematically something like this:
- * &lt;tr&gt;&lt;tc/&gt;&lt;tc/&gt;&lt;sdt&gt&lt;tc/&gt;&lt;/sdt&gt;&lt;/tr&gt;
+ * {@code <tr><tc/><tc/><sdt><tc/></sdt></tr>}
  */
 public interface ICell {
 }
