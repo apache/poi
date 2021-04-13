@@ -73,9 +73,9 @@ public final class FunctionEval {
         retval[5] = AggregateFunction.AVERAGE;
         retval[6] = AggregateFunction.MIN;
         retval[7] = AggregateFunction.MAX;
-        retval[8] = new RowFunc(); // ROW
-        retval[9] = new Column();
-        retval[10] = new Na();
+        retval[8] = RowFunc::evaluate; // ROW
+        retval[9] = Column::evaluate;
+        retval[10] = Na::evaluate;
         retval[11] = new Npv();
         retval[12] = AggregateFunction.STDEV;
         retval[13] = NumericFunction.DOLLAR;
@@ -137,7 +137,7 @@ public final class FunctionEval {
         retval[71] = CalendarFieldFunction.HOUR;
         retval[72] = CalendarFieldFunction.MINUTE;
         retval[73] = CalendarFieldFunction.SECOND;
-        retval[74] = new Now();
+        retval[74] = Now::evaluate;
         retval[75] = new Areas();
         retval[76] = new Rows();
         retval[77] = new Columns();
@@ -226,7 +226,7 @@ public final class FunctionEval {
         retval[216] = new Rank();
         retval[219] = new Address();
         retval[220] = new Days360();
-        retval[221] = new Today();
+        retval[221] = Today::evaluate;
         //222: VBD
 
         retval[227] = AggregateFunction.MEDIAN;
@@ -259,7 +259,7 @@ public final class FunctionEval {
         retval[276] = NumericFunction.COMBIN;
         // 277: CONFIDENCE
         // 278:CRITBINOM
-        retval[279] = new Even();
+        retval[279] = NumericFunction.EVEN;
         // 280: EXPONDIST
         // 281: FDIST
         // 282: FINV
@@ -278,7 +278,7 @@ public final class FunctionEval {
         // 295: NORMINV
         // 296: NORMSINV
         // 297: STANDARDIZE
-        retval[298] = new Odd();
+        retval[298] = NumericFunction.ODD;
         // 299: PERMUT
         retval[300] = NumericFunction.POISSON;
         // 301: TDIST

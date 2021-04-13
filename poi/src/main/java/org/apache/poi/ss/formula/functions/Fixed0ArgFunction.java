@@ -19,12 +19,15 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.Removal;
 
 /**
  * Convenience base class for functions that only take zero arguments.
  *
- * @author Josh Micich
+ * @deprecated replaced by lambda expressions in 5.0.1
  */
+@Deprecated
+@Removal(version = "6.0.0")
 public abstract class Fixed0ArgFunction implements Function0Arg {
 	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		if (args.length != 0) {

@@ -22,12 +22,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implementation of Excel function NA()
- *
- * @author Josh Micich
  */
-public final class Na extends Fixed0ArgFunction {
-
-	public ValueEval evaluate(int srcCellRow, int srcCellCol) {
-		return ErrorEval.NA;
+public final class Na {
+	public static ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+		return args.length != 0 ? ErrorEval.VALUE_INVALID : ErrorEval.NA;
 	}
 }

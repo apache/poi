@@ -29,13 +29,13 @@ import java.util.function.BiFunction;
  */
 
 public interface ArrayFunction {
-    
+
     /**
      * @param args the evaluated function arguments.  Empty values are represented with
-     * {@link BlankEval} or {@link MissingArgEval}, never <code>null</code>.
+     * {@link BlankEval} or {@link MissingArgEval}, never {@code null}.
      * @param srcRowIndex row index of the cell containing the formula under evaluation
      * @param srcColumnIndex column index of the cell containing the formula under evaluation
-     * @return The evaluated result, possibly an {@link ErrorEval}, never <code>null</code>.
+     * @return The evaluated result, possibly an {@link ErrorEval}, never {@code null}.
      * <b>Note</b> - Excel uses the error code <i>#NUM!</i> instead of IEEE <i>NaN</i>, so when
      * numeric functions evaluate to {@link Double#NaN} be sure to translate the result to {@link
      * ErrorEval#NUM_ERROR}.
@@ -47,19 +47,29 @@ public interface ArrayFunction {
      * Evaluate an array function with two arguments.
      *
      * @param arg0 the first function argument. Empty values are represented with
-     *        {@link BlankEval} or {@link MissingArgEval}, never <code>null</code>
+     *        {@link BlankEval} or {@link MissingArgEval}, never {@code null}
      * @param arg1 the first function argument. Empty values are represented with
-     *      @link BlankEval} or {@link MissingArgEval}, never <code>null</code>
+     *      @link BlankEval} or {@link MissingArgEval}, never {@code null}
      *
      * @param srcRowIndex row index of the cell containing the formula under evaluation
      * @param srcColumnIndex column index of the cell containing the formula under evaluation
-     * @return The evaluated result, possibly an {@link ErrorEval}, never <code>null</code>.
+     * @return The evaluated result, possibly an {@link ErrorEval}, never {@code null}.
      * <b>Note</b> - Excel uses the error code <i>#NUM!</i> instead of IEEE <i>NaN</i>, so when
      * numeric functions evaluate to {@link Double#NaN} be sure to translate the result to {@link
      * ErrorEval#NUM_ERROR}.
      */
     default ValueEval evaluateTwoArrayArgs(ValueEval arg0, ValueEval arg1, int srcRowIndex, int srcColumnIndex,
                                            BiFunction<ValueEval, ValueEval, ValueEval> evalFunc) {
+        return _evaluateTwoArrayArgs(arg0, arg1, srcRowIndex, srcColumnIndex, evalFunc);
+    }
+
+    default ValueEval evaluateOneArrayArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex,
+                                          java.util.function.Function<ValueEval, ValueEval> evalFunc) {
+        return _evaluateOneArrayArg(arg0, srcRowIndex, srcColumnIndex, evalFunc);
+    }
+
+    static ValueEval _evaluateTwoArrayArgs(ValueEval arg0, ValueEval arg1, int srcRowIndex, int srcColumnIndex,
+        BiFunction<ValueEval, ValueEval, ValueEval> evalFunc) {
         int w1, w2, h1, h2;
         int a1FirstCol = 0, a1FirstRow = 0;
         if (arg0 instanceof AreaEval) {
@@ -150,8 +160,9 @@ public interface ArrayFunction {
         return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
     }
 
-    default ValueEval evaluateOneArrayArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex,
-                                          java.util.function.Function<ValueEval, ValueEval> evalFunc){
+
+    static ValueEval _evaluateOneArrayArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex,
+        java.util.function.Function<ValueEval, ValueEval> evalFunc){
         int w1, w2, h1, h2;
         int a1FirstCol = 0, a1FirstRow = 0;
         if (arg0 instanceof AreaEval) {
@@ -204,7 +215,6 @@ public interface ArrayFunction {
         }
 
         return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
-
     }
 
 }

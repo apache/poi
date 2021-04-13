@@ -34,8 +34,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <li> Numbers: 0 is false. Any other number is TRUE </li>
  * <li> Areas: *all* cells in area are evaluated according to the above rules</li>
  * </ol>
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public abstract class BooleanFunction implements Function,ArrayFunction {
 
@@ -132,43 +130,12 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 			return cumulativeResult || currentValue;
 		}
 	};
-	public static final Function FALSE = new Fixed0ArgFunction() {
-		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
-			return BoolEval.FALSE;
-		}
-	};
-	public static final Function TRUE = new Fixed0ArgFunction() {
-		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
-			return BoolEval.TRUE;
-		}
-	};
 
-	abstract static class Boolean1ArgFunction extends Fixed1ArgFunction implements ArrayFunction {
-		@Override
-		public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-			if (args.length != 1) {
-				return ErrorEval.VALUE_INVALID;
-			}
-			return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex,
-					vA -> evaluate(srcRowIndex, srcColumnIndex, vA));
-		}
+	public static final Function FALSE = BooleanFunction::evaluateFalse;
 
-	}
+	public static final Function TRUE = BooleanFunction::evaluateTrue;
 
-	public static final Function NOT = new Boolean1ArgFunction() {
-		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-			boolean boolArgVal;
-			try {
-				ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-				Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
-				boolArgVal = b == null ? false : b;
-			} catch (EvaluationException e) {
-				return e.getErrorEval();
-			}
-
-			return BoolEval.valueOf(!boolArgVal);
-		}
-	};
+	public static final Function NOT = BooleanFunction::evaluateNot;
 
 	@Override
 	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
@@ -177,5 +144,31 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 		}
 		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex,
 				vA -> evaluate(new ValueEval[]{vA}, srcRowIndex, srcColumnIndex));
+	}
+
+	private static ValueEval evaluateFalse(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		return args.length != 0 ? ErrorEval.VALUE_INVALID : BoolEval.FALSE;
+	}
+
+	private static ValueEval evaluateTrue(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		return args.length != 0 ? ErrorEval.VALUE_INVALID : BoolEval.TRUE;
+	}
+
+	private static ValueEval evaluateNot(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		if (args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		java.util.function.Function<ValueEval, ValueEval> notInner = (va) -> {
+			try {
+				ValueEval ve = OperandResolver.getSingleValue(va, srcRowIndex, srcColumnIndex);
+				Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
+				boolean boolArgVal = b != null && b;
+				return BoolEval.valueOf(!boolArgVal);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+		};
+
+		return ArrayFunction._evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, notInner);
 	}
 }

@@ -24,14 +24,12 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for ROW(), ROWS(), COLUMN(), COLUMNS()
- *
- * @author Josh Micich
  */
 final class TestRowCol {
 
 	@Test
 	void testCol() {
-		Function target = new Column();
+		Function target = Column::evaluate;
 		{
 			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
 			double actual = NumericFunctionInvoker.invoke(target, args);
@@ -46,7 +44,7 @@ final class TestRowCol {
 
 	@Test
 	void testRow() {
-		Function target = new RowFunc();
+		Function target = RowFunc::evaluate;
 		{
 			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
 			double actual = NumericFunctionInvoker.invoke(target, args);

@@ -51,6 +51,12 @@ final class MathX {
         return round(n, p, java.math.RoundingMode.HALF_UP);
     }
 
+    public static double round(double n, double p) {
+        return round(n, (int)p);
+    }
+
+
+
     /**
      * Returns a value rounded-up to p digits after decimal.
      * If p is negative, then the number is rounded to
@@ -70,6 +76,11 @@ final class MathX {
         return round(n, p, java.math.RoundingMode.UP);
     }
 
+    public static double roundUp(double n, double p) {
+        return roundUp(n, (int)p);
+    }
+
+
     /**
      * Returns a value rounded to p digits after decimal.
      * If p is negative, then the number is rounded to
@@ -88,7 +99,11 @@ final class MathX {
     public static double roundDown(double n, int p) {
         return round(n, p, java.math.RoundingMode.DOWN);
     }
-    
+
+    public static double roundDown(double n, double p) {
+        return roundDown(n, (int)p);
+    }
+
     private static double round(double n, int p, java.math.RoundingMode rounding) {
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             return Double.NaN;
@@ -271,6 +286,10 @@ final class MathX {
             d = Double.NaN;
         }
         return d;
+    }
+
+    public static double factorial(double d) {
+        return factorial((int)d);
     }
 
 
