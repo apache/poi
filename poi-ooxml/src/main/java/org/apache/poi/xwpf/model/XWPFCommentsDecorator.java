@@ -23,8 +23,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTMarkupRange;
 /**
  * Decorator class for XWPFParagraph allowing to add comments
  * found in paragraph to its text
- *
- * @author Yury Batrakov (batrakov at gmail.com)
  */
 public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
     private StringBuilder commentText;

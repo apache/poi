@@ -32,8 +32,6 @@ import org.apache.poi.util.GenericRecordUtil;
  * Note: when asked to write out, will simply put any child records correctly
  *  into the Escher layer. A call to the escher layer to write out (by the
  *  parent PPDrawing) will do the actual write out
- *
- * @author Nick Burch
  */
 public final class EscherTextboxWrapper extends RecordContainer {
 	private EscherTextboxRecord _escherRecord;

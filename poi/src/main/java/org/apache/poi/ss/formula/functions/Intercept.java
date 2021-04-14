@@ -29,9 +29,6 @@ import org.apache.poi.ss.formula.functions.LinearRegressionFunction.FUNCTION;
  * (http://introcs.cs.princeton.edu/java/97data/LinearRegression.java.html)
  * <b>Syntax</b>:<br>
  * <b>INTERCEPT</b>(<b>arrayX</b>, <b>arrayY</b>)<p>
- *
- *
- * @author Johan Karlsteen
  */
 public final class Intercept extends Fixed2ArgFunction {
 
@@ -39,7 +36,7 @@ public final class Intercept extends Fixed2ArgFunction {
 	public Intercept() {
 		func = new LinearRegressionFunction(FUNCTION.INTERCEPT);
 	}
-	
+
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
 			ValueEval arg0, ValueEval arg1) {
 		return func.evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);

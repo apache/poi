@@ -19,9 +19,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-/**
- * @author Yegor Kozlov
- */
 public interface PatternFormatting {
     /**  No background */
     public static final short     NO_FILL             = 0  ;

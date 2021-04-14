@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * FFN - Font Family Name. FFN is a data structure that stores the names of the Main
  * Font and that of Alternate font as an array of characters. It has also a header
  * that stores info about the whole structure and the fonts
- *
- * @author Praveen Mathew
  */
 @Internal
 public final class Ffn

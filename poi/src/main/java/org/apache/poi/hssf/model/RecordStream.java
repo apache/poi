@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.record.Record;
 /**
- * Simplifies iteration over a sequence of <tt>Record</tt> objects.
+ * Simplifies iteration over a sequence of {@code Record} objects.
  */
 public final class RecordStream {
 
@@ -61,7 +61,7 @@ public final class RecordStream {
 	}
 
 	/**
-	 * @return the {@link Class} of the next Record. <code>null</code> if this stream is exhausted.
+	 * @return the {@link Class} of the next Record. {@code null} if this stream is exhausted.
 	 */
 	public Class<? extends Record> peekNextClass() {
 		if(!hasNext()) {
@@ -71,7 +71,7 @@ public final class RecordStream {
 	}
 
 	/**
-	 * @return the next Record. <code>null</code> if this stream is exhausted.
+	 * @return the next Record. {@code null} if this stream is exhausted.
 	 */
 	public Record peekNextRecord() {
 		return (hasNext()) ? _list.get(_nextIndex) : null;

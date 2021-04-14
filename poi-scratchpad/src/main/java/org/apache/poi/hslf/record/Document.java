@@ -27,8 +27,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * Master container for Document. There is one of these for every
  *  slideshow, and it holds lots of definitions, and some summaries.
- *
- * @author Nick Burch
  */
 
 public final class Document extends PositionDependentRecordContainer

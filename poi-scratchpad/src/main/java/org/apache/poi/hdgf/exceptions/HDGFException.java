@@ -19,8 +19,6 @@ package org.apache.poi.hdgf.exceptions;
 
 /**
  * The superclass of all HDGF exceptions
- *
- * @author Yegor Kozlov
  */
 public final class HDGFException extends RuntimeException {
 

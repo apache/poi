@@ -27,8 +27,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about external video data.
- *
- * @author Yegor Kozlov
  */
 public final class ExVideoContainer extends RecordContainer {
 	private byte[] _header;

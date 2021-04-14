@@ -33,15 +33,15 @@ import org.apache.poi.util.StringUtil;
 public final class ViewFieldsRecord extends StandardRecord {
 	public static final short sid = 0x00B1;
 
-	/** the value of the <tt>cchName</tt> field when the {@link #_name} is not present */
+	/** the value of the {@code cchName} field when the {@link #_name} is not present */
 	private static final int STRING_NOT_PRESENT_LEN = 0xFFFF;
 	/** 5 shorts */
 	private static final int BASE_SIZE = 10;
 
-	private int _sxaxis;
-	private int _cSub;
-	private int _grbitSub;
-	private int _cItm;
+	private final int _sxaxis;
+	private final int _cSub;
+	private final int _grbitSub;
+	private final int _cItm;
 
 	private String _name;
 
@@ -54,7 +54,7 @@ public final class ViewFieldsRecord extends StandardRecord {
 		COLUMN(2),
 		PAGE(4),
 		DATA(8);
-		int id;
+		final int id;
 		Axis(int id) {
 			this.id = id;
 		}

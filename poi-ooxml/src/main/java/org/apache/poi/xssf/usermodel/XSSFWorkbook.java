@@ -257,7 +257,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
+     * Constructs a XSSFWorkbook object given a OpenXML4J {@code Package} object,
      *  see <a href="https://poi.apache.org/oxml4j/">https://poi.apache.org/oxml4j/</a>.
      *
      * <p>Once you have finished working with the Workbook, you should close the package
@@ -267,7 +267,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * <p>Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
      *  footprint than an InputStream backed one.
      *
-     * @param pkg the OpenXML4J <code>OPC Package</code> object.
+     * @param pkg the OpenXML4J {@code OPC Package} object.
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
@@ -288,13 +288,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *
      * <p>Using an {@link InputStream} requires more memory than using a File, so
      *  if a {@link File} is available then you should instead do something like
-     *   <pre><code>
+     *   <pre>{@code
      *       OPCPackage pkg = OPCPackage.open(path);
      *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
      *       // work with the wb object
      *       ......
      *       pkg.close(); // gracefully closes the underlying zip file
-     *   </code></pre>
+     *   }</pre>
      */
     public XSSFWorkbook(InputStream is) throws IOException {
         this(PackageHelper.open(is));
@@ -823,11 +823,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *     POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
      *     Example:
      *
-     *     <pre><code>
+     *     <pre>{@code
      *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
      *     assert 31 == sheet.getSheetName().length();
      *     assert "My very long sheet name which i" == sheet.getSheetName();
-     *     </code></pre>
+     *     }</pre>
      * </p>
      *
      * Except the 31-character constraint, Excel applies some other rules:
@@ -928,7 +928,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Finds a font that matches the one with the supplied attributes
      *
-     * @return the font with the matched attributes or <code>null</code>
+     * @return the font with the matched attributes or {@code null}
      */
     @Override
     public XSSFFont findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
@@ -988,7 +988,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * {@link #getNames(String name)} returns all named ranges with the given name.
      *
      * @param name  named range name
-     * @return XSSFName with the given name. <code>null</code> is returned no named range could be found.
+     * @return XSSFName with the given name.
+     * {@code null} is returned no named range could be found.
      */
     @Override
     public XSSFName getName(String name) {
@@ -1045,7 +1046,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Gets the named range index by name. No longer public and only used in tests.
      *
      * @param name named range name
-     * @return named range index. <code>-1</code> is returned if no named ranges could be found.
+     * @return named range index. {@code -1} is returned if no named ranges could be found.
      *
      * @deprecated 3.16. New projects should avoid accessing named ranges by index.
      * Use {@link #getName(String)} instead.
@@ -1121,7 +1122,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Get sheet with the given name (case insensitive match)
      *
      * @param name of the sheet
-     * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
+     * @return XSSFSheet with the name provided or {@code null} if it does not exist
      */
     @Override
     public XSSFSheet getSheet(String name) {
@@ -1151,7 +1152,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Returns the index of the sheet by his name (case insensitive match)
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based) or <tt>-1</tt> if not found
+     * @return index of the sheet (0 based) or {@code -1} if not found
      */
     @Override
     public int getSheetIndex(String name) {
@@ -1169,7 +1170,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Returns the index of the given sheet
      *
      * @param sheet the sheet to look up
-     * @return index of the sheet (0 based). <tt>-1</tt> if not found
+     * @return index of the sheet (0 based). {@code -1} if not found
      */
     @Override
     public int getSheetIndex(Sheet sheet) {
@@ -1924,7 +1925,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *   The calculation chain object specifies the order in which the cells in a workbook were last calculated
      * </p>
      *
-     * @return the <code>CalculationChain</code> object or <code>null</code> if not defined
+     * @return the {@code CalculationChain} object or {@code null} if not defined
      */
     @Internal
     public CalculationChain getCalculationChain() {
@@ -1942,7 +1943,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *  External Links in a formula would be '[1]Foo' which corresponds to
      *  entry 0 in this list.</p>
 
-     * @return the <code>ExternalLinksTable</code> list, which may be empty
+     * @return the {@code ExternalLinksTable} list, which may be empty
      */
     @Internal
     public List<ExternalLinksTable> getExternalLinksTable() {
@@ -2314,7 +2315,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Returns the data table with the given name (case insensitive).
      *
      * @param name the data table name (case-insensitive)
-     * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
+     * @return The Data table in the workbook named {@code name}, or {@code null} if no table is named {@code name}.
      * @since 3.15 beta 2
      */
     public XSSFTable getTable(String name) {

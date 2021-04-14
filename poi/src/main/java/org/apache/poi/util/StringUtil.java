@@ -51,7 +51,7 @@ public final class StringUtil {
      *               byte array. it is assumed that string[ offset ] and string[ offset +
      *               1 ] contain the first 16-bit unicode character
      * @param len    the length of the final string
-     * @return the converted string, never <code>null</code>.
+     * @return the converted string, never {@code null}.
      * @throws ArrayIndexOutOfBoundsException if offset is out of bounds for
      *                                        the byte array (i.e., is negative or is greater than or equal to
      *                                        string.length)
@@ -85,7 +85,7 @@ public final class StringUtil {
      * { 0x16, 0x00 } -0x16
      *
      * @param string the byte array to be converted
-     * @return the converted string, never <code>null</code>
+     * @return the converted string, never {@code null}
      */
     public static String getFromUnicodeLE(byte[] string) {
         if (string.length == 0) {
@@ -129,7 +129,7 @@ public final class StringUtil {
     }
 
     /**
-     * InputStream <tt>in</tt> is expected to contain:
+     * InputStream {@code in} is expected to contain:
      * <ol>
      * <li>ushort nChars</li>
      * <li>byte is16BitFlag</li>
@@ -150,7 +150,7 @@ public final class StringUtil {
     }
 
     /**
-     * InputStream <tt>in</tt> is expected to contain:
+     * InputStream {@code in} is expected to contain:
      * <ol>
      * <li>byte is16BitFlag</li>
      * <li>byte[]/char[] characterData</li>
@@ -170,7 +170,7 @@ public final class StringUtil {
     }
 
     /**
-     * OutputStream <tt>out</tt> will get:
+     * OutputStream {@code out} will get:
      * <ol>
      * <li>ushort nChars</li>
      * <li>byte is16BitFlag</li>
@@ -191,7 +191,7 @@ public final class StringUtil {
     }
 
     /**
-     * OutputStream <tt>out</tt> will get:
+     * OutputStream {@code out} will get:
      * <ol>
      * <li>byte is16BitFlag</li>
      * <li>byte[]/char[] characterData</li>
@@ -622,7 +622,7 @@ public final class StringUtil {
      *               byte array. it is assumed that string[ offset ] and string[ offset +
      *               1 ] contain the first 16-bit unicode character
      * @param len    the max. length of the final string
-     * @return the converted string, never <code>null</code>.
+     * @return the converted string, never {@code null}.
      * @throws ArrayIndexOutOfBoundsException if offset is out of bounds for
      *                                        the byte array (i.e., is negative or is greater than or equal to
      *                                        string.length)

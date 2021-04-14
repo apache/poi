@@ -36,8 +36,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests for OFFSET function implementation
- *
- * @author Josh Micich
  */
 final class TestOffset {
 

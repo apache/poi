@@ -29,17 +29,14 @@ import org.apache.poi.ss.formula.functions.LinearRegressionFunction.FUNCTION;
  * (http://introcs.cs.princeton.edu/java/97data/LinearRegression.java.html)
  * <b>Syntax</b>:<br>
  * <b>SLOPE</b>(<b>arrayX</b>, <b>arrayY</b>)<p>
- *
- *
- * @author Johan Karlsteen
  */
 public final class Slope extends Fixed2ArgFunction {
-	
+
 	private final LinearRegressionFunction func;
 	public Slope() {
 		func = new LinearRegressionFunction(FUNCTION.SLOPE);
 	}
-	
+
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
 			ValueEval arg0, ValueEval arg1) {
 		return func.evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);

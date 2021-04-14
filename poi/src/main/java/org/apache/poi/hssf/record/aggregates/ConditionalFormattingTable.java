@@ -43,7 +43,8 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 		}
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		for (CFRecordsAggregate subAgg : _cfHeaders) {
 			subAgg.visitContainedRecords(rv);
 		}

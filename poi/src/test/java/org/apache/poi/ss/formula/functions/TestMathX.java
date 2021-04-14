@@ -26,10 +26,6 @@ import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
 import org.junit.jupiter.api.Test;
 
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- */
 public class TestMathX extends BaseTestNumeric {
 
     @Test

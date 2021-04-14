@@ -25,9 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author Yegor Kozlov
- */
 public class XSLFTestDataSamples {
 
     public static XMLSlideShow openSampleDocument(String sampleName) {
@@ -52,7 +49,7 @@ public class XSLFTestDataSamples {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
+
         InputStream bais;
         bais = new ByteArrayInputStream(baos.toByteArray());
         try {
@@ -67,6 +64,6 @@ public class XSLFTestDataSamples {
                 throw new RuntimeException(e);
             }
         }
-        
+
     }
 }

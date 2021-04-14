@@ -177,7 +177,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * this holds the HSSFName objects attached to this workbook
      */
 
-    private ArrayList<HSSFName> names;
+    private final ArrayList<HSSFName> names;
 
     /**
      * this holds the HSSFFont objects attached to this workbook.
@@ -212,7 +212,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private UDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
+    private final UDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
     public static HSSFWorkbook create(InternalWorkbook book) {
         return new HSSFWorkbook(book);
@@ -583,7 +583,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     /**
      * Selects multiple sheets as a group. This is distinct from
      * the 'active' sheet (which is the sheet with focus).
-     * Unselects sheets that are not in <code>indexes</code>.
+     * Unselects sheets that are not in {@code indexes}.
      *
      * @param indexes Array of sheets to select, the index is 0-based.
      */
@@ -598,7 +598,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     /**
      * Selects multiple sheets as a group. This is distinct from
      * the 'active' sheet (which is the sheet with focus).
-     * Unselects sheets that are not in <code>indexes</code>.
+     * Unselects sheets that are not in {@code indexes}.
      *
      * @param indexes Collection of sheets to select, the index is 0-based.
      */
@@ -770,7 +770,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Returns the index of the given sheet
      *
      * @param sheet the sheet to look up
-     * @return index of the sheet (0 based). <tt>-1</tt> if not found
+     * @return index of the sheet (0 based). {@code -1} if not found
      */
     @Override
     public int getSheetIndex(Sheet sheet) {
@@ -873,11 +873,11 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
      * Example:
      *
-     * <pre><code>
+     * <pre>{@code
      *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
      *     assert 31 == sheet.getSheetName().length();
      *     assert "My very long sheet name which i" == sheet.getSheetName();
-     *     </code></pre>
+     *     }</pre>
      * </p>
      * <p>
      * Except the 31-character constraint, Excel applies some other rules:
@@ -1009,7 +1009,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Get sheet with the given name (case insensitive match)
      *
      * @param name of the sheet
-     * @return HSSFSheet with the name provided or <code>null</code> if it does not exist
+     * @return HSSFSheet with the name provided or {@code null} if it does not exist
      */
 
     @Override
@@ -1027,7 +1027,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Removes sheet at the given index.<p>
+     * Removes sheet at the given index.
      * <p>
      * Care must be taken if the removed sheet is the currently active or only selected sheet in
      * the workbook. There are a few situations when Excel must have a selection and/or active
@@ -1408,7 +1408,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private static final class SheetRecordCollector implements RecordVisitor {
 
-        private List<Record> _list;
+        private final List<Record> _list;
         private int _totalSize;
 
         public SheetRecordCollector() {
@@ -1836,7 +1836,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Adds a picture to the workbook.
      *
      * @param pictureData The bytes of the picture
-     * @param format      The format of the picture.  One of <code>PICTURE_TYPE_*</code>
+     * @param format      The format of the picture.  One of {@code PICTURE_TYPE_*}
      * @return the index to this picture (1 based).
      * @see #PICTURE_TYPE_WMF
      * @see #PICTURE_TYPE_EMF

@@ -29,11 +29,6 @@ import org.apache.tools.ant.Task;
  * by a WorkbookUtil instance.  The evaluate() method of the WorkbookUtil
  * class returns an EvaluationResult which encapsulates the results and
  * information from the evaluation.
- *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
-
- *
  */
 public class ExcelAntEvaluateCell extends Task {
 

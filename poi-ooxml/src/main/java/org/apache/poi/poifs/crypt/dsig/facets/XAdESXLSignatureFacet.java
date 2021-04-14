@@ -82,7 +82,6 @@ import org.w3c.dom.NodeList;
  * This implementation has been tested against an implementation that
  * participated multiple ETSI XAdES plugtests.
  *
- * @author Frank Cornelis
  * @see XAdESSignatureFacet
  */
 public class XAdESXLSignatureFacet implements SignatureFacet {

@@ -22,8 +22,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Allows tests to execute {@link WorkbookEvaluator}s and track the internal workings.
- *
- * @author Josh Micich
  */
 public final class WorkbookEvaluatorTestHelper {
 

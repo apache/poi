@@ -39,8 +39,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test that checks numbered list functionality.
- *
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
 public final class TestNumberedList {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();

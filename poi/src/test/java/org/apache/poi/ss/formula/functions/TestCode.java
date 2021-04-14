@@ -25,8 +25,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Code}
- *
- * @author cedric dot walter @ gmail dot com
  */
 class TestCode {
     private static ValueEval invokeValue(String number1) {

@@ -72,11 +72,11 @@ public class Formula implements GenericRecord {
 		return read(encodedTokenLen, in, encodedTokenLen);
 	}
 	/**
-	 * When there are no array constants present, <tt>encodedTokenLen</tt>==<tt>totalEncodedLen</tt>
+	 * When there are no array constants present, {@code encodedTokenLen}=={@code totalEncodedLen}
 	 * @param encodedTokenLen number of bytes in the stream taken by the plain formula tokens
 	 * @param totalEncodedLen the total number of bytes in the formula (includes trailing encoding
-	 * for array constants, but does not include 2 bytes for initial <tt>ushort encodedTokenLen</tt> field.
-	 * @return A new formula object as read from the stream.  Possibly empty, never <code>null</code>.
+	 * for array constants, but does not include 2 bytes for initial {@code ushort encodedTokenLen} field.
+	 * @return A new formula object as read from the stream.  Possibly empty, never {@code null}.
 	 */
 	public static Formula read(int encodedTokenLen, LittleEndianInput in, int totalEncodedLen) {
 		byte[] byteEncoding = IOUtils.safelyAllocate(totalEncodedLen, MAX_ENCODED_LEN);
@@ -117,7 +117,7 @@ public class Formula implements GenericRecord {
 	 * <li>tokenData</li>
 	 * <li>arrayConstantData (optional)</li>
 	 * </ul>
-	 * Note - this value is different to <tt>tokenDataLength</tt>
+	 * Note - this value is different to {@code tokenDataLength}
 	 */
 	public int getEncodedSize() {
 		return 2 + _byteEncoding.length;
@@ -134,10 +134,10 @@ public class Formula implements GenericRecord {
 	}
 
 	/**
-	 * Creates a {@link Formula} object from a supplied {@link Ptg} array.
-	 * Handles <code>null</code>s OK.
-	 * @param ptgs may be <code>null</code>
-	 * @return Never <code>null</code> (Possibly empty if the supplied <tt>ptgs</tt> is <code>null</code>)
+	 * Creates a Formula object from a supplied {@link Ptg} array.
+	 * Handles {@code null}s OK.
+	 * @param ptgs may be {@code null}
+	 * @return Never {@code null} (Possibly empty if the supplied {@code ptgs} is {@code null})
 	 */
 	public static Formula create(Ptg[] ptgs) {
 		if (ptgs == null || ptgs.length < 1) {
@@ -150,11 +150,11 @@ public class Formula implements GenericRecord {
 		return new Formula(encodedData, encodedTokenLen);
 	}
 	/**
-	 * Gets the {@link Ptg} array from the supplied {@link Formula}.
-	 * Handles <code>null</code>s OK.
+	 * Gets the {@link Ptg} array from the supplied Formula.
+	 * Handles {@code null}s OK.
 	 *
-	 * @param formula may be <code>null</code>
-	 * @return possibly <code>null</code> (if the supplied <tt>formula</tt> is <code>null</code>)
+	 * @param formula may be {@code null}
+	 * @return possibly {@code null} (if the supplied {@code formula} is {@code null})
 	 */
 	public static Ptg[] getTokens(Formula formula) {
 		if (formula == null) {
@@ -176,7 +176,7 @@ public class Formula implements GenericRecord {
 	 * The return value is usually not the same as the location of the cell containing this formula.
 	 *
 	 * @return the firstRow &amp; firstColumn of an array formula or shared formula that this formula
-	 * belongs to.  <code>null</code> if this formula is not part of an array or shared formula.
+	 * belongs to.  {@code null} if this formula is not part of an array or shared formula.
 	 */
 	public CellReference getExpReference() {
 		byte[] data = _byteEncoding;

@@ -24,8 +24,6 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 
 /**
  *  Used internally to navigate the PresentationML text style hierarchy and fetch properties
- *
- * @author Yegor Kozlov
 */
 @Internal
 public abstract class PropertyFetcher<T> {

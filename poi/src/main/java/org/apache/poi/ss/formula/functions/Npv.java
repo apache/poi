@@ -30,9 +30,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * values). Minimum 2 arguments, first arg is the rate of discount over the
  * length of one period others up to 254 arguments representing the payments and
  * income.
- *
- * @author SPetrakovsky
- * @author Marcel May
  */
 public final class Npv implements Function {
 

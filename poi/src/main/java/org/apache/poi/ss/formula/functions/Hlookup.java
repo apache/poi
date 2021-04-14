@@ -36,17 +36,17 @@ import org.apache.poi.ss.formula.TwoDEval;
  * <b>row_index_num</b> a 1 based index specifying which row value of the lookup data will be returned.<br>
  * <b>range_lookup</b> If TRUE (default), HLOOKUP finds the largest value less than or equal to
  * the lookup_value.  If FALSE, only exact matches will be considered<br>
- *
- * @author Josh Micich
  */
 public final class Hlookup extends Var3or4ArgFunction  {
 	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2) {
 		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
 	}
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2, ValueEval arg3) {
 		try {
@@ -65,7 +65,7 @@ public final class Hlookup extends Var3or4ArgFunction  {
 	}
 
 	/**
-	 * Returns one column from an <tt>AreaEval</tt>
+	 * Returns one column from an {@code AreaEval}
 	 *
 	 * @param rowIndex assumed to be non-negative
 	 *

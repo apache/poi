@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test HSSFRow is okay.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 final class TestHSSFRow extends BaseTestRow {
 

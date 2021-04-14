@@ -21,8 +21,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 
 /**
  * Represents a text box in a SpreadsheetML drawing.
- *
- * @author Yegor Kozlov
  */
 public final class XSSFTextBox extends XSSFSimpleShape {
 

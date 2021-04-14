@@ -30,8 +30,6 @@ import java.util.zip.*;
  * Drop in replacement for `java.util.ZipOutputStream`.
  *
  * For more information see https://github.com/rzymek/opczip
- *
- * @author Krzysztof Rzymkowski
  */
 class OpcOutputStream extends DeflaterOutputStream {
 

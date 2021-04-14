@@ -23,21 +23,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The LFOLVL structure contains information that is used to override the formatting
-        information of a corresponding LVL. <p>Class and fields descriptions are quoted from
-        Microsoft Office Word 97-2007 Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary
-        File Format
-
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
-        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-
+ * The LFOLVL structure contains information that is used to override the formatting information of a corresponding LVL.
  */
 @Internal
 public abstract class LFOLVLBaseAbstractType

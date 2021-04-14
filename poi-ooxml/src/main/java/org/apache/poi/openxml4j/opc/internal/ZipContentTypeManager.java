@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 /**
  * Zip implementation of the ContentTypeManager.
  *
- * @author Julien Chable
  * @version 1.0
  * @see ContentTypeManager
  */

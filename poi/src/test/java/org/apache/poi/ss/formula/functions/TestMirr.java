@@ -35,8 +35,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Mirr}
  *
- * @author Carlos Delgado (carlos dot del dot est at gmail dot com)
- * @author Cedric Walter (cedric dot walter at gmail dot com)
  * @see org.apache.poi.ss.formula.functions.TestIrr
  */
 final class TestMirr {

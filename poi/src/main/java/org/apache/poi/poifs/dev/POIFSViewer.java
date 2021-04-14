@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.dev;
 
@@ -27,8 +27,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * A simple viewer for POIFS files
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public final class POIFSViewer {

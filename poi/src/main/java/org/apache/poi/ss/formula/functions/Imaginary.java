@@ -36,8 +36,6 @@ import java.util.regex.Pattern;
  * <ul>
  * <li>Use COMPLEX to convert real and imaginary coefficients into a complex number.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
 

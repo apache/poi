@@ -38,8 +38,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * This abstract class represents a record in the PowerPoint document.
  * Record classes should extend with RecordContainer or RecordAtom, which
  *  extend this in turn.
- *
- * @author Nick Burch
  */
 
 public abstract class Record implements GenericRecord

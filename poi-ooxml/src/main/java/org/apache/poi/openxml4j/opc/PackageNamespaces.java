@@ -20,7 +20,6 @@ package org.apache.poi.openxml4j.opc;
 /**
  * Open Packaging Convention namespaces URI.
  *
- * @author Julien Chable
  * @version 1.0
  */
 public interface PackageNamespaces {

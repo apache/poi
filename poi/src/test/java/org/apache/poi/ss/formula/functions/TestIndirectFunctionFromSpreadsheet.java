@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.Arguments;
  * Tests INDIRECT() as loaded from a test data spreadsheet.<p>
  *
  * Tests for bug fixes and specific/tricky behaviour can be found in the corresponding test class
- * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
+ * ({@code TestXxxx}) of the target ({@code Xxxx}) implementor, where execution can be observed
  *  more easily.
  */
 final class TestIndirectFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {

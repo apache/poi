@@ -29,9 +29,11 @@ public class UnknownPtg extends Ptg {
         _sid = sid;
     }
 
+    @Override
     public boolean isBaseToken() {
         return true;
     }
+    @Override
     public void write(LittleEndianOutput out) {
         out.writeByte(_sid);
     }
@@ -41,13 +43,16 @@ public class UnknownPtg extends Ptg {
         return (byte)_sid;
     }
 
+    @Override
     public int getSize() {
         return size;
     }
 
+    @Override
     public String toFormulaString() {
         return "UNKNOWN";
     }
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }

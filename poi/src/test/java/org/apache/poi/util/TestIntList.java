@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Class to test IntList
- *
- * @author Marc Johnson
  */
 final class TestIntList {
     @Test

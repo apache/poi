@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- */
 public abstract class FinanceFunction implements Function3Arg, Function4Arg {
     private static final ValueEval DEFAULT_ARG3 = NumberEval.ZERO;
     private static final ValueEval DEFAULT_ARG4 = BoolEval.FALSE;

@@ -21,8 +21,6 @@ import org.apache.poi.util.Beta;
 
 /**
  * User-implemented pictures manager to store images on-disk
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Beta
 public interface PicturesManager
@@ -35,7 +33,7 @@ public interface PicturesManager
      * {@link PictureType#TIFF}, but rarely {@link PictureType#EMF} or
      * {@link PictureType#WMF}. FO (Apache FOP) supports at least PNG and SVG
      * types.
-     * 
+     *
      * @param content
      *            picture content
      * @param pictureType
@@ -50,7 +48,7 @@ public interface PicturesManager
      *            display height in inches (scaled). May be useful for rendering
      *            vector images (such as EMF or WMF)
      * @return path to file that can be used as reference in HTML (img's src) of
-     *         XLS FO (fo:external-graphic's src) or <tt>null</tt> if image were
+     *         XLS FO (fo:external-graphic's src) or {@code null} if image were
      *         not saved and should not be referenced from result HTML / FO.
      */
     String savePicture( byte[] content, PictureType pictureType,

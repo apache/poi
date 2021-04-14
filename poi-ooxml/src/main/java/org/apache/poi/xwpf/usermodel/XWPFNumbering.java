@@ -38,9 +38,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
 
-/**
- * @author Philipp Epp
- */
 public class XWPFNumbering extends POIXMLDocumentPart {
     protected List<XWPFAbstractNum> abstractNums = new ArrayList<>();
     protected List<XWPFNum> nums = new ArrayList<>();

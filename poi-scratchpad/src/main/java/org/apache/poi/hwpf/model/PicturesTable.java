@@ -52,8 +52,6 @@ import org.apache.poi.util.LittleEndian;
  * CharacterRun.isSpecial() returns true. The file location of the picture in the Word binary file is accessed
  * via CharacterRun.getPicOffset(). The CharacterRun.getPicOffset() is a byte offset into the data stream.
  * Beginning at the position recorded in picOffset, a header data structure, will be stored.
- *
- * @author Dmitry Romanov
  */
 @Internal
 public final class PicturesTable {

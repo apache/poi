@@ -19,9 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 
-/**
- * @author Yegor Kozlov
- */
 final class TestHSSFBorderStyle extends BaseTestBorderStyle  {
 
     public TestHSSFBorderStyle() {

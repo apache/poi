@@ -22,7 +22,6 @@ package org.apache.poi.openxml4j.exceptions;
  * set as Runtime in order not to force the user to manage the exception in a
  * try/catch).
  *
- * @author Julien Chable
  * @version 1.0
  */
 @SuppressWarnings("serial")

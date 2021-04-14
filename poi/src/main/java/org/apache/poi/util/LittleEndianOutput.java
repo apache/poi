@@ -16,10 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.util;
-/**
- *
- * @author Josh Micich
- */
+
 public interface LittleEndianOutput {
 	void writeByte(int v);
 	void writeShort(int v);

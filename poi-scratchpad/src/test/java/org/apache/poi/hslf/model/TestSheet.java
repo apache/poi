@@ -30,10 +30,8 @@ import org.apache.poi.hslf.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test common functionality of the <code>Sheet</code> object.
+ * Test common functionality of the {@code Sheet} object.
  * For each ppt in the test directory check that all sheets are properly initialized
- *
- * @author Yegor Kozlov
  */
 public final class TestSheet {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();

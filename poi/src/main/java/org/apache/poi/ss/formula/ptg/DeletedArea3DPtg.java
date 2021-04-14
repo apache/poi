@@ -56,7 +56,8 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
 

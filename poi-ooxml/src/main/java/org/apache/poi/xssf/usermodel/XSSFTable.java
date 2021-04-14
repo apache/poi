@@ -49,16 +49,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
 
 /**
- * 
+ *
  * This class implements the Table Part (Open Office XML Part 4: chapter 3.5.1)
- * 
+ *
  * Columns of this table may contains mappings to a subtree of an XML. The root
  * element of this subtree can occur multiple times (one for each row of the
  * table). The child nodes of the root element can be only attributes or
  * elements with maxOccurs=1 property set.
- * 
- *
- * @author Roberto Manicardi
  */
 public class XSSFTable extends POIXMLDocumentPart implements Table {
 
@@ -67,8 +64,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     private transient List<XSSFTableColumn> tableColumns;
     private transient HashMap<String, Integer> columnMap;
     private transient CellReference startCellReference;
-    private transient CellReference endCellReference;    
-    private transient String commonXPath; 
+    private transient CellReference endCellReference;
+    private transient String commonXPath;
     private transient String name;
     private transient String styleName;
 
@@ -80,7 +77,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         ctTable = CTTable.Factory.newInstance();
     }
 
-    /** 
+    /**
      * @param part The part used to initialize the table
      * @throws IOException If reading data from the part fails.
      * @since POI 3.14-Beta1
@@ -89,7 +86,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         super(part);
         readFrom(part.getInputStream());
     }
-    
+
     /**
      * Read table XML from an {@link InputStream}
      * @param is The stream which provides the XML data for the table.
@@ -103,7 +100,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             throw new IOException(e.getLocalizedMessage());
         }
     }
-    
+
     /**
      * @return owning sheet
      */
@@ -131,7 +128,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         writeTo(out);
         out.close();
     }
-    
+
     /**
       * get the underlying CTTable XML bean
      * @return underlying OOXML object
@@ -140,7 +137,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public CTTable getCTTable() {
         return ctTable;
     }
-    
+
     /**
      * Checks if this Table element contains even a single mapping to the map identified by id
      * @param id the XSSFMap ID
@@ -148,22 +145,22 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     public boolean mapsTo(long id){
         List<XSSFXmlColumnPr> pointers = getXmlColumnPrs();
-        
+
         for (XSSFXmlColumnPr pointer: pointers) {
             if (pointer.getMapId()==id) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
-     * 
+     *
      * Calculates the xpath of the root element for the table. This will be the common part
      * of all the mapping's xpaths
      * Note: this function caches the result for performance. To flush the cache {@link #updateHeaders()} must be called.
-     * 
+     *
      * @return the xpath of the table's root element
      */
     public String getCommonXpath() {
@@ -175,16 +172,16 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                     String[] tokens =  xpath.split("/");
                     if (commonTokens.length==0) {
                         commonTokens = tokens;
-                        
+
                     } else {
                         final int maxLength = Math.min(commonTokens.length, tokens.length);
-                         
+
                         for (int i =0; i<maxLength; i++) {
                             if (!commonTokens[i].equals(tokens[i])) {
                              List<String> subCommonTokens = Arrays.asList(commonTokens).subList(0, i);
-                             
+
                              String[] container = {};
-                             
+
                              commonTokens = subCommonTokens.toArray(container);
                              break;
                             }
@@ -196,7 +193,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             commonTokens[0] = "";
             commonXPath = StringUtil.join(commonTokens, "/");
         }
-        
+
         return commonXPath;
     }
 
@@ -236,10 +233,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return xmlColumnPrs;
     }
-    
+
     /**
      * Add a new column to the right end of the table.
-     * 
+     *
      * @param columnName
      *            the unique name of the column, must not be {@code null}
      * @return the created table column
@@ -248,10 +245,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public XSSFTableColumn createColumn(String columnName) {
         return createColumn(columnName, getColumnCount());
     }
-    
+
     /**
      * Adds a new column to the table.
-     * 
+     *
      * @param columnName
      *            the unique name of the column, or {@code null} for a generated name
      * @param columnIndex
@@ -263,20 +260,20 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @since 4.0.0
      */
     public XSSFTableColumn createColumn(String columnName, int columnIndex) {
-                
+
         int columnCount = getColumnCount();
         if(columnIndex < 0 || columnIndex > columnCount) {
             throw new IllegalArgumentException("Column index out of bounds");
         }
-        
+
         // Ensure we have Table Columns
         CTTableColumns columns = ctTable.getTableColumns();
         if (columns == null) {
             columns = ctTable.addNewTableColumns();
         }
-        
-        // check if name is unique and calculate unique column id 
-        long nextColumnId = 0; 
+
+        // check if name is unique and calculate unique column id
+        long nextColumnId = 0;
         for (XSSFTableColumn tableColumn : getColumns()) {
             if (columnName != null && columnName.equalsIgnoreCase(tableColumn.getName())) {
                 throw new IllegalArgumentException("Column '" + columnName
@@ -286,18 +283,18 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         // Bug #62740, the logic was just re-using the existing max ID, not incrementing beyond it.
         nextColumnId++;
-        
+
         // Add the new Column
         CTTableColumn column = columns.insertNewTableColumn(columnIndex);
         columns.setCount(columns.sizeOfTableColumnArray());
-        
+
         column.setId(nextColumnId);
         if(columnName != null) {
-            column.setName(columnName); 
+            column.setName(columnName);
         } else {
             column.setName("Column " + nextColumnId);
         }
-        
+
         if (ctTable.getRef() != null) {
             // calculate new area
             int newColumnCount = columnCount + 1;
@@ -310,12 +307,12 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
             setCellRef(newTableArea);
         }
-        
+
         updateHeaders();
-        
+
         return getColumns().get(columnIndex);
     }
-    
+
     /**
      * Remove a column from the table.
      *
@@ -331,7 +328,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             updateHeaders();
         }
     }
-    
+
     /**
      * Remove a column from the table.
      *
@@ -346,18 +343,18 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (columnIndex < 0 || columnIndex > getColumnCount() - 1) {
             throw new IllegalArgumentException("Column index out of bounds");
         }
-        
+
         if(getColumnCount() == 1) {
             throw new IllegalArgumentException("Table must have at least one column");
         }
-        
+
         CTTableColumns tableColumns = ctTable.getTableColumns();
         tableColumns.removeTableColumn(columnIndex);
         tableColumns.setCount(tableColumns.getTableColumnList().size());
         updateReferences();
         updateHeaders();
     }
-    
+
     /**
      * @return the name of the Table, if set
      */
@@ -367,7 +364,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return name;
     }
-    
+
     /**
      * Changes the name of the Table
      * @param newName The name of the table.
@@ -392,7 +389,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return styleName;
     }
-    
+
     /**
      * Changes the name of the Table
      * @param newStyleName The name of the style.
@@ -412,7 +409,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         ctTable.getTableStyleInfo().setName(newStyleName);
         styleName = newStyleName;
     }
-    
+
     /**
      * @return the display name of the Table, if set
      */
@@ -437,7 +434,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      *
      * Does not track updates to underlying changes to CTTable To synchronize
      * with changes to the underlying CTTable, call {@link #updateReferences()}.
-     * 
+     *
      * @return the area of the table
      * @see "Open Office XML Part 4: chapter 3.5.1.2, attribute ref"
      * @since 3.17 beta 1
@@ -449,35 +446,35 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                 SpreadsheetVersion.EXCEL2007
         );
     }
-    
+
     /**
      * Set the area reference for the cells which this table covers. The area
      * includes includes header rows and totals rows. Automatically synchronizes
      * any changes by calling {@link #updateHeaders()}.
-     * 
+     *
      * Note: The area's width should be identical to the amount of columns in
      * the table or the table may be invalid. All header rows, totals rows and
      * at least one data row must fit inside the area. Updating the area with
      * this method does not create or remove any columns and does not change any
      * cell values.
-     * 
+     *
      * @see "Open Office XML Part 4: chapter 3.5.1.2, attribute ref"
      * @since 3.17 beta 1
      */
     public void setCellReferences(AreaReference refs) {
         setCellRef(refs);
     }
-    
+
     @Internal
     protected void setCellRef(AreaReference refs) {
-        
+
         // Strip the sheet name,
         // CTWorksheet.getTableParts defines in which sheet the table is
         String ref = refs.formatAsString();
         if (ref.indexOf('!') != -1) {
             ref = ref.substring(ref.indexOf('!')+1);
         }
-        
+
         // Update
         ctTable.setRef(ref);
         if (ctTable.isSetAutoFilter()) {
@@ -494,19 +491,19 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
             ctTable.getAutoFilter().setRef(filterRef);
         }
-        
+
         // Have everything recomputed
         updateReferences();
         updateHeaders();
     }
-    
+
     /**
      * Set the area reference for the cells which this table covers. The area
      * includes includes header rows and totals rows.
-     * 
+     *
      * Updating the area with this method will create new column as necessary to
      * the right side of the table but will not modify any cell values.
-     * 
+     *
      * @param tableArea
      *            the new area of the table
      * @throws IllegalArgumentException
@@ -518,7 +515,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (tableArea == null) {
             throw new IllegalArgumentException("AreaReference must not be null");
         }
-        
+
         String areaSheetName = tableArea.getFirstCell().getSheetName();
         if (areaSheetName != null && !areaSheetName.equals(getXSSFSheet().getSheetName())) {
             // TODO to move a table from one sheet to another
@@ -526,7 +523,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             throw new IllegalArgumentException(
                     "The AreaReference must not reference a different sheet");
         }
-        
+
         int rowCount = (tableArea.getLastCell().getRow() - tableArea.getFirstCell().getRow()) + 1;
         int minimumRowCount = 1 + getHeaderRowCount() + getTotalsRowCount();
         if (rowCount < minimumRowCount) {
@@ -563,7 +560,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
         updateHeaders();
     }
-    
+
     /**
      * Get the area that this table covers.
      *
@@ -580,10 +577,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             return null;
         }
     }
-    
+
     /**
      * @return The reference for the cell in the top-left part of the table
-     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
      *
      * Does not track updates to underlying changes to CTTable
      * To synchronize with changes to the underlying CTTable,
@@ -595,7 +592,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return startCellReference;
     }
-    
+
     /**
      * @return The reference for the cell in the bottom-right part of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
@@ -625,7 +622,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
     }
 
-    
+
     /**
      * Clears the cached values set by {@link #getStartCellReference()}
      * and {@link #getEndCellReference()}.
@@ -641,40 +638,40 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         endCellReference = null;
     }
 
-    
+
     /**
      * Get the total number of rows in this table, including all
      * {@linkplain #getHeaderRowCount() header rows} and all
      * {@linkplain #getTotalsRowCount() totals rows}. (Note: in this version
      * autofiltering is ignored)
-     * 
+     *
      * Returns <code>0</code> if the start or end cell references are not set.
-     * 
+     *
      * Does not track updates to underlying changes to CTTable To synchronize
      * with changes to the underlying CTTable, call {@link #updateReferences()}.
-     * 
+     *
      * @return the total number of rows
      */
     public int getRowCount() {
         CellReference from = getStartCellReference();
         CellReference to = getEndCellReference();
-        
+
         int rowCount = 0;
         if (from!=null && to!=null) {
             rowCount = to.getRow() - from.getRow() + 1;
         }
         return rowCount;
     }
-    
+
     /**
      * Get the number of data rows in this table. This does not include any
      * header rows or totals rows.
-     * 
+     *
      * Returns <code>0</code> if the start or end cell references are not set.
-     * 
+     *
      * Does not track updates to underlying changes to CTTable To synchronize
      * with changes to the underlying CTTable, call {@link #updateReferences()}.
-     * 
+     *
      * @return the number of data rows
      * @since 4.0.0
      */
@@ -693,11 +690,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * Set the number of rows in the data area of the table. This does not
      * affect any header rows or totals rows.
-     * 
+     *
      * If the new row count is less than the current row count, superfluous rows
      * will be cleared. If the new row count is greater than the current row
      * count, cells below the table will be overwritten by the table.
-     * 
+     *
      * To resize the table without overwriting cells, use
      * {@link #setArea(AreaReference)} instead.
      *
@@ -781,14 +778,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Synchronize table headers with cell values in the parent sheet.
      * Headers <em>must</em> be in sync, otherwise Excel will display a
      * "Found unreadable content" message on startup.
-     * 
+     *
      * If calling both {@link #updateReferences()} and
      * this method, {@link #updateReferences()}
      * should be called first.
-     * 
+     *
      * Note that a Table <em>must</em> have a header. To reproduce
      *  the equivalent of inserting a table in Excel without Headers,
-     *  manually add cells with values of "Column1", "Column2" etc first. 
+     *  manually add cells with values of "Column1", "Column2" etc first.
      */
     public void updateHeaders() {
         XSSFSheet sheet = (XSSFSheet)getParent();
@@ -841,7 +838,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
             final int count = getColumnCount();
             columnMap = new HashMap<>(count * 3 / 2);
-            
+
             int i = 0;
             for (XSSFTableColumn column : getColumns()) {
                 String columnName = column.getName();
@@ -872,7 +869,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public boolean isHasTotalsRow() {
         return ctTable.getTotalsRowShown();
     }
-    
+
     /**
      * @return 0 for no totals rows, 1 for totals row shown.
      * Values &gt; 1 are not currently used by Excel up through 2016, and the OOXML spec
@@ -891,7 +888,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public int getHeaderRowCount() {
         return (int) ctTable.getHeaderRowCount();
     }
-    
+
     /**
      * @since 3.15 beta 2
      */
@@ -919,7 +916,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public int getEndRowIndex() {
         return getEndCellReference().getRow();
     }
-    
+
     /**
      * @since 3.17 beta 1
      */
@@ -945,7 +942,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return false;
     }
-    
+
     /**
      * Remove relations
      */

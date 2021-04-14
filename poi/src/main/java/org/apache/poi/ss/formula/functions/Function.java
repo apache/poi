@@ -24,8 +24,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Common interface for all implementations of Excel built-in functions.
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public interface Function {
 

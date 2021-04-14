@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  *  The enumeration value indicating the possible paper size for a sheet
- *
- * @author Daniele Montagni
  */
 public enum PaperSize {
     LETTER_PAPER,

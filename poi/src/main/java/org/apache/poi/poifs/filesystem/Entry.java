@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
@@ -23,8 +23,6 @@ package org.apache.poi.poifs.filesystem;
  * This interface provides access to an object managed by a Filesystem
  * instance. Entry objects are further divided into DocumentEntry and
  * DirectoryEntry instances.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public interface Entry

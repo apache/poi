@@ -24,9 +24,7 @@ import java.util.Arrays;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This class holds the links to exernal objects referenced
- *  from the document.
- * @author Nick Burch
+ * This class holds the links to exernal objects referenced from the document.
  */
 public class ExObjList extends RecordContainer {
 	private byte[] _header;

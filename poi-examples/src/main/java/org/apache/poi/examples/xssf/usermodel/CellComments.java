@@ -39,8 +39,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Excel comment is a kind of a text shape,
  * so inserting a comment is very similar to placing a text box in a worksheet
  * </p>
- *
- * @author Yegor Kozlov
  */
 public class CellComments {
     public static void main(String[] args) throws IOException {

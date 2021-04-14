@@ -23,16 +23,12 @@ import org.apache.tools.ant.Project;
 /**
  * Class for use in an Ant build script that sets the value of an Excel
  * sheet cell using the cell id ('Sheet Name'!cellId).
- * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- * 
  */
 public class ExcelAntSetDoubleCell extends ExcelAntSet {
 	private double cellValue;
-	
+
 	public ExcelAntSetDoubleCell() {}
-	
+
 	/**
 	 * Set the value of the specified cell as the double passed in.
 	 * @param value The double-value that should be set when this task is executed.
@@ -49,11 +45,11 @@ public class ExcelAntSetDoubleCell extends ExcelAntSet {
 	public double getCellValue() {
 		return cellValue;
 	}
-	
+
 	@Override
     public void execute() throws BuildException {
 		wbUtil.setDoubleValue(cellStr, cellValue ) ;
-		
+
 		log( "set cell " + cellStr + " to value " + cellValue + " as double.", Project.MSG_DEBUG ) ;
 	}
 }

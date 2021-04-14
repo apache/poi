@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- */
 public abstract class AggregateFunction extends MultiOperandNumericFunction {
 
     private static final class LargeSmall extends Fixed2ArgFunction {

@@ -20,9 +20,6 @@ package org.apache.poi.xwpf.usermodel;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
-/**
- * @author Philipp Epp
- */
 public class XWPFStyle {
 
     protected XWPFStyles styles;

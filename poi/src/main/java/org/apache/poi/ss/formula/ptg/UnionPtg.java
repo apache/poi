@@ -20,9 +20,6 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianOutput;
 
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
 public final class UnionPtg extends OperationPtg {
     public static final byte sid  = 0x10;
 
@@ -32,6 +29,7 @@ public final class UnionPtg extends OperationPtg {
     	// enforce singleton
     }
 
+    @Override
     public final boolean isBaseToken() {
         return true;
     }
@@ -41,14 +39,17 @@ public final class UnionPtg extends OperationPtg {
         return sid;
     }
 
+    @Override
     public int getSize() {
         return 1;
     }
 
+    @Override
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
     }
 
+    @Override
     public String toFormulaString()
     {
         return ",";
@@ -56,10 +57,12 @@ public final class UnionPtg extends OperationPtg {
 
 
     /** implementation of method from OperationsPtg*/
+    @Override
     public String toFormulaString(String[] operands) {
         return operands[0] + "," + operands[1];
      }
 
+    @Override
     public int getNumberOfOperands()
     {
         return 2;

@@ -23,22 +23,20 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * To support Constant Values (2.5.7) as required by the CRN record.
- * This class is also used for two dimensional arrays which are encoded by 
+ * This class is also used for two dimensional arrays which are encoded by
  * EXTERNALNAME (5.39) records and Array tokens.<p>
- * 
- * @author Josh Micich
  */
 public final class ConstantValueParser {
 	// note - these (non-combinable) enum values are sparse.
 	private static final int TYPE_EMPTY = 0;
 	private static final int TYPE_NUMBER = 1;
 	private static final int TYPE_STRING = 2;
-	private static final int TYPE_BOOLEAN = 4; 
+	private static final int TYPE_BOOLEAN = 4;
 	private static final int TYPE_ERROR_CODE = 16; // TODO - update OOO document to include this value
-	
-	private static final int TRUE_ENCODING = 1; 
+
+	private static final int TRUE_ENCODING = 1;
 	private static final int FALSE_ENCODING = 0;
-	
+
 	// TODO - is this the best way to represent 'EMPTY'?
 	private static final Object EMPTY_REPRESENTATION = null;
 
@@ -59,7 +57,7 @@ public final class ConstantValueParser {
 		switch(grbit) {
 			case TYPE_EMPTY:
 				in.readLong(); // 8 byte 'not used' field
-				return EMPTY_REPRESENTATION; 
+				return EMPTY_REPRESENTATION;
 			case TYPE_NUMBER:
 				return Double.valueOf(in.readDouble());
 			case TYPE_STRING:
@@ -105,7 +103,7 @@ public final class ConstantValueParser {
 			return 8;
 		}
 		Class<?> cls = object.getClass();
-		
+
 		if(cls == Boolean.class || cls == Double.class || cls == ErrorConstant.class) {
 			return 8;
 		}

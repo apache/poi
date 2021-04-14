@@ -33,9 +33,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
 final class TestReadWriteChart {
 
     /**

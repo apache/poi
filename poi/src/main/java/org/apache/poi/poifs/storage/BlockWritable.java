@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.storage;
 
@@ -24,12 +24,8 @@ import java.io.OutputStream;
 
 /**
  * An interface for persisting block storage of POIFS components.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public interface BlockWritable
-{
+public interface BlockWritable {
 
     /**
      * Write the storage to an OutputStream

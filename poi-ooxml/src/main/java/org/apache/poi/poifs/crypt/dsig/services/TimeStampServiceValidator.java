@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
@@ -29,15 +29,12 @@ import java.util.List;
 
 /**
  * Interface for trust validator of a TSP.
- * 
- * @author Frank Cornelis
- * 
  */
 public interface TimeStampServiceValidator {
 
     /**
      * Validates the given certificate chain.
-     * 
+     *
      * @param certificateChain
      * @param revocationData
      *            the optional data container that should be filled with

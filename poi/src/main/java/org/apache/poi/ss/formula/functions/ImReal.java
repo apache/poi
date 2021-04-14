@@ -40,8 +40,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <li>If inumber is not in the form x + yi or x + yj, this function returns the #NUM! error value.</li>
  * <li>Use COMPLEX to convert real and imaginary coefficients into a complex number.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
 

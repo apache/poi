@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that DocumentEncryptionAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestDocumentEncryptionAtom {
 	// From a real file

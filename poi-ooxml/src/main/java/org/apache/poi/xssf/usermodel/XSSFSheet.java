@@ -119,6 +119,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Kept for backwards-compatibility, use {@link Font#TWIPS_PER_POINT} instead.
      * @deprecated POI 5.0.0
      */
+    @Deprecated
     public static final int TWIPS_PER_POINT = Font.TWIPS_PER_POINT;
 
     //TODO make the two variable below private!
@@ -357,7 +358,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param region to merge
      * @param validate whether to validate merged region
      * @return 0-based index of this region
-     * @throws IllegalArgumentException if region contains fewer than 2 cells (this check is inexpensive and is performed regardless of <tt>validate</tt>)
+     * @throws IllegalArgumentException if region contains fewer than 2 cells (this check is inexpensive and is performed regardless of {@code validate})
      * @throws IllegalStateException if region intersects with a multi-cell array formula
      * @throws IllegalStateException if region intersects with an existing region on this sheet
      */
@@ -596,7 +597,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param autoCreate if true, then a new VML drawing part is created
      *
-     * @return the VML drawing of <code>null</code> if the drawing was not found and autoCreate=false
+     * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
      */
     protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFVMLDrawing drawing = null;
@@ -888,7 +889,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Vertical page break information used for print layout view, page layout view, drawing print breaks
      * in normal view, and for printing the worksheet.
      *
-     * @return column indexes of all the vertical page breaks, never <code>null</code>
+     * @return column indexes of all the vertical page breaks, never {@code null}
      */
     @Override
     public int[] getColumnBreaks() {
@@ -1070,7 +1071,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Flag indicating whether the Fit to Page print option is enabled.
      *
-     * @return <code>true</code>
+     * @return {@code true}
      */
     @Override
     public boolean getFitToPage() {
@@ -1394,7 +1395,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Also sets some attributes on the {@link CTSheetProtection} that correspond to
      * the default values used by Excel
      *
-     * @param password to set for protection. Pass <code>null</code> to remove protection
+     * @param password to set for protection. Pass {@code null} to remove protection
      */
     @Override
     public void protectSheet(String password) {
@@ -1440,7 +1441,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
      *
      * @param rownum  row to get
-     * @return <code>XSSFRow</code> representing the rownumber or <code>null</code> if its not defined on the sheet
+     * @return {@code XSSFRow} representing the rownumber or {@code null} if its not defined on the sheet
      */
     @Override
     public XSSFRow getRow(int rownum) {
@@ -1492,7 +1493,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Horizontal page break information used for print layout view, page layout view, drawing print breaks in normal
      *  view, and for printing the worksheet.
      *
-     * @return row indexes of all the horizontal page breaks, never <code>null</code>
+     * @return row indexes of all the horizontal page breaks, never {@code null}
      */
     @Override
     public int[] getRowBreaks() {
@@ -1511,7 +1512,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * When false a summary row is inserted above the detailed data being summarized and a new outline level
      * is established on that row.
      * </p>
-     * @return <code>true</code> if row summaries appear below detail in the outline
+     * @return {@code true} if row summaries appear below detail in the outline
      */
     @Override
     public boolean getRowSumsBelow() {
@@ -1532,7 +1533,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * When false a summary row is inserted above the detailed data being summarized and a new outline level
      * is established on that row.
      * </p>
-     * @param value <code>true</code> if row summaries appear below detail in the outline
+     * @param value {@code true} if row summaries appear below detail in the outline
      */
     @Override
     public void setRowSumsBelow(boolean value) {
@@ -1550,7 +1551,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * When false a summary column is inserted to the left of the detailed data being
      * summarized and a new outline level is established on that column.
      * </p>
-     * @return <code>true</code> if col summaries appear right of the detail in the outline
+     * @return {@code true} if col summaries appear right of the detail in the outline
      */
     @Override
     public boolean getRowSumsRight() {
@@ -1571,7 +1572,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * When false a summary column is inserted to the left of the detailed data being
      * summarized and a new outline level is established on that column.
      * </p>
-     * @param value <code>true</code> if col summaries appear right of the detail in the outline
+     * @param value {@code true} if col summaries appear right of the detail in the outline
      */
     @Override
     public void setRowSumsRight(boolean value) {
@@ -1729,7 +1730,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Get the hidden state for a given column.
      *
      * @param columnIndex - the column to set (0-based)
-     * @return hidden - <code>false</code> if the column is visible
+     * @return hidden - {@code false} if the column is visible
      */
     @Override
     public boolean isColumnHidden(int columnIndex) {
@@ -1740,7 +1741,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Gets the flag indicating whether this sheet should display formulas.
      *
-     * @return <code>true</code> if this sheet should display formulas.
+     * @return {@code true} if this sheet should display formulas.
      */
     @Override
     public boolean isDisplayFormulas() {
@@ -1752,7 +1753,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Gets the flag indicating whether this sheet displays the lines
      * between rows and columns to make editing and reading easier.
      *
-     * @return <code>true</code> (default) if this sheet displays gridlines.
+     * @return {@code true} (default) if this sheet displays gridlines.
      * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
      */
     @Override
@@ -1767,7 +1768,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * To turn printing of gridlines use {@link #setPrintGridlines(boolean)}
      *
      *
-     * @param show <code>true</code> if this sheet should display gridlines.
+     * @param show {@code true} if this sheet should display gridlines.
      * @see #setPrintGridlines(boolean)
      */
     @Override
@@ -1786,7 +1787,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Column heading are the letters or numbers that appear above the columns of the sheet
      * </p>
      *
-     * @return <code>true</code> (default) if this sheet should display row and column headings.
+     * @return {@code true} (default) if this sheet should display row and column headings.
      */
     @Override
     public boolean isDisplayRowColHeadings() {
@@ -1803,7 +1804,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Column heading are the letters or numbers that appear above the columns of the sheet
      * </p>
      *
-     * @param show <code>true</code> if this sheet should display row and column headings.
+     * @param show {@code true} if this sheet should display row and column headings.
      */
     @Override
     public void setDisplayRowColHeadings(boolean show) {
@@ -1862,7 +1863,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Tests if there is a page break at the indicated row
      *
      * @param row index of the row to test
-     * @return <code>true</code> if there is a page break at the indicated row
+     * @return {@code true} if there is a page break at the indicated row
      */
     @Override
     public boolean isRowBroken(int row) {
@@ -1891,8 +1892,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Sets a page break at the indicated row
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
-     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2100,7 +2101,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Flag indicating whether the sheet displays Automatic Page Breaks.
      *
-     * @return <code>true</code> if the sheet displays Automatic Page Breaks.
+     * @return {@code true} if the sheet displays Automatic Page Breaks.
      */
     @Override
     public boolean getAutobreaks() {
@@ -2113,7 +2114,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Flag indicating whether the sheet displays Automatic Page Breaks.
      *
-     * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
+     * @param value {@code true} if the sheet displays Automatic Page Breaks.
      */
     @Override
     public void setAutobreaks(boolean value) {
@@ -2126,8 +2127,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Sets a page break at the indicated column.
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
-     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2502,7 +2503,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * <p>
      * Character width is defined as the maximum digit width
-     * of the numbers <code>0, 1, 2, ... 9</code> as rendered
+     * of the numbers {@code 0, 1, 2, ... 9} as rendered
      * using the default font (first font in the workbook).
      * <br>
      * Unless you are using a very special font, the default character is '0' (zero),
@@ -2518,18 +2519,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * To compute the actual number of visible characters,
      *  Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):
      * </p>
-     * <code>
+     * {@code
      *     width = Truncate([{Number of Visible Characters} *
      *      {Maximum Digit Width} + {5 pixel padding}]/{Maximum Digit Width}*256)/256
-     * </code>
+     * }
      * <p>Using the Calibri font as an example, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
-     *  If you set a column width to be eight characters wide, e.g. <code>setColumnWidth(columnIndex, 8*256)</code>,
+     *  If you set a column width to be eight characters wide, e.g. {@code setColumnWidth(columnIndex, 8*256)},
      *  then the actual value of visible characters (the value shown in Excel) is derived from the following equation:
-     *  <code>
+     *  {@code
      Truncate([numChars*7+5]/7*256)/256 = 8;
-     *  </code>
+     *  }
      *
-     *  which gives <code>7.29</code>.
+     *  which gives {@code 7.29}.
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
@@ -2555,7 +2556,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * This value does not include margin padding or extra padding for gridlines. It is only the
      * number of characters.
      *
-     * @param width the number of characters. Default value is <code>8</code>.
+     * @param width the number of characters. Default value is {@code 8}.
      */
     @Override
     public void setDefaultColumnWidth(int width) {
@@ -2588,7 +2589,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Sets the flag indicating whether this sheet should display formulas.
      *
-     * @param show <code>true</code> if this sheet should display formulas.
+     * @param show {@code true} if this sheet should display formulas.
      */
     @Override
     public void setDisplayFormulas(boolean show) {
@@ -2600,7 +2601,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Flag indicating whether the Fit to Page print option is enabled.
      *
-     * @param b <code>true</code> if the Fit to Page print option is enabled.
+     * @param b {@code true} if the Fit to Page print option is enabled.
      */
     @Override
     public void setFitToPage(boolean b) {
@@ -3342,7 +3343,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * </p>
      * Note: multiple sheets can be selected, but only one sheet can be active at one time.
      *
-     * @return <code>true</code> if this sheet is selected
+     * @return {@code true} if this sheet is selected
      */
     @Override
     public boolean isSelected() {
@@ -3359,7 +3360,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * </p>
      * Note: multiple sheets can be selected, but only one sheet can be active at one time.
      *
-     * @param value <code>true</code> if this sheet is selected
+     * @param value {@code true} if this sheet is selected
      */
     @Override
     public void setSelected(boolean value) {
@@ -3402,7 +3403,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Return location of the active cell, e.g. <code>A1</code>.
+     * Return location of the active cell, e.g. {@code A1}.
      *
      * @return the location of the active cell.
      */
@@ -3526,7 +3527,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Return a master shared formula by index
      *
      * @param sid shared group index
-     * @return a CTCellFormula bean holding shared formula or <code>null</code> if not found
+     * @return a CTCellFormula bean holding shared formula or {@code null} if not found
      */
     @Internal
     public CTCellFormula getSharedFormula(int sid){
@@ -4170,7 +4171,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      * Get background color of the sheet tab.
-     * Returns <tt>null</tt> if no sheet tab color is set.
+     * Returns {@code null} if no sheet tab color is set.
      *
      * @return the background color of the sheet tab
      */

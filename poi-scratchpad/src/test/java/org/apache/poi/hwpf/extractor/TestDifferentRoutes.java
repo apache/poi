@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test the different routes to extracting text
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestDifferentRoutes {
 	private static final String[] p_text = new String[] {

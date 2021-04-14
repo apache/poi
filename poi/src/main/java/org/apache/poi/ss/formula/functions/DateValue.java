@@ -41,8 +41,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * <p>
  * To view a date serial number as a date, you must apply a date format to the cell. Find links to more
  * information about displaying numbers as dates in the See Also section.
- *
- * @author Milosz Rembisz
  */
 public class DateValue extends Fixed1ArgFunction {
 

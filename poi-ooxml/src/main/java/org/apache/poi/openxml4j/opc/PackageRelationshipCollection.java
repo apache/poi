@@ -33,9 +33,6 @@ import org.w3c.dom.NodeList;
 /**
  * Represents a collection of PackageRelationship elements that are owned by a
  * given PackagePart or the Package.
- *
- * @author Julien Chable, CDubettier
- * @version 0.1
  */
 public final class PackageRelationshipCollection implements Iterable<PackageRelationship> {
 

@@ -21,8 +21,6 @@ package org.apache.poi.xslf.usermodel;
 
 /**
  * Date: 11/5/11
- *
- * @author Yegor Kozlov
  */
 public enum SlideLayout {
     /**

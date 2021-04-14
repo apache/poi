@@ -32,8 +32,6 @@ public final class LittleEndian implements LittleEndianConsts {
 
     /**
      * Exception to handle buffer underruns
-     *
-     * @author Marc Johnson (mjohnson at apache dot org)
      */
     public static final class BufferUnderrunException extends IOException {
         /**

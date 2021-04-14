@@ -24,7 +24,6 @@ import org.apache.poi.ss.formula.eval.*;
 import java.util.function.BiFunction;
 
 /**
- * @author Robert Hulbert
  * Common Interface for any excel built-in function that has implemented array formula functionality.
  */
 

@@ -63,7 +63,8 @@ public final class ChartSubstreamRecordAggregate extends RecordAggregate {
 		}
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		if (_recs.isEmpty()) {
 			return;
 		}

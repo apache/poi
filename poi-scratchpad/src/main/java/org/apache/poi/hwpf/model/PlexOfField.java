@@ -25,8 +25,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Structure describing the Plex for fields (contained plclfd* in the spec).
- * 
- * @author Cedric Bosdonnat <cbosdonnat@novell.com>
  */
 @Internal
 public class PlexOfField

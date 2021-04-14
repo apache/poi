@@ -25,16 +25,16 @@ import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 /**
- * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
- * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped
- * <tt>Ptg</tt> is non-atomic.
+ * Represents a syntactic element from a formula by encapsulating the corresponding {@code Ptg}
+ * token.  Each {@code ParseNode} may have child {@code ParseNode}s in the case when the wrapped
+ * {@code Ptg} is non-atomic.
  */
 final class ParseNode {
 
 	public static final ParseNode[] EMPTY_ARRAY = { };
 	private final Ptg _token;
 	private final ParseNode[] _children;
-	private boolean _isIf;
+	private final boolean _isIf;
 	private final int _tokenCount;
 
 	public ParseNode(Ptg token, ParseNode[] children) {
@@ -45,8 +45,8 @@ final class ParseNode {
 		_children = children.clone();
 		_isIf = isIf(token);
 		int tokenCount = 1;
-		for (int i = 0; i < children.length; i++) {
-			tokenCount += children[i].getTokenCount();
+		for (ParseNode child : children) {
+			tokenCount += child.getTokenCount();
 		}
 		if (_isIf) {
 			// there will be 2 or 3 extra tAttr tokens according to whether the false param is present
@@ -68,14 +68,14 @@ final class ParseNode {
 	}
 	public int getEncodedSize() {
 		int result = _token instanceof ArrayPtg ? ArrayPtg.PLAIN_TOKEN_SIZE : _token.getSize();
-		for (int i = 0; i < _children.length; i++) {
-			result += _children[i].getEncodedSize();
+		for (ParseNode child : _children) {
+			result += child.getEncodedSize();
 		}
 		return result;
 	}
 
 	/**
-	 * Collects the array of <tt>Ptg</tt> tokens for the specified tree.
+	 * Collects the array of {@code Ptg} tokens for the specified tree.
 	 */
 	public static Ptg[] toTokenArray(ParseNode rootNode) {
 		TokenCollector temp = new TokenCollector(rootNode.getTokenCount());
@@ -150,9 +150,7 @@ final class ParseNode {
 	private static boolean isIf(Ptg token) {
 		if (token instanceof FuncVarPtg) {
 			FuncVarPtg func = (FuncVarPtg) token;
-			if (FunctionMetadataRegistry.FUNCTION_NAME_IF.equals(func.getName())) {
-				return true;
-			}
+			return FunctionMetadataRegistry.FUNCTION_NAME_IF.equals(func.getName());
 		}
 		return false;
 	}

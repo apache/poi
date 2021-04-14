@@ -34,8 +34,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <b>startNum</b> The position of the first character to replace (1-based)<br>
  * <b>numChars</b> The number of characters to replace<br>
  * <b>newText</b> The new text value to replace the removed section<br>
- *
- * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
 public final class Replace extends Fixed4ArgFunction {
 

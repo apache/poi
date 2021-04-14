@@ -58,25 +58,31 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		return new SSCellRange<>(firstRow, firstColumn, height, width, flattenedArray);
 	}
 
-	public int getHeight() {
+	@Override
+    public int getHeight() {
 		return _height;
 	}
+	@Override
 	public int getWidth() {
 		return _width;
 	}
+	@Override
 	public int size() {
 		return _height*_width;
 	}
 
+	@Override
 	public String getReferenceText() {
 		CellRangeAddress cra = new CellRangeAddress(_firstRow, _firstRow+_height-1, _firstColumn, _firstColumn+_width-1);
 		return cra.formatAsString();
 	}
 
+	@Override
 	public K getTopLeftCell() {
 		return _flattenedArray[0];
 	}
 
+	@Override
 	public K getCell(int relativeRowIndex, int relativeColumnIndex) {
 		if (relativeRowIndex < 0 || relativeRowIndex >= _height) {
 			throw new ArrayIndexOutOfBoundsException("Specified row " + relativeRowIndex
@@ -89,10 +95,12 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		int flatIndex = _width * relativeRowIndex + relativeColumnIndex;
 		return _flattenedArray[flatIndex];
 	}
+	@Override
 	public K[] getFlattenedCells() {
 		return _flattenedArray.clone();
 	}
 
+	@Override
 	public K[][] getCells() {
 		Class<?> itemCls = _flattenedArray.getClass();
 		@SuppressWarnings("unchecked")
@@ -107,6 +115,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		return result;
 	}
 
+	@Override
 	public Iterator<K> iterator() {
 		return Stream.of(_flattenedArray).iterator();
 	}

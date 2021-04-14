@@ -125,7 +125,7 @@ public final class ToHtml {
 
     /**
      * Creates a new examples to HTML for the given workbook.  If the path ends
-     * with "<tt>.xlsx</tt>" an {@link XSSFWorkbook} will be used; otherwise
+     * with "{@code .xlsx}" an {@link XSSFWorkbook} will be used; otherwise
      * this will use an {@link HSSFWorkbook}.
      *
      * @param path   The file that has the workbook.

@@ -26,8 +26,6 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 /**
  * Implementation of Excel 'Analysis ToolPak' function ISEVEN() ISODD()<br>
- *
- * @author Josh Micich
  */
 final class ParityFunction implements FreeRefFunction {
 

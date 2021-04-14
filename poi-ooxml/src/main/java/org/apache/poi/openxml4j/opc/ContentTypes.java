@@ -22,8 +22,6 @@ import java.util.Locale;
 /**
  * Open Packaging Convention content types (see Annex F : Standard Namespaces
  * and Content Types).
- *
- * @author CDubettier define some constants, Julien Chable
  */
 public final class ContentTypes {
 

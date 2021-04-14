@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.Locale;
 
-import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -30,11 +29,6 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * @author Josh Micich
- * @author Stephen Wolke (smwolke at geistig.com)
- */
 public abstract class TextFunction implements Function {
 	protected static final DataFormatter formatter = new DataFormatter();
 
@@ -52,6 +46,7 @@ public abstract class TextFunction implements Function {
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 
+	@Override
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		try {
 			return evaluateFunc(args, srcCellRow, srcCellCol);
@@ -69,6 +64,7 @@ public abstract class TextFunction implements Function {
 		protected SingleArgTextFunc() {
 			// no fields to initialise
 		}
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 			String arg;
 			try {
@@ -85,7 +81,8 @@ public abstract class TextFunction implements Function {
      * Returns the character specified by a number.
      */
     public static final Function CHAR = new Fixed1ArgFunction() {
-        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+        @Override
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
             int arg;
             try {
                 arg = evaluateIntArg(arg0, srcRowIndex, srcColumnIndex);
@@ -101,16 +98,19 @@ public abstract class TextFunction implements Function {
     };
 
 	public static final Function LEN = new SingleArgTextFunc() {
+		@Override
 		protected ValueEval evaluate(String arg) {
 			return new NumberEval(arg.length());
 		}
 	};
 	public static final Function LOWER = new SingleArgTextFunc() {
+		@Override
 		protected ValueEval evaluate(String arg) {
 			return new StringEval(arg.toLowerCase(Locale.ROOT));
 		}
 	};
 	public static final Function UPPER = new SingleArgTextFunc() {
+		@Override
 		protected ValueEval evaluate(String arg) {
 			return new StringEval(arg.toUpperCase(Locale.ROOT));
 		}
@@ -124,6 +124,7 @@ public abstract class TextFunction implements Function {
      * This is nearly equivalent to toTitleCase if the Java language had it
 	 */
 	public static final Function PROPER = new SingleArgTextFunc() {
+		@Override
 		protected ValueEval evaluate(String text) {
 			StringBuilder sb = new StringBuilder();
 			boolean shouldMakeUppercase = true;
@@ -151,6 +152,7 @@ public abstract class TextFunction implements Function {
 	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
 	 */
 	public static final Function TRIM = new SingleArgTextFunc() {
+		@Override
 		protected ValueEval evaluate(String arg) {
 			return new StringEval(arg.trim());
 		}
@@ -163,7 +165,8 @@ public abstract class TextFunction implements Function {
 	 * Author: Aniket Banerjee(banerjee@google.com)
 	 */
     public static final Function CLEAN = new SingleArgTextFunc() {
-        protected ValueEval evaluate(String arg) {
+        @Override
+		protected ValueEval evaluate(String arg) {
             StringBuilder result = new StringBuilder();
             for (final char c : arg.toCharArray()) {
                 if (isPrintable(c)) {
@@ -201,6 +204,7 @@ public abstract class TextFunction implements Function {
 	 */
 	public static final Function MID = new Fixed3ArgFunction() {
 
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
 				ValueEval arg1, ValueEval arg2) {
 			String text;
@@ -239,9 +243,11 @@ public abstract class TextFunction implements Function {
 		protected LeftRight(boolean isLeft) {
 			_isLeft = isLeft;
 		}
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 			return evaluate(srcRowIndex, srcColumnIndex, arg0, DEFAULT_ARG1);
 		}
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
 				ValueEval arg1) {
 			String arg;
@@ -270,45 +276,43 @@ public abstract class TextFunction implements Function {
 	public static final Function LEFT = new LeftRight(true);
 	public static final Function RIGHT = new LeftRight(false);
 
-	public static final FreeRefFunction CONCAT = new FreeRefFunction() {
-	    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-	        StringBuilder sb = new StringBuilder();
-	        for (ValueEval arg : args) {
-	            try {
-	                if (arg instanceof AreaEval) {
-	                    AreaEval area = (AreaEval)arg;
-	                    for (int rn=0; rn<area.getHeight(); rn++) {
-	                        for (int cn=0; cn<area.getWidth(); cn++) {
-	                            ValueEval ve = area.getRelativeValue(rn, cn);
-	                            sb.append(evaluateStringArg(ve, ec.getRowIndex(), ec.getColumnIndex()));
-	                        }
-	                    }
-	                } else {
-	                    sb.append(evaluateStringArg(arg, ec.getRowIndex(), ec.getColumnIndex()));
-	                }
-	            } catch (EvaluationException e) {
-	                return e.getErrorEval();
-	            }
-	        }
-	        return new StringEval(sb.toString());
-	    }
+	public static final FreeRefFunction CONCAT = (args, ec) -> {
+		StringBuilder sb = new StringBuilder();
+		for (ValueEval arg : args) {
+			try {
+				if (arg instanceof AreaEval) {
+					AreaEval area = (AreaEval)arg;
+					for (int rn=0; rn<area.getHeight(); rn++) {
+						for (int cn=0; cn<area.getWidth(); cn++) {
+							ValueEval ve = area.getRelativeValue(rn, cn);
+							sb.append(evaluateStringArg(ve, ec.getRowIndex(), ec.getColumnIndex()));
+						}
+					}
+				} else {
+					sb.append(evaluateStringArg(arg, ec.getRowIndex(), ec.getColumnIndex()));
+				}
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+		}
+		return new StringEval(sb.toString());
 	};
-	public static final Function CONCATENATE = new Function() {
-	    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-	        StringBuilder sb = new StringBuilder();
-	        for (ValueEval arg : args) {
-	            try {
-	                sb.append(evaluateStringArg(arg, srcRowIndex, srcColumnIndex));
-	            } catch (EvaluationException e) {
-	                return e.getErrorEval();
-	            }
-	        }
-	        return new StringEval(sb.toString());
-	    }
+
+	public static final Function CONCATENATE = (args, srcRowIndex, srcColumnIndex) -> {
+		StringBuilder sb = new StringBuilder();
+		for (ValueEval arg : args) {
+			try {
+				sb.append(evaluateStringArg(arg, srcRowIndex, srcColumnIndex));
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+		}
+		return new StringEval(sb.toString());
 	};
 
 	public static final Function EXACT = new Fixed2ArgFunction() {
 
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
 				ValueEval arg1) {
 			String s0;
@@ -335,6 +339,7 @@ public abstract class TextFunction implements Function {
 	 */
 	public static final Function TEXT = new Fixed2ArgFunction() {
 
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 			double s0;
 			String s1;
@@ -362,6 +367,7 @@ public abstract class TextFunction implements Function {
 		public SearchFind(boolean isCaseSensitive) {
 			_isCaseSensitive = isCaseSensitive;
 		}
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 			try {
 				String needle = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
@@ -371,6 +377,7 @@ public abstract class TextFunction implements Function {
 				return e.getErrorEval();
 			}
 		}
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 				ValueEval arg2) {
 			try {
@@ -407,8 +414,8 @@ public abstract class TextFunction implements Function {
 	 * <b>FIND</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p>
 	 *
 	 * FIND returns the character position of the first (case sensitive) occurrence of
-	 * <tt>find_text</tt> inside <tt>within_text</tt>.  The third parameter,
-	 * <tt>start_num</tt>, is optional (default=1) and specifies where to start searching
+	 * {@code find_text} inside {@code within_text}.  The third parameter,
+	 * {@code start_num}, is optional (default=1) and specifies where to start searching
 	 * from.  Character positions are 1-based.<p>
 	 *
 	 * Author: Torstein Tauno Svendsen (torstei@officenet.no)

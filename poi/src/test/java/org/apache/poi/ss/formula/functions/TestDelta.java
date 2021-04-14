@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Delta}
- *
- * @author cedric dot walter @ gmail dot com
  */
 final class TestDelta {
 

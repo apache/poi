@@ -17,16 +17,6 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-/**
- * <p>
- * 9 Jan 2010
- * </p>
- * <p>
- * // TODO insert Javadoc here!
- * </p>
- *
- * @author epp
- */
 public enum BodyElementType {
     CONTENTCONTROL,
     PARAGRAPH,

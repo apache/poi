@@ -38,7 +38,6 @@ public class XSSFColor extends ExtendedColor {
      * @return null if color is null, new instance otherwise
      */
     public static XSSFColor from(CTColor color, IndexedColorMap map) {
-        //noinspection deprecation
         return color == null ? null : new XSSFColor(color, map);
     }
 
@@ -84,7 +83,6 @@ public class XSSFColor extends ExtendedColor {
      * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(IndexedColorMap colorMap) {
-        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
     }
 
@@ -115,7 +113,6 @@ public class XSSFColor extends ExtendedColor {
      * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(byte[] rgb, IndexedColorMap colorMap) {
-        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setRgb(rgb);
     }
@@ -125,7 +122,6 @@ public class XSSFColor extends ExtendedColor {
      * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(IndexedColors indexedColor, IndexedColorMap colorMap) {
-        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setIndexed(indexedColor.index);
     }
@@ -245,6 +241,7 @@ public class XSSFColor extends ExtendedColor {
        return ctColor.getRgb();
    }
 
+   @Override
    protected byte[] getIndexedRGB() {
        if (isIndexed()) {
            if (indexedColorMap != null) return indexedColorMap.getRGB(getIndex());
@@ -262,8 +259,8 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * Index into the <clrScheme> collection, referencing a particular <sysClr> or
-     *  <srgbClr> value expressed in the Theme part.
+     * Index into the {@code clrScheme} collection, referencing a particular {@code sysClr} or
+     * {@code srgbClr} value expressed in the Theme part.
      */
    @Override
    public int getTheme() {
@@ -271,8 +268,8 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * Index into the <clrScheme> collection, referencing a particular <sysClr> or
-     *  <srgbClr> value expressed in the Theme part.
+     * Index into the {@code clrScheme} collection, referencing a particular {@code sysClr} or
+     * {@code srgbClr} value expressed in the Theme part.
      * @param theme index
      */
     public void setTheme(int theme) {
@@ -382,7 +379,7 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * Checked type cast <tt>color</tt> to an XSSFColor.
+     * Checked type cast {@code color} to an XSSFColor.
      *
      * @param color the color to type cast
      * @return the type casted color

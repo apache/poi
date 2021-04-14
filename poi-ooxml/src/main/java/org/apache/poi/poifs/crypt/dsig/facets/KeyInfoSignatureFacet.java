@@ -51,8 +51,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Signature Facet implementation that adds ds:KeyInfo to the XML signature.
- *
- * @author Frank Cornelis
  */
 public class KeyInfoSignatureFacet implements SignatureFacet {
 

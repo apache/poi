@@ -118,6 +118,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
     {
         return new OfficeDrawing()
         {
+            @Override
             public HorizontalPositioning getHorizontalPositioning()
             {
                 int value = getTertiaryPropertyValue(EscherPropertyTypes.GROUPSHAPE__POSH );
@@ -141,6 +142,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return HorizontalPositioning.ABSOLUTE;
             }
 
+            @Override
             public HorizontalRelativeElement getHorizontalRelative()
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSRELH );
@@ -160,11 +162,13 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return HorizontalRelativeElement.TEXT;
             }
 
+            @Override
             public EscherContainerRecord getOfficeArtSpContainer()
             {
                 return getEscherShapeRecordContainer( getShapeId() );
             }
 
+            @Override
             public byte[] getPictureData()
             {
                 EscherContainerRecord shapeDescription = getEscherShapeRecordContainer( getShapeId() );
@@ -189,26 +193,31 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return escherBlipRecord.getPicturedata();
             }
 
+            @Override
             public int getRectangleBottom()
             {
                 return fspa.getYaBottom();
             }
 
+            @Override
             public int getRectangleLeft()
             {
                 return fspa.getXaLeft();
             }
 
+            @Override
             public int getRectangleRight()
             {
                 return fspa.getXaRight();
             }
 
+            @Override
             public int getRectangleTop()
             {
                 return fspa.getYaTop();
             }
 
+            @Override
             public int getShapeId()
             {
                 return fspa.getSpid();
@@ -230,6 +239,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return ( escherProperty == null ) ? -1 : escherProperty.getPropertyValue();
             }
 
+            @Override
             public VerticalPositioning getVerticalPositioning()
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
@@ -253,6 +263,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return VerticalPositioning.ABSOLUTE;
             }
 
+            @Override
             public VerticalRelativeElement getVerticalRelativeElement()
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
@@ -280,6 +291,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         };
     }
 
+    @Override
     public OfficeDrawing getOfficeDrawingAt( int characterPosition )
     {
         final FSPA fspa = _fspaTable.getFspaFromCp( characterPosition );
@@ -289,6 +301,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         return getOfficeDrawing( fspa );
     }
 
+    @Override
     public Collection<OfficeDrawing> getOfficeDrawings()
     {
         List<OfficeDrawing> result = new ArrayList<>();

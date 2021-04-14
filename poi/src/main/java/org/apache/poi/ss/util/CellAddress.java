@@ -26,11 +26,11 @@ import org.apache.poi.ss.usermodel.Cell;
  * It is barely a container for these two coordinates. The implementation
  * of the Comparable interface sorts by "natural" order top left to bottom right.</p>
  *
- * <p>Use <tt>CellAddress</tt> when you want to refer to the location of a cell in a sheet
+ * <p>Use {@code CellAddress} when you want to refer to the location of a cell in a sheet
  * when the concept of relative/absolute does not apply (such as the anchor location
  * of a cell comment). Use {@link CellReference} when the concept of
  * relative/absolute does apply (such as a cell reference in a formula).
- * <tt>CellAddress</tt>es do not have a concept of "sheet", while <tt>CellReference</tt>s do.</p>
+ * {@code CellAddress}es do not have a concept of "sheet", while {@code CellReference}s do.</p>
  */
 public class CellAddress implements Comparable<CellAddress> {
     /** A constant for references to the first cell in a sheet. */
@@ -127,7 +127,6 @@ public class CellAddress implements Comparable<CellAddress> {
      * Compare this CellAddress using the "natural" row-major, column-minor ordering.
      * That is, top-left to bottom-right ordering.
      *
-     * @param other
      * @return <ul>
      * <li>-1 if this CellAddress is before (above/left) of other</li>
      * <li>0 if addresses are the same</li>
@@ -137,16 +136,8 @@ public class CellAddress implements Comparable<CellAddress> {
     @Override
     public int compareTo(CellAddress other) {
         int r = this._row-other._row;
-        if (r!=0) {
-            return r;
-        }
+        return r != 0 ? r : this._col - other._col;
 
-        r = this._col-other._col;
-        if (r!=0) {
-            return r;
-        }
-
-        return 0;
     }
 
     @Override

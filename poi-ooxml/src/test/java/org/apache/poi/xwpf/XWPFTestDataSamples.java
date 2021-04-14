@@ -25,9 +25,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-/**
- * @author Yegor Kozlov
- */
 public class XWPFTestDataSamples {
 
     public static XWPFDocument openSampleDocument(String sampleName) throws IOException {

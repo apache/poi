@@ -32,8 +32,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual
 
 /**
  * Specifies a connection shape.
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFConnectorShape extends XSLFSimpleShape

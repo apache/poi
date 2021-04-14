@@ -23,8 +23,6 @@ import java.util.ArrayList;
 
 /**
  * A class that represents sound data embedded in a slide show.
- *
- * @author Yegor Kozlov
  */
 public final class HSLFSoundData {
     /**

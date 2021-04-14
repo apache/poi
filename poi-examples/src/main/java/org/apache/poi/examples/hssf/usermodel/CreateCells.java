@@ -27,8 +27,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Illustrates how to create cell values.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class CreateCells {
     public static void main(String[] args) throws IOException {

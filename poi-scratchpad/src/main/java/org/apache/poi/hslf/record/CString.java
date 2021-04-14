@@ -32,8 +32,6 @@ import org.apache.poi.util.StringUtil;
  * A CString (type 4026). Holds a unicode string, and the first two bytes
  *  of the record header normally encode the count. Typically attached to
  *  some complex sequence of records, eg Commetns.
- *
- * @author Nick Burch
  */
 
 public final class CString extends RecordAtom {

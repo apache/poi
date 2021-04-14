@@ -26,7 +26,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class represents the data of a link in the document.
- * @author Nick Burch
  */
 public class ExHyperlink extends RecordContainer {
 	private static final long _type = RecordTypes.ExHyperlink.typeID;

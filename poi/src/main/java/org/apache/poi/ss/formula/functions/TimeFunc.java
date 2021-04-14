@@ -25,9 +25,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for the Excel function TIME
- *
- * @author Steven Butler (sebutler @ gmail dot com)
+ * Implementation for the Excel function TIME<p>
  *
  * Based on POI {@link DateFunc}
  */

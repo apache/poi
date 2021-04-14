@@ -24,10 +24,6 @@ import java.util.Map;
 /**
  * This is a factory class maps file names to WorkbookUtil instances.  This
  * helps ExcelAnt be more efficient when being run many times in an Ant build.
- *
- * @author Jon Svede (jon [at] loquatic [dot] com)
- * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
- *
  */
 public final class ExcelAntWorkbookUtilFactory {
 

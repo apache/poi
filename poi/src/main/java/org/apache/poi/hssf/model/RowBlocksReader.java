@@ -43,7 +43,7 @@ public final class RowBlocksReader {
 	/**
 	 * Also collects any loose MergeCellRecords and puts them in the supplied
 	 * mergedCellsTable
-	 * 
+	 *
 	 * @param  rs the record stream
 	 */
 	public RowBlocksReader(RecordStream rs) {
@@ -100,7 +100,7 @@ public final class RowBlocksReader {
 	/**
 	 * Some unconventional apps place {@link MergeCellsRecord}s within the row block.  They
 	 * actually should be in the {@link MergedCellsTable} which is much later (see bug 45699).
-	 * @return any loose  <tt>MergeCellsRecord</tt>s found
+	 * @return any loose  {@code MergeCellsRecord}s found
 	 */
 	public MergeCellsRecord[] getLooseMergedCells() {
 		return _mergedCellsRecords;

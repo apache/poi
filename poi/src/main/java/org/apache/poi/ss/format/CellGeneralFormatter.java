@@ -23,8 +23,6 @@ import org.apache.poi.util.LocaleUtil;
 
 /**
  * A formatter for the default "General" cell format.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellGeneralFormatter extends CellFormatter {
     /** Creates a new general formatter. */

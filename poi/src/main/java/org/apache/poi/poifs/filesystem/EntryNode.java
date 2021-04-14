@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
@@ -28,8 +28,6 @@ import org.apache.poi.poifs.property.Property;
  * appropriate
  *
  * Extending classes must override isDeleteOK()
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public abstract class EntryNode

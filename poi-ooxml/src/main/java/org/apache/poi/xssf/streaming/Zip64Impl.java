@@ -26,8 +26,6 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 /**
  * Excel compatible Zip64 implementation.
  * For more information see https://github.com/rzymek/opczip
- *
- * @author Krzysztof Rzymkowski
  */
 class Zip64Impl {
     private static final long PK0102 = 0x02014b50L;

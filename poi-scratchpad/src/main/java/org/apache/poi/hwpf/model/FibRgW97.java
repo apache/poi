@@ -23,13 +23,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * The FibRgW97 structure is a variable-length portion of the Fib.
- * <p>
- * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
- * Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format.
- *
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format Specification [*.doc] and [MS-DOC] - v20110608 Word
- *         (.doc) Binary File Format
  */
 @Internal
 public class FibRgW97 extends FibRgW97AbstractType

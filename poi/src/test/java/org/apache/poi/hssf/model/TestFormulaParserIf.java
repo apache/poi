@@ -36,7 +36,7 @@ import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
+ * Tests {@code FormulaParser} specifically with respect to IF() functions
  */
 final class TestFormulaParserIf {
 	private static Ptg[] parseFormula(String formula) {

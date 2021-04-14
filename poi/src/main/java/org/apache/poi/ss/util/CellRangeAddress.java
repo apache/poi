@@ -29,7 +29,6 @@ import org.apache.poi.util.LittleEndianOutput;
  *  Ref8U - see page 831 of version 1.0 of the documentation.
  *
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddress extends CellRangeAddressBase {
 	public static final int ENCODED_SIZE = 8;

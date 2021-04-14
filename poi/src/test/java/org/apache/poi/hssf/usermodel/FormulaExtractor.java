@@ -22,16 +22,14 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
- * Test utility class to get <tt>Ptg</tt> arrays out of formula cells
- * 
- * @author Josh Micich
+ * Test utility class to get {@code Ptg} arrays out of formula cells
  */
 public final class FormulaExtractor {
 
 	private FormulaExtractor() {
 		// no instances of this class
 	}
-	
+
 	public static Ptg[] getPtgs(HSSFCell cell) {
 		CellValueRecordInterface vr = cell.getCellValueRecord();
 		if (!(vr instanceof FormulaRecordAggregate)) {

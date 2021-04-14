@@ -22,8 +22,6 @@ import org.apache.poi.hwpf.model.FieldsDocumentPart;
 
 /**
  * User-friendly interface to access document {@link Field}s
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public interface Fields
 {

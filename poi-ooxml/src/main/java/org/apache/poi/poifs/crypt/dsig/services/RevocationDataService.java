@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
@@ -30,16 +30,13 @@ import java.util.List;
 /**
  * Interface for a service that retrieves revocation data about some given
  * certificate chain.
- * 
- * @author Frank Cornelis
- * 
  */
 public interface RevocationDataService {
 
     /**
      * Gives back the revocation data corresponding with the given certificate
      * chain.
-     * 
+     *
      * @param certificateChain the certificate chain
      * @return the revocation data corresponding with the given certificate chain.
      */

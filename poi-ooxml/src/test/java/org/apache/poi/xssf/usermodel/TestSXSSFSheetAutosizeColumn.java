@@ -23,9 +23,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestSXSSFSheetAutosizeColumn extends BaseTestSheetAutosizeColumn {
 
     public TestSXSSFSheetAutosizeColumn(){

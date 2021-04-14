@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that Comment2000Atom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestComment2000Atom {
 	// From a real file

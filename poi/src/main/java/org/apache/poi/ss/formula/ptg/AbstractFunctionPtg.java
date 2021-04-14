@@ -55,6 +55,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         returnClass = (byte) pReturnClass;
         paramClass = paramTypes;
     }
+    @Override
     public final boolean isBaseToken() {
         return false;
     }
@@ -62,6 +63,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     public final short getFunctionIndex() {
         return _functionIndex;
     }
+    @Override
     public final int getNumberOfOperands() {
         return _numberOfArgs;
     }
@@ -71,16 +73,18 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     /**
      * external functions get some special processing
-     * @return <code>true</code> if this is an external function
+     * @return {@code true} if this is an external function
      */
     public final boolean isExternalFunction() {
         return _functionIndex == FUNCTION_INDEX_EXTERNAL;
     }
 
+    @Override
     public final String toFormulaString() {
         return getName();
     }
 
+    @Override
     public String toFormulaString(String[] operands) {
         StringBuilder buf = new StringBuilder();
 
@@ -105,6 +109,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         buf.append(")");
     }
 
+    @Override
     public abstract int getSize();
 
 
@@ -112,8 +117,8 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
      * Used to detect whether a function name found in a formula is one of the standard excel functions
      * <p>
      * The name matching is case insensitive.
-     * @return <code>true</code> if the name specifies a standard worksheet function,
-     *  <code>false</code> if the name should be assumed to be an external function.
+     * @return {@code true} if the name specifies a standard worksheet function,
+     *  {@code false} if the name should be assumed to be an external function.
      */
     public static boolean isBuiltInFunctionName(String name) {
         short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase(Locale.ROOT));
@@ -144,7 +149,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
      * Resolves internal function names into function indexes.
      * <p>
      * The name matching is case insensitive.
-     * @return the standard worksheet function index if found, otherwise <tt>FUNCTION_INDEX_EXTERNAL</tt>
+     * @return the standard worksheet function index if found, otherwise {@code FUNCTION_INDEX_EXTERNAL}
      */
     protected static short lookupIndex(String name) {
         short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase(Locale.ROOT));
@@ -154,6 +159,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return ix;
     }
 
+    @Override
     public byte getDefaultOperandClass() {
         return returnClass;
     }

@@ -30,8 +30,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * This example demonstrates opening a workbook, modifying it and writing
  * the results back out.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class ReadWriteWorkbook {
     public static void main(String[] args) throws IOException {

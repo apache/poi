@@ -22,8 +22,6 @@ import java.util.Map;
 /**
  * Specifies all types of vertical alignment which are available to be applied to of all text
  * on each line displayed within a paragraph.
- *
- * @author Gisella Bronzetti
  */
 public enum TextAlignment {
     /**

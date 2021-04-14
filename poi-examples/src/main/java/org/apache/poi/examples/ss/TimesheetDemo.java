@@ -41,8 +41,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * A weekly timesheet created using Apache POI.
  * Usage:
  *  TimesheetDemo -xls|xlsx
- *
- * @author Yegor Kozlov
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class TimesheetDemo {

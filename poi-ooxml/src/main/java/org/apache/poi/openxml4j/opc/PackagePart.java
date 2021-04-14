@@ -151,9 +151,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @param relationshipType
      *            Type of relationship.
      * @return The newly created and added relationship
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
-     *      java.lang.String)
      */
+    @Override
     public PackageRelationship addExternalRelationship(String target,
             String relationshipType) {
         return addExternalRelationship(target, relationshipType, null);
@@ -176,6 +175,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
      *      java.lang.String)
      */
+    @Override
     public PackageRelationship addExternalRelationship(String target,
             String relationshipType, String id) {
         if (target == null) {
@@ -211,9 +211,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @param relationshipType
      *            Type of relationship.
      * @return The newly created and added relationship
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
-     *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String)
      */
+    @Override
     public PackageRelationship addRelationship(PackagePartName targetPartName,
             TargetMode targetMode, String relationshipType) {
         return addRelationship(targetPartName, targetMode, relationshipType,
@@ -244,9 +243,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *             invalid nested relations are created.
      * @throws IllegalArgumentException if targetPartName, targetMode
      *             or relationshipType are passed as null
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
-     *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String, java.lang.String)
      */
+    @Override
     public PackageRelationship addRelationship(PackagePartName targetPartName,
             TargetMode targetMode, String relationshipType, String id) {
         _container.throwExceptionIfReadOnly();
@@ -347,9 +345,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
                 targetMode, relationshipType, id);
     }
 
-    /**
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#clearRelationships()
-     */
+    @Override
     public void clearRelationships() {
         if (_relationships != null) {
             _relationships.clear();
@@ -361,8 +357,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *
      * @param id
      *            The ID identified the part to delete.
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#removeRelationship(java.lang.String)
      */
+    @Override
     public void removeRelationship(String id) {
         this._container.throwExceptionIfReadOnly();
         if (this._relationships != null)
@@ -375,8 +371,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @return This part's relationships.
      * @throws InvalidOperationException
      *             Throws if the package is open en write only mode.
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationships()
      */
+    @Override
     public PackageRelationshipCollection getRelationships()
             throws InvalidFormatException {
         return getRelationshipsCore(null);
@@ -388,8 +384,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @param id
      *            ID of the package relationship to retrieve.
      * @return The package relationship
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
      */
+    @Override
     public PackageRelationship getRelationship(String id) {
         return this._relationships.getRelationshipByID(id);
     }
@@ -405,8 +401,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *             If an error occurs while parsing the part.
      * @throws InvalidOperationException
      *             If the package is open in write only mode.
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationshipsByType(java.lang.String)
      */
+    @Override
     public PackageRelationshipCollection getRelationshipsByType(
             String relationshipType) throws InvalidFormatException {
         _container.throwExceptionIfWriteOnly();
@@ -443,8 +439,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *
      * @return <b>true</b> if the part have at least one relationship else
      *         <b>false</b>.
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
      */
+    @Override
     public boolean hasRelationships() {
         return (!this._isRelationshipPart && (_relationships != null && _relationships
                 .size() > 0));
@@ -457,8 +453,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *            The relationship to check.
      * @return <b>true</b> if the specified relationship exists in this part,
      *         else returns <b>false</b>
-     * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
      */
+    @Override
     public boolean isRelationshipExists(PackageRelationship rel) {
         return rel != null && _relationships.getRelationshipByID(rel.getId()) != null;
     }
@@ -500,7 +496,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * Get the input stream of this part to read its content.
      *
      * @return The input stream of the content of this part, else
-     *         <code>null</code>.
+     *         {@code null}.
      *
      * @throws IOException If creating the input-stream fails.
      */

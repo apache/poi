@@ -18,8 +18,6 @@ package org.apache.poi.hwpf.usermodel;
 
 /**
  * Picture types supported by MS Word format
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public enum PictureType
 {

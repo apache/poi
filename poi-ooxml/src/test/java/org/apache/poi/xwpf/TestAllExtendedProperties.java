@@ -43,8 +43,6 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
  * The author of this has added {@link CoreProperties#getKeywords()} and
  * {@link CoreProperties#setKeywords(String)} and this test is supposed to test
  * them.
- *
- * @author Antoni Mylka
  */
 public final class TestAllExtendedProperties {
     @Test

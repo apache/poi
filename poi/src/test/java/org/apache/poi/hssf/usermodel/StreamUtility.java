@@ -27,8 +27,6 @@ import java.util.List;
  * any significant detail.  Normally this task would be simple except for the presence of artifacts
  * in the file that change every time it is generated.  Usually these volatile artifacts are
  * time-stamps, user names, or other machine dependent parameters.
- *
- * @author Josh Micich
  */
 public final class StreamUtility {
 

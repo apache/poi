@@ -25,9 +25,6 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- */
 public abstract class XYNumericFunction extends Fixed2ArgFunction {
 
 	private static abstract class ValueArray implements ValueVector {
@@ -35,7 +32,8 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 		protected ValueArray(int size) {
 			_size = size;
 		}
-		public ValueEval getItem(int index) {
+		@Override
+        public ValueEval getItem(int index) {
 			if (index < 0 || index > _size) {
 				throw new IllegalArgumentException("Specified index " + index
 						+ " is outside range (0.." + (_size - 1) + ")");
@@ -43,6 +41,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 			return getItemInternal(index);
 		}
 		protected abstract ValueEval getItemInternal(int index);
+		@Override
 		public final int getSize() {
 			return _size;
 		}
@@ -54,6 +53,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 			super(1);
 			_value = value;
 		}
+		@Override
 		protected ValueEval getItemInternal(int index) {
 			return _value;
 		}
@@ -62,14 +62,15 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 	private static final class RefValueArray extends ValueArray {
 		private final RefEval _ref;
         private final int _width;
-        
+
 		public RefValueArray(RefEval ref) {
 			super(ref.getNumberOfSheets());
 			_ref = ref;
 			_width = ref.getNumberOfSheets();
 		}
+		@Override
 		protected ValueEval getItemInternal(int index) {
-		    int sIx = (index % _width) + _ref.getFirstSheetIndex(); 
+		    int sIx = (index % _width) + _ref.getFirstSheetIndex();
 			return _ref.getInnerValueEval(sIx);
 		}
 	}
@@ -83,6 +84,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 			_ae = ae;
 			_width = ae.getWidth();
 		}
+		@Override
 		protected ValueEval getItemInternal(int index) {
 			int rowIx = index / _width;
 			int colIx = index % _width;
@@ -90,7 +92,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 		}
 	}
 
-	protected static interface Accumulator {
+	protected interface Accumulator {
 		double accumulate(double x, double y);
 	}
 
@@ -99,6 +101,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 	 */
 	protected abstract Accumulator createAccumulator();
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		double result;

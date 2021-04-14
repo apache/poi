@@ -420,7 +420,7 @@ public abstract class CFRuleBase extends StandardRecord {
     /**
      * get the stack of the 2nd expression as a list
      *
-     * @return array of {@link Ptg}s, possibly <code>null</code>
+     * @return array of {@link Ptg}s, possibly {@code null}
      */
     public Ptg[] getParsedExpression2() {
         return Formula.getTokens(formula2);
@@ -436,7 +436,7 @@ public abstract class CFRuleBase extends StandardRecord {
     }
 
     /**
-     * @param formula must not be <code>null</code>
+     * @param formula must not be {@code null}
      * @return encoded size of the formula tokens (does not include 2 bytes for ushort length)
      */
     protected static int getFormulaSize(Formula formula) {
@@ -451,7 +451,7 @@ public abstract class CFRuleBase extends StandardRecord {
      *
      * @param formula  The formula to parse, excluding the leading equals sign.
      * @param sheet  The sheet that the formula is on.
-     * @return <code>null</code> if <tt>formula</tt> was null.
+     * @return {@code null} if {@code formula} was null.
      */
     public static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
         if(formula == null) {

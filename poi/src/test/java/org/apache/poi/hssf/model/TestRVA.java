@@ -41,7 +41,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests 'operand class' transformation performed by
- * <tt>OperandClassTransformer</tt> by comparing its results with those
+ * {@code OperandClassTransformer} by comparing its results with those
  * directly produced by Excel (in a sample spreadsheet).
  */
 final class TestRVA {

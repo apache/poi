@@ -23,12 +23,10 @@ package org.apache.poi.util;
  * the header has been written.  The client code can call {@link #createDelayedOutput(int)}
  * to reserve two bytes of the output for the 'ushort size' header field.  The delayed output can
  * be written at any stage.
- *
- * @author Josh Micich
  */
 public interface DelayableLittleEndianOutput extends LittleEndianOutput {
 	/**
-	 * Creates an output stream intended for outputting a sequence of <tt>size</tt> bytes.
+	 * Creates an output stream intended for outputting a sequence of {@code size} bytes.
 	 */
 	LittleEndianOutput createDelayedOutput(int size);
 }

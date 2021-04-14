@@ -25,8 +25,6 @@ import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for Excel ROWS function.
- *
- * @author Josh Micich
  */
 public final class Rows extends Fixed1ArgFunction {
 

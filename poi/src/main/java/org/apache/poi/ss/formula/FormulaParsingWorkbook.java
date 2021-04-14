@@ -28,15 +28,13 @@ import org.apache.poi.ss.util.CellReference;
  * Abstracts a workbook for the purpose of formula parsing.<br>
  *
  * For POI internal use only
- *
- * @author Josh Micich
  */
 public interface FormulaParsingWorkbook {
     /**
      *  named range name matching is case insensitive
      */
     EvaluationName getName(String name, int sheetIndex);
-    
+
     /**
      * Return the underlying workbook
      */
@@ -46,12 +44,12 @@ public interface FormulaParsingWorkbook {
      * XSSF Only - gets a table that exists in the worksheet
      */
     Table getTable(String name);
-    
+
     /**
      * Return an external name (named range, function, user-defined function) Ptg
      */
     Ptg getNameXPtg(String name, SheetIdentifier sheet);
-    
+
     /**
      * Produce the appropriate Ptg for a 3d cell reference
      */

@@ -47,7 +47,7 @@ public final class POIDataSamples {
     private static POIDataSamples _instXmlDSign;
 
     private File _resolvedDataDir;
-    /** <code>true</code> if standard system propery is not set,
+    /** {@code true} if standard system propery is not set,
      * but the data is available on the test runtime classpath */
     private boolean _sampleDataIsAvaliableOnClassPath;
     private final String _moduleDir;
@@ -125,7 +125,7 @@ public final class POIDataSamples {
      * Opens a sample file from the test data directory
      *
      * @param  sampleFileName the file to open
-     * @return an open <tt>InputStream</tt> for the specified sample file
+     * @return an open {@code InputStream} for the specified sample file
      */
     public InputStream openResourceAsStream(String sampleFileName) {
 
@@ -223,7 +223,7 @@ public final class POIDataSamples {
      * Opens a test sample file from the 'data' sub-package of this class's package.
      *
      * @param  sampleFileName the file to open
-     * @return <code>null</code> if the sample file is not deployed on the classpath.
+     * @return {@code null} if the sample file is not deployed on the classpath.
      */
     private InputStream openClasspathResource(String sampleFileName) {
         return getClass().getResourceAsStream("/" + _moduleDir + "/" + sampleFileName);

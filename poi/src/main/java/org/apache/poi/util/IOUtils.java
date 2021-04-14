@@ -231,7 +231,7 @@ public final class IOUtils {
     }
 
     /**
-     * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
+     * Helper method, just calls {@code readFully(in, b, 0, b.length)}
      *
      * @param in the stream from which the data is read.
      * @param b the buffer into which the data is read.
@@ -248,14 +248,14 @@ public final class IOUtils {
      * <p>Same as the normal {@link InputStream#read(byte[], int, int)}, but tries to ensure
      * that the entire len number of bytes is read.</p>
      *
-     * <p>If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
+     * <p>If the end of file is reached before any bytes are read, returns {@code -1}. If
      * the end of the file is reached after some bytes are read, returns the
-     * number of bytes read. If the end of the file isn't reached before <tt>len</tt>
-     * bytes have been read, will return <tt>len</tt> bytes.</p>
+     * number of bytes read. If the end of the file isn't reached before {@code len}
+     * bytes have been read, will return {@code len} bytes.</p>
      *
      * @param in the stream from which the data is read.
      * @param b the buffer into which the data is read.
-     * @param off the start offset in array <tt>b</tt> at which the data is written.
+     * @param off the start offset in array {@code b} at which the data is written.
      * @param len the maximum number of bytes to read.
      *
      * @return the number of bytes read or -1 if no bytes were read
@@ -277,7 +277,7 @@ public final class IOUtils {
     }
 
     /**
-     * Same as the normal <tt>channel.read(b)</tt>, but tries to ensure
+     * Same as the normal {@code channel.read(b)}, but tries to ensure
      * that the buffer is filled completely if possible, i.e. b.remaining()
      * returns 0.
      * <p>
@@ -401,7 +401,7 @@ public final class IOUtils {
 
     /**
      * Quietly (no exceptions) close Closable resource. In case of error it will
-     * be printed to {@link IOUtils} class logger.
+     * be printed to IOUtils class logger.
      *
      * @param closeable
      *            resource to close
@@ -430,18 +430,15 @@ public final class IOUtils {
      * than delegating to {@link InputStream#skip(long)}.
      * This means that the method may be considerably less efficient than using the actual skip implementation,
      * this is done to guarantee that the correct number of bytes are skipped.
-     * </p>
      * <p>
      * This mimics POI's {@link #readFully(InputStream, byte[])}.
-     * If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
+     * If the end of file is reached before any bytes are read, returns {@code -1}. If
      * the end of the file is reached after some bytes are read, returns the
-     * number of bytes read. If the end of the file isn't reached before <tt>len</tt>
-     * bytes have been read, will return <tt>len</tt> bytes.</p>
+     * number of bytes read. If the end of the file isn't reached before {@code len}
+     * bytes have been read, will return {@code len} bytes.
 
-     * </p>
      * <p>
      * Copied nearly verbatim from commons-io 41a3e9c
-     * </p>
      *
      * @param input byte stream to skip
      * @param toSkip number of bytes to skip.

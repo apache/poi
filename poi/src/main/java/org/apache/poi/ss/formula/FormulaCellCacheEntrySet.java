@@ -23,8 +23,6 @@ package org.apache.poi.ss.formula;
  * Profiling tests (Oct 2008) have shown that each element {@link FormulaCellCacheEntry} takes
  * around 32 bytes to store in a HashSet, but around 6 bytes to store here.  For Spreadsheets with
  * thousands of formula cells with multiple interdependencies, the savings can be very significant.
- *
- * @author Josh Micich
  */
 final class FormulaCellCacheEntrySet {
 	private static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };

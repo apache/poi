@@ -59,7 +59,8 @@ public final class MemFuncPtg extends OperandPtg {
 		return "";
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
 

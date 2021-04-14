@@ -24,8 +24,6 @@ import org.apache.poi.ss.util.NumberComparer;
 
 /**
  * Base class for all comparison operator evaluators
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public abstract class RelationalOperationEval extends Fixed2ArgFunction implements ArrayFunction {
 

@@ -33,8 +33,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * This should only be used on the older files, for most uses you
  *  should call {@link WordExtractor} which deals properly
  *  with HWPF.
- *
- * @author Nick Burch
  */
 public final class Word6Extractor implements POIOLE2TextExtractor {
 	private HWPFOldDocument doc;

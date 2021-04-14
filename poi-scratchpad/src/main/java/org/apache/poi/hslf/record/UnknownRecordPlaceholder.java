@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndian;
  * If we come across a record we don't know about, we create one of
  *  these. It allows us to keep track of what it contains, so we can
  *  write it back out to disk unchanged
- *
- * @author Nick Burch
  */
 
 @SuppressWarnings("unused")

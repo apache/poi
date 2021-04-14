@@ -28,7 +28,8 @@ public final class IntersectionPtg extends OperationPtg {
 		// enforce singleton
 	}
 
-	public final boolean isBaseToken() {
+	@Override
+    public final boolean isBaseToken() {
 		return true;
 	}
 

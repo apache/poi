@@ -70,7 +70,7 @@ final class TestSharedFormulaRecord {
     };
 
     /**
-     * The method <tt>SharedFormulaRecord.convertSharedFormulas()</tt> converts formulas from
+     * The method {@code SharedFormulaRecord.convertSharedFormulas()} converts formulas from
      * 'shared formula' to 'single cell formula' format.  It is important that token operand
      * classes are preserved during this transformation, because Excel may not tolerate the
      * incorrect encoding.  The formula here is one such example (Excel displays #VALUE!).

@@ -34,8 +34,6 @@ import java.util.Map;
  * element
  * </li>
  * </ul>
- *
- * @author Gisella Bronzetti
  */
 public enum Borders {
 

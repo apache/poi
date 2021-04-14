@@ -36,9 +36,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-/**
- * @author Yegor Kozlov
- */
 class TestXSLFTextRun {
 
     @Test

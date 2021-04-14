@@ -28,9 +28,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies that a shape is a header or footer placeholder shape
- *
- * @since  PowerPoint 2007
- * @author Yegor Kozlov
  */
 public final class RoundTripHFPlaceholder12 extends RecordAtom {
     /**

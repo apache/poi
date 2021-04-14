@@ -22,10 +22,6 @@ import org.apache.tools.ant.taskdefs.Typedef;
 /**
  * This class encapsulates the Strings necessary to create the User Defined
  * Function instances that will be passed to POI's Evaluator instance.
- *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 public class ExcelAntUserDefinedFunction extends Typedef {
 

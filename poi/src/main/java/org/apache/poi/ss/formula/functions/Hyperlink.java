@@ -32,8 +32,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <b>friendly_name</b> (optional) the value to display<p>
  *
  *  Returns last argument.  Leaves type unchanged (does not convert to {@link org.apache.poi.ss.formula.eval.StringEval}).
- *
- * @author Wayne Clingingsmith
  */
 public final class Hyperlink extends Var1or2ArgFunction {
 

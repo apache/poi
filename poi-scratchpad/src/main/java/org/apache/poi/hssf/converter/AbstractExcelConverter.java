@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 /**
  * Common class for {@link ExcelToFoConverter} and {@link ExcelToHtmlConverter}
  *
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  * @see AbstractWordConverter
  */
 @Beta
@@ -67,7 +66,7 @@ public abstract class AbstractExcelConverter
 
     /**
      * Generates name for output as column header in case
-     * <tt>{@link #isOutputColumnHeaders()} == true</tt>
+     * {@link #isOutputColumnHeaders()}{@code  == true}
      *
      * @param columnIndex
      *            0-based column index
@@ -86,7 +85,7 @@ public abstract class AbstractExcelConverter
 
     /**
      * Generates name for output as row number in case
-     * <tt>{@link #isOutputRowNumbers()} == true</tt>
+     * {@link #isOutputRowNumbers()}{@code  == true}
      */
     protected String getRowName( HSSFRow row )
     {

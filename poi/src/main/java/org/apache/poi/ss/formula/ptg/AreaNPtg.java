@@ -21,7 +21,6 @@ import org.apache.poi.util.LittleEndianInput;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class AreaNPtg extends Area2DPtgBase {
 	public static final short sid = 0x2D;

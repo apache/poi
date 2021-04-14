@@ -32,8 +32,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies information about external audio or video data.
- *
- * @author Yegor Kozlov
  */
 public final class ExMediaAtom extends RecordAtom
 {

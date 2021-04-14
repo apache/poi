@@ -23,8 +23,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 
 /**
  * Context needed for the unmarshall process of a part. This class is immutable.
- * 
- * @author Julien Chable
+ *
  * @version 1.0
  */
 public final class UnmarshallContext {
@@ -37,7 +36,7 @@ public final class UnmarshallContext {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param targetPackage
 	 *            Container.
 	 * @param partName

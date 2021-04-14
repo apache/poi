@@ -40,9 +40,6 @@ import org.apache.poi.ss.util.CellReference;
  * <li>{@link ArrayRecord}s</li>
  * <li>{@link TableRecord}s</li>
  * </ul>
- *
- * @author Josh Micich
- * @author Vladimirs Abramovs(Vladimirs.Abramovs at exigenservices.com) - handling of ArrayRecords
  */
 public final class SharedValueManager {
 
@@ -100,7 +97,7 @@ public final class SharedValueManager {
 	}
 
 	/**
-	 * @return a new empty {@link SharedValueManager}.
+	 * @return a new empty SharedValueManager.
 	 */
 	public static SharedValueManager createEmpty() {
 		// Note - must create distinct instances because they are assumed to be mutable.
@@ -151,7 +148,7 @@ public final class SharedValueManager {
 
 	/**
 	 * @param firstCell as extracted from the {@link ExpPtg} from the cell's formula.
-	 * @return never <code>null</code>
+	 * @return never {@code null}
 	 */
 	public SharedFormulaRecord linkSharedFormulaRecord(CellReference firstCell, FormulaRecordAggregate agg) {
 		SharedFormulaGroup result = findFormulaGroupForCell(firstCell);
@@ -186,7 +183,7 @@ public final class SharedValueManager {
 	 * top left cell.
 	 *
 	 * @return the SHRFMLA, TABLE or ARRAY record for the formula cell, if it is the first cell of
-	 * a table or array region. <code>null</code> if the formula cell is not shared/array/table,
+	 * a table or array region. {@code null} if the formula cell is not shared/array/table,
 	 * or if the specified formula is not the the first in the group.
 	 */
 	public SharedValueRecordBase getRecordForFirstCell(FormulaRecordAggregate agg) {
@@ -231,7 +228,7 @@ public final class SharedValueManager {
 	}
 
 	/**
-	 * Converts all {@link FormulaRecord}s handled by <tt>sharedFormulaRecord</tt>
+	 * Converts all {@link FormulaRecord}s handled by {@code sharedFormulaRecord}
 	 * to plain unshared formulas
 	 */
 	public void unlink(SharedFormulaRecord sharedFormulaRecord) {
@@ -254,7 +251,7 @@ public final class SharedValueManager {
 	/**
 	 * Removes the {@link ArrayRecord} for the cell group containing the specified cell.
 	 * The caller should clear (set blank) all cells in the returned range.
-	 * @return the range of the array formula which was just removed. Never <code>null</code>.
+	 * @return the range of the array formula which was just removed. Never {@code null}.
 	 */
 	public CellRangeAddress8Bit removeArrayFormula(int rowIndex, int columnIndex) {
 		for (ArrayRecord ar : _arrayRecords) {
@@ -269,7 +266,7 @@ public final class SharedValueManager {
 	}
 
 	/**
-	 * @return the shared ArrayRecord identified by (firstRow, firstColumn). never <code>null</code>.
+	 * @return the shared ArrayRecord identified by (firstRow, firstColumn). never {@code null}.
 	 */
 	public ArrayRecord getArrayRecord(int firstRow, int firstColumn) {
 		for(ArrayRecord ar : _arrayRecords) {

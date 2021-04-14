@@ -626,7 +626,7 @@ public class Range {
      * @param newText
      *            The text to be replaced with
      * @param addAfter
-     *            if <tt>true</tt> the text will be added at the end of current
+     *            if {@code true} the text will be added at the end of current
      *            range, otherwise to the beginning
      */
     public void replaceText( String newText, boolean addAfter )
@@ -657,7 +657,7 @@ public class Range {
 	 *            The replacement text (e.g., "Apache Software Foundation")
 	 * @param pOffset
 	 *            The offset or index where the text to be replaced begins
-	 *            (relative to/within this <code>Range</code>)
+	 *            (relative to/within this {@code Range})
 	 */
 	@Internal
 	public void replaceText(String pPlaceHolder, String pValue, int pOffset) {
@@ -1056,7 +1056,7 @@ public class Range {
 
     /**
      * Adjust the value of the various FIB character count fields, eg
-     * <code>FIB.CCPText</code> after an insert or a delete...
+     * {@code FIB.CCPText} after an insert or a delete...
      *
      * Works on all CCP fields from this range onwards
      *

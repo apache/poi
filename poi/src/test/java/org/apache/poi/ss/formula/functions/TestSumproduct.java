@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for SUMPRODUCT()
- *
- * @author Josh Micich
  */
 final class TestSumproduct {
 

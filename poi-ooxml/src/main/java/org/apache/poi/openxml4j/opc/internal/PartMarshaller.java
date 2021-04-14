@@ -27,7 +27,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  * marshaller is responsible to marshall a part in order to be save in a
  * package.
  *
- * @author Julien Chable
  * @version 0.1
  */
 public interface PartMarshaller {

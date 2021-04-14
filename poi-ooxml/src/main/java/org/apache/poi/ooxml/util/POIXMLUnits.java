@@ -87,11 +87,11 @@ public class POIXMLUnits {
     }
 
     /**
-     * This type seems to be interpreted as percent value when the trailing percent sign is missing.<br/>
+     * This type seems to be interpreted as percent value when the trailing percent sign is missing.<p>
      * sample snippet from settings.xml
-     * <pre>
-     *    &lt;w:zoom w:percent="50" /&gt;
-     * <pre>
+     * <pre>{@code
+     *    <w:zoom w:percent="50" />
+     * }</pre>
      *
      * @return the percent scaled by 1000, so 100% = 100000
      */
@@ -100,11 +100,11 @@ public class POIXMLUnits {
     }
 
     /**
-     * This type seems to be interpreted as percent value when the trailing percent sign is missing.<br/>
+     * This type seems to be interpreted as percent value when the trailing percent sign is missing.<p>
      * sample snippet from settings.xml
-     * <pre>
-     *    &lt;w:textscale w:w="50" /&gt;
-     * <pre>
+     * <pre>{@code
+     *    <w:textscale w:w="50" />
+     * }</pre>
      *
      * @return the percent scaled by 1000, so 100% = 100000
      */
@@ -235,7 +235,7 @@ public class POIXMLUnits {
     private static long parseLengthInner(org.apache.xmlbeans.XmlAnySimpleType coordUnion, double noUnitEmuFactor) {
         String strVal = coordUnion.getStringValue().toLowerCase(Locale.ROOT);
         double digVal = Double.parseDouble(strVal.replaceAll("(mm|cm|in|pt|pc|pi)", ""));
-        long emu = 0;
+        long emu;
         // http://startbigthinksmall.wordpress.com/2010/01/04/points-inches-and-emus-measuring-units-in-office-open-xml/
         if (strVal.endsWith("mm")) {
             emu = (long)(((digVal/10f)/2.54f)*EMU_PER_INCH);

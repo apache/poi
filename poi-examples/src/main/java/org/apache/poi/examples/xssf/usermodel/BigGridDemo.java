@@ -49,22 +49,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Demonstrates a workaround you can use to generate large workbooks and avoid OutOfMemory exception.
- *
+ * <p>
  * Note - You probably <em>don't want to use this approach any more</em>! POI
  *  now includes the SXSSF which handles all of this for you, you should
  *  be using that instead! This code remains mostly for historical interest.
  * <p>
- * See <a "https://poi.apache.org/spreadsheet/how-to.html#sxssf">
- *     https://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
- * <p>
  * If you really want to use this approach, which is also the one that SXSSF
  * does for you, it works as follows:
+ * <ol>
+ * <li>create a template workbook, create sheets and global objects such as cell styles, number formats, etc.</li>
+ * <li>create an application that streams data in a text file</li>
+ * <li>Substitute the sheet in the template with the generated data</li>
+ * </ol>
  *
- * 1. create a template workbook, create sheets and global objects such as cell styles, number formats, etc.
- * 2. create an application that streams data in a text file
- * 3. Substitute the sheet in the template with the generated data
- *
- * <p>
  *  Since 3.8 POI provides a low-memory footprint SXSSF API, which implements
  *  ths "BigGridDemo" strategy. SXSSF is an API-compatible streaming extension
  *  of XSSF to be used when very large spreadsheets have to be produced, and
@@ -72,9 +69,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *  access to the rows that are within a sliding window, while XSSF gives access
  *  to all rows in the document. Older rows that are no longer in the window
  *  become inaccessible, as they are written to the disk.
- * </p>
- * See <a "https://poi.apache.org/spreadsheet/how-to.html#sxssf">
- *     https://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
+ *
+ * @see <a href="https://poi.apache.org/spreadsheet/how-to.html#sxssf">SXSSF (Streaming Usermodel API)</a>.
  */
 public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";

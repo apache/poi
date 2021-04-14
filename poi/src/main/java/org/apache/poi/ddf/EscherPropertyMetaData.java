@@ -20,8 +20,6 @@ package org.apache.poi.ddf;
 
 /**
  * This class stores the type and description of an escher property.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherPropertyMetaData
 {

@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Bin2Dec}
- *
- * @author cedric dot walter @ gmail dot com
  */
 final class TestBin2Dec {
 

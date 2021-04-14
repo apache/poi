@@ -38,9 +38,7 @@ import java.math.BigInteger;
  * <br>
  * where:<br>
  *
- * <tt>significand</tt> = wholePart + fractionalPart / 2<sup>24</sup><br>
- *
- * @author Josh Micich
+ * {@code significand} = wholePart + fractionalPart / 2<sup>24</sup><br>
  */
 final class NormalisedDecimal {
 	/**
@@ -168,10 +166,10 @@ final class NormalisedDecimal {
 	 * The resulting transformed object is easily converted to a 64 bit IEEE double:
 	 * <ul>
 	 * <li>bits 2-53 of the {@link #composeFrac()} become the 52 bit 'fraction'.</li>
-	 * <li>{@link #getBinaryExponent()} is biased by 1023 to give the 'exponent'.</li>
+	 * <li>{@link #getDecimalExponent()} is biased by 1023 to give the 'exponent'.</li>
 	 * </ul>
 	 * The sign bit must be obtained from somewhere else.
-	 * @return a new {@link NormalisedDecimal} normalised to base 2 representation.
+	 * @return a new NormalisedDecimal normalised to base 2 representation.
 	 */
 	public ExpandedDouble normaliseBaseTwo() {
 		MutableFPNumber cc = new MutableFPNumber(composeFrac(), 39);

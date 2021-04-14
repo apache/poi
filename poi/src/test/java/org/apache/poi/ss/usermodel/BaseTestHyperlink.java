@@ -29,9 +29,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test diffrent types of Excel hyperlinks
- *
- * @author Yegor Kozlov
+ * Test different types of Excel hyperlinks
  */
 public abstract class BaseTestHyperlink {
 

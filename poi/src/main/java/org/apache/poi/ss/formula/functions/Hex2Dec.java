@@ -32,8 +32,6 @@ import org.apache.poi.ss.formula.eval.*;
  * The remaining 39 bits are magnitude bits. Negative numbers are represented using two's-complement notation.
  * Remark
  * If number is not a valid hexadecimal number, HEX2DEC returns the #NUM! error value.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Hex2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 

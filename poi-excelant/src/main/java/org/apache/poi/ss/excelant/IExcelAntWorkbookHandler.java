@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 
 /**
- * In Excel there are many ways to handle manipulating a workbook based 
+ * In Excel there are many ways to handle manipulating a workbook based
  * on some arbitrary user action (onChange, etc).  You use this interface
  * to create classes that will handle the workbook in whatever manner is needed
  * that cannot be handled by POI.
@@ -30,13 +30,9 @@ import org.apache.poi.ss.usermodel.Workbook;
  * does some calculations and updates other cells based on that change.  In
  * ExcelAnt you would set the value of the cell then write your own handler
  * then call that from your Ant task after the set task.
- * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 public interface IExcelAntWorkbookHandler {
     public void setWorkbook( Workbook workbook ) ;
-    
+
     public void execute() ;
 }

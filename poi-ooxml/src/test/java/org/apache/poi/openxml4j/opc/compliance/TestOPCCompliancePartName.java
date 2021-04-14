@@ -80,8 +80,6 @@ import org.junit.jupiter.api.Test;
  *
  * Part name equivalence is determined by comparing part names as
  * case-insensitive ASCII strings. [M1.12]
- *
- * @author Julien Chable
  */
 public final class TestOPCCompliancePartName {
 

@@ -29,9 +29,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * This class provides access to all the fields Plex.
- * 
- * @author Cedric Bosdonnat <cbosdonnat@novell.com>
- * 
  */
 @Internal
 public class FieldsTables

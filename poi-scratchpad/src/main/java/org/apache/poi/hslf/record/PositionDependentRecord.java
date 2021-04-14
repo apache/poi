@@ -28,8 +28,6 @@ import java.util.Map;
  *  need to be pinged with their current location. When written out, they
  *  need to be given their new location, and offered the list of records
  *  which have changed their location.
- *
- * @author Nick Burch
  */
 
 public interface PositionDependentRecord

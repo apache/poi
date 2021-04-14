@@ -118,7 +118,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * class has to be modified to produce files to suit a specific application
  * or requirement.
  * </p>
- * @author Mark B
+ *
  * @version 1.00 9th April 2010
  *          1.10 13th April 2010 - Added support for processing all Excel
  *                                 workbooks in a folder along with the ability

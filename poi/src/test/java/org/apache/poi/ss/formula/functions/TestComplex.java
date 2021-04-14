@@ -25,8 +25,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Complex}
- *
- * @author cedric dot walter @ gmail dot com
  */
 class TestComplex {
     private static ValueEval invokeValue(String real_num, String i_num, String suffix) {

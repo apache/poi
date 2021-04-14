@@ -39,8 +39,6 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Represents a movie in a PowerPoint document.
- *
- * @author Yegor Kozlov
  */
 public final class MovieShape extends HSLFPictureShape {
     public static final int DEFAULT_MOVIE_THUMBNAIL = -1;

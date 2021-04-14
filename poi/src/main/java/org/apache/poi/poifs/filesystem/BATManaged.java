@@ -15,15 +15,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
 /**
  * This interface defines behaviors for objects managed by the Block
  * Allocation Table (BAT).
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public interface BATManaged

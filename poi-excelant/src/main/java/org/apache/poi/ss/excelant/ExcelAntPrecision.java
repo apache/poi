@@ -19,20 +19,14 @@ package org.apache.poi.ss.excelant;
 
 import org.apache.tools.ant.taskdefs.Typedef;
 
-/**
- * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- * 
- */
 public class ExcelAntPrecision extends Typedef {
-	
+
 	private double value ;
-	
+
 	public void setValue( double precision ) {
 		value = precision ;
 	}
-	
+
 	public double getValue() {
 		return value ;
 	}

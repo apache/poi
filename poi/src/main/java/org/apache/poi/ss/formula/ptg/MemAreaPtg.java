@@ -65,7 +65,8 @@ public final class MemAreaPtg extends OperandPtg {
 		return ""; // TODO: Not sure how to format this. -- DN
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
 

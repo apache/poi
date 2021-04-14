@@ -69,9 +69,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Used by developers to list out key information on a HWPF file. End users will
  * probably never need to use this program.
- * 
- * @author Nick Burch (nick at torchbox dot com)
- * @author Sergey Vladimirov (vlsergey at gmail dot com)
  */
 @Beta
 public final class HWPFLister {

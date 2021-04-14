@@ -57,8 +57,6 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
- * @author centic
- *
  * This testcase contains tests for bugs that are yet to be fixed. Therefore,
  * the standard ant test target does not run these tests. Run this testcase with
  * the single-test target. The names of the tests usually correspond to the

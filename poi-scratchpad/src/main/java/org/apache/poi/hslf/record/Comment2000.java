@@ -28,7 +28,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * This class represents a comment on a slide, in the format used by
  *  PPT 2000/XP/etc. (PPT 97 uses plain Escher Text Boxes for comments)
- * @author Nick Burch
  */
 public final class Comment2000 extends RecordContainer {
 	private byte[] _header;

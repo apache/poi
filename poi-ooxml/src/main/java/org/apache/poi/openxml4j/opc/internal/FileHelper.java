@@ -25,8 +25,6 @@ import java.nio.channels.FileChannel;
 
 /**
  * Provide useful method to manage file.
- *
- * @author Julien Chable
  * @version 0.1
  */
 public final class FileHelper {
@@ -67,7 +65,7 @@ public final class FileHelper {
              FileOutputStream fos = new FileOutputStream(out);
              FileChannel sourceChannel = fis.getChannel();
              FileChannel destinationChannel = fos.getChannel()) {
-            
+
             sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
         }
     }

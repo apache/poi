@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for Excel function T()
- *
- * @author Josh Micich
  */
 final class TestTFunc {
 

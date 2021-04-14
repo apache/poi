@@ -22,9 +22,6 @@ package org.apache.poi.hssf.record;
  * contain cell values.  It allows the containing sheet to move through them and compare
  * them.
  *
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- *
  * @see org.apache.poi.hssf.record.Record
  * @see org.apache.poi.hssf.record.RecordFactory
  */

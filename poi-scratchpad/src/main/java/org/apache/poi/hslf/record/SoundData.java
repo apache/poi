@@ -29,8 +29,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Storage for embedded sounds.
- *
- * @author Yegor Kozlov
  */
 public final class SoundData extends RecordAtom {
 

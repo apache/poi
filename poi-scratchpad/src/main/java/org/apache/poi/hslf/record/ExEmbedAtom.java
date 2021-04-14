@@ -40,8 +40,6 @@ import org.apache.poi.util.LittleEndian;
  * 5    bool1    noSizeToServerB    Set if don't need to send the dimension to the embedded object
  * 6    Bool1    isTable            Set if the object is a Word table
  * -->
- *
- * @author Daniel Noll
  */
 public class ExEmbedAtom extends RecordAtom {
 

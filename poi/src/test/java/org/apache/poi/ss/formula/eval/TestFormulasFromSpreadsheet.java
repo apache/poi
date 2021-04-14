@@ -44,10 +44,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p>
- * This class does not test implementors of <tt>Function</tt> and <tt>OperationEval</tt> in
- * isolation.  Much of the evaluation engine (i.e. <tt>HSSFFormulaEvaluator</tt>, ...) gets
+ * This class does not test implementors of {@code Function} and {@code OperationEval} in
+ * isolation.  Much of the evaluation engine (i.e. {@code HSSFFormulaEvaluator}, ...) gets
  * exercised as well.  Tests for bug fixes and specific/tricky behaviour can be found in the
- * corresponding test class (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor,
+ * corresponding test class ({@code TestXxxx}) of the target ({@code Xxxx}) implementor,
  * where execution can be observed more easily.
  */
 public final class TestFormulasFromSpreadsheet {
@@ -125,7 +125,7 @@ public final class TestFormulasFromSpreadsheet {
 
     /**
      * @param startRowIndex row index in the spreadsheet where the first function/operator is found
-     * Typically pass <code>null</code> to test all functions
+     * Typically pass {@code null} to test all functions
      */
     private static void processFunctionGroup(List<Arguments> data, int startRowIndex) {
         for (int rowIndex = startRowIndex; true; rowIndex += SS.NUMBER_OF_ROWS_PER_FUNCTION) {
@@ -202,7 +202,7 @@ public final class TestFormulasFromSpreadsheet {
        }
    }
 	/**
-	 * @return <code>null</code> if cell is missing, empty or blank
+	 * @return {@code null} if cell is missing, empty or blank
 	 */
 	private static String getTargetFunctionName(Row r) {
 		if(r == null) {

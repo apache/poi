@@ -42,8 +42,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Manage package content types ([Content_Types].xml part).
- *
- * @author Julien Chable
  */
 public abstract class ContentTypeManager {
 

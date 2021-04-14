@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link SheetNameFormatter}
- *
- * @author Josh Micich
  */
 final class TestSheetNameFormatter {
 	/**

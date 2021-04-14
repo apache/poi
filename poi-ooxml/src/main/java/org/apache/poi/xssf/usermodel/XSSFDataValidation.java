@@ -31,10 +31,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOpera
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator.Enum;
 
-/**
- * @author <a href="rjankiraman@emptoris.com">Radhakrishnan J</a>
- *
- */
 public class XSSFDataValidation implements DataValidation {
     private static final int MAX_TEXT_LENGTH = 255;
 
@@ -93,7 +89,7 @@ public class XSSFDataValidation implements DataValidation {
         this.ctDataValidation = ctDataValidation;
         this.regions = regions;
     }
- 
+
     CTDataValidation getCtDataValidation() {
         return ctDataValidation;
     }

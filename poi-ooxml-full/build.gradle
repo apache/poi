@@ -139,6 +139,22 @@ tasks.withType(Jar) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 }
 
+javadoc {
+    failOnError = true
+    maxMemory = "1024M"
+    doFirst {
+        options {
+            if (JavaVersion.current().isJava9Compatible()) {
+                addBooleanOption('html5', true)
+            }
+            links 'https://xmlbeans.apache.org/docs/5.0.0/'
+            use = true
+            splitIndex = true
+            source = "1.8"
+        }
+    }
+}
+
 task sourceJar(type: Jar) {
     classifier 'sources'
     from sourceSets.main.allJava

@@ -28,11 +28,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
-/**
- *
- * @author Richard Ngo
- *
- */
 public class SimpleDocumentWithHeader {
 
 	public static void main(String[] args) throws IOException {

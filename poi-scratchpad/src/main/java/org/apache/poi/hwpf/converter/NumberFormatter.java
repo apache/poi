@@ -25,8 +25,6 @@ import org.apache.poi.util.Beta;
 
 /**
  * Utility class to translate numbers in letters, usually for lists.
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Beta
 public final class NumberFormatter {
@@ -61,7 +59,7 @@ public final class NumberFormatter {
             return String.valueOf( num );
         }
     }
-    
+
     private static String toLetters(int number) {
         if ( number <= 0 ) {
             throw new IllegalArgumentException( "Unsupported number: " + number );

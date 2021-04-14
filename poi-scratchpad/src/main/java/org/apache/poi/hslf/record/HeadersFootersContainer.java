@@ -28,15 +28,14 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * A container record that specifies information about the footers on a presentation slide.
  * <p>
- * It contains:<br>
+ * It contains:
+ * <ul>
  * <li> 1. {@link HeadersFootersAtom}
  * <li> 2. {@link CString }, Instance UserDate (0), optional: Stores the user's date.
  *    This is the date that the user wants in the footers, instead of today's date.
  * <li> 3. {@link CString }, Instance Header (1), optional: Stores the Header's contents.
  * <li> 4. {@link CString }, Instance Footer (2), optional: Stores the Footer's contents.
- * </p>
- *
- * @author Yegor Kozlov
+ * </ul>
  */
 public final class HeadersFootersContainer extends RecordContainer {
 

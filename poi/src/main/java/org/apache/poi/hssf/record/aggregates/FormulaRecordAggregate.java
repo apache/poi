@@ -140,7 +140,8 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 		return _formulaRecord.toString();
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		 rv.visitRecord(_formulaRecord);
 		 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(this);
 		 if (sharedFormulaRecord != null) {

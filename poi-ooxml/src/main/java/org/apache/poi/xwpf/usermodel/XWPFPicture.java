@@ -23,9 +23,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
 
-/**
- * @author Philipp Epp
- */
 public class XWPFPicture {
 
     private CTPicture ctPic;
@@ -78,7 +75,7 @@ public class XWPFPicture {
         }
         return null;
     }
-   
+
     /**
      * Returns the width of the picture (in points).
      *
@@ -87,9 +84,9 @@ public class XWPFPicture {
     public double getWidth() {
         return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCx());
     }
-   
+
     /**
-     * Returns the depth of the picture (in points). 
+     * Returns the depth of the picture (in points).
      *
      * @since POI 4.1.1
      */

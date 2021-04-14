@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * This class is an extension to the standard math library
  * provided by java.lang.Math class. It follows the Math class
  * in that it has a private constructor and all static methods.

@@ -20,9 +20,6 @@ package org.apache.poi.ss.tests.usermodel;
 import org.apache.poi.ss.usermodel.BaseTestBorderStyle;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFBorderStyle extends BaseTestBorderStyle {
 
     public TestXSSFBorderStyle() {

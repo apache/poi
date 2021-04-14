@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Tne atom that holds metadata on a specific Link in the document.
  * (The actual link is held in a sibling CString record)
- *
- * @author Nick Burch
  */
 public final class ExHyperlinkAtom extends RecordAtom {
 

@@ -22,8 +22,6 @@ import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Constants used in reading/writing the Header block
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public interface HeaderBlockConstants
 {
@@ -37,7 +35,7 @@ public interface HeaderBlockConstants
     //  BAT ~= FAT
     //  SBAT ~= MiniFAT
     //  XBAT ~= DIFat
-    
+
     // useful offsets
     int  _signature_offset        = 0;
     int  _bat_count_offset        = 0x2C;

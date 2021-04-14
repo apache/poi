@@ -27,8 +27,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about a movie stored externally.
- *
- * @author Yegor Kozlov
  */
 public class ExMCIMovie extends RecordContainer { // TODO - instantiable superclass
     private byte[] _header;

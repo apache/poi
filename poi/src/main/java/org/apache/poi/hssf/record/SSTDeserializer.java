@@ -28,9 +28,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Handles the task of deserializing a SST string.  The two main entry points are
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Jason Height (jheight at apache.org)
  */
 class SSTDeserializer
 {

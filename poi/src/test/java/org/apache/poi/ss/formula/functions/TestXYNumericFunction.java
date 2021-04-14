@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel functions SUMX2MY2(), SUMX2PY2(), SUMXMY2()
- *
- * @author Josh Micich
  */
 final class TestXYNumericFunction {
 	private static final Function SUM_SQUARES = new Sumx2py2();

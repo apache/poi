@@ -36,8 +36,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Negative numbers are represented using two's-complement notation..
  * <p>
  * If number is not a valid octal number, OCT2DEC returns the #NUM! error value.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Oct2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 

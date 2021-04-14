@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests that serialization and deserialization of the TextObjectRecord .
  * Test data taken directly from a real Excel file.
- *
- * @author Yegor Kozlov
  */
 final class TestTextObjectRecord {
 

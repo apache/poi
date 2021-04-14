@@ -152,7 +152,7 @@ public final class OperationEvaluationContext {
     }
 
     /**
-     * @return <code>null</code> if either workbook or sheet is not found
+     * @return {@code null} if either workbook or sheet is not found
      */
     private SheetRefEvaluator createExternSheetRefEvaluator(String workbookName, String sheetName) {
         WorkbookEvaluator targetEvaluator;
@@ -184,18 +184,18 @@ public final class OperationEvaluationContext {
 
     /**
      * Resolves a cell or area reference dynamically.
-     * @param workbookName the name of the workbook containing the reference.  If <code>null</code>
+     * @param workbookName the name of the workbook containing the reference.  If {@code null}
      * the current workbook is assumed.  Note - to evaluate formulas which use multiple workbooks,
      * a {@link CollaboratingWorkbooksEnvironment} must be set up.
-     * @param sheetName the name of the sheet containing the reference.  May be <code>null</code>
-     * (when <tt>workbookName</tt> is also null) in which case the current workbook and sheet is
+     * @param sheetName the name of the sheet containing the reference.  May be {@code null}
+     * (when {@code workbookName} is also null) in which case the current workbook and sheet is
      * assumed.
      * @param refStrPart1 the single cell reference or first part of the area reference.  Must not
-     * be <code>null</code>.
+     * be {@code null}.
      * @param refStrPart2 the second part of the area reference. For single cell references this
-     * parameter must be <code>null</code>
-     * @param isA1Style specifies the format for <tt>refStrPart1</tt> and <tt>refStrPart2</tt>.
-     * Pass <code>true</code> for 'A1' style and <code>false</code> for 'R1C1' style.
+     * parameter must be {@code null}
+     * @param isA1Style specifies the format for {@code refStrPart1} and {@code refStrPart2}.
+     * Pass {@code true} for 'A1' style and {@code false} for 'R1C1' style.
      * TODO - currently POI only supports 'A1' reference style
      * @return a {@link RefEval} or {@link AreaEval}
      */

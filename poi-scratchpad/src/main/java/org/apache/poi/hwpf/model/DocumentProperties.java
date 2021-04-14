@@ -24,11 +24,6 @@ import org.apache.poi.hwpf.model.types.DOPAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
-/**
- * Comment me
- *
- * @author Ryan Ackley
- */
 @Internal
 public final class DocumentProperties extends DOPAbstractType
 {

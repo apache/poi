@@ -40,8 +40,6 @@ import org.apache.poi.util.Units;
 
 /**
  * Represents a table in a PowerPoint presentation
- *
- * @author Yegor Kozlov
  */
 public final class HSLFTable extends HSLFGroupShape
 implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
@@ -186,10 +184,10 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if (htc.isEmpty()) {
             throw new IllegalStateException("HSLFTable without HSLFTableCells");
         }
-        
+
         SortedSet<Double> colSet = new TreeSet<>();
         SortedSet<Double> rowSet = new TreeSet<>();
-        
+
         // #1 pass - determine cols and rows
         for (HSLFTableCell sh : htc) {
             Rectangle2D anchor = sh.getAnchor();
@@ -197,10 +195,10 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
             rowSet.add(anchor.getY());
         }
         cells = new HSLFTableCell[rowSet.size()][colSet.size()];
-        
+
         List<Double> colLst = new ArrayList<>(colSet);
         List<Double> rowLst = new ArrayList<>(rowSet);
-        
+
         // #2 pass - assign shape to table cells
         for (HSLFTableCell sh : htc) {
             Rectangle2D anchor = sh.getAnchor();
@@ -208,14 +206,14 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
             int col = colLst.indexOf(anchor.getX());
             assert(row != -1 && col != -1);
             cells[row][col] = sh;
-            
+
             // determine gridSpan / rowSpan
             int gridSpan = calcSpan(colLst, anchor.getWidth(), col);
             int rowSpan = calcSpan(rowLst, anchor.getHeight(), row);
-            
+
             sh.setGridSpan(gridSpan);
             sh.setRowSpan(rowSpan);
-        }        
+        }
     }
 
     private int calcSpan(List<Double> spaces, double totalSpace, int idx) {
@@ -227,7 +225,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         return span;
     }
-    
+
     static class LineRect {
         final HSLFLine l;
         final double lx1, lx2, ly1, ly2;
@@ -356,10 +354,10 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if (row < 0 || row >= cells.length) {
             throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
         }
-        
+
         return cells[row][0].getAnchor().getHeight();
     }
-    
+
     @Override
     public void setRowHeight(int row, final double height) {
         if (row < 0 || row >= cells.length) {
@@ -373,7 +371,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         double currentHeight = Units.masterToPoints(LittleEndian.getInt(masterBytes, 0));
         LittleEndian.putInt(masterBytes, 0, Units.pointsToMaster(height));
         p.setElement(row, masterBytes);
-        
+
         // move the cells
         double dy = height - currentHeight;
         for (int i = row; i < cells.length; i++) {
@@ -400,7 +398,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if (col < 0 || col >= cells[0].length) {
             throw new IllegalArgumentException("Column index '"+col+"' is not within range [0-"+(cells[0].length-1)+"]");
         }
-        
+
         // TODO: check for merged cols
         return cells[0][col].getAnchor().getWidth();
     }

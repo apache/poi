@@ -26,7 +26,6 @@ import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 /**
  * Default marshaller that specified that the part is responsible to marshall its content.
  *
- * @author Julien Chable
  * @version 1.0
  * @see PartMarshaller
  */

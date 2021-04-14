@@ -31,8 +31,6 @@ import org.apache.poi.sl.usermodel.Placeholder;
  * This class represents a slide's notes in a PowerPoint Document. It
  *  allows access to the text within, and the layout. For now, it only
  *  does the text side of things though
- *
- * @author Nick Burch
  */
 
 public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTextParagraph> {
@@ -72,6 +70,7 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTe
     /**
      * Return <code>null</code> - Notes Masters are not yet supported
      */
+    @Override
     public HSLFMasterSheet getMasterSheet() {
         return null;
     }

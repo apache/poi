@@ -50,8 +50,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
- *
- * @author Dragos Buleandra ( dragos.buleandra@trade2b.ro )
  */
 final class TestDataValidation extends BaseTestDataValidation {
 

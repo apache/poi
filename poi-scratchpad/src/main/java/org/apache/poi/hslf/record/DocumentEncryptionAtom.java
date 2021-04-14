@@ -39,8 +39,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 /**
  * A Document Encryption Atom (type 12052). Holds information
  *  on the Encryption of a Document
- *
- * @author Nick Burch
  */
 public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
     private static final long _type = RecordTypes.DocumentEncryptionAtom.typeID;

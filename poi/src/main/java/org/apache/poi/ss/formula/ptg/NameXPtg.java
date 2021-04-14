@@ -87,7 +87,8 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
 

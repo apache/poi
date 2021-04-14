@@ -237,7 +237,7 @@ final class TestMatch {
 
 
 	/**
-	 * Ensures that the match_type argument can be an <tt>AreaEval</tt>.<br>
+	 * Ensures that the match_type argument can be an {@code AreaEval}.<br>
 	 * Bugzilla 44421
 	 */
 	@Test

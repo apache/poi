@@ -21,9 +21,6 @@ package org.apache.poi.util;
 
 /**
  * Manage operations dealing with bit-mapped fields.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 @Internal(since="POI 3.15 beta 3")
 public class BitField

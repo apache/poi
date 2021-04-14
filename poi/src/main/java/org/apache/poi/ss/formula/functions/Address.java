@@ -22,8 +22,6 @@ import org.apache.poi.ss.util.CellReference;
 
 /**
  * Creates a text reference as text, given specified row and column numbers.
- *
- * @author Aniket Banerjee (banerjee@google.com)
  */
 public class Address implements Function {
     public static final int REF_ABSOLUTE = 1;

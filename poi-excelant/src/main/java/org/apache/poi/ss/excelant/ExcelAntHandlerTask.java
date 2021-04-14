@@ -39,10 +39,6 @@ import org.apache.tools.ant.Task;
  * <code>IExcelAntWorkbookHandler</code> interface.  After writing the
  * class you should package it and it's dependencies into a jar file to
  * add as library in your Ant build file.
- *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 public class ExcelAntHandlerTask extends Task {
 

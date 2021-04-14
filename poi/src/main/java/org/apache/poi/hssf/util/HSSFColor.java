@@ -43,9 +43,9 @@ public class HSSFColor implements Color {
     private static Map<Integer,HSSFColor> indexHash;
     private static Map<HSSFColorPredefined,HSSFColor> enumList;
 
-    private java.awt.Color color;
-    private int index;
-    private int index2;
+    private final java.awt.Color color;
+    private final int index;
+    private final int index2;
 
     /**
      * Predefined HSSFColors with their given palette index (and an optional 2nd index)
@@ -108,7 +108,7 @@ public class HSSFColor implements Color {
          */
         AUTOMATIC            (0x40,   -1, 0x000000);
 
-        private HSSFColor color;
+        private final HSSFColor color;
 
         HSSFColorPredefined(int index, int index2, int rgb) {
             this.color = new HSSFColor(index, index2, new java.awt.Color(rgb));
@@ -167,7 +167,7 @@ public class HSSFColor implements Color {
      * This function returns all the colours in an unmodifiable Map.
      * The map is cached on first use.
      *
-     * @return a Map containing all colours keyed by <tt>Integer</tt> excel-style palette indexes
+     * @return a Map containing all colours keyed by {@code Integer} excel-style palette indexes
      */
     public static synchronized Map<Integer,HSSFColor> getIndexHash() {
         if(indexHash == null) {
@@ -344,7 +344,7 @@ public class HSSFColor implements Color {
 
         if (index != hssfColor.index) return false;
         if (index2 != hssfColor.index2) return false;
-        return color != null ? color.equals(hssfColor.color) : hssfColor.color == null;
+        return Objects.equals(color, hssfColor.color);
     }
 
     @Override
@@ -353,7 +353,7 @@ public class HSSFColor implements Color {
     }
 
     /**
-     * Checked type cast <tt>color</tt> to an HSSFColor.
+     * Checked type cast {@code color} to an HSSFColor.
      *
      * @param color the color to type cast
      * @return the type casted color

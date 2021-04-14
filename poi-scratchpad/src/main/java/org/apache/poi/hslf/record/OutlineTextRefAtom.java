@@ -35,9 +35,6 @@ import org.apache.poi.util.LittleEndian;
  * in a SlideListWithText containter. Sometimes slide texts are not contained
  * within the slide container to be able to delay loading a slide and still display
  * the title and body text in outline view.
- * </p>
- *
- * @author Yegor Kozlov
  */
 
 public final class OutlineTextRefAtom extends RecordAtom {

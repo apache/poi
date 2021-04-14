@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * test common properties for sheets (slides, masters, layouts, etc.)
- *
- * @author Yegor Kozlov
  */
 class TestXSLFSheet {
 

@@ -25,8 +25,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 /**
  * Specifies all types of alignment which are available to be applied to objects in a
  * WordprocessingML document
- *
- * @author Yegor Kozlov
  */
 public enum ParagraphAlignment {
     //YK: TODO document each alignment option

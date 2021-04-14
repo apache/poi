@@ -73,7 +73,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
 implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
-    private static Logger LOG = LogManager.getLogger(XSLFSheet.class);
+    private static final Logger LOG = LogManager.getLogger(XSLFSheet.class);
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -345,7 +345,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * it is unchanged.
      *
      * @param xShape shape to be removed from this sheet, if present
-     * @return <tt>true</tt> if this sheet contained the specified element
+     * @return {@code true} if this sheet contained the specified element
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
@@ -461,7 +461,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * Append content to this sheet.
      *
      * @param src the source sheet
-     * @return modified <code>this</code>.
+     * @return modified {@code this}.
      */
     @SuppressWarnings("unused")
     public XSLFSheet appendContent(XSLFSheet src){
@@ -490,7 +490,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
    /**
      * @return theme (shared styles) associated with this theme.
-     *  By default returns <code>null</code> which means that this sheet is theme-less.
+     *  By default returns {@code null} which means that this sheet is theme-less.
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
      *  method and return the corresponding package part.
      */

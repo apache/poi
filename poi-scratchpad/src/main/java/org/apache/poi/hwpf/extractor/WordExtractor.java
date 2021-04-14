@@ -35,8 +35,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * You should use either getParagraphText() or getText() unless you have a
  * strong reason otherwise.
- *
- * @author Nick Burch
  */
 public final class WordExtractor implements POIOLE2TextExtractor {
     private final HWPFDocument doc;

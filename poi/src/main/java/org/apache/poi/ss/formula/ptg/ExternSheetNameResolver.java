@@ -22,9 +22,6 @@ import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 
-/**
- * @author Josh Micich
- */
 final class ExternSheetNameResolver {
     private ExternSheetNameResolver() {
         // no instances of this class

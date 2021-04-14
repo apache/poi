@@ -27,7 +27,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Represents a constant error code value as encoded in a constant values array. <p>
  *
  * This class is a type-safe wrapper for a 16-bit int value performing a similar job to
- * <tt>ErrorEval</tt>.
+ * {@code ErrorEval}.
  */
 public final class ErrorConstant {
 	private static final Logger LOG = LogManager.getLogger(ErrorConstant.class);
@@ -74,10 +74,6 @@ public final class ErrorConstant {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(getText());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" + getText() + "]";
 	}
 }

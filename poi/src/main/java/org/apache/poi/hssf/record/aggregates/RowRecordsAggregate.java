@@ -42,11 +42,6 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 
-/**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
- */
 public final class RowRecordsAggregate extends RecordAggregate {
     private int _firstrow = -1;
     private int _lastrow  = -1;

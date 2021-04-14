@@ -25,8 +25,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 /**
  * A table column of an {@link XSSFTable}. Use {@link XSSFTable#createColumn} to
  * create new table columns.
- * 
- * @author Leonard Kappe
+ *
  * @since 4.0.0
  */
 public class XSSFTableColumn {
@@ -62,7 +61,7 @@ public class XSSFTableColumn {
 
     /**
      * Get the identifier of this column, which is is unique per table.
-     * 
+     *
      * @return the column id
      * @since 4.0.0
      */
@@ -72,9 +71,9 @@ public class XSSFTableColumn {
 
     /**
      * Set the identifier of this column, which must be unique per table.
-     * 
+     *
      * It is up to the caller to enforce the uniqueness of the id.
-     * 
+     *
      * @param columnId the column id
      * @since 4.0.0
      */
@@ -84,7 +83,7 @@ public class XSSFTableColumn {
 
     /**
      * Get the name of the column, which is is unique per table.
-     * 
+     *
      * @return the column name
      * @since 4.0.0
      */
@@ -94,7 +93,7 @@ public class XSSFTableColumn {
 
     /**
      * Get the name of the column, which is is unique per table.
-     * 
+     *
      * @param columnName  the column name
      * @since 4.0.0
      */

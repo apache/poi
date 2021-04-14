@@ -35,16 +35,14 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  * conjunction with
  * {@link org.apache.poi.hwpf.HWPFDocument#registerList(HWPFList) registerList}
  * in {@link org.apache.poi.hwpf.HWPFDocument HWPFDocument}.
- * 
+ *
  * In Word, lists are not ranged entities, meaning you can't actually add one to
  * the document. Lists only act as properties for list entries. Once you
  * register a list, you can add list entries to a document that are a part of
  * the list.
- * 
+ *
  * The only benefit of this that I see, is that you can add a list entry
  * anywhere in the document and continue numbering from the previous list.
- * 
- * @author Ryan Ackley
  */
 public final class HWPFList
 {
@@ -56,7 +54,7 @@ public final class HWPFList
     private StyleSheet _styleSheet;
 
     /**
-     * 
+     *
      * @param numbered
      *            true if the list should be numbered; false if it should be
      *            bulleted.
@@ -197,7 +195,7 @@ public final class HWPFList
 
     /**
      * Sets the character properties of the list numbers.
-     * 
+     *
      * @param level
      *            the level number that the properties should apply to.
      * @param chp
@@ -215,7 +213,7 @@ public final class HWPFList
 
     /**
      * Sets the paragraph properties for a particular level of the list.
-     * 
+     *
      * @param level
      *            The level number.
      * @param pap

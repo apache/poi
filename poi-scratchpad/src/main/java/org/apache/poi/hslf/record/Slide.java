@@ -26,8 +26,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Master container for Slides. There is one of these for every slide,
  *  and they have certain specific children
- *
- * @author Nick Burch
  */
 
 public final class Slide extends SheetContainer

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.dev;
 
@@ -31,8 +31,6 @@ import java.util.Iterator;
  * A POIFSViewable object is also expected to provide a short
  * description of itself, that can be used by a viewer when the
  * viewable object is collapsed.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public interface POIFSViewable
@@ -46,7 +44,7 @@ public interface POIFSViewable
      */
 
     public Object [] getViewableArray();
-    
+
     /**
      * Get an Iterator of objects, some of which may implement
      * POIFSViewable

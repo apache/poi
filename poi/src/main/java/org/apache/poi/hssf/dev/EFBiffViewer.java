@@ -25,11 +25,6 @@ import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-/**
- *
- * @author  andy
- */
-
 public class EFBiffViewer
 {
     String file;

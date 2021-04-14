@@ -38,8 +38,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Represents DrawingML GraphicalObjectFrame.
- *
- * @author Roman Kashitsyn
  */
 public final class XSSFGraphicFrame extends XSSFShape {
 

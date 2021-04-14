@@ -25,9 +25,6 @@ import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-/**
- * @author Yegor Kozlov
- */
 public final class XWPFRelation extends POIXMLRelation {
 
     /**

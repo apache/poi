@@ -23,10 +23,6 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator.Enum;
 
-/**
- * @author <a href="rjankiraman@emptoris.com">Radhakrishnan J</a>
- *
- */
 public class XSSFDataValidationConstraint implements DataValidationConstraint {
     /**
      * Excel validation constraints with static lists are delimited with optional whitespace and the Windows List Separator,
@@ -53,10 +49,10 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		}
 		this.validationType = ValidationType.LIST;
 		setExplicitListValues(explicitListOfValues);
-		
+
 		validate();
 	}
-	
+
 	public XSSFDataValidationConstraint(int validationType, String formula1) {
 		super();
 		setFormula1(formula1);
@@ -89,11 +85,11 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		setFormula2(formula2);
 		this.validationType = validationType;
 		this.operator = operator;
-		
+
 		validate();
-		
+
 		//FIXME: Need to confirm if this is not a formula.
-		// empirical testing shows Excel saves explicit lists surrounded by double quotes, 
+		// empirical testing shows Excel saves explicit lists surrounded by double quotes,
 		// range formula expressions can't start with quotes (I think - anyone have a creative counter example?)
 		if ( ValidationType.LIST == validationType
 				&& this.formula1 != null
@@ -142,7 +138,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	 */
 	public void setExplicitListValues(String[] explicitListValues) {
 		this.explicitListOfValues = explicitListValues;
-		
+
 		// for OOXML we need to set formula1 to the quoted csv list of values (doesn't appear documented, but that's where Excel puts its lists)
 		// further, Excel has no escaping for commas in explicit lists, so we don't need to worry about that.
 		if ( explicitListOfValues!=null && explicitListOfValues.length > 0 ) {
@@ -155,7 +151,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 				builder.append(string);
 			}
 			builder.append(QUOTE);
-			setFormula1(builder.toString());			
+			setFormula1(builder.toString());
 		}
 	}
 
@@ -201,7 +197,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		if (validationType==ValidationType.ANY) {
 			return;
 		}
-		
+
 		if (validationType==ValidationType.LIST ) {
 			if (isFormulaEmpty(formula1)) {
 				throw new IllegalArgumentException("A valid formula or a list of values must be specified for list validation.");
@@ -213,7 +209,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 			if( isFormulaEmpty(formula1) ) {
 				throw new IllegalArgumentException("Formula is not specified. Formula is required for all validation types except explicit list validation.");
 			}
-			
+
 			if( validationType!= ValidationType.FORMULA ) {
 				if (operator==-1) {
 					throw new IllegalArgumentException("This validation type requires an operator to be specified.");
@@ -224,7 +220,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		}
 	}
 
-	
+
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
 		STDataValidationType.Enum vt = XSSFDataValidation.validationTypeMappings.get(validationType);

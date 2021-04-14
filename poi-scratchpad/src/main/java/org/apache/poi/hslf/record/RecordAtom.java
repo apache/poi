@@ -19,8 +19,6 @@ package org.apache.poi.hslf.record;
 
 /**
  * Abstract class which all atom records will extend.
- *
- * @author Nick Burch
  */
 
 public abstract class RecordAtom extends Record

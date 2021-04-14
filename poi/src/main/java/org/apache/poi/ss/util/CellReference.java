@@ -38,12 +38,12 @@ import org.apache.poi.util.GenericRecordUtil;
  *  style references. Handles sheet-based and sheet-free references
  *  as well, eg "Sheet1!A1" and "$B$72"</p>
  *
- *  <p>Use <tt>CellReference</tt> when the concept of
+ *  <p>Use {@code CellReference} when the concept of
  * relative/absolute does apply (such as a cell reference in a formula).
  * Use {@link CellAddress} when you want to refer to the location of a cell in a sheet
  * when the concept of relative/absolute does not apply (such as the anchor location
  * of a cell comment).
- * <tt>CellReference</tt>s have a concept of "sheet", while <tt>CellAddress</tt>es do not.</p>
+ * {@code CellReference}s have a concept of "sheet", while {@code CellAddress}es do not.</p>
  */
 public class CellReference implements GenericRecord {
     /**
@@ -177,7 +177,7 @@ public class CellReference implements GenericRecord {
     public boolean isRowAbsolute(){return _isRowAbs;}
     public boolean isColAbsolute(){return _isColAbs;}
     /**
-     * @return possibly <code>null</code> if this is a 2D reference.  Special characters are not
+     * @return possibly {@code null} if this is a 2D reference.  Special characters are not
      * escaped or delimited
      */
     public String getSheetName(){
@@ -216,7 +216,7 @@ public class CellReference implements GenericRecord {
 
     /**
      * Classifies an identifier as either a simple (2D) cell reference or a named range name
-     * @return one of the values from <tt>NameType</tt>
+     * @return one of the values from {@code NameType}
      */
     public static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
         int len = str.length();
@@ -290,7 +290,6 @@ public class CellReference implements GenericRecord {
      * reference is valid (in range) becomes important.
      * <p>
      * Note - that the maximum sheet size varies across Excel versions:
-     * <p>
      * <blockquote><table border="0" cellpadding="1" cellspacing="0"
      *                 summary="Notable cases.">
      *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
@@ -317,7 +316,7 @@ public class CellReference implements GenericRecord {
      *
      * @param colStr a string of only letter characters
      * @param rowStr a string of only digit characters
-     * @return <code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.
+     * @return {@code true} if the row and col parameters are within range of a BIFF8 spreadsheet.
      */
     public static boolean cellReferenceIsWithinRange(String colStr, String rowStr, SpreadsheetVersion ssVersion) {
         if (!isColumnWithinRange(colStr, ssVersion)) {

@@ -24,31 +24,22 @@ import org.apache.poi.ss.util.CellRangeAddress;
 /**
  * The ConditionalFormatting class encapsulates all settings of Conditional Formatting.
  *
- * The class can be used
- *
- * <UL>
- * <LI>
- * to make a copy ConditionalFormatting settings.
- * </LI>
- *
- *
+ * The class can be used to make a copy ConditionalFormatting settings.
+ * <p>
  * For example:
- * <PRE>
+ * <pre>{@code
  * ConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
  * newSheet.addConditionalFormatting(cf);
- * </PRE>
+ * }</pre>
  *
- *  <LI>
- *  or to modify existing Conditional Formatting settings (formatting regions and/or rules).
- *  </LI>
- *  </UL>
+ * or to modify existing Conditional Formatting settings (formatting regions and/or rules).<p>
  *
  * Use {@link org.apache.poi.ss.usermodel.Sheet#getSheetConditionalFormatting()}
  * to get access to an instance of this class.
- * <P>
+ * <p>
  * To create a new Conditional Formatting set use the following approach:
  *
- * <PRE>
+ * <pre>{@code
  *
  * // Define a Conditional Formatting rule, which triggers formatting
  * // when cell's value is greater or equal than 100.0 and
@@ -71,18 +62,18 @@ import org.apache.poi.ss.util.CellRangeAddress;
  *
  * // Apply Conditional Formatting rule defined above to the regions
  * sheet.addConditionalFormatting(regions, rule);
- * </PRE>
+ * }</pre>
  */
 public interface ConditionalFormatting {
 
     /**
-     * @return array of <tt>CellRangeAddress</tt>s. Never <code>null</code>
+     * @return array of {@code CellRangeAddress}s. Never {@code null}
      */
     CellRangeAddress[] getFormattingRanges();
 
     /**
      * Sets the cell ranges the rule conditional formatting must be applied to.
-     * @param ranges non-null array of <tt>CellRangeAddress</tt>s
+     * @param ranges non-null array of {@code CellRangeAddress}s
      */
     void setFormattingRanges(CellRangeAddress[] ranges);
 

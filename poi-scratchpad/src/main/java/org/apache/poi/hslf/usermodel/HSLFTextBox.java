@@ -29,9 +29,6 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
  * <p>
  * Contains the text in a text frame as well as the properties and methods
  * that control alignment and anchoring of the text.
- * </p>
- *
- * @author Yegor Kozlov
  */
 public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLFTextParagraph> {
 

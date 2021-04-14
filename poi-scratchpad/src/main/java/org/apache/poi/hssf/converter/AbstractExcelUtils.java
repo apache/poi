@@ -160,7 +160,7 @@ class AbstractExcelUtils {
      * @param mergedRanges map of sheet merged ranges built with
      *                     {@link #buildMergedRangesMap(Sheet)}
      * @return {@link CellRangeAddress} from map if cell with specified row and
-     * column numbers contained in found range, <tt>null</tt> otherwise
+     * column numbers contained in found range, {@code null} otherwise
      */
     public static CellRangeAddress getMergedRange(
         CellRangeAddress[][] mergedRanges, int rowNumber, int columnNumber) {

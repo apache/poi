@@ -24,8 +24,6 @@ package org.apache.poi.ss.usermodel;
  * When a new theme is chosen, every font that is part of a theme definition is updated to use the new major or minor font definition for that
  * theme.
  * Usually major fonts are used for styles like headings, and minor fonts are used for body &amp; paragraph text.
- *
- * @author Gisella Bronzetti
  */
 public enum FontScheme {
 

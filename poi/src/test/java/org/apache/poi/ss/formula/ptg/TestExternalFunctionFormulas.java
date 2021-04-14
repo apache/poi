@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 final class TestExternalFunctionFormulas {
 
 	/**
-	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that
+	 * tests {@code NameXPtg.toFormulaString(Workbook)} and logic in Workbook below that
 	 */
     @Test
 	void testReadFormulaContainingExternalFunction() throws Exception {

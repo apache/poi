@@ -19,10 +19,10 @@ package org.apache.poi.ss.formula.eval;
 
 /**
  * This class is used to simplify error handling logic <i>within</i> operator and function
- * implementations.   Note - <tt>OperationEval.evaluate()</tt> and <tt>Function.evaluate()</tt>
+ * implementations.   Note - {@code OperationEval.evaluate()} and {@code Function.evaluate()}
  * method signatures do not throw this exception so it cannot propagate outside.<p>
  *
- * Here is an example coded without <tt>EvaluationException</tt>, to show how it can help:
+ * Here is an example coded without {@code EvaluationException}, to show how it can help:
  * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
  *	// ...
@@ -52,8 +52,9 @@ package org.apache.poi.ss.formula.eval;
  * In this example, if any error is encountered while processing the arguments, an error is
  * returned immediately. This code is difficult to refactor due to all the points where errors
  * are returned.<br>
- * Using <tt>EvaluationException</tt> allows the error returning code to be consolidated to one
- * place.<p>
+ * Using {@code EvaluationException} allows the error returning code to be consolidated to one
+ * place.
+ *
  * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
  *	try {
@@ -100,12 +101,10 @@ package org.apache.poi.ss.formula.eval;
  *  error), because exceptions conveniently propagate up the call stack regardless of execution
  *  points or the number of levels of nested calls.<p>
  *
- * <b>Note</b> - Only standard evaluation errors are represented by <tt>EvaluationException</tt> (
+ * <b>Note</b> - Only standard evaluation errors are represented by {@code EvaluationException} (
  * i.e. conditions expected to be encountered when evaluating arbitrary Excel formulas). Conditions
  * that could never occur in an Excel spreadsheet should result in runtime exceptions. Care should
  * be taken to not translate any POI internal error into an Excel evaluation error code.
- *
- * @author Josh Micich
  */
 public final class EvaluationException extends Exception {
 	private final ErrorEval _errorEval;

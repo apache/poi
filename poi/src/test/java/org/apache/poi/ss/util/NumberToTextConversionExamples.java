@@ -20,7 +20,7 @@ package org.apache.poi.ss.util;
 import java.util.Locale;
 
 /**
- * Contains specific examples of <tt>double</tt> values and their rendering in Excel.
+ * Contains specific examples of {@code double} values and their rendering in Excel.
  */
 final class NumberToTextConversionExamples {
 

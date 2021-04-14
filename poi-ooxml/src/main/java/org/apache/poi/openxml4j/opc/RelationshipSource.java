@@ -34,7 +34,7 @@ public interface RelationshipSource {
 	 *            Type of relationship.
 	 * @return The newly created and added relationship
 	 */
-	public abstract PackageRelationship addRelationship(
+	PackageRelationship addRelationship(
 			PackagePartName targetPartName, TargetMode targetMode,
 			String relationshipType);
 
@@ -56,11 +56,8 @@ public interface RelationshipSource {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 *
-	 * @throws InvalidFormatException
-	 *             If the URI point to a relationship part URI.
 	 */
-	public abstract PackageRelationship addRelationship(
+	PackageRelationship addRelationship(
 			PackagePartName targetPartName, TargetMode targetMode,
 			String relationshipType, String id);
 
@@ -76,9 +73,8 @@ public interface RelationshipSource {
 	 * @param target External target of the relationship
 	 * @param relationshipType Type of relationship.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String, java.lang.String)
 	 */
-	public PackageRelationship addExternalRelationship(String target, String relationshipType);
+	PackageRelationship addExternalRelationship(String target, String relationshipType);
 
 	/**
 	 * Adds an external relationship to a part
@@ -95,12 +91,12 @@ public interface RelationshipSource {
 	 * @return The newly created and added relationship
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String, java.lang.String)
 	 */
-	public PackageRelationship addExternalRelationship(String target, String relationshipType, String id);
+	PackageRelationship addExternalRelationship(String target, String relationshipType, String id);
 
 	/**
 	 * Delete all the relationships attached to this.
 	 */
-	public abstract void clearRelationships();
+	void clearRelationships();
 
 	/**
 	 * Delete the relationship specified by its id.
@@ -108,16 +104,14 @@ public interface RelationshipSource {
 	 * @param id
 	 *            The ID identified the part to delete.
 	 */
-	public abstract void removeRelationship(String id);
+	void removeRelationship(String id);
 
 	/**
 	 * Retrieve all the relationships attached to this.
 	 *
 	 * @return This part's relationships.
-	 * @throws OpenXML4JException
 	 */
-	public abstract PackageRelationshipCollection getRelationships()
-			throws InvalidFormatException, OpenXML4JException;
+	PackageRelationshipCollection getRelationships() throws OpenXML4JException;
 
 	/**
 	 * Retrieves a package relationship from its id.
@@ -126,7 +120,7 @@ public interface RelationshipSource {
 	 *            ID of the package relationship to retrieve.
 	 * @return The package relationship
 	 */
-	public abstract PackageRelationship getRelationship(String id);
+	PackageRelationship getRelationship(String id);
 
 	/**
 	 * Retrieve all relationships attached to this part which have the specified
@@ -140,9 +134,8 @@ public interface RelationshipSource {
 	 * @throws InvalidOperationException
 	 *             If the package is open in write only mode.
 	 */
-	public abstract PackageRelationshipCollection getRelationshipsByType(
-			String relationshipType) throws InvalidFormatException,
-			IllegalArgumentException, OpenXML4JException;
+	PackageRelationshipCollection getRelationshipsByType(String relationshipType)
+		throws IllegalArgumentException, OpenXML4JException;
 
 	/**
 	 * Knows if the part have any relationships.
@@ -150,7 +143,7 @@ public interface RelationshipSource {
 	 * @return <b>true</b> if the part have at least one relationship else
 	 *         <b>false</b>.
 	 */
-	public abstract boolean hasRelationships();
+	boolean hasRelationships();
 
 	/**
 	 * Checks if the specified relationship is part of this package part.
@@ -160,6 +153,6 @@ public interface RelationshipSource {
 	 * @return <b>true</b> if the specified relationship exists in this part,
 	 *         else returns <b>false</b>
 	 */
-	public abstract boolean isRelationshipExists(PackageRelationship rel);
+	boolean isRelationshipExists(PackageRelationship rel);
 
 }

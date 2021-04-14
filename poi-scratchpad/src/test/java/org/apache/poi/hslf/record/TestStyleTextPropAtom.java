@@ -39,8 +39,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that StyleTextPropAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestStyleTextPropAtom {
     /** From a real file: a paragraph with 4 different styles */

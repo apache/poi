@@ -23,9 +23,6 @@ import org.apache.poi.util.StringUtil;
 /**
  * Helper functions for the record transformations. Used during model classes
  * autogeneration.
- * 
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 @Internal
 public class RecordUtil

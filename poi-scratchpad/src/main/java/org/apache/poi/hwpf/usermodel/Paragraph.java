@@ -195,8 +195,8 @@ public class Paragraph extends Range implements Duplicatable {
   }
 
   /**
-   * @return <tt>true</tt>, if table trailer paragraph (last in table row),
-   *         <tt>false</tt> otherwise
+   * @return {@code true}, if table trailer paragraph (last in table row),
+   *         {@code false} otherwise
    */
   public boolean isTableRowEnd()
   {
@@ -209,8 +209,8 @@ public class Paragraph extends Range implements Duplicatable {
   }
 
     /**
-     * @return <tt>true</tt>, if the end of paragraph mark is really an end of
-     *         cell mark for a nested table cell, <tt>false</tt> otherwise
+     * @return {@code true}, if the end of paragraph mark is really an end of
+     *         cell mark for a nested table cell, {@code false} otherwise
      */
     public boolean isEmbeddedCellMark()
     {

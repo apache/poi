@@ -25,11 +25,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.util.Internal;
 
 /**
- * Abstracts a workbook for the purpose of formula evaluation.<br>
- *
- * For POI internal use only
- *
- * @author Josh Micich
+ * Abstracts a workbook for the purpose of formula evaluation.
  */
 @Internal
 public interface EvaluationWorkbook {
@@ -58,7 +54,7 @@ public interface EvaluationWorkbook {
     ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber);
     /**
      * HSSF Only - convert an external sheet index to an internal sheet index,
-     *  for an external-style reference to one of this workbook's own sheets 
+     *  for an external-style reference to one of this workbook's own sheets
      */
     int convertFromExternSheetIndex(int externSheetIndex);
 
@@ -70,19 +66,19 @@ public interface EvaluationWorkbook {
      * XSSF Only - fetch the external-style name details
      */
     ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber);
-    
+
     EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);
     String resolveNameXText(NameXPtg ptg);
     Ptg[] getFormulaTokens(EvaluationCell cell);
     UDFFinder getUDFFinder();
     SpreadsheetVersion getSpreadsheetVersion();
-    
+
     /**
      * Propagated from {@link WorkbookEvaluator#clearAllCachedResultValues()} to clear locally cached data.
      * Implementations must call the same method on all referenced {@link EvaluationSheet} instances, as well as clearing local caches.
      * @see WorkbookEvaluator#clearAllCachedResultValues()
-     * 
+     *
      * @since POI 3.15 beta 3
      */
     public void clearAllCachedResultValues();
@@ -108,7 +104,7 @@ public interface EvaluationWorkbook {
             super(workbookName, firstSheetName);
             this._lastSheetName = lastSheetName;
         }
-        
+
         public String getFirstSheetName() {
             return getSheetName();
         }

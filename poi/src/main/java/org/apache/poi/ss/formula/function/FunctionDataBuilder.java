@@ -23,10 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Temporarily collects <tt>FunctionMetadata</tt> instances for creation of a
- * <tt>FunctionMetadataRegistry</tt>.
- *
- * @author Josh Micich
+ * Temporarily collects {@code FunctionMetadata} instances for creation of a
+ * {@code FunctionMetadataRegistry}.
  */
 final class FunctionDataBuilder {
 	private int _maxFunctionIndex;
@@ -47,7 +45,7 @@ final class FunctionDataBuilder {
 		FunctionMetadata fm = new FunctionMetadata(functionIndex, functionName, minParams, maxParams,
 				returnClassCode, parameterClassCodes);
 
-		Integer indexKey = Integer.valueOf(functionIndex);
+		Integer indexKey = functionIndex;
 
 
 		if(functionIndex > _maxFunctionIndex) {
@@ -60,7 +58,7 @@ final class FunctionDataBuilder {
 			if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
 				throw new RuntimeException("Multiple entries for function name '" + functionName + "'");
 			}
-			_functionDataByIndex.remove(Integer.valueOf(prevFM.getIndex()));
+			_functionDataByIndex.remove(prevFM.getIndex());
 		}
 		prevFM = _functionDataByIndex.get(indexKey);
 		if(prevFM != null) {

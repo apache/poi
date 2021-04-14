@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Class to test RootProperty functionality
- *
- * @author Marc Johnson
  */
 final class TestRootProperty {
 	private RootProperty _property;

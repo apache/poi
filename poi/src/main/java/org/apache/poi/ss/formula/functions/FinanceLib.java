@@ -18,9 +18,6 @@
 package org.apache.poi.ss.formula.functions;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- *
  * This class is a functon library for common fiscal functions.
  * <b>Glossary of terms/abbreviations:</b>
  * <br>

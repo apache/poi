@@ -23,16 +23,13 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.MatrixFunction.MutableValueCollector;
 import org.apache.poi.ss.formula.functions.MatrixFunction.TwoArrayArg;
 
-/**
- * @author Josh Micich
- */
 public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction implements ArrayFunction {
 
 	protected final double singleOperandEvaluate(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
 	}
-	
+
 	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 	    if (args.length != 2) {
 	        return ErrorEval.VALUE_INVALID;
@@ -52,7 +49,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 				});
 
 	}
-	
+
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		double result;
 		try {
@@ -78,27 +75,27 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 
 	private final class ArrayEval extends TwoArrayArg {
 	    private final MutableValueCollector instance = new MutableValueCollector(true, true);
-        
+
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
             return instance.collectValues(arg);
         }
-	    
+
 	    protected double[][] evaluate(double[][] d1, double[][] d2) throws IllegalArgumentException, EvaluationException {
 	        int width = (d1[0].length < d2[0].length) ? d1[0].length : d2[0].length;
 	        int height = (d1.length < d2.length) ? d1.length : d2.length;
 
             double[][] result = new double[height][width];
-	        
+
 	        for (int j = 0; j < height; j++) {
 	            for (int i = 0; i < width; i++) {
 	                result[j][i] = TwoOperandNumericOperation.this.evaluate(d1[j][i], d2[j][i]);
 	            }
 	        }
-	        
+
 	        return result;
 	    }
 	}
-	
+
 	public static final Function AddEval = new TwoOperandNumericOperation() {
 		protected double evaluate(double d0, double d1) {
 			return d0+d1;

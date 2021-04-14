@@ -17,10 +17,6 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-/**
- *
- * @author  andy
- */
 public final class EqualPtg extends ValueOperatorPtg {
     public static final byte sid  = 0x0b;
 

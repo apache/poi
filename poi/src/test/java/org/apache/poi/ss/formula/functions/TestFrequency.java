@@ -32,8 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for the function FREQUENCY(data, bins)
- *
- * @author Yegor Kozlov
  */
 class TestFrequency {
 

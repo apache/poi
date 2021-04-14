@@ -121,6 +121,7 @@ public class VBAMacroReader implements Closeable {
         throw new IllegalArgumentException("No VBA project found");
     }
 
+    @Override
     public void close() throws IOException {
         fs.close();
         fs = null;
@@ -171,9 +172,11 @@ public class VBAMacroReader implements Closeable {
             out.close();
             buf = out.toByteArray();
         }
+        @Override
         public String getContent() {
             return new String(buf, charset);
         }
+        @Override
         public ModuleType geModuleType() {
             return moduleType;
         }
@@ -183,9 +186,9 @@ public class VBAMacroReader implements Closeable {
     }
 
     /**
-     * Recursively traverses directory structure rooted at <tt>dir</tt>.
+     * Recursively traverses directory structure rooted at {@code dir}.
      * For each macro module that is found, the module's name and code are
-     * added to <tt>modules<tt>.
+     * added to {@code modules}.
      *
      * @param dir The directory of entries to look at
      * @param modules The resulting map of modules
@@ -264,11 +267,10 @@ public class VBAMacroReader implements Closeable {
                     module.read(decompressed);
                 }
                 return;
-            } catch (IllegalArgumentException | IllegalStateException e) {
+            } catch (IllegalArgumentException | IllegalStateException ignored) {
             }
 
             //bad module.offset, try brute force
-            ;
             byte[] decompressedBytes;
             try (InputStream compressed = new DocumentInputStream(documentNode)) {
                 decompressedBytes = findCompressedStreamWBruteForce(compressed);
@@ -282,7 +284,7 @@ public class VBAMacroReader implements Closeable {
     }
 
     /**
-      * Skips <tt>n</tt> bytes in an input stream, throwing IOException if the
+      * Skips {@code n} bytes in an input stream, throwing IOException if the
       * number of bytes skipped is different than requested.
       * @throws IOException If skipping would exceed the available data or skipping did not work.
       */
@@ -311,7 +313,7 @@ public class VBAMacroReader implements Closeable {
 
     /**
      * Reads VBA Project modules from a VBA Project directory located at
-     * <tt>macroDir</tt> into <tt>modules</tt>.
+     * {@code macroDir} into {@code modules}.
      *
      * @since 3.15-beta2
      */
@@ -634,8 +636,8 @@ public class VBAMacroReader implements Closeable {
                                            Map<String, String> moduleNames, Charset charset) throws IOException {
         //see 2.3.3 PROJECTwm Stream: Module Name Information
         //multibytecharstring
-        String mbcs = null;
-        String unicode = null;
+        String mbcs;
+        String unicode;
         //arbitrary sanity threshold
         final int maxNameRecords = 10000;
         int records = 0;
@@ -701,7 +703,7 @@ public class VBAMacroReader implements Closeable {
     }
 
     /**
-     * Read <tt>length</tt> bytes of MBCS (multi-byte character set) characters from the stream
+     * Read {@code length} bytes of MBCS (multi-byte character set) characters from the stream
      *
      * @param stream the inputstream to read from
      * @param length number of bytes to read from stream
@@ -789,7 +791,7 @@ public class VBAMacroReader implements Closeable {
      * This relies on some, er, heuristics, admittedly.
      *
      * @param is full module inputstream to read
-     * @return uncompressed bytes if found, <code>null</code> otherwise
+     * @return uncompressed bytes if found, {@code null} otherwise
      * @throws IOException for a true IOException copying the is to a byte array
      */
     private static byte[] findCompressedStreamWBruteForce(InputStream is) throws IOException {

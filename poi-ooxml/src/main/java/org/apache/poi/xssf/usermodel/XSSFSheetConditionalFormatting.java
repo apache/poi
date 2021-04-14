@@ -56,7 +56,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}</tt>: <p>
+     *		 {@code {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}}:
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>
@@ -67,12 +67,13 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      *		 <li>GE</li>
      *		 <li>LE</li>
      * </ul>
-     * </p>
+     *
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
      * {@link org.apache.poi.ss.usermodel.ComparisonOperator#BETWEEN}) and
      * {@link org.apache.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN} operations)
      */
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
             String formula1,
@@ -100,6 +101,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
 
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
             String formula) {
@@ -112,6 +114,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      *
      * @param formula - formula for the valued, compared with the cell
      */
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
         CTCfRule cfRule = rule.getCTCfRule();
@@ -122,12 +125,12 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
 
     /**
      * Create a Databar conditional formatting rule.
-     * <p>The thresholds and colour for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colour for it will be created, but will be
+     *  empty and require configuring with
      *  {@link XSSFConditionalFormattingRule#getDataBarFormatting()}
      *  then
      *  {@link XSSFDataBarFormatting#getMinThreshold()}
-     *  and 
+     *  and
      *  {@link XSSFDataBarFormatting#getMaxThreshold()}
      */
     public XSSFConditionalFormattingRule createConditionalFormattingRule(XSSFColor color) {
@@ -139,6 +142,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         // All done!
         return rule;
     }
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
         return createConditionalFormattingRule((XSSFColor)color);
     }
@@ -147,11 +151,12 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * A factory method allowing the creation of conditional formatting
      *  rules using an Icon Set / Multi-State formatting.
      * The thresholds for it will be created, but will be empty
-     *  and require configuring with 
+     *  and require configuring with
      *  {@link XSSFConditionalFormattingRule#getMultiStateFormatting()}
      *  then
      *  {@link XSSFIconMultiStateFormatting#getThresholds()}
      */
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet) {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
 
@@ -164,14 +169,15 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
 
     /**
      * Create a Color Scale / Color Gradient conditional formatting rule.
-     * <p>The thresholds and colours for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colours for it will be created, but will be
+     *  empty and require configuring with
      *  {@link XSSFConditionalFormattingRule#getColorScaleFormatting()}
      *  then
      *  {@link XSSFColorScaleFormatting#getThresholds()}
      *  and
      *  {@link XSSFColorScaleFormatting#getColors()}
      */
+    @Override
     public XSSFConditionalFormattingRule createConditionalFormattingColorScaleRule() {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
 
@@ -182,6 +188,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         if (regions == null) {
             throw new IllegalArgumentException("regions must not be null");
@@ -214,6 +221,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return _sheet.getCTWorksheet().sizeOfConditionalFormattingArray() - 1;
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions,
                                         ConditionalFormattingRule rule1)
     {
@@ -223,6 +231,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
                 });
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions,
                                         ConditionalFormattingRule rule1, ConditionalFormattingRule rule2)
     {
@@ -245,6 +254,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * @param cf HSSFConditionalFormatting object
      * @return index of the new Conditional Formatting object
      */
+    @Override
     public int addConditionalFormatting( ConditionalFormatting cf ) {
         XSSFConditionalFormatting xcf = (XSSFConditionalFormatting)cf;
         CTWorksheet sh = _sheet.getCTWorksheet();
@@ -259,6 +269,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      *			of the Conditional Formatting object to fetch
      * @return Conditional Formatting object
      */
+    @Override
     public XSSFConditionalFormatting getConditionalFormattingAt(int index) {
         checkIndex(index);
         CTConditionalFormatting cf = _sheet.getCTWorksheet().getConditionalFormattingArray(index);
@@ -268,6 +279,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     /**
      * @return number of Conditional Formatting objects of the sheet
      */
+    @Override
     public int getNumConditionalFormattings() {
         return _sheet.getCTWorksheet().sizeOfConditionalFormattingArray();
     }
@@ -276,6 +288,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * removes a Conditional Formatting object by index
      * @param index of a Conditional Formatting object to remove
      */
+    @Override
     public void removeConditionalFormatting(int index) {
         checkIndex(index);
         _sheet.getCTWorksheet().removeConditionalFormatting(index);

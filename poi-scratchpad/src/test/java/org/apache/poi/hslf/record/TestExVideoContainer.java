@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
- *
- * @author Yegor Kozlov
  */
 public final class TestExVideoContainer {
 

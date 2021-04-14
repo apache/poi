@@ -40,7 +40,7 @@ public abstract class NumericFunction implements Function {
 	}
 
 	/**
-	 * @throws EvaluationException (#NUM!) if <tt>result</tt> is {@code NaN} or {@code Infinity}
+	 * @throws EvaluationException (#NUM!) if {@code result} is {@code NaN} or {@code Infinity}
 	 */
 	public static void checkValue(double result) throws EvaluationException {
 		if (Double.isNaN(result) || Double.isInfinite(result)) {
@@ -48,6 +48,7 @@ public abstract class NumericFunction implements Function {
 		}
 	}
 
+	@Override
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		double result;
 		try {

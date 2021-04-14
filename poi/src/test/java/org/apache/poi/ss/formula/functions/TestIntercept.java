@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for Excel function INTERCEPT()
- *
- * @author Johan Karlsteen
  */
 final class TestIntercept {
 	private static final Function INTERCEPT = new Intercept();

@@ -15,15 +15,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.util;
 
 /**
  * a repository for constants shared by classes within this package
- *
- * @author Marc Johnson
- * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 
 public interface LittleEndianConsts {

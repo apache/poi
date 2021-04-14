@@ -32,8 +32,6 @@ import org.apache.poi.util.LittleEndianInput;
  * A Record Input Stream derivative that makes access to byte arrays used in the
  * test cases work a bit easier.
  * <p> Creates the stream and moves to the first record.
- *
- * @author Jason Height (jheight at apache.org)
  */
 public final class TestcaseRecordInputStream {
 
@@ -52,8 +50,8 @@ public final class TestcaseRecordInputStream {
 		return create(mergeDataAndSid(sid, data.length, data));
 	}
 	/**
-	 * First 4 bytes of <tt>data</tt> are assumed to be record identifier and length. The supplied
-	 * <tt>data</tt> can contain multiple records (sequentially encoded in the same way)
+	 * First 4 bytes of {@code data} are assumed to be record identifier and length. The supplied
+	 * {@code data} can contain multiple records (sequentially encoded in the same way)
 	 */
 	public static RecordInputStream create(byte[] data) {
 		InputStream is = new ByteArrayInputStream(data);

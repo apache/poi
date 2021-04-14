@@ -209,6 +209,7 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
         return GenericRecordJsonWriter.marshal(this);
     }
 
+    @Override
     public void visitContainedRecords(RecordVisitor rv) {
         rv.visitRecord(header);
         for (CFRuleBase rule : rules) {

@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RecordFactoryInputStream}
- *
- * @author Josh Micich
  */
 final class TestRecordFactoryInputStream {
 	/**

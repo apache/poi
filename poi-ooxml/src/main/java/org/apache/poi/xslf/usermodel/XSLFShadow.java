@@ -29,8 +29,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 
 /**
  * Represents a shadow of a shape. For now supports only outer shadows.
- *
- * @author Yegor Kozlov
  */
 public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextParagraph> {
 

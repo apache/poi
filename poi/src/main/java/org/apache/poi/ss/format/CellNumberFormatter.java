@@ -79,6 +79,7 @@ public class CellNumberFormatter extends CellFormatter {
             super(locale, "General");
         }
 
+        @Override
         public void formatValue(StringBuffer toAppendTo, Object value) {
             if (value == null) {
                 return;
@@ -95,6 +96,7 @@ public class CellNumberFormatter extends CellFormatter {
             cf.formatValue(toAppendTo, value);
         }
 
+        @Override
         public void simpleValue(StringBuffer toAppendTo, Object value) {
             formatValue(toAppendTo, value);
         }
@@ -420,7 +422,7 @@ public class CellNumberFormatter extends CellFormatter {
         return (afterFractional == null) ? specials.size() : specials.indexOf(afterFractional);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void formatValue(StringBuffer toAppendTo, Object valueObject) {
         double value = ((Number) valueObject).doubleValue();
         value *= scale;
@@ -842,9 +844,10 @@ public class CellNumberFormatter extends CellFormatter {
     /**
      * {@inheritDoc}
      * <p>
-     * For a number, this is <tt>"#"</tt> for integer values, and <tt>"#.#"</tt>
+     * For a number, this is {@code "#"} for integer values, and {@code "#.#"}
      * for floating-point values.
      */
+    @Override
     public void simpleValue(StringBuffer toAppendTo, Object value) {
         SIMPLE_NUMBER.formatValue(toAppendTo, value);
     }

@@ -14,16 +14,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 8, 2005
- *
- */
 package org.apache.poi.ss.formula.eval;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- */
 public interface NumericValueEval extends ValueEval {
 
     double getNumberValue();

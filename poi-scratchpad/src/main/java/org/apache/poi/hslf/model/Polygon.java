@@ -35,8 +35,6 @@ import org.apache.poi.util.Units;
 
 /**
  * A simple closed polygon shape
- *
- * @author Yegor Kozlov
  */
 public final class Polygon extends HSLFAutoShape {
     /**

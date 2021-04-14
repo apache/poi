@@ -51,7 +51,8 @@ public final class DataValidityTable extends RecordAggregate {
 		_validationList = new ArrayList<>();
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		if (_validationList.isEmpty()) {
 			return;
 		}

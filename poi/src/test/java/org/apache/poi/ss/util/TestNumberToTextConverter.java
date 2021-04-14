@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.util.NumberToTextConversionExamples.ExampleConversion;
@@ -31,8 +32,8 @@ import org.junit.jupiter.api.Test;
  */
 final class TestNumberToTextConverter {
 	/**
-	 * Confirms that <tt>ExcelNumberToTextConverter.toText(d)</tt> produces the right results.
-	 * As part of preparing this test class, the <tt>ExampleConversion</tt> instances should be set
+	 * Confirms that {@code ExcelNumberToTextConverter.toText(d)} produces the right results.
+	 * As part of preparing this test class, the {@code ExampleConversion} instances should be set
 	 * up to contain the rendering as produced by Excel.
 	 */
 	@Test
@@ -60,14 +61,14 @@ final class TestNumberToTextConverter {
 	 * values as a plain number. That is the unusual functionality that this method is testing.<p>
 	 *
 	 * There are multiple encodings (bit patterns) for NaN, and CPUs and applications can convert
-	 * to a preferred NaN encoding  (Java prefers <tt>0x7FF8000000000000L</tt>).  Besides the
-	 * special encoding in {@link FormulaRecord.SpecialCachedValue}, it is not known how/whether
+	 * to a preferred NaN encoding  (Java prefers {@code 0x7FF8000000000000L}).  Besides the
+	 * special encoding in {@code FormulaRecord.SpecialCachedValue}, it is not known how/whether
 	 * Excel attempts to encode NaN values.
 	 *
 	 * Observed NaN behaviour on HotSpot/Windows:
-	 * <tt>Double.longBitsToDouble()</tt> will set one bit 51 (the NaN signaling flag) if it isn't
-	 *  already. <tt>Double.doubleToLongBits()</tt> will return a double with bit pattern
-	 *  <tt>0x7FF8000000000000L</tt> for any NaN bit pattern supplied.<br>
+	 * {@code Double.longBitsToDouble()} will set one bit 51 (the NaN signaling flag) if it isn't
+	 *  already. {@code Double.doubleToLongBits()} will return a double with bit pattern
+	 *  {@code 0x7FF8000000000000L} for any NaN bit pattern supplied.<br>
 	 * Differences are likely to be observed with other architectures.<p>
 	 *
 	 * <p>

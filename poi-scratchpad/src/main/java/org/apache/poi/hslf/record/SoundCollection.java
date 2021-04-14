@@ -23,10 +23,10 @@ import java.util.Arrays;
 
 /**
  * Is a container for all sound related atoms and containers. It contains:
- *<li>1. SoundCollAtom (2021)
- *<li>2. Sound (2022), for each sound, if any
- *
- * @author Yegor Kozlov
+ * <ul>
+ * <li>1. SoundCollAtom (2021)</li>
+ * <li>2. Sound (2022), for each sound, if any</li>
+ * </ul>
  */
 public final class SoundCollection extends RecordContainer {
     /**

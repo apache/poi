@@ -36,8 +36,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * <p>
  * Fields documentation is quotes from Microsoft Office Word 97-2007 Binary File
  * Format (.doc) Specification, page 36 of 210
- *
- * @author Ryan Ackley
  */
 @Internal
 public final class StyleSheet {

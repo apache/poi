@@ -37,20 +37,19 @@ import org.apache.poi.util.LittleEndianOutput;
  * several records (not formulas). A cell range address list consists of a field
  * with the number of ranges and the list of the range addresses. Each cell
  * range address (called an ADDR structure) contains 4 16-bit-values.
- * </p>
  */
 public class CellRangeAddressList implements GenericRecord {
 
 	/**
-	 * List of <tt>CellRangeAddress</tt>es. Each structure represents a cell range
+	 * List of {@code CellRangeAddress}es. Each structure represents a cell range
 	 */
 	protected final List<CellRangeAddress> _list = new ArrayList<>();
 
 	public CellRangeAddressList() {
 	}
 	/**
-	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single
-	 * <tt>CellRangeAddress</tt>.  Other <tt>CellRangeAddress</tt>es may be added later.
+	 * Convenience constructor for creating a {@code CellRangeAddressList} with a single
+	 * {@code CellRangeAddress}.  Other {@code CellRangeAddress}es may be added later.
 	 */
 	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
 		addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
@@ -104,7 +103,7 @@ public class CellRangeAddressList implements GenericRecord {
 	}
 
 	/**
-	 * @return <tt>CellRangeAddress</tt> at the given index
+	 * @return {@code CellRangeAddress} at the given index
 	 */
 	public CellRangeAddress getCellRangeAddress(int index) {
 		return _list.get(index);

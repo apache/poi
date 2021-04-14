@@ -23,8 +23,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br>
  *
  * Default method implementations all do nothing
- *
- * @author Josh Micich
  */
 public abstract class EvaluationListener implements IEvaluationListener {
 	@Override

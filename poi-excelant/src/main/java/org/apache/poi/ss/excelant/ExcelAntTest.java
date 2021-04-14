@@ -31,10 +31,6 @@ import org.apache.tools.ant.Task;
  * This class represents a single test.  In order for the test any and all
  * ExcelAntEvaluateCell evaluations must pass.  Therefore it is recommended
  * that you use only 1 evaluator but you can use more if you choose.
- *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 @SuppressWarnings("unused")
 public class ExcelAntTest extends Task{

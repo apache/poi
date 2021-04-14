@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * the different types of possible underline formatting
- *
- * @author Gisella Bronzetti
  */
 public enum FontUnderline {
 

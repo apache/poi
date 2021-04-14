@@ -88,7 +88,7 @@ public class XSSFReader {
     /**
      * Creates a new XSSFReader, for the given package
      *
-     * @param pkg an <code>OPCPackage</code> representing a spreasheet file
+     * @param pkg an {@code OPCPackage} representing a spreasheet file
      * @param allowStrictOoxmlFiles whether to try to handle Strict OOXML format files
      */
     public XSSFReader(OPCPackage pkg, boolean allowStrictOoxmlFiles) throws IOException, OpenXML4JException {
@@ -226,7 +226,7 @@ public class XSSFReader {
         XSSFSheetRef xssfSheetRef;
 
         /**
-         * Iterator over CTSheet objects, returns sheets in <tt>logical</tt> order.
+         * Iterator over CTSheet objects, returns sheets in {@code logical} order.
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
          * i.e. as they are stored in the underlying package
          */
@@ -302,9 +302,9 @@ public class XSSFReader {
         }
 
         /**
-         * Returns <tt>true</tt> if the iteration has more elements.
+         * Returns {@code true} if the iteration has more elements.
          *
-         * @return <tt>true</tt> if the iterator has more elements.
+         * @return {@code true} if the iterator has more elements.
          */
         @Override
         public boolean hasNext() {
@@ -366,7 +366,7 @@ public class XSSFReader {
         protected CommentsTable parseComments(PackagePart commentsPart) throws IOException {
             return new CommentsTable(commentsPart);
         }
-        
+
         /**
          * Returns the shapes associated with this sheet,
          * an empty list or null if there is an exception

@@ -29,8 +29,6 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 
 /**
  * Package core properties marshaller specialized for zipped package.
- *
- * @author Julien Chable
  */
 public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarshaller {
 

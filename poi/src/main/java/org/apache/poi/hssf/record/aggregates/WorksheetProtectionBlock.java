@@ -21,7 +21,6 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.ObjectProtectRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.RecordFormatException;
@@ -32,8 +31,6 @@ import org.apache.poi.util.RecordFormatException;
  *
  * See OOO excelfileformat.pdf sec 4.18.2 'Sheet Protection in a Workbook
  * (BIFF5-BIFF8)'
- *
- * @author Josh Micich
  */
 public final class WorksheetProtectionBlock extends RecordAggregate {
 	// Every one of these component records is optional
@@ -51,7 +48,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 	}
 
 	/**
-	 * @return <code>true</code> if the specified Record sid is one belonging to
+	 * @return {@code true} if the specified Record sid is one belonging to
 	 *         the 'Page Settings Block'.
 	 */
 	public static boolean isComponentRecord(int sid) {
@@ -97,7 +94,8 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 		}
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		// Replicates record order from Excel 2007, though this is not critical
 
 		visitIfPresent(_protectRecord, rv);
@@ -121,7 +119,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 	}
 
 	/**
-	 * This method reads {@link WorksheetProtectionBlock} records from the supplied RecordStream
+	 * This method reads WorksheetProtectionBlock records from the supplied RecordStream
 	 * until the first non-WorksheetProtectionBlock record is encountered. As each record is read,
 	 * it is incorporated into this WorksheetProtectionBlock.
 	 * <p>
@@ -170,7 +168,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 	 * protect a spreadsheet with a password (not encrypted, just sets protect
 	 * flags and the password.
 	 *
-	 * @param password to set. Pass <code>null</code> to remove all protection
+	 * @param password to set. Pass {@code null} to remove all protection
 	 * @param shouldProtectObjects are protected
 	 * @param shouldProtectScenarios are protected
 	 */

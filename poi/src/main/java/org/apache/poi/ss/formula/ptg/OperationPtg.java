@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 /**
  * defines a Ptg that is an operation instead of an operand
- * @author  andy
  */
 public abstract class OperationPtg extends Ptg {
     public static final int TYPE_UNARY    = 0;
@@ -44,6 +43,7 @@ public abstract class OperationPtg extends Ptg {
      */
     public abstract int getNumberOfOperands();
 
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }

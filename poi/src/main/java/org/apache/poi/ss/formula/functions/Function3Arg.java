@@ -21,8 +21,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implemented by all functions that can be called with three arguments
- *
- * @author Josh Micich
  */
 public interface Function3Arg extends Function {
 	/**

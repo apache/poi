@@ -26,8 +26,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
  * formats.  If you are writing such code, you can add a method to this
  * interface, and then implement it for both HSSF and XSSF workbooks, letting
  * the driving code stay independent of format.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public interface HtmlHelper {
     /**

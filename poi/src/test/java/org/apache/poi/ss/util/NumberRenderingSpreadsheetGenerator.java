@@ -41,8 +41,6 @@ import org.apache.poi.util.HexRead;
 
 /**
  * Creates a spreadsheet that demonstrates Excel's rendering of various IEEE double values.
- * 
- * @author Josh Micich
  */
 public class NumberRenderingSpreadsheetGenerator {
 
@@ -80,7 +78,7 @@ public class NumberRenderingSpreadsheetGenerator {
 	}
 	/** 0x7ff8000000000000 encoded in little endian order */
 	private static final byte[] JAVA_NAN_BYTES = HexRead.readFromString("00 00 00 00 00 00 F8 7F");
-	
+
 	private static void writeHeaderCell(HSSFRow row, int i, String text, HSSFCellStyle style) {
 		HSSFCell cell = row.createCell(i);
 		cell.setCellValue(new HSSFRichTextString(text));
@@ -104,22 +102,22 @@ public class NumberRenderingSpreadsheetGenerator {
 		writeHeaderCell(row, 2, "JDK Double Rendering", style);
 		writeHeaderCell(row, 3, "Actual Rendering", style);
 		writeHeaderCell(row, 4, "Expected Rendering", style);
-		writeHeaderCell(row, 5, "Match", style);  
+		writeHeaderCell(row, 5, "Match", style);
 		writeHeaderCell(row, 6, "Java Metadata", style);
 	}
 	static void writeDataRow(HSSFSheet sheet, int rowIx, long rawLongBits, String expectedExcelRendering) {
 		double d = Double.longBitsToDouble(rawLongBits);
 		HSSFRow row = sheet.createRow(rowIx);
-		
+
 		int rowNum = rowIx + 1;
 		String cel0ref = "A" + rowNum;
 		String rawBitsText = formatLongAsHex(rawLongBits);
 		String jmExpr = "'ec(" + rawBitsText + ", ''\" & C" + rowNum + " & \"'', ''\" & D" + rowNum + " & \"''),'";
-		
+
 		// The 'Match' column will contain 'OK' if the metadata (from NumberToTextConversionExamples)
 		// matches Excel's rendering.
 		String matchExpr = "if(D" + rowNum + "=E" + rowNum + ", \"OK\", \"ERROR\")";
-		
+
 		row.createCell(0).setCellValue(d);
 		row.createCell(1).setCellValue(new HSSFRichTextString(rawBitsText));
 		row.createCell(2).setCellValue(new HSSFRichTextString(Double.toString(d)));
@@ -134,22 +132,22 @@ public class NumberRenderingSpreadsheetGenerator {
 //			row.createCell(8).setCellFormula(cel0ref + " / 1.0001");
 //		}
 	}
-	
+
 	private static String formatLongAsHex(long l) {
 		return HexDump.longToHex(l) + 'L';
 	}
 
 	public static void main(String[] args) {
 		writeJavaDoc();
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		SheetWriter sw = new SheetWriter(wb);
-		
+
 		ExampleConversion[] exampleValues = NumberToTextConversionExamples.getExampleConversions();
 		for (ExampleConversion example : exampleValues) {
 			sw.addTestRow(example.getRawDoubleBits(), example.getExcelRendering());
 		}
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			wb.write(baos);
@@ -158,10 +156,10 @@ public class NumberRenderingSpreadsheetGenerator {
 		}
 		byte[] fileContent = baos.toByteArray();
 		replaceNaNs(fileContent, sw.getReplacementNaNs());
-		
-		
+
+
 		File outputFile = new File("ExcelNumberRendering.xls");
-		
+
 		try {
 			FileOutputStream os = new FileOutputStream(outputFile);
 			os.write(fileContent);
@@ -173,20 +171,20 @@ public class NumberRenderingSpreadsheetGenerator {
 	}
 
 	public static void writeJavaDoc() {
-		
+
 		ExampleConversion[] exampleConversions = NumberToTextConversionExamples.getExampleConversions();
 		for (ExampleConversion ec : exampleConversions) {
-			String line = 	" * <tr><td>" 
+			String line = 	" * <tr><td>"
 				+ formatLongAsHex(ec.getRawDoubleBits())
-				+ "</td><td>" + Double.toString(ec.getDoubleValue()) 
+				+ "</td><td>" + Double.toString(ec.getDoubleValue())
 				+ "</td><td>" + ec.getExcelRendering() + "</td></tr>";
-			
+
 			System.out.println(line);
 		}
 	}
 
-	
-	
+
+
 	private static void replaceNaNs(byte[] fileContent, long[] replacementNaNs) {
 		int countFound = 0;
 		for(int i=0; i<fileContent.length; i++) {
@@ -198,7 +196,7 @@ public class NumberRenderingSpreadsheetGenerator {
 		if (countFound < replacementNaNs.length) {
 			throw new RuntimeException("wrong repl count");
 		}
-		
+
 	}
 
 	private static void writeLong(byte[] bb, int i, long val) {
@@ -215,7 +213,7 @@ public class NumberRenderingSpreadsheetGenerator {
 //			String newVal = interpretLong(bb, i);
 //			System.out.println("changed offset " + i + " from " + oldVal + " to " + newVal);
 //		}
-		
+
 	}
 
 	private static String interpretLong(byte[] fileContent, int offset) {

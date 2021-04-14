@@ -35,8 +35,8 @@ public final class IntPtg extends ScalarConstantPtg {
 	/**
 	 * Excel represents integers 0..65535 with the tInt token.
 	 *
-	 * @return <code>true</code> if the specified value is within the range of values
-	 * <tt>IntPtg</tt> can represent.
+	 * @return {@code true} if the specified value is within the range of values
+	 * {@code IntPtg} can represent.
 	 */
 	public static boolean isInRange(int i) {
 		return i >= MIN_VALUE && i <= MAX_VALUE;
@@ -61,6 +61,7 @@ public final class IntPtg extends ScalarConstantPtg {
 		return field_1_value;
 	}
 
+	@Override
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(getValue());
@@ -71,10 +72,12 @@ public final class IntPtg extends ScalarConstantPtg {
 		return sid;
 	}
 
+	@Override
 	public int getSize() {
 		return SIZE;
 	}
 
+	@Override
 	public String toFormulaString() {
 		return String.valueOf(getValue());
 	}

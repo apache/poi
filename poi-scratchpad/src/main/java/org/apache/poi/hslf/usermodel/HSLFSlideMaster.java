@@ -33,8 +33,6 @@ import org.apache.poi.util.Internal;
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
  * It stores information about default font styles, placeholder sizes and positions,
  * background design, and color schemes.
- *
- * @author Yegor Kozlov
  */
 public final class HSLFSlideMaster extends HSLFMasterSheet {
     private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
@@ -80,11 +78,11 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
      * If {@code name = "*"} return the current collection, otherwise if the name is not found
      * in the current selection of txtype/level/name, first try lower levels then try parent types,
      * if it wasn't found there return {@code null}.
-     * 
+     *
      * @param txtype the {@link TextHeaderAtom} type
      * @param level the indent level of the paragraph, if the level is not defined for the found
      *      collection, the highest existing level will be used
-     * @param name the property name, 
+     * @param name the property name,
      * @param isCharacter if {@code true} use character styles, otherwise use paragraph styles
      */
     @Override

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests specific formula examples in <tt>OperandClassTransformer</tt>.
+ * Tests specific formula examples in {@code OperandClassTransformer}.
  */
 final class TestOperandClassTransformer {
 
@@ -70,7 +70,7 @@ final class TestOperandClassTransformer {
     }
 
     /**
-     * In the example: <code>INDEX(PI(),1)</code>, Excel encodes PI() as 'array'.  It is not clear
+     * In the example: {@code INDEX(PI(),1)}, Excel encodes PI() as 'array'.  It is not clear
      * what rule justifies this. POI currently encodes it as 'value' which Excel(2007) seems to
      * tolerate. Changing the metadata for INDEX to have first parameter as 'array' class breaks
      * other formulas involving INDEX.  It seems like a special case needs to be made.  Perhaps an

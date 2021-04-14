@@ -32,9 +32,7 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.util.AreaReference;
 
 /**
- * Test helper class for creating mock <code>Eval</code> objects
- *
- * @author Josh Micich
+ * Test helper class for creating mock {@code Eval} objects
  */
 public final class EvalFactory {
 

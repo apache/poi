@@ -33,9 +33,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Tne atom that holds metadata on Links in the document.
  * (The actual link is held Document.ExObjList.ExHyperlink)
- *
- * @author Nick Burch
- * @author Yegor Kozlov
  */
 public class InteractiveInfoAtom extends RecordAtom {
 

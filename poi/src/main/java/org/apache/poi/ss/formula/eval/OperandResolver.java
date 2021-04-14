@@ -26,9 +26,6 @@ import java.util.regex.Pattern;
 
 /**
  * Provides functionality for evaluating arguments to functions and operators.
- *
- * @author Josh Micich
- * @author Brendan Nolan
  */
 public final class OperandResolver {
 
@@ -43,7 +40,7 @@ public final class OperandResolver {
                  "(\\."+Digits+"("+Exp+")?))"+
                  "[\\x00-\\x20]*");
     private static final Pattern fpPattern = Pattern.compile(fpRegex);
-    
+
     private OperandResolver() {
         // no instances of this class
     }
@@ -54,8 +51,8 @@ public final class OperandResolver {
      * @param arg the evaluated argument as passed to the function or operator.
      * @param srcCellRow used when arg is a single column AreaRef
      * @param srcCellCol used when arg is a single row AreaRef
-     * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>.
-     * Never <code>null</code> or <tt>ErrorEval</tt>.
+     * @return a {@code NumberEval}, {@code StringEval}, {@code BoolEval} or {@code BlankEval}.
+     * Never {@code null} or {@code ErrorEval}.
      * @throws EvaluationException if srcCellRow or srcCellCol do not properly index into
      *  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding
      *  EvaluationException is thrown.
@@ -75,15 +72,15 @@ public final class OperandResolver {
         }
         return result;
     }
-    
+
     /**
      * Retrieves a single value from an area evaluation utilizing the 2D indices of the cell
      * within its own area reference to index the value in the area evaluation.
      *
      * @param ae area reference after evaluation
      * @param cell the source cell of the formula that contains its 2D indices
-     * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>. or <tt>ErrorEval<tt>
-     * Never <code>null</code>.
+     * @return a {@code NumberEval}, {@code StringEval}, {@code BoolEval} or {@code BlankEval}. or {@code ErrorEval}
+     * Never {@code null}.
      */
 
     public static ValueEval getElementFromArray(AreaEval ae, EvaluationCell cell) {
@@ -105,7 +102,7 @@ public final class OperandResolver {
         else if (ae.isRow() && relativeColIndex < ae.getWidth()) {
             return ae.getRelativeValue(0, relativeColIndex);
         }
-        
+
         return ErrorEval.NA;
     }
 
@@ -142,14 +139,14 @@ public final class OperandResolver {
      *
      * Of course with carefully (or carelessly) chosen parameters, cyclic references can occur and
      * hence this method <b>can</b> throw a 'circular reference' EvaluationException.  Note that
-     * this method does not attempt to detect cycles.  Every cell in the specified Area <tt>ae</tt>
+     * this method does not attempt to detect cycles.  Every cell in the specified Area {@code ae}
      * has already been evaluated prior to this method call.  Any cell (or cell<b>s</b>) part of
-     * <tt>ae</tt> that would incur a cyclic reference error if selected by this method, will
-     * already have the value <t>ErrorEval.CIRCULAR_REF_ERROR</tt> upon entry to this method.  It
+     * {@code ae} that would incur a cyclic reference error if selected by this method, will
+     * already have the value {@code ErrorEval.CIRCULAR_REF_ERROR} upon entry to this method.  It
      * is assumed logic exists elsewhere to produce this behaviour.
      *
-     * @return whatever the selected cell's evaluated value is.  Never <code>null</code>. Never
-     *  <tt>ErrorEval</tt>.
+     * @return whatever the selected cell's evaluated value is.  Never {@code null}. Never
+     *  {@code ErrorEval}.
      * @throws EvaluationException if there is a problem with indexing into the area, or if the
      *  evaluated cell has an error.
      */
@@ -163,7 +160,7 @@ public final class OperandResolver {
     }
 
     /**
-     * @return possibly <tt>ErrorEval</tt>, and <code>null</code>
+     * @return possibly {@code ErrorEval}, and {@code null}
      */
     private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae,
             int srcCellRow, int srcCellCol) throws EvaluationException {
@@ -212,21 +209,21 @@ public final class OperandResolver {
         }
         return ae.getAbsoluteValue(ae.getFirstRow(), srcCellCol);
     }
-    
+
     private static ValueEval chooseSingleElementFromRef(RefEval ref) {
         return ref.getInnerValueEval( ref.getFirstSheetIndex() );
     }
 
     /**
      * Applies some conversion rules if the supplied value is not already an integer.<br>
-     * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
-     * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p>
+     * Value is first coerced to a {@code double} ( See {@code coerceValueToDouble()} ).
+     * Note - {@code BlankEval} is converted to {@code 0}.<p>
      *
      * Excel typically converts doubles to integers by truncating toward negative infinity.<br>
      * The equivalent java code is:<br>
-     * &nbsp;&nbsp;<code>return (int)Math.floor(d);</code><br>
+     * &nbsp;&nbsp;{@code return (int)Math.floor(d);}<br>
      * <b>not</b>:<br>
-     * &nbsp;&nbsp;<code>return (int)d; // wrong - rounds toward zero</code>
+     * &nbsp;&nbsp;{@code return (int)d; // wrong - rounds toward zero}
      *
      */
     public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
@@ -241,12 +238,12 @@ public final class OperandResolver {
 
     /**
      * Applies some conversion rules if the supplied value is not already a number.
-     * Note - <tt>BlankEval</tt> is converted to {@link NumberEval#ZERO}.
+     * Note - {@code BlankEval} is converted to {@link NumberEval#ZERO}.
      * @param ev must be a {@link NumberEval}, {@link StringEval}, {@link BoolEval} or
      * {@link BlankEval}
      * @return actual, parsed or interpreted double value (respectively).
      * @throws EvaluationException if a StringEval is supplied and cannot be parsed
-     * as a double (See <tt>parseDouble()</tt> for allowable formats).
+     * as a double (See {@code parseDouble()} for allowable formats).
      * @throws RuntimeException if the supplied parameter is not {@link NumberEval},
      * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
      */
@@ -266,7 +263,7 @@ public final class OperandResolver {
             if (dd == null) {
                 throw EvaluationException.invalidValue();
             }
-            return dd.doubleValue();
+            return dd;
         }
         throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
     }
@@ -274,8 +271,8 @@ public final class OperandResolver {
     /**
      * Converts a string to a double using standard rules that Excel would use.<br>
      * Tolerates leading and trailing spaces, <p>
-     * 
-     * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.  
+     *
+     * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.
      *
      *  Some examples:<br>
      *  " 123 " -&gt; 123.0<br>
@@ -288,7 +285,7 @@ public final class OperandResolver {
      *  "5**2" -&gt; 500<br>
      *  "250%" -&gt; 2.5<br>
      *
-     * @return <code>null</code> if the specified text cannot be parsed as a number
+     * @return {@code null} if the specified text cannot be parsed as a number
      */
     public static Double parseDouble(String pText) {
 
@@ -301,7 +298,7 @@ public final class OperandResolver {
         else {
             return null;
         }
-        
+
     }
 
     public static Double parseDateTime(String pText) {
@@ -315,8 +312,8 @@ public final class OperandResolver {
     }
 
     /**
-     * @param ve must be a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>, or <tt>BlankEval</tt>
-     * @return the converted string value. never <code>null</code>
+     * @param ve must be a {@code NumberEval}, {@code StringEval}, {@code BoolEval}, or {@code BlankEval}
+     * @return the converted string value. never {@code null}
      */
     public static String coerceValueToString(ValueEval ve) {
         if (ve instanceof StringValueEval) {
@@ -330,7 +327,7 @@ public final class OperandResolver {
     }
 
     /**
-     * @return <code>null</code> to represent blank values
+     * @return {@code null} to represent blank values
      * @throws EvaluationException if ve is an ErrorEval, or if a string value cannot be converted
      */
     public static Boolean coerceValueToBoolean(ValueEval ve, boolean stringsAreBlanks) throws EvaluationException {
@@ -340,7 +337,7 @@ public final class OperandResolver {
             return null;
         }
         if (ve instanceof BoolEval) {
-            return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
+            return ((BoolEval) ve).getBooleanValue();
         }
 
         if (ve instanceof StringEval) {
@@ -364,7 +361,7 @@ public final class OperandResolver {
             if (Double.isNaN(d)) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
-            return Boolean.valueOf(d != 0);
+            return d != 0;
         }
         if (ve instanceof ErrorEval) {
             throw new EvaluationException((ErrorEval) ve);

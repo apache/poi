@@ -64,12 +64,14 @@ import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
  */
 public final class Match extends Var2or3ArgFunction {
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		// default match_type is 1.0
 		return eval(srcRowIndex, srcColumnIndex, arg0, arg1, 1.0);
 	}
 
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2) {
 
@@ -111,7 +113,8 @@ public final class Match extends Var2or3ArgFunction {
 			_value = value;
 		}
 
-		public ValueEval getItem(int index) {
+		@Override
+        public ValueEval getItem(int index) {
 			if (index != 0) {
 				throw new RuntimeException("Invalid index ("
 						+ index + ") only zero is allowed");
@@ -119,6 +122,7 @@ public final class Match extends Var2or3ArgFunction {
 			return _value;
 		}
 
+		@Override
 		public int getSize() {
 			return 1;
 		}

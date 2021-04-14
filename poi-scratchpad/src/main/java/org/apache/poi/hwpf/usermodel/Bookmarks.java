@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * User-friendly interface to access document bookmarks
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public interface Bookmarks
 {
@@ -50,7 +48,7 @@ public interface Bookmarks
 
     /**
      * Remove bookmark from document (but not the bookmark text)
-     * 
+     *
      * @param index
      *            bookmark document index to be removed
      */

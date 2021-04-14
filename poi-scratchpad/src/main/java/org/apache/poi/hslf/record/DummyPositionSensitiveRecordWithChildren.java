@@ -31,8 +31,6 @@ import org.apache.poi.util.LittleEndian;
  *  disk this is, but not much else.
  * Anything done using this should quite quickly be transitioned to its
  *  own proper record class!
- *
- * @author Nick Burch
  */
 
 public final class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer

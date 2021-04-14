@@ -40,9 +40,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.ChartsheetDocument;
  * High level representation of Sheet Parts that are of type 'chartsheet'.
  * <p>
  *  Chart sheet is a special kind of Sheet that contains only chart and no data.
- * </p>
- *
- * @author Yegor Kozlov
  */
 public class XSSFChartSheet extends XSSFSheet  {
 
@@ -56,7 +53,8 @@ public class XSSFChartSheet extends XSSFSheet  {
     protected XSSFChartSheet(PackagePart part) {
         super(part);
     }
-    
+
+    @Override
     protected void read(InputStream is) throws IOException {
         //initialize the supeclass with a blank worksheet
         super.read(new ByteArrayInputStream(BLANK_WORKSHEET));
@@ -81,12 +79,12 @@ public class XSSFChartSheet extends XSSFSheet  {
     protected CTDrawing getCTDrawing() {
        return chartsheet.getDrawing();
     }
-    
+
     @Override
     protected CTLegacyDrawing getCTLegacyDrawing() {
        return chartsheet.getLegacyDrawing();
     }
-    
+
     @Override
     protected void write(OutputStream out) throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);

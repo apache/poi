@@ -38,8 +38,6 @@ import org.apache.poi.util.StringUtil;
  * It keeps all the information needed to define the attributes of a font,
  * such as height, width, etc. For more information, consult the
  * Windows API Programmer's reference.
- *
- * @author Yegor Kozlov
  */
 
 public final class FontEntityAtom extends RecordAtom {

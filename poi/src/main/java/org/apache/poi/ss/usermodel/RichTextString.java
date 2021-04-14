@@ -18,14 +18,11 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * Rich text unicode string.  These strings can have fonts 
+ * Rich text unicode string.  These strings can have fonts
  *  applied to arbitary parts of the string.
- *  
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Jason Height (jheight at apache.org)
  */
 public interface RichTextString {
-    
+
     /**
      * Applies a font to the specified characters of a string.
      *

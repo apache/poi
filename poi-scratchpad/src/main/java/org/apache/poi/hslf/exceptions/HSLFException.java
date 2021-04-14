@@ -19,8 +19,6 @@ package org.apache.poi.hslf.exceptions;
 
 /**
  * A generic exception that can be thrown by HSLF classes
- *
- * @author Yegor Kozlov
  */
 public final class HSLFException extends RuntimeException {
 

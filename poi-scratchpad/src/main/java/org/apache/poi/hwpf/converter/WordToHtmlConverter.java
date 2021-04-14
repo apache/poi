@@ -67,8 +67,8 @@ import org.w3c.dom.Text;
 public class WordToHtmlConverter extends AbstractWordConverter
 {
     /**
-     * Holds properties values, applied to current <tt>p</tt> element. Those
-     * properties shall not be doubled in children <tt>span</tt> elements.
+     * Holds properties values, applied to current {@code p} element. Those
+     * properties shall not be doubled in children {@code span} elements.
      */
     private static class BlockProperies
     {
@@ -91,7 +91,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     private Element notes;
 
     /**
-     * Creates new instance of {@link WordToHtmlConverter}. Can be used for
+     * Creates new instance of WordToHtmlConverter. Can be used for
      * output several {@link HWPFDocument}s into single HTML document.
      *
      * @param document XML DOM Document used as HTML document
@@ -132,7 +132,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     /**
-     * Java main() interface to interact with {@link WordToHtmlConverter}<p>
+     * Java main() interface to interact with WordToHtmlConverter<p>
      *
      * Usage: WordToHtmlConverter infile outfile<p>
      *

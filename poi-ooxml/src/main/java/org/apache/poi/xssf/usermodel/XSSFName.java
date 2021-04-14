@@ -50,12 +50,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  *   name2.setRefersToFormula("Sheet1!$B$3");
  *
  * </blockquote></pre>
- *
- * @author Nick Burch
- * @author Yegor Kozlov
  */
 public final class XSSFName implements Name {
-    
+
     /**
      * A built-in defined name that specifies the workbook's print area
      */
@@ -356,30 +353,30 @@ public final class XSSFName implements Name {
         XSSFName cf = (XSSFName) o;
         return _ctName.toString().equals(cf.getCTName().toString());
     }
-    
+
     /**
      * https://support.office.com/en-us/article/Define-and-use-names-in-formulas-4D0F13AC-53B7-422E-AFD2-ABD7FF379C64#bmsyntax_rules_for_names
-     * 
+     *
      * Valid characters:
      *   First character: { letter | underscore | backslash }
      *   Remaining characters: { letter | number | period | underscore }
-     *   
+     *
      * Cell shorthand: cannot be { "C" | "c" | "R" | "r" }
-     * 
+     *
      * Cell references disallowed: cannot be a cell reference $A$1 or R1C1
-     * 
+     *
      * Spaces are not valid (follows from valid characters above)
-     * 
+     *
      * Name length: (XSSF-specific?) 255 characters maximum
-     * 
+     *
      * Case sensitivity: all names are case-insensitive
-     * 
+     *
      * Uniqueness: must be unique (for names with the same scope)
      *
      * @param name
      */
     private static void validateName(String name) {
-        
+
         if (name.length() == 0) {
             throw new IllegalArgumentException("Name cannot be blank");
         }
@@ -389,7 +386,7 @@ public final class XSSFName implements Name {
         if (name.equalsIgnoreCase("R") || name.equalsIgnoreCase("C")) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be special shorthand R or C");
         }
-        
+
         // is first character valid?
         char c = name.charAt(0);
         String allowedSymbols = "_\\";
@@ -397,7 +394,7 @@ public final class XSSFName implements Name {
         if (!characterIsValid) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': first character must be underscore or a letter");
         }
-        
+
         // are all other characters valid?
         allowedSymbols = "_.\\"; //backslashes needed for unicode escape
         for (final char ch : name.toCharArray()) {
@@ -406,13 +403,13 @@ public final class XSSFName implements Name {
                 throw new IllegalArgumentException("Invalid name: '"+name+"': name must be letter, digit, period, or underscore");
             }
         }
-        
+
         // Is the name a valid $A$1 cell reference
         // Because $, :, and ! are disallowed characters, A1-style references become just a letter-number combination
         if (name.matches("[A-Za-z]+\\d+")) {
             String col = name.replaceAll("\\d", "");
             String row = name.replaceAll("[A-Za-z]", "");
-            
+
             try {
                 if (CellReference.cellReferenceIsWithinRange(col, row, SpreadsheetVersion.EXCEL2007)) {
                     throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be $A$1-style cell reference");
@@ -422,7 +419,7 @@ public final class XSSFName implements Name {
                 // therefore name passes the not-a-cell-reference criteria
             }
         }
-        
+
         // Is the name a valid R1C1 cell reference?
         if (name.matches("[Rr]\\d+[Cc]\\d+")) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be R1C1-style cell reference");

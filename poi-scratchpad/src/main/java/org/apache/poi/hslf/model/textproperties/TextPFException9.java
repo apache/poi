@@ -35,9 +35,6 @@ import org.apache.poi.util.LittleEndian;
  * this means the default values will be used: statNumber=1 and sheme=ANM_ArabicPeriod
  * @see <a href="http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28">
  *     http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28</a>
- *
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
- *
  */
 public class TextPFException9 implements GenericRecord {
 

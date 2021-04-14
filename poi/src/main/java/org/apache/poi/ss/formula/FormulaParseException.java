@@ -22,8 +22,6 @@ package org.apache.poi.ss.formula;
  * supported by POI).  It  is primarily used by test code to confirm specific parsing exceptions.
  * Application code should also handle this exception if it potentially supplies formula text
  * that is not guaranteed to be well-formed.
- *
- * @author Josh Micich
  */
 public final class FormulaParseException extends RuntimeException {
 

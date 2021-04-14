@@ -49,10 +49,6 @@ import org.apache.tools.ant.taskdefs.Typedef;
 /**
  * A general utility class that abstracts the POI details of loading the
  * workbook, accessing and updating cells.
- *
- * @author Jon Svede (jon [at] loquatic [dot] com)
- * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
- *
  */
 public class ExcelAntWorkbookUtil extends Typedef {
 

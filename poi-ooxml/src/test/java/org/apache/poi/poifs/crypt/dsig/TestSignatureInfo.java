@@ -412,6 +412,7 @@ class TestSignatureInfo {
         CommitableWorkbook(OPCPackage pkg) throws IOException {
             super(pkg);
         }
+        @Override
         public void commit() throws IOException {
             super.commit();
         }

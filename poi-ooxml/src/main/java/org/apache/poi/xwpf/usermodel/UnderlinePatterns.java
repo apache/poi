@@ -22,8 +22,6 @@ import java.util.Map;
 /**
  * Specifies the types of patterns which may be used to create the underline
  * applied beneath the text in a run.
- *
- * @author Gisella Bronzetti
  */
 public enum UnderlinePatterns {
 

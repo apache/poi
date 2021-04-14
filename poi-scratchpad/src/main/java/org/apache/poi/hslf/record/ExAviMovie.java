@@ -20,8 +20,6 @@ package org.apache.poi.hslf.record;
 
 /**
  * A container record that specifies information about a movie stored externally.
- *
- * @author Yegor Kozlov
  */
 public final class ExAviMovie extends ExMCIMovie {
 

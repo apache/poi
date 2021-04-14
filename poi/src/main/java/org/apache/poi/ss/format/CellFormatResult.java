@@ -22,24 +22,23 @@ import java.awt.Color;
  * This object contains the result of applying a cell format or cell format part
  * to a value.
  *
- * @author Ken Arnold, Industrious Media LLC
  * @see CellFormatPart#apply(Object)
  * @see CellFormat#apply(Object)
  */
 public class CellFormatResult {
     /**
-     * This is <tt>true</tt> if no condition was given that applied to the
+     * This is {@code true} if no condition was given that applied to the
      * value, or if the condition is satisfied.  If a condition is relevant, and
-     * when applied the value fails the test, this is <tt>false</tt>.
+     * when applied the value fails the test, this is {@code false}.
      */
     public final boolean applies;
 
-    /** The resulting text.  This will never be <tt>null</tt>. */
+    /** The resulting text.  This will never be {@code null}. */
     public final String text;
 
     /**
-     * The color the format sets, or <tt>null</tt> if the format sets no color.
-     * This will always be <tt>null</tt> if {@link #applies} is <tt>false</tt>.
+     * The color the format sets, or {@code null} if the format sets no color.
+     * This will always be {@code null} if {@link #applies} is {@code false}.
      */
     public final Color textColor;
 

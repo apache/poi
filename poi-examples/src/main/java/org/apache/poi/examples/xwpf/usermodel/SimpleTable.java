@@ -45,9 +45,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
  * that not all referenced wordprocessingml classes are defined in the
  * poi-ooxml-lite jar. If this is the case, you'll need to use the
  * poi-ooxml-full jar library.
- *
- * @author gisella bronzetti (original)
- * @author Gregg Morris (styled table)
  */
 public class SimpleTable {
 

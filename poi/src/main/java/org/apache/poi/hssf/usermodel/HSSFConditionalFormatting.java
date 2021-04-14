@@ -23,55 +23,45 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 
- * 
- * The class can be used 
- * 
- * <UL>
- * <LI>
- * to make a copy HSSFConditionalFormatting settings.
- * </LI>
- *  
- * 
+ * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting.
+ *
+ * The class can be used to make a copy HSSFConditionalFormatting settings.
+ *
+ *
  * For example:
- * <PRE>
+ * <pre>{@code
  * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
  * newSheet.addConditionalFormatting(cf);
- * </PRE>
- * 
- *  <LI>
- *  or to modify existing Conditional Formatting settings (formatting regions and/or rules).
- *  </LI>
- *  </UL>
- * 
+ * }</pre>
+ *
+ *  or to modify existing Conditional Formatting settings (formatting regions and/or rules).<p>
+ *
  * Use {@link org.apache.poi.hssf.usermodel.HSSFSheet#getSheetConditionalFormatting()} to get access to an instance of this class.
  * <P>
  * To create a new Conditional Formatting set use the following approach:
- * 
- * <PRE>
- * 
+ *
+ * <pre>{@code
  * // Define a Conditional Formatting rule, which triggers formatting
  * // when cell's value is greater or equal than 100.0 and
  * // applies patternFormatting defined below.
  * HSSFConditionalFormattingRule rule = sheet.createConditionalFormattingRule(
- *     ComparisonOperator.GE, 
- *     "100.0", // 1st formula 
+ *     ComparisonOperator.GE,
+ *     "100.0", // 1st formula
  *     null     // 2nd formula is not used for comparison operator GE
  * );
- * 
+ *
  * // Create pattern with red background
  * HSSFPatternFormatting patternFmt = rule.cretePatternFormatting();
  * patternFormatting.setFillBackgroundColor(HSSFColor.RED.index);
- * 
+ *
  * // Define a region containing first column
- * Region [] regions =
- * {
+ * Region [] regions = {
  *     new Region(1,(short)1,-1,(short)1)
  * };
- *     
- * // Apply Conditional Formatting rule defined above to the regions  
+ *
+ * // Apply Conditional Formatting rule defined above to the regions
  * sheet.addConditionalFormatting(regions, rule);
- * </PRE>
+ * }</pre>
  */
 public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     private final HSSFSheet sheet;
@@ -84,7 +74,7 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
         if(cfAggregate == null) {
             throw new IllegalArgumentException("cfAggregate must not be null");
         }
-        this.sheet = sheet; 
+        this.sheet = sheet;
         this.cfAggregate = cfAggregate;
     }
     CFRecordsAggregate getCFRecordsAggregate() {
@@ -92,7 +82,7 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     }
 
     /**
-     * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
+     * @return array of {@code CellRangeAddress}s. never {@code null}
      */
     @Override
     public CellRangeAddress[] getFormattingRanges() {
@@ -106,11 +96,11 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     }
 
     /**
-     * Replaces an existing Conditional Formatting rule at position idx. 
+     * Replaces an existing Conditional Formatting rule at position idx.
      * Older versions of Excel only allow up to 3 Conditional Formatting rules,
      *  and will ignore rules beyond that, while newer versions are fine.
      * This method can be useful to modify existing  Conditional Formatting rules.
-     * 
+     *
      * @param idx position of the rule. Should be between 0 and 2 for older Excel versions
      * @param cfRule - Conditional Formatting rule
      */
@@ -124,7 +114,7 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     }
 
     /**
-     * add a Conditional Formatting rule. 
+     * add a Conditional Formatting rule.
      * Excel allows to create up to 3 Conditional Formatting rules.
      * @param cfRule - Conditional Formatting rule
      */

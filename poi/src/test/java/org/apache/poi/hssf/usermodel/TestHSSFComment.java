@@ -48,8 +48,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests TestHSSFCellComment.
- *
- * @author  Yegor Kozlov
  */
 final class TestHSSFComment extends BaseTestCellComment {
 

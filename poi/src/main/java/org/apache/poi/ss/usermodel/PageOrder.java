@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Specifies printed page order.
- *
- * @author Gisella Bronzetti
  */
 public enum PageOrder {
 

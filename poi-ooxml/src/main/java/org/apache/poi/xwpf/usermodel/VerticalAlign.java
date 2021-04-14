@@ -24,8 +24,6 @@ import java.util.Map;
  * relation to the default appearance of the run's text. This allows the text to
  * be repositioned as subscript or superscript without altering the font size of
  * the run properties.
- *
- * @author Gisella Bronzetti
  */
 public enum VerticalAlign {
 

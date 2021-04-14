@@ -24,8 +24,6 @@ import org.apache.poi.util.IntMapper;
 /**
  * This class handles serialization of SST records.  It utilizes the record processor
  * class write individual records. This has been refactored from the SSTRecord class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 final class SSTSerializer {
 

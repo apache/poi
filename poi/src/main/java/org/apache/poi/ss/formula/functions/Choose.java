@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-/**
- * @author Josh Micich
- */
 public final class Choose implements Function {
 
 	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {

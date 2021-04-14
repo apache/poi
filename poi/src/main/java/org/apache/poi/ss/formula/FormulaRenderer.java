@@ -26,14 +26,12 @@ import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
 
 /**
- * Common logic for rendering formulas.<br>
- *
- * For POI internal use only
- *
- * @author Josh Micich
+ * Common logic for rendering formulas.
  */
+@Internal
 public class FormulaRenderer {
 
     /**

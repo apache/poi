@@ -30,8 +30,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
  * <b>Syntax:</b><br>
  * <b>ERROR.TYPE</b>(<b>errorValue</b>)</p>
  * <p>
- * Returns a number corresponding to the error type of the supplied argument.<p>
- * <p>
+ * Returns a number corresponding to the error type of the supplied argument.
  *    <table border="1" cellpadding="1" cellspacing="1" summary="Return values for ERROR.TYPE()">
  *      <tr><td>errorValue</td><td>Return Value</td></tr>
  *      <tr><td>#NULL!</td><td>1</td></tr>
@@ -45,13 +44,11 @@ import org.apache.poi.ss.usermodel.FormulaError;
  *    </table>
  *
  * Note - the results of ERROR.TYPE() are different to the constants defined in
- * <tt>ErrorConstants</tt>.
- * </p>
- *
- * @author Josh Micich
+ * {@code ErrorConstants}.
  */
 public final class Errortype extends Fixed1ArgFunction {
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
 		try {

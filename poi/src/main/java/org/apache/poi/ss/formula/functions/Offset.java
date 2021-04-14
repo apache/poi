@@ -37,8 +37,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <b>cols</b> is the number of columns left or right from the base reference.<br>
  * <b>height</b> (default same height as base reference) is the row count for the returned area reference.<br>
  * <b>width</b> (default same width as base reference) is the column count for the returned area reference.<br>
- *
- * @author Josh Micich
  */
 public final class Offset implements Function {
     // These values are specific to BIFF8
@@ -79,7 +77,7 @@ public final class Offset implements Function {
          *
          * @param translationAmount may be zero negative or positive
          *
-         * @return the equivalent <tt>LinearOffsetRange</tt> with a positive length, moved by the
+         * @return the equivalent {@code LinearOffsetRange} with a positive length, moved by the
          * specified translationAmount.
          */
         public LinearOffsetRange normaliseAndTranslate(int translationAmount) {
@@ -93,20 +91,10 @@ public final class Offset implements Function {
         }
 
         public boolean isOutOfBounds(int lowValidIx, int highValidIx) {
-            if(_offset < lowValidIx) {
-                return true;
-            }
-            if(getLastIndex() > highValidIx) {
-                return true;
-            }
-            return false;
+            return _offset < lowValidIx || getLastIndex() > highValidIx;
         }
         public String toString() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append(getClass().getName()).append(" [");
-            sb.append(_offset).append("...").append(getLastIndex());
-            sb.append("]");
-            return sb.toString();
+            return getClass().getName() + " [" + _offset + "..." + getLastIndex() + "]";
         }
     }
 
@@ -161,6 +149,7 @@ public final class Offset implements Function {
         }
     }
 
+    @Override
     @SuppressWarnings("fallthrough")
     public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
         if(args.length < 1 || args.length > 5) {

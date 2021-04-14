@@ -39,6 +39,7 @@ public class CellNumberPartHandler implements PartHandler {
     private final List<Special> specials = new LinkedList<>();
     private boolean improperFraction;
 
+    @Override
     public String handlePart(Matcher m, String part, CellFormatType type, StringBuffer descBuf) {
         int pos = descBuf.length();
         char firstCh = part.charAt(0);
@@ -148,7 +149,7 @@ public class CellNumberPartHandler implements PartHandler {
         }
         return null;
     }
-    
+
     private static boolean isDigitFmt(Special s) {
         return s.ch == '0' || s.ch == '?' || s.ch == '#';
     }

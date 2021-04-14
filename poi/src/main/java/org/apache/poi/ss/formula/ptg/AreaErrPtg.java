@@ -54,7 +54,8 @@ public final class AreaErrPtg extends OperandPtg {
 		return FormulaError.REF.getString();
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
 

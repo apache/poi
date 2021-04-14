@@ -113,6 +113,7 @@ public final class ArrayPtg extends Ptg {
 		return result;
 	}
 
+	@Override
 	public boolean isBaseToken() {
 		return false;
 	}
@@ -208,7 +209,8 @@ public final class ArrayPtg extends Ptg {
 		throw new IllegalArgumentException("Unexpected constant class (" + o.getClass().getName() + ")");
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_ARRAY;
 	}
 

@@ -20,9 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 
-/**
- * @author Yegor Kozlov
- */
 final class TestHSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     public TestHSSFSheetShiftRows() {

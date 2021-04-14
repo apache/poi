@@ -21,8 +21,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implemented by all functions that can be called with two arguments
- *
- * @author Josh Micich
  */
 public interface Function2Arg extends Function {
 	/**

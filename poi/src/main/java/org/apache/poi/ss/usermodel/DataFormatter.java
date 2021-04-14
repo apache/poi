@@ -66,26 +66,25 @@ import org.apache.poi.util.LocaleUtil;
  * prefix or suffix.
  * </p>
  * <p>
- * For example the Excel pattern <code>"$#,##0.00 "USD"_);($#,##0.00 "USD")"
- * </code> will be correctly formatted as "$1,000.00 USD" or "($1,000.00 USD)".
- * However the pattern <code>"00-00-00"</code> is incorrectly formatted by
+ * For example the Excel pattern {@code "$#,##0.00 "USD"_);($#,##0.00 "USD")"
+ * } will be correctly formatted as "$1,000.00 USD" or "($1,000.00 USD)".
+ * However the pattern {@code "00-00-00"} is incorrectly formatted by
  * DecimalFormat as "000000--". For Excel formats that are not compatible with
  * DecimalFormat, you can provide your own custom {@link Format} implementation
- * via <code>DataFormatter.addFormat(String,Format)</code>. The following
+ * via {@code DataFormatter.addFormat(String,Format)}. The following
  * custom formats are already provided by this class:
  * </p>
- * <pre>
- * <ul><li>SSN "000-00-0000"</li>
- *     <li>Phone Number "(###) ###-####"</li>
- *     <li>Zip plus 4 "00000-0000"</li>
- * </ul>
- * </pre>
+ * <pre>{@code
+ * SSN "000-00-0000"
+ * Phone Number "(###) ###-####"
+ * Zip plus 4 "00000-0000"
+ * }</pre>
  * <p>
  * If the Excel format pattern cannot be parsed successfully, then a default
  * format will be used. The default number format will mimic the Excel General
  * format: "#" for whole numbers and "#.##########" for decimal numbers. You
- * can override the default format pattern with <code>
- * DataFormatter.setDefaultNumberFormat(Format)</code>. <b>Note:</b> the
+ * can override the default format pattern with {@code
+ * DataFormatter.setDefaultNumberFormat(Format)}. <b>Note:</b> the
  * default format will only be used when a Format cannot be created from the
  * cell's data format string.
  *
@@ -95,24 +94,24 @@ import org.apache.poi.util.LocaleUtil;
  * </p>
  * <p>Example:</p>
  * <p>
- * Consider a numeric cell with a value <code>12.343</code> and format <code>"##.##_ "</code>.
- *  The trailing underscore and space ("_ ") in the format adds a space to the end and Excel formats this cell as <code>"12.34 "</code>,
- *  but <code>DataFormatter</code> trims the formatted value and returns <code>"12.34"</code>.
+ * Consider a numeric cell with a value {@code 12.343} and format {@code "##.##_ "}.
+ *  The trailing underscore and space ("_ ") in the format adds a space to the end and Excel formats this cell as {@code "12.34 "},
+ *  but {@code DataFormatter} trims the formatted value and returns {@code "12.34"}.
  * </p>
- * You can enable spaces by passing the <code>emulateCSV=true</code> flag in the <code>DateFormatter</code> cosntructor.
+ * You can enable spaces by passing the {@code emulateCSV=true} flag in the {@code DateFormatter} cosntructor.
  * If set to true, then the output tries to conform to what you get when you take an xls or xlsx in Excel and Save As CSV file:
  * <ul>
  *  <li>returned values are not trimmed</li>
  *  <li>Invalid dates are formatted as  255 pound signs ("#")</li>
  *  <li>simulate Excel's handling of a format string of all # when the value is 0.
- *   Excel will output "", <code>DataFormatter</code> will output "0".
+ *   Excel will output "", {@code DataFormatter} will output "0".
  * </ul>
  * <p>
  *  Some formats are automatically "localized" by Excel, eg show as mm/dd/yyyy when
  *   loaded in Excel in some Locales but as dd/mm/yyyy in others. These are always
  *   returned in the "default" (US) format, as stored in the file.
  *  Some format strings request an alternate locale, eg
- *   <code>[$-809]d/m/yy h:mm AM/PM</code> which explicitly requests UK locale.
+ *   {@code [$-809]d/m/yy h:mm AM/PM} which explicitly requests UK locale.
  *   These locale directives are (currently) ignored.
  *  You can use {@link DateFormatConverter} to do some of this localisation if
  *   you need it.
@@ -269,7 +268,7 @@ public class DataFormatter {
 
     /**
      * Return a Format for the given cell if one exists, otherwise try to
-     * create one. This method will return <code>null</code> if any of the
+     * create one. This method will return {@code null} if any of the
      * following is true:
      * <ul>
      * <li>the cell's style is null</li>
@@ -685,7 +684,7 @@ public class DataFormatter {
     private static class InternalDecimalFormatWithScale extends Format {
 
         private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
-        private BigDecimal divider;
+        private final BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
         private final DecimalFormat df;
         private static String trimTrailingCommas(String s) {
@@ -798,8 +797,8 @@ public class DataFormatter {
     }
 
     /**
-     * Returns the formatted value of an Excel date as a <tt>String</tt> based
-     * on the cell's <code>DataFormat</code>. i.e. "Thursday, January 02, 2003"
+     * Returns the formatted value of an Excel date as a {@code String} based
+     * on the cell's {@code DataFormat}. i.e. "Thursday, January 02, 2003"
      * , "01/02/2003" , "02-Jan" , etc.
      * <p>
      * If any conditional format rules apply, the highest priority with a number format is used.
@@ -839,8 +838,8 @@ public class DataFormatter {
     }
 
     /**
-     * Returns the formatted value of an Excel number as a <tt>String</tt>
-     * based on the cell's <code>DataFormat</code>. Supported formats include
+     * Returns the formatted value of an Excel number as a {@code String}
+     * based on the cell's {@code DataFormat}. Supported formats include
      * currency, percents, decimals, phone number, SSN, etc.:
      * "61.54%", "$100.00", "(800) 555-1234".
      * <p>
@@ -929,7 +928,7 @@ public class DataFormatter {
 
     /**
      * <p>
-     * Returns the formatted value of a cell as a <tt>String</tt> regardless
+     * Returns the formatted value of a cell as a {@code String} regardless
      * of the cell type. If the Excel format pattern cannot be parsed then the
      * cell value will be formatted using a default format.
      * </p>
@@ -946,7 +945,7 @@ public class DataFormatter {
 
     /**
      * <p>
-     * Returns the formatted value of a cell as a <tt>String</tt> regardless
+     * Returns the formatted value of a cell as a {@code String} regardless
      * of the cell type. If the Excel number format pattern cannot be parsed then the
      * cell value will be formatted using a default format.
      * </p>
@@ -967,7 +966,7 @@ public class DataFormatter {
 
     /**
      * <p>
-     * Returns the formatted value of a cell as a <tt>String</tt> regardless
+     * Returns the formatted value of a cell as a {@code String} regardless
      * of the cell type. If the Excel number format pattern cannot be parsed then the
      * cell value will be formatted using a default format.
      * </p>
@@ -1038,9 +1037,9 @@ public class DataFormatter {
      * </p>
      * <p>
      * The value that will be passed to the Format's format method (specified
-     * by <code>java.text.Format#format</code>) will be a double value from a
+     * by {@code java.text.Format#format}) will be a double value from a
      * numeric cell. Therefore the code in the format method should expect a
-     * <code>Number</code> value.
+     * {@code Number} value.
      * </p>
      *
      * @param format A Format instance to be used as a default
@@ -1059,9 +1058,9 @@ public class DataFormatter {
      * Adds a new format to the available formats.
      * <p>
      * The value that will be passed to the Format's format method (specified
-     * by <code>java.text.Format#format</code>) will be a double value from a
+     * by {@code java.text.Format#format}) will be a double value from a
      * numeric cell. Therefore the code in the format method should expect a
-     * <code>Number</code> value.
+     * {@code Number} value.
      * </p>
      * @param excelFormatStr The data format string
      * @param format A Format instance
@@ -1073,7 +1072,7 @@ public class DataFormatter {
     // Some custom formats
 
     /**
-     * @return a <tt>DecimalFormat</tt> with parseIntegerOnly set <code>true</code>
+     * @return a {@code DecimalFormat} with parseIntegerOnly set {@code true}
      */
     private static DecimalFormat createIntegerOnlyFormat(String fmt) {
         DecimalFormatSymbols dsf = DecimalFormatSymbols.getInstance(Locale.ROOT);
@@ -1164,8 +1163,6 @@ public class DataFormatter {
     /**
      * Format class for Excel's SSN format. This class mimics Excel's built-in
      * SSN formatting.
-     *
-     * @author James May
      */
     @SuppressWarnings("serial")
    private static final class SSNFormat extends Format {
@@ -1197,7 +1194,6 @@ public class DataFormatter {
     /**
      * Format class for Excel Zip + 4 format. This class mimics Excel's
      * built-in formatting for Zip + 4.
-     * @author James May
      */
     @SuppressWarnings("serial")
    private static final class ZipPlusFourFormat extends Format {
@@ -1228,7 +1224,6 @@ public class DataFormatter {
     /**
      * Format class for Excel phone number format. This class mimics Excel's
      * built-in phone number formatting.
-     * @author James May
      */
     @SuppressWarnings("serial")
    private static final class PhoneFormat extends Format {
@@ -1312,6 +1307,7 @@ public class DataFormatter {
         private CellFormatResultWrapper(CellFormatResult result) {
             this.result = result;
         }
+        @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             if (emulateCSV) {
                 return toAppendTo.append(result.text);
@@ -1319,6 +1315,7 @@ public class DataFormatter {
                 return toAppendTo.append(result.text.trim());
             }
         }
+        @Override
         public Object parseObject(String source, ParsePosition pos) {
             return null; // Not supported
         }

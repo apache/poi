@@ -22,10 +22,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- */
 public abstract class BaseTestNumeric {
 
     public static final double POS_ZERO = 1E-4;

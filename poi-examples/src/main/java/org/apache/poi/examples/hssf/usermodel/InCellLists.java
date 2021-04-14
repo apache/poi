@@ -46,8 +46,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * are not strictly necessary. If the inputs to the listInCell() and
  * multilLevelListInCell() methods are constructed to include the bullet
  * character or the item numbers then these methods alone may be sufficient.
- *
- * @author Mark Beardsley [msb at apache.org]
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public class InCellLists {

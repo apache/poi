@@ -24,8 +24,6 @@ import java.util.Arrays;
 /**
  * Master container for Notes. There is one of these for every page of
  *  notes, and they have certain specific children
- *
- * @author Nick Burch
  */
 
 public final class Notes extends SheetContainer

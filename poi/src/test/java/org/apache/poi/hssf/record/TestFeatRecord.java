@@ -35,7 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for <tt>FeatRecord</tt>
+ * Tests for {@code FeatRecord}
  */
 final class TestFeatRecord {
 	@Test

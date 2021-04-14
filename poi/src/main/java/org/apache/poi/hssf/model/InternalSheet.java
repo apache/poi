@@ -358,6 +358,7 @@ public final class InternalSheet {
         public RecordCloner(List<Record> destList) {
             _destList = destList;
         }
+        @Override
         public void visitRecord(Record r) {
             _destList.add(r.copy());
         }

@@ -40,8 +40,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
  *  in a sane manner - i.e. records end up in the right place
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestReWriteSanity {
     // HSLFSlideShow primed on the test data

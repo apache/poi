@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Tne atom that holds the seed info used by a ExObjList
- *
- * @author Nick Burch
  */
 
 public class ExObjListAtom extends RecordAtom

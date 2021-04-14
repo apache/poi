@@ -45,8 +45,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Utility to update formulas and named ranges when a sheet name was changed
- *
- * @author Yegor Kozlov
  */
 public final class XSSFFormulaUtils {
     private final XSSFWorkbook _wb;

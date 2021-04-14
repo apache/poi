@@ -33,7 +33,6 @@ import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
@@ -54,9 +53,6 @@ import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
  * This class represents a slide in a PowerPoint Document. It allows
  *  access to the text within, and the layout. For now, it only does
  *  the text side of things though
- *
- * @author Nick Burch
- * @author Yegor Kozlov
  */
 
 public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTextParagraph> {
@@ -154,9 +150,10 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      * Called by SlideShow ater a new slide is created.
      * <p>
      * For Slide we need to do the following:
-     *  <li> set id of the drawing group.
-     *  <li> set shapeId for the container descriptor and background
-     * </p>
+     * <ul>
+     *  <li> set id of the drawing group.</li>
+     *  <li> set shapeId for the container descriptor and background</li>
+     * </ul>
      */
     @Override
     public void onCreate(){
@@ -191,9 +188,9 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
 	/**
-	 * Create a <code>TextBox</code> object that represents the slide's title.
+	 * Create a {@code TextBox} object that represents the slide's title.
 	 *
-	 * @return <code>TextBox</code> object that represents the slide's title.
+	 * @return {@code TextBox} object that represents the slide's title.
 	 */
 	public HSLFTextBox addTitle() {
 		HSLFPlaceholder pl = new HSLFPlaceholder();
@@ -211,8 +208,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 
 	/**
 	 * <p>
-	 * The title is a run of text of type <code>TextHeaderAtom.CENTER_TITLE_TYPE</code> or
-	 * <code>TextHeaderAtom.TITLE_TYPE</code>
+	 * The title is a run of text of type {@code TextHeaderAtom.CENTER_TITLE_TYPE} or
+	 * {@code TextHeaderAtom.TITLE_TYPE}
 	 * </p>
 	 *
 	 * @see TextHeaderAtom
@@ -259,7 +256,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
 	/**
-	 * @return set of records inside <code>SlideListWithtext</code> container
+	 * @return set of records inside {@code SlideListWithtext} container
 	 *  which hold text data for this slide (typically for placeholders).
 	 */
 	protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
@@ -298,8 +295,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Sets whether this slide follows master background
      *
-     * @param flag  <code>true</code> if the slide follows master,
-     * <code>false</code> otherwise
+     * @param flag  {@code true} if the slide follows master,
+     * {@code false} otherwise
      */
     @Override
     public void setFollowMasterBackground(boolean flag){
@@ -310,8 +307,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Whether this slide follows master sheet background
      *
-     * @return <code>true</code> if the slide follows master background,
-     * <code>false</code> otherwise
+     * @return {@code true} if the slide follows master background,
+     * {@code false} otherwise
      */
     @Override
     public boolean getFollowMasterBackground(){
@@ -322,8 +319,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Sets whether this slide draws master sheet objects
      *
-     * @param flag  <code>true</code> if the slide draws master sheet objects,
-     * <code>false</code> otherwise
+     * @param flag  {@code true} if the slide draws master sheet objects,
+     * {@code false} otherwise
      */
     @Override
     public void setFollowMasterObjects(boolean flag){
@@ -334,8 +331,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Whether this slide follows master color scheme
      *
-     * @return <code>true</code> if the slide follows master color scheme,
-     * <code>false</code> otherwise
+     * @return {@code true} if the slide follows master color scheme,
+     * {@code false} otherwise
      */
     public boolean getFollowMasterScheme(){
         SlideAtom sa = getSlideRecord().getSlideAtom();
@@ -345,8 +342,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Sets whether this slide draws master color scheme
      *
-     * @param flag  <code>true</code> if the slide draws master color scheme,
-     * <code>false</code> otherwise
+     * @param flag  {@code true} if the slide draws master color scheme,
+     * {@code false} otherwise
      */
     public void setFollowMasterScheme(boolean flag){
         SlideAtom sa = getSlideRecord().getSlideAtom();
@@ -356,8 +353,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     /**
      * Whether this slide draws master sheet objects
      *
-     * @return <code>true</code> if the slide draws master sheet objects,
-     * <code>false</code> otherwise
+     * @return {@code true} if the slide draws master sheet objects,
+     * {@code false} otherwise
      */
     @Override
     public boolean getFollowMasterObjects(){
@@ -403,6 +400,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      *  PPT 2003 files. Doesn't work for PPT 97
      *  ones, as they do their comments oddly.
      */
+    @Override
     public List<HSLFComment> getComments() {
         final List<HSLFComment> comments = new ArrayList<>();
     	// If there are any, they're in
@@ -427,6 +425,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      *
      * @return Header / Footer settings for this slide
      */
+    @Override
     public HeadersFooters getHeadersFooters(){
         return new HeadersFooters(this, HeadersFootersContainer.SlideHeadersFootersContainer);
     }
@@ -473,7 +472,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         Drawable draw = drawFact.getDrawable(this);
         draw.draw(graphics);
     }
-    
+
     @Override
     public boolean getFollowMasterColourScheme() {
         return false;
@@ -482,7 +481,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     @Override
     public void setFollowMasterColourScheme(boolean follow) {
     }
-    
+
     @Override
     public boolean getFollowMasterGraphics() {
         return getFollowMasterObjects();

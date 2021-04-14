@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
@@ -34,13 +34,8 @@ import org.apache.poi.util.IOUtils;
 /**
  * Test (Proof of concept) program that employs the
  * POIFSReaderListener and POIFSWriterListener interfaces
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public final class ReaderWriter
-    implements POIFSReaderListener, POIFSWriterListener
-{
+public final class ReaderWriter implements POIFSReaderListener, POIFSWriterListener {
     private final DirectoryEntry  root;
 
     // keys are DocumentDescriptors, values are byte[]s

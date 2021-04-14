@@ -74,6 +74,7 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
         return sb.toString();
     }
 
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }

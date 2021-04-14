@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
  * Test the ability to clone a sheet.
  *  If adding new records that belong to a sheet (as opposed to a book)
  *  add that record to the sheet in the testCloneSheetBasic method.
- * @author  avik
  */
 final class TestCloneSheet extends BaseTestCloneSheet {
     public TestCloneSheet() {

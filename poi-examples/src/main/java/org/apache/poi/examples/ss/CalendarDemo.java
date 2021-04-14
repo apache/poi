@@ -45,8 +45,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Usage:
  * CalendarDemo -xls|xlsx &lt;year&gt;
  * </pre>
- *
- * @author Yegor Kozlov
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class CalendarDemo {

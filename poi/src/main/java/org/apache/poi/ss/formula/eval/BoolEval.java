@@ -17,12 +17,9 @@
 
 package org.apache.poi.ss.formula.eval;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- */
 public final class BoolEval implements NumericValueEval, StringValueEval {
 
-	private boolean _value;
+	private final boolean _value;
 
 	public static final BoolEval FALSE = new BoolEval(false);
 
@@ -30,9 +27,9 @@ public final class BoolEval implements NumericValueEval, StringValueEval {
 
 	/**
 	 * Convenience method for the following:<br>
-	 * <code>(b ? BoolEval.TRUE : BoolEval.FALSE)</code>
+	 * {@code (b ? BoolEval.TRUE : BoolEval.FALSE)}
 	 *
-	 * @return the <tt>BoolEval</tt> instance representing <tt>b</tt>.
+	 * @return the {@code BoolEval} instance representing {@code b}.
 	 */
 	public static BoolEval valueOf(boolean b) {
 		return b ? TRUE : FALSE;
@@ -46,10 +43,12 @@ public final class BoolEval implements NumericValueEval, StringValueEval {
 		return _value;
 	}
 
+	@Override
 	public double getNumberValue() {
 		return _value ? 1 : 0;
 	}
 
+	@Override
 	public String getStringValue() {
 		return _value ? "TRUE" : "FALSE";
 	}

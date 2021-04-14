@@ -50,9 +50,6 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-/**
- * @author Roberto Manicardi
- */
 public final class TestXSSFExportToXML {
 
     @Test

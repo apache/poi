@@ -32,6 +32,7 @@ import java.io.IOException;
 public class TempFilePOIFSFileSystem extends POIFSFileSystem {
     File tempFile;
 
+    @Override
     protected void createNewDataSource() {
         try {
             tempFile = TempFile.createTempFile("poifs", ".tmp");
@@ -41,6 +42,7 @@ public class TempFilePOIFSFileSystem extends POIFSFileSystem {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (tempFile != null && tempFile.exists()) tempFile.delete();
         super.close();

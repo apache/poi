@@ -32,8 +32,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 
 /**
  * Represents a shape with a preset geometry.
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFAutoShape extends XSLFTextShape implements AutoShape<XSLFShape, XSLFTextParagraph> {

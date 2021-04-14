@@ -21,8 +21,6 @@ package org.apache.poi.ss.usermodel;
 /**
  * The font family this font belongs to. A font family is a set of fonts having common stroke width and serif
  * characteristics. The font name overrides when there are conflicting values.
- *
- * @author Gisella Bronzetti
  */
 public enum FontFamily {
 

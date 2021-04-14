@@ -36,8 +36,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * <p>
  * Documentation quoted from Page 424 of 621. [MS-DOC] -- v20110315 Word (.doc)
  * Binary File Format
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public class PlfLfo
 {

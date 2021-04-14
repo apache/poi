@@ -43,7 +43,7 @@ final class TestCellRange {
 		biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell,
 	};
 
-	/** cross-reference of <tt>contains()</tt> operations for sampleRanges against itself */
+	/** cross-reference of {@code contains()} operations for sampleRanges against itself */
 	private static final boolean [][] containsExpectedResults =
     {
 	//               biggest, tenthColumn, tenthRow, box10x10, box9x9, box10to20c, oneCell

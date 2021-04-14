@@ -28,7 +28,8 @@ public abstract class OperandPtg extends Ptg {
 	/**
 	 * All Operand {@link Ptg}s are classified ('relative', 'value', 'array')
 	 */
-	public final boolean isBaseToken() {
+	@Override
+    public final boolean isBaseToken() {
 		return false;
 	}
 

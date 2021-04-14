@@ -18,23 +18,20 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
 /**
  * Interface for the signature policy service.
- * 
- * @author Frank Cornelis
- * 
  */
 public interface SignaturePolicyService {
 
     /**
      * Gives back the signature policy identifier URI.
-     * 
+     *
      * @return the signature policy identifier URI.
      */
     String getSignaturePolicyIdentifier();
@@ -42,7 +39,7 @@ public interface SignaturePolicyService {
     /**
      * Gives back the short description of the signature policy or
      * <code>null</code> if a description is not available.
-     * 
+     *
      * @return the description, or <code>null</code>.
      */
     String getSignaturePolicyDescription();
@@ -51,14 +48,14 @@ public interface SignaturePolicyService {
      * Gives back the download URL where the signature policy document can be
      * found. Can be <code>null</code> in case such a download location does not
      * exist.
-     * 
+     *
      * @return the download URL, or <code>null</code>.
      */
     String getSignaturePolicyDownloadUrl();
 
     /**
      * Gives back the signature policy document.
-     * 
+     *
      * @return the bytes of the signature policy document.
      */
     byte[] getSignaturePolicyDocument();

@@ -32,8 +32,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * Word files. The sttbfffn is an sttbf where each string is an FFN structure instead
  * of pascal-style strings. An sttbf is a string Table stored in file. Thus sttbffn
  * is like an Sttbf with an array of FFN structures that stores the font name strings
- *
- * @author Praveen Mathew
  */
 @Internal
 public final class FontTable

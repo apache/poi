@@ -40,8 +40,6 @@ package org.apache.poi.util;
  *      remove(int index)
  * <li> subList is not supported
  * </ul>
- *
- * @author Marc Johnson
  */
 public class IntList
 {

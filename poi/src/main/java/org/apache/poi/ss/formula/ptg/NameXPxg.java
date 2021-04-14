@@ -90,6 +90,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
         return sb.toString();
     }
 
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }

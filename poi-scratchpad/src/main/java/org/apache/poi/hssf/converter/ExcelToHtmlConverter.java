@@ -69,7 +69,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
     private static final Logger LOG = LogManager.getLogger(ExcelToHtmlConverter.class);
 
     /**
-     * Java main() interface to interact with {@link ExcelToHtmlConverter}
+     * Java main() interface to interact with ExcelToHtmlConverter
      *
      * <p>
      * Usage: ExcelToHtmlConverter infile outfile
@@ -266,13 +266,14 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
         return cssClassPrefixTable;
     }
 
+    @Override
     public Document getDocument() {
         return htmlDocumentFacade.getDocument();
     }
 
     protected String getStyleClassName(HSSFWorkbook workbook,
         HSSFCellStyle cellStyle) {
-        final Short cellStyleKey = Short.valueOf(cellStyle.getIndex());
+        final Short cellStyleKey = cellStyle.getIndex();
 
         String knownClass = excelStyleToClass.get(cellStyleKey);
         if (knownClass != null) {
@@ -446,7 +447,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
 
     /**
      * Creates COLGROUP element with width specified for all columns. (Except
-     * first if <tt>{@link #isOutputRowNumbers()}==true</tt>)
+     * first if {@link #isOutputRowNumbers()}{@code ==true})
      */
     protected void processColumnWidths(HSSFSheet sheet, int maxSheetColumns,
         Element table) {

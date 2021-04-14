@@ -29,9 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
- */
 final class TestDate {
 
     private HSSFCell cell11;

@@ -67,7 +67,7 @@ public class POIFSFileSystem extends BlockStore
 
     /**
      * Maximum number size (in blocks) of the allocation table as supported by
-     * POI.<p>
+     * POI.
      * <p>
      * This constant has been chosen to help POI identify corrupted data in the
      * header block (rather than crash immediately with {@link OutOfMemoryError}
@@ -135,8 +135,8 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * <p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     * creating from an <tt>InputStream</tt>. The File will be opened read-only</p>
+     * <p>Creates a POIFSFileSystem from a {@code File}. This uses less memory than
+     * creating from an {@code InputStream}. The File will be opened read-only</p>
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying file closed, as the file is
@@ -151,8 +151,8 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * <p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     * creating from an <tt>InputStream</tt>.</p>
+     * <p>Creates a POIFSFileSystem from a {@code File}. This uses less memory than
+     * creating from an {@code InputStream}.</p>
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying file closed, as the file is
@@ -168,8 +168,8 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses
-     * less memory than creating from an <tt>InputStream</tt>. The stream will
+     * <p>Creates a POIFSFileSystem from an open {@code FileChannel}. This uses
+     * less memory than creating from an {@code InputStream}. The stream will
      * be used in read-only mode.</p>
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
@@ -185,8 +185,8 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses
-     * less memory than creating from an <tt>InputStream</tt>.</p>
+     * <p>Creates a POIFSFileSystem from an open {@code FileChannel}. This uses
+     * less memory than creating from an {@code InputStream}.</p>
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying Channel closed, as the channel is
@@ -240,21 +240,21 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
-     * EOF.  The stream is always closed.<p>
+     * Create a POIFSFileSystem from an {@code InputStream}.  Normally the stream is read until
+     * EOF.  The stream is always closed.
      * <p>
-     * Some streams are usable after reaching EOF (typically those that return <code>true</code>
-     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream
+     * Some streams are usable after reaching EOF (typically those that return {@code true}
+     * for {@code markSupported()}).  In the unlikely case that the caller has such a stream
      * <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
-     * stream in order to trap the <tt>close()</tt> call.  A convenience method (
-     * <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
+     * stream in order to trap the {@code close()} call.  A convenience method (
+     * {@code createNonClosingInputStream()}) has been provided for this purpose:
      * <pre>
      * InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
      * HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
      * is.reset();
      * doSomethingElse(is);
      * </pre>
-     * Note also the special case of <tt>ByteArrayInputStream</tt> for which the <tt>close()</tt>
+     * Note also the special case of {@code ByteArrayInputStream} for which the {@code close()}
      * method does nothing.
      * <pre>
      * ByteArrayInputStream bais = ...
@@ -316,7 +316,7 @@ public class POIFSFileSystem extends BlockStore
 
     /**
      * @param stream  the stream to be closed
-     * @param success <code>false</code> if an exception is currently being thrown in the calling method
+     * @param success {@code false} if an exception is currently being thrown in the calling method
      */
     private void closeInputStream(InputStream stream, boolean success) {
         try {
@@ -902,12 +902,12 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * Creates a new {@link POIFSFileSystem} in a new {@link File}.
+     * Creates a new POIFSFileSystem in a new {@link File}.
      * Use {@link #POIFSFileSystem(File)} to open an existing File,
      * this should only be used to create a new empty filesystem.
      *
      * @param file The file to create and open
-     * @return The created and opened {@link POIFSFileSystem}
+     * @return The created and opened POIFSFileSystem
      */
     public static POIFSFileSystem create(File file) throws IOException {
         // Create a new empty POIFS in the file

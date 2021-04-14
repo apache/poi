@@ -41,9 +41,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests row shifting capabilities.
- *
- * @author Shawn Laubach (slaubach at apache dot com)
- * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
 public abstract class BaseTestSheetShiftRows {
 

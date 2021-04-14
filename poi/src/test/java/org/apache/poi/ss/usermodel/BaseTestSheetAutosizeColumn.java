@@ -35,8 +35,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing automatic sizing of sheet columns
- *
- * @author Yegor Kozlov
  */
 public abstract class BaseTestSheetAutosizeColumn {
 

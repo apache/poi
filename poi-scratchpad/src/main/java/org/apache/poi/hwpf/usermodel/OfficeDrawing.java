@@ -27,13 +27,11 @@ import org.apache.poi.ddf.EscherContainerRecord;
  * <li>[MS-ODRAW] -- v20110608; Office Drawing Binary File Format; Copyright (c)
  * 2011 Microsoft Corporation.
  * </ul>
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public interface OfficeDrawing
 {
 
-    public enum HorizontalPositioning {
+    enum HorizontalPositioning {
 
         /**
          * The shape is horizontally offset by an absolute distance from the
@@ -72,11 +70,11 @@ public interface OfficeDrawing
         RIGHT
     }
 
-    public enum HorizontalRelativeElement {
+    enum HorizontalRelativeElement {
         CHAR, MARGIN, PAGE, TEXT
     }
 
-    public enum VerticalPositioning {
+    enum VerticalPositioning {
 
         /**
          * The shape is vertically offset by an absolute distance from the page
@@ -112,34 +110,34 @@ public interface OfficeDrawing
         TOP
     }
 
-    public enum VerticalRelativeElement {
+    enum VerticalRelativeElement {
         LINE, MARGIN, PAGE, TEXT
     }
 
     /**
      * Returns the type of horizontal positioning to use for a shape
-     * 
+     *
      * @return the type of horizontal positioning to use for a shape
      */
-    public HorizontalPositioning getHorizontalPositioning();
+    HorizontalPositioning getHorizontalPositioning();
 
     /**
      * Specifies a page element relative to which a shape is horizontally
      * positioned
-     * 
+     *
      * @return a page element relative to which a shape is horizontally
      *         positioned
      */
-    public HorizontalRelativeElement getHorizontalRelative();
+    HorizontalRelativeElement getHorizontalRelative();
 
     /**
      * Returns escher record that represent shape container (record type is
-     * <tt>0xF004</tt>). Returned record has a child with record type
-     * <tt>0xF00A</tt> and value of shape id equals to {@link #getShapeId()}.
-     * 
-     * @return Returns office art shape container or <tt>null</tt> if not found
+     * {@code 0xF004}). Returned record has a child with record type
+     * {@code 0xF00A} and value of shape id equals to {@link #getShapeId()}.
+     *
+     * @return Returns office art shape container or {@code null} if not found
      */
-    public EscherContainerRecord getOfficeArtSpContainer();
+    EscherContainerRecord getOfficeArtSpContainer();
 
     /**
      * Returns picture data if this shape has (single?) associated picture data
@@ -174,17 +172,17 @@ public interface OfficeDrawing
 
     /**
      * Specifies the type of vertical positioning to use for a shape
-     * 
+     *
      * @return return the type of vertical positioning to use for a shape
      */
-    public VerticalPositioning getVerticalPositioning();
+    VerticalPositioning getVerticalPositioning();
 
     /**
      * Specifies a page element relative to which a shape is vertically
      * positioned
-     * 
+     *
      * @return a page element relative to which a shape is vertically positioned
      */
-    public VerticalRelativeElement getVerticalRelativeElement();
+    VerticalRelativeElement getVerticalRelativeElement();
 
 }

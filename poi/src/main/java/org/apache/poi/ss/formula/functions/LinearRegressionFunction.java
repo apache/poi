@@ -35,10 +35,7 @@ import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
  * <b>Syntax</b>:<br>
  * <b>INTERCEPT</b>(<b>arrayX</b>, <b>arrayY</b>)<p>
  * or
- * <b>SLOPE</b>(<b>arrayX</b>, <b>arrayY</b>)<p>
- *
- *
- * @author Johan Karlsteen
+ * <b>SLOPE</b>(<b>arrayX</b>, <b>arrayY</b>)
  */
 public final class LinearRegressionFunction extends Fixed2ArgFunction {
 
@@ -48,7 +45,8 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			_size = size;
 		}
 
-		public ValueEval getItem(int index) {
+		@Override
+        public ValueEval getItem(int index) {
 			if (index < 0 || index > _size) {
 				throw new IllegalArgumentException("Specified index " + index
 						+ " is outside range (0.." + (_size - 1) + ")");

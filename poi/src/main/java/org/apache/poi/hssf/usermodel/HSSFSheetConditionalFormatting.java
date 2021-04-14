@@ -31,7 +31,7 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
+ * The 'Conditional Formatting' facet of {@code HSSFSheet}
  */
 public final class HSSFSheetConditionalFormatting implements SheetConditionalFormatting {
     private final HSSFSheet _sheet;
@@ -48,7 +48,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}</tt>: <p>
+     *		 {@code {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}}:
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>
@@ -59,12 +59,13 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      *		 <li>GE</li>
      *		 <li>LE</li>
      * </ul>
-     * </p>
+     *
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
      * {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator#BETWEEN}) and
      * {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator#NOT_BETWEEN} operations)
      */
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
             String formula1,
@@ -73,6 +74,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         return new HSSFConditionalFormattingRule(_sheet, rr);
     }
 
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
             String formula1) {
@@ -87,6 +89,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * TODO - formulas containing cell references are currently not parsed properly
      * @param formula - formula for the valued, compared with the cell
      */
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
         CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
         return new HSSFConditionalFormattingRule(_sheet, rr);
@@ -101,6 +104,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      *  then
      *  {@link HSSFIconMultiStateFormatting#getThresholds()}
      */
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
             IconSet iconSet) {
         CFRule12Record rr = CFRule12Record.create(_sheet, iconSet);
@@ -121,6 +125,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         CFRule12Record rr = CFRule12Record.create(_sheet, color.getExtendedColor());
         return new HSSFConditionalFormattingRule(_sheet, rr);
     }
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
         return createConditionalFormattingRule((HSSFExtendedColor)color);
     }
@@ -135,6 +140,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      *  and
      *  {@link HSSFColorScaleFormatting#getColors()}
      */
+    @Override
     public HSSFConditionalFormattingRule createConditionalFormattingColorScaleRule() {
         CFRule12Record rr = CFRule12Record.createColorScale(_sheet);
         return new HSSFConditionalFormattingRule(_sheet, rr);
@@ -158,6 +164,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         return _conditionalFormattingTable.add(cfraClone);
     }
 
+    @Override
     public int addConditionalFormatting( ConditionalFormatting cf ) {
         return addConditionalFormatting((HSSFConditionalFormatting)cf);
     }
@@ -194,6 +201,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         return _conditionalFormattingTable.add(cfra);
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         HSSFConditionalFormattingRule[] hfRules;
         if(cfRules instanceof HSSFConditionalFormattingRule[]) {
@@ -212,6 +220,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         );
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions,
             ConditionalFormattingRule rule1) {
         return addConditionalFormatting(regions,  (HSSFConditionalFormattingRule)rule1);
@@ -224,6 +233,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
                 new HSSFConditionalFormattingRule[] { rule1, rule2 });
     }
 
+    @Override
     public int addConditionalFormatting(CellRangeAddress[] regions,
             ConditionalFormattingRule rule1,
             ConditionalFormattingRule rule2) {
@@ -240,6 +250,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      *			of the Conditional Formatting object to fetch
      * @return Conditional Formatting object
      */
+    @Override
     public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
         CFRecordsAggregate cf = _conditionalFormattingTable.get(index);
         if (cf == null) {
@@ -251,6 +262,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
     /**
      * @return number of Conditional Formatting objects of the sheet
      */
+    @Override
     public int getNumConditionalFormattings() {
         return _conditionalFormattingTable.size();
     }
@@ -259,6 +271,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * removes a Conditional Formatting object by index
      * @param index of a Conditional Formatting object to remove
      */
+    @Override
     public void removeConditionalFormatting(int index) {
         _conditionalFormattingTable.remove(index);
     }

@@ -24,8 +24,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  * Implementation of {@link HtmlHelper} for XSSF files.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class XSSFHtmlHelper implements HtmlHelper {
     @Override

@@ -31,9 +31,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontPr
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
 
-/**
- * @author Yegor Kozlov
- */
 public class XSSFFontFormatting implements FontFormatting {
     private IndexedColorMap _colorMap;
     private CTFont _font;

@@ -37,8 +37,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *     <li>If number1 is nonnumeric, DELTA returns the #VALUE! error value.</li>
  *     <li>If number2 is nonnumeric, DELTA returns the #VALUE! error value.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public final class Delta extends Fixed2ArgFunction implements FreeRefFunction {
 

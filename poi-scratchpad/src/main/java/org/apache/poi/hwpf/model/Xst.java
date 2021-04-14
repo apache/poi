@@ -24,13 +24,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * The Xst structure is a string. The string is prepended by its length and is
- * not null-terminated.
- * <p>
- * Documentation quoted from Page 424 of 621. [MS-DOC] -- v20110315 Word (.doc)
- * Binary File Format
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
+ * The Xst structure is a string. The string is prepended by its length and is not null-terminated.
  */
 public class Xst
 {

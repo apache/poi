@@ -23,20 +23,7 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Base part of the File information Block (FibBase). Holds the core part of the FIB,
-        from the first 32 bytes. <p>Class and fields descriptions are quoted from Microsoft
-        Office Word 97-2007 Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File
-        Format
-    
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice 
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author Andrew C. Oliver; Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
-        File Format Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+ * from the first 32 bytes.
  */
 @Internal
 public abstract class FibBaseAbstractType

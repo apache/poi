@@ -33,10 +33,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
  * data from them. Only works if Formulas are enabled in "RecordFactory"
- * @author  andy
- * @author Avik
  */
-
 public class FormulaViewer
 {
     private String file;

@@ -39,9 +39,7 @@ import org.junit.jupiter.api.Test;
 
 
 /**
- * Test <code>Fill</code> object.
- *
- * @author Yegor Kozlov
+ * Test {@code Fill} object.
  */
 public final class TestBackground {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();

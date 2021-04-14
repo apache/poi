@@ -24,17 +24,15 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Josh Micich
- */
 final class TestFuncVarPtg {
 
 	/**
 	 * The first fix for bugzilla 44675 broke the encoding of SUM formulas (and probably others).
 	 * The operand classes of the parameters to SUM() should be coerced to 'reference' not 'value'.
 	 * In the case of SUM, Excel evaluates the formula to '#VALUE!' if a parameter operand class is
-	 * wrong.  In other cases Excel seems to tolerate bad operand classes.</p>
-	 * This functionality is related to the setParameterRVA() methods of <tt>FormulaParser</tt>
+	 * wrong.  In other cases Excel seems to tolerate bad operand classes.<p>
+	 *
+	 * This functionality is related to the setParameterRVA() methods of {@code FormulaParser}
 	 */
 	@Test
 	void testOperandClass() {

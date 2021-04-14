@@ -32,8 +32,6 @@ import org.apache.poi.hwpf.model.PropertyNode;
 
 /**
  * Implementation of user-friendly interface for document bookmarks
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 public class BookmarksImpl implements Bookmarks
 {

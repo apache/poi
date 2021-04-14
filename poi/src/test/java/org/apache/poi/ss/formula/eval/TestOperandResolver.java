@@ -27,7 +27,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for <tt>OperandResolver</tt>
+ * Tests for {@code OperandResolver}
  */
 final class TestOperandResolver {
 	@Test

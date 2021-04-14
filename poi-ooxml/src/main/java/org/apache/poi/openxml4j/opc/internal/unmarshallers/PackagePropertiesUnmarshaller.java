@@ -41,8 +41,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Package properties unmarshaller.
- *
- * @author Julien Chable
  */
 public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 

@@ -23,8 +23,6 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Represents a Placeholder in PowerPoint.
- *
- * @author Yegor Kozlov
  */
 public final class HSLFPlaceholder extends HSLFTextBox {
 
@@ -48,7 +46,7 @@ public final class HSLFPlaceholder extends HSLFTextBox {
     @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
         EscherContainerRecord ecr = super.createSpContainer(isChild);
-        
+
         setPlaceholder(Placeholder.BODY);
 
         return ecr;

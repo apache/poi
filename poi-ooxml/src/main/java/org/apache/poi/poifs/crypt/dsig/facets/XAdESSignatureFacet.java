@@ -86,7 +86,6 @@ import org.w3c.dom.Element;
  * This implementation has been tested against an implementation that
  * participated multiple ETSI XAdES plugtests.
  *
- * @author Frank Cornelis
  * @see <a href="http://en.wikipedia.org/wiki/XAdES">XAdES</a>
  *
  */

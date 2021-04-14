@@ -38,8 +38,6 @@ import java.util.HashMap;
  * <li>If number is negative, FACTDOUBLE returns the #NUM! error value.</li>
  * </ul>
  * Use a cache for more speed of previously calculated factorial
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
 

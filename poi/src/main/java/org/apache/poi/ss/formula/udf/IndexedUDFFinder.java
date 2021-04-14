@@ -23,8 +23,6 @@ import java.util.HashMap;
 
 /**
  * A UDFFinder that can retrieve functions both by name and by fake index.
- *
- * @author Yegor Kozlov
  */
 @Internal
 public class IndexedUDFFinder extends AggregatingUDFFinder {

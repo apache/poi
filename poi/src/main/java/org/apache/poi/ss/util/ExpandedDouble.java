@@ -29,10 +29,8 @@ import static org.apache.poi.ss.util.IEEEDouble.*;
  * <br>
  * where:<br>
  *
- * <tt>a</tt> = <i>significand</i><br>
- * <tt>b</tt> = <i>binaryExponent</i> - bitLength(significand) + 1<br>
- *
- * @author Josh Micich
+ * {@code a} = <i>significand</i><br>
+ * {@code b} = <i>binaryExponent</i> - bitLength(significand) + 1<br>
  */
 final class ExpandedDouble {
 	private static final BigInteger BI_FRAC_MASK = BigInteger.valueOf(FRAC_MASK);
@@ -60,7 +58,7 @@ final class ExpandedDouble {
 			BigInteger frac = BigInteger.valueOf(rawBits).and(BI_FRAC_MASK);
 			int expAdj = 64 - frac.bitLength();
 			_significand = frac.shiftLeft(expAdj);
-			_binaryExponent = (biasedExp & 0x07FF) - 1023 - expAdj;
+			_binaryExponent = -1023 - expAdj;
 		} else {
             _significand = getFrac(rawBits);
 			_binaryExponent = (biasedExp & 0x07FF) - 1023;

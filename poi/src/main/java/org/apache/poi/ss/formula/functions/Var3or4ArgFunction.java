@@ -21,10 +21,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Convenience base class for any function which must take three or four
- * arguments
- *
- * @author Josh Micich
+ * Convenience base class for any function which must take three or four arguments
  */
 abstract class Var3or4ArgFunction implements Function3Arg, Function4Arg {
 

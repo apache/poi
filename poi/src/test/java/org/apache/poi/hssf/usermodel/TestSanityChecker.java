@@ -35,8 +35,6 @@ import org.junit.jupiter.api.Test;
 /**
  * A Test case for a test utility class.<br>
  * Okay, this may seem strange but I need to test my test logic.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 final class TestSanityChecker {
 	private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);

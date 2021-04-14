@@ -30,7 +30,7 @@ import org.apache.poi.util.StringUtil;
 /**
  * This tool extracts out the source of all VBA Modules of an office file,
  *  both OOXML (eg XLSM) and OLE2/POIFS (eg DOC), to STDOUT or a directory.
- * 
+ *
  * @since 3.15-beta2
  */
 public class VBAMacroExtractor {
@@ -43,24 +43,24 @@ public class VBAMacroExtractor {
             System.err.println("Otherwise they are output to the screen");
             System.exit(1);
         }
-        
+
         File input = new File(args[0]);
         File output = null;
         if (args.length > 1) {
             output = new File(args[1]);
         }
-        
+
         VBAMacroExtractor extractor = new VBAMacroExtractor();
         extractor.extract(input, output);
     }
-    
+
     /**
       * Extracts the VBA modules from a macro-enabled office file and writes them
-      * to files in <tt>outputDir</tt>.
+      * to files in {@code outputDir}.
       *
-      * Creates the <tt>outputDir</tt>, directory, including any necessary but
-      * nonexistent parent directories, if <tt>outputDir</tt> does not exist.
-      * If <tt>outputDir</tt> is null, writes the contents to standard out instead.
+      * Creates the {@code outputDir}, directory, including any necessary but
+      * nonexistent parent directories, if {@code outputDir} does not exist.
+      * If {@code outputDir} is null, writes the contents to standard out instead.
       *
       * @param input  the macro-enabled office file.
       * @param outputDir  the directory to write the extracted VBA modules to.
@@ -83,7 +83,7 @@ public class VBAMacroExtractor {
         try (VBAMacroReader reader = new VBAMacroReader(input)) {
             macros = reader.readMacros();
         }
-        
+
         final String divider = "---------------------------------------";
         for (Entry<String, String> entry : macros.entrySet()) {
             String moduleName = entry.getKey();
@@ -109,12 +109,12 @@ public class VBAMacroExtractor {
 
     /**
       * Extracts the VBA modules from a macro-enabled office file and writes them
-      * to <tt>.vba</tt> files in <tt>outputDir</tt>. 
-      * 
-      * Creates the <tt>outputDir</tt>, directory, including any necessary but
-      * nonexistent parent directories, if <tt>outputDir</tt> does not exist.
-      * If <tt>outputDir</tt> is null, writes the contents to standard out instead.
-      * 
+      * to {@code .vba} files in {@code outputDir}.
+      *
+      * Creates the {@code outputDir}, directory, including any necessary but
+      * nonexistent parent directories, if {@code outputDir} does not exist.
+      * If {@code outputDir} is null, writes the contents to standard out instead.
+      *
       * @param input  the macro-enabled office file.
       * @param outputDir  the directory to write the extracted VBA modules to.
       * @since 3.15-beta2

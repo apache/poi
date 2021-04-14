@@ -18,13 +18,10 @@ package org.apache.poi.ooxml;
 
 /**
  * Indicates a generic OOXML error.
- *
- * @author Yegor Kozlov
  */
-@SuppressWarnings("serial")
 public final class POIXMLException extends RuntimeException{
     /**
-     * Create a new <code>POIXMLException</code> with no
+     * Create a new {@code POIXMLException} with no
      * detail mesage.
      */
     public POIXMLException() {
@@ -32,8 +29,8 @@ public final class POIXMLException extends RuntimeException{
     }
 
     /**
-     * Create a new <code>POIXMLException</code> with
-     * the <code>String</code> specified as an error message.
+     * Create a new {@code POIXMLException} with
+     * the {@code String} specified as an error message.
      *
      * @param msg The error message for the exception.
      */
@@ -42,12 +39,12 @@ public final class POIXMLException extends RuntimeException{
     }
 
     /**
-     * Create a new <code>POIXMLException</code> with
-     * the <code>String</code> specified as an error message and the cause.
+     * Create a new {@code POIXMLException} with
+     * the {@code String} specified as an error message and the cause.
      *
      * @param msg The error message for the exception.
      * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         {@link #getCause()} method).  (A {@code null} value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
@@ -56,11 +53,11 @@ public final class POIXMLException extends RuntimeException{
     }
 
     /**
-     * Create a new <code>POIXMLException</code> with
+     * Create a new {@code POIXMLException} with
      * the specified cause.
      *
      * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         {@link #getCause()} method).  (A {@code null} value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */

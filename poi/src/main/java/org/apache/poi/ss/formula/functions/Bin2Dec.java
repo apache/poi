@@ -37,8 +37,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Remark
  * If number is not a valid binary number, or if number contains more than 10 characters (10 bits),
  * BIN2DEC returns the #NUM! error value.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 
@@ -80,10 +78,10 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
                 String inverted = toggleBits(unsigned);
                 // Calculate decimal number
                 int sum = getDecimalValue(inverted);
-    
+
                 //Add 1 to obtained number
                 sum++;
-    
+
                 value = "-" + sum;
             }
         } catch (NumberFormatException e) {

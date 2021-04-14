@@ -45,8 +45,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
 /**
  * Represents a font used in a workbook.
- *
- * @author Gisella Bronzetti
  */
 public class XSSFFont implements Font {
 

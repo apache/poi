@@ -37,10 +37,6 @@ import org.apache.poi.util.Removal;
 /**
  *
  * Aggregate value records together.  Things are easier to handle that way.
- *
- * @author  andy
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class ValueRecordsAggregate implements Iterable<CellValueRecordInterface> {
 	private static final int MAX_ROW_INDEX = 0XFFFF;

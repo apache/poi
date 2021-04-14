@@ -35,8 +35,6 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 /**
  * The special info runs contained in this text.
  * Special info runs consist of character properties which don?t follow styles.
- *
- * @author Yegor Kozlov
  */
 public final class TextSpecInfoAtom extends RecordAtom {
 

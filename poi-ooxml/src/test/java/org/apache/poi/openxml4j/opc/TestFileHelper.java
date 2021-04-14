@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test TestFileHelper class.
- *
- * @author Julien Chable
  */
 public final class TestFileHelper {
 

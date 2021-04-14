@@ -315,6 +315,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         }
     }
 
+    @Override
     @NotImplemented
     public int getExternalSheetIndex(String workbookName, String sheetName) {
         throw new RuntimeException("not implemented yet");
@@ -387,7 +388,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
      * This is meant to be used on documents whose structure is essentially static at the point formulas are evaluated.
      *
      * @param name the data table name (case-insensitive)
-     * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
+     * @return The Data table in the workbook named {@code name}, or {@code null} if no table is named {@code name}.
      * @since 3.15 beta 2
      */
     @Override
@@ -419,15 +420,18 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             _fpBook = fpBook;
         }
 
+        @Override
         public Ptg[] getNameDefinition() {
 
             return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook, FormulaType.NAMEDRANGE, _nameRecord.getSheetIndex());
         }
 
+        @Override
         public String getNameText() {
             return _nameRecord.getNameName();
         }
 
+        @Override
         public boolean hasFormula() {
             // TODO - no idea if this is right
             CTDefinedName ctn = _nameRecord.getCTName();
@@ -435,13 +439,16 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             return !ctn.getFunction() && strVal != null && strVal.length() > 0;
         }
 
+        @Override
         public boolean isFunctionName() {
             return _nameRecord.isFunctionName();
         }
 
+        @Override
         public boolean isRange() {
             return hasFormula(); // TODO - is this right?
         }
+        @Override
         public NamePtg createPtg() {
             return new NamePtg(_index);
         }

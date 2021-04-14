@@ -40,12 +40,10 @@ import org.apache.poi.util.HexDump;
  * This class provides a way to view the contents of a powerpoint file.
  * It will use the recored layer to grok the contents of the file, and
  *  will print out what it finds.
- *
- * @author Nick Burch
  */
 public final class SlideShowRecordDumper {
     static final String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
-    
+
     private boolean optVerbose;
     private boolean optEscher;
     private HSLFSlideShowImpl doc;
@@ -203,16 +201,16 @@ public final class SlideShowRecordDumper {
             ps.println(ind+ child);
             prevChild = child;
         }
- 
+
     }
-    
+
     private void printEscherContainerRecord( EscherContainerRecord ecr, int indent ) {
         String ind = tabs.substring(0, indent);
         ps.println(ind + ecr.getClass().getName() + " (" + ecr.getRecordName() + "):");
         ps.println(ind + "  isContainer: " + ecr.isContainerRecord());
         ps.println(ind + "  options: 0x" + HexDump.toHex( ecr.getOptions() ));
         ps.println(ind + "  recordId: 0x" + HexDump.toHex( ecr.getRecordId() ));
-        
+
         ps.println(ind + "  numchildren: " + ecr.getChildCount());
         ps.println(ind + "  children: ");
         int count = 0;

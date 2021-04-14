@@ -33,8 +33,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Centralises logic for finding/opening sample files in the test-data/spreadsheet folder.
- *
- * @author Josh Micich
  */
 public class XSSFTestDataSamples {
     /**

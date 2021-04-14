@@ -34,7 +34,6 @@ import java.lang.annotation.Documented;
  * not subject to the POI project policy of deprecating an element for 2 major
  * releases before removing.
  *
- * @author Yegor Kozlov
  * @since POI-3.6
  */
 @Documented

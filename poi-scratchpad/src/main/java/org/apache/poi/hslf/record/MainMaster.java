@@ -24,8 +24,6 @@ import java.util.Arrays;
 
 /**
  * Master slide
- *
- * @author Yegor Kozlov
  */
 public final class MainMaster extends SheetContainer {
 	private byte[] _header;

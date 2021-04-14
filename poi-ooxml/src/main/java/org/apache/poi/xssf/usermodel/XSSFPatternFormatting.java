@@ -25,9 +25,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
-/**
- * @author Yegor Kozlov
- */
 public class XSSFPatternFormatting implements PatternFormatting {
     IndexedColorMap _colorMap;
     CTFill _fill;
@@ -82,7 +79,7 @@ public class XSSFPatternFormatting implements PatternFormatting {
             ptrn.setBgColor(color);
         }
     }
-    
+
     public void setFillForegroundColor(Color fg) {
         XSSFColor xcolor = XSSFColor.toXSSFColor(fg);
         if (xcolor == null) setFillForegroundColor((CTColor)null);

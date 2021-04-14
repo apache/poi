@@ -27,8 +27,6 @@ import org.apache.poi.util.LittleEndian;
  * If we come across a record we know has children of (potential)
  *  interest, but where the record itself is boring, we create one
  *  of these. It allows us to get at the children, but not much else
- *
- * @author Nick Burch
  */
 
 public final class DummyRecordWithChildren extends RecordContainer

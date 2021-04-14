@@ -29,24 +29,29 @@ public abstract class ValueOperatorPtg extends OperationPtg {
 	protected ValueOperatorPtg() {}
 
 	/**
-	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classified)
+	 * All Operator {@code Ptg}s are base tokens (i.e. are not RVA classified)
 	 */
+	@Override
 	public final boolean isBaseToken() {
 		return true;
 	}
 
-	public final byte getDefaultOperandClass() {
+	@Override
+    public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
 
+	@Override
 	public void write(LittleEndianOutput out) {
 		out.writeByte(getSid());
 	}
 
+	@Override
 	public final int getSize() {
 		return 1;
 	}
 
+	@Override
 	public final String toFormulaString() {
 		// TODO - prune this method out of the hierarchy
 		throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");

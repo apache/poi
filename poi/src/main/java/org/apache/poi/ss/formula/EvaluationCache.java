@@ -32,8 +32,6 @@ import org.apache.poi.ss.usermodel.CellType;
  * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
  * This class stores previously calculated values of already visited cells,
  * to avoid unnecessary re-calculation when the same cells are referenced multiple times
- *
- * @author Josh Micich
  */
 final class EvaluationCache {
 

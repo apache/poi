@@ -28,8 +28,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies an ActiveX control.
- *
- * @author Yegor Kozlov
  */
 public final class ExControlAtom extends RecordAtom {
 

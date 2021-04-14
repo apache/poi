@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
  * The Freeform shape is constructed from java.awt.GeneralPath.
  * Check that the get/set path accessors are consistent.
  * (TODO: verification of Bezier curves is more difficult due to rounding error.  Figure out a test approach for that)
- *
- * @author Yegor Kozlov
  */
 public final class TestFreeform {
 

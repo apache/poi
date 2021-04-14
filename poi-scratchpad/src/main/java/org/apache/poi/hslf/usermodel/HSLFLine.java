@@ -27,8 +27,6 @@ import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * Represents a line in a PowerPoint drawing
- *
- *  @author Yegor Kozlov
  */
 public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLFTextParagraph> {
     public HSLFLine(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
@@ -47,7 +45,7 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLF
     @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
         EscherContainerRecord ecr = super.createSpContainer(isChild);
-        
+
         setShapeType(ShapeType.LINE);
 
         EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
@@ -67,20 +65,20 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLF
 
         return ecr;
     }
-    
+
 //    /**
 //     * Sets the orientation of the line, if inverse is false, then line goes
-//     * from top-left to bottom-right, otherwise use inverse equals true 
+//     * from top-left to bottom-right, otherwise use inverse equals true
 //     *
 //     * @param inverse the orientation of the line
 //     */
 //    public void setInverse(boolean inverse) {
 //        setShapeType(inverse ? ShapeType.LINE_INV : ShapeType.LINE);
 //    }
-//    
+//
 //    /**
 //     * Gets the orientation of the line, if inverse is false, then line goes
-//     * from top-left to bottom-right, otherwise inverse equals true 
+//     * from top-left to bottom-right, otherwise inverse equals true
 //     *
 //     * @return inverse the orientation of the line
 //     */

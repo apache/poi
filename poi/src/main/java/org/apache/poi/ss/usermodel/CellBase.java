@@ -31,7 +31,6 @@ import java.util.Locale;
 
 /**
  * Common implementation-independent logic shared by all implementations of {@link Cell}.
- * @author Vladislav "gallon" Galas gallon at apache dot org
  */
 public abstract class CellBase implements Cell {
     /**

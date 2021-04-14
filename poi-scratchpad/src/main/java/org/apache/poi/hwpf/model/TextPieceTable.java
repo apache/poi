@@ -38,8 +38,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * The piece table for matching up character positions to bits of text. This
  * mostly works in bytes, but the TextPieces themselves work in characters. This
  * does the icky convertion.
- *
- * @author Ryan Ackley
  */
 @Internal
 public class TextPieceTable implements CharIndexTranslator {

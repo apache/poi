@@ -19,15 +19,13 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Internal;
 
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
- * and non-formula cells.<br>
- * 
- * For POI internal use only
- * 
- * @author Josh Micich
+ * and non-formula cells.
  */
+@Internal
 public interface EvaluationCell {
 	/**
 	 * @return an Object that identifies the underlying cell,

@@ -41,8 +41,6 @@ import org.w3c.dom.NodeList;
  * Work-around for Office2010 to accept the XAdES-BES/EPES signature.
  *
  * xades:UnsignedProperties/xades:UnsignedSignatureProperties needs to be present.
- *
- * @author Frank Cornelis
  */
 public class Office2010SignatureFacet implements SignatureFacet {
 

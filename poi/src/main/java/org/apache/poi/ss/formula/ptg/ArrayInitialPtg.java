@@ -44,12 +44,14 @@ final class ArrayInitialPtg extends Ptg {
 	private static RuntimeException invalid() {
 		throw new IllegalStateException("This object is a partially initialised tArray, and cannot be used as a Ptg");
 	}
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		throw invalid();
 	}
 	public int getSize() {
 		return ArrayPtg.PLAIN_TOKEN_SIZE;
 	}
+	@Override
 	public boolean isBaseToken() {
 		return false;
 	}

@@ -42,8 +42,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * For now, we scan through looking for interesting bits, then creating
  *  the helpful Sheet from model for them
- *
- * @author Nick Burch
  */
 
 // For now, pretend to be an atom

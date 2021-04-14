@@ -75,7 +75,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 
 	/**
 	 * Inserts a column into the aggregate (at the position specified by
-	 * <code>idx</code>.
+	 * {@code idx}.
 	 */
 	private void insertColumn(int idx, ColumnInfoRecord col) {
 		records.add(idx, col);
@@ -85,6 +85,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		return records.size();
 	}
 
+	@Override
 	public void visitContainedRecords(RecordVisitor rv) {
 		int nItems = records.size();
 		if (nItems < 1) {
@@ -147,7 +148,6 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 
 	/**
 	 * 'Collapsed' state is stored in a single column col info record immediately after the outline group
-	 * @param idx
 	 * @return true, if the column is collapsed, false otherwise.
 	 */
 	private boolean isColumnGroupCollapsed(int idx) {
@@ -362,7 +362,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	}
 
 	/**
-	 * Sets all non null fields into the <code>ci</code> parameter.
+	 * Sets all non null fields into the {@code ci} parameter.
 	 */
 	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width,
 				Integer level, Boolean hidden, Boolean collapsed) {
@@ -428,7 +428,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	}
 	/**
 	 * merges two column info records (if they are adjacent and have the same formatting, etc)
-	 * @return <code>false</code> if the two column records could not be merged
+	 * @return {@code false} if the two column records could not be merged
 	 */
 	private static boolean mergeColInfoRecords(ColumnInfoRecord ciA, ColumnInfoRecord ciB) {
 		if (ciA.isAdjacentBefore(ciB) && ciA.formatMatches(ciB)) {
@@ -447,8 +447,8 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	 * @param toColumnIx
 	 *            group to this column (inclusive)
 	 * @param indent
-	 *            if <code>true</code> the group will be indented by one
-	 *            level, if <code>false</code> indenting will be decreased by
+	 *            if {@code true} the group will be indented by one
+	 *            level, if {@code false} indenting will be decreased by
 	 *            one level.
 	 */
 	public void groupColumnRange(int fromColumnIx, int toColumnIx, boolean indent) {
@@ -473,9 +473,9 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	}
 
 	/**
-	 * Finds the <tt>ColumnInfoRecord</tt> which contains the specified columnIndex
+	 * Finds the {@code ColumnInfoRecord} which contains the specified columnIndex
 	 * @param columnIndex index of the column (not the index of the ColumnInfoRecord)
-	 * @return <code>null</code> if no column info found for the specified column
+	 * @return {@code null} if no column info found for the specified column
 	 */
 	public ColumnInfoRecord findColumnInfo(int columnIndex) {
 		int nInfos = records.size();

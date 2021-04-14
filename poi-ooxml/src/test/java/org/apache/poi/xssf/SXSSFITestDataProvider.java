@@ -37,14 +37,11 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-/**
- * @author Yegor Kozlov
- */
 public final class SXSSFITestDataProvider implements ITestDataProvider {
     public static final SXSSFITestDataProvider instance = new SXSSFITestDataProvider();
 
     // an instance of all SXSSFWorkbooks opened by this TestDataProvider,
-    // so that the temporary files created can be disposed up by cleanup() 
+    // so that the temporary files created can be disposed up by cleanup()
     private final Collection<SXSSFWorkbook> instances = new ArrayList<>();
 
     private SXSSFITestDataProvider() {
@@ -89,7 +86,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         instances.add(wb);
         return wb;
     }
-    
+
     //************ SXSSF-specific methods ***************//
     @Override
     public SXSSFWorkbook createWorkbook(int rowAccessWindowSize) {
@@ -97,13 +94,13 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         instances.add(wb);
         return wb;
     }
-    
+
     @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {
         ((SXSSFSheet)sheet).trackAllColumnsForAutoSizing();
     }
     //************ End SXSSF-specific methods ***************//
-    
+
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator(((SXSSFWorkbook) wb).getXSSFWorkbook());

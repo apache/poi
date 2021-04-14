@@ -29,10 +29,6 @@ import org.apache.poi.ss.formula.functions.NumericFunction;
  *
  * <b>Syntax</b><br>
  * <b>MROUND</b>(<b>number</b>, <b>multiple</b>)
- *
- * <p>
- *
- * @author Yegor Kozlov
  */
 final class MRound implements FreeRefFunction {
 

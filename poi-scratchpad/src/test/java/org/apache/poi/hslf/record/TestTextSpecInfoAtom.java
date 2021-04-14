@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests TextSpecInfoAtom
- *
- * @author Yegor Kozlov
  */
 public final class TestTextSpecInfoAtom  {
 

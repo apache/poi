@@ -32,8 +32,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author aviks
- *
  * This testcase contains tests for bugs that are yet to be fixed. Therefore,
  * the standard ant test target does not run these tests. Run this testcase with
  * the single-test target. The names of the tests usually correspond to the

@@ -215,15 +215,15 @@ final class TestValueRecordsAggregate {
 	}
 
 	/**
-	 * Sometimes the 'shared formula' flag (<tt>FormulaRecord.isSharedFormula()</tt>) is set when
+	 * Sometimes the 'shared formula' flag ({@code FormulaRecord.isSharedFormula()}) is set when
 	 * there is no corresponding SharedFormulaRecord available. SharedFormulaRecord definitions do
 	 * not span multiple sheets.  They are are only defined within a sheet, and thus they do not
 	 * have a sheet index field (only row and column range fields).<br>
 	 * So it is important that the code which locates the SharedFormulaRecord for each
-	 * FormulaRecord does not allow matches across sheets.</br>
+	 * FormulaRecord does not allow matches across sheets.<p>
 	 *
-	 * Prior to bugzilla 44449 (Feb 2008), POI <tt>ValueRecordsAggregate.construct(int, List)</tt>
-	 * allowed <tt>SharedFormulaRecord</tt>s to be erroneously used across sheets.  That incorrect
+	 * Prior to bugzilla 44449 (Feb 2008), POI {@code ValueRecordsAggregate.construct(int, List)}
+	 * allowed {@code SharedFormulaRecord}s to be erroneously used across sheets.  That incorrect
 	 * behaviour is shown by this test.<p>
 	 *
 	 * <b>Notes on how to produce the test spreadsheet</b>:</p>
@@ -237,10 +237,10 @@ final class TestValueRecordsAggregate {
 	 * <li>Four rows on Sheet1 "5" through "8" were deleted ('delete rows' alt-E D, not 'clear' Del).</li>
 	 * <li>The spreadsheet was saved as AbnormalSharedFormulaFlag.xls.</li>
 	 * </ol>
-	 * Prior to the row delete action the spreadsheet has two <tt>SharedFormulaRecord</tt>s. One
+	 * Prior to the row delete action the spreadsheet has two {@code SharedFormulaRecord}s. One
 	 * for each sheet. To expose the bug, the shared formulas have been made to overlap.<br>
 	 * The row delete action (as described here) seems to to delete the
-	 * <tt>SharedFormulaRecord</tt> from Sheet1 (but not clear the 'shared formula' flags.<br>
+	 * {@code SharedFormulaRecord} from Sheet1 (but not clear the 'shared formula' flags.<br>
 	 * There are other variations on this theme to create the same effect.
 	 *
 	 */

@@ -37,11 +37,7 @@ import org.w3c.dom.Node;
  * <p>
  * This element contains all of the properties related to the XML map,
  * and the behaviors expected during data refresh operations.
- *
- * @author Roberto Manicardi
  */
-
-
 public class XSSFMap {
     private CTMap ctMap;
     private MapInfo mapInfo;

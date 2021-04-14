@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SystemTimeUtils works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestSystemTimeUtils {
 	// From real files

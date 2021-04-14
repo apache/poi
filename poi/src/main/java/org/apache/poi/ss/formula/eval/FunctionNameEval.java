@@ -17,9 +17,6 @@
 
 package org.apache.poi.ss.formula.eval;
 
-/**
- * @author Josh Micich
- */
 public final class FunctionNameEval implements ValueEval {
 
 	private final String _functionName;

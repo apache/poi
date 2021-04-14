@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel function ISBLANK()
- *
- * @author Josh Micich
  */
 final class TestIsBlank {
 

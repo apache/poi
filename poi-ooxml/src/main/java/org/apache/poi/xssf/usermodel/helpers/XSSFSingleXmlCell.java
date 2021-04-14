@@ -29,11 +29,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlPr;
  *
  * This class is a wrapper around the CTSingleXmlCell  (Open Office XML Part 4:
  * chapter 3.5.2.1)
- *
-
- *
- * @author Roberto Manicardi
- *
  */
 public class XSSFSingleXmlCell {
 

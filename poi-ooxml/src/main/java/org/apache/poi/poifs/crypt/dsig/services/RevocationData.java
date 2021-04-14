@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
@@ -31,9 +31,6 @@ import java.util.List;
 
 /**
  * Container class for PKI revocation data.
- * 
- * @author Frank Cornelis
- * 
  */
 public class RevocationData {
 
@@ -51,7 +48,7 @@ public class RevocationData {
 
     /**
      * Adds a CRL to this revocation data set.
-     * 
+     *
      * @param encodedCrl
      */
     public void addCRL(byte[] encodedCrl) {
@@ -60,7 +57,7 @@ public class RevocationData {
 
     /**
      * Adds a CRL to this revocation data set.
-     * 
+     *
      * @param crl
      */
     public void addCRL(X509CRL crl) {
@@ -76,7 +73,7 @@ public class RevocationData {
 
     /**
      * Adds an OCSP response to this revocation data set.
-     * 
+     *
      * @param encodedOcsp
      */
     public void addOCSP(byte[] encodedOcsp) {
@@ -85,7 +82,7 @@ public class RevocationData {
 
     /**
      * Gives back a list of all CRLs.
-     * 
+     *
      * @return a list of all CRLs
      */
     public List<byte[]> getCRLs() {
@@ -94,7 +91,7 @@ public class RevocationData {
 
     /**
      * Gives back a list of all OCSP responses.
-     * 
+     *
      * @return a list of all OCSP response
      */
     public List<byte[]> getOCSPs() {
@@ -104,7 +101,7 @@ public class RevocationData {
     /**
      * Returns <code>true</code> if this revocation data set holds OCSP
      * responses.
-     * 
+     *
      * @return <code>true</code> if this revocation data set holds OCSP
      * responses.
      */
@@ -114,7 +111,7 @@ public class RevocationData {
 
     /**
      * Returns <code>true</code> if this revocation data set holds CRLs.
-     * 
+     *
      * @return <code>true</code> if this revocation data set holds CRLs.
      */
     public boolean hasCRLs() {
@@ -123,7 +120,7 @@ public class RevocationData {
 
     /**
      * Returns <code>true</code> if this revocation data is not empty.
-     * 
+     *
      * @return <code>true</code> if this revocation data is not empty.
      */
     public boolean hasRevocationDataEntries() {

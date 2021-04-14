@@ -25,7 +25,8 @@ import org.apache.poi.ss.formula.eval.*;
  */
 public abstract class LogicalFunction extends Fixed1ArgFunction implements ArrayFunction{
 
-    @SuppressWarnings("unused")
+    @Override
+	@SuppressWarnings("unused")
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		ValueEval ve;
 		try {
@@ -58,21 +59,25 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 	protected abstract boolean evaluate(ValueEval arg);
 
 	public static final Function ISLOGICAL = new LogicalFunction() {
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg instanceof BoolEval;
 		}
 	};
 	public static final Function ISNONTEXT = new LogicalFunction() {
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return !(arg instanceof StringEval);
 		}
 	};
 	public static final Function ISNUMBER = new LogicalFunction() {
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg instanceof NumberEval;
 		}
 	};
 	public static final Function ISTEXT = new LogicalFunction() {
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg instanceof StringEval;
 		}
@@ -80,6 +85,7 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 
 	public static final Function ISBLANK = new LogicalFunction() {
 
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg instanceof BlankEval;
 		}
@@ -87,21 +93,22 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 
 	public static final Function ISERROR = new LogicalFunction() {
 
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg instanceof ErrorEval;
 		}
 	};
 
     /**
-     * Implementation of Excel <tt>ISERR()</tt> function.<p>
+     * Implementation of Excel {@code ISERR()} function.<p>
      *
      * <b>Syntax</b>:<br>
      * <b>ISERR</b>(<b>value</b>)<p>
      *
      * <b>value</b>  The value to be tested<p>
      *
-     * Returns the logical value <tt>TRUE</tt> if value refers to any error value except
-     * <tt>'#N/A'</tt>; otherwise, it returns <tt>FALSE</tt>.
+     * Returns the logical value {@code TRUE} if value refers to any error value except
+     * {@code '#N/A'}; otherwise, it returns {@code FALSE}.
      */
     public static final Function ISERR = new LogicalFunction() {
         @Override
@@ -121,10 +128,11 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 	 *
 	 * <b>value</b>  The value to be tested<br>
 	 * <br>
-	 * Returns <tt>TRUE</tt> if the specified value is '#N/A', <tt>FALSE</tt> otherwise.
+	 * Returns {@code TRUE} if the specified value is '#N/A', {@code FALSE} otherwise.
 	 */
 	public static final Function ISNA = new LogicalFunction() {
 
+		@Override
 		protected boolean evaluate(ValueEval arg) {
 			return arg == ErrorEval.NA;
 		}
@@ -132,6 +140,7 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 
 	public static final Function ISREF = new Fixed1ArgFunction() {
 
+		@Override
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 			if (arg0 instanceof RefEval || arg0 instanceof AreaEval || arg0 instanceof RefListEval) {
 				return BoolEval.TRUE;

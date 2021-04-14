@@ -50,8 +50,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * 			A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
  *    )&nbsp;
  *  )
- * </p>
- * @author Josh Micich
  */
 public final class Sumproduct implements Function {
 

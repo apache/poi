@@ -31,8 +31,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * An atomic record containing information about a comment.
- *
- * @author Daniel Noll
  */
 
 public final class Comment2000Atom extends RecordAtom

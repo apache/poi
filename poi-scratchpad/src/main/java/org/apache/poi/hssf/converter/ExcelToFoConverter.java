@@ -170,11 +170,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter {
     }
 
     /**
-     * Returns <tt>false</tt> if cell style by itself (without text, i.e.
-     * borders, fill, etc.) worth a mention, <tt>true</tt> otherwise
+     * Returns {@code false} if cell style by itself (without text, i.e.
+     * borders, fill, etc.) worth a mention, {@code true} otherwise
      *
-     * @return <tt>false</tt> if cell style by itself (without text, i.e.
-     * borders, fill, etc.) worth a mention, <tt>true</tt> otherwise
+     * @return {@code false} if cell style by itself (without text, i.e.
+     * borders, fill, etc.) worth a mention, {@code true} otherwise
      */
     protected boolean isEmptyStyle(CellStyle cellStyle) {
         return cellStyle == null || (
@@ -423,7 +423,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter {
 
     /**
      * Creates COLGROUP element with width specified for all columns. (Except
-     * first if <tt>{@link #isOutputRowNumbers()}==true</tt>)
+     * first if {@link #isOutputRowNumbers()}{@code ==true})
      *
      * @return table width in inches
      */
@@ -670,7 +670,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter {
     /**
      * Process single sheet (as specified by 0-based sheet index)
      *
-     * @return <tt>true</tt> if result were added to FO document, <tt>false</tt>
+     * @return {@code true} if result were added to FO document, {@code false}
      * otherwise
      */
     protected boolean processSheet(HSSFWorkbook workbook, int sheetIndex) {

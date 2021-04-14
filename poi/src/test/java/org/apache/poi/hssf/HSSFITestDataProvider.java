@@ -28,25 +28,22 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-/**
- * @author Yegor Kozlov
- */
 public final class HSSFITestDataProvider implements ITestDataProvider {
     public static final HSSFITestDataProvider instance = new HSSFITestDataProvider();
 
     private HSSFITestDataProvider(){
         // enforce singleton
     }
-    
+
     @Override
     public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
-    
+
     public InputStream openWorkbookStream(String sampleFileName) {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
     }
-    
+
     @Override
     public HSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof HSSFWorkbook)) {
@@ -54,22 +51,22 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
         }
         return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)original);
     }
-    
+
     @Override
     public HSSFWorkbook createWorkbook(){
         return new HSSFWorkbook();
     }
-    
+
     //************ SXSSF-specific methods ***************//
     @Override
     public HSSFWorkbook createWorkbook(int rowAccessWindowSize) {
         return createWorkbook();
     }
-    
+
     @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {}
     //************ End SXSSF-specific methods ***************//
-    
+
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new HSSFFormulaEvaluator((HSSFWorkbook) wb);
@@ -79,12 +76,12 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
-    
+
     @Override
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
     }
-    
+
     @Override
     public String getStandardFileNameExtension() {
         return "xls";

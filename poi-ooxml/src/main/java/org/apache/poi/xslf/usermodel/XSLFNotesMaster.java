@@ -42,8 +42,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 * their attached text bodies. Then the notesStyles element specifies the
 * formatting for the text within each of these shapes.
 * </p>
- *
- * @author Yegor Kozlov
 */
 @Beta
  public class XSLFNotesMaster extends XSLFSheet

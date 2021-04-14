@@ -40,7 +40,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    private ChunkedCipherInputStream ccis;
+    private final ChunkedCipherInputStream ccis;
     private final byte[] buffer = new byte[LittleEndianConsts.LONG_SIZE];
     private boolean shouldSkipEncryptionOnCurrentRecord;
 
@@ -58,7 +58,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
             Decryptor dec = info.getDecryptor();
             dec.setChunkSize(RC4_REKEYING_INTERVAL);
             ccis = (ChunkedCipherInputStream)dec.getDataStream(stream, Integer.MAX_VALUE, 0);
-            
+
             if (initialOffset > 0) {
                 ccis.readFully(initialBuf);
             }
@@ -124,7 +124,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     public int readUByte() {
 	    return readByte() & 0xFF;
 	}
-	
+
 	@Override
     public byte readByte() {
         if (shouldSkipEncryptionOnCurrentRecord) {
@@ -139,7 +139,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     public int readUShort() {
 	    return readShort() & 0xFFFF;
 	}
-	
+
 	@Override
     public short readShort() {
         if (shouldSkipEncryptionOnCurrentRecord) {
@@ -176,11 +176,11 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 	public long getPosition() {
 	    return ccis.getPos();
 	}
-	
+
     /**
      * TODO: Additionally, the lbPlyPos (position_of_BOF) field of the BoundSheet8 record MUST NOT be encrypted.
      *
-     * @return <code>true</code> if record type specified by <tt>sid</tt> is never encrypted
+     * @return {@code true} if record type specified by {@code sid} is never encrypted
      */
     public static boolean isNeverEncryptedRecord(int sid) {
         switch (sid) {

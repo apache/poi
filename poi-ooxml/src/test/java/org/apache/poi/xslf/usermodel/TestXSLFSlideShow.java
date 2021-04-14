@@ -28,9 +28,6 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Yegor Kozlov
- */
 class TestXSLFSlideShow {
     @Test
     void testCreateSlide() throws IOException {

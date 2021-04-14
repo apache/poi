@@ -44,12 +44,9 @@ import org.apache.poi.ss.usermodel.Workbook;
  * style change to a cell, the code will attempt to see if a style already exists that meets your
  * needs. If not, then it will create a new style. This is to prevent creating too many styles.
  * there is an upper limit in Excel on the number of styles that can be supported.
- *
- *@author Eric Pugh epugh@upstate.com
- *@author (secondary) Avinash Kewalramani akewalramani@accelrys.com
  */
 public final class CellUtil {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(CellUtil.class);
 
     // FIXME: Move these constants into an enum
@@ -73,7 +70,7 @@ public final class CellUtil {
     public static final String ROTATION = "rotation";
     public static final String VERTICAL_ALIGNMENT = "verticalAlignment";
     public static final String WRAP_TEXT = "wrapText";
-    
+
     private static final Set<String> shortValues = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
                     BOTTOM_BORDER_COLOR,
@@ -87,8 +84,8 @@ public final class CellUtil {
                     ROTATION
             )));
     private static final Set<String> intValues = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                    FONT
+            new HashSet<>(Collections.singletonList(
+                FONT
             )));
     private static final Set<String> booleanValues = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
@@ -105,7 +102,7 @@ public final class CellUtil {
             )));
 
 
-    private static UnicodeMapping[] unicodeMappings;
+    private static final UnicodeMapping[] unicodeMappings;
 
     private static final class UnicodeMapping {
 
@@ -190,7 +187,7 @@ public final class CellUtil {
 
     /**
      * Take a cell, and align it.
-     * 
+     *
      * This is superior to cell.getCellStyle().setAlignment(align) because
      * this method will not modify the CellStyle object that may be referenced
      * by multiple cells. Instead, this method will search for existing CellStyles
@@ -206,10 +203,10 @@ public final class CellUtil {
     public static void setAlignment(Cell cell, HorizontalAlignment align) {
         setCellStyleProperty(cell, ALIGNMENT, align);
     }
-    
+
     /**
      * Take a cell, and vertically align it.
-     * 
+     *
      * This is superior to cell.getCellStyle().setVerticalAlignment(align) because
      * this method will not modify the CellStyle object that may be referenced
      * by multiple cells. Instead, this method will search for existing CellStyles
@@ -225,13 +222,13 @@ public final class CellUtil {
     public static void setVerticalAlignment(Cell cell, VerticalAlignment align) {
         setCellStyleProperty(cell, VERTICAL_ALIGNMENT, align);
     }
-    
+
     /**
      * Take a cell, and apply a font to it
      *
      * @param cell the cell to set the alignment for
      * @param font The Font that you want to set.
-     * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
+     * @throws IllegalArgumentException if {@code font} and {@code cell} do not belong to the same workbook
      */
     public static void setFont(Cell cell, Font font) {
         // Check if font belongs to workbook
@@ -248,19 +245,19 @@ public final class CellUtil {
     }
 
     /**
-     * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s 
-     * current style plus styles properties in <code>properties</code>. A new style is created if the
+     * <p>This method attempts to find an existing CellStyle that matches the {@code cell}'s
+     * current style plus styles properties in {@code properties}. A new style is created if the
      * workbook does not contain a matching style.</p>
-     * 
-     * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+     *
+     * <p>Modifies the cell style of {@code cell} without affecting other cells that use the
      * same style.</p>
-     * 
+     *
      * <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
-     * 
+     *
      * <p>This function is more efficient than multiple calls to
      * {@link #setCellStyleProperty(Cell, String, Object)}
      * if adding multiple cell styles.</p>
-     * 
+     *
      * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
      * this method does NOT remove the old style from the workbook.
      * <!-- NOT IMPLEMENTED: Unused styles should be
@@ -304,18 +301,18 @@ public final class CellUtil {
     }
 
     /**
-     * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
-     * current style plus a single style property <code>propertyName</code> with value
-     * <code>propertyValue</code>.
+     * <p>This method attempts to find an existing CellStyle that matches the {@code cell}'s
+     * current style plus a single style property {@code propertyName} with value
+     * {@code propertyValue}.
      * A new style is created if the workbook does not contain a matching style.</p>
-     * 
-     * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+     *
+     * <p>Modifies the cell style of {@code cell} without affecting other cells that use the
      * same style.</p>
-     * 
+     *
      * <p>If setting more than one cell style property on a cell, use
      * {@link #setCellStyleProperties(Cell, Map)},
      * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
-     * 
+     *
      * @param cell The cell that is to be changed.
      * @param propertyName The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
@@ -327,8 +324,8 @@ public final class CellUtil {
 
     /**
      * Returns a map containing the format properties of the given cell style.
-     * The returned map is not tied to <code>style</code>, so subsequent changes
-     * to <code>style</code> will not modify the map, and changes to the returned
+     * The returned map is not tied to {@code style}, so subsequent changes
+     * to {@code style} will not modify the map, and changes to the returned
      * map will not modify the cell style. The returned map is mutable.
      *
      * @param style cell style
@@ -359,7 +356,7 @@ public final class CellUtil {
         put(properties, WRAP_TEXT, style.getWrapText());
         return properties;
     }
-    
+
     /**
      * Copies the entries in src to dest, using the preferential data type
      * so that maps can be compared for equality
@@ -452,7 +449,7 @@ public final class CellUtil {
         }
         return 0;
     }
-    
+
     /**
      * Utility method that returns the named BorderStyle value from the given map.
      *
@@ -469,7 +466,7 @@ public final class CellUtil {
         // @deprecated 3.15 beta 2. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
         else if (value instanceof Short) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use BorderStyle enums instead.", name);
-            short code = ((Short) value).shortValue();
+            short code = (Short) value;
             border = BorderStyle.valueOf(code);
         }
         else if (value == null) {
@@ -480,7 +477,7 @@ public final class CellUtil {
         }
         return border;
     }
-    
+
     /**
      * Utility method that returns the named FillPatternType value from the given map.
      *
@@ -498,7 +495,7 @@ public final class CellUtil {
         // @deprecated 3.15 beta 2. getFillPattern will only work on FillPatternType enums instead of codes in the future.
         else if (value instanceof Short) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use FillPatternType enums instead.", name);
-            short code = ((Short) value).shortValue();
+            short code = (Short) value;
             pattern = FillPatternType.forInt(code);
         }
         else if (value == null) {
@@ -509,7 +506,7 @@ public final class CellUtil {
         }
         return pattern;
     }
-    
+
     /**
      * Utility method that returns the named HorizontalAlignment value from the given map.
      *
@@ -527,7 +524,7 @@ public final class CellUtil {
         // @deprecated 3.15 beta 2. getHorizontalAlignment will only work on HorizontalAlignment enums instead of codes in the future.
         else if (value instanceof Short) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use HorizontalAlignment enums instead.", name);
-            short code = ((Short) value).shortValue();
+            short code = (Short) value;
             align = HorizontalAlignment.forInt(code);
         }
         else if (value == null) {
@@ -538,7 +535,7 @@ public final class CellUtil {
         }
         return align;
     }
-    
+
     /**
      * Utility method that returns the named VerticalAlignment value from the given map.
      *
@@ -556,7 +553,7 @@ public final class CellUtil {
         // @deprecated 3.15 beta 2. getVerticalAlignment will only work on VerticalAlignment enums instead of codes in the future.
         else if (value instanceof Short) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use VerticalAlignment enums instead.", name);
-            short code = ((Short) value).shortValue();
+            short code = (Short) value;
             align = VerticalAlignment.forInt(code);
         }
         else if (value == null) {
@@ -580,7 +577,7 @@ public final class CellUtil {
         Object value = properties.get(name);
         //noinspection SimplifiableIfStatement
         if (value instanceof Boolean) {
-            return ((Boolean) value).booleanValue();
+            return (Boolean) value;
         }
         return false;
     }

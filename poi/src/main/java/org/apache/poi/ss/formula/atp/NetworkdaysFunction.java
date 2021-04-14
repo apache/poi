@@ -33,8 +33,6 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
  * <b>Syntax</b><br>
  * <b>NETWORKDAYS</b>(<b>startDate</b>, <b>endDate</b>, holidays)
  * <p>
- * 
- * @author jfaenomoto@gmail.com
  */
 final class NetworkdaysFunction implements FreeRefFunction {
 
@@ -44,7 +42,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
 
     /**
      * Constructor.
-     * 
+     *
      * @param anEvaluator an injected {@link ArgumentsEvaluator}.
      */
     private NetworkdaysFunction(ArgumentsEvaluator anEvaluator) {
@@ -55,7 +53,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
     /**
      * Evaluate for NETWORKDAYS. Given two dates and a optional date or interval of holidays, determines how many working days are there
      * between those dates.
-     * 
+     *
      * @return {@link ValueEval} for the number of days between two dates.
      */
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) { // NOSONAR

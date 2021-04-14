@@ -51,8 +51,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <li>If omitted, suffix is assumed to be "i".</li>
  * <li>If suffix is neither "i" nor "j", COMPLEX returns the #VALUE! error value.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
 
@@ -96,7 +94,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         if (suffixValue.length() == 0) {
             suffixValue = DEFAULT_SUFFIX;
         }
-        if (suffixValue.equals(DEFAULT_SUFFIX.toUpperCase(Locale.ROOT)) || 
+        if (suffixValue.equals(DEFAULT_SUFFIX.toUpperCase(Locale.ROOT)) ||
                 suffixValue.equals(SUPPORTED_SUFFIX.toUpperCase(Locale.ROOT))) {
             return ErrorEval.VALUE_INVALID;
         }

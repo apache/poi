@@ -35,8 +35,6 @@ import java.util.Arrays;
  * If data_array contains no values, FREQUENCY returns an array of zeros.<br>
  * <b>bins_array</b> Required. An array of or reference to intervals into which you want to group the values in data_array.
  * If bins_array contains no values, FREQUENCY returns the number of elements in data_array.<br>
- *
- * @author Yegor Kozlov
  */
 public class Frequency extends Fixed2ArgFunction {
     public static final Function instance = new Frequency();

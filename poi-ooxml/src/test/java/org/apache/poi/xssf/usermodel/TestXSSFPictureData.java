@@ -29,9 +29,6 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFPictureData {
     @Test
     void testRead() throws IOException {

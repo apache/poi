@@ -43,8 +43,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test {@link FormulaParser}'s handling of row numbers at the edge of the
  * HSSF/XSSF ranges.
- *
- * @author David North
  */
 class TestFormulaParser {
 

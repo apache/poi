@@ -21,8 +21,6 @@ import org.apache.poi.ss.formula.functions.Function;
 
 /**
  * Collects eval instances for easy access by tests in this package
- *
- * @author Josh Micich
  */
 final class EvalInstances {
 	private EvalInstances() {

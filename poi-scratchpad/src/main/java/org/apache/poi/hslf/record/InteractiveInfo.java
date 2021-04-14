@@ -26,7 +26,6 @@ import org.apache.poi.util.LittleEndian;
  * This class represents the metadata of a link in a slide/notes/etc.
  * It normally just holds a InteractiveInfoAtom, with the metadata
  *  in it.
- * @author Nick Burch
  */
 public class InteractiveInfo extends RecordContainer {
 	private byte[] _header;

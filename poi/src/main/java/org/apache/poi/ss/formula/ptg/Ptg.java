@@ -28,16 +28,16 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * <tt>Ptg</tt> represents a syntactic token in a formula.  'PTG' is an acronym for
+ * {@code Ptg} represents a syntactic token in a formula.  'PTG' is an acronym for
  * '<b>p</b>arse <b>t</b>hin<b>g</b>'.  Originally, the name referred to the single
- * byte identifier at the start of the token, but in POI, <tt>Ptg</tt> encapsulates
+ * byte identifier at the start of the token, but in POI, {@code Ptg} encapsulates
  * the whole formula token (initial byte + value data).
  * <p>
  *
- * <tt>Ptg</tt>s are logically arranged in a tree representing the structure of the
- * parsed formula.  However, in BIFF files <tt>Ptg</tt>s are written/read in
+ * {@code Ptg}s are logically arranged in a tree representing the structure of the
+ * parsed formula.  However, in BIFF files {@code Ptg}s are written/read in
  * <em>Reverse-Polish Notation</em> order. The RPN ordering also simplifies formula
- * evaluation logic, so POI mostly accesses <tt>Ptg</tt>s in the same way.
+ * evaluation logic, so POI mostly accesses {@code Ptg}s in the same way.
  */
 public abstract class Ptg implements Duplicatable, GenericRecord {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
@@ -55,8 +55,8 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 	}
 
 	/**
-	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
-	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
+	 * Reads {@code size} bytes of the input stream, to create an array of {@code Ptg}s.
+	 * Extra data (beyond {@code size}) may be read if and {@code ArrayPtg}s are present.
 	 */
 	public static Ptg[] readTokens(int size, LittleEndianInput in) {
 		List<Ptg> temp = new ArrayList<>(4 + size / 2);
@@ -181,7 +181,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 	/**
 	 * This method will return the same result as {@link #getEncodedSizeWithoutArrayData(Ptg[])}
 	 * if there are no array tokens present.
-	 * @return the full size taken to encode the specified <tt>Ptg</tt>s
+	 * @return the full size taken to encode the specified {@code Ptg}s
 	 */
 	public static int getEncodedSize(Ptg[] ptgs) {
 		int result = 0;
@@ -285,7 +285,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 	public abstract byte getDefaultOperandClass();
 
 	/**
-	 * @return <code>false</code> if this token is classified as 'reference', 'value', or 'array'
+	 * @return {@code false} if this token is classified as 'reference', 'value', or 'array'
 	 */
 	public abstract boolean isBaseToken();
 
@@ -311,10 +311,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 		if (ptg instanceof AreaErrPtg) {
 			return true;
 		}
-		if (ptg instanceof RefErrorPtg) {
-			return true;
-		}
-		return false;
+		return ptg instanceof RefErrorPtg;
 	}
 
 	@Override

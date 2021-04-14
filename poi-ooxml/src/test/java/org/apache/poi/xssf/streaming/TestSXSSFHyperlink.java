@@ -28,8 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 
 /**
  * Test setting hyperlinks in SXSSF
- *
- * @author Yegor Kozlov
  */
 class TestSXSSFHyperlink extends BaseTestHyperlink {
 

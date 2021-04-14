@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that CurrentUserAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestCurrentUserAtom {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();

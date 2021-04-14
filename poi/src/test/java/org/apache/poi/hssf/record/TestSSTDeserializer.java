@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Exercise the SSTDeserializer class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 final class TestSSTDeserializer {
 	private static final int FAKE_SID = -5555;

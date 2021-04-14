@@ -93,8 +93,8 @@ public class HWPFTestDataSamples {
        }
    }
     /**
-     * Writes a spreadsheet to a <tt>ByteArrayOutputStream</tt> and reads it back
-     * from a <tt>ByteArrayInputStream</tt>.<p>
+     * Writes a spreadsheet to a {@code ByteArrayOutputStream} and reads it back
+     * from a {@code ByteArrayInputStream}.<p>
      * Useful for verifying that the serialisation round trip
      */
     public static HWPFDocument writeOutAndReadBack(HWPFDocument original) {

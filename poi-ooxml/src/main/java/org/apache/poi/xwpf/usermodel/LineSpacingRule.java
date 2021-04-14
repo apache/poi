@@ -22,8 +22,6 @@ import java.util.Map;
 /**
  * Specifies the logic which shall be used to calculate the line spacing of the
  * parent object when it is displayed in the document.
- *
- * @author Gisella Bronzetti
  */
 public enum LineSpacingRule {
 

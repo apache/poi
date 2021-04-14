@@ -92,7 +92,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * Notes:
 	 * <ul>
 	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data
-	 * of <tt>text</tt></li>
+	 * of {@code text}</li>
 	 * <li>The string options flag is never separated (by a {@link ContinueRecord}) from the
 	 * first chunk of character data it refers to.</li>
 	 * <li>The 'ushort length' field is assumed to have been explicitly written earlier.  Hence,
@@ -132,7 +132,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * Notes:
 	 * <ul>
 	 * <li>The value of the 'is16bitEncoded' flag is determined by the actual character data
-	 * of <tt>text</tt></li>
+	 * of {@code text}</li>
 	 * <li>The string header fields are never separated (by a {@link ContinueRecord}) from the
 	 * first chunk of character data (i.e. the first character is always encoded in the same
 	 * record as the string header).</li>
@@ -185,7 +185,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 			}
 		} else {
 			while(true) {
-				int nWritableChars = Math.min(nChars-i, _ulrOutput.getAvailableSpace() / 1);
+				int nWritableChars = Math.min(nChars-i, _ulrOutput.getAvailableSpace());
 				for ( ; nWritableChars > 0; nWritableChars--) {
 					_ulrOutput.writeByte(text.charAt(i++));
 				}
@@ -198,16 +198,18 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		}
 	}
 
+	@Override
 	public void write(byte[] b) {
 		writeContinueIfRequired(b.length);
 		_ulrOutput.write(b);
 	}
 
+	@Override
 	public void write(byte[] b, int offset, int len) {
 
         int i=0;
         while(true) {
-            int nWritableChars = Math.min(len - i, _ulrOutput.getAvailableSpace() / 1);
+            int nWritableChars = Math.min(len - i, _ulrOutput.getAvailableSpace());
             for ( ; nWritableChars > 0; nWritableChars--) {
                 _ulrOutput.writeByte(b[offset + i++]);
             }
@@ -218,22 +220,27 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
         }
 	}
 
+	@Override
 	public void writeByte(int v) {
 		writeContinueIfRequired(1);
 		_ulrOutput.writeByte(v);
 	}
+	@Override
 	public void writeDouble(double v) {
 		writeContinueIfRequired(8);
 		_ulrOutput.writeDouble(v);
 	}
+	@Override
 	public void writeInt(int v) {
 		writeContinueIfRequired(4);
 		_ulrOutput.writeInt(v);
 	}
+	@Override
 	public void writeLong(long v) {
 		writeContinueIfRequired(8);
 		_ulrOutput.writeLong(v);
 	}
+	@Override
 	public void writeShort(int v) {
 		writeContinueIfRequired(2);
 		_ulrOutput.writeShort(v);
@@ -244,27 +251,35 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 */
 	private static final LittleEndianOutput NOPOutput = new DelayableLittleEndianOutput() {
 
+		@Override
 		public LittleEndianOutput createDelayedOutput(int size) {
 			return this;
 		}
+		@Override
 		public void write(byte[] b) {
 			// does nothing
 		}
+		@Override
 		public void write(byte[] b, int offset, int len) {
 			// does nothing
 		}
+		@Override
 		public void writeByte(int v) {
 			// does nothing
 		}
+		@Override
 		public void writeDouble(double v) {
 			// does nothing
 		}
+		@Override
 		public void writeInt(int v) {
 			// does nothing
 		}
+		@Override
 		public void writeLong(long v) {
 			// does nothing
 		}
+		@Override
 		public void writeShort(int v) {
 			// does nothing
 		}

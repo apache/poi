@@ -28,10 +28,6 @@ import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Evgeniy Berlog
- * @date 25.06.12
- */
 class TestText {
 
     @Test

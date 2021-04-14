@@ -42,8 +42,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNo
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.
- *
- * @author Yegor Kozlov
  */
 public final class XSSFPicture extends XSSFShape implements Picture {
     private static final Logger LOG = LogManager.getLogger(XSSFPicture.class);

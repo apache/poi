@@ -20,8 +20,6 @@ package org.apache.poi.ss.util;
 
 /**
  * For working with the internals of IEEE 754-2008 'binary64' (double precision) floating point numbers
- *
- * @author Josh Micich
  */
 final class IEEEDouble {
 	private static final long EXPONENT_MASK = 0x7FF0000000000000L;

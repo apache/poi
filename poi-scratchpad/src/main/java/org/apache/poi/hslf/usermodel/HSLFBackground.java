@@ -23,8 +23,6 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Background shape
- *
- * @author Yegor Kozlov
  */
 public final class HSLFBackground extends HSLFShape implements Background<HSLFShape,HSLFTextParagraph> {
 

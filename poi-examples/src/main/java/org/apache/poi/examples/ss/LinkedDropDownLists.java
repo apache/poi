@@ -60,7 +60,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * better to include the name of the sheet when calling the setRefersToFormula()
  * method.
  *
- * @author Mark Beardsley [msb at apache.org]
  * @version 1.00 30th March 2012
  */
 public class LinkedDropDownLists {

@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test setting text properties of newly added TextBoxes
- *
- * @author Yegor Kozlov
  */
 public final class TestSetBoldItalic {
     /**

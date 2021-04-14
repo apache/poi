@@ -32,8 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests HSSFHyperlink.
- *
- * @author  Yegor Kozlov
  */
 final class TestHSSFHyperlink extends BaseTestHyperlink {
 

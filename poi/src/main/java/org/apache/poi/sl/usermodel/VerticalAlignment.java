@@ -20,11 +20,9 @@ package org.apache.poi.sl.usermodel;
 
 /**
  * Specifies a list of available anchoring types for text
- * 
+ *
  * <!-- FIXME: Identical to {@link org.apache.poi.ss.usermodel.VerticalAlignment}. Should merge these to
  * {@link org.apache.poi.common.usermodel}.VerticalAlignment in the future. -->
- * 
- * @author Yegor Kozlov
  */
 public enum VerticalAlignment {
     /**

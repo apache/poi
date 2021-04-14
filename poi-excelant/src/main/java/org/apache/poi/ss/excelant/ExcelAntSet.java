@@ -20,27 +20,21 @@ package org.apache.poi.ss.excelant;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.tools.ant.Task;
 
-/**
- * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- * 
- */
 public abstract class ExcelAntSet extends Task {
-    
+
     protected String cellStr ;
-    
+
     protected ExcelAntWorkbookUtil wbUtil ;
-    
+
     public void setCell( String cellName ) {
         cellStr = cellName ;
     }
-    
+
     public String getCell() {
         return cellStr ;
     }
-    
-    
+
+
     public void setWorkbookUtil( ExcelAntWorkbookUtil wb ) {
         wbUtil = wb ;
     }

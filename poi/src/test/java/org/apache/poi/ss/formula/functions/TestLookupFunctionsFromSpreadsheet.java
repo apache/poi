@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.Arguments;
  * functions have more complex test cases and test data setup.
  *
  * Tests for bug fixes and specific/tricky behaviour can be found in the corresponding test class
- * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
+ * ({@code TestXxxx}) of the target ({@code Xxxx}) implementor, where execution can be observed
  *  more easily.
  */
 final class TestLookupFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {

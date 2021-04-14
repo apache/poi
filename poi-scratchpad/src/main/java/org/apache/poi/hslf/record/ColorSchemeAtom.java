@@ -34,8 +34,6 @@ import org.apache.poi.util.LittleEndian;
  *  colours of bits of text, that makes up a given colour scheme.
  * Slides (presumably) link to a given colour scheme atom, and that
  *  defines the colours to be used
- *
- * @author Nick Burch
  */
 public final class ColorSchemeAtom extends RecordAtom {
 	private byte[] _header;

@@ -26,10 +26,6 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 /**
  * A simple user-defined function to calculate principal and interest.
- *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 public class CalculateMortgage implements FreeRefFunction {
 
@@ -81,7 +77,7 @@ public class CalculateMortgage implements FreeRefFunction {
     /**
      * Excel does not support infinities and NaNs, rather, it gives a #NUM! error in these cases
      *
-     * @throws EvaluationException (#NUM!) if <tt>result</tt> is <tt>NaN</> or <tt>Infinity</tt>
+     * @throws EvaluationException (#NUM!) if {@code result} is {@code NaN} or {@code Infinity}
      */
      private void checkValue(double result) throws EvaluationException {
          if (Double.isNaN(result) || Double.isInfinite(result)) {

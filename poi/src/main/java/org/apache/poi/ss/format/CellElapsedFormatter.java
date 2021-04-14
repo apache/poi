@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
 
 /**
  * This class implements printing out an elapsed time format.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellElapsedFormatter extends CellFormatter {
     private final List<TimeSpec> specs;
@@ -74,6 +72,7 @@ public class CellElapsedFormatter extends CellFormatter {
         // only special character for this is '%', so we have to handle all the
         // quoting in this method ourselves.
 
+        @Override
         public String handlePart(Matcher m, String part, CellFormatType type,
                 StringBuffer desc) {
 
@@ -186,7 +185,7 @@ public class CellElapsedFormatter extends CellFormatter {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void formatValue(StringBuffer toAppendTo, Object value) {
         double elapsed = ((Number) value).doubleValue();
 
@@ -208,8 +207,9 @@ public class CellElapsedFormatter extends CellFormatter {
     /**
      * {@inheritDoc}
      * <p>
-     * For a date, this is <tt>"mm/d/y"</tt>.
+     * For a date, this is {@code "mm/d/y"}.
      */
+    @Override
     public void simpleValue(StringBuffer toAppendTo, Object value) {
         formatValue(toAppendTo, value);
     }

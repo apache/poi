@@ -46,8 +46,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class holds all of the character formatting properties.
- *
- * @author Ryan Ackley
  */
 @Internal
 public class CHPBinTable

@@ -22,9 +22,6 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- */
 public final class StringEval implements StringValueEval {
 
 	public static final StringEval EMPTY_INSTANCE = new StringEval("");

@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Class to test POIFSReaderRegistry functionality
- *
- * @author Marc Johnson
  */
 final class TestPOIFSReaderRegistry {
     private final POIFSReaderListener[] listeners =

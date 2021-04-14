@@ -32,7 +32,6 @@ import org.apache.poi.util.NotImplemented;
 /**
  * Zip implementation of a PackagePart.
  *
- * @author Julien Chable
  * @version 1.0
  * @see PackagePart
  */

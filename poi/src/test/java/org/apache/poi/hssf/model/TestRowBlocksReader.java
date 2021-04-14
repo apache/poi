@@ -35,8 +35,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RowBlocksReader}
- *
- * @author Josh Micich
  */
 final class TestRowBlocksReader {
     @Test

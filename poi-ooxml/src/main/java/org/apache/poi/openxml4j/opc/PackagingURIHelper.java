@@ -31,7 +31,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 /**
  * Helper for part and pack URI.
  *
- * @author Julien Chable, CDubet, Kim Ung
  * @version 0.1
  */
 public final class PackagingURIHelper {

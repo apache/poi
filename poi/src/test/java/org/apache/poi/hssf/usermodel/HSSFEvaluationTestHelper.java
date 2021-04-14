@@ -20,9 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ss.formula.EvaluationCell;
 
 /**
- * Raises visibility of some internal functionality for test purposes 
- * 
- * @author Josh Micich
+ * Raises visibility of some internal functionality for test purposes
  */
 public final class HSSFEvaluationTestHelper {
 

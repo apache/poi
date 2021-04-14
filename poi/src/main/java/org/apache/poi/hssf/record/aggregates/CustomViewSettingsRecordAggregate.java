@@ -67,7 +67,8 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 		}
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		if (_recs.isEmpty()) {
 			return;
 		}
@@ -88,6 +89,6 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 	}
 
     public void append(RecordBase r){
-        _recs.add(r);    
+        _recs.add(r);
     }
 }

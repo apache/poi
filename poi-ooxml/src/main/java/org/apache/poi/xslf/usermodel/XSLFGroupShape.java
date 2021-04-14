@@ -50,8 +50,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 /**
  * Represents a group shape that consists of many shapes grouped together.
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFGroupShape extends XSLFShape

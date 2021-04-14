@@ -60,7 +60,8 @@ public final class MemErrPtg extends OperandPtg {
 		return "ERR#";
 	}
 
-	public byte getDefaultOperandClass() {
+	@Override
+    public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
 

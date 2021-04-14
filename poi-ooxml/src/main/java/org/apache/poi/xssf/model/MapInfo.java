@@ -37,21 +37,19 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSchema;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.MapInfoDocument;
 
 /**
- * 
+ *
  * This class implements the Custom XML Mapping Part (Open Office XML Part 1:
  * chapter 12.3.6)
- * 
+ *
  * An instance of this part type contains a schema for an XML file, and
  * information on the behavior that is used when allowing this custom XML schema
  * to be mapped into the spreadsheet.
- * 
- * @author Roberto Manicardi
  */
 
 public class MapInfo extends POIXMLDocumentPart {
 
 	private CTMapInfo mapInfo;
-	
+
 	private Map<Integer, XSSFMap> maps ;
 
 	public MapInfo() {
@@ -66,8 +64,8 @@ public class MapInfo extends POIXMLDocumentPart {
 	public MapInfo(PackagePart part) throws IOException {
 	    super(part);
 	    readFrom(part.getInputStream());
-    }	
-	
+    }
+
 	public void readFrom(InputStream is) throws IOException {
 		try {
 			MapInfoDocument doc = MapInfoDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -82,7 +80,7 @@ public class MapInfo extends POIXMLDocumentPart {
 			throw new IOException(e.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
      * Returns the parent XSSFWorkbook
      *
@@ -91,14 +89,14 @@ public class MapInfo extends POIXMLDocumentPart {
     public XSSFWorkbook getWorkbook() {
         return (XSSFWorkbook)getParent();
     }
-	
+
 	/**
-	 * 
+	 *
 	 * @return the internal data object
 	 */
 	public CTMapInfo getCTMapInfo(){
 		return mapInfo;
-		
+
 	}
 
 	/**
@@ -117,27 +115,27 @@ public class MapInfo extends POIXMLDocumentPart {
 		}
 		return xmlSchema;
 	}
-	
-	
+
+
 	public XSSFMap getXSSFMapById(int id){
 		return maps.get(id);
 	}
-	
+
 	public XSSFMap getXSSFMapByName(String name){
-		
+
 		XSSFMap matchedMap = null;
-		
+
 		for(XSSFMap map :maps.values()){
 			if(map.getCtMap().getName()!=null && map.getCtMap().getName().equals(name)){
 				matchedMap = map;
 			}
-		}		
-		
+		}
+
 		return matchedMap;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return all the mappings configured in this document
 	 */
 	public Collection<XSSFMap> getAllXSSFMaps(){

@@ -24,9 +24,6 @@ import static org.apache.poi.ss.util.IEEEDouble.*;
 /**
  * Excel compares numbers using different rules to those of java, so
  *  {@link Double#compare(double, double)} won't do.
- *
- *
- * @author Josh Micich
  */
 public final class NumberComparer {
 
@@ -37,9 +34,8 @@ public final class NumberComparer {
 	 * decimal digits of precision and a decimal exponent, before completing the comparison.
 	 * <p>
 	 * In Excel formula evaluation, expressions like "(0.06-0.01)=0.05" evaluate to "TRUE" even
-	 * though the equivalent java expression is <code>false</code>.  In examples like this,
+	 * though the equivalent java expression is {@code false}.  In examples like this,
 	 * Excel achieves the effect by having additional logic for comparison operations.
-	 * <p>
 	 * <p>
 	 * Note - Excel also gives special treatment to expressions like "0.06-0.01-0.05" which
 	 * evaluates to "0" (in java, rounding anomalies give a result of 6.9E-18).  The special
@@ -55,8 +51,8 @@ public final class NumberComparer {
 	 * This rule (for rounding the result of a final addition or subtraction), has not been
 	 * implemented in POI (as of Jul-2009).
 	 *
-	 * @return <code>negative, 0, or positive</code> according to the standard Excel comparison
-	 * of values <tt>a</tt> and <tt>b</tt>.
+	 * @return {@code negative, 0, or positive} according to the standard Excel comparison
+	 * of values {@code a} and {@code b}.
 	 */
 	public static int compare(double a, double b) {
 		long rawBitsA = Double.doubleToLongBits(a);
@@ -142,7 +138,7 @@ public final class NumberComparer {
 	 * Usually any normal number is greater (in magnitude) than any subnormal number.
 	 * However there are some anomalous cases around the threshold where Excel produces screwy results
 	 * @param isNegative both values are either negative or positive. This parameter affects the sign of the comparison result
-	 * @return usually <code>isNegative ? -1 : +1</code>
+	 * @return usually {@code isNegative ? -1 : +1}
 	 */
 	private static int compareAcrossSubnormalThreshold(long normalRawBitsA, long subnormalRawBitsB, boolean isNegative) {
 		long fracB = subnormalRawBitsB & FRAC_MASK;

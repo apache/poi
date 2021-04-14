@@ -20,8 +20,6 @@ import java.util.Locale;
 
 /**
  * This class implements printing out text.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellTextFormatter extends CellFormatter {
     private final int[] textPos;

@@ -20,52 +20,48 @@ package org.apache.poi.ss.excelant.util;
 /**
  * A simple class that encapsulates information about a cell evaluation
  * from POI.
- * 
- * @author Jon Svede (jon [at] loquatic [dot] com)
- * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
- *
  */
 public class ExcelAntEvaluationResult {
-	
+
 	/**
 	 * This boolean flag is used to determine if the evaluation completed
-	 * without error.  This alone doesn't ensure that the evaluation was 
+	 * without error.  This alone doesn't ensure that the evaluation was
 	 * successful.
 	 */
 	private boolean evaluationCompletedWithError ;
-	
+
 	/**
 	 * This boolean flag is used to determine if the result was within
 	 * the specified precision.
 	 */
 	private boolean didPass ;
-	
+
 	/**
 	 * This is the actual value returned from the evaluation.
 	 */
 	private double returnValue ;
-	
+
 	/**
 	 * Any error message String values that need to be returned.
 	 */
 	private String errorMessage ;
-	
+
 	/**
 	 * Stores the absolute value of the delta for this evaluation.
 	 */
 	private double actualDelta ;
-	
+
 	/**
 	 * This stores the fully qualified cell name (sheetName!cellId).
 	 */
 	private String cellName ;
-	
-	
+
+
 
 	public ExcelAntEvaluationResult(boolean completedWithError,
-			                 boolean passed, 
-			                 double retValue, 
-			                 String errMessage, 
+			                 boolean passed,
+			                 double retValue,
+			                 String errMessage,
 			                 double delta,
 			                 String cellId) {
 
@@ -84,19 +80,19 @@ public class ExcelAntEvaluationResult {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-	
+
 	public boolean didTestPass() {
 		return didPass ;
 	}
-	
+
 	public boolean evaluationCompleteWithError() {
 		return evaluationCompletedWithError ;
 	}
-	
+
 	public double getDelta() {
 		return actualDelta ;
 	}
-	
+
 	public String getCellName() {
 		return cellName ;
 	}
@@ -108,5 +104,5 @@ public class ExcelAntEvaluationResult {
 				+ ", returnValue=" + returnValue + ", errorMessage="
 				+ errorMessage + ", actualDelta=" + actualDelta + ", cellName="
 				+ cellName + "]";
-	}	
+	}
 }

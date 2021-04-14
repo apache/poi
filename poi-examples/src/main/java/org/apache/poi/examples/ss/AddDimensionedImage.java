@@ -180,7 +180,6 @@ import org.apache.poi.util.IOUtils;
  * grow in size of the column is made wider or the row higher but it will shrink
  * if the columns width or rows height are reduced.
  *
- * @author Mark Beardsley [msb at apache.org] and Mark Southern [southern at scripps.edu]
  * @version 1.00 5th August 2009.
  *          2.00 26th February 2010.
  *               Ported to make use of the the SS usermodel classes.
@@ -859,7 +858,6 @@ public class AddDimensionedImage {
      * either how far the image should be inset from the top or the left hand
      * edge of the cell.
      *
-     * @author Mark Beardsley [msb at apache.org]
      * @version 1.00 5th August 2009.
      */
     public class ClientAnchorDetail {
@@ -928,7 +926,6 @@ public class AddDimensionedImage {
      * size measurements into pixels and/or millimetres. The class also contains
      * various constants that are required in other calculations.
      *
-     * @author xio[darjino@hotmail.com]
      * @version 1.01 30th July 2009.
      *      Added by Mark Beardsley [msb at apache.org].
      *          Additional constants.

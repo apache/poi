@@ -30,6 +30,7 @@ public final class RangePtg  extends OperationPtg {
     	// enforce singleton
     }
 
+    @Override
     public final boolean isBaseToken() {
         return true;
     }
@@ -39,14 +40,17 @@ public final class RangePtg  extends OperationPtg {
         return sid;
     }
 
+    @Override
     public int getSize() {
         return SIZE;
     }
 
+    @Override
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
     }
 
+    @Override
     public String toFormulaString()
     {
         return ":";
@@ -54,10 +58,12 @@ public final class RangePtg  extends OperationPtg {
 
 
     /** implementation of method from OperationsPtg*/
+    @Override
     public String toFormulaString(String[] operands) {
         return operands[0] + ":" + operands[1];
      }
 
+    @Override
     public int getNumberOfOperands()
     {
         return 2;

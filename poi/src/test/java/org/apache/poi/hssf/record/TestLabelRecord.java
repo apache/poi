@@ -27,7 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for <tt>LabelRecord</tt>
+ * Tests for {@code LabelRecord}
  */
 final class TestLabelRecord  {
 

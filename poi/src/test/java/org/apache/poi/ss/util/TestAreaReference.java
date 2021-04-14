@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link AreaReference} handling of max rows.
- *
- * @author David North
  */
 class TestAreaReference {
     @Test

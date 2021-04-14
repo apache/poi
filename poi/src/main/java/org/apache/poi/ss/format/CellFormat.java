@@ -48,17 +48,17 @@ import org.apache.poi.util.LocaleUtil;
  * specifies what to do with particular kinds of values, depending on the number
  * of parts given:
  * <dl>
- * <dt>One part (example: <tt>[Green]#.##</tt>)</dt>
+ * <dt>One part (example: {@code [Green]#.##})</dt>
  * <dd>If the value is a number, display according to this one part (example: green text,
  * with up to two decimal points). If the value is text, display it as is.</dd>
  *
- * <dt>Two parts (example: <tt>[Green]#.##;[Red]#.##</tt>)</dt>
+ * <dt>Two parts (example: {@code [Green]#.##;[Red]#.##})</dt>
  * <dd>If the value is a positive number or zero, display according to the first part (example: green
  * text, with up to two decimal points); if it is a negative number, display
  * according to the second part (example: red text, with up to two decimal
  * points). If the value is text, display it as is.</dd>
  *
- * <dt>Three parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##</tt>)</dt>
+ * <dt>Three parts (example: {@code [Green]#.##;[Black]#.##;[Red]#.##})</dt>
  * <dd>If the value is a positive
  * number, display according to the first part (example: green text, with up to
  * two decimal points); if it is zero, display according to the second part
@@ -66,7 +66,7 @@ import org.apache.poi.util.LocaleUtil;
  * number, display according to the third part (example: red text, with up to
  * two decimal points). If the value is text, display it as is.</dd>
  *
- * <dt>Four parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##;[@]</tt>)</dt>
+ * <dt>Four parts (example: {@code [Green]#.##;[Black]#.##;[Red]#.##;[@]})</dt>
  * <dd>If the value is a positive number, display according to the first part (example: green text,
  * with up to two decimal points); if it is zero, display according to the
  * second part (example: black text, with up to two decimal points); if it is a
@@ -77,7 +77,7 @@ import org.apache.poi.util.LocaleUtil;
  * </dl>
  * <p>
  * A given format part may specify a given Locale, by including something
- *  like <tt>[$$-409]</tt> or <tt>[$&pound;-809]</tt> or <tt>[$-40C]</tt>. These
+ *  like {@code [$$-409]} or {@code [$&pound;-809]} or {@code [$-40C]}. These
  *  are (currently) largely ignored. You can use {@link DateFormatConverter}
  *  to look these up into Java Locales if desired.
  * <p>
@@ -136,25 +136,25 @@ public class CellFormat {
             new WeakHashMap<>();
 
     /**
-     * Returns a {@link CellFormat} that applies the given format.  Two calls
+     * Returns a CellFormat that applies the given format.  Two calls
      * with the same format may or may not return the same object.
      *
      * @param format The format.
      *
-     * @return A {@link CellFormat} that applies the given format.
+     * @return A CellFormat that applies the given format.
      */
     public static CellFormat getInstance(String format) {
         return getInstance(LocaleUtil.getUserLocale(), format);
     }
 
     /**
-     * Returns a {@link CellFormat} that applies the given format.  Two calls
+     * Returns a CellFormat that applies the given format.  Two calls
      * with the same format may or may not return the same object.
      *
      * @param locale The locale.
      * @param format The format.
      *
-     * @return A {@link CellFormat} that applies the given format.
+     * @return A CellFormat that applies the given format.
      */
     public static synchronized CellFormat getInstance(Locale locale, String format) {
         Map<String, CellFormat> formatMap = formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
@@ -255,7 +255,7 @@ public class CellFormat {
         } else if (value instanceof java.util.Date) {
             // Don't know (and can't get) the workbook date windowing (1900 or 1904)
             // so assume 1900 date windowing
-            Double numericValue = DateUtil.getExcelDate((Date) value);
+            double numericValue = DateUtil.getExcelDate((Date) value);
             if (DateUtil.isValidExcelDate(numericValue)) {
                 return getApplicableFormatPart(numericValue).apply(value);
             } else {
@@ -294,7 +294,7 @@ public class CellFormat {
         case BOOLEAN:
             return apply(c.getBooleanCellValue());
         case NUMERIC:
-            Double value = c.getNumericCellValue();
+            double value = c.getNumericCellValue();
             if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
                 if (DateUtil.isValidExcelDate(value)) {
                     return apply(c.getDateCellValue(), value);
@@ -364,7 +364,7 @@ public class CellFormat {
             case BOOLEAN:
                 return apply(label, c.getBooleanCellValue());
             case NUMERIC:
-                Double value = c.getNumericCellValue();
+                double value = c.getNumericCellValue();
                 if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
                     if (DateUtil.isValidExcelDate(value)) {
                         return apply(label, c.getDateCellValue(), value);
@@ -450,12 +450,12 @@ public class CellFormat {
     }
 
     /**
-     * Returns <tt>true</tt> if the other object is a {@link CellFormat} object
+     * Returns {@code true} if the other object is a CellFormat object
      * with the same format.
      *
      * @param obj The other object.
      *
-     * @return <tt>true</tt> if the two objects are equal.
+     * @return {@code true} if the two objects are equal.
      */
     @Override
     public boolean equals(Object obj) {

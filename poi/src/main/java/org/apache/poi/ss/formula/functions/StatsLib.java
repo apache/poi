@@ -20,8 +20,6 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Arrays;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  * Library for common statistics functions
  */
 final class StatsLib {

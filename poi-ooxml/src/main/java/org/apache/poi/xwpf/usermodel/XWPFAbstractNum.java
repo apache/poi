@@ -19,9 +19,6 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
-/**
- * @author Philipp Epp
- */
 public class XWPFAbstractNum {
     protected XWPFNumbering numbering;
     private CTAbstractNum ctAbstractNum;

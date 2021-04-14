@@ -25,12 +25,8 @@ import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
- */
 public final class NumberEval implements NumericValueEval, StringValueEval {
-    
+
     public static final NumberEval ZERO = new NumberEval(0);
 
     private final double _value;

@@ -80,7 +80,7 @@ final class TestDays360 {
     }
 
     /**
-     * The <tt>method</tt> parameter only makes a difference when the second parameter
+     * The {@code method} parameter only makes a difference when the second parameter
      * is the last day of the month that does <em>not</em> have 30 days.
      */
     @Test

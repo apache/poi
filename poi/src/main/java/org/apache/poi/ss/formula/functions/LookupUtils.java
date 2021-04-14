@@ -39,7 +39,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 final class LookupUtils {
 
 	/**
-	 * Represents a single row or column within an <tt>AreaEval</tt>.
+	 * Represents a single row or column within an {@code AreaEval}.
 	 */
 	public interface ValueVector {
 		ValueEval getItem(int index);
@@ -64,6 +64,7 @@ final class LookupUtils {
 			_size = tableArray.getWidth();
 		}
 
+		@Override
 		public ValueEval getItem(int index) {
 			if(index > _size) {
 				throw new ArrayIndexOutOfBoundsException("Specified index (" + index
@@ -71,6 +72,7 @@ final class LookupUtils {
 			}
 			return _tableArray.getValue(_rowIndex, index);
 		}
+		@Override
 		public int getSize() {
 			return _size;
 		}
@@ -93,6 +95,7 @@ final class LookupUtils {
 			_size = _tableArray.getHeight();
 		}
 
+		@Override
 		public ValueEval getItem(int index) {
 			if(index > _size) {
 				throw new ArrayIndexOutOfBoundsException("Specified index (" + index
@@ -100,6 +103,7 @@ final class LookupUtils {
 			}
 			return _tableArray.getValue(index, _columnIndex);
 		}
+		@Override
 		public int getSize() {
 			return _size;
 		}
@@ -114,7 +118,8 @@ final class LookupUtils {
             _re = re;
         }
 
-        public ValueEval getItem(int index) {
+        @Override
+		public ValueEval getItem(int index) {
             if(index >= _size) {
                 throw new ArrayIndexOutOfBoundsException("Specified index (" + index
                         + ") is outside the allowed range (0.." + (_size-1) + ")");
@@ -122,7 +127,8 @@ final class LookupUtils {
             int sheetIndex = _re.getFirstSheetIndex() + index;
             return _re.getInnerValueEval(sheetIndex);
         }
-        public int getSize() {
+        @Override
+		public int getSize() {
             return _size;
         }
     }
@@ -134,7 +140,7 @@ final class LookupUtils {
 		return new ColumnVector(tableArray, relativeColumnIndex);
 	}
 	/**
-	 * @return <code>null</code> if the supplied area is neither a single row nor a single column
+	 * @return {@code null} if the supplied area is neither a single row nor a single column
 	 */
 	public static ValueVector createVector(TwoDEval ae) {
 		if (ae.isColumn()) {
@@ -158,7 +164,7 @@ final class LookupUtils {
 	 * changes behaviour when the evaluated 'mid' value has a different type to the lookup value.<p>
 	 *
 	 * A simple int might have done the same job, but there is risk in confusion with the well
-	 * known <tt>Comparable.compareTo()</tt> and <tt>Comparator.compare()</tt> which both use
+	 * known {@code Comparable.compareTo()} and {@code Comparator.compare()} which both use
 	 * a ubiquitous 3 value result encoding.
 	 */
 	public static final class CompareResult {
@@ -241,8 +247,8 @@ final class LookupUtils {
 
 	public interface LookupValueComparer {
 		/**
-		 * @return one of 4 instances or <tt>CompareResult</tt>: <tt>LESS_THAN</tt>, <tt>EQUAL</tt>,
-		 * <tt>GREATER_THAN</tt> or <tt>TYPE_MISMATCH</tt>
+		 * @return one of 4 instances or {@code CompareResult}: {@code LESS_THAN}, {@code EQUAL},
+		 * {@code GREATER_THAN} or {@code TYPE_MISMATCH}
 		 */
 		CompareResult compareTo(ValueEval other);
 	}
@@ -256,6 +262,7 @@ final class LookupUtils {
 			}
 			_targetClass = targetValue.getClass();
 		}
+		@Override
 		public final CompareResult compareTo(ValueEval other) {
 			if (other == null) {
 				throw new RuntimeException("compare to value cannot be null");
@@ -291,6 +298,7 @@ final class LookupUtils {
             _isMatchFunction = isMatchFunction;
 		}
 
+		@Override
 		protected CompareResult compareSameType(ValueEval other) {
             StringEval se = (StringEval) other;
 
@@ -307,6 +315,7 @@ final class LookupUtils {
 
             return CompareResult.valueOf(_value.compareToIgnoreCase(stringValue));
 		}
+		@Override
 		protected String getValueAsString() {
 			return _value;
 		}
@@ -318,10 +327,12 @@ final class LookupUtils {
 			super(ne);
 			_value = ne.getNumberValue();
 		}
+		@Override
 		protected CompareResult compareSameType(ValueEval other) {
 			NumberEval ne = (NumberEval) other;
 			return CompareResult.valueOf(Double.compare(_value, ne.getNumberValue()));
 		}
+		@Override
 		protected String getValueAsString() {
 			return String.valueOf(_value);
 		}
@@ -333,6 +344,7 @@ final class LookupUtils {
 			super(be);
 			_value = be.getBooleanValue();
 		}
+		@Override
 		protected CompareResult compareSameType(ValueEval other) {
 			BoolEval be = (BoolEval) other;
 			boolean otherVal = be.getBooleanValue();
@@ -345,6 +357,7 @@ final class LookupUtils {
 			}
 			return CompareResult.LESS_THAN;
 		}
+		@Override
 		protected String getValueAsString() {
 			return String.valueOf(_value);
 		}
@@ -430,7 +443,7 @@ final class LookupUtils {
 
 	/**
 	 * Resolves the last (optional) parameter (<b>range_lookup</b>) to the VLOOKUP and HLOOKUP functions.
-	 * @param rangeLookupArg must not be <code>null</code>
+	 * @param rangeLookupArg must not be {@code null}
 	 */
 	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, int srcCellCol) throws EvaluationException {
 

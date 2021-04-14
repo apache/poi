@@ -23,8 +23,6 @@ import java.util.Arrays;
 
 /**
  * Environment, which contains lots of settings for the document.
- *
- * @author Nick Burch
  */
 
 public final class Environment extends PositionDependentRecordContainer

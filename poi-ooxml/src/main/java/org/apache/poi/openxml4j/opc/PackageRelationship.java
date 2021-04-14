@@ -23,8 +23,6 @@ import java.util.Objects;
 
 /**
  * A part relationship.
- *
- * @author Julien Chable
  * @version 1.0
  */
 public final class PackageRelationship {

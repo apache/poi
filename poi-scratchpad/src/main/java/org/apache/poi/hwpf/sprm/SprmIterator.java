@@ -22,7 +22,6 @@ import org.apache.poi.util.Internal;
 /**
  * This class is used to iterate through a list of sprms from a Word 97/2000/XP
  * document.
- * @author Ryan Ackley
  * @version 1.0
  */
 @Internal

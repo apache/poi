@@ -30,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMapInfo;
 import org.w3c.dom.Node;
 
-/**
- * @author Roberto Manicardi
- */
 public final class TestMapInfo {
     @Test
     void testMapInfoExists() throws IOException {

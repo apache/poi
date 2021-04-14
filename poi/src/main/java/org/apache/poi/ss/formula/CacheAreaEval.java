@@ -26,7 +26,6 @@ import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * @author Robert Hulbert
  * Provides holding structure for temporary values in arrays during the evaluation process.
  * As such, Row/Column references do not actually correspond to data in the file.
  */

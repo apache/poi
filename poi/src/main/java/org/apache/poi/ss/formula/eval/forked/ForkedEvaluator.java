@@ -52,14 +52,14 @@ public final class ForkedEvaluator {
 	}
 
 	/**
-	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 * @param udfFinder pass {@code null} for default (AnalysisToolPak only)
 	 */
 	public static ForkedEvaluator create(Workbook wb, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		return new ForkedEvaluator(wb.createEvaluationWorkbook(), stabilityClassifier, udfFinder);
 	}
 
 	/**
-	 * Sets the specified cell to the supplied <tt>value</tt>
+	 * Sets the specified cell to the supplied {@code value}
 	 * @param sheetName the name of the sheet containing the cell
 	 * @param rowIndex zero based
 	 * @param columnIndex zero based
@@ -72,8 +72,8 @@ public final class ForkedEvaluator {
 	}
 	/**
 	 * Copies the values of all updated cells (modified by calls to {@link
-	 * #updateCell(String, int, int, ValueEval)}) to the supplied <tt>workbook</tt>.<br>
-	 * Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook',
+	 * #updateCell(String, int, int, ValueEval)}) to the supplied {@code workbook}.<br>
+	 * Typically, the supplied {@code workbook} is a writable copy of the 'master workbook',
 	 * but at the very least it must contain sheets with the same names.
 	 */
 	public void copyUpdatedCells(Workbook workbook) {
@@ -90,7 +90,7 @@ public final class ForkedEvaluator {
      * @param sheetName the name of the sheet containing the cell
      * @param rowIndex zero based
      * @param columnIndex zero based
-	 * @return <code>null</code> if the supplied cell is <code>null</code> or blank
+	 * @return {@code null} if the supplied cell is {@code null} or blank
 	 */
 	public ValueEval evaluate(String sheetName, int rowIndex, int columnIndex) {
 		EvaluationCell cell = _sewb.getEvaluationCell(sheetName, rowIndex, columnIndex);

@@ -40,8 +40,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
  * If order is 0 (zero) or omitted, Microsoft Excel ranks number as if ref were a list sorted in descending order.
  * If order is any nonzero value, Microsoft Excel ranks number as if ref were a list sorted in ascending order.
- *
- * @author Rubin Wang
  */
 public class Rank extends Var2or3ArgFunction {
 

@@ -20,8 +20,6 @@ import org.apache.poi.ss.usermodel.AutoFilter;
 
 /**
  * Represents autofiltering for the specified worksheet.
- *
- * @author Yegor Kozlov
  */
 public final class XSSFAutoFilter implements AutoFilter {
     private XSSFSheet _sheet;

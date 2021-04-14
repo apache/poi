@@ -22,8 +22,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Class for the FLD structure.
- * 
- * @author Cedric Bosdonnat <cbosdonnat@novell.com>
  */
 @Internal
 public final class FieldDescriptor extends FLDAbstractType

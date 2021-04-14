@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * The enumeration value indicating the print orientation for a sheet.
- *
- * @author Gisella Bronzetti
  */
 public enum PrintOrientation {
 

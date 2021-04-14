@@ -27,8 +27,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container record that specifies information about animation information for a shape.
- *
- * @author Yegor Kozlov
  */
 public final class AnimationInfo extends RecordContainer {
 	private byte[] _header;

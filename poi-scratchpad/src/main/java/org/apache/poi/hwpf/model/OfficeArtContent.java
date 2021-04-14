@@ -34,8 +34,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Information about drawings in the document.
  * <p>
  * The {@code delay stream} referenced in {@code [MS-ODRAW]} is the {@code WordDocument} stream.
- *
- * @author Squeeself
  */
 @Internal
 public final class OfficeArtContent {

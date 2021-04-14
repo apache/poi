@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel function TRIM()
- *
- * @author Josh Micich
  */
 final class TestTrim {
 

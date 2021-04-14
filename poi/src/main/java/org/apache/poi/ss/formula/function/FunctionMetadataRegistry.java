@@ -19,10 +19,9 @@ package org.apache.poi.ss.formula.function;
 
 import java.util.Map;
 import java.util.Set;
+
 /**
  * Allows clients to get {@link FunctionMetadata} instances for any built-in function of Excel.
- *
- * @author Josh Micich
  */
 public final class FunctionMetadataRegistry {
 	/**

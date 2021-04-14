@@ -44,8 +44,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * A business plan demo
  * Usage:
  *  BusinessPlan -xls|xlsx
- *
- * @author Yegor Kozlov
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class BusinessPlan {

@@ -31,8 +31,6 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchAreaPredicate;
  * Excel Syntax
  * COUNTA(value1,value2,...)
  * Value1, value2, ...   are 1 to 30 arguments representing the values or ranges to be counted.
- *
- * @author Josh Micich
  */
 public final class Counta implements Function {
     private final I_MatchPredicate _predicate;
@@ -98,7 +96,7 @@ public final class Counta implements Function {
         public boolean matches(ValueEval valueEval) {
             return defaultPredicate.matches(valueEval);
         }
-        
+
         /**
          * don't count cells in rows that are hidden or subtotal cells
          */
@@ -106,7 +104,7 @@ public final class Counta implements Function {
             return !areEval.isSubTotal(rowIndex, columnIndex) && ! areEval.isRowHidden(rowIndex);
         }
     };
-    
+
     public static Counta subtotalInstance(boolean includeHiddenRows) {
         return new Counta(includeHiddenRows ? subtotalPredicate : subtotalVisibleOnlyPredicate);
     }

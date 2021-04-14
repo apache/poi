@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * test reading properties from a multi-theme and multi-master document
- *
- * @author Yegor Kozlov
  */
 class TestXSLFTheme {
     @Test

@@ -45,8 +45,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <li>If places is nonnumeric, DEC2BIN returns the #VALUE! error value.</li>
  * <li>If places is zero or negative, DEC2BIN returns the #NUM! error value.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Dec2Bin extends Var1or2ArgFunction implements FreeRefFunction {
 

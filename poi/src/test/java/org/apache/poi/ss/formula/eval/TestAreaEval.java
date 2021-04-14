@@ -28,7 +28,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for <tt>AreaEval</tt>
+ * Tests for {@code AreaEval}
  */
 final class TestAreaEval {
 

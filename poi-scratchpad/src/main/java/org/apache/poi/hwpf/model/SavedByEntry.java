@@ -24,8 +24,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * A single entry in the {@link SavedByTable}.
- *
- * @author Daniel Noll
  */
 @Internal
 public final class SavedByEntry

@@ -43,8 +43,6 @@ import org.junit.jupiter.api.Test;
  * if a paragraph has autonumber ()
  * @see <a href="http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28">
  *     PPT: Missing TextAutoNumberScheme structure providing the style of the number bullets</a>
- *
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
 public final class TestNumberedList3 {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();

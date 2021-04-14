@@ -32,8 +32,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * The main purpose of this class is to detect an attempt to evaluate a cell
  * that is already being evaluated. In other words, it detects circular
  * references in spreadsheet formulas.
- *
- * @author Josh Micich
  */
 final class EvaluationTracker {
 	// TODO - consider deleting this class and letting CellEvaluationFrame take care of itself
@@ -51,15 +49,15 @@ final class EvaluationTracker {
 	 * Notifies this evaluation tracker that evaluation of the specified cell is
 	 * about to start.<br>
 	 *
-	 * In the case of a <code>true</code> return code, the caller should
+	 * In the case of a {@code true} return code, the caller should
 	 * continue evaluation of the specified cell, and also be sure to call
-	 * <tt>endEvaluate()</tt> when complete.<br>
+	 * {@code endEvaluate()} when complete.<br>
 	 *
-	 * In the case of a <code>null</code> return code, the caller should
+	 * In the case of a {@code null} return code, the caller should
 	 * return an evaluation result of
-	 * <tt>ErrorEval.CIRCULAR_REF_ERROR<tt>, and not call <tt>endEvaluate()</tt>.
+	 * {@code ErrorEval.CIRCULAR_REF_ERROR}, and not call {@code endEvaluate()}.
 	 * <br>
-	 * @return <code>false</code> if the specified cell is already being evaluated
+	 * @return {@code false} if the specified cell is already being evaluated
 	 */
 	public boolean startEvaluate(FormulaCellCacheEntry cce) {
 		if (cce == null) {
@@ -96,7 +94,7 @@ final class EvaluationTracker {
 	/**
 	 * Notifies this evaluation tracker that the evaluation of the specified cell is complete. <p>
 	 *
-	 * Every successful call to <tt>startEvaluate</tt> must be followed by a call to <tt>endEvaluate</tt> (recommended in a finally block) to enable
+	 * Every successful call to {@code startEvaluate} must be followed by a call to {@code endEvaluate} (recommended in a finally block) to enable
 	 * proper tracking of which cells are being evaluated at any point in time.<p>
 	 *
 	 * Assuming a well behaved client, parameters to this method would not be

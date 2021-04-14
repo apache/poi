@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * This object represents a condition in a cell format.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public abstract class CellFormatCondition {
     private static final int LT = 0;
@@ -69,36 +67,42 @@ public abstract class CellFormatCondition {
         switch (test) {
         case LT:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value < c;
                 }
             };
         case LE:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value <= c;
                 }
             };
         case GT:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value > c;
                 }
             };
         case GE:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value >= c;
                 }
             };
         case EQ:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value == c;
                 }
             };
         case NE:
             return new CellFormatCondition() {
+                @Override
                 public boolean pass(double value) {
                     return value != c;
                 }
@@ -111,11 +115,11 @@ public abstract class CellFormatCondition {
     }
 
     /**
-     * Returns <tt>true</tt> if the given value passes the constraint's test.
+     * Returns {@code true} if the given value passes the constraint's test.
      *
      * @param value The value to compare against.
      *
-     * @return <tt>true</tt> if the given value passes the constraint's test.
+     * @return {@code true} if the given value passes the constraint's test.
      */
     public abstract boolean pass(double value);
 }

@@ -29,7 +29,7 @@ public interface CellRange<C extends Cell> extends Iterable<C> {
 
     /**
      * Gets the number of cells in this range.
-     * @return <tt>height * width </tt>
+     * @return {@code height * width }
      */
     int size();
 
@@ -40,24 +40,24 @@ public interface CellRange<C extends Cell> extends Iterable<C> {
     String getReferenceText();
 
     /**
-     * @return the cell at relative coordinates (0,0).  Never <code>null</code>.
+     * @return the cell at relative coordinates (0,0).  Never {@code null}.
      */
     C getTopLeftCell();
 
     /**
-     * @param relativeRowIndex must be between <tt>0</tt> and <tt>height-1</tt>
-     * @param relativeColumnIndex must be between <tt>0</tt> and <tt>width-1</tt>
-     * @return the cell at the specified coordinates.  Never <code>null</code>.
+     * @param relativeRowIndex must be between {@code 0} and {@code height-1}
+     * @param relativeColumnIndex must be between {@code 0} and {@code width-1}
+     * @return the cell at the specified coordinates.  Never {@code null}.
      */
     C getCell(int relativeRowIndex, int relativeColumnIndex);
     /**
-     * @return a flattened array of all the cells in this {@link CellRange}
+     * @return a flattened array of all the cells in this CellRange
      */
     C[] getFlattenedCells();
     /**
-     * @return a 2-D array of all the cells in this {@link CellRange}.  The first
-     * array dimension is the row index (values <tt>0...height-1</tt>)
-     * and the second dimension is the column index (values <tt>0...width-1</tt>)
+     * @return a 2-D array of all the cells in this CellRange.  The first
+     * array dimension is the row index (values {@code 0...height-1})
+     * and the second dimension is the column index (values {@code 0...width-1})
      */
     C[][] getCells();
 
@@ -65,5 +65,6 @@ public interface CellRange<C extends Cell> extends Iterable<C> {
      * @return an {@link Iterator} over all cells in this range.  Iteration starts
      * with all cells in the first row followed by all cells in the next row, etc.
      */
+    @Override
     Iterator<C> iterator();
 }

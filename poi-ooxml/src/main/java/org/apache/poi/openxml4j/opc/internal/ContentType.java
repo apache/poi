@@ -45,8 +45,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  * retrieving a part from a package; format designers shall specify only such
  * content types for inclusion in the format.
  * </p>
- * @author Julien Chable
- * @version 0.1
  *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">http://www.ietf.org/rfc/rfc2045.txt</a>
  * @see <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>

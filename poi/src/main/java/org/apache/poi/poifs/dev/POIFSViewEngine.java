@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.dev;
 
@@ -28,8 +28,6 @@ import java.util.List;
 
 /**
  * This class contains methods used to inspect POIFSViewable objects
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public class POIFSViewEngine

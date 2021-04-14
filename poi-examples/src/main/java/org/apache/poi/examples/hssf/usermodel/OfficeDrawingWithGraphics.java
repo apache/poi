@@ -35,8 +35,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Demonstrates the use of the EscherGraphics2d library.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class OfficeDrawingWithGraphics {
     public static void main( String[] args ) throws IOException {

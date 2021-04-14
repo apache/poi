@@ -22,9 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Contains specific examples of <tt>double</tt> value pairs and their comparison result according to Excel.
- *
- * @author Josh Micich
+ * Contains specific examples of {@code double} value pairs and their comparison result according to Excel.
  */
 final class NumberComparisonExamples {
 
@@ -116,29 +114,27 @@ final class NumberComparisonExamples {
         addStepTransition(temp, 0x001000000000001BL);
         addStepTransition(temp, 0x001000000000002FL);
 
-        Collections.addAll(temp, new ComparisonExample[]{
-                // negative, and exponents differ by more than 1
-                ce(0xBF30000000000000L, 0xBE60000000000000L, -1),
+        Collections.addAll(temp, // negative, and exponents differ by more than 1
+            ce(0xBF30000000000000L, 0xBE60000000000000L, -1),
 
-                // negative zero *is* less than positive zero, but not easy to get out of calculations
-                ce(0x0000000000000000L, 0x8000000000000000L, +1),
-                // subnormal numbers compare without rounding for some reason
-                ce(0x0000000000000000L, 0x0000000000000001L, -1),
-                ce(0x0008000000000000L, 0x0008000000000001L, -1),
-                ce(0x000FFFFFFFFFFFFFL, 0x000FFFFFFFFFFFFEL, +1),
-                ce(0x000FFFFFFFFFFFFBL, 0x000FFFFFFFFFFFFCL, -1),
-                ce(0x000FFFFFFFFFFFFBL, 0x000FFFFFFFFFFFFEL, -1),
+            // negative zero *is* less than positive zero, but not easy to get out of calculations
+            ce(0x0000000000000000L, 0x8000000000000000L, +1),
+            // subnormal numbers compare without rounding for some reason
+            ce(0x0000000000000000L, 0x0000000000000001L, -1),
+            ce(0x0008000000000000L, 0x0008000000000001L, -1),
+            ce(0x000FFFFFFFFFFFFFL, 0x000FFFFFFFFFFFFEL, +1),
+            ce(0x000FFFFFFFFFFFFBL, 0x000FFFFFFFFFFFFCL, -1),
+            ce(0x000FFFFFFFFFFFFBL, 0x000FFFFFFFFFFFFEL, -1),
 
-                // across subnormal threshold (some mistakes when close)
-                ce(0x000FFFFFFFFFFFFFL, 0x0010000000000000L, +1),
-                ce(0x000FFFFFFFFFFFFBL, 0x0010000000000007L, +1),
-                ce(0x000FFFFFFFFFFFFAL, 0x0010000000000007L, 0),
+            // across subnormal threshold (some mistakes when close)
+            ce(0x000FFFFFFFFFFFFFL, 0x0010000000000000L, +1),
+            ce(0x000FFFFFFFFFFFFBL, 0x0010000000000007L, +1),
+            ce(0x000FFFFFFFFFFFFAL, 0x0010000000000007L, 0),
 
-                // when a bit further apart - normal results
-                ce(0x000FFFFFFFFFFFF9L, 0x0010000000000007L, -1),
-                ce(0x000FFFFFFFFFFFFAL, 0x0010000000000008L, -1),
-                ce(0x000FFFFFFFFFFFFBL, 0x0010000000000008L, -1),
-        });
+            // when a bit further apart - normal results
+            ce(0x000FFFFFFFFFFFF9L, 0x0010000000000007L, -1),
+            ce(0x000FFFFFFFFFFFFAL, 0x0010000000000008L, -1),
+            ce(0x000FFFFFFFFFFFFBL, 0x0010000000000008L, -1));
 
         ComparisonExample[] result = new ComparisonExample[temp.size()];
         temp.toArray(result);
@@ -150,11 +146,10 @@ final class NumberComparisonExamples {
     }
 
     private static void addStepTransition(List<ComparisonExample> temp, long rawBits) {
-        Collections.addAll(temp, new ComparisonExample[]{
-                ce(rawBits - 1, rawBits + 0, 0),
-                ce(rawBits + 0, rawBits + 1, -1),
-                ce(rawBits + 1, rawBits + 2, 0),
-        });
+        Collections.addAll(temp,
+            ce(rawBits - 1, rawBits + 0, 0),
+            ce(rawBits + 0, rawBits + 1, -1),
+            ce(rawBits + 1, rawBits + 2, 0));
 
     }
 

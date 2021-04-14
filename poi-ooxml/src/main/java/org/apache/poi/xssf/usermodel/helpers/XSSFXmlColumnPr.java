@@ -26,9 +26,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
  *
  * This class is a wrapper around the CTXmlColumnPr (Open Office XML Part 4:
  * chapter 3.5.1.7)
- *
- *
- * @author Roberto Manicardi
  */
 public class XSSFXmlColumnPr {
 

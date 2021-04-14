@@ -26,10 +26,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Document Properties.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
- *
- * @author S. Ryan Ackley
  */
 @Internal
 public abstract class DOPAbstractType {

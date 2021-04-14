@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestSlideChangeNotes {
 	// SlideShow primed on the test data

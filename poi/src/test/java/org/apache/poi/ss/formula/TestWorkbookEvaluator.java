@@ -54,8 +54,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link WorkbookEvaluator}.
- *
- * @author Josh Micich
  */
 class TestWorkbookEvaluator {
 

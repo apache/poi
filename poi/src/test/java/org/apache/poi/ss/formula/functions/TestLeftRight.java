@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
  *
  * Test cases for {@link TextFunction#LEFT} and {@link TextFunction#RIGHT}
  *
- * @author Brendan Nolan
- *
  */
 class TestLeftRight {
 

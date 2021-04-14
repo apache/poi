@@ -25,8 +25,6 @@ import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for Excel COLUMNS function.
- *
- * @author Josh Micich
  */
 public final class Columns extends Fixed1ArgFunction {
 

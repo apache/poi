@@ -23,8 +23,6 @@ import java.io.OutputStream;
 
 /**
  * Build an output stream for MemoryPackagePart.
- *
- * @author Julien Chable
  */
 public final class MemoryPackagePartOutputStream extends OutputStream {
 

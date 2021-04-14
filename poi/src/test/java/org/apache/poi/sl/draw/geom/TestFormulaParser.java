@@ -24,8 +24,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Date: 10/24/11
- *
- * @author Yegor Kozlov
  */
 class TestFormulaParser {
     @Test

@@ -27,8 +27,6 @@ import org.apache.poi.ss.formula.eval.*;
  * Returns a numeric code for the first character in a text string. The returned code corresponds to the character set used by your computer.
  * <p>
  * text The text for which you want the code of the first character.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Code extends Fixed1ArgFunction {
 

@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * A Notes Atom (type 1009). Holds information on the parent Notes, such
  *  as what slide it is tied to
- *
- * @author Nick Burch
  */
 
 public final class NotesAtom extends RecordAtom

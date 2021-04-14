@@ -33,8 +33,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * <b>Syntax</b><br>
  * <b>WORKDAY</b>(<b>startDate</b>, <b>days</b>, holidays)
  * <p>
- * 
- * @author jfaenomoto@gmail.com
  */
 final class WorkdayFunction implements FreeRefFunction {
 
@@ -50,7 +48,7 @@ final class WorkdayFunction implements FreeRefFunction {
     /**
      * Evaluate for WORKDAY. Given a date, a number of days and a optional date or interval of holidays, determines which date it is past
      * number of parametrized workdays.
-     * 
+     *
      * @return {@link ValueEval} with date as its value.
      */
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {

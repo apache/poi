@@ -46,8 +46,8 @@ public interface ITestDataProvider {
      * @return an instance of Workbook
      */
     Workbook createWorkbook();
-    
-    
+
+
     //************ SXSSF-specific methods ***************//
     /**
      * Provides way of creating a SXSSFWorkbook with a specific row access window size.
@@ -55,7 +55,7 @@ public interface ITestDataProvider {
      * @return an instance of Workbook
      */
     Workbook createWorkbook(int rowAccessWindowSize);
-    
+
     /**
      * Only matters for SXSSF - enables tracking of the column
      *  widths so that autosizing can work. No-op on others.
@@ -65,17 +65,17 @@ public interface ITestDataProvider {
 
     /**
      * Creates the corresponding {@link FormulaEvaluator} for the
-     * type of Workbook handled by this Provider. 
+     * type of Workbook handled by this Provider.
      *
      * @param wb The workbook to base the formula evaluator on.
-     * @return A new instance of a matching type of formula evaluator. 
+     * @return A new instance of a matching type of formula evaluator.
      */
     FormulaEvaluator createFormulaEvaluator(Workbook wb);
 
     /**
      * Opens a sample file from the standard HSSF test data directory
      *
-     * @return an open <tt>InputStream</tt> for the specified sample file
+     * @return an open {@code InputStream} for the specified sample file
      */
     byte[] getTestDataFileContent(String fileName);
 

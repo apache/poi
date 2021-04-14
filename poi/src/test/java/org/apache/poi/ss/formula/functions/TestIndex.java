@@ -144,7 +144,7 @@ final class TestIndex {
 
 	/**
 	 * Confirms that the result is an area ref with the specified coordinates
-	 * @return <tt>ve</tt> cast to {@link AreaEval} if it is valid
+	 * @return {@code ve} cast to {@link AreaEval} if it is valid
 	 */
 	private static AreaEval confirmAreaEval(String refText, ValueEval ve) {
 		CellRangeAddress cra = CellRangeAddress.valueOf(refText);

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.util;
 
@@ -27,8 +27,6 @@ import java.nio.BufferUnderflowException;
 /**
  * representation of a byte (8-bit) field at a fixed location within a
  * byte array
- *
- * @author Marc Johnson (mjohnson at apache dot org
  */
 
 public class ByteField

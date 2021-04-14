@@ -30,9 +30,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * Implementation of Excel functions Date parsing functions:
  *  Date - DAY, MONTH and YEAR
  *  Time - HOUR, MINUTE and SECOND
- *
- * @author Others (not mentioned in code)
- * @author Thies Wellpott
  */
 public final class CalendarFieldFunction extends Fixed1ArgFunction {
 	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR);
@@ -79,12 +76,12 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
 		// rounding issues); use UTC here to prevent daylight saving issues for HOUR
 		Calendar c = DateUtil.getJavaCalendarUTC(serialDate + 0.4995 / DateUtil.SECONDS_PER_DAY, false);
 		int result = c.get(_dateFieldId);
-		
+
 		// Month is a special case due to C semantics
 		if (_dateFieldId == Calendar.MONTH) {
 			result++;
 		}
-		
+
 		return result;
 	}
 }

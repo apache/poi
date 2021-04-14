@@ -39,7 +39,7 @@ final class TestExternalNameReference {
 	double NEW_QUANT = 7.0d;
 	double NEW_PART_COST = 15.3d;
 	/**
-	 * tests <tt>NameXPtg for external cell reference by name</tt> and logic in Workbook below that
+	 * tests {@code NameXPtg for external cell reference by name} and logic in Workbook below that
 	 */
 	@Test
 	void testReadCalcSheet() {

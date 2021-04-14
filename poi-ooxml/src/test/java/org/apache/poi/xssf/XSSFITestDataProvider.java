@@ -26,9 +26,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-/**
- * @author Yegor Kozlov
- */
 public final class XSSFITestDataProvider implements ITestDataProvider {
     public static final XSSFITestDataProvider instance = new XSSFITestDataProvider();
 
@@ -53,17 +50,17 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
     public XSSFWorkbook createWorkbook() {
         return new XSSFWorkbook();
     }
-    
+
     //************ SXSSF-specific methods ***************//
     @Override
     public XSSFWorkbook createWorkbook(int rowAccessWindowSize) {
         return createWorkbook();
     }
-    
+
     @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {}
     //************ End SXSSF-specific methods ***************//
-   
+
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator((XSSFWorkbook) wb);

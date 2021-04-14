@@ -22,15 +22,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Field Descriptor (FLD).
- * <p>
- * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
- * Binary File Format
- * 
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/records/definitions.
- * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format Specification [*.doc]
  */
 @Internal
 public abstract class FLDAbstractType
@@ -137,7 +128,7 @@ public abstract class FLDAbstractType
     /**
      * Type of field boundary the FLD describes: 19 -- field begin mark, 20 --
      * field separation mark; 21 -- field end mark
-     * 
+     *
      * @return the ch field value.
      */
     public byte getCh()
@@ -157,7 +148,7 @@ public abstract class FLDAbstractType
 
     /**
      * Reserved
-     * 
+     *
      * @return the reserved field value.
      */
     public byte getReserved()
@@ -177,7 +168,7 @@ public abstract class FLDAbstractType
 
     /**
      * Ignored for saved file
-     * 
+     *
      * @return the fDiffer field value.
      */
     public boolean isFDiffer()
@@ -198,7 +189,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when result still believes this field is an EMBED or LINK field
-     * 
+     *
      * @return the fZombieEmbed field value.
      */
     public boolean isFZombieEmbed()
@@ -219,7 +210,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when user has edited or formatted the result. == 0 otherwise
-     * 
+     *
      * @return the fResultDirty field value.
      */
     public boolean isFResultDirty()
@@ -240,7 +231,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when user has inserted text into or deleted text from the result
-     * 
+     *
      * @return the fResultEdited field value.
      */
     public boolean isFResultEdited()
@@ -260,7 +251,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when field is locked from recalculation
-     * 
+     *
      * @return the fLocked field value.
      */
     public boolean isFLocked()
@@ -281,7 +272,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 whenever the result of the field is never to be shown
-     * 
+     *
      * @return the fPrivateResult field value.
      */
     public boolean isFPrivateResult()
@@ -302,7 +293,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when field is nested within another field
-     * 
+     *
      * @return the fNested field value.
      */
     public boolean isFNested()
@@ -322,7 +313,7 @@ public abstract class FLDAbstractType
 
     /**
      * ==1 when field has a field separator
-     * 
+     *
      * @return the fHasSep field value.
      */
     public boolean isFHasSep()

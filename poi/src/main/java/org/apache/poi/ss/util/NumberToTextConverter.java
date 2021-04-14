@@ -20,14 +20,14 @@ package org.apache.poi.ss.util;
 
 /**
  * Excel converts numbers to text with different rules to those of java, so
- *  <code>Double.toString(value)</tt> won't do.
+ *  {@code Double.toString(value)} won't do.
  * <ul>
  * <li>No more than 15 significant figures are output (java does 18).</li>
  * <li>The sign char for the exponent is included even if positive</li>
- * <li>Special values (<tt>NaN</tt> and <tt>Infinity</tt>) get rendered like the ordinary
+ * <li>Special values ({@code NaN} and {@code Infinity}) get rendered like the ordinary
  * number that the bit pattern represents.</li>
  * <li>Denormalised values (between &plusmn;2<sup>-1074</sup> and &plusmn;2<sup>-1022</sup>
- *  are displayed as "0"</sup>
+ *  are displayed as "0"</li>
  * </ul>
  * IEEE 64-bit Double Rendering Comparison
  *
@@ -106,8 +106,6 @@ package org.apache.poi.ss.util;
  * Excel's text to number conversion is not a true <i>inverse</i> of this operation.  The
  * allowable ranges are different.  Some numbers that don't correctly convert to text actually
  * <b>do</b> get handled properly when used in arithmetic evaluations.
- *
- * @author Josh Micich
  */
 public final class NumberToTextConverter {
 
@@ -119,9 +117,9 @@ public final class NumberToTextConverter {
 	}
 
 	/**
-	 * Converts the supplied <tt>value</tt> to the text representation that Excel would give if
+	 * Converts the supplied {@code value} to the text representation that Excel would give if
 	 * the value were to appear in an unformatted cell, or as a literal number in a formula.<br>
-	 * Note - the results from this method differ slightly from those of <tt>Double.toString()</tt>
+	 * Note - the results from this method differ slightly from those of {@code Double.toString()}
 	 * In some special cases Excel behaves quite differently.  This function attempts to reproduce
 	 * those results.
 	 */

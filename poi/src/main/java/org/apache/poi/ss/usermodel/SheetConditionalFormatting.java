@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * The 'Conditional Formatting' facet of <tt>Sheet</tt>
+ * The 'Conditional Formatting' facet of {@code Sheet}
  *
  * @since 3.8
  */
@@ -88,7 +88,7 @@ public interface SheetConditionalFormatting {
      * </p>
      *
      * @param comparisonOperation - MUST be a constant value from
-     *		 <tt>{@link ComparisonOperator}</tt>: <p>
+     *		 {@link ComparisonOperator}:
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>
@@ -99,7 +99,6 @@ public interface SheetConditionalFormatting {
      *		 <li>GE</li>
      *		 <li>LE</li>
      * </ul>
-     * </p>
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
      * {@link ComparisonOperator#BETWEEN}) and {@link ComparisonOperator#NOT_BETWEEN} operations)
@@ -117,7 +116,7 @@ public interface SheetConditionalFormatting {
      * </p>
      *
      * @param comparisonOperation  MUST be a constant value from
-     *		 <tt>{@link ComparisonOperator}</tt> except  BETWEEN and NOT_BETWEEN
+     *		 {@link ComparisonOperator} except  BETWEEN and NOT_BETWEEN
      *
      * @param formula  the formula to determine if the conditional formatting is applied
      */
@@ -138,20 +137,20 @@ public interface SheetConditionalFormatting {
 
     /**
      * Create a Databar conditional formatting rule.
-     * <p>The thresholds and colour for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colour for it will be created, but will be
+     *  empty and require configuring with
      *  {@link ConditionalFormattingRule#getDataBarFormatting()}
      *  then
      *  {@link DataBarFormatting#getMinThreshold()}
-     *  and 
+     *  and
      *  {@link DataBarFormatting#getMaxThreshold()}
      */
     ConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color);
-    
+
     /**
      * Create an Icon Set / Multi-State conditional formatting rule.
      * <p>The thresholds for it will be created, but will be empty
-     *  and require configuring with 
+     *  and require configuring with
      *  {@link ConditionalFormattingRule#getMultiStateFormatting()}
      *  then
      *  {@link IconMultiStateFormatting#getThresholds()}
@@ -160,8 +159,8 @@ public interface SheetConditionalFormatting {
 
     /**
      * Create a Color Scale / Color Gradient conditional formatting rule.
-     * <p>The thresholds and colours for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colours for it will be created, but will be
+     *  empty and require configuring with
      *  {@link ConditionalFormattingRule#getColorScaleFormatting()}
      *  then
      *  {@link ColorScaleFormatting#getThresholds()}
@@ -169,12 +168,12 @@ public interface SheetConditionalFormatting {
      *  {@link ColorScaleFormatting#getColors()}
      */
     ConditionalFormattingRule createConditionalFormattingColorScaleRule();
-    
+
     /**
     * Gets Conditional Formatting object at a particular index
     *
     * @param index  0-based index of the Conditional Formatting object to fetch
-    * @return Conditional Formatting object or <code>null</code> if not found
+    * @return Conditional Formatting object or {@code null} if not found
     * @throws IllegalArgumentException if the index is  outside of the allowable range (0 ... numberOfFormats-1)
     */
     ConditionalFormatting getConditionalFormattingAt(int index);

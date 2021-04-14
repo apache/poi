@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Hex2Dec}
- *
- * @author cedric dot walter @ gmail dot com
  */
 final class TestHex2Dec {
 

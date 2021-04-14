@@ -35,8 +35,6 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  *      <tr><th>criteria</th><td>The value or expression used to filter rows from <b>range</b></td></tr>
  *      <tr><th>sum_range</th><td>Locates the top-left corner of the corresponding range of addends - values to be added (after being selected by the criteria)</td></tr>
  *    </table><br>
- * </p>
- * @author Josh Micich
  */
 public final class Sumif extends Var2or3ArgFunction {
 
@@ -69,7 +67,7 @@ public final class Sumif extends Var2or3ArgFunction {
 			AreaEval aeSum) {
 		// TODO - junit to prove last arg must be srcColumnIndex and not srcRowIndex
 		I_MatchPredicate mp = Countif.createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
-		
+
 		// handle empty cells
 		if(mp == null) {
 		    return NumberEval.ZERO;

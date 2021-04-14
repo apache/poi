@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public class Rate implements Function {
     private static final Logger LOG = LogManager.getLogger(Rate.class);
 
+   @Override
    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
       if (args.length < 3) { //First 3 parameters are mandatory
          return ErrorEval.VALUE_INVALID;
@@ -52,7 +53,7 @@ public class Rate implements Function {
          if (args.length >= 6)
             v6 = OperandResolver.getSingleValue(args[5], srcRowIndex, srcColumnIndex);
 
-         periods = OperandResolver.coerceValueToDouble(v1); 
+         periods = OperandResolver.coerceValueToDouble(v1);
          payment = OperandResolver.coerceValueToDouble(v2);
          present_val = OperandResolver.coerceValueToDouble(v3);
          if (args.length >= 4)
@@ -77,7 +78,7 @@ public class Rate implements Function {
       int FINANCIAL_MAX_ITERATIONS = 20;//Bet accuracy with 128
       double FINANCIAL_PRECISION = 0.0000001;//1.0e-8
 
-      double y, y0, y1, x0, x1 = 0, f = 0, i = 0;
+      double y, y0, y1, x0, x1, f = 0, i;
       double rate = guess;
       if (Math.abs(rate) < FINANCIAL_PRECISION) {
          y = pv * (1 + nper * rate) + pmt * (1 + rate * type) * nper + fv;
@@ -112,8 +113,8 @@ public class Rate implements Function {
 
    /**
     * Excel does not support infinities and NaNs, rather, it gives a #NUM! error in these cases
-    * 
-    * @throws EvaluationException (#NUM!) if <tt>result</tt> is <tt>NaN</> or <tt>Infinity</tt>
+    *
+    * @throws EvaluationException (#NUM!) if {@code result} is {@code NaN} or {@code Infinity}
     */
    static void checkValue(double result) throws EvaluationException {
       if (Double.isNaN(result) || Double.isInfinite(result)) {

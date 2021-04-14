@@ -33,8 +33,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * An atom record that specifies options for displaying headers and footers
  * on a presentation slide or notes slide.
- *
- * @author Yegor Kozlov
  */
 
 public final class HeadersFootersAtom extends RecordAtom {

@@ -32,7 +32,7 @@ public final class RefErrorPtg extends OperandPtg {
 
     private static final int SIZE = 5;
     public static final byte sid  = 0x2A;
-    private int              field_1_reserved;
+    private final int              field_1_reserved;
 
     public RefErrorPtg() {
         field_1_reserved = 0;
@@ -47,6 +47,7 @@ public final class RefErrorPtg extends OperandPtg {
         field_1_reserved = in.readInt();
     }
 
+    @Override
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
         out.writeInt(field_1_reserved);
@@ -57,14 +58,17 @@ public final class RefErrorPtg extends OperandPtg {
         return sid;
     }
 
+    @Override
     public int getSize() {
         return SIZE;
     }
 
+    @Override
     public String toFormulaString() {
         return FormulaError.REF.getString();
     }
 
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
     }

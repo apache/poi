@@ -28,7 +28,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RangePtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
-import org.apache.poi.util.Removal;
 
 /**
  * This class performs 'operand class' transformation. Non-base tokens are classified into three
@@ -53,8 +52,6 @@ import org.apache.poi.util.Removal;
  *
  * Hopefully, as additional important test cases are identified and added to the test suite,
  * patterns might become more obvious in this code and allow for simplification.
- *
- * @author Josh Micich
  */
 final class OperandClassTransformer {
 
@@ -65,7 +62,7 @@ final class OperandClassTransformer {
 	}
 
 	/**
-	 * Traverses the supplied formula parse tree, calling <tt>Ptg.setClass()</tt> for each non-base
+	 * Traverses the supplied formula parse tree, calling {@code Ptg.setClass()} for each non-base
 	 * token to set its operand class.
 	 */
 	public void transformFormula(ParseNode rootNode) {
@@ -90,7 +87,7 @@ final class OperandClassTransformer {
 	}
 
 	/**
-	 * @param callerForceArrayFlag <code>true</code> if one of the current node's parents is a
+	 * @param callerForceArrayFlag {@code true} if one of the current node's parents is a
 	 * function Ptg which has been changed from default 'V' to 'A' type (due to requirements on
 	 * the function return value).
 	 */
@@ -102,8 +99,8 @@ final class OperandClassTransformer {
 
 		if (isSimpleValueFunc) {
 			boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
-			for (int i = 0; i < children.length; i++) {
-				transformNode(children[i], desiredOperandClass, localForceArray);
+			for (ParseNode child : children) {
+				transformNode(child, desiredOperandClass, localForceArray);
 			}
 			setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
 			return;
@@ -128,8 +125,8 @@ final class OperandClassTransformer {
 			// All direct operands of value operators that are initially 'R' type will
 			// be converted to 'V' type.
 			byte localDesiredOperandClass = desiredOperandClass == Ptg.CLASS_REF ? Ptg.CLASS_VALUE : desiredOperandClass;
-			for (int i = 0; i < children.length; i++) {
-				transformNode(children[i], localDesiredOperandClass, callerForceArrayFlag);
+			for (ParseNode child : children) {
+				transformNode(child, localDesiredOperandClass, callerForceArrayFlag);
 			}
 			return;
 		}

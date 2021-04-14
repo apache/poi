@@ -37,8 +37,6 @@ import org.apache.poi.util.Internal;
 /**
  * A connection shape drawing element. A connection shape is a line, etc.
  * that connects two other shapes in this drawing.
- *
- * @author Yegor Kozlov
  */
 public final class XSSFConnector extends XSSFShape {
 

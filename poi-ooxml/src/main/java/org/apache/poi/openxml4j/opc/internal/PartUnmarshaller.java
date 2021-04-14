@@ -29,9 +29,6 @@ import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
  * Classes implementing this interface are considered as part unmarshaller. A part
  * unmarshaller is responsible to unmarshall a part in order to load it from a
  * package.
- *
- * @author Julien Chable
- * @version 0.1
  */
 public interface PartUnmarshaller {
 

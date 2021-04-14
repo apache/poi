@@ -41,7 +41,7 @@ public interface ShapeContainer<
      * it is unchanged.
      *
      * @param shape the shape to be removed from this sheet, if present
-     * @return <tt>true</tt> if this sheet contained the specified element
+     * @return {@code true} if this sheet contained the specified element
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
@@ -61,22 +61,22 @@ public interface ShapeContainer<
      * create a text box
      */
 	TextBox<S,P> createTextBox();
-	
+
     /**
      * create a connector
      */
 	ConnectorShape<S,P> createConnector();
-	
+
     /**
      * create a group of shapes belonging to this container
      */
 	GroupShape<S,P> createGroup();
-	
+
     /**
      * create a picture belonging to this container
      */
 	PictureShape<S,P> createPicture(PictureData pictureData);
-	
+
     /**
      * Create a new Table of the given number of rows and columns
      *
@@ -84,7 +84,7 @@ public interface ShapeContainer<
      * @param numCols the number of columns
      */
 	TableShape<S,P> createTable(int numRows, int numCols);
-	
+
 	/**
 	 * Create a new OLE object shape with the given pictureData as preview image
 	 *

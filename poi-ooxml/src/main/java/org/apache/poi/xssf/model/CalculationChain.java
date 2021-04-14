@@ -32,8 +32,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CalcChainDocument;
 /**
  * The cells in a workbook can be calculated in different orders depending on various optimizations and
  * dependencies. The calculation chain object specifies the order in which the cells in a workbook were last calculated.
- *
- * @author Yegor Kozlov
  */
 public class CalculationChain extends POIXMLDocumentPart {
     private CTCalcChain chain;
@@ -50,7 +48,7 @@ public class CalculationChain extends POIXMLDocumentPart {
         super(part);
         readFrom(part.getInputStream());
     }
-    
+
     public void readFrom(InputStream is) throws IOException {
         try {
             CalcChainDocument doc = CalcChainDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -80,7 +78,7 @@ public class CalculationChain extends POIXMLDocumentPart {
 
     /**
      * Remove a formula reference from the calculation chain
-     * 
+     *
      * @param sheetId  the sheet Id of a sheet the formula belongs to.
      * @param ref  A1 style reference to the cell containing the formula.
      */

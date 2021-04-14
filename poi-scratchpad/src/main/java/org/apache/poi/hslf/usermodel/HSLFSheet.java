@@ -47,14 +47,11 @@ import org.apache.poi.util.Internal;
 /**
  * This class defines the common format of "Sheets" in a powerpoint
  * document. Such sheets could be Slides, Notes, Master etc
- *
- * @author Nick Burch
- * @author Yegor Kozlov
  */
 
 public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,HSLFTextParagraph> {
     /**
-     * The <code>SlideShow</code> we belong to
+     * The {@code SlideShow} we belong to
      */
     private HSLFSlideShow _slideShow;
 
@@ -69,9 +66,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      * for notes it is org.apache.poi.hslf.record.Notes,
      * for slide masters it is org.apache.poi.hslf.record.SlideMaster, etc.
      */
-    private SheetContainer _container;
+    private final SheetContainer _container;
 
-    private int _sheetNo;
+    private final int _sheetNo;
 
     public HSLFSheet(SheetContainer container, int sheetNo) {
         _container = container;
@@ -130,7 +127,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         if (_slideShow != null) {
             throw new HSLFException("Can't change existing slideshow reference");
         }
-        
+
         _slideShow = ss;
         List<List<HSLFTextParagraph>> trs = getTextParagraphs();
         if (trs == null) {
@@ -177,14 +174,14 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             EscherContainerRecord sp = (EscherContainerRecord)r;
             HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);
-            
+
             if (sh instanceof HSLFSimpleShape) {
                 HSLFHyperlink link = HSLFHyperlink.find(sh);
                 if (link != null) {
                     ((HSLFSimpleShape)sh).setHyperlink(link);
                 }
             }
-            
+
             shapeList.add(sh);
         }
 
@@ -224,7 +221,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      * Removes the specified shape from this sheet.
      *
      * @param shape shape to be removed from this sheet, if present.
-     * @return <tt>true</tt> if the shape was deleted.
+     * @return {@code true} if the shape was deleted.
      */
     @Override
     public boolean removeShape(HSLFShape shape) {
@@ -287,8 +284,6 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     /**
      * Subclasses should call this method and update the array of text runs
      * when a text shape is added
-     *
-     * @param shape
      */
     protected void onAddTextShape(HSLFTextShape shape) {
     }
@@ -297,7 +292,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      * Return placeholder by text type
      *
      * @param type  type of text, See {@link org.apache.poi.hslf.record.TextHeaderAtom}
-     * @return  <code>TextShape</code> or <code>null</code>
+     * @return  {@code TextShape} or {@code null}
      */
     public HSLFTextShape getPlaceholderByTextType(int type){
         for (HSLFShape shape : getShapes()) {
@@ -330,7 +325,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     }
 
     /**
-     * Return programmable tag associated with this sheet, e.g. <code>___PPT12</code>.
+     * Return programmable tag associated with this sheet, e.g. {@code ___PPT12}.
      *
      * @return programmable tag associated with this sheet.
      */
@@ -452,7 +447,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         addShape(s);
         return s;
     }
-    
+
     /**
      * Header / Footer settings for this slide.
      *

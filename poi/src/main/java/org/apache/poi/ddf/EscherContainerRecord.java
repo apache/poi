@@ -172,7 +172,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
 
     /**
-     * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
+     * replaces the internal child list with the contents of the supplied {@code childRecords}
      */
     @Override
     public void setChildRecords(List<EscherRecord> childRecords) {

@@ -25,9 +25,6 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
-/**
- * @author Yegor Kozlov
- */
 class TestXSLFTextBox {
 
     @Test

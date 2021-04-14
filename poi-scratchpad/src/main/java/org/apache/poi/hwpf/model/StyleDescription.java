@@ -33,11 +33,6 @@ import org.apache.poi.util.StringUtil;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
-/**
- * Comment me
- *
- * @author Ryan Ackley
- */
 @Internal
 public final class StyleDescription {
 

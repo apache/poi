@@ -31,8 +31,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 /**
  * Shows how various alignment options work.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class Alignment {
     public static void main(String[] args) throws IOException {

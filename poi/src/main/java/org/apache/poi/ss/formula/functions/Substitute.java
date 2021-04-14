@@ -25,7 +25,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * An implementation of the SUBSTITUTE function:<p>
  * Substitutes text in a text string with new text, some number of times.
- * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
 public final class Substitute extends Var3or4ArgFunction {
 

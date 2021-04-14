@@ -23,8 +23,6 @@ import org.apache.poi.hwpf.model.NotesTables;
 
 /**
  * Default implementation of {@link Notes} interface
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 public class NotesImpl implements Notes
 {

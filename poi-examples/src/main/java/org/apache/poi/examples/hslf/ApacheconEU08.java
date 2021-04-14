@@ -45,8 +45,6 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 
 /**
  * Presentation for Fast Feather Track on ApacheconEU 2008
- *
- * @author Yegor Kozlov
  */
 @SuppressWarnings("java:S1192")
 public final class ApacheconEU08 {

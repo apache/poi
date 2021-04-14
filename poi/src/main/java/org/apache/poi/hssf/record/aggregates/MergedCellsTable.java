@@ -53,6 +53,7 @@ public final class MergedCellsTable extends RecordAggregate {
 		}
 	}
 
+	@Override
 	public int getRecordSize() {
 		// a bit cheaper than the default impl
 		int nRegions = _mergedRegions.size();
@@ -68,7 +69,8 @@ public final class MergedCellsTable extends RecordAggregate {
                 + CellRangeAddressList.getEncodedSize(nLeftoverMergedRegions);
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+	@Override
+    public void visitContainedRecords(RecordVisitor rv) {
 		int nRegions = _mergedRegions.size();
 		if (nRegions < 1) {
 			// no need to write a single empty MergeCellsRecord

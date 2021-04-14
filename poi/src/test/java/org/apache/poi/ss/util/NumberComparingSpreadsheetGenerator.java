@@ -37,8 +37,6 @@ import org.apache.poi.util.HexDump;
  * (along with their expected results) that get encoded into rows of the spreadsheet.
  * Each example is checked with a formula (in column I) that displays either "OK" or
  * "ERROR" depending on whether actual results match those expected.
- *
- * @author Josh Micich
  */
 public class NumberComparingSpreadsheetGenerator {
 

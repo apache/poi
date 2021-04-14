@@ -40,8 +40,6 @@ import org.apache.poi.util.RecordFormatException;
  * CHP and PAP fkps also store the compressed styles(grpprl) that correspond to
  * the offsets on the front of the fkp. The offset of the grpprls is determined
  * differently for CHP fkps and PAP fkps.
- *
- * @author Ryan Ackley
  */
 @Internal
 public final class CHPFormattedDiskPage extends FormattedDiskPage

@@ -71,8 +71,6 @@ import java.util.List;
  * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
  * the option 'ignore hidden values'.
  * <p>
- *
- * @author Paul Tomlin &lt; pault at bulk sms dot com &gt;
  */
 public class Subtotal implements Function {
 

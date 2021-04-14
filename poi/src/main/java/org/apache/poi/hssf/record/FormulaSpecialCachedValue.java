@@ -64,7 +64,7 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
     }
 
     /**
-     * @return <code>null</code> if the double value encoded by <tt>valueLongBits</tt>
+     * @return {@code null} if the double value encoded by {@code valueLongBits}
      * is a normal (non NaN) double value.
      */
     public static FormulaSpecialCachedValue create(long valueLongBits) {

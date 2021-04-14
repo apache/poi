@@ -57,6 +57,7 @@ public final class NumberPtg extends ScalarConstantPtg {
 		return field_1_value;
 	}
 
+	@Override
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeDouble(getValue());
@@ -67,10 +68,12 @@ public final class NumberPtg extends ScalarConstantPtg {
 		return sid;
 	}
 
+	@Override
 	public int getSize() {
 		return SIZE;
 	}
 
+	@Override
 	public String toFormulaString() {
 		return NumberToTextConverter.toText(field_1_value);
 	}

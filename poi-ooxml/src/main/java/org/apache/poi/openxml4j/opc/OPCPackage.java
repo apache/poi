@@ -602,7 +602,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @param partName
 	 *            Part name of the part to retrieve.
-	 * @return The part with the specified name, else <code>null</code>.
+	 * @return The part with the specified name, else {@code null}.
 	 */
 	public PackagePart getPart(PackagePartName partName) {
 		throwExceptionIfWriteOnly();
@@ -958,7 +958,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * part, then delete all relationships in the source part.
 	 *
 	 * @param part
-	 *            The part to remove. If <code>null</code>, skip the action.
+	 *            The part to remove. If {@code null}, skip the action.
 	 * @see #removePart(PackagePartName)
 	 */
 	public void removePart(PackagePart part) {
@@ -1217,8 +1217,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param relationshipType
 	 *            Type of relationship.
 	 * @return The newly created and added relationship
-	 * @see RelationshipSource#addExternalRelationship(String,
-	 *      String)
 	 */
 	@Override
     public PackageRelationship addExternalRelationship(String target,
@@ -1347,25 +1345,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 	}
 
-	/**
-	 * @see RelationshipSource#getRelationship(String)
-	 */
 	@Override
     public PackageRelationship getRelationship(String id) {
 		return this.relationships.getRelationshipByID(id);
 	}
 
-	/**
-	 * @see RelationshipSource#hasRelationships()
-	 */
 	@Override
     public boolean hasRelationships() {
 		return (relationships.size() > 0);
 	}
 
-	/**
-	 * @see RelationshipSource#isRelationshipExists(PackageRelationship)
-	 */
 	@Override
     public boolean isRelationshipExists(PackageRelationship rel) {
         for (PackageRelationship r : relationships) {
@@ -1559,32 +1548,29 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throws InvalidFormatException;
 
     /**
-     * Replace a content type in this package.
-     *
-     * <p>
-     *     A typical scneario to call this method is to rename a template file to the main format, e.g.
-     *     ".dotx" to ".docx"
-     *     ".dotm" to ".docm"
-     *     ".xltx" to ".xlsx"
-     *     ".xltm" to ".xlsm"
-     *     ".potx" to ".pptx"
-     *     ".potm" to ".pptm"
-     * </p>
+     * Replace a content type in this package.<p>
+     * A typical scneario to call this method is to rename a template file to the main format, e.g.
+	 * <ul>
+     *     <li>".dotx" to ".docx"</li>
+     *     <li>".dotm" to ".docm"</li>
+     *     <li>".xltx" to ".xlsx"</li>
+     *     <li>".xltm" to ".xlsm"</li>
+     *     <li>".potx" to ".pptx"</li>
+     *     <li>".potm" to ".pptm"</li>
+	 * </ul>
      * For example, a code converting  a .xlsm macro workbook to .xlsx would look as follows:
-     * <p>
-     *    <pre><code>
+     * <pre>{@code
      *
-     *     OPCPackage pkg = OPCPackage.open(new FileInputStream("macro-workbook.xlsm"));
-     *     pkg.replaceContentType(
-     *         "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
-     *         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+     *  OPCPackage pkg = OPCPackage.open(new FileInputStream("macro-workbook.xlsm"));
+     *  pkg.replaceContentType(
+     *      "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
+     *      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
      *
-     *     FileOutputStream out = new FileOutputStream("workbook.xlsx");
-     *     pkg.save(out);
-     *     out.close();
+     *  FileOutputStream out = new FileOutputStream("workbook.xlsx");
+     *  pkg.save(out);
+     *  out.close();
      *
-     *    </code></pre>
-     * </p>
+     * }</pre>
      *
      * @param oldContentType  the content type to be replaced
      * @param newContentType  the replacement

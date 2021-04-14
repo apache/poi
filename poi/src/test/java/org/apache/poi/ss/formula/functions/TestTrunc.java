@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for TRUNC()
- *
- * @author Stephen Wolke (smwolke at geistig.com)
  */
 final class TestTrunc extends BaseTestNumeric {
     private static final NumericFunction F = null;

@@ -21,14 +21,14 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 
 /**
- * <tt>RecordAggregate</tt>s are groups of of BIFF <tt>Record</tt>s that are typically stored
+ * {@code RecordAggregate}s are groups of of BIFF {@code Record}s that are typically stored
  * together and/or updated together.  Workbook / Sheet records are typically stored in a sequential
  * list, which does not provide much structure to coordinate updates.
  */
 public abstract class RecordAggregate extends RecordBase {
 
 	/**
-	 * Visit each of the atomic BIFF records contained in this {@link RecordAggregate} in the order
+	 * Visit each of the atomic BIFF records contained in this RecordAggregate in the order
 	 * that they should be written to file.  Implementors may or may not return the actual
 	 * {@link Record}s being used to manage POI's internal implementation.  Callers should not
 	 * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
@@ -37,11 +37,13 @@ public abstract class RecordAggregate extends RecordBase {
 	 */
 	public abstract void visitContainedRecords(RecordVisitor rv);
 
+	@Override
 	public final int serialize(int offset, byte[] data) {
 		SerializingRecordVisitor srv = new SerializingRecordVisitor(data, offset);
 		visitContainedRecords(srv);
 		return srv.countBytesWritten();
 	}
+	@Override
 	public int getRecordSize() {
 		RecordSizingVisitor rsv = new RecordSizingVisitor();
 		visitContainedRecords(rsv);
@@ -51,7 +53,7 @@ public abstract class RecordAggregate extends RecordBase {
 	public interface RecordVisitor {
 		/**
 		 * Implementors may call non-mutating methods on Record r.
-		 * @param r must not be <code>null</code>
+		 * @param r must not be {@code null}
 		 */
 		void visitRecord(org.apache.poi.hssf.record.Record r);
 	}
@@ -70,6 +72,7 @@ public abstract class RecordAggregate extends RecordBase {
 		public int countBytesWritten() {
 			return _countBytesWritten;
 		}
+		@Override
 		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			int currentOffset = _startOffset + _countBytesWritten;
 			_countBytesWritten += r.serialize(currentOffset, _data);
@@ -85,6 +88,7 @@ public abstract class RecordAggregate extends RecordBase {
 		public int getTotalSize() {
 			return _totalSize;
 		}
+		@Override
 		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			_totalSize += r.getRecordSize();
 		}
@@ -101,6 +105,7 @@ public abstract class RecordAggregate extends RecordBase {
 			_rv = rv;
 			_position = initialPosition;
 		}
+		@Override
 		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			_position += r.getRecordSize();
 			_rv.visitRecord(r);

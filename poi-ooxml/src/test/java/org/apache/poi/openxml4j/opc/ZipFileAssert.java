@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -76,7 +75,7 @@ public final class ZipFileAssert {
                         withDifferenceEvaluator(new IgnoreXMLDeclEvaluator()).
                         withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes, ElementSelectors.byNameAndText)).
                         build();
-                assertFalse(diff.hasDifferences(), fileName+": "+diff.toString());
+                assertFalse(diff.hasDifferences(), fileName+": "+ diff);
             } else {
                 // not xml, may be an image or other binary format
                 Assertions.assertEquals(contain1.size(), contain2.size(), fileName + " does not have the same size in both zip:");
@@ -118,10 +117,8 @@ public final class ZipFileAssert {
     }
 
     /**
-     * Asserts that two files are equal. Throws an <tt>AssertionFailedError</tt>
+     * Asserts that two files are equal. Throws an {@code AssertionFailedError}
      * if they are not.
-     * <p>
-     *
      */
     public static void assertEquals(File expected, File actual) {
         assertNotNull(expected);

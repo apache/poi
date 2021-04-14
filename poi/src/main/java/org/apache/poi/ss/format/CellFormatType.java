@@ -21,78 +21,91 @@ import java.util.Locale;
 
 /**
  * The different kinds of formats that the formatter understands.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public enum CellFormatType {
 
-    /** The general (default) format; also used for <tt>"General"</tt>. */
+    /** The general (default) format; also used for {@code "General"}. */
     GENERAL {
+        @Override
         boolean isSpecial(char ch) {
             return false;
         }
+        @Override
         CellFormatter formatter(String pattern) {
             return new CellGeneralFormatter();
         }
+        @Override
         CellFormatter formatter(Locale locale, String pattern) {
             return new CellGeneralFormatter(locale);
         }
     },
     /** A numeric format. */
     NUMBER {
+        @Override
         boolean isSpecial(char ch) {
             return false;
         }
+        @Override
         CellFormatter formatter(String pattern) {
             return new CellNumberFormatter(pattern);
         }
+        @Override
         CellFormatter formatter(Locale locale, String pattern) {
             return new CellNumberFormatter(locale, pattern);
         }
     },
     /** A date format. */
     DATE {
+        @Override
         boolean isSpecial(char ch) {
             return ch == '\'' || (ch <= '\u007f' && Character.isLetter(ch));
         }
+        @Override
         CellFormatter formatter(String pattern) {
             return new CellDateFormatter(pattern);
         }
+        @Override
         CellFormatter formatter(Locale locale, String pattern) {
             return new CellDateFormatter(locale, pattern);
         }
     },
     /** An elapsed time format. */
     ELAPSED {
+        @Override
         boolean isSpecial(char ch) {
             return false;
         }
+        @Override
         CellFormatter formatter(String pattern) {
             return new CellElapsedFormatter(pattern);
         }
+        @Override
         CellFormatter formatter(Locale locale, String pattern) {
             return new CellElapsedFormatter(pattern);
         }
     },
     /** A text format. */
     TEXT {
+        @Override
         boolean isSpecial(char ch) {
             return false;
         }
+        @Override
         CellFormatter formatter(String pattern) {
             return new CellTextFormatter(pattern);
         }
+        @Override
         CellFormatter formatter(Locale locale, String pattern) {
             return new CellTextFormatter(pattern);
         }
     };
 
     /**
-     * Returns <tt>true</tt> if the format is special and needs to be quoted.
+     * Returns {@code true} if the format is special and needs to be quoted.
      *
      * @param ch The character to test.
      *
-     * @return <tt>true</tt> if the format is special and needs to be quoted.
+     * @return {@code true} if the format is special and needs to be quoted.
      */
     abstract boolean isSpecial(char ch);
 

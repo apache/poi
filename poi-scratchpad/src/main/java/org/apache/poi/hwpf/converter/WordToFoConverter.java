@@ -58,9 +58,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-/**
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
- */
 @Beta
 public class WordToFoConverter extends AbstractWordConverter
 {

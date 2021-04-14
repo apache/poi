@@ -31,9 +31,6 @@ import java.util.List;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Yegor Kozlov
- */
 class TestXSLFSlide {
 
     @Test

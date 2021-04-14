@@ -15,20 +15,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.eventfilesystem;
 
 /**
  * Class Listener
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @version %I%, %G%
  */
-
-class Listener
-    implements POIFSReaderListener
-{
+class Listener implements POIFSReaderListener {
 
     /**
      * Process a POIFSReaderEvent that this listener had registered

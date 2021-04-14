@@ -41,8 +41,6 @@ import org.w3c.dom.Document;
 
 /**
  * Signature Facet implementation to create enveloped signatures.
- *
- * @author Frank Cornelis
  */
 public class EnvelopedSignatureFacet implements SignatureFacet {
 

@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
  * Tests that the record setup done by SlideShow
  *  has worked correctly
  * Note: most recent record stuff has its own test
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestRecordSetup {
 	// SlideShow primed on the test data

@@ -31,8 +31,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies the animation information for a shape.
- *
- * @author Yegor Kozlov
  */
 public final class AnimationInfoAtom extends RecordAtom {
 

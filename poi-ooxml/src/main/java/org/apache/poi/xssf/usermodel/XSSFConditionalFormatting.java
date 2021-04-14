@@ -27,9 +27,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatti
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * @author Yegor Kozlov
- */
 public class XSSFConditionalFormatting implements ConditionalFormatting {
     private final CTConditionalFormatting _cf;
     private final XSSFSheet _sh;
@@ -50,7 +47,7 @@ public class XSSFConditionalFormatting implements ConditionalFormatting {
     }
 
     /**
-     * @return array of <tt>CellRangeAddress</tt>s. Never <code>null</code>
+     * @return array of {@code CellRangeAddress}s. Never {@code null}
      */
     @Override
     public CellRangeAddress[] getFormattingRanges() {

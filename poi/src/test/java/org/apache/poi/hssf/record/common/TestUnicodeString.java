@@ -47,8 +47,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests that {@link UnicodeString} record size calculates correctly.  The record size
  * is used when serializing {@link SSTRecord}s.
- *
- * @author Jason Height (jheight at apache.org)
  */
 final class TestUnicodeString {
     private static final int MAX_DATA_SIZE = RecordInputStream.MAX_RECORD_DATA_SIZE;
@@ -61,7 +59,7 @@ final class TestUnicodeString {
     }
 
     /**
-     * Note - a value of zero for <tt>amountUsedInCurrentRecord</tt> would only ever occur just
+     * Note - a value of zero for {@code amountUsedInCurrentRecord} would only ever occur just
      * after a {@link ContinueRecord} had been started.  In the initial {@link SSTRecord} this
      * value starts at 8 (for the first {@link UnicodeString} written).  In general, it can be
      * any value between 0 and {@link #MAX_DATA_SIZE}
@@ -432,7 +430,7 @@ final class TestUnicodeString {
     }
 
     /**
-     * @param is16Bit if <code>true</code> the created string will have characters > 0x00FF
+     * @param is16Bit if {@code true} the created string will have characters > 0x00FF
      * @return a string of the specified number of characters
      */
     private static UnicodeString makeUnicodeString(int numChars, boolean is16Bit) {

@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel function POISSON(x,mean,cumulative)
- * @author Kalpesh Parmar
  */
 class TestPoisson {
 

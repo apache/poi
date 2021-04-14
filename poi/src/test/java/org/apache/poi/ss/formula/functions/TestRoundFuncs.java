@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
- *
- * @author Josh Micich
  */
 final class TestRoundFuncs {
 	// github-43

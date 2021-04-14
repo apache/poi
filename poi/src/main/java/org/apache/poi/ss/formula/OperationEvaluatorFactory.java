@@ -57,10 +57,8 @@ import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>
+ * This class creates {@code OperationEval} instances to help evaluate {@code OperationPtg}
  * formula tokens.
- *
- * @author Josh Micich
  */
 final class OperationEvaluatorFactory {
 

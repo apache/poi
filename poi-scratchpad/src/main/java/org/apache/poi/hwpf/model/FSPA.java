@@ -22,8 +22,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * File Shape Address structure
- * 
- * @author Squeeself
  */
 @Internal
 public final class FSPA extends FSPAAbstractType

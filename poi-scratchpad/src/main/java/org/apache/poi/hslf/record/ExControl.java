@@ -28,10 +28,6 @@ package org.apache.poi.hslf.record;
  *  A ProgID is a string that uniquely identifies a given object.
  * 5. CString (4026), Instance ClipboardName (3) that appears in the paste special dialog.
  * 6. MetaFile( 4033), optional
- * </p>
- *
- *
- * @author Yegor kozlov
  */
 public final class ExControl extends ExEmbed {
 

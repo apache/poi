@@ -17,14 +17,12 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.util.Internal;
+
 /**
  * Should be implemented by any {@link org.apache.poi.ss.formula.ptg.Ptg} subclass that needs a workbook to render its formula.
- * <br>
- *
- * For POI internal use only
- *
- * @author Josh Micich
  */
+@Internal
 public interface WorkbookDependentFormula {
 	String toFormulaString(FormulaRenderingWorkbook book);
 }

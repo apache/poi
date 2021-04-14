@@ -31,9 +31,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.IOUtils;
 
 /**
- * Converts the text meta-data file into a <tt>FunctionMetadataRegistry</tt>
- *
- * @author Josh Micich
+ * Converts the text meta-data file into a {@code FunctionMetadataRegistry}
  */
 final class FunctionMetadataReader {
 
@@ -150,12 +148,7 @@ final class FunctionMetadataReader {
 	}
 
 	private static boolean isDash(String codes) {
-		if(codes.length() == 1) {
-			if (codes.charAt(0) == '-') {
-				return true;
-			}
-		}
-		return false;
+		return codes.length() == 1 && codes.charAt(0) == '-';
 	}
 
 	private static byte parseOperandTypeCode(String code) {

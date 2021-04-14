@@ -33,8 +33,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Default implementation of {@link Field}
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
 public class FieldsImpl implements Fields

@@ -76,9 +76,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A TSP time-stamp service implementation.
- *
- * @author Frank Cornelis
- *
  */
 public class TSPTimeStampService implements TimeStampService {
 

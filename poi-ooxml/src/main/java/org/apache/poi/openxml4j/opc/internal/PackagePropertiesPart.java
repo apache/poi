@@ -41,8 +41,6 @@ import org.apache.poi.util.LocaleUtil;
 
 /**
  * Represents the core properties part of a package.
- *
- * @author Julien Chable
  */
 public final class PackagePropertiesPart extends PackagePart implements PackageProperties {
 

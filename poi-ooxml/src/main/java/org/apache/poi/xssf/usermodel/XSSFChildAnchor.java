@@ -22,9 +22,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 
-/**
- * @author Yegor Kozlov
- */
 public final class XSSFChildAnchor extends XSSFAnchor {
     private CTTransform2D t2d;
 

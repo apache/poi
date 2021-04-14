@@ -25,15 +25,13 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A container holding information about a sound. It contains:
- * <p>
+ * <ul>
  * <li>1. CString (4026), Instance 0: Name of sound (e.g. "crash")
  * <li>2. CString (4026), Instance 1: Type of sound (e.g. ".wav")
  * <li>3. CString (4026), Instance 2: Reference id of sound in sound collection
  * <li>4. CString (4026), Instance 3, optional: Built-in id of sound, for sounds we ship. This is the id that?s in the reg file.
  * <li>5. SoundData (2023), optional
- * </p>
- *
- * @author Yegor Kozlov
+ * </ul>
  */
 public final class Sound extends RecordContainer {
     /**

@@ -24,10 +24,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 /**
  *
  * Common entry point for all user-defined (non-built-in) functions (where
- * <tt>AbstractFunctionPtg.field_2_fnc_index</tt> == 255)
- *
- * @author Josh Micich
- * @author Petr Udalau - Improved resolving of UDFs through the ToolPacks.
+ * {@code AbstractFunctionPtg.field_2_fnc_index} == 255)
  */
 final class UserDefinedFunction implements FreeRefFunction {
 
@@ -37,6 +34,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		// enforce singleton
 	}
 
+	@Override
 	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {

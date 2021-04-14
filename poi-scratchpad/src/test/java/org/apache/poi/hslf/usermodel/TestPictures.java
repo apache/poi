@@ -53,8 +53,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test adding/reading pictures
- *
- * @author Yegor Kozlov
  */
 public final class TestPictures {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();

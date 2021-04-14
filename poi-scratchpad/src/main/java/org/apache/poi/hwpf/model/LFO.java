@@ -23,10 +23,7 @@ import org.apache.poi.hwpf.model.types.LFOAbstractType;
 /**
  * "The LFO structure specifies the LSTF element that corresponds to a list that
  * contains a paragraph. An LFO can also specify formatting information that
- * overrides the LSTF element to which it corresponds." -- [MS-DOC] -- v20110315
- * Word (.doc) Binary File Format
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
+ * overrides the LSTF element to which it corresponds."
  */
 @Internal
 public class LFO extends LFOAbstractType

@@ -162,7 +162,7 @@ public class CellDateFormatter extends CellFormatter {
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public synchronized void formatValue(StringBuffer toAppendTo, Object value) {
         if (value == null)
             value = 0.0;
@@ -221,8 +221,9 @@ public class CellDateFormatter extends CellFormatter {
     /**
      * {@inheritDoc}
      * <p>
-     * For a date, this is <tt>"mm/d/y"</tt>.
+     * For a date, this is {@code "mm/d/y"}.
      */
+    @Override
     public void simpleValue(StringBuffer toAppendTo, Object value) {
         synchronized (CellDateFormatter.class) {
             if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_CAL.equals(EXCEL_EPOCH_CAL)) {

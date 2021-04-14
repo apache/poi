@@ -18,8 +18,6 @@ package org.apache.poi.hwpf.usermodel;
 
 /**
  * User friendly interface to access information about document bookmarks
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 public interface Bookmark
 {

@@ -297,6 +297,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         return formatReferenceAsString();
     }
 
+    @Override
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
     }

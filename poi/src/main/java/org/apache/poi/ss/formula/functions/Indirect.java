@@ -42,8 +42,6 @@ import org.apache.poi.ss.usermodel.Table;
  * normally be written in a cell formula.<br>
  * <b>isA1Style</b> (default TRUE) specifies whether the ref_text should be
  * interpreted as A1-style or R1C1-style.
- *
- * @author Josh Micich
  */
 public final class Indirect implements FreeRefFunction {
 
@@ -95,7 +93,7 @@ public final class Indirect implements FreeRefFunction {
 
     private static ValueEval evaluateIndirect(final OperationEvaluationContext ec, String text,
             boolean isA1style) {
-        
+
         // Search backwards for '!' because sheet names can contain '!'
         int plingPos = text.lastIndexOf('!');
 
@@ -132,7 +130,7 @@ public final class Indirect implements FreeRefFunction {
             int colonPos = refText.indexOf(':');
             if (colonPos < 0) {
                  refStrPart1 = refText.trim();
-                 refStrPart2 = null;            
+                 refStrPart2 = null;
             } else {
                 refStrPart1 = refText.substring(0, colonPos).trim();
                 refStrPart2 = refText.substring(colonPos + 1).trim();

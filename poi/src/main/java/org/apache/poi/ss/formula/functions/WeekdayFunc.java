@@ -33,8 +33,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation for the Excel function WEEKDAY
- *
- * @author Thies Wellpott
  */
 public final class WeekdayFunc implements Function {
 //or:  extends Var1or2ArgFunction {

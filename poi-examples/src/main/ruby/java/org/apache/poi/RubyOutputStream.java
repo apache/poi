@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 /**
- * @author aviks
  * Wrap a java.io.OutputStream around a Ruby IO object
  */
 

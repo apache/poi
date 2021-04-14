@@ -22,8 +22,7 @@ import java.util.Optional;
 
 /**
  * Represents the core properties of an OPC package.
- * 
- * @author Julien Chable
+ *
  * @version 1.0
  * @see org.apache.poi.openxml4j.opc.OPCPackage
  */

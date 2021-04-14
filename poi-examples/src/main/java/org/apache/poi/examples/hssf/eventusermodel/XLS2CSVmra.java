@@ -50,7 +50,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * A XLS -&gt; CSV processor, that uses the MissingRecordAware
  *  EventModel code to ensure it outputs all columns and rows.
- * @author Nick Burch
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public class XLS2CSVmra implements HSSFListener {

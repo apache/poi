@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
- *
- * @author Dragos Buleandra ( dragos.buleandra@trade2b.ro )
  */
 public abstract class BaseTestDataValidation {
     private final ITestDataProvider _testDataProvider;

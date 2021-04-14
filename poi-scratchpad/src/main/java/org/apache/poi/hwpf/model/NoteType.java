@@ -15,15 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-/**
- * Word document notes types (and their FIB field indices)
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
- */
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.Internal;
 
+/**
+ * Word document notes types (and their FIB field indices)
+ */
 @Internal
 public enum NoteType {
     /** Ending note */

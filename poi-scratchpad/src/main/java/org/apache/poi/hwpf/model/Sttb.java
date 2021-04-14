@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.StringUtil;
@@ -27,18 +28,8 @@ import org.apache.poi.util.StringUtil;
  * The STTB is a string table that is made up of a header that is followed by an
  * array of elements. The cData value specifies the number of elements that are
  * contained in the array.
- * <p>
- * Class and fields descriptions are quoted from [MS-DOC] -- v20121003 Word
- * (.doc) Binary File Format; Copyright (c) 2012 Microsoft Corporation; Release:
- * October 8, 2012
- * <p>
- * This class is internal. It content or properties may change without notice
- * due to changes in our knowledge of internal Microsoft Word binary structures.
- *
- * @author Sergey Vladimirov; according to [MS-DOC] -- v20121003 Word (.doc)
- *         Binary File Format; Copyright (c) 2012 Microsoft Corporation;
- *         Release: October 8, 2012
  */
+@Internal
 public class Sttb
 {
 

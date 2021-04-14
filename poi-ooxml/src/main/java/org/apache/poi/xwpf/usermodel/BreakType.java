@@ -24,8 +24,6 @@ import java.util.Map;
  * document.
  * The break type determines the next location where text shall be
  * placed after this manual break is applied to the text contents
- *
- * @author Gisella Bronzetti
  */
 public enum BreakType {
 

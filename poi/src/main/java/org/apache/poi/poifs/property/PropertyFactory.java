@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.property;
 
@@ -31,8 +31,6 @@ import org.apache.poi.poifs.common.POIFSConstants;
  * should correspond to a Property, but which does not map to a proper
  * Property (i.e., a DirectoryProperty, DocumentProperty, or
  * RootProperty) will get mapped to a null Property in the array.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 final class PropertyFactory {
@@ -69,7 +67,7 @@ final class PropertyFactory {
              properties.add(null);
              break;
           }
-          
+
           offset += POIFSConstants.PROPERTY_SIZE;
        }
     }

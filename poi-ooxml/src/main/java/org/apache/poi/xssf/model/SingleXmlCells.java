@@ -36,16 +36,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SingleXmlCellsDocumen
 
 
 /**
- * 
+ *
  * This class implements the Single Cell Tables Part (Open Office XML Part 4:
  * chapter 3.5.2)
- * 
- *
- * @author Roberto Manicardi
  */
 public class SingleXmlCells extends POIXMLDocumentPart {
-	
-	
+
+
 	private CTSingleXmlCells singleXMLCells;
 
 	public SingleXmlCells() {
@@ -70,7 +67,7 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 			throw new IOException(e.getLocalizedMessage());
 		}
 	}
-	
+
 	public XSSFSheet getXSSFSheet(){
 		return (XSSFSheet) getParent();
 	}
@@ -88,21 +85,21 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 		writeTo(out);
 		out.close();
 	}
-	
+
 	public CTSingleXmlCells getCTSingleXMLCells(){
 		return singleXMLCells;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return all the SimpleXmlCell contained in this SingleXmlCells element
 	 */
 	public List<XSSFSingleXmlCell> getAllSimpleXmlCell(){
 		List<XSSFSingleXmlCell> list = new Vector<>();
-		
+
 		for(CTSingleXmlCell singleXmlCell: singleXMLCells.getSingleXmlCellArray()){
 			list.add(new XSSFSingleXmlCell(singleXmlCell,this));
-		}		
+		}
 		return list;
 	}
 }

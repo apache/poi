@@ -40,11 +40,13 @@ import org.apache.poi.ss.formula.TwoDEval;
 public final class Vlookup extends Var3or4ArgFunction {
 	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2) {
 		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
 	}
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookup_value, ValueEval table_array,
 			ValueEval col_index, ValueEval range_lookup) {
 		try {
@@ -69,7 +71,7 @@ public final class Vlookup extends Var3or4ArgFunction {
 
 
 	/**
-	 * Returns one column from an <tt>AreaEval</tt>
+	 * Returns one column from an {@code AreaEval}
 	 *
 	 * @param colIndex assumed to be non-negative
 	 *

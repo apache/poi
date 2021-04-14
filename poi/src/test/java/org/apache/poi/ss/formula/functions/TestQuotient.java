@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Quotient}
- *
- * @author cedric dot walter @ gmail dot com
  */
 class TestQuotient {
     private static ValueEval invokeValue(String numerator, String denominator) {

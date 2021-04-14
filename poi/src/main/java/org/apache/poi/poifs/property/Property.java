@@ -34,8 +34,6 @@ import org.apache.poi.util.ShortField;
 /**
  * This abstract base class is the ancestor of all classes
  * implementing POIFS Property behavior.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public abstract class Property implements Child, POIFSViewable {

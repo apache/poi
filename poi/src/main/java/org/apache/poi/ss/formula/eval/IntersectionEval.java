@@ -20,9 +20,6 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
 
-/**
- * @author Josh Micich
- */
 public final class IntersectionEval  extends Fixed2ArgFunction {
 
 	public static final Function instance = new IntersectionEval();
@@ -31,6 +28,7 @@ public final class IntersectionEval  extends Fixed2ArgFunction {
 		// enforces singleton
 	}
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		try {
@@ -48,7 +46,7 @@ public final class IntersectionEval  extends Fixed2ArgFunction {
 
 	/**
 	 * @return simple rectangular {@link AreaEval} which represents the intersection of areas
-	 * <tt>aeA</tt> and <tt>aeB</tt>. If the two areas do not intersect, the result is <code>null</code>.
+	 * {@code aeA} and {@code aeB}. If the two areas do not intersect, the result is {@code null}.
 	 */
 	private static AreaEval resolveRange(AreaEval aeA, AreaEval aeB) {
 

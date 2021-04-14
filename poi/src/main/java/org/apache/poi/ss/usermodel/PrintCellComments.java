@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * These enumerations specify how cell comments shall be displayed for paper printing purposes.
- *
- * @author Gisella Bronzetti
  */
 public enum PrintCellComments {
 

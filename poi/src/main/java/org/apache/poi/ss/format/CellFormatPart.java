@@ -194,14 +194,14 @@ public class CellFormatPart {
     }
 
     /**
-     * Returns <tt>true</tt> if this format part applies to the given value. If
+     * Returns {@code true} if this format part applies to the given value. If
      * the value is a number and this is part has a condition, returns
-     * <tt>true</tt> only if the number passes the condition.  Otherwise, this
-     * always return <tt>true</tt>.
+     * {@code true} only if the number passes the condition.  Otherwise, this
+     * always return {@code true}.
      *
      * @param valueObject The value to evaluate.
      *
-     * @return <tt>true</tt> if this format part applies to the given value.
+     * @return {@code true} if this format part applies to the given value.
      */
     public boolean applies(Object valueObject) {
         if (condition == null || !(valueObject instanceof Number)) {
@@ -242,12 +242,12 @@ public class CellFormatPart {
     }
 
     /**
-     * Returns the color specification from the matcher, or <tt>null</tt> if
+     * Returns the color specification from the matcher, or {@code null} if
      * there is none.
      *
      * @param m The matcher for the format part.
      *
-     * @return The color specification or <tt>null</tt>.
+     * @return The color specification or {@code null}.
      */
     private static Color getColor(Matcher m) {
         String cdesc = m.group(COLOR_GROUP);
@@ -261,12 +261,12 @@ public class CellFormatPart {
     }
 
     /**
-     * Returns the condition specification from the matcher, or <tt>null</tt> if
+     * Returns the condition specification from the matcher, or {@code null} if
      * there is none.
      *
      * @param m The matcher for the format part.
      *
-     * @return The condition specification or <tt>null</tt>.
+     * @return The condition specification or {@code null}.
      */
     private CellFormatCondition getCondition(Matcher m) {
         String mdesc = m.group(CONDITION_OPERATOR_GROUP);
@@ -451,7 +451,7 @@ public class CellFormatPart {
      * @param label The label
      * @param value The value to apply this format part to.
      *
-     * @return <tt>true</tt> if the
+     * @return {@code true} if the
      */
     public CellFormatResult apply(JLabel label, Object value) {
         CellFormatResult result = apply(value);
@@ -473,9 +473,9 @@ public class CellFormatPart {
     }
 
     /**
-     * Returns <tt>true</tt> if this format part has a condition.
+     * Returns {@code true} if this format part has a condition.
      *
-     * @return <tt>true</tt> if this format part has a condition.
+     * @return {@code true} if this format part has a condition.
      */
     boolean hasCondition() {
         return condition != null;
@@ -566,13 +566,13 @@ public class CellFormatPart {
     }
 
     /**
-     * Returns the string from the group, or <tt>""</tt> if the group is
-     * <tt>null</tt>.
+     * Returns the string from the group, or {@code ""} if the group is
+     * {@code null}.
      *
      * @param m The matcher.
      * @param g The group number.
      *
-     * @return The group or <tt>""</tt>.
+     * @return The group or {@code ""}.
      */
     public static String group(Matcher m, int g) {
         String str = m.group(g);

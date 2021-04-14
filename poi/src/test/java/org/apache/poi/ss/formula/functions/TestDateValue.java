@@ -37,8 +37,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel function DATEVALUE()
- *
- * @author Milosz Rembisz
  */
 final class TestDateValue {
 

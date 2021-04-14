@@ -22,8 +22,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Convenience base class for functions that must take exactly three arguments.
- *
- * @author Josh Micich
  */
 public abstract class Fixed3ArgFunction implements Function3Arg {
 	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {

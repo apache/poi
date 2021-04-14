@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for <tt>ArrayPtg</tt>
+ * Tests for {@code ArrayPtg}
  */
 final class TestArrayPtg {
 

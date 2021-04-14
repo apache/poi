@@ -24,8 +24,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Holds information about document notes (footnotes or ending notes)
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 @Internal
 public class NotesTables

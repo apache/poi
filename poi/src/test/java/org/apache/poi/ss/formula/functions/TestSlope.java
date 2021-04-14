@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for Excel function SLOPE()
- *
- * @author Johan Karlsteen
  */
 final class TestSlope {
 	private static final Function SLOPE = new Slope();

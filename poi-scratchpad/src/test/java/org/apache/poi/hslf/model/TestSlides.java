@@ -30,9 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test adding new slides to a ppt.
  *
- * Note - uses the same empty PPT file as the core "new Slideshow"
- *  stuff does
- * @author Yegor Kozlov
+ * Note - uses the same empty PPT file as the core "new Slideshow" stuff does
  */
 public final class TestSlides {
 

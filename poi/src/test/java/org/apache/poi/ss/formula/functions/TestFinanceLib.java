@@ -23,10 +23,6 @@ package org.apache.poi.ss.formula.functions;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- */
 class TestFinanceLib extends BaseTestNumeric {
 
     @Test
@@ -39,7 +35,7 @@ class TestFinanceLib extends BaseTestNumeric {
         f = FinanceLib.fv(r, n, y, p, t);
         x = -2;
         assertDouble("fv ", x, f);
-        
+
         r = 0.12/12; n = 12; y = -1000; p = 0; t = false;
         f = FinanceLib.fv(r, n, y, p, t);
         x = 12682.50301319;

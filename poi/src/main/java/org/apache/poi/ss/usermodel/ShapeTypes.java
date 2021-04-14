@@ -18,8 +18,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * All known types of automatic shapes in DrawingML
- *
- * @author Yegor Kozlov
  */
 public class ShapeTypes {
     public static final int LINE = 1;

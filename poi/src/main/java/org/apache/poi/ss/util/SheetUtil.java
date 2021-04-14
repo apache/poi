@@ -43,8 +43,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * Helper methods for when working with Usermodel sheets
- *
- * @author Yegor Kozlov
  */
 public class SheetUtil {
 

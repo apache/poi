@@ -31,8 +31,6 @@ import org.apache.poi.util.IOUtils;
 /**
  * Raw picture data, normally attached to a WordprocessingML Drawing.
  * As a rule, pictures are stored in the /word/media/ part of a WordprocessingML package.
- *
- * @author Philipp Epp
  */
 public class XWPFPictureData extends POIXMLDocumentPart {
 
@@ -69,13 +67,13 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * Construct XWPFPictureData from a package part
      *
      * @param part the package part holding the drawing data,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     public XWPFPictureData(PackagePart part) {
         super(part);
     }
-    
+
     @Override
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();

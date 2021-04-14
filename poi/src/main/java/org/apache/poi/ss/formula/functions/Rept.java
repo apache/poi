@@ -37,8 +37,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.
  *
  * The result of the REPT function cannot be longer than 32,767 characters, or REPT returns #VALUE!.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class Rept extends Fixed2ArgFunction  {
 

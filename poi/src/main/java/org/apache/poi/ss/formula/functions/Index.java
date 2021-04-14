@@ -30,8 +30,8 @@ import org.apache.poi.ss.formula.TwoDEval;
  * Implementation for the Excel function INDEX
  * <p>
  *
- * Syntax : <br>
- *  INDEX ( reference, row_num[, column_num [, area_num]])</br>
+ * Syntax : <p>
+ *  INDEX ( reference, row_num[, column_num [, area_num]])<p>
  *  INDEX ( array, row_num[, column_num])
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
  *      <tr><th>reference</th><td>typically an area reference, possibly a union of areas</td></tr>
@@ -40,9 +40,6 @@ import org.apache.poi.ss.formula.TwoDEval;
  *      <tr><th>column_num</th><td>selects column within the array or area reference. default is 1</td></tr>
  *      <tr><th>area_num</th><td>used when reference is a union of areas</td></tr>
  *    </table>
- * </p>
- *
- * @author Josh Micich
  */
 public final class Index implements Function2Arg, Function3Arg, Function4Arg, ArrayMode {
 

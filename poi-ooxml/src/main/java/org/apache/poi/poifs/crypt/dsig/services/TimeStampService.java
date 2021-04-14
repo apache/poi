@@ -28,8 +28,6 @@ import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 
 /**
  * Interface for a time-stamp service.
- *
- * @author Frank Cornelis
  */
 public interface TimeStampService {
 
