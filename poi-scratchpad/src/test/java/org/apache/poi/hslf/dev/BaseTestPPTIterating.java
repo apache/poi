@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,10 +37,12 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullPrintStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Isolated	// this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 public abstract class BaseTestPPTIterating {
     protected static final Set<String> OLD_FILES = new HashSet<>();
     static {
@@ -76,7 +77,7 @@ public abstract class BaseTestPPTIterating {
     private final PrintStream save = System.out;
 
     @BeforeEach
-    void setUpBase() throws UnsupportedEncodingException {
+    void setUpBase() {
         // set a higher max allocation limit as some test-files require more
         IOUtils.setByteArrayMaxOverride(5*1024*1024);
 

@@ -29,7 +29,9 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated	// this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 public class TestSlideShowDumper extends BaseTestPPTIterating {
     private static final Set<String> FAILING = new HashSet<>();
     static {
