@@ -77,7 +77,6 @@ java {
     withSourcesJar()
 }
 
-
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava'
 
@@ -121,7 +120,6 @@ task cacheTest9(type: Copy) {
     into(TEST9_SRC)
 }
 
-
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
@@ -163,8 +161,29 @@ sourcesJar {
     exclude 'META-INF/services/**'
 }
 
+javadoc {
+	failOnError = true
+	doFirst {
+		options {
+			if (JavaVersion.current().isJava9Compatible()) {
+				addBooleanOption('html5', true)
+			}
+			links 'https://poi.apache.org/apidocs/dev/'
+			links 'https://docs.oracle.com/javase/8/docs/api/'
+			use = true
+			splitIndex = true
+			source = "1.8"
+			classpath += configurations.javadocs.files
+		}
+	}
+}
+
+artifacts {
+    tests testJar
+}
+
 test {
-    dependsOn 'testJar'
+    dependsOn { testJar }
 
     useJUnitPlatform()
 
@@ -191,6 +210,7 @@ test {
                 '--illegal-access=warn',
 
                 '--add-modules', MODULE_NAME,
+
                 // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                 // opposed to the recommendation there, it doesn't work to add ... to the dependencies
                 // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
@@ -202,27 +222,6 @@ test {
             ]
         }
     }
-}
-
-javadoc {
-    failOnError = true
-    doFirst {
-        options {
-            if (JavaVersion.current().isJava9Compatible()) {
-                addBooleanOption('html5', true)
-            }
-            links 'https://poi.apache.org/apidocs/dev/'
-            links 'https://docs.oracle.com/javase/8/docs/api/'
-            use = true
-            splitIndex = true
-            source = "1.8"
-            classpath += configurations.javadocs.files
-        }
-    }
-}
-
-artifacts {
-    tests testJar
 }
 
 publishing {

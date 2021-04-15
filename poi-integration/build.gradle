@@ -21,6 +21,10 @@ final String TEST9_SRC = 'src/test/java9'
 final String TEST9_OUT = "${buildDir}/classes/java9/test/"
 final String VERSIONS9 = 'META-INF/versions/9'
 
+configurations {
+	tests
+}
+
 sourceSets {
     test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -28,11 +32,6 @@ sourceSets {
         }
     }
 }
-
-configurations {
-    tests
-}
-
 
 dependencies {
     testImplementation 'org.apache.ant:ant:1.10.9'
@@ -85,7 +84,6 @@ task cacheTest9(type: Copy) {
     from(file(TEST9_OUT + VERSIONS9))
     into(TEST9_SRC)
 }
-
 
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")

@@ -29,6 +29,18 @@ final String TEST9_SRC = 'src/test/java9'
 final String TEST9_OUT = "${buildDir}/classes/java9/test/"
 final String VERSIONS9 = 'META-INF/versions/9'
 
+configurations {
+	all {
+		exclude group: 'xalan', module: 'xalan'
+		if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+			exclude group: 'xml-apis', module: 'xml-apis'
+		}
+	}
+	broken
+	tests
+    javadocs
+}
+
 sourceSets {
     main {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -40,18 +52,6 @@ sourceSets {
             output.dir(TEST9_OUT, builtBy: 'cacheTest9')
         }
     }
-}
-
-configurations {
-    all {
-        exclude group: 'xalan', module: 'xalan'
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
-    }
-    broken
-    tests
-    javadocs
 }
 
 dependencies {
@@ -192,7 +192,6 @@ task testJar(type: Jar, dependsOn: testClasses) {
     }
 }
 
-
 sourcesJar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
     exclude 'META-INF/services/**'
@@ -234,7 +233,7 @@ test {
     // for some reason catching the OOM does not work when run from Gradle
     exclude '**/MemoryUsage.class'
 
-    dependsOn 'testJar'
+    dependsOn { testJar }
 
     useJUnitPlatform()
 

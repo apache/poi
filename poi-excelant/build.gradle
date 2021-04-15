@@ -29,6 +29,10 @@ final String TEST9_SRC = 'src/test/java9'
 final String TEST9_OUT = "${buildDir}/classes/java9/test/"
 final String VERSIONS9 = 'META-INF/versions/9'
 
+configurations {
+	tests
+}
+
 sourceSets {
     main {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -40,10 +44,6 @@ sourceSets {
             output.dir(TEST9_OUT, builtBy: 'cacheTest9')
         }
     }
-}
-
-configurations {
-    tests
 }
 
 dependencies {
@@ -193,7 +193,7 @@ test {
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
             '-Djunit.jupiter.execution.parallel.enabled=true',
             '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3',
+            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
             // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -201,6 +201,7 @@ test {
                 '-Dsun.reflect.debugModuleAccessChecks=true',
                 '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
                 '--illegal-access=warn',
+
                 '--add-modules', MODULE_NAME,
 
                 // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97

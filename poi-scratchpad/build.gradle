@@ -159,12 +159,29 @@ sourcesJar {
     exclude 'META-INF/services/**'
 }
 
+javadoc {
+	failOnError = true
+	doFirst {
+		options {
+			if (JavaVersion.current().isJava9Compatible()) {
+				addBooleanOption('html5', true)
+			}
+			links 'https://poi.apache.org/apidocs/dev/'
+			links 'https://docs.oracle.com/javase/8/docs/api/'
+			use = true
+			splitIndex = true
+			source = "1.8"
+			classpath += configurations.javadocs.files
+		}
+	}
+}
+
 artifacts {
     tests testJar
 }
 
 test {
-    dependsOn 'testJar'
+    dependsOn { testJar }
 
     useJUnitPlatform()
 
@@ -181,7 +198,7 @@ test {
             '-ea',
             '-Djunit.jupiter.execution.parallel.enabled=true',
             '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3',
+            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
             // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -201,23 +218,6 @@ test {
 
                 '--module-path', '../build/dist/maven/poi-scratchpad-tests:' + files(TEST_MODULE_PATH).asPath,
             ]
-        }
-    }
-}
-
-javadoc {
-    failOnError = true
-    doFirst {
-        options {
-            if (JavaVersion.current().isJava9Compatible()) {
-                addBooleanOption('html5', true)
-            }
-            links 'https://poi.apache.org/apidocs/dev/'
-            links 'https://docs.oracle.com/javase/8/docs/api/'
-            use = true
-            splitIndex = true
-            source = "1.8"
-            classpath += configurations.javadocs.files
         }
     }
 }
