@@ -72,10 +72,12 @@ public class HwmfMisc {
      * The META_SETRELABS record is reserved and not supported.
      */
     public static class WmfSetRelabs implements HwmfRecord {
+        @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setRelabs;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return 0;
         }
@@ -186,7 +188,7 @@ public class HwmfMisc {
         public enum HwmfBkMode {
             TRANSPARENT(0x0001), OPAQUE(0x0002);
 
-            int flag;
+            final int flag;
             HwmfBkMode(int flag) {
                 this.flag = flag;
             }
@@ -201,10 +203,12 @@ public class HwmfMisc {
 
         protected HwmfBkMode bkMode;
 
+        @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setBkMode;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             bkMode = HwmfBkMode.valueOf(leis.readUShort());
             return LittleEndianConsts.SHORT_SIZE;
@@ -752,7 +756,7 @@ public class HwmfMisc {
      * The following table shows the relationship between values in the BrushStyle,
      * ColorRef and BrushHatch fields in a LogBrush Object. Only supported brush styles are listed.
      *
-     * <table>
+     * <table summary="">
      * <tr>
      *   <th>BrushStyle</th>
      *   <th>ColorRef</th>

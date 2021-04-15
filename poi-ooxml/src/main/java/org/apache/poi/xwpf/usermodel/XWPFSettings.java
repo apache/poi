@@ -73,9 +73,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * it sets the value of zoom
      * <br>
      * sample snippet from settings.xml
-     * <pre>
-     *    &lt;w:zoom w:percent="50" /&gt;
-     * <pre>
+     * <pre>{@code
+     *    <w:zoom w:percent="50" />
+     * }</pre>
      *
      * @return percentage as an integer of zoom level
      */
@@ -97,9 +97,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * it sets the value of zoom
      * <br>
      * sample snippet from settings.xml
-     * <pre>
-     *    &lt;w:zoom w:percent="50" /&gt;
-     * <pre>
+     * <pre>{@code
+     *    <w:zoom w:percent="50" />
+     * }</pre>
      */
     public void setZoomPercent(long zoomPercent) {
         if (!ctSettings.isSetZoom()) {
@@ -365,7 +365,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Check if revision tracking is turned on.
      *
-     * @return <code>true</code> if revision tracking is turned on
+     * @return {@code true} if revision tracking is turned on
      */
     public boolean isTrackRevisions() {
         return ctSettings.isSetTrackRevisions();
@@ -374,7 +374,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Enable or disable revision tracking.
      *
-     * @param enable <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
+     * @param enable {@code true} to  turn on revision tracking, {@code false} to turn off revision tracking
      */
     public void setTrackRevisions(boolean enable) {
         if (enable) {
@@ -432,8 +432,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Turn separate even-and-odd headings on or off
      *
-     * @param enable <code>true</code> to turn on separate even and odd headings,
-     * <code>false</code> to turn off even and odd headings.
+     * @param enable {@code true} to turn on separate even and odd headings,
+     * {@code false} to turn off even and odd headings.
      */
     public void setEvenAndOddHeadings(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();
@@ -453,8 +453,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Turn mirrored margins on or off
      *
-     * @param enable <code>true</code> to turn on mirrored margins,
-     * <code>false</code> to turn off mirrored marginss.
+     * @param enable {@code true} to turn on mirrored margins,
+     * {@code false} to turn off mirrored marginss.
      */
     public void setMirrorMargins(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();

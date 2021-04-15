@@ -67,21 +67,19 @@ public abstract class HRESIAbstractType {
 
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[HRESI]\n");
-        builder.append("    .hres                 = ");
-        builder.append(" (").append(getHres()).append(" )\n");
-        builder.append("    .chHres               = ");
-        builder.append(" (").append(getChHres()).append(" )\n");
-
-        builder.append("[/HRESI]\n");
-        return builder.toString();
+        return "[HRESI]\n" +
+            "    .hres                 = " +
+            " (" + getHres() + " )\n" +
+            "    .chHres               = " +
+            " (" + getChHres() + " )\n" +
+            "[/HRESI]\n";
     }
 
     /**
      * Hyphenation rule.
      *
      * @return One of
+     * <ul>
      * <li>{@link #HRES_NO}
      * <li>{@link #HRES_NORMAL}
      * <li>{@link #HRES_ADD_LETTER_BEFORE}
@@ -89,6 +87,7 @@ public abstract class HRESIAbstractType {
      * <li>{@link #HRES_DELETE_LETTER_BEFORE}
      * <li>{@link #HRES_CHANGE_LETTER_AFTER}
      * <li>{@link #HRES_DELETE_BEFORE_CHANGE_BEFORE}
+     * </ul>
      */
     public byte getHres()
     {
@@ -98,8 +97,8 @@ public abstract class HRESIAbstractType {
     /**
      * Hyphenation rule.
      *
-     * @param field_1_hres
-     *        One of
+     * @param field_1_hres One of
+     * <ul>
      * <li>{@link #HRES_NO}
      * <li>{@link #HRES_NORMAL}
      * <li>{@link #HRES_ADD_LETTER_BEFORE}
@@ -107,6 +106,7 @@ public abstract class HRESIAbstractType {
      * <li>{@link #HRES_DELETE_LETTER_BEFORE}
      * <li>{@link #HRES_CHANGE_LETTER_AFTER}
      * <li>{@link #HRES_DELETE_BEFORE_CHANGE_BEFORE}
+     * </ul>
      */
     public void setHres( byte field_1_hres )
     {

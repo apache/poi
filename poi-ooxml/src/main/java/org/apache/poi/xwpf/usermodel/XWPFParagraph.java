@@ -33,11 +33,11 @@ import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
- * <p>A Paragraph within a Document, Table, Header etc.</p>
- * <p>
- * <p>A paragraph has a lot of styling information, but the
+ * A Paragraph within a Document, Table, Header etc.<p>
+ *
+ * A paragraph has a lot of styling information, but the
  * actual text (possibly along with more styling) is held on
- * the child {@link XWPFRun}s.</p>
+ * the child {@link XWPFRun}s.
  */
 public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Paragraph {
     private final CTP paragraph;
@@ -49,7 +49,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     protected List<XWPFRun> runs;
     protected List<IRunElement> iruns;
 
-    private StringBuilder footnoteText = new StringBuilder(64);
+    private final StringBuilder footnoteText = new StringBuilder(64);
 
     public XWPFParagraph(CTP prgrph, IBody part) {
         this.paragraph = prgrph;
@@ -176,8 +176,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * Return literal runs and sdt/content control objects.
-     *
-     * @return List<IRunElement>
      */
     public List<IRunElement> getIRuns() {
         return Collections.unmodifiableList(iruns);
@@ -252,8 +250,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * setNumID of Paragraph
-     *
-     * @param numPos
      */
     public void setNumID(BigInteger numPos) {
         if (paragraph.getPPr() == null) {
@@ -271,7 +267,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * setNumILvl of Paragraph
      *
-     * @param iLvl
      * @since 4.1.2
      */
     public void setNumILvl(BigInteger iLvl) {
@@ -484,13 +479,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p>
-     * <p>
      * If this element is not set on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
-     * </p>
      *
      * @return the paragraph alignment of this paragraph.
      */
@@ -504,13 +497,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p>
-     * <p>
      * If this element is not set on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
-     * </p>
      *
      * @param align the paragraph alignment to apply to this paragraph.
      */
@@ -610,7 +601,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies the border which shall be displayed above a set of paragraphs
      * which have the same set of paragraph border settings.
      * <p>
-     * <p>
      * To determine if any two adjoining paragraphs shall have an individual top
      * and bottom border or a between border, the set of borders on the two
      * adjoining paragraphs are compared. If the border information on those two
@@ -620,14 +610,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * respectively. If this border specifies a space attribute, that value
      * determines the space above the text (ignoring any spacing above) which
      * should be left before this border is drawn, specified in points.
-     * </p>
      * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no between border shall be applied
      * above identical paragraphs.
-     * </p>
+     * <p>
      * <b>This border can only be a line border.</b>
      *
      * @param border one of the defined Border styles, see {@link Borders}
@@ -1466,8 +1455,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * add a new run at the end of the position of
      * the content of parameter run
-     *
-     * @param run
      */
     protected void addRun(CTR run) {
         int pos;
@@ -1643,9 +1630,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * verifies that cursor is on the right position
-     *
-     * @param cursor
-     * @return
      */
     private boolean isCursorInParagraph(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
@@ -1659,9 +1643,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * this methods parse the paragraph and search for the string searched.
      * If it finds the string, it will return true and the position of the String
      * will be saved in the parameter startPos.
-     *
-     * @param searched
-     * @param startPos
      */
     public TextSegment searchText(String searched, PositionInParagraph startPos) {
         int startRun = startPos.getRun(),
@@ -1731,8 +1712,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * get a Text
-     *
-     * @param segment
      */
     public String getText(TextSegment segment) {
         int runBegin = segment.getBeginRun();
@@ -1770,7 +1749,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * removes a Run at the position pos in the paragraph
      *
-     * @param pos
      * @return true if the run was removed
      */
     public boolean removeRun(int pos) {
@@ -1810,9 +1788,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Is there only one ctHyperlink in all runs
      *
-     * @param run
-     *            hyperlink run
-     * @return
+     * @param run hyperlink run
      */
     private boolean isTheOnlyCTHyperlinkInRuns(XWPFHyperlinkRun run) {
         CTHyperlink ctHyperlink = run.getCTHyperlink();
@@ -1825,9 +1801,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Is there only one ctField in all runs
      *
-     * @param run
-     *            field run
-     * @return
+     * @param run field run
      */
     private boolean isTheOnlyCTFieldInRuns(XWPFFieldRun run) {
         CTSimpleField ctField = run.getCTField();
@@ -1838,8 +1812,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * returns the type of the BodyElement Paragraph
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
      */
     @Override
     public BodyElementType getElementType() {
@@ -1876,8 +1848,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * adds a new Run to the Paragraph
-     *
-     * @param r
      */
     public void addRun(XWPFRun r) {
         if (!runs.contains(r)) {
@@ -1887,8 +1857,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * return the XWPFRun-Element which owns the CTR run-Element
-     *
-     * @param r
      */
     public XWPFRun getRun(CTR r) {
         for (int i = 0; i < getRuns().size(); i++) {

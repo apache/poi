@@ -129,15 +129,15 @@ public final class HeadersFootersAtom extends RecordAtom {
     /**
      * record header
      */
-    private byte[] _header;
+    private final byte[] _header;
 
 	/**
      * record data
      */
-	private byte[] _recdata;
+	private final byte[] _recdata;
 
     /**
-     * Build an instance of <code>HeadersFootersAtom</code> from on-disk data
+     * Build an instance of {@code HeadersFootersAtom} from on-disk data
      */
 	protected HeadersFootersAtom(byte[] source, int start, int len) {
 		// Get the header
@@ -148,7 +148,7 @@ public final class HeadersFootersAtom extends RecordAtom {
 	}
 
     /**
-     * Create a new instance of <code>HeadersFootersAtom</code>
+     * Create a new instance of {@code HeadersFootersAtom}
      */
     public HeadersFootersAtom() {
         _recdata = new byte[4];
@@ -158,6 +158,7 @@ public final class HeadersFootersAtom extends RecordAtom {
         LittleEndian.putInt(_header, 4, _recdata.length);
     }
 
+    @Override
     public long getRecordType() {
         return RecordTypes.HeadersFootersAtom.typeID;
     }
@@ -165,7 +166,8 @@ public final class HeadersFootersAtom extends RecordAtom {
     /**
 	 * Write the contents of the record back, so it can be written to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		out.write(_header);
 		out.write(_recdata);
 	}
@@ -173,10 +175,9 @@ public final class HeadersFootersAtom extends RecordAtom {
     /**
      * A signed integer that specifies the format ID to be used to style the datetime.
      * <p>
-     * It MUST be in the range [0, 12]. </br>
+     * It MUST be in the range [0, 12]. <p>
      * This value is converted into a string as specified by the index field of the DateTimeMCAtom record.
      * It MUST be ignored unless fHasTodayDate is TRUE.
-     * </b>
      *
      * @return  A signed integer that specifies the format ID to be used to style the datetime.
      */
@@ -196,6 +197,7 @@ public final class HeadersFootersAtom extends RecordAtom {
     /**
      *  A bit mask specifying options for displaying headers and footers
      *
+     * <ul>
      * <li> A - {@link #fHasDate} (1 bit): A bit that specifies whether the date is displayed in the footer.
      * <li> B - {@link #fHasTodayDate} (1 bit): A bit that specifies whether the current datetime is used for
      *      displaying the datetime.
@@ -207,6 +209,7 @@ public final class HeadersFootersAtom extends RecordAtom {
      * <li> F - {@link #fHasFooter} (1 bit): A bit that specifies whether the footer text specified by FooterAtom
      *      record is displayed.
      * <li> reserved (10 bits): MUST be zero and MUST be ignored.
+     * </ul>
      *
      * @return A bit mask specifying options for displaying headers and footers
      */

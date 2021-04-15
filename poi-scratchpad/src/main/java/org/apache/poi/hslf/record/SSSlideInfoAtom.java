@@ -38,7 +38,7 @@ import org.apache.poi.util.LittleEndianConsts;
  * <br>
  *
  * Combination of effectType and effectDirection:
- * <table>
+ * <table summary="">
  * <tr><th>type</th><th>description</th><th>direction</th></tr>
  * <tr><td>0</td><td>cut</td><td>0x00 = no transition, 0x01 = black transition</td></tr>
  * <tr><td>1</td><td>random</td><td>0x00</td></tr>
@@ -137,7 +137,7 @@ public class SSSlideInfoAtom extends RecordAtom {
 
     private static final long _type = RecordTypes.SSSlideInfoAtom.typeID;
 
-    private byte[] _header;
+    private final byte[] _header;
 
     /**
      * A signed integer that specifies an amount of time, in milliseconds, to wait
@@ -175,7 +175,7 @@ public class SSSlideInfoAtom extends RecordAtom {
      * (0x00 = 0.75 seconds, 0x01 = 0.5 seconds, 0x02 = 0.25 seconds)
      */
     private short _speed; // byte
-    private byte[] _unused; // 3-byte
+    private final byte[] _unused; // 3-byte
 
     public SSSlideInfoAtom() {
         _header = new byte[8];
@@ -222,6 +222,7 @@ public class SSSlideInfoAtom extends RecordAtom {
      * Write the contents of the record back, so it can be written
      *  to disk
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         // Header - size or type unchanged
         out.write(_header);
@@ -245,6 +246,7 @@ public class SSSlideInfoAtom extends RecordAtom {
     /**
      * We are of type 1017
      */
+    @Override
     public long getRecordType() { return _type; }
 
 
@@ -290,8 +292,6 @@ public class SSSlideInfoAtom extends RecordAtom {
 
     /**
      * Use one of the bitmasks MANUAL_ADVANCE_BIT ... CURSOR_VISIBLE_BIT
-     * @param bitmask
-     * @param enabled
      */
     public void setEffectTransitionFlagByBit(int bitmask, boolean enabled) {
         if (enabled) {

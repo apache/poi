@@ -813,22 +813,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Create a new sheet for this Workbook and return the high level representation.
      * Use this to create new sheets.
-     *
      * <p>
-     *     Note that Excel allows sheet names up to 31 chars in length but other applications
-     *     (such as OpenOffice) allow more. Some versions of Excel crash with names longer than 31 chars,
-     *     others - truncate such names to 31 character.
-     * </p>
+     * Note that Excel allows sheet names up to 31 chars in length but other applications
+     * (such as OpenOffice) allow more. Some versions of Excel crash with names longer than 31 chars,
+     * others - truncate such names to 31 character.
      * <p>
-     *     POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
-     *     Example:
+     * POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
+     * Example:
      *
-     *     <pre>{@code
-     *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
-     *     assert 31 == sheet.getSheetName().length();
-     *     assert "My very long sheet name which i" == sheet.getSheetName();
-     *     }</pre>
-     * </p>
+     * <pre>{@code
+     * Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
+     * assert 31 == sheet.getSheetName().length();
+     * assert "My very long sheet name which i" == sheet.getSheetName();
+     * }</pre>
      *
      * Except the 31-character constraint, Excel applies some other rules:
      * <p>
@@ -845,12 +842,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * <li> closing square bracket (]) </li>
      * </ul>
      * The string MUST NOT begin or end with the single quote (') character.
-     * </p>
-     *
      * <p>
      * See {@link WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
-     * </p>
+     *
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid

@@ -136,7 +136,6 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
      * Add an {@link XWPFFootnote} to the document
      *
      * @param footnote Footnote to add
-     * @throws IOException
      */
     public void addFootnote(XWPFFootnote footnote) {
         listFootnote.add(footnote);
@@ -147,7 +146,6 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
      * Add a CT footnote to the document
      *
      * @param note CTFtnEdn to add.
-     * @throws IOException
      */
     @Internal
     public XWPFFootnote addFootnote(CTFtnEdn note) {

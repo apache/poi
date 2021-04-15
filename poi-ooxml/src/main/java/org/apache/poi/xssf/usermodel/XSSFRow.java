@@ -102,12 +102,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
     /**
      * Cell iterator over the physically defined cells:
-     * <blockquote><pre>
+     * <pre>{@code
      * for (Iterator<Cell> it = row.cellIterator(); it.hasNext(); ) {
      *     Cell cell = it.next();
      *     ...
      * }
-     * </pre></blockquote>
+     * }</pre>
      *
      * @return an iterator over cells in this row.
      */
@@ -133,22 +133,22 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     /**
-     * Compares two <code>XSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
+     * Compares two {@code XSSFRow} objects.  Two rows are equal if they belong to the same worksheet and
      * their row indexes are equal.
      *
-     * @param   other   the <code>XSSFRow</code> to be compared.
+     * @param   other   the {@code XSSFRow} to be compared.
      * @return  <ul>
      *      <li>
-     *      the value <code>0</code> if the row number of this <code>XSSFRow</code> is
-     *      equal to the row number of the argument <code>XSSFRow</code>
+     *      the value {@code 0} if the row number of this {@code XSSFRow} is
+     *      equal to the row number of the argument {@code XSSFRow}
      *      </li>
      *      <li>
-     *      a value less than <code>0</code> if the row number of this this <code>XSSFRow</code> is
-     *      numerically less than the row number of the argument <code>XSSFRow</code>
+     *      a value less than {@code 0} if the row number of this this {@code XSSFRow} is
+     *      numerically less than the row number of the argument {@code XSSFRow}
      *      </li>
      *      <li>
-     *      a value greater than <code>0</code> if the row number of this this <code>XSSFRow</code> is
-     *      numerically greater than the row number of the argument <code>XSSFRow</code>
+     *      a value greater than {@code 0} if the row number of this this {@code XSSFRow} is
+     *      numerically greater than the row number of the argument {@code XSSFRow}
      *      </li>
      *      </ul>
      * @throws IllegalArgumentException if the argument row belongs to a different worksheet
@@ -186,7 +186,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     * either through calling {@code setCellValue} or {@code setCellType}.
      * </p>
      * @param columnIndex - the column number this cell represents
      * @return Cell a high level representation of the created cell.
@@ -359,7 +359,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     /**
      *  Set the height in "twips" or  1/20th of a point.
      *
-     * @param height the height in "twips" or  1/20th of a point. <code>-1</code>  resets to the default height
+     * @param height the height in "twips" or  1/20th of a point. {@code -1}  resets to the default height
      */
     @Override
     public void setHeight(short height) {
@@ -380,7 +380,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     /**
      * Set the row's height in points.
      *
-     * @param height the height in points. <code>-1</code>  resets to the default height
+     * @param height the height in points. {@code -1}  resets to the default height
      */
     @Override
     public void setHeightInPoints(float height) {

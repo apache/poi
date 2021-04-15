@@ -30,10 +30,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  * Represents a defined named range in a SpreadsheetML workbook.
  * <p>
  * Defined names are descriptive text that is used to represents a cell, range of cells, formula, or constant value.
- * Use easy-to-understand names, such as Products, to refer to hard to understand ranges, such as <code>Sales!C20:C30</code>.
+ * Use easy-to-understand names, such as Products, to refer to hard to understand ranges, such as {@code Sales!C20:C30}.
  * </p>
  * Example:
- * <pre><blockquote>
+ * <pre>{@code
  *   XSSFWorkbook wb = new XSSFWorkbook();
  *   XSSFSheet sh = wb.createSheet("Sheet1");
  *
@@ -49,7 +49,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  *   name2.setLocalSheetId(0);
  *   name2.setRefersToFormula("Sheet1!$B$3");
  *
- * </blockquote></pre>
+ * }</pre>
  */
 public final class XSSFName implements Name {
 
@@ -79,11 +79,13 @@ public final class XSSFName implements Name {
     public static final String BUILTIN_EXTRACT = "_xlnm.Extract:";
 
     /**
-     * ?an be one of the following
+     * Can be one of the following
+     * <ul>
      * <li> this defined name refers to a range to which an advanced filter has been
      * applied. This represents the source data range, unfiltered.
      * <li> This defined name refers to a range to which an AutoFilter has been
      * applied
+     * </ul>
      */
     public static final String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase";
 
@@ -102,8 +104,8 @@ public final class XSSFName implements Name {
      */
     public static final String BUILTIN_SHEET_TITLE = "_xlnm.Sheet_Title";
 
-    private XSSFWorkbook _workbook;
-    private CTDefinedName _ctName;
+    private final XSSFWorkbook _workbook;
+    private final CTDefinedName _ctName;
 
     /**
      * Creates an XSSFName object - called internally by XSSFWorkbook.
@@ -129,6 +131,7 @@ public final class XSSFName implements Name {
      *
      * @return text name of this defined name
      */
+    @Override
     public String getNameName() {
         return _ctName.getName();
     }
@@ -140,7 +143,7 @@ public final class XSSFName implements Name {
      * <p>
      * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
      * within its scope. However you can use the same name in different scopes. Example:
-     * <pre><blockquote>
+     * <pre>{@code
      * //by default names are workbook-global
      * XSSFName name;
      * name = workbook.createName();
@@ -158,11 +161,12 @@ public final class XSSFName implements Name {
      * name.setSheetIndex(0);
      * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
      *
-     * </blockquote></pre>
-    * </p>
+     * }</pre>
+     *
      * @param name name of this defined name
      * @throws IllegalArgumentException if the name is invalid or the workbook already contains this name (case-insensitive)
      */
+    @Override
     public void setNameName(String name) {
         validateName(name);
 
@@ -180,6 +184,7 @@ public final class XSSFName implements Name {
         _workbook.updateName(this, oldName);
     }
 
+    @Override
     public String getRefersToFormula() {
         String result = _ctName.getStringValue();
         if (result == null || result.length() < 1) {
@@ -188,6 +193,7 @@ public final class XSSFName implements Name {
         return result;
     }
 
+    @Override
     public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(_workbook);
         //validate through the FormulaParser
@@ -196,6 +202,7 @@ public final class XSSFName implements Name {
         _ctName.setStringValue(formulaText);
     }
 
+    @Override
     public boolean isDeleted(){
         String formulaText = getRefersToFormula();
         if (formulaText == null) {
@@ -211,6 +218,7 @@ public final class XSSFName implements Name {
      *
      * @param index the sheet index this name applies to, -1 unsets this property making the name workbook-global
      */
+    @Override
     public void setSheetIndex(int index) {
         int lastSheetIx = _workbook.getNumberOfSheets() - 1;
         if (index < -1 || index > lastSheetIx) {
@@ -230,6 +238,7 @@ public final class XSSFName implements Name {
      *
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
+    @Override
     public int getSheetIndex() {
         return _ctName.isSetLocalSheetId() ? (int) _ctName.getLocalSheetId() : -1;
     }
@@ -238,8 +247,9 @@ public final class XSSFName implements Name {
      * Indicates that the defined name refers to a user-defined function.
      * This attribute is used when there is an add-in or other code project associated with the file.
      *
-     * @param value <code>true</code> indicates the name refers to a function.
+     * @param value {@code true} indicates the name refers to a function.
      */
+    @Override
     public void setFunction(boolean value) {
         _ctName.setFunction(value);
     }
@@ -248,7 +258,7 @@ public final class XSSFName implements Name {
      * Indicates that the defined name refers to a user-defined function.
      * This attribute is used when there is an add-in or other code project associated with the file.
      *
-     * @return <code>true</code> indicates the name refers to a function.
+     * @return {@code true} indicates the name refers to a function.
      */
     public boolean getFunction() {
         return _ctName.getFunction();
@@ -282,6 +292,7 @@ public final class XSSFName implements Name {
      * @return sheet name, which this named range referred to.
      * Empty string if the referenced sheet name was not found.
      */
+    @Override
     public String getSheetName() {
         if (_ctName.isSetLocalSheetId()) {
             // Given as explicit sheet id
@@ -296,8 +307,9 @@ public final class XSSFName implements Name {
     /**
      * Is the name refers to a user-defined function ?
      *
-     * @return <code>true</code> if this name refers to a user-defined function
+     * @return {@code true} if this name refers to a user-defined function
      */
+    @Override
     public boolean isFunctionName() {
         return getFunction();
     }
@@ -308,6 +320,7 @@ public final class XSSFName implements Name {
      *
      * @return true if this name is a hidden one
      */
+    @Override
     public boolean isHidden() {
         return _ctName.getHidden();
     }
@@ -317,6 +330,7 @@ public final class XSSFName implements Name {
      *
      * @return the user comment for this named range
      */
+    @Override
     public String getComment() {
         return _ctName.getComment();
     }
@@ -326,6 +340,7 @@ public final class XSSFName implements Name {
      *
      * @param comment  the user comment for this named range
      */
+    @Override
     public void setComment(String comment) {
         _ctName.setComment(comment);
     }
@@ -337,12 +352,12 @@ public final class XSSFName implements Name {
 
     /**
      * Compares this name to the specified object.
-     * The result is <code>true</code> if the argument is XSSFName and the
+     * The result is {@code true} if the argument is XSSFName and the
      * underlying CTDefinedName bean equals to the CTDefinedName representing this name
      *
-     * @param   o   the object to compare this <code>XSSFName</code> against.
-     * @return  <code>true</code> if the <code>XSSFName </code>are equal;
-     *          <code>false</code> otherwise.
+     * @param   o   the object to compare this {@code XSSFName} against.
+     * @return  {@code true} if the {@code XSSFName }are equal;
+     *          {@code false} otherwise.
      */
     @Override
     public boolean equals(Object o) {
@@ -372,8 +387,6 @@ public final class XSSFName implements Name {
      * Case sensitivity: all names are case-insensitive
      *
      * Uniqueness: must be unique (for names with the same scope)
-     *
-     * @param name
      */
     private static void validateName(String name) {
 

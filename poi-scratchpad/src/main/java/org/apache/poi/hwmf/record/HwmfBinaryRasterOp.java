@@ -29,14 +29,14 @@ import java.util.function.BiConsumer;
  * selected pen and the destination bitmap are combined. Following are the two operands used in these
  * operations.
  *
- * <table>
+ * <table summary="">
  * <tr><th>Operand</th><th>Meaning</th></tr>
  * <tr><td>P</td><td>Selected pen</td></tr>
  * <tr><td>D</td><td>Destination bitmap</td></tr>
  * </table>
  *
  * Following are the Boolean operators used in these operations.
- * <table>
+ * <table summary="">
  * <tr><th>Operand</th><th>Meaning</th></tr>
  * <tr><td>a</td><td>Bitwise AND</td></tr>
  * <tr><td>n</td><td>Bitwise NOT (inverse)</td></tr>
@@ -54,7 +54,7 @@ import java.util.function.BiConsumer;
  * (in this case, the pen and destination values). For example, the operation indexes for the DPo and
  * DPan operations are shown in the following list.
  *
- * <table>
+ * <table summary="">
  * <tr><th>P</th><th>D</th><th>DPo</th><th>DPan</th></tr>
  * <tr><td>0</td><td>0</td><td>0</td><td>1</td></tr>
  * <tr><td>0</td><td>1</td><td>1</td><td>1</td></tr>

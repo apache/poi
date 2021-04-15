@@ -50,15 +50,15 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
     public ExHyperlink getExHyperlink() {
         return exHyper;
     }
-    
+
     public InteractiveInfo getInfo() {
         return info;
     }
-    
+
     public TxInteractiveInfoAtom getTextRunInfo() {
         return txinfo;
     }
-    
+
     protected void setTextRunInfo(TxInteractiveInfoAtom txinfo) {
         this.txinfo = txinfo;
     }
@@ -69,7 +69,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      *
      * @param shape the shape which receives the hyperlink
      * @return the new hyperlink
-     * 
+     *
      * @see HSLFSimpleShape#createHyperlink()
      */
     /* package */ static HSLFHyperlink createHyperlink(HSLFSimpleShape shape) {
@@ -94,7 +94,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      *
      * @param run the run which receives the hyperlink
      * @return the new hyperlink
-     * 
+     *
      * @see HSLFTextRun#createHyperlink()
      */
     /* package */ static HSLFHyperlink createHyperlink(HSLFTextRun run) {
@@ -109,22 +109,22 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         // this will be done, when the paragraph is saved
         HSLFHyperlink hyper = new HSLFHyperlink(exHyper, info);
         hyper.linkToNextSlide();
-        
+
         TxInteractiveInfoAtom txinfo = new TxInteractiveInfoAtom();
         int startIdx = run.getTextParagraph().getStartIdxOfTextRun(run);
         int endIdx = startIdx + run.getLength();
         txinfo.setStartIndex(startIdx);
         txinfo.setEndIndex(endIdx);
         hyper.setTextRunInfo(txinfo);
-        
+
         run.setHyperlink(hyper);
         return hyper;
     }
-    
+
 
     /**
      * Gets the type of the hyperlink action.
-     * Must be a <code>LINK_*</code>  constant</code>
+     * Must be a {@code LINK_*} constant
      *
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
@@ -300,8 +300,8 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
     /**
      * Find hyperlinks in a text shape
      *
-     * @param shape  <code>TextRun</code> to lookup hyperlinks in
-     * @return found hyperlinks or <code>null</code> if not found
+     * @param shape  {@code TextRun} to lookup hyperlinks in
+     * @return found hyperlinks or {@code null} if not found
      */
     public static List<HSLFHyperlink> find(HSLFTextShape shape){
         return find(shape.getTextParagraphs());
@@ -310,7 +310,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
     /**
      * Find hyperlinks in a text paragraph
      *
-     * @param paragraphs  List of <code>TextParagraph</code> to lookup hyperlinks
+     * @param paragraphs  List of {@code TextParagraph} to lookup hyperlinks
      * @return found hyperlinks
      */
     @SuppressWarnings("resource")
@@ -334,8 +334,8 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
     /**
      * Find hyperlink assigned to the supplied shape
      *
-     * @param shape  <code>Shape</code> to lookup hyperlink in
-     * @return found hyperlink or <code>null</code>
+     * @param shape  {@code Shape} to lookup hyperlink in
+     * @return found hyperlink or {@code null}
      */
     @SuppressWarnings("resource")
     protected static HSLFHyperlink find(HSLFShape shape){

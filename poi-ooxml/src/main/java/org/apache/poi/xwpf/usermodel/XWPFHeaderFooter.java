@@ -93,6 +93,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         return headerFooter;
     }
 
+    @Override
     public List<IBodyElement> getBodyElements() {
         return Collections.unmodifiableList(bodyElements);
     }
@@ -104,6 +105,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * there could be more in certain cases, or
      * a table.
      */
+    @Override
     public List<XWPFParagraph> getParagraphs() {
         return Collections.unmodifiableList(paragraphs);
     }
@@ -117,6 +119,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * complex headers/footers have a table or two
      * in addition.
      */
+    @Override
     public List<XWPFTable> getTables() throws ArrayIndexOutOfBoundsException {
         return Collections.unmodifiableList(tables);
     }
@@ -129,9 +132,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public String getText() {
         StringBuilder t = new StringBuilder(64);
         //TODO: simplify this to get ibody elements in order
-        for (int i = 0; i < paragraphs.size(); i++) {
-            if (!paragraphs.get(i).isEmpty()) {
-                String text = paragraphs.get(i).getText();
+        for (XWPFParagraph paragraph : paragraphs) {
+            if (!paragraph.isEmpty()) {
+                String text = paragraph.getText();
                 if (text != null && text.length() > 0) {
                     t.append(text);
                     t.append('\n');
@@ -139,8 +142,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             }
         }
 
-        for (int i = 0; i < tables.size(); i++) {
-            String text = tables.get(i).getText();
+        for (XWPFTable table : tables) {
+            String text = table.getText();
             if (text != null && text.length() > 0) {
                 t.append(text);
                 t.append('\n');
@@ -149,7 +152,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
         for (IBodyElement bodyElement : getBodyElements()) {
             if (bodyElement instanceof XWPFSDT) {
-                t.append(((XWPFSDT) bodyElement).getContent().getText() + '\n');
+                t.append(((XWPFSDT) bodyElement).getContent().getText()).append('\n');
             }
         }
         return t.toString();
@@ -167,9 +170,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * if there is a corresponding {@link XWPFTable} of the parameter ctTable in the tableList of this header
      * the method will return this table
      * if there is no corresponding {@link XWPFTable} the method will return null
-     *
-     * @param ctTable
      */
+    @Override
     public XWPFTable getTable(CTTbl ctTable) {
         for (XWPFTable table : tables) {
             if (table == null)
@@ -193,6 +195,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * Returns the paragraph that holds
      * the text of the header or footer.
      */
+    @Override
     public XWPFParagraph getParagraphArray(int pos) {
         if(pos >= 0 && pos<paragraphs.size()){
             return paragraphs.get(pos);
@@ -283,9 +286,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * returns the PictureData by blipID
      *
-     * @param blipID
      * @return XWPFPictureData of a specificID
-     * @throws Exception
      */
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
@@ -368,9 +369,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * add a new paragraph at position of the cursor
      *
-     * @param cursor
      * @return the inserted paragraph
      */
+    @Override
     public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
         if (isCursorInHdrF(cursor)) {
             String uri = CTP.type.getName().getNamespaceURI();
@@ -410,9 +411,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
 
     /**
-     * @param cursor
      * @return the inserted table
      */
+    @Override
     public XWPFTable insertNewTbl(final XmlCursor cursor) {
         if (isCursorInHdrF(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
@@ -453,8 +454,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * verifies that cursor is on the right position
-     *
-     * @param cursor
      */
     private boolean isCursorInHdrF(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
@@ -471,9 +470,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * Returns the table at position pos
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
+    @Override
     public XWPFTable getTableArray(int pos) {
         if (pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
@@ -483,10 +481,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
-     *
-     * @param pos
-     * @param table
      */
+    @Override
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
@@ -526,9 +522,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * get the TableCell which belongs to the TableCell
-     *
-     * @param cell
      */
+    @Override
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
         cursor.toParent();
@@ -553,6 +548,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         return tableRow.getTableCell(cell);
     }
 
+    @Override
     public XWPFDocument getXWPFDocument() {
         if (document != null) {
             return document;
@@ -567,9 +563,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         return this;
     }

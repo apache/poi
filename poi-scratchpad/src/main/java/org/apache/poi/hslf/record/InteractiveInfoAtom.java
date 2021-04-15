@@ -121,12 +121,12 @@ public class InteractiveInfoAtom extends RecordAtom {
     /**
      * Record header.
      */
-    private byte[] _header;
+    private final byte[] _header;
 
     /**
      * Record data.
      */
-    private byte[] _data;
+    private final byte[] _data;
 
     /**
      * Constructs a brand new link related atom record.
@@ -203,7 +203,7 @@ public class InteractiveInfoAtom extends RecordAtom {
     /**
      * Hyperlink Action.
      * <p>
-     * see <code>ACTION_*</code> constants for the list of actions
+     * see {@code ACTION_*} constants for the list of actions
      * </p>
      *
      * @return hyperlink action.
@@ -215,7 +215,7 @@ public class InteractiveInfoAtom extends RecordAtom {
     /**
      * Hyperlink Action
      * <p>
-     * see <code>ACTION_*</code> constants for the list of actions
+     * see {@code ACTION_*} constants for the list of actions
      * </p>
      *
      * @param val hyperlink action.
@@ -241,7 +241,7 @@ public class InteractiveInfoAtom extends RecordAtom {
     /**
      * Jump
      * <p>
-     * see <code>JUMP_*</code> constants for the list of actions
+     * see {@code JUMP_*} constants for the list of actions
      * </p>
      *
      * @return jump
@@ -253,7 +253,7 @@ public class InteractiveInfoAtom extends RecordAtom {
     /**
      * Jump
      * <p>
-     * see <code>JUMP_*</code> constants for the list of actions
+     * see {@code JUMP_*} constants for the list of actions
      * </p>
      *
      * @param val jump
@@ -264,12 +264,12 @@ public class InteractiveInfoAtom extends RecordAtom {
 
     /**
      * Flags
-     * <p>
+     * <ul>
      * <li> Bit 1: Animated. If 1, then button is animated
      * <li> Bit 2: Stop sound. If 1, then stop current sound when button is pressed.
      * <li> Bit 3: CustomShowReturn. If 1, and this is a jump to custom show,
      *   then return to this slide after custom show.
-     * </p>
+     * </ul>
      */
     public byte getFlags() {
         return _data[11];
@@ -277,12 +277,12 @@ public class InteractiveInfoAtom extends RecordAtom {
 
     /**
      * Flags
-     * <p>
+     * <ul>
      * <li> Bit 1: Animated. If 1, then button is animated
      * <li> Bit 2: Stop sound. If 1, then stop current sound when button is pressed.
      * <li> Bit 3: CustomShowReturn. If 1, and this is a jump to custom show,
      *   then return to this slide after custom show.
-     * </p>
+     * </ul>
      */
     public void setFlags(byte val) {
     	_data[11] = val;
@@ -310,6 +310,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * Gets the record type.
      * @return the record type.
      */
+    @Override
     public long getRecordType() { return RecordTypes.InteractiveInfoAtom.typeID; }
 
     /**
@@ -319,6 +320,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * @param out the output stream to write to.
      * @throws IOException if an error occurs.
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);

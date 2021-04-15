@@ -50,9 +50,9 @@ public enum BreakClear {
      * </li>
      * <li> If this line is not broken into multiple regions, then treat this
      * break as a text wrapping break of type none. </li>
-     * </ul>
      * <li> If the parent paragraph is right to left, then these behaviors are
      * also reversed. </li>
+     * </ul>
      */
     LEFT(2),
 
@@ -81,7 +81,7 @@ public enum BreakClear {
      */
     ALL(4);
 
-    private static Map<Integer, BreakClear> imap = new HashMap<>();
+    private static final Map<Integer, BreakClear> imap = new HashMap<>();
 
     static {
         for (BreakClear p : values()) {
@@ -91,7 +91,7 @@ public enum BreakClear {
 
     private final int value;
 
-    private BreakClear(int val) {
+    BreakClear(int val) {
         value = val;
     }
 

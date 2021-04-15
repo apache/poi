@@ -90,7 +90,6 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
     /**
      * Remove the specified footnote if present.
      *
-     * @param pos
      * @return True if the footnote was removed.
      * @since 4.0.0
      */
@@ -134,9 +133,6 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
 
     /**
      * add an {@link XWPFEndnote} to the document
-     *
-     * @param endnote
-     * @throws IOException
      */
     public void addEndnote(XWPFEndnote endnote) {
         listFootnote.add(endnote);
@@ -148,7 +144,6 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
      *
      * @param note Note to add
      * @return New {@link XWPFEndnote}
-     * @throws IOException
      */
     @Internal
     public XWPFEndnote addEndnote(CTFtnEdn note) {
@@ -164,6 +159,7 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
      * @param id End note ID.
      * @return The end note or null if not found.
      */
+    @Override
     public XWPFEndnote getFootnoteById(int id) {
         return (XWPFEndnote)super.getFootnoteById(id);
     }

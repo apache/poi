@@ -25,7 +25,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
- * A variant of SXSSFSheet that uses a <code>RowGeneratorFunction</code></code> to lazily create rows.
+ * A variant of SXSSFSheet that uses a {@code RowGeneratorFunction} to lazily create rows.
  *
  *  This variant is experimental and APIs may change at short notice.
  *
@@ -36,20 +36,20 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 @Beta
 public class DeferredSXSSFSheet extends SXSSFSheet {
     private RowGeneratorFunction rowGenerator;
-    
+
     public DeferredSXSSFSheet(DeferredSXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         super(workbook, xSheet, workbook.getRandomAccessWindowSize());
     }
-    
+
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
         throw new RuntimeException("Not supported by DeferredSXSSFSheet");
     }
-    
+
     public void setRowGenerator(RowGeneratorFunction rowGenerator) {
         this.rowGenerator = rowGenerator;
     }
-    
+
     public void writeRows(OutputStream out) throws IOException {
         // delayed creation of SheetDataWriter
         _writer = ((DeferredSXSSFWorkbook) _workbook).createSheetDataWriter(out);
