@@ -288,7 +288,7 @@ task allJavaDoc(type: Javadoc) {
 	// for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
 	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
 	destinationDir = file("${buildDir}/docs/javadoc")
-	maxMemory="384M"
+	maxMemory="768M"
 
 	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
 	options.use = true
