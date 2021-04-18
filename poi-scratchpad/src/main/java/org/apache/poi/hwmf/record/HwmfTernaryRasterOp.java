@@ -25,7 +25,8 @@ import java.util.Deque;
  * the source, the selected brush, and the destination are combined. Following are the three operands
  * used in these operations.
  *
- * <table summary="">
+ * <table>
+ * <caption>Raster-operation code meaning</caption>
  * <tr><th>Operand</th><th>Meaning</th></tr>
  * <tr><td>D</td><td>Destination bitmap</td></tr>
  * <tr><td>P</td><td>Selected brush (also called pattern)</td></tr>
@@ -33,7 +34,8 @@ import java.util.Deque;
  * </table>
  *
  * Following are the Boolean operators used in these operations.
- * <table summary="">
+ * <table>
+ * <caption>Boolean operator meaning</caption>
  * <tr><th>Operand</th><th>Meaning</th></tr>
  * <tr><td>a</td><td>Bitwise AND</td></tr>
  * <tr><td>n</td><td>Bitwise NOT (inverse)</td></tr>
@@ -55,7 +57,8 @@ import java.util.Deque;
  * values. For example, the operation indexes for the PSo and DPSoo operations are shown in the
  * following list.
  *
- * <table summary="">
+ * <table>
+ * <caption>Raster-operation examples</caption>
  * <tr><th>P</th><th>S</th><th>D</th><th>DPo</th><th>DPan</th></tr>
  * <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
  * <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>

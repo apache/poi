@@ -43,7 +43,8 @@ import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
  *
  * Specific matching behaviour can be modified with the optional <b>match_type</b> parameter.
  *
- *    <table border="0" cellpadding="1" cellspacing="0" summary="match_type parameter description">
+ *    <table>
+ *      <caption>match_type parameter description</caption>
  *      <tr><th>Value</th><th>Matching Behaviour</th></tr>
  *      <tr><td>1</td><td>(default) find the largest value that is less than or equal to lookup_value.
  *        The lookup_array must be in ascending <i>order</i>*.</td></tr>

@@ -380,7 +380,8 @@ public final class BiffViewer {
 	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt;<p>
 	 * BiffViewer --rawhex  [--out] &lt;fileName&gt;
 	 *
-	 * <table summary="BiffViewer options">
+	 * <table>
+     * <caption>BiffViewer options</caption>
 	 * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
 	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
 	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>

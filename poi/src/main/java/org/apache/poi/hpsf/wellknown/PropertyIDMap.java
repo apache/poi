@@ -108,7 +108,8 @@ public class PropertyIDMap implements Map<Long,String> {
      * document is allowed or whether is should be opened as read-only. It can
      * have the following values:
      *
-     * <table summary="">
+     * <table>
+     *  <caption>ID-property mapping</caption>
      *  <tbody>
      *   <tr>
      *    <th>Value</th>
@@ -233,13 +234,13 @@ public class PropertyIDMap implements Map<Long,String> {
      * re-evaluated.
      */
     public static final int PID_LINKSDIRTY = 0x10;
-    
+
     /**
-     * The entry specifies an estimate of the number of characters 
+     * The entry specifies an estimate of the number of characters
      *  in the document, including whitespace, as an integer
      */
     public static final int PID_CCHWITHSPACES = 0x11;
-    
+
     // 0x12 Unused
     // 0x13 GKPIDDSI_SHAREDDOC - Must be False
     // 0x14 GKPIDDSI_LINKBASE - Must not be written
@@ -251,46 +252,46 @@ public class PropertyIDMap implements Map<Long,String> {
      *  hyperlinks should be updated on document load.
      */
     public static final int PID_HYPERLINKSCHANGED = 0x16;
-    
+
     /**
      * This entry contains the version of the Application which wrote the
      *  Property set, stored with the two high order bytes having the major
      *  version number, and the two low order bytes the minor version number.
      */
     public static final int PID_VERSION = 0x17;
-    
+
     /**
-     * This entry contains the VBA digital signature for the VBA project 
+     * This entry contains the VBA digital signature for the VBA project
      *  embedded in the document.
      */
     public static final int PID_DIGSIG = 0x18;
-    
+
     // 0x19 Unused
-    
+
     /**
      * This entry contains a string of the content type of the file.
      */
     public static final int PID_CONTENTTYPE = 0x1A;
-    
+
     /**
      * This entry contains a string of the document status.
      */
     public static final int PID_CONTENTSTATUS = 0x1B;
-    
+
     /**
      * This entry contains a string of the document language, but
      *  normally should be empty.
      */
     public static final int PID_LANGUAGE = 0x1C;
-    
+
     /**
      * This entry contains a string of the document version, but
      *  normally should be empty
      */
     public static final int PID_DOCVERSION = 0x1D;
-    
+
     /**
-     * The highest well-known property ID. Applications are free to use 
+     * The highest well-known property ID. Applications are free to use
      *  higher values for custom purposes. (This value is based on Office 12,
      *  earlier versions of Office had lower values)
      */
@@ -311,19 +312,19 @@ public class PropertyIDMap implements Map<Long,String> {
      * A version 0 property set, indicated by the value 0x0000 for the Version field of
      * the PropertySetStream packet, MUST NOT have a Behavior property.
      * If the Behavior property is present, it MUST have one of the following values.
-     * 
+     *
      * <ul>
      * <li>0x00000000 = Property names are case-insensitive (default)
      * <li>0x00000001 = Property names are case-sensitive.
      * </ul>
      */
     public static final int PID_BEHAVIOUR = 0x80000003;
-    
+
     /**
      * A property without a known name is described by this string.
      */
     public static final String UNDEFINED = "[undefined]";
-    
+
     /**
      * Contains the summary information property ID values and
      * associated strings. See the overall HPSF documentation for
@@ -376,8 +377,8 @@ public class PropertyIDMap implements Map<Long,String> {
         { (long)PID_COMPANY, "PID_COMPANY" },
         { (long)PID_LINKSDIRTY, "PID_LINKSDIRTY" },
     };
-    
-    
+
+
     /**
      * Contains the fallback property ID values and associated strings.
      * This is only used for lookups and not for initializing a property set
@@ -420,7 +421,7 @@ public class PropertyIDMap implements Map<Long,String> {
     };
 
     private final Map<Long,String> idMap;
-    
+
 
     /**
      * Creates a {@link PropertyIDMap} backed by another map.
@@ -467,7 +468,7 @@ public class PropertyIDMap implements Map<Long,String> {
         }
         return fallbackProperties;
     }
-    
+
     @Override
     public int size() {
         return idMap.size();

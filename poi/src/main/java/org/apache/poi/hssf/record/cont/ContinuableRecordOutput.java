@@ -123,7 +123,8 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	 * </ul>
 	 *
 	 * The following bits of the 'optionFlags' byte will be set as appropriate:
-	 * <table border='1'>
+	 * <table>
+	 * <caption>bits of the 'optionFlags'</caption>
 	 * <tr><th>Mask</th><th>Description</th></tr>
 	 * <tr><td>0x01</td><td>is16bitEncoded</td></tr>
 	 * <tr><td>0x04</td><td>hasExtendedData</td></tr>

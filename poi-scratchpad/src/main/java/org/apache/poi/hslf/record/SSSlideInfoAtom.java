@@ -38,7 +38,8 @@ import org.apache.poi.util.LittleEndianConsts;
  * <br>
  *
  * Combination of effectType and effectDirection:
- * <table summary="">
+ * <table>
+ * <caption>Combination of effectType and effectDirection</caption>
  * <tr><th>type</th><th>description</th><th>direction</th></tr>
  * <tr><td>0</td><td>cut</td><td>0x00 = no transition, 0x01 = black transition</td></tr>
  * <tr><td>1</td><td>random</td><td>0x00</td></tr>

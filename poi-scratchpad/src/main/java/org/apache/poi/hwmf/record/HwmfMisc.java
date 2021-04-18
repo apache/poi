@@ -756,7 +756,8 @@ public class HwmfMisc {
      * The following table shows the relationship between values in the BrushStyle,
      * ColorRef and BrushHatch fields in a LogBrush Object. Only supported brush styles are listed.
      *
-     * <table summary="">
+     * <table>
+     * <caption>Relationship between values in the BrushStyle, ColorRef and BrushHatch fields</caption>
      * <tr>
      *   <th>BrushStyle</th>
      *   <th>ColorRef</th>
