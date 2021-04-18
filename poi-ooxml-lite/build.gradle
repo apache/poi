@@ -28,14 +28,20 @@ plugins {
 final String JAVA9_SRC = 'src/main/java9'
 final String JAVA9_OUT = "${buildDir}/classes/java9/main/"
 final String VERSIONS9 = 'META-INF/versions/9'
+final String BEANS_SRC = "${buildDir}/generated-sources"
+final String BEANS_RES = "${buildDir}/generated-resources"
 
 sourceSets {
     main {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
+        compileClasspath += files(BEANS_RES)
+        java {
+            srcDirs += BEANS_SRC
+        }
         resources {
-            srcDirs += project(':poi-ooxml-full').sourceSets.main.output.findAll{it =~ /.*(classes\/java\/main|generated-resources)$/}
+            srcDirs += BEANS_RES
         }
     }
 }
@@ -51,7 +57,8 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
 
-task compileOoxmlLite() {
+
+task compileOoxmlLite(type: Copy) {
     dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
 
     File fileIn = file("${OOXML_LITE_REPORT}.clazz")
@@ -61,6 +68,14 @@ task compileOoxmlLite() {
         ant.uptodate(property: "ooxmlLiteUnchanged", srcfile: fileIn.path, targetfile: fileOut.path)
         ant.properties.ooxmlLiteUnchanged
     }
+
+    // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
+    from(project(':poi-ooxml-full').buildDir) {
+        include 'generated-sources/**'
+        include 'generated-resources/**'
+        include 'classes/java/main/**'
+    }
+    into(buildDir)
 
     doLast {
         String header = fileOut.collect().findAll { !(it =~ /exports|}/) }.join('\n')

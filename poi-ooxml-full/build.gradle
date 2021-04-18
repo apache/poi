@@ -51,6 +51,14 @@ dependencies {
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 }
 
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file(BEANS_SRC)
+        resourceDirs += file(BEANS_RES)
+    }
+}
+
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
@@ -119,8 +127,8 @@ task generate_beans(dependsOn: copy_xsds) {
         if (!ant.properties.xmlbeans_uptodate) {
             ant.xmlbean(
                 schema: 'build/xsds',
-                srcgendir: 'build/generated-sources',
-                classgendir: 'build/generated-resources',
+                srcgendir: BEANS_SRC,
+                classgendir: BEANS_RES,
                 destfile: 'build/xsds.jar',
                 srconly: true,
                 failonerror: true,

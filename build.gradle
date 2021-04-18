@@ -59,6 +59,7 @@ ant.taskdef(name: "junit",
         classname: "org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask",
         classpath: configurations.antLibs.asPath)
 
+
 wrapper {
     // https://stackoverflow.com/a/54741656/2066598
     gradleVersion = '6.8'
@@ -79,8 +80,8 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
  Define properties for all projects, including this one
  */
 allprojects {
-    apply plugin: 'eclipse'
-//    apply plugin: 'idea'
+//    apply plugin: 'eclipse'
+    apply plugin: 'idea'
 }
 
 /**
@@ -131,6 +132,11 @@ subprojects {
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
         testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    }
+
+    task wrapper(type: Wrapper){
+        // https://stackoverflow.com/a/65701523/2066598
+        gradleVersion = '6.8'
     }
 
     jar {
