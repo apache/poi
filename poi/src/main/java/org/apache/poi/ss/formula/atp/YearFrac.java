@@ -40,7 +40,8 @@ import org.apache.poi.ss.util.DateParser;
  *
  * The <b>basis</b> optionally specifies the behaviour of YEARFRAC as follows:
  *
- * <table border="0" cellpadding="1" cellspacing="0" summary="basis parameter description">
+ * <table>
+ *   <caption>basis parameter description</caption>
  *   <tr><th>Value</th><th>Days per Month</th><th>Days per Year</th></tr>
  *   <tr align='center'><td>0 (default)</td><td>30</td><td>360</td></tr>
  *   <tr align='center'><td>1</td><td>actual</td><td>actual</td></tr>
@@ -58,6 +59,7 @@ final class YearFrac implements FreeRefFunction {
 		// enforce singleton
 	}
 
+	@Override
 	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 		int srcCellRow = ec.getRowIndex();
 		int srcCellCol = ec.getColumnIndex();
@@ -90,7 +92,7 @@ final class YearFrac implements FreeRefFunction {
 			String strVal = ((StringEval) ve).getStringValue();
 			Double dVal = OperandResolver.parseDouble(strVal);
 			if (dVal != null) {
-				return dVal.doubleValue();
+				return dVal;
 			}
 			LocalDate date = DateParser.parseLocalDate(strVal);
 			return DateUtil.getExcelDate(date, false);

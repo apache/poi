@@ -56,7 +56,7 @@ public final class ExtractorFactory {
     /**
      * Some OPCPackages are packed in side an OLE2 container.
      * If encrypted, the {@link DirectoryNode} is called {@link Decryptor#DEFAULT_POIFS_ENTRY "EncryptedPackage"},
-     * otherwise the node is called "Packge"
+     * otherwise the node is called "Package"
      */
     public static final String OOXML_PACKAGE = "Package";
 

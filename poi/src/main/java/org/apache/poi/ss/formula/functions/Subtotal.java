@@ -19,58 +19,57 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.apache.poi.ss.formula.functions.AggregateFunction.subtotalInstance;
 
-import org.apache.poi.ss.formula.LazyRefEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.poi.ss.formula.LazyRefEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implementation for the Excel function SUBTOTAL<p>
  *
  * <b>Syntax :</b> <br>
  *  SUBTOTAL ( <b>functionCode</b>, <b>ref1</b>, ref2 ... ) <br>
- *    <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><td><b>functionCode</b></td><td>(1-11) Selects the underlying aggregate function to be used (see table below)</td></tr>
  *      <tr><td><b>ref1</b>, ref2 ...</td><td>Arguments to be passed to the underlying aggregate function</td></tr>
  *    </table><br>
- * </p>
  *
- *  <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *  <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><th>functionCode</th><th>Aggregate Function</th></tr>
- *      <tr align='center'><td>1</td><td>AVERAGE</td></tr>
- *      <tr align='center'><td>2</td><td>COUNT</td></tr>
- *      <tr align='center'><td>3</td><td>COUNTA</td></tr>
- *      <tr align='center'><td>4</td><td>MAX</td></tr>
- *      <tr align='center'><td>5</td><td>MIN</td></tr>
- *      <tr align='center'><td>6</td><td>PRODUCT</td></tr>
- *      <tr align='center'><td>7</td><td>STDEV</td></tr>
- *      <tr align='center'><td>8</td><td>STDEVP *</td></tr>
- *      <tr align='center'><td>9</td><td>SUM</td></tr>
- *      <tr align='center'><td>10</td><td>VAR *</td></tr>
- *      <tr align='center'><td>11</td><td>VARP *</td></tr>
- *      <tr align='center'><td>101</td><td>AVERAGE</td></tr>
- *      <tr align='center'><td>102</td><td>COUNT</td></tr>
- *      <tr align='center'><td>103</td><td>COUNTA</td></tr>
- *      <tr align='center'><td>104</td><td>MAX</td></tr>
- *      <tr align='center'><td>105</td><td>MIN</td></tr>
- *      <tr align='center'><td>106</td><td>PRODUCT</td></tr>
- *      <tr align='center'><td>107</td><td>STDEV</td></tr>
- *      <tr align='center'><td>108</td><td>STDEVP *</td></tr>
- *      <tr align='center'><td>109</td><td>SUM</td></tr>
- *      <tr align='center'><td>110</td><td>VAR *</td></tr>
- *      <tr align='center'><td>111</td><td>VARP *</td></tr>
+ *      <tr><td>1</td><td>AVERAGE</td></tr>
+ *      <tr><td>2</td><td>COUNT</td></tr>
+ *      <tr><td>3</td><td>COUNTA</td></tr>
+ *      <tr><td>4</td><td>MAX</td></tr>
+ *      <tr><td>5</td><td>MIN</td></tr>
+ *      <tr><td>6</td><td>PRODUCT</td></tr>
+ *      <tr><td>7</td><td>STDEV</td></tr>
+ *      <tr><td>8</td><td>STDEVP *</td></tr>
+ *      <tr><td>9</td><td>SUM</td></tr>
+ *      <tr><td>10</td><td>VAR *</td></tr>
+ *      <tr><td>11</td><td>VARP *</td></tr>
+ *      <tr><td>101</td><td>AVERAGE</td></tr>
+ *      <tr><td>102</td><td>COUNT</td></tr>
+ *      <tr><td>103</td><td>COUNTA</td></tr>
+ *      <tr><td>104</td><td>MAX</td></tr>
+ *      <tr><td>105</td><td>MIN</td></tr>
+ *      <tr><td>106</td><td>PRODUCT</td></tr>
+ *      <tr><td>107</td><td>STDEV</td></tr>
+ *      <tr><td>108</td><td>STDEVP *</td></tr>
+ *      <tr><td>109</td><td>SUM</td></tr>
+ *      <tr><td>110</td><td>VAR *</td></tr>
+ *      <tr><td>111</td><td>VARP *</td></tr>
  *  </table><br>
  * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
  * the option 'ignore hidden values'.
- * <p>
  */
 public class Subtotal implements Function {
 
@@ -102,6 +101,7 @@ public class Subtotal implements Function {
 		throw EvaluationException.invalidValue();
 	}
 
+	@Override
 	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		int nInnerArgs = args.length-1; // -1: first arg is used to select from a basic aggregate function
 		if (nInnerArgs < 1) {
@@ -109,7 +109,7 @@ public class Subtotal implements Function {
 		}
 
 		final Function innerFunc;
-		int functionCode = 0;
+		int functionCode;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
             functionCode = OperandResolver.coerceValueToInt(ve);

@@ -38,11 +38,11 @@ import java.lang.annotation.Documented;
  * removed in the n+2 release, a later version should be specified by this
  * annotation. The annotation version number should not include beta</p>
  *
- * <p>For example, a feature with a <code>&#64;deprecated POI 3.15 beta 3</code>
+ * <p>For example, a feature with a {@code @deprecated POI 3.15 beta 3}
  * is deprecated in POI 3.15 and 3.16 and becomes eligible for deletion during
  * the POI 3.17 release series, and may be deleted immediately after POI 3.16 is
- * released. This would be annotated <code>&#64;Removal(version="3.17")</p>.
- * 
+ * released. This would be annotated {@code @Removal(version="3.17")}</p>.
+ *
  * @since POI-3.15 beta 3
  */
 @Documented
@@ -50,12 +50,14 @@ import java.lang.annotation.Documented;
 public @interface Removal {
     /**
      * The POI version when this feature may be removed.
-     * 
+     *
      * To ensure that the version number can be compared to the current version
      * and a unit test can generate a warning if a removal-eligible feature has
      * not been removed yet, the version number should adhere to the following format:
+     * <pre>{@code
      * Format: "(?<major>\d+)\.(?<minor>\d+)"
      * Example: "3.15"
+     * }</pre>
      */
     String version() default "";
     // TODO: Verify that the version syntax is valid by parsing with a version-aware parser like

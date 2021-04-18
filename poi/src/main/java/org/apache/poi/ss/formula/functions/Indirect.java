@@ -35,7 +35,7 @@ import org.apache.poi.ss.usermodel.Table;
  *
  * INDIRECT() returns the cell or area reference denoted by the text argument.<p>
  *
- * <b>Syntax</b>:</br>
+ * <b>Syntax</b>:<br>
  * <b>INDIRECT</b>(<b>ref_text</b>,isA1Style)<p>
  *
  * <b>ref_text</b> a string representation of the desired reference as it would
@@ -51,6 +51,7 @@ public final class Indirect implements FreeRefFunction {
         // enforce singleton
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length < 1) {
             return ErrorEval.VALUE_INVALID;
@@ -88,7 +89,7 @@ public final class Indirect implements FreeRefFunction {
         }
         // numeric quantities follow standard boolean conversion rules
         // for strings, only "TRUE" and "FALSE" (case insensitive) are valid
-        return OperandResolver.coerceValueToBoolean(ve, false).booleanValue();
+        return OperandResolver.coerceValueToBoolean(ve, false);
     }
 
     private static ValueEval evaluateIndirect(final OperationEvaluationContext ec, String text,
@@ -116,7 +117,7 @@ public final class Indirect implements FreeRefFunction {
 
         if (Table.isStructuredReference.matcher(refText).matches()) {
             // The argument is structured reference
-            Area3DPxg areaPtg = null;
+            Area3DPxg areaPtg;
             try {
                 areaPtg = FormulaParser.parseStructuredReference(refText, (FormulaParsingWorkbook) ec.getWorkbook(), ec.getRowIndex());
             } catch (FormulaParseException e) {
@@ -142,7 +143,7 @@ public final class Indirect implements FreeRefFunction {
     /**
      * @return array of length 2: {workbookName, sheetName,}.  Second element will always be
      * present.  First element may be null if sheetName is unqualified.
-     * Returns <code>null</code> if text cannot be parsed.
+     * Returns {@code null} if text cannot be parsed.
      */
     private static String[] parseWorkbookAndSheetName(CharSequence text) {
         int lastIx = text.length() - 1;
@@ -212,7 +213,7 @@ public final class Indirect implements FreeRefFunction {
     }
 
     /**
-     * @return <code>null</code> if there is a syntax error in any escape sequence
+     * @return {@code null} if there is a syntax error in any escape sequence
      * (the typical syntax error is a single quote character not followed by another).
      */
     private static String unescapeString(CharSequence text) {
@@ -246,9 +247,6 @@ public final class Indirect implements FreeRefFunction {
         if (Character.isWhitespace(text.charAt(0))) {
             return true;
         }
-        if (Character.isWhitespace(text.charAt(lastIx))) {
-            return true;
-        }
-        return false;
+        return Character.isWhitespace(text.charAt(lastIx));
     }
 }

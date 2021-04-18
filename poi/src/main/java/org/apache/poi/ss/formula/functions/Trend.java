@@ -47,7 +47,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *
  * Syntax:<br>
  * TREND(known_y's, known_x's, new_x's, constant)
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><th>known_y's, known_x's, new_x's</th><td>typically area references, possibly cell references or scalar values</td></tr>
  *      <tr><th>constant</th><td><b>TRUE</b> or <b>FALSE</b>:
  *      determines whether the regression line should include an intercept term</td></tr>
@@ -56,7 +57,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * of the same size as <b>known_y's</b>.<br>
  * If <b>new_x's</b> is not given, it is assumed to be the same as <b>known_x's</b><br>
  * If <b>constant</b> is omitted, it is assumed to be <b>TRUE</b>
- * </p>
  */
 
 public final class Trend implements Function {
@@ -72,6 +72,7 @@ public final class Trend implements Function {
         }
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         if (args.length < 1 || args.length > 4) {
             return ErrorEval.VALUE_INVALID;

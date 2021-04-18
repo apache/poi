@@ -290,13 +290,14 @@ public class CellReference implements GenericRecord {
      * reference is valid (in range) becomes important.
      * <p>
      * Note - that the maximum sheet size varies across Excel versions:
-     * <blockquote><table border="0" cellpadding="1" cellspacing="0"
-     *                 summary="Notable cases.">
+     * <table>
+     *   <caption>Notable cases.</caption>
      *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
      *   	<th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
      *   <tr><td>97-2003</td><td>BIFF8</td><td>"IV" (2^8)</td><td>65536 (2^14)</td></tr>
      *   <tr><td>2007</td><td>BIFF12</td><td>"XFD" (2^14)</td><td>1048576 (2^20)</td></tr>
-     * </table></blockquote>
+     * </table>
+     *
      * POI currently targets BIFF8 (Excel 97-2003), so the following behaviour can be observed for
      * this method:
      * <blockquote><table border="0" cellpadding="1" cellspacing="0"
@@ -482,7 +483,8 @@ public class CellReference implements GenericRecord {
      * Returns a text representation of this cell reference.
      * <p>
      *  Example return values:
-     *	<table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+     *	<table>
+     *	  <caption>Example return values</caption>
      *	  <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
      *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
      *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>

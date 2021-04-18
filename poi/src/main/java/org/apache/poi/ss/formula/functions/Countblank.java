@@ -25,13 +25,15 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  * Implementation for the function COUNTBLANK
  * <p>
  *  Syntax: COUNTBLANK ( range )
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *        <caption>Parameter descriptions</caption>
  *      <tr><th>range&nbsp;&nbsp;&nbsp;</th><td>is the range of cells to count blanks</td></tr>
  *    </table>
  * </p>
  */
 public final class Countblank extends Fixed1ArgFunction {
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
 		double result;
@@ -45,14 +47,11 @@ public final class Countblank extends Fixed1ArgFunction {
 		return new NumberEval(result);
 	}
 
-	private static final I_MatchPredicate predicate = new I_MatchPredicate() {
-
-		public boolean matches(ValueEval valueEval) {
-			// Note - only BlankEval counts
-			return valueEval == BlankEval.instance ||
-					// see https://support.office.com/en-us/article/COUNTBLANK-function-6a92d772-675c-4bee-b346-24af6bd3ac22
-					// "Cells with formulas that return "" (empty text) are also counted."
-					(valueEval instanceof StringEval && ((StringEval)valueEval).getStringValue().isEmpty());
-		}
+	private static final I_MatchPredicate predicate = valueEval -> {
+		// Note - only BlankEval counts
+		return valueEval == BlankEval.instance ||
+				// see https://support.office.com/en-us/article/COUNTBLANK-function-6a92d772-675c-4bee-b346-24af6bd3ac22
+				// "Cells with formulas that return "" (empty text) are also counted."
+				(valueEval instanceof StringEval && ((StringEval)valueEval).getStringValue().isEmpty());
 	};
 }

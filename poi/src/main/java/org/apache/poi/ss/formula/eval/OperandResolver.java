@@ -111,7 +111,8 @@ public final class OperandResolver {
      * area depending on the coordinates of the calling cell.  Here is an example demonstrating
      * both selection from a single row area and a single column area in the same formula.
      *
-     *    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
+     *    <table>
+     *      <caption>sample spreadsheet</caption>
      *      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
      *      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
      *      <tr><th>2</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>200</td></tr>
@@ -122,7 +123,8 @@ public final class OperandResolver {
      * If the formula "=1000+A1:B1+D2:D3" is put into the 9 cells from A2 to C4, the spreadsheet
      * will look like this:
      *
-     *    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
+     *    <table>
+     *      <caption>sample spreadsheet</caption>
      *      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
      *      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
      *      <tr><th>2</th><td>1215</td><td>1220</td><td>#VALUE!</td><td>200</td></tr>

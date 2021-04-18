@@ -367,7 +367,8 @@ final class LookupUtils {
 	 * Processes the third argument to VLOOKUP, or HLOOKUP (<b>col_index_num</b>
 	 * or <b>row_index_num</b> respectively).<br>
 	 * Sample behaviour:
-	 *    <table border="0" cellpadding="1" cellspacing="2" summary="Sample behaviour">
+	 *    <table>
+	 *      <caption>Sample behaviour</caption>
 	 *      <tr><th>Input&nbsp;&nbsp;&nbsp;Return</th><th>Value&nbsp;&nbsp;</th><th>Thrown Error</th></tr>
 	 *      <tr><td>5</td><td>4</td><td>&nbsp;</td></tr>
 	 *      <tr><td>2.9</td><td>2</td><td>&nbsp;</td></tr>

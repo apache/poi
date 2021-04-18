@@ -383,7 +383,8 @@ public class AreaReference {
      * Returns a text representation of this area reference.
      * <p>
      *  Example return values:
-     *    <table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+     *    <table>
+     *      <caption>Example return values</caption>
      *      <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
      *      <tr><td>A1:A1</td><td>Single cell area reference without sheet</td></tr>
      *      <tr><td>A1:$C$1</td><td>Multi-cell area reference without sheet</td></tr>

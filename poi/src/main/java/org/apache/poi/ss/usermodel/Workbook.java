@@ -164,12 +164,11 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *     POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
      *     Example:
      *
-     *     <pre><code>
+     *     <pre>{@code
      *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
      *     assert 31 == sheet.getSheetName().length();
      *     assert "My very long sheet name which i" == sheet.getSheetName();
-     *     </code></pre>
-     * </p>
+     *     }</pre>
      *
      * Except the 31-character constraint, Excel applies some other rules:
      * <p>
@@ -186,7 +185,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * <li> closing square bracket (]) </li>
      * </ul>
      * The string MUST NOT begin or end with the single quote (') character.
-     * </p>
      *
      * <p>
      * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
@@ -237,7 +235,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * Get sheet with the given name
      *
      * @param name of the sheet
-     * @return Sheet with the name provided or <code>null</code> if it does not exist
+     * @return Sheet with the name provided or {@code null} if it does not exist
      */
     Sheet getSheet(String name);
 
@@ -258,7 +256,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /**
      * Finds a font that matches the one with the supplied attributes
      *
-     * @return the font with the matched attributes or <code>null</code>
+     * @return the font with the matched attributes or {@code null}
      */
     Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
 
@@ -337,7 +335,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /**
      * @param name the name of the defined name
-     * @return the defined name with the specified name. <code>null</code> if not found.
+     * @return the defined name with the specified name. {@code null} if not found.
      */
     Name getName(String name);
 
@@ -479,12 +477,12 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     CreationHelper getCreationHelper();
 
     /**
-     * @return <code>false</code> if this workbook is not visible in the GUI
+     * @return {@code false} if this workbook is not visible in the GUI
      */
     boolean isHidden();
 
     /**
-     * @param hiddenFlag pass <code>false</code> to make the workbook visible in the GUI
+     * @param hiddenFlag pass {@code false} to make the workbook visible in the GUI
      */
     void setHidden(boolean hiddenFlag);
 
@@ -495,7 +493,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *  ({@link #isSheetVeryHidden(int)})
      * </p>
      * @param sheetIx Number
-     * @return <code>true</code> if sheet is hidden
+     * @return {@code true} if sheet is hidden
      * @see #getSheetVisibility(int)
      */
     boolean isSheetHidden(int sheetIx);
@@ -507,7 +505,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *  ({@link #isSheetHidden(int)})
      * </p>
      * @param sheetIx sheet index to check
-     * @return <code>true</code> if sheet is very hidden
+     * @return {@code true} if sheet is very hidden
      * @see #getSheetVisibility(int)
      */
     boolean isSheetVeryHidden(int sheetIx);

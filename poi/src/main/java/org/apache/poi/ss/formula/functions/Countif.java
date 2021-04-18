@@ -36,11 +36,11 @@ import org.apache.poi.ss.usermodel.FormulaError;
  * Implementation for the function COUNTIF
  * <p>
  *  Syntax: COUNTIF ( range, criteria )
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><th>range&nbsp;&nbsp;&nbsp;</th><td>is the range of cells to be counted based on the criteria</td></tr>
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
- * </p>
  */
 public final class Countif extends Fixed2ArgFunction {
 
@@ -138,10 +138,7 @@ public final class Countif extends Fixed2ArgFunction {
         }
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append(getClass().getName());
-            sb.append(" [").append(_representation).append("]");
-            return sb.toString();
+            return getClass().getName() + " [" + _representation + "]";
         }
         public String getRepresentation() {
             return _representation;
@@ -208,7 +205,7 @@ public final class Countif extends Fixed2ArgFunction {
                     // x is text that is not a number
                     return false;
                 }
-                return _value == val.doubleValue();
+                return _value == val;
             } else if((x instanceof NumberEval)) {
                 NumberEval ne = (NumberEval) x;
                 testValue = ne.getNumberValue();
@@ -304,7 +301,7 @@ public final class Countif extends Fixed2ArgFunction {
             }
             return false;
         }
-        
+
         public int getValue() {
             return _value;
         }
@@ -377,7 +374,7 @@ public final class Countif extends Fixed2ArgFunction {
         }
         /**
          * Translates Excel countif wildcard strings into java regex strings
-         * @return <code>null</code> if the specified value contains no special wildcard characters.
+         * @return {@code null} if the specified value contains no special wildcard characters.
          */
         public static Pattern getWildCardPattern(String value) {
             int len = value.length();
@@ -458,7 +455,7 @@ public final class Countif extends Fixed2ArgFunction {
 
     /**
      * Creates a criteria predicate object for the supplied criteria arg
-     * @return <code>null</code> if the arg evaluates to blank.
+     * @return {@code null} if the arg evaluates to blank.
      */
     /* package */ static I_MatchPredicate createCriteriaPredicate(ValueEval arg, int srcRowIndex, int srcColumnIndex) {
 
@@ -505,12 +502,12 @@ public final class Countif extends Fixed2ArgFunction {
 
         Boolean booleanVal = parseBoolean(value);
         if(booleanVal != null) {
-            return new BooleanMatcher(booleanVal.booleanValue(), operator);
+            return new BooleanMatcher(booleanVal, operator);
         }
 
         Double doubleVal = OperandResolver.parseDouble(value);
         if(doubleVal != null) {
-            return new NumberMatcher(doubleVal.doubleValue(), operator);
+            return new NumberMatcher(doubleVal, operator);
         }
         ErrorEval ee = parseError(value);
         if (ee != null) {
@@ -550,7 +547,7 @@ public final class Countif extends Fixed2ArgFunction {
     }
     /**
      * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers.
-     * @return <code>null</code> to represent blank values
+     * @return {@code null} to represent blank values
      */
     /* package */ static Boolean parseBoolean(String strRep) {
         if (strRep.length() < 1) {

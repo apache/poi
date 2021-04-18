@@ -31,7 +31,8 @@ package org.apache.poi.ss.util;
  * </ul>
  * IEEE 64-bit Double Rendering Comparison
  *
- * <table border="1" cellpadding="2" cellspacing="0" summary="IEEE 64-bit Double Rendering Comparison">
+ * <table>
+ * <caption>IEEE 64-bit Double Rendering Comparison</caption>
  * <tr><th>Raw bits</th><th>Java</th><th>Excel</th></tr>
  *
  * <tr><td>0x0000000000000000L</td><td>0.0</td><td>0</td></tr>

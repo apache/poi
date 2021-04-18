@@ -202,140 +202,80 @@ public abstract class SEPAbstractType {
 
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[SEP]\n");
-        builder.append("    .bkc                  = ");
-        builder.append(" (").append(getBkc()).append(" )\n");
-        builder.append("    .fTitlePage           = ");
-        builder.append(" (").append(getFTitlePage()).append(" )\n");
-        builder.append("    .fAutoPgn             = ");
-        builder.append(" (").append(getFAutoPgn()).append(" )\n");
-        builder.append("    .nfcPgn               = ");
-        builder.append(" (").append(getNfcPgn()).append(" )\n");
-        builder.append("    .fUnlocked            = ");
-        builder.append(" (").append(getFUnlocked()).append(" )\n");
-        builder.append("    .cnsPgn               = ");
-        builder.append(" (").append(getCnsPgn()).append(" )\n");
-        builder.append("    .fPgnRestart          = ");
-        builder.append(" (").append(getFPgnRestart()).append(" )\n");
-        builder.append("    .fEndNote             = ");
-        builder.append(" (").append(getFEndNote()).append(" )\n");
-        builder.append("    .lnc                  = ");
-        builder.append(" (").append(getLnc()).append(" )\n");
-        builder.append("    .grpfIhdt             = ");
-        builder.append(" (").append(getGrpfIhdt()).append(" )\n");
-        builder.append("    .nLnnMod              = ");
-        builder.append(" (").append(getNLnnMod()).append(" )\n");
-        builder.append("    .dxaLnn               = ");
-        builder.append(" (").append(getDxaLnn()).append(" )\n");
-        builder.append("    .dxaPgn               = ");
-        builder.append(" (").append(getDxaPgn()).append(" )\n");
-        builder.append("    .dyaPgn               = ");
-        builder.append(" (").append(getDyaPgn()).append(" )\n");
-        builder.append("    .fLBetween            = ");
-        builder.append(" (").append(getFLBetween()).append(" )\n");
-        builder.append("    .vjc                  = ");
-        builder.append(" (").append(getVjc()).append(" )\n");
-        builder.append("    .dmBinFirst           = ");
-        builder.append(" (").append(getDmBinFirst()).append(" )\n");
-        builder.append("    .dmBinOther           = ");
-        builder.append(" (").append(getDmBinOther()).append(" )\n");
-        builder.append("    .dmPaperReq           = ");
-        builder.append(" (").append(getDmPaperReq()).append(" )\n");
-        builder.append("    .brcTop               = ");
-        builder.append(" (").append(getBrcTop()).append(" )\n");
-        builder.append("    .brcLeft              = ");
-        builder.append(" (").append(getBrcLeft()).append(" )\n");
-        builder.append("    .brcBottom            = ");
-        builder.append(" (").append(getBrcBottom()).append(" )\n");
-        builder.append("    .brcRight             = ");
-        builder.append(" (").append(getBrcRight()).append(" )\n");
-        builder.append("    .fPropMark            = ");
-        builder.append(" (").append(getFPropMark()).append(" )\n");
-        builder.append("    .ibstPropRMark        = ");
-        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
-        builder.append("    .dttmPropRMark        = ");
-        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
-        builder.append("    .dxtCharSpace         = ");
-        builder.append(" (").append(getDxtCharSpace()).append(" )\n");
-        builder.append("    .dyaLinePitch         = ");
-        builder.append(" (").append(getDyaLinePitch()).append(" )\n");
-        builder.append("    .clm                  = ");
-        builder.append(" (").append(getClm()).append(" )\n");
-        builder.append("    .unused2              = ");
-        builder.append(" (").append(getUnused2()).append(" )\n");
-        builder.append("    .dmOrientPage         = ");
-        builder.append(" (").append(getDmOrientPage()).append(" )\n");
-        builder.append("    .iHeadingPgn          = ");
-        builder.append(" (").append(getIHeadingPgn()).append(" )\n");
-        builder.append("    .pgnStart             = ");
-        builder.append(" (").append(getPgnStart()).append(" )\n");
-        builder.append("    .lnnMin               = ");
-        builder.append(" (").append(getLnnMin()).append(" )\n");
-        builder.append("    .wTextFlow            = ");
-        builder.append(" (").append(getWTextFlow()).append(" )\n");
-        builder.append("    .unused3              = ");
-        builder.append(" (").append(getUnused3()).append(" )\n");
-        builder.append("    .pgbProp              = ");
-        builder.append(" (").append(getPgbProp()).append(" )\n");
-        builder.append("    .unused4              = ");
-        builder.append(" (").append(getUnused4()).append(" )\n");
-        builder.append("    .xaPage               = ");
-        builder.append(" (").append(getXaPage()).append(" )\n");
-        builder.append("    .yaPage               = ");
-        builder.append(" (").append(getYaPage()).append(" )\n");
-        builder.append("    .xaPageNUp            = ");
-        builder.append(" (").append(getXaPageNUp()).append(" )\n");
-        builder.append("    .yaPageNUp            = ");
-        builder.append(" (").append(getYaPageNUp()).append(" )\n");
-        builder.append("    .dxaLeft              = ");
-        builder.append(" (").append(getDxaLeft()).append(" )\n");
-        builder.append("    .dxaRight             = ");
-        builder.append(" (").append(getDxaRight()).append(" )\n");
-        builder.append("    .dyaTop               = ");
-        builder.append(" (").append(getDyaTop()).append(" )\n");
-        builder.append("    .dyaBottom            = ");
-        builder.append(" (").append(getDyaBottom()).append(" )\n");
-        builder.append("    .dzaGutter            = ");
-        builder.append(" (").append(getDzaGutter()).append(" )\n");
-        builder.append("    .dyaHdrTop            = ");
-        builder.append(" (").append(getDyaHdrTop()).append(" )\n");
-        builder.append("    .dyaHdrBottom         = ");
-        builder.append(" (").append(getDyaHdrBottom()).append(" )\n");
-        builder.append("    .ccolM1               = ");
-        builder.append(" (").append(getCcolM1()).append(" )\n");
-        builder.append("    .fEvenlySpaced        = ");
-        builder.append(" (").append(getFEvenlySpaced()).append(" )\n");
-        builder.append("    .unused5              = ");
-        builder.append(" (").append(getUnused5()).append(" )\n");
-        builder.append("    .dxaColumns           = ");
-        builder.append(" (").append(getDxaColumns()).append(" )\n");
-        builder.append("    .rgdxaColumn          = ");
-        builder.append(" (").append(Arrays.toString(getRgdxaColumn())).append(" )\n");
-        builder.append("    .dxaColumnWidth       = ");
-        builder.append(" (").append(getDxaColumnWidth()).append(" )\n");
-        builder.append("    .dmOrientFirst        = ");
-        builder.append(" (").append(getDmOrientFirst()).append(" )\n");
-        builder.append("    .fLayout              = ");
-        builder.append(" (").append(getFLayout()).append(" )\n");
-        builder.append("    .unused6              = ");
-        builder.append(" (").append(getUnused6()).append(" )\n");
-        builder.append("    .olstAnm              = ");
-        builder.append(" (").append(Arrays.toString(getOlstAnm())).append(" )\n");
 
-        builder.append("[/SEP]\n");
-        return builder.toString();
+        return "[SEP]\n" +
+            "    .bkc                  =  (" + getBkc() + " )\n" +
+            "    .fTitlePage           =  (" + getFTitlePage() + " )\n" +
+            "    .fAutoPgn             =  (" + getFAutoPgn() + " )\n" +
+            "    .nfcPgn               =  (" + getNfcPgn() + " )\n" +
+            "    .fUnlocked            =  (" + getFUnlocked() + " )\n" +
+            "    .cnsPgn               =  (" + getCnsPgn() + " )\n" +
+            "    .fPgnRestart          =  (" + getFPgnRestart() + " )\n" +
+            "    .fEndNote             =  (" + getFEndNote() + " )\n" +
+            "    .lnc                  =  (" + getLnc() + " )\n" +
+            "    .grpfIhdt             =  (" + getGrpfIhdt() + " )\n" +
+            "    .nLnnMod              =  (" + getNLnnMod() + " )\n" +
+            "    .dxaLnn               =  (" + getDxaLnn() + " )\n" +
+            "    .dxaPgn               =  (" + getDxaPgn() + " )\n" +
+            "    .dyaPgn               =  (" + getDyaPgn() + " )\n" +
+            "    .fLBetween            =  (" + getFLBetween() + " )\n" +
+            "    .vjc                  =  (" + getVjc() + " )\n" +
+            "    .dmBinFirst           =  (" + getDmBinFirst() + " )\n" +
+            "    .dmBinOther           =  (" + getDmBinOther() + " )\n" +
+            "    .dmPaperReq           =  (" + getDmPaperReq() + " )\n" +
+            "    .brcTop               =  (" + getBrcTop() + " )\n" +
+            "    .brcLeft              =  (" + getBrcLeft() + " )\n" +
+            "    .brcBottom            =  (" + getBrcBottom() + " )\n" +
+            "    .brcRight             =  (" + getBrcRight() + " )\n" +
+            "    .fPropMark            =  (" + getFPropMark() + " )\n" +
+            "    .ibstPropRMark        =  (" + getIbstPropRMark() + " )\n" +
+            "    .dttmPropRMark        =  (" + getDttmPropRMark() + " )\n" +
+            "    .dxtCharSpace         =  (" + getDxtCharSpace() + " )\n" +
+            "    .dyaLinePitch         =  (" + getDyaLinePitch() + " )\n" +
+            "    .clm                  =  (" + getClm() + " )\n" +
+            "    .unused2              =  (" + getUnused2() + " )\n" +
+            "    .dmOrientPage         =  (" + getDmOrientPage() + " )\n" +
+            "    .iHeadingPgn          =  (" + getIHeadingPgn() + " )\n" +
+            "    .pgnStart             =  (" + getPgnStart() + " )\n" +
+            "    .lnnMin               =  (" + getLnnMin() + " )\n" +
+            "    .wTextFlow            =  (" + getWTextFlow() + " )\n" +
+            "    .unused3              =  (" + getUnused3() + " )\n" +
+            "    .pgbProp              =  (" + getPgbProp() + " )\n" +
+            "    .unused4              =  (" + getUnused4() + " )\n" +
+            "    .xaPage               =  (" + getXaPage() + " )\n" +
+            "    .yaPage               =  (" + getYaPage() + " )\n" +
+            "    .xaPageNUp            =  (" + getXaPageNUp() + " )\n" +
+            "    .yaPageNUp            =  (" + getYaPageNUp() + " )\n" +
+            "    .dxaLeft              =  (" + getDxaLeft() + " )\n" +
+            "    .dxaRight             =  (" + getDxaRight() + " )\n" +
+            "    .dyaTop               =  (" + getDyaTop() + " )\n" +
+            "    .dyaBottom            =  (" + getDyaBottom() + " )\n" +
+            "    .dzaGutter            =  (" + getDzaGutter() + " )\n" +
+            "    .dyaHdrTop            =  (" + getDyaHdrTop() + " )\n" +
+            "    .dyaHdrBottom         =  (" + getDyaHdrBottom() + " )\n" +
+            "    .ccolM1               =  (" + getCcolM1() + " )\n" +
+            "    .fEvenlySpaced        =  (" + getFEvenlySpaced() + " )\n" +
+            "    .unused5              =  (" + getUnused5() + " )\n" +
+            "    .dxaColumns           =  (" + getDxaColumns() + " )\n" +
+            "    .rgdxaColumn          =  (" + Arrays.toString(getRgdxaColumn()) + " )\n" +
+            "    .dxaColumnWidth       =  (" + getDxaColumnWidth() + " )\n" +
+            "    .dmOrientFirst        =  (" + getDmOrientFirst() + " )\n" +
+            "    .fLayout              =  (" + getFLayout() + " )\n" +
+            "    .unused6              =  (" + getUnused6() + " )\n" +
+            "    .olstAnm              =  (" + Arrays.toString(getOlstAnm()) + " )\n" +
+            "[/SEP]\n";
     }
 
     /**
      * Break code.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #BKC_NO_BREAK}
      * <li>{@link #BKC_NEW_COLUMN}
      * <li>{@link #BKC_NEW_PAGE}
      * <li>{@link #BKC_EVEN_PAGE}
      * <li>{@link #BKC_ODD_PAGE}
+     * </ul>
      */
     public byte getBkc()
     {
@@ -345,13 +285,13 @@ public abstract class SEPAbstractType {
     /**
      * Break code.
      *
-     * @param field_1_bkc
-     *        One of
+     * @param field_1_bkc One of <ul>
      * <li>{@link #BKC_NO_BREAK}
      * <li>{@link #BKC_NEW_COLUMN}
      * <li>{@link #BKC_NEW_PAGE}
      * <li>{@link #BKC_EVEN_PAGE}
      * <li>{@link #BKC_ODD_PAGE}
+     * </ul>
      */
     public void setBkc(byte field_1_bkc)
     {
@@ -393,12 +333,13 @@ public abstract class SEPAbstractType {
     /**
      * Page number format code.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #NFCPGN_ARABIC}
      * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
      * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
      * <li>{@link #NFCPGN_LETTER_UPPER_CASE}
      * <li>{@link #NFCPGN_LETTER_LOWER_CASE}
+     * </ul>
      */
     public byte getNfcPgn()
     {
@@ -408,13 +349,13 @@ public abstract class SEPAbstractType {
     /**
      * Page number format code.
      *
-     * @param field_4_nfcPgn
-     *        One of
+     * @param field_4_nfcPgn One of <ul>
      * <li>{@link #NFCPGN_ARABIC}
      * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
      * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
      * <li>{@link #NFCPGN_LETTER_UPPER_CASE}
      * <li>{@link #NFCPGN_LETTER_LOWER_CASE}
+     * </ul>
      */
     public void setNfcPgn(byte field_4_nfcPgn)
     {
@@ -840,9 +781,10 @@ public abstract class SEPAbstractType {
     /**
      * Get the dmOrientPage field for the SEP record.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #DMORIENTPAGE_LANDSCAPE}
      * <li>{@link #DMORIENTPAGE_PORTRAIT}
+     * </ul>
      */
     public boolean getDmOrientPage()
     {
@@ -852,10 +794,10 @@ public abstract class SEPAbstractType {
     /**
      * Set the dmOrientPage field for the SEP record.
      *
-     * @param field_31_dmOrientPage
-     *        One of
+     * @param field_31_dmOrientPage One of <ul>
      * <li>{@link #DMORIENTPAGE_LANDSCAPE}
      * <li>{@link #DMORIENTPAGE_PORTRAIT}
+     * </ul>
      */
     public void setDmOrientPage(boolean field_31_dmOrientPage)
     {

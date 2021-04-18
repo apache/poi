@@ -427,11 +427,12 @@ public abstract class PAPAbstractType {
     /**
      * Border line style.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #BRCL_SINGLE}
      * <li>{@link #BRCL_THICK}
      * <li>{@link #BRCL_DOUBLE}
      * <li>{@link #BRCL_SHADOW}
+     * </ul>
      */
     @Internal
     public byte getBrcl()
@@ -442,12 +443,12 @@ public abstract class PAPAbstractType {
     /**
      * Border line style.
      *
-     * @param field_6_brcl
-     *        One of
+     * @param field_6_brcl One of <ul>
      * <li>{@link #BRCL_SINGLE}
      * <li>{@link #BRCL_THICK}
      * <li>{@link #BRCL_DOUBLE}
      * <li>{@link #BRCL_SHADOW}
+     * </ul>
      */
     @Internal
     public void setBrcl( byte field_6_brcl )
@@ -458,12 +459,13 @@ public abstract class PAPAbstractType {
     /**
      * Rectangle border codes.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #BRCP_NONE}
      * <li>{@link #BRCP_BORDER_ABOVE}
      * <li>{@link #BRCP_BORDER_BELOW}
      * <li>{@link #BRCP_BOX_AROUND}
      * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
+     * </ul>
      */
     @Internal
     public byte getBrcp()
@@ -474,13 +476,13 @@ public abstract class PAPAbstractType {
     /**
      * Rectangle border codes.
      *
-     * @param field_7_brcp
-     *        One of
+     * @param field_7_brcp One of <ul>
      * <li>{@link #BRCP_NONE}
      * <li>{@link #BRCP_BORDER_ABOVE}
      * <li>{@link #BRCP_BORDER_BELOW}
      * <li>{@link #BRCP_BOX_AROUND}
      * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
+     * </ul>
      */
     @Internal
     public void setBrcp( byte field_7_brcp )
@@ -870,9 +872,10 @@ public abstract class PAPAbstractType {
     /**
      * Minimum height is exact or auto.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
+     * </ul>
      */
     @Internal
     public boolean getFMinHeight()
@@ -883,10 +886,10 @@ public abstract class PAPAbstractType {
     /**
      * Minimum height is exact or auto.
      *
-     * @param field_27_fMinHeight
-     *        One of
+     * @param field_27_fMinHeight One of <ul>
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
+     * </ul>
      */
     @Internal
     public void setFMinHeight( boolean field_27_fMinHeight )
@@ -1095,12 +1098,13 @@ public abstract class PAPAbstractType {
     /**
      * Get the wAlignFont field for the PAP record.
      *
-     * @return One of
+     * @return One of <ul>
      * <li>{@link #WALIGNFONT_HANGING}
      * <li>{@link #WALIGNFONT_CENTERED}
      * <li>{@link #WALIGNFONT_ROMAN}
      * <li>{@link #WALIGNFONT_VARIABLE}
      * <li>{@link #WALIGNFONT_AUTO}
+     * </ul>
      */
     @Internal
     public int getWAlignFont()
@@ -1111,13 +1115,13 @@ public abstract class PAPAbstractType {
     /**
      * Set the wAlignFont field for the PAP record.
      *
-     * @param field_39_wAlignFont
-     *        One of
+     * @param field_39_wAlignFont One of <ul>
      * <li>{@link #WALIGNFONT_HANGING}
      * <li>{@link #WALIGNFONT_CENTERED}
      * <li>{@link #WALIGNFONT_ROMAN}
      * <li>{@link #WALIGNFONT_VARIABLE}
      * <li>{@link #WALIGNFONT_AUTO}
+     * </ul>
      */
     @Internal
     public void setWAlignFont( int field_39_wAlignFont )

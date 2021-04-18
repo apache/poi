@@ -40,26 +40,24 @@ import org.apache.poi.util.LocaleUtil;
  * prefix or suffix.
  * </p>
  * <p>
- * For example the Excel pattern <code>"$#,##0.00 "USD"_);($#,##0.00 "USD")"
- * </code> will be correctly formatted as "$1,000.00 USD" or "($1,000.00 USD)".
- * However the pattern <code>"00-00-00"</code> is incorrectly formatted by
+ * For example the Excel pattern {@code "$#,##0.00 "USD"_);($#,##0.00 "USD")"
+ * } will be correctly formatted as "$1,000.00 USD" or "($1,000.00 USD)".
+ * However the pattern {@code "00-00-00"} is incorrectly formatted by
  * DecimalFormat as "000000--". For Excel formats that are not compatible with
  * DecimalFormat, you can provide your own custom {@link Format} implementation
- * via <code>HSSFDataFormatter.addFormat(String,Format)</code>. The following
+ * via {@code HSSFDataFormatter.addFormat(String,Format)}. The following
  * custom formats are already provided by this class:
  * </p>
- * <pre>
  * <ul><li>SSN "000-00-0000"</li>
  *     <li>Phone Number "(###) ###-####"</li>
  *     <li>Zip plus 4 "00000-0000"</li>
  * </ul>
- * </pre>
  * <p>
  * If the Excel format pattern cannot be parsed successfully, then a default
  * format will be used. The default number format will mimic the Excel General
  * format: "#" for whole numbers and "#.##########" for decimal numbers. You
- * can override the default format pattern with <code>
- * HSSFDataFormatter.setDefaultNumberFormat(Format)</code>. <b>Note:</b> the
+ * can override the default format pattern with {@code
+ * HSSFDataFormatter.setDefaultNumberFormat(Format)}. <b>Note:</b> the
  * default format will only be used when a Format cannot be created from the
  * cell's data format string.
  */

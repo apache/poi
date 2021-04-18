@@ -31,7 +31,8 @@ import org.apache.poi.ss.usermodel.FormulaError;
  * <b>ERROR.TYPE</b>(<b>errorValue</b>)</p>
  * <p>
  * Returns a number corresponding to the error type of the supplied argument.
- *    <table border="1" cellpadding="1" cellspacing="1" summary="Return values for ERROR.TYPE()">
+ *    <table>
+ *      <caption>Return values for ERROR.TYPE()</caption>
  *      <tr><td>errorValue</td><td>Return Value</td></tr>
  *      <tr><td>#NULL!</td><td>1</td></tr>
  *      <tr><td>#DIV/0!</td><td>2</td></tr>

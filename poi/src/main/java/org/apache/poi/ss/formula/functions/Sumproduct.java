@@ -36,7 +36,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *
  * Syntax : <br>
  *  SUMPRODUCT ( array1[, array2[, array3[, ...]]])
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><th>array1, ... arrayN&nbsp;&nbsp;</th><td>typically area references,
  *      possibly cell references or scalar values</td></tr>
  *    </table><br>
@@ -54,6 +55,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class Sumproduct implements Function {
 
 
+	@Override
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 
 		int maxN = args.length;
@@ -87,8 +89,8 @@ public final class Sumproduct implements Function {
 		int maxN = evalArgs.length;
 
 		double term = 1D;
-		for(int n=0; n<maxN; n++) {
-			double val = getScalarValue(evalArgs[n]);
+		for (ValueEval evalArg : evalArgs) {
+			double val = getScalarValue(evalArg);
 			term *= val;
 		}
 		return new NumberEval(term);
@@ -178,13 +180,12 @@ public final class Sumproduct implements Function {
 	}
 
 	private static boolean areasAllSameSize(TwoDEval[] args, int height, int width) {
-		for (int i = 0; i < args.length; i++) {
-			TwoDEval areaEval = args[i];
+		for (TwoDEval areaEval : args) {
 			// check that height and width match
-			if(areaEval.getHeight() != height) {
+			if (areaEval.getHeight() != height) {
 				return false;
 			}
-			if(areaEval.getWidth() != width) {
+			if (areaEval.getWidth() != width) {
 				return false;
 			}
 		}
@@ -193,12 +194,12 @@ public final class Sumproduct implements Function {
 
 
 	/**
-	 * Determines a <code>double</code> value for the specified <code>ValueEval</code>.
-	 * @param isScalarProduct <code>false</code> for SUMPRODUCTs over area refs.
-	 * @throws EvaluationException if <code>ve</code> represents an error value.
+	 * Determines a {@code double} value for the specified {@code ValueEval}.
+	 * @param isScalarProduct {@code false} for SUMPRODUCTs over area refs.
+	 * @throws EvaluationException if {@code ve} represents an error value.
 	 * <p>
 	 * Note - string values and empty cells are interpreted differently depending on
-	 * <code>isScalarProduct</code>.  For scalar products, if any term is blank or a string, the
+	 * {@code isScalarProduct}.  For scalar products, if any term is blank or a string, the
 	 * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the
 	 * result is zero.
 	 */

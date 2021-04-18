@@ -33,7 +33,8 @@ import org.apache.poi.ss.formula.TwoDEval;
  * Syntax : <p>
  *  INDEX ( reference, row_num[, column_num [, area_num]])<p>
  *  INDEX ( array, row_num[, column_num])
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *    <table>
+ *      <caption>Parameter descriptions</caption>
  *      <tr><th>reference</th><td>typically an area reference, possibly a union of areas</td></tr>
  *      <tr><th>array</th><td>a literal array value (currently not supported)</td></tr>
  *      <tr><th>row_num</th><td>selects the row within the array or area reference</td></tr>
@@ -43,6 +44,7 @@ import org.apache.poi.ss.formula.TwoDEval;
  */
 public final class Index implements Function2Arg, Function3Arg, Function4Arg, ArrayMode {
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		TwoDEval reference = convertFirstArg(arg0);
 
@@ -67,6 +69,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
 			return e.getErrorEval();
 		}
 	}
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2) {
 		TwoDEval reference = convertFirstArg(arg0);
@@ -79,6 +82,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
 			return e.getErrorEval();
 		}
 	}
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2, ValueEval arg3) {
 		throw new RuntimeException("Incomplete code"
@@ -104,6 +108,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
 
 	}
 
+	@Override
 	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		switch (args.length) {
 			case 2:

@@ -868,7 +868,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Note that Excel allows sheet names up to 31 chars in length but other applications
      * (such as OpenOffice) allow more. Some versions of Excel crash with names longer than 31 chars,
      * others - truncate such names to 31 character.
-     * </p>
      * <p>
      * POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
      * Example:
@@ -878,7 +877,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *     assert 31 == sheet.getSheetName().length();
      *     assert "My very long sheet name which i" == sheet.getSheetName();
      *     }</pre>
-     * </p>
      * <p>
      * Except the 31-character constraint, Excel applies some other rules:
      * <p>
@@ -895,7 +893,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * <li> closing square bracket (]) </li>
      * </ul>
      * The string MUST NOT begin or end with the single quote (') character.
-     * </p>
      *
      * @param sheetname sheetname to set for the sheet.
      * @return Sheet representing the new sheet.

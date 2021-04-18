@@ -24,7 +24,8 @@ public interface CellWalkContext {
      * from top left cell and ends at bottom right cell. Here is a
      * brief example (number in cell is it's ordinal number):
      *
-     * <table border="1">
+     * <table>
+     *   <caption>ordinal number example</caption>
      *   <tbody>
      *     <tr><td>1</td><td>2</td></tr>
      *     <tr><td>3</td><td>4</td></tr>
