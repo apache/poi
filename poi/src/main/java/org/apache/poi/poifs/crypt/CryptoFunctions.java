@@ -370,7 +370,7 @@ public final class CryptoFunctions {
      *
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd926947.aspx">2.3.7.1 Binary Document Password Verifier Derivation Method 1</a>
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>
-     * @see <a href="http://www.ecma-international.org/news/TC45_current_work/Office Open XML Part 4 - Markup Language Reference.pdf">Part 4 - Markup Language Reference - Ecma International - 3.2.12 fileSharing</a>
+     * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">Part 4 - Markup Language Reference - Ecma International - 3.2.12 fileSharing</a>
      *
      * @param password the password
      * @return the verifier (actually a short value)

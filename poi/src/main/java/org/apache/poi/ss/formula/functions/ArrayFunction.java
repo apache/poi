@@ -48,7 +48,7 @@ public interface ArrayFunction {
      * @param arg0 the first function argument. Empty values are represented with
      *        {@link BlankEval} or {@link MissingArgEval}, never {@code null}
      * @param arg1 the first function argument. Empty values are represented with
-     *      @link BlankEval} or {@link MissingArgEval}, never {@code null}
+     *      {@link BlankEval} or {@link MissingArgEval}, never {@code null}
      *
      * @param srcRowIndex row index of the cell containing the formula under evaluation
      * @param srcColumnIndex column index of the cell containing the formula under evaluation

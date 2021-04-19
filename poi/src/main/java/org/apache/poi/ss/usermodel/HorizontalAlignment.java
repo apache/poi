@@ -62,7 +62,6 @@ public enum HorizontalAlignment {
      * left/right edge, don't append the additional occurrence of the value.</li>
      * <li>The display value of the cell is filled, not the underlying raw number.</li>
      * </ol>
-     * </p>
      */
     FILL,
 
@@ -92,7 +91,7 @@ public enum HorizontalAlignment {
      * <p> Two lines inside a cell are separated by a carriage return. </p>
      */
     DISTRIBUTED;
-    
+
     public short getCode() {
         return (short) ordinal();
     }

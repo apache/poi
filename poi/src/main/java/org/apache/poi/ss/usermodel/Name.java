@@ -90,7 +90,7 @@ public interface Name {
      * <p>
      * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
      * within its scope. However you can use the same name in different scopes. Example:
-     * <pre><blockquote>
+     * <pre>{@code
      * //by default names are workbook-global
      * Name name;
      * name = workbook.createName();
@@ -108,8 +108,8 @@ public interface Name {
      * name.setSheetIndex(0);
      * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
      *
-     * </blockquote></pre>
-    * </p>
+     * }</pre>
+     *
      * @param name named range name to set
      * @throws IllegalArgumentException if the name is invalid or the already exists within its scope (case-insensitive)
      */
@@ -118,7 +118,7 @@ public interface Name {
     /**
      * Returns the formula that the name is defined to refer to.
      *
-     * @return the reference for this name, <code>null</code> if it has not been set yet. Never empty string
+     * @return the reference for this name, {@code null} if it has not been set yet. Never empty string
      * @see #setRefersToFormula(String)
      */
     String getRefersToFormula();
@@ -127,11 +127,11 @@ public interface Name {
      * Sets the formula that the name is defined to refer to. The following are representative examples:
      *
      * <ul>
-     *  <li><code>'My Sheet'!$A$3</code></li>
-     *  <li><code>8.3</code></li>
-     *  <li><code>HR!$A$1:$Z$345</code></li>
-     *  <li><code>SUM(Sheet1!A1,Sheet2!B2)</li>
-     *  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
+     *  <li>{@code 'My Sheet'!$A$3}</li>
+     *  <li>{@code 8.3}</li>
+     *  <li>{@code HR!$A$1:$Z$345}</li>
+     *  <li>{@code SUM(Sheet1!A1,Sheet2!B2)}</li>
+     *  <li>{@code -PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)}</li>
      * </ul>
      *
      * Note: Using relative values like 'A1:B1' can lead to unexpected moving of
@@ -154,7 +154,7 @@ public interface Name {
     /**
      * Checks if this name points to a cell that no longer exists
      *
-     * @return <code>true</code> if the name refers to a deleted cell, <code>false</code> otherwise
+     * @return {@code true} if the name refers to a deleted cell, {@code false} otherwise
      */
     boolean isDeleted();
 
@@ -162,7 +162,7 @@ public interface Name {
      * Checks if this name is hidden, eg one of the built-in Excel
      *  internal names
      *
-     * @return <code>true</code> if the name is a hidden name, <code>false</code> otherwise
+     * @return {@code true} if the name is a hidden name, {@code false} otherwise
      */
     boolean isHidden();
 
@@ -172,34 +172,34 @@ public interface Name {
      * @param sheetId the sheet index this name applies to, -1 unsets this property making the name workbook-global
      * @throws IllegalArgumentException if the sheet index is invalid.
      */
-    public void setSheetIndex(int sheetId);
+    void setSheetIndex(int sheetId);
 
     /**
      * Returns the sheet index this name applies to.
      *
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
-    public int getSheetIndex();
+    int getSheetIndex();
 
     /**
      * Returns the comment the user provided when the name was created.
      *
      * @return the user comment for this named range
      */
-    public String getComment();
+    String getComment();
 
     /**
      * Sets the comment the user provided when the name was created.
      *
      * @param comment the user comment for this named range
      */
-    public void setComment(String comment);
+    void setComment(String comment);
 
     /**
      * Indicates that the defined name refers to a user-defined function.
      * This attribute is used when there is an add-in or other code project associated with the file.
      *
-     * @param value <code>true</code> indicates the name refers to a function.
+     * @param value {@code true} indicates the name refers to a function.
      */
     void setFunction(boolean value);
 }

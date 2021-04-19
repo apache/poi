@@ -17,7 +17,6 @@
 package org.apache.poi.ss.format;
 
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import org.apache.poi.util.LocaleUtil;
 
@@ -25,9 +24,6 @@ import org.apache.poi.util.LocaleUtil;
  * This is the abstract supertype for the various cell formatters.
  */
 public abstract class CellFormatter {
-    /** The logger to use in the formatting code. */
-    private static final Logger LOG = Logger.getLogger(CellFormatter.class.getName());
-
     /** The original specified format. */
     protected final String format;
     protected final Locale locale;
@@ -54,7 +50,7 @@ public abstract class CellFormatter {
 
     /**
      * Format a value according the format string.
-     * <p/>
+     * <p>
      * NOTE: this method must be thread safe!  In particular, if it uses a
      * Format instance that is not thread safe, i.e. DateFormat, this method
      * must be synchronized, either on the method, if the format is a final
@@ -67,7 +63,7 @@ public abstract class CellFormatter {
 
     /**
      * Format a value according to the type, in the most basic way.
-     * <p/>
+     * <p>
      * NOTE: this method must be thread safe!  In particular, if it uses a
      * Format instance that is not thread safe, i.e. DateFormat, this method
      * must be synchronized, either on the method, if the format is a final

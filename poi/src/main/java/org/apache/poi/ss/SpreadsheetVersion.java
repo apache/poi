@@ -49,7 +49,7 @@ public enum SpreadsheetVersion {
      * (actually limited by available memory in Excel)</li>
      * <li>Number of cell styles is 64000</li>
      * <li>Length of text cell contents is 32767</li>
-     * <ul>
+     * </ul>
      */
     EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, 64000, 32767);
 
@@ -60,7 +60,7 @@ public enum SpreadsheetVersion {
     private final int _maxCellStyles;
     private final int _maxTextLength;
 
-    private SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats, int maxCellStyles, int maxText) {
+    SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats, int maxCellStyles, int maxText) {
         _maxRows = maxRows;
         _maxColumns = maxColumns;
         _maxFunctionArgs = maxFunctionArgs;
@@ -77,7 +77,7 @@ public enum SpreadsheetVersion {
     }
 
     /**
-     * @return the last (maximum) valid row index, equals to <code> getMaxRows() - 1 </code>
+     * @return the last (maximum) valid row index, equals to {@code getMaxRows() - 1 }
      */
     public int getLastRowIndex() {
         return _maxRows - 1;
@@ -91,7 +91,7 @@ public enum SpreadsheetVersion {
     }
 
     /**
-     * @return the last (maximum) valid column index, equals to <code> getMaxColumns() - 1 </code>
+     * @return the last (maximum) valid column index, equals to {@code getMaxColumns() - 1 }
      */
     public int getLastColumnIndex() {
         return _maxColumns - 1;
@@ -121,7 +121,7 @@ public enum SpreadsheetVersion {
     /**
      *
      * @return the last valid column index in a ALPHA-26 representation
-     *  (<code>IV</code> or <code>XFD</code>).
+     *  ({@code IV} or {@code XFD}).
      */
     public String getLastColumnName() {
         return CellReference.convertNumToColString(getLastColumnIndex());

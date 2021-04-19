@@ -32,12 +32,12 @@ import org.apache.poi.ss.util.CellReference;
  * 'named range' or name of a user defined function.
  */
 public final class HSSFName implements Name {
-    
-    private HSSFWorkbook _book;
-    private NameRecord _definedNameRec;
-    private NameCommentRecord _commentRec;
 
-    /** 
+    private final HSSFWorkbook _book;
+    private final NameRecord _definedNameRec;
+    private final NameCommentRecord _commentRec;
+
+    /**
      * Creates new HSSFName   - called by HSSFWorkbook to create a name from
      * scratch.
      *
@@ -48,7 +48,7 @@ public final class HSSFName implements Name {
     /* package */ HSSFName(HSSFWorkbook book, NameRecord name) {
       this(book, name, null);
     }
-    /** 
+    /**
      * Creates new HSSFName   - called by HSSFWorkbook to create a name from
      * scratch.
      *
@@ -66,6 +66,7 @@ public final class HSSFName implements Name {
     /** Get the sheets name which this named range is referenced to
      * @return sheet name, which this named range referred to
      */
+    @Override
     public String getSheetName() {
         int indexToExternSheet = _definedNameRec.getExternSheetNumber();
 
@@ -75,6 +76,7 @@ public final class HSSFName implements Name {
     /**
      * @return text name of this defined name
      */
+    @Override
     public String getNameName(){
         return _definedNameRec.getNameText();
     }
@@ -104,7 +106,7 @@ public final class HSSFName implements Name {
      * <p>
      * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
      * within its scope. However you can use the same name in different scopes. Example:
-     * <pre><blockquote>
+     * <pre>{@code
      * //by default names are workbook-global
      * HSSFName name;
      * name = workbook.createName();
@@ -122,12 +124,12 @@ public final class HSSFName implements Name {
      * name.setSheetIndex(0);
      * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
      *
-     * </blockquote></pre>
-    * </p>
+     * }</pre>
      *
      * @param nameName named range name to set
      * @throws IllegalArgumentException if the name is invalid or the name already exists (case-insensitive)
      */
+    @Override
     public void setNameName(String nameName){
         validateName(nameName);
 
@@ -149,7 +151,7 @@ public final class HSSFName implements Name {
                 }
             }
         }
-        
+
         // Update our comment, if there is one
         if(_commentRec != null) {
            _commentRec.setNameText(nameName);
@@ -159,21 +161,21 @@ public final class HSSFName implements Name {
 
     /**
      * https://support.office.com/en-us/article/Define-and-use-names-in-formulas-4D0F13AC-53B7-422E-AFD2-ABD7FF379C64#bmsyntax_rules_for_names
-     * 
+     *
      * Valid characters:
      *   First character: { letter | underscore | backslash }
      *   Remaining characters: { letter | number | period | underscore }
-     *   
+     *
      * Cell shorthand: cannot be { "C" | "c" | "R" | "r" }
-     * 
+     *
      * Cell references disallowed: cannot be a cell reference $A$1 or R1C1
-     * 
+     *
      * Spaces are not valid (follows from valid characters above)
-     * 
+     *
      * Name length: (XSSF-specific?) 255 characters maximum
-     * 
+     *
      * Case sensitivity: all names are case-insensitive
-     * 
+     *
      * Uniqueness: must be unique (for names with the same scope)
      */
     private static void validateName(String name) {
@@ -187,7 +189,7 @@ public final class HSSFName implements Name {
         if (name.equalsIgnoreCase("R") || name.equalsIgnoreCase("C")) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be special shorthand R or C");
         }
-        
+
         // is first character valid?
         char c = name.charAt(0);
         String allowedSymbols = "_\\";
@@ -195,7 +197,7 @@ public final class HSSFName implements Name {
         if (!characterIsValid) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': first character must be underscore or a letter");
         }
-        
+
         // are all other characters valid?
         allowedSymbols = "_.\\"; //backslashes needed for unicode escape
         for (final char ch : name.toCharArray()) {
@@ -204,7 +206,7 @@ public final class HSSFName implements Name {
                 throw new IllegalArgumentException("Invalid name: '"+name+"': name must be letter, digit, period, or underscore");
             }
         }
-        
+
         // Is the name a valid $A$1 cell reference
         // Because $, :, and ! are disallowed characters, A1-style references become just a letter-number combination
         if (name.matches("[A-Za-z]+\\d+")) {
@@ -214,18 +216,20 @@ public final class HSSFName implements Name {
                 throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be $A$1-style cell reference");
             }
         }
-        
+
         // Is the name a valid R1C1 cell reference?
         if (name.matches("[Rr]\\d+[Cc]\\d+")) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be R1C1-style cell reference");
         }
     }
 
+    @Override
     public void setRefersToFormula(String formulaText) {
         Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE, getSheetIndex());
         _definedNameRec.setNameDefinition(ptgs);
     }
 
+    @Override
     public String getRefersToFormula() {
         if (_definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
@@ -240,9 +244,9 @@ public final class HSSFName implements Name {
 
 
     /**
-     * Sets the NameParsedFormula structure that specifies the formula for the 
+     * Sets the NameParsedFormula structure that specifies the formula for the
      * defined name.
-     * 
+     *
      * @param ptgs the sequence of {@link Ptg}s for the formula.
      */
     void setNameDefinition(Ptg[] ptgs) {
@@ -250,6 +254,7 @@ public final class HSSFName implements Name {
     }
 
 
+    @Override
     public boolean isDeleted(){
         Ptg[] ptgs = _definedNameRec.getNameDefinition();
         return Ptg.doesFormulaReferToDeletedCell(ptgs);
@@ -260,6 +265,7 @@ public final class HSSFName implements Name {
      *
      * @return true if this name is a function name
      */
+    @Override
     public boolean isFunctionName() {
         return _definedNameRec.isFunctionName();
     }
@@ -270,6 +276,7 @@ public final class HSSFName implements Name {
      *
      * @return true if this name is a hidden one
      */
+    @Override
     public boolean isHidden() {
         return _definedNameRec.isHiddenName();
     }
@@ -287,6 +294,7 @@ public final class HSSFName implements Name {
      * to the collection of sheets as they appear in the workbook.
      * @throws IllegalArgumentException if the sheet index is invalid.
      */
+    @Override
     public void setSheetIndex(int index){
         int lastSheetIx = _book.getNumberOfSheets() - 1;
         if (index < -1 || index > lastSheetIx) {
@@ -302,6 +310,7 @@ public final class HSSFName implements Name {
      *
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
+    @Override
     public int getSheetIndex(){
         return _definedNameRec.getSheetNumber() - 1;
     }
@@ -311,6 +320,7 @@ public final class HSSFName implements Name {
      *
      * @return the user comment for this named range
      */
+    @Override
     public String getComment() {
         if(_commentRec != null) {
            // Prefer the comment record if it has text in it
@@ -327,6 +337,7 @@ public final class HSSFName implements Name {
      *
      * @param comment the user comment for this named range
      */
+    @Override
     public void setComment(String comment){
         // Update the main record
         _definedNameRec.setDescriptionText(comment);
@@ -340,8 +351,9 @@ public final class HSSFName implements Name {
      * Indicates that the defined name refers to a user-defined function.
      * This attribute is used when there is an add-in or other code project associated with the file.
      *
-     * @param value <code>true</code> indicates the name refers to a function.
+     * @param value {@code true} indicates the name refers to a function.
      */
+    @Override
     public void setFunction(boolean value) {
         _definedNameRec.setFunction(value);
     }

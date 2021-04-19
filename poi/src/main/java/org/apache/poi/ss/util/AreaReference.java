@@ -385,7 +385,7 @@ public class AreaReference {
      *  Example return values:
      *    <table>
      *      <caption>Example return values</caption>
-     *      <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+     *      <tr><th>Result</th><th>Comment</th></tr>
      *      <tr><td>A1:A1</td><td>Single cell area reference without sheet</td></tr>
      *      <tr><td>A1:$C$1</td><td>Multi-cell area reference without sheet</td></tr>
      *      <tr><td>Sheet1!A$1:B4</td><td>Standard sheet name</td></tr>

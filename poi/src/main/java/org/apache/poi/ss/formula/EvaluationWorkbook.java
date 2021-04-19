@@ -81,7 +81,7 @@ public interface EvaluationWorkbook {
      *
      * @since POI 3.15 beta 3
      */
-    public void clearAllCachedResultValues();
+    void clearAllCachedResultValues();
 
     class ExternalSheet {
         private final String _workbookName;

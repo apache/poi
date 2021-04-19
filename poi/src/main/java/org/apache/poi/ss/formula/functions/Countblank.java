@@ -29,7 +29,6 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  *        <caption>Parameter descriptions</caption>
  *      <tr><th>range&nbsp;&nbsp;&nbsp;</th><td>is the range of cells to count blanks</td></tr>
  *    </table>
- * </p>
  */
 public final class Countblank extends Fixed1ArgFunction {
 

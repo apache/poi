@@ -49,9 +49,9 @@ public final class SSTRecord extends ContinuableRecord {
      * according to docs ONLY SST
      */
     private int field_2_num_unique_strings;
-    private IntMapper<UnicodeString> field_3_strings;
+    private final IntMapper<UnicodeString> field_3_strings;
 
-    private SSTDeserializer deserializer;
+    private final SSTDeserializer deserializer;
 
     /**
      * Offsets from the beginning of the SST record (even across continuations)
@@ -134,6 +134,7 @@ public final class SSTRecord extends ContinuableRecord {
         return field_3_strings.get( id );
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
@@ -143,8 +144,7 @@ public final class SSTRecord extends ContinuableRecord {
      * <P>
      * The data consists of sets of string data. This string data is
      * arranged as follows:
-     * </P>
-     * <pre>
+     * <pre>{@code
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
      *                         // handling
@@ -157,12 +157,11 @@ public final class SSTRecord extends ContinuableRecord {
      *                         // array is run_count)
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
-     * </pre>
+     * }</pre>
      * <P>
      * The string_flag is bit mapped as follows:
-     * </P>
-     * <P>
-     * <TABLE summary="string_flag mapping">
+     * <TABLE>
+     *   <caption>string_flag mapping</caption>
      *   <TR>
      *      <TH>Bit number</TH>
      *      <TH>Meaning if 0</TH>
@@ -252,6 +251,7 @@ public final class SSTRecord extends ContinuableRecord {
         return field_3_strings.size();
     }
 
+    @Override
     protected void serialize(ContinuableRecordOutput out) {
         SSTSerializer serializer = new SSTSerializer(field_3_strings, getNumStrings(), getNumUniqueStrings() );
         serializer.serialize(out);
@@ -313,7 +313,7 @@ public final class SSTRecord extends ContinuableRecord {
         return GenericRecordUtil.getGenericProperties(
             "numStrings", this::getNumStrings,
             "numUniqueStrings", this::getNumUniqueStrings,
-            "strings", () -> field_3_strings.getElements(),
+            "strings", field_3_strings::getElements,
             "bucketAbsoluteOffsets", () -> bucketAbsoluteOffsets,
             "bucketRelativeOffsets", () -> bucketRelativeOffsets
         );

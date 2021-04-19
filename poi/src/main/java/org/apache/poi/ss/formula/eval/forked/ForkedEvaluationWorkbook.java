@@ -36,7 +36,7 @@ import org.apache.poi.util.Internal;
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
  * shared master workbook, except those that potentially involve cell values that may have been
  * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.<br>
- * 
+ *
  * For POI internal use only
  */
 @Internal
@@ -117,7 +117,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     public EvaluationSheet getSheet(int sheetIndex) {
         return getSharedSheet(getSheetName(sheetIndex));
     }
-    
+
     @Override
     public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
        return _masterBook.getExternalName(externSheetIndex, externNameIndex);
@@ -155,15 +155,16 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     public UDFFinder getUDFFinder() {
         return _masterBook.getUDFFinder();
     }
-    
+
+    @Override
     public SpreadsheetVersion getSpreadsheetVersion() {
         return _masterBook.getSpreadsheetVersion();
     }
-    
+
     /* (non-Javadoc)
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
-     * 
+     *
      * @since POI 3.15 beta 3
      */
     @Override

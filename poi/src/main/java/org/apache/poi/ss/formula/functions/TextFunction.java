@@ -197,7 +197,7 @@ public abstract class TextFunction implements Function {
 	 * MID returns a specific number of
 	 * characters from a text string, starting at the specified position.<p>
 	 *
-	 * <b>Syntax<b>:<br> <b>MID</b>(<b>text</b>, <b>start_num</b>,
+	 * <b>Syntax</b>:<br> <b>MID</b>(<b>text</b>, <b>start_num</b>,
 	 * <b>num_chars</b>)<br>
 	 *
 	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
@@ -335,7 +335,7 @@ public abstract class TextFunction implements Function {
 	 *  {@link DataFormatter} to be done, as this works much the same as the
 	 *  display focused work that that does.
 	 *
-	 * <b>Syntax<b>:<br> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br>
+	 * <b>Syntax</b>:<br> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br>
 	 */
 	public static final Function TEXT = new Fixed2ArgFunction() {
 

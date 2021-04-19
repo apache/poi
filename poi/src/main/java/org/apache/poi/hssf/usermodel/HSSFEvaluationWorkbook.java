@@ -67,7 +67,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public void clearAllCachedResultValues() {
         // nothing to do
     }
-    
+
     @Override
     public HSSFName createName() {
         return _uBook.createName();
@@ -82,7 +82,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public int getExternalSheetIndex(String workbookName, String sheetName) {
         return _iBook.getExternalSheetIndex(workbookName, sheetName);
     }
-    
+
     @Override
     public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
@@ -107,7 +107,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
      *
      * @param name the name to search
      * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
-     * The sheet index is required to resolve sheet-level names. <code>-1</code> means workbook-global names
+     * The sheet index is required to resolve sheet-level names. {@code -1} means workbook-global names
      */
     @Override
     public EvaluationName getName(String name, int sheetIndex) {
@@ -160,10 +160,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
                 // Not actually sheet based at all - is workbook scoped
                 return null;
             }
-            
+
             // Look up the local sheet
             String sheetName = getSheetName(localSheetIndex);
-            
+
             // Is it a single local sheet, or a range?
             int lastLocalSheetIndex = _iBook.getLastSheetIndexFromExternSheetIndex(externSheetIndex);
             if (lastLocalSheetIndex == localSheetIndex) {
@@ -177,7 +177,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     }
 
     /**
-     * @throws IllegalStateException: XSSF-style external references are not supported for HSSF
+     * @throws IllegalStateException XSSF-style external references are not supported for HSSF
      */
     @Override
     public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
@@ -190,7 +190,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     }
 
     /**
-     * @throws IllegalStateException: XSSF-style external names are not supported for HSSF
+     * @throws IllegalStateException XSSF-style external names are not supported for HSSF
      */
     @Override
     public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
@@ -275,14 +275,14 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         if (sheetIden == null) {
             extIx = -1;
         } else {
-            String workbookName = sheetIden.getBookName(); 
+            String workbookName = sheetIden.getBookName();
             String firstSheetName = sheetIden.getSheetIdentifier().getName();
             String lastSheetName = firstSheetName;
-            
+
             if (sheetIden instanceof SheetRangeIdentifier) {
                 lastSheetName = ((SheetRangeIdentifier)sheetIden).getLastSheetIdentifier().getName();
             }
-            
+
             if (workbookName == null) {
                 int firstSheetIndex = _uBook.getSheetIndex(firstSheetName);
                 int lastSheetIndex = _uBook.getSheetIndex(lastSheetName);
@@ -300,7 +300,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     }
 
     /**
-      * @throws IllegalStateException: data tables are not supported in Excel 97-2003 format
+      * @throws IllegalStateException data tables are not supported in Excel 97-2003 format
       */
     @Override
     public Table getTable(String name) {

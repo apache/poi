@@ -144,18 +144,21 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
 
 
     protected class ExternalName implements Name {
-        private CTExternalDefinedName name;
+        private final CTExternalDefinedName name;
         protected ExternalName(CTExternalDefinedName name) {
             this.name = name;
         }
 
+        @Override
         public String getNameName() {
             return name.getName();
         }
+        @Override
         public void setNameName(String name) {
             this.name.setName(name);
         }
 
+        @Override
         public String getSheetName() {
             int sheetId = getSheetIndex();
             if (sheetId >= 0) {
@@ -164,29 +167,35 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
                 return null;
             }
         }
+        @Override
         public int getSheetIndex() {
             if (name.isSetSheetId()) {
                 return (int)name.getSheetId();
             }
             return -1;
         }
+        @Override
         public void setSheetIndex(int sheetId) {
             name.setSheetId(sheetId);
         }
 
+        @Override
         public String getRefersToFormula() {
             // Return, without the leading =
             return name.getRefersTo().substring(1);
         }
+        @Override
         public void setRefersToFormula(String formulaText) {
             // Save with leading =
             name.setRefersTo('=' + formulaText);
         }
 
+        @Override
         public boolean isFunctionName() {
             return false;
         }
 
+        @Override
         public boolean isDeleted() {
             return false;
         }
@@ -196,12 +205,15 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
             return false;
         }
 
+        @Override
         public String getComment() {
             return null;
         }
+        @Override
         public void setComment(String comment) {
             throw new IllegalStateException("Not Supported");
         }
+        @Override
         public void setFunction(boolean value) {
             throw new IllegalStateException("Not Supported");
         }

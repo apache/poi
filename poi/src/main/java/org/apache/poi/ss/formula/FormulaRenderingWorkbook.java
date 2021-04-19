@@ -28,7 +28,7 @@ import org.apache.poi.util.Internal;
 @Internal
 public interface FormulaRenderingWorkbook {
 	/**
-	 * @return <code>null</code> if externSheetIndex refers to a sheet inside the current workbook
+	 * @return {@code null} if externSheetIndex refers to a sheet inside the current workbook
 	 */
 	ExternalSheet getExternalSheet(int externSheetIndex);
 

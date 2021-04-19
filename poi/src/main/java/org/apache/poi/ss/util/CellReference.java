@@ -300,8 +300,8 @@ public class CellReference implements GenericRecord {
      *
      * POI currently targets BIFF8 (Excel 97-2003), so the following behaviour can be observed for
      * this method:
-     * <blockquote><table border="0" cellpadding="1" cellspacing="0"
-     *                 summary="Notable cases.">
+     * <table>
+     *   <caption>Notable cases</caption>
      *   <tr><th>Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
      *       <th>Result&nbsp;</th></tr>
      *   <tr><td>"A", "1"</td><td>true</td></tr>
@@ -313,7 +313,7 @@ public class CellReference implements GenericRecord {
      *   <tr><td>"AAA", "1"</td><td>false</td></tr>
      *   <tr><td>"a", "111"</td><td>true</td></tr>
      *   <tr><td>"Sheet", "1"</td><td>false</td></tr>
-     * </table></blockquote>
+     * </table>
      *
      * @param colStr a string of only letter characters
      * @param rowStr a string of only digit characters
@@ -485,7 +485,7 @@ public class CellReference implements GenericRecord {
      *  Example return values:
      *	<table>
      *	  <caption>Example return values</caption>
-     *	  <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+     *	  <tr><th>Result</th><th>Comment</th></tr>
      *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
      *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
      *	  <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
@@ -502,8 +502,9 @@ public class CellReference implements GenericRecord {
      *
      * <p>
      *  Example return values:
-     *	<table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
-     *	  <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+     *	<table>
+     *	  <caption>Example return values</caption>
+     *	  <tr><th>Result</th><th>Comment</th></tr>
      *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
      *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
      *	  <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
@@ -583,9 +584,7 @@ public class CellReference implements GenericRecord {
                 && _colIndex == cr._colIndex
                 && _isRowAbs == cr._isRowAbs
                 && _isColAbs == cr._isColAbs
-                && ((_sheetName == null)
-                        ? (cr._sheetName == null)
-                        : _sheetName.equals(cr._sheetName));
+                && Objects.equals(_sheetName, cr._sheetName);
     }
 
     @Override
