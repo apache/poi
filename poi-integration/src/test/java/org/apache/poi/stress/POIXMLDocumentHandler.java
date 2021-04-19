@@ -59,14 +59,26 @@ public final class POIXMLDocumentHandler {
     protected static void cursorRecursive(XmlObject base) {
         XmlCursor cur = base.newCursor();
         try {
-            if (!cur.toFirstChild()) {
-                return;
-            }
-            do {
-                cursorRecursive(cur.getObject());
-            } while (cur.toNextSibling());
+            cursorRecursive(cur);
         } finally {
             cur.dispose();
         }
+    }
+
+    private static void cursorRecursive(XmlCursor cur) {
+        do {
+            assertNotNull(cur.getObject());
+            cur.push();
+            for (boolean b = cur.toFirstAttribute(); b; b = cur.toNextAttribute()) {
+                assertNotNull(cur.getObject());
+            }
+            cur.pop();
+            cur.push();
+
+            if (cur.toFirstChild()) {
+                cursorRecursive(cur);
+            }
+            cur.pop();
+        } while (cur.toNextSibling());
     }
 }
