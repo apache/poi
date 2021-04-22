@@ -65,6 +65,7 @@ public final class CharacterPropertyFetcher<T> extends PropertyFetcher<T> {
 
         if (!(sheet instanceof XSLFSlideMaster)) {
             fetchRunProp();
+            fetchParagraphDefaultRunProp();
             fetchShapeProp(shape);
             fetchThemeProp(shape);
         }
@@ -76,6 +77,15 @@ public final class CharacterPropertyFetcher<T> extends PropertyFetcher<T> {
 
     private void fetchRunProp() {
         fetchProp(run.getRPr(false));
+    }
+
+    private void fetchParagraphDefaultRunProp() {
+        if (!isSet()) {
+            CTTextParagraphProperties pr = run.getParagraph().getXmlObject().getPPr();
+            if (pr != null) {
+                fetchProp(pr.getDefRPr());
+            }
+        }
     }
 
     private void fetchShapeProp(XSLFShape shape) {

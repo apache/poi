@@ -50,7 +50,7 @@ public class ImageHeaderEMF {
         int top = LittleEndian.getInt(data, offset); offset += 4;
         int right = LittleEndian.getInt(data, offset); offset += 4;
         int bottom = LittleEndian.getInt(data, offset); offset += 4;
-        deviceBounds = new Rectangle(left, top, right-left, bottom-top);
+        deviceBounds = new Rectangle(left, top,  right-left == -1 ? 0 : right-left, bottom-top == -1 ? 0 : bottom-top);
         // ignore frame bounds
         offset += 16;
         String signature = new String(data, offset, EMF_SIGNATURE.length(), LocaleUtil.CHARSET_1252);

@@ -77,25 +77,7 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullPrintStream;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFAutoShape;
-import org.apache.poi.xslf.usermodel.XSLFGroupShape;
-import org.apache.poi.xslf.usermodel.XSLFHyperlink;
-import org.apache.poi.xslf.usermodel.XSLFNotes;
-import org.apache.poi.xslf.usermodel.XSLFObjectShape;
-import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
-import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
-import org.apache.poi.xslf.usermodel.XSLFTable;
-import org.apache.poi.xslf.usermodel.XSLFTableCell;
-import org.apache.poi.xslf.usermodel.XSLFTableRow;
-import org.apache.poi.xslf.usermodel.XSLFTextBox;
-import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
-import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xslf.util.DummyGraphics2d;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -1080,4 +1062,18 @@ class TestXSLFBugs {
         }
     }
 
+    @Test
+    public void bug65228() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("bug65228.pptx")) {
+            TextRun.TextCap act = ppt.getSlides().stream()
+                .flatMap(s -> s.getShapes().stream())
+                .filter(s -> "März 2021\u2026".equals(s.getShapeName()))
+                .map(XSLFTextShape.class::cast)
+                .flatMap(s -> s.getTextParagraphs().stream())
+                .flatMap(s -> s.getTextRuns().stream())
+                .map(XSLFTextRun::getTextCap)
+                .findFirst().orElse(null);
+            assertEquals(TextRun.TextCap.ALL, act);
+        }
+    }
 }
