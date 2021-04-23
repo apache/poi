@@ -136,6 +136,17 @@ class TestCellFormatPart {
     }
 
     @Test
+    void testDateFormatNumbers() throws IOException {
+        TimeZone tz = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        try {
+            runFormatTests("DateFormatNumberTests.xlsx", Cell::getNumericCellValue);
+        } finally {
+            LocaleUtil.setUserTimeZone(tz);
+        }
+    }
+
+    @Test
     void testElapsedFormat() throws IOException {
         runFormatTests("ElapsedFormatTests.xlsx", Cell::getNumericCellValue);
     }
