@@ -39,8 +39,10 @@ public class CellDateFormatter extends CellFormatter {
     private final DateFormat dateFmt;
     private String sFmt;
 
-    private final Calendar EXCEL_EPOCH_CAL =
+    private static final Calendar EXCEL_EPOCH_CAL =
         LocaleUtil.getLocaleCalendar(1904, 0, 1);
+
+    private static final double NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
     private static /* final */ CellDateFormatter SIMPLE_DATE;
 
@@ -177,12 +179,15 @@ public class CellDateFormatter extends CellFormatter {
             value = 0.0;
         if (value instanceof Number) {
             Number num = (Number) value;
-            long v = num.longValue();
+            // Convert from fractional days to milliseconds. Excel always rounds up.
+            double v = Math.round(num.doubleValue() * NUM_MILLISECONDS_IN_DAY);
             if (v == 0L) {
                 value = EXCEL_EPOCH_CAL.getTime();
             } else {
                 Calendar c = (Calendar)EXCEL_EPOCH_CAL.clone();
-                c.add(Calendar.SECOND, (int)(v / 1000));
+                // If milliseconds were not requested in the format string, round the seconds.
+                int seconds = (int) (sFmt == null ? Math.round(v / 1000) : v / 1000);
+                c.add(Calendar.SECOND, seconds);
                 c.add(Calendar.MILLISECOND, (int)(v % 1000));
                 value = c.getTime();
             }
@@ -201,6 +206,9 @@ public class CellDateFormatter extends CellFormatter {
                     int pos = toAppendTo.length();
                     try (Formatter formatter = new Formatter(toAppendTo, Locale.ROOT)) {
                         long msecs = dateObj.getTime() % 1000;
+                        if (msecs < 0) {
+                            msecs += 1000;
+                        }
                         formatter.format(locale, sFmt, msecs / 1000.0);
                     }
                     toAppendTo.delete(pos, pos + 2);
