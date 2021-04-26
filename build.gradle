@@ -212,7 +212,9 @@ subprojects {
 
                 // the plugin seems to not detect our non-standard build-layout
                 property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
-                property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
+
+				// the Gradle run will report an invalid directory for 'ooxml-schema', but it seems to still work fine
+				property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
             }
         }
     }

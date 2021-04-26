@@ -66,7 +66,9 @@ def poijobs = [
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
         [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
-          email: 'kiwiwings@apache.org'
+          email: 'kiwiwings@apache.org',
+		  // replaced by Gradle-based build now
+		  disabled: true
         ],
         // set trigger empty as it is not stable yet, we can remove the Sonar Maven run when this is fully working
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: '', gradle: true, sonar: true, skipcigame: true
