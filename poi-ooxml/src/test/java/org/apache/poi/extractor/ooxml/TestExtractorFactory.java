@@ -35,20 +35,16 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
-import org.apache.xmlbeans.XmlException;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -118,7 +114,7 @@ class TestExtractorFactory {
             Arguments.of("PowerPoint - pptx", pptx, "XSLFExtractor", 120),
             Arguments.of("Visio - vsdx", vsdx, "XDGFVisioExtractor", 20)
         );
-    };
+    }
 
     public static Stream<Arguments> testScratchData() {
         return Stream.of(
@@ -132,12 +128,12 @@ class TestExtractorFactory {
             Arguments.of("Publisher", pub, "PublisherTextExtractor", 50),
             Arguments.of("Outlook msg", msg, "OutlookTextExtractor", 50)
         );
-    };
+    }
 
     public static Stream<Arguments> testFileData() {
         return Stream.concat(testOOXMLData(), testScratchData());
         // TODO Support OOXML-Strict / xlsxStrict, see bug #57699
-    };
+    }
 
 
     @ParameterizedTest

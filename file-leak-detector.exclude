@@ -67,6 +67,7 @@ java.text.BreakIterator.getBundle
 sun.java2d.SunGraphicsEnvironment.<init>
 org.kohsuke.file_leak_detector.AgentMain.runHttpServer
 org.apache.log4j.FileAppender.setFile
+org.apache.logging.log4j.core.config.ConfigurationSource.getConfigurationSource
 sun.launcher.LauncherHelper.validateMainClass
 sun.util.locale.provider.RuleBasedBreakIterator$1.run
 java.util.ServiceLoader$LazyIterator.hasNextService
