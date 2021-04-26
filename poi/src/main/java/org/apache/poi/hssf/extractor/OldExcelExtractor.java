@@ -316,7 +316,38 @@ public class OldExcelExtractor implements POITextExtractor {
 
     @Override
     public POITextExtractor getMetadataTextExtractor() {
-        return null;
+		return new POITextExtractor() {
+
+			@Override
+			public String getText() {
+				return "";
+			}
+
+			@Override
+			public POITextExtractor getMetadataTextExtractor() {
+				throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
+			}
+
+			@Override
+			public void setCloseFilesystem(boolean doCloseFilesystem) {
+
+			}
+
+			@Override
+			public boolean isCloseFilesystem() {
+				return toClose != null;
+			}
+
+			@Override
+			public Closeable getFilesystem() {
+				return toClose;
+			}
+
+			@Override
+			public Object getDocument() {
+				return ris;
+			}
+		};
     }
 
     @Override

@@ -107,7 +107,7 @@ class HSSFFileHandler extends SpreadsheetHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	void test() throws Exception {
-        File file = new File("test-data/spreadsheet/49219.xls");
+        File file = new File("../test-data/spreadsheet/59074.xls");
 
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
@@ -122,6 +122,6 @@ class HSSFFileHandler extends SpreadsheetHandler {
     @Test
 	@SuppressWarnings("java:S2699")
     void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
+        handleExtracting(new File("../test-data/spreadsheet/59074.xls"));
     }
 }

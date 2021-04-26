@@ -35,6 +35,7 @@ import java.security.Permission;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -378,4 +379,24 @@ final class TestOldExcelExtractor {
             this.status = status;
         }
     }
+
+	@Test
+	void testMetaData() throws IOException {
+		try (OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls")) {
+			POITextExtractor metaData = extractor.getMetadataTextExtractor();
+			assertNotNull(metaData);
+
+			assertThrows(IllegalStateException.class, metaData::getMetadataTextExtractor);
+			assertEquals("", metaData.getText());
+			assertNotNull(metaData.getDocument());
+			assertTrue(metaData.isCloseFilesystem());
+			assertNotNull(metaData.getFilesystem());
+
+			// the setter is a NOP
+			metaData.setCloseFilesystem(false);
+			assertTrue(metaData.isCloseFilesystem());
+
+			metaData.close();
+		}
+	}
 }
