@@ -112,7 +112,10 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
                 // Check if any rows have already been flushed out
                 int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
                 if (lastFlushedRowNum > -1) {
-                    if (! skipOutOfWindow) throw new RowFlushedException(0);
+                    if (!skipOutOfWindow) {
+                    	throw new RowFlushedException(0, lastFlushedRowNum);
+					}
+
                     LOG.atInfo().log("Rows up to {} have already been flushed, skipping", box(lastFlushedRowNum));
                 }
             }
@@ -146,8 +149,8 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         }
     }
     public static class RowFlushedException extends IllegalStateException {
-        protected RowFlushedException(int rowNum) {
-            super("Row " + rowNum + " has been flushed, cannot evaluate all cells");
+        protected RowFlushedException(int rowNum, int lastFlushedRowNum) {
+            super("Row " + rowNum + " has been flushed (rows up to " + lastFlushedRowNum + " have been flushed), cannot evaluate all cells");
         }
     }
 }

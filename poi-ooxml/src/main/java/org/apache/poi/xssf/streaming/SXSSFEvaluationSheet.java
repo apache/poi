@@ -44,7 +44,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
     public int getLastRowNum() {
         return _xs.getLastRowNum();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
      * @since POI 4.1.0
@@ -60,7 +60,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
         SXSSFRow row = _xs.getRow(rowIndex);
         if (row == null) {
             if (rowIndex <= _xs.getLastFlushedRowNum()) {
-                throw new SXSSFFormulaEvaluator.RowFlushedException(rowIndex);
+                throw new SXSSFFormulaEvaluator.RowFlushedException(rowIndex, _xs.getLastFlushedRowNum());
             }
             return null;
         }
@@ -70,7 +70,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
         }
         return new SXSSFEvaluationCell(cell, this);
     }
-    
+
     /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
      * @since POI 3.15 beta 3
      */
