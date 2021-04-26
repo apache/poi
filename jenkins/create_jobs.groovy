@@ -175,7 +175,10 @@ def sonarDesc = '''
 '''
 
 def shellCmdsUnix =
-        '''# show which files are currently modified in the working copy
+        '''# remove some outdated directories that should not be there any more
+rm -rf examples excelant integrationtest main ooxml ooxml-schema scratchpad build.javacheck.xml
+
+# show which files are currently modified in the working copy
 svn status || true
 
 # print out information about which exact version of java we are using
