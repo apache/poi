@@ -30,6 +30,8 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -163,5 +165,11 @@ class TestTriggerCoverage {
             graphics.dispose();
             img.flush();
         }
+    }
+
+    @Disabled("Only used for running a single file")
+    @Test
+    public void test() throws Exception {
+        testFile(new File("test-data/integration/stress025.docx"));
     }
 }
