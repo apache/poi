@@ -789,6 +789,17 @@ class TestXWPFRun {
     }
 
     @Test
+    void testGetEmptyStyle() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals("", run.getStyle());
+
+        run.getCTR().addNewRPr();
+        assertEquals("", run.getStyle());
+        document.close();
+    }
+
+    @Test
     void testGetDepthWidth() throws IOException, InvalidFormatException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx")) {
             XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);

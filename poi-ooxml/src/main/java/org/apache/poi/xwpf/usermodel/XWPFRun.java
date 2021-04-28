@@ -1248,16 +1248,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getStyle() {
         CTRPr pr = getCTR().getRPr();
-        if (pr == null) {
+        if (pr == null || pr.sizeOfRStyleArray() <= 0) {
             return "";
         }
-
         CTString style = pr.getRStyleArray(0);
-        if (style == null) {
-            return "";
-        }
-
-        return style.getVal();
+        return null == style ? "" : style.getVal();
     }
 
 
