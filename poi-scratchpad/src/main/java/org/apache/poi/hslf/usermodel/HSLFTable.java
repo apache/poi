@@ -352,7 +352,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public double getRowHeight(int row) {
         if (row < 0 || row >= cells.length) {
-            throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
+            throw new IndexOutOfBoundsException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
         }
 
         return cells[row][0].getAnchor().getHeight();
@@ -361,7 +361,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public void setRowHeight(int row, final double height) {
         if (row < 0 || row >= cells.length) {
-            throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
+            throw new IndexOutOfBoundsException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
         }
 
         // update row height in the table properties
