@@ -110,7 +110,9 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSignatureLine;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
 import org.apache.xmlbeans.XmlException;
@@ -742,6 +744,45 @@ class TestSignatureInfo {
             } catch (EncryptedDocumentException e) {
                 assumeTrue(e.getMessage().startsWith("Export Restrictions"));
             }
+        }
+    }
+
+    // Test signing of external references / hyperlinks
+    @Test
+    void bug65214() throws Exception {
+        initKeyPair();
+
+	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFHyperlinkRun r = doc.createParagraph().createHyperlinkRun("http://poi.apache.org");
+	        r.setText("Hyperlink");
+	        r.setUnderline(UnderlinePatterns.SINGLE);
+	        r.setUnderlineColor("0000FF");
+	        doc.write(bos);
+        }
+
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setDigestAlgo(HashAlgorithm.sha256);
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            si.confirmSignature();
+            bos.reset();
+            pkg.save(bos);
+        } catch (EncryptedDocumentException e) {
+            assumeTrue(e.getMessage().startsWith("Export Restrictions"));
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            si.verifySignature();
+        } catch (EncryptedDocumentException e) {
+            assumeTrue(e.getMessage().startsWith("Export Restrictions"));
         }
     }
 

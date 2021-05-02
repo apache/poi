@@ -56,7 +56,7 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
         Transform exclusiveTransform = newTransform(signatureInfo, CanonicalizationMethod.EXCLUSIVE);
         transforms.add(exclusiveTransform);
 
-        Reference reference = newReference(signatureInfo, "", transforms, null, null, null);
+        Reference reference = newReference(signatureInfo, "", transforms, null);
         references.add(reference);
     }
 }

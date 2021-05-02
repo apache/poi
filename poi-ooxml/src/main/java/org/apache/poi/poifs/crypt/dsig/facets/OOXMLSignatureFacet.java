@@ -37,6 +37,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
 import javax.xml.crypto.URIReference;
@@ -118,7 +120,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         XMLObject xo = sigFac.newXMLObject(objectContent, ID_PACKAGE_OBJECT, null, null);
         objects.add(xo);
 
-        Reference reference = newReference(signatureInfo, "#"+ID_PACKAGE_OBJECT, null, XML_DIGSIG_NS+"Object", null, null);
+        Reference reference = newReference(signatureInfo, "#"+ID_PACKAGE_OBJECT, null, XML_DIGSIG_NS+"Object");
         references.add(reference);
     }
 
@@ -150,6 +152,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                  * "The producer shall not create a Manifest element that references any data outside of the package."
                  */
                 if (TargetMode.EXTERNAL == relationship.getTargetMode()) {
+                    // only add the relationship but not the reference/data
+                    parameterSpec.addRelationshipReference(relationship.getId());
                     continue;
                 }
 
@@ -183,7 +187,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 }
 
                 String uri = partName + "?ContentType=" + contentType;
-                Reference reference = newReference(signatureInfo, uri, null, null, null, null);
+                Reference reference = newReference(signatureInfo, uri, null, null);
                 manifestReferences.add(reference);
             }
 
@@ -193,7 +197,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 transforms.add(newTransform(signatureInfo, CanonicalizationMethod.INCLUSIVE));
                 String uri = normalizePartName(pp.getPartName().getURI(), baseUri)
                     + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
-                Reference reference = newReference(signatureInfo, uri, transforms, null, null, null);
+                Reference reference = newReference(signatureInfo, uri, transforms, null);
                 manifestReferences.add(reference);
             }
         }
@@ -292,7 +296,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         String objectId = "idOfficeObject";
         objects.add(sigFac.newXMLObject(objectContent, objectId, null, null));
 
-        Reference reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+        Reference reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object");
         references.add(reference);
 
         Base64.Encoder enc = Base64.getEncoder();
@@ -302,7 +306,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             DOMStructure tn = new DOMStructure(document.createTextNode(enc.encodeToString(imageValid)));
             objects.add(sigFac.newXMLObject(Collections.singletonList(tn), objectId, null, null));
 
-            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object");
             references.add(reference);
         }
 
@@ -312,7 +316,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             DOMStructure tn = new DOMStructure(document.createTextNode(enc.encodeToString(imageInvalid)));
             objects.add(sigFac.newXMLObject(Collections.singletonList(tn), objectId, null, null));
 
-            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object");
             references.add(reference);
         }
     }
@@ -336,7 +340,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     /**
      * Office 2010 list of signed types (extensions).
      */
-    private static final Set<String> signed = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    private static final Set<String> signed = Stream.of(
             "activeXControlBinary", "aFChunk", "attachedTemplate", "attachedToolbars", "audio", "calcChain", "chart", "chartColorStyle",
             "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "commentAuthors", "comments", "connections", "connectorXml",
             "control", "ctrlProp", "customData", "customData", "customProperty", "customXml", "diagram", "diagramColors",
@@ -357,5 +361,5 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             "volatileDependencies", "webSettings", "wordVbaData", "worksheet", "wsSortMap", "xlBinaryIndex",
             "xlExternalLinkPath/xlAlternateStartup", "xlExternalLinkPath/xlLibrary", "xlExternalLinkPath/xlPathMissing",
             "xlExternalLinkPath/xlStartup", "xlIntlMacrosheet", "xlMacrosheet", "xmlMaps"
-    )));
+    ).collect(Collectors.toSet());
 }

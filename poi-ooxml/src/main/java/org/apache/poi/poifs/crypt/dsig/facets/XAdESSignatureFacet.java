@@ -242,7 +242,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
     private Reference addXadesReference(SignatureInfo signatureInfo) throws XMLSignatureException {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<Transform> transforms = singletonList(newTransform(signatureInfo, CanonicalizationMethod.INCLUSIVE));
-        return newReference(signatureInfo, "#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE, null, null);
+        return newReference(signatureInfo, "#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE);
     }
 
     /**

@@ -52,9 +52,7 @@ final class SignatureFacetHelper {
             SignatureInfo signatureInfo
             , String uri
             , List<Transform> transforms
-            , String type
-            , String id
-            , byte[] digestValue)
+            , String type)
             throws XMLSignatureException {
         // the references appear in the package signature or the package object
         // so we can use the default digest algorithm
@@ -68,8 +66,6 @@ final class SignatureFacetHelper {
             throw new XMLSignatureException("unknown digest method uri: "+digestMethodUri, e);
         }
 
-        return (digestValue == null)
-                ? sigFac.newReference(uri, digestMethod, transforms, type, id)
-                : sigFac.newReference(uri, digestMethod, transforms, type, id, digestValue);
+        return sigFac.newReference(uri, digestMethod, transforms, type, null);
     }
 }
