@@ -1852,6 +1852,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void addRun(XWPFRun r) {
         if (!runs.contains(r)) {
             runs.add(r);
+            iruns.add(r);
         }
     }
 

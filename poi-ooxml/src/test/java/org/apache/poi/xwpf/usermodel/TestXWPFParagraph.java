@@ -330,15 +330,23 @@ public final class TestXWPFParagraph {
 
             XWPFParagraph p = doc.getParagraphs().get(0);
             assertEquals(2, p.getRuns().size());
+            assertEquals(2, p.getIRuns().size());
 
             XWPFRun r = p.createRun();
             assertEquals(3, p.getRuns().size());
             assertEquals(2, p.getRuns().indexOf(r));
 
+            assertEquals(3, p.getIRuns().size());
+            assertEquals(2, p.getIRuns().indexOf(r));
+
             XWPFRun r2 = p.insertNewRun(1);
             assertEquals(4, p.getRuns().size());
             assertEquals(1, p.getRuns().indexOf(r2));
             assertEquals(3, p.getRuns().indexOf(r));
+
+            assertEquals(4, p.getIRuns().size());
+            assertEquals(1, p.getIRuns().indexOf(r2));
+            assertEquals(3, p.getIRuns().indexOf(r));
         }
     }
 
