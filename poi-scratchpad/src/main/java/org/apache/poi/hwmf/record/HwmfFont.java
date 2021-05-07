@@ -410,7 +410,8 @@ public class HwmfFont implements FontInfo, GenericRecord {
         pitchAndFamily = leis.readUByte();
 
         StringBuilder sb = new StringBuilder();
-        int readBytes = readString(leis, sb, 32, charSet.getCharset());
+        Charset actualCharset = (charSet == null) ? null : charSet.getCharset();
+        int readBytes = readString(leis, sb, 32, actualCharset);
         if (readBytes == -1) {
             throw new IOException("Font facename can't be determined.");
         }
