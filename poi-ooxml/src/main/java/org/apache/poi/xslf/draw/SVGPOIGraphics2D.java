@@ -40,6 +40,7 @@ public class SVGPOIGraphics2D extends SVGGraphics2D {
     public SVGPOIGraphics2D(Document document, boolean textAsShapes) {
         super(getCtx(document), textAsShapes);
         hints = getGeneratorContext().getGraphicContextDefaults().getRenderingHints();
+        ((SVGRenderExtension)getGeneratorContext().getExtensionHandler()).setSvgGraphics2D(this);
     }
 
     private static SVGGeneratorContext getCtx(Document document) {

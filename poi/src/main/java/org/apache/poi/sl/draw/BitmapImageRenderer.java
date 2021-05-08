@@ -52,6 +52,9 @@ public class BitmapImageRenderer implements ImageRenderer {
     private static final Logger LOG = LogManager.getLogger(BitmapImageRenderer.class);
 
     protected BufferedImage img;
+    private boolean doCache;
+    private byte[] cachedImage;
+    private String cachedContentType;
 
     @Override
     public boolean canRender(String contentType) {
@@ -68,11 +71,26 @@ public class BitmapImageRenderer implements ImageRenderer {
 
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {
-        img = readImage(data, contentType);
+        InputStream in = data;
+        if (doCache) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            IOUtils.copy(data, bos);
+            cachedImage = bos.toByteArray();
+            cachedContentType = contentType;
+            in = new ByteArrayInputStream(cachedImage);
+        }
+        img = readImage(in, contentType);
     }
 
     @Override
     public void loadImage(byte[] data, String contentType) throws IOException {
+        if (data == null) {
+            return;
+        }
+        if (doCache) {
+            cachedImage = data.clone();
+            cachedContentType = contentType;
+        }
         img = readImage(new ByteArrayInputStream(data), contentType);
     }
 
@@ -330,5 +348,24 @@ public class BitmapImageRenderer implements ImageRenderer {
     @Override
     public Rectangle2D getNativeBounds() {
         return new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight());
+    }
+
+    @Override
+    public void setCacheInput(boolean enable) {
+        doCache = enable;
+        if (!enable) {
+            cachedContentType = null;
+            cachedImage = null;
+        }
+    }
+
+    @Override
+    public byte[] getCachedImage() {
+        return cachedImage;
+    }
+
+    @Override
+    public String getCachedContentType() {
+        return cachedContentType;
     }
 }

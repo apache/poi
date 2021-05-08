@@ -272,6 +272,8 @@ public class DrawPaint {
                 return TRANSPARENT;
             }
 
+            Boolean cacheImage = (Boolean)graphics.getRenderingHint(Drawable.CACHE_IMAGE_SOURCE);
+            renderer.setCacheInput(cacheImage != null && cacheImage);
             renderer.loadImage(is, contentType);
 
             int alpha = fill.getAlpha();
@@ -336,7 +338,7 @@ public class DrawPaint {
             Shape s = (Shape)graphics.getRenderingHint(Drawable.GRADIENT_SHAPE);
 
             // TODO: check why original bitmaps scale/behave differently to vector based images
-            return new DrawTexturePaint(image, s, fill, flipX, flipY, renderer instanceof BitmapImageRenderer);
+            return new DrawTexturePaint(renderer, image, s, fill, flipX, flipY, renderer instanceof BitmapImageRenderer);
         } catch (IOException e) {
             LOG.atError().withThrowable(e).log("Can't load image data - using transparent color");
             return TRANSPARENT;

@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -46,6 +47,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTileFlipMode;
 
 @Internal
 public class XSLFTexturePaint implements PaintStyle.TexturePaint {
+    private final XSLFShape shape;
     private final CTBlipFillProperties blipFill;
     private final PackagePart parentPart;
     private final CTBlip blip;
@@ -53,7 +55,8 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     private final XSLFTheme theme;
     private final XSLFSheet sheet;
 
-    public XSLFTexturePaint(final CTBlipFillProperties blipFill, final PackagePart parentPart, CTSchemeColor phClr, final XSLFTheme theme, final XSLFSheet sheet) {
+    public XSLFTexturePaint(final XSLFShape shape, final CTBlipFillProperties blipFill, final PackagePart parentPart, CTSchemeColor phClr, final XSLFTheme theme, final XSLFSheet sheet) {
+        this.shape = shape;
         this.blipFill = blipFill;
         this.parentPart = parentPart;
         blip = blipFill.getBlip();
@@ -100,7 +103,7 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
 
     @Override
     public boolean isRotatedWithShape() {
-        return blipFill.isSetRotWithShape() && blipFill.getRotWithShape();
+        return !blipFill.isSetRotWithShape() || blipFill.getRotWithShape();
     }
 
     @Override
@@ -165,6 +168,10 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
         return colors;
     }
 
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
 
     private static Insets2D getRectVal(CTRelativeRect rect) {
         return rect == null ? null : new Insets2D(

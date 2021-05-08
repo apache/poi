@@ -425,7 +425,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     @SuppressWarnings("WeakerAccess")
     protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart, CTSchemeColor phClr, final XSLFTheme theme) {
-        return new XSLFTexturePaint(blipFill, parentPart, phClr, theme, _sheet);
+        return new XSLFTexturePaint(this, blipFill, parentPart, phClr, theme, _sheet);
     }
 
     @SuppressWarnings("WeakerAccess")

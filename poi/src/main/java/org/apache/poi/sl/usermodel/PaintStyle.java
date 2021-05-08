@@ -163,7 +163,7 @@ public interface PaintStyle {
         /**
          * The stretch specifies the edges of a fill rectangle.<p>
          *
-         * Each edge of the fill rectangle is defined by a perentage offset from the corresponding edge
+         * Each edge of the fill rectangle is defined by a percentage offset from the corresponding edge
          * of the picture's bounding box. A positive percentage specifies an inset and a negative percentage
          * specifies an outset.<p>
          *
@@ -183,5 +183,9 @@ public interface PaintStyle {
             return null;
         }
 
+        /**
+         * @return the shape this texture paint is applied to
+         */
+        Shape getShape();
     }
 }

@@ -34,8 +34,11 @@ import java.awt.image.ColorModel;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.Internal;
 
-/* package */ class DrawTexturePaint extends java.awt.TexturePaint {
+@Internal
+public class DrawTexturePaint extends java.awt.TexturePaint {
+    private final ImageRenderer imgRdr;
     private final PaintStyle.TexturePaint fill;
     private final Shape shape;
     private final double flipX, flipY;
@@ -44,9 +47,10 @@ import org.apache.poi.util.Dimension2DDouble;
     private static final Insets2D INSETS_EMPTY = new Insets2D(0,0,0,0);
 
 
-    DrawTexturePaint(BufferedImage txtr, Shape shape, PaintStyle.TexturePaint fill, double flipX, double flipY, boolean isBitmapSrc) {
+    DrawTexturePaint(ImageRenderer imgRdr, BufferedImage txtr, Shape shape, PaintStyle.TexturePaint fill, double flipX, double flipY, boolean isBitmapSrc) {
         // deactivate scaling/translation in super class, by specifying the dimension of the texture
         super(txtr, new Rectangle2D.Double(0,0,txtr.getWidth(),txtr.getHeight()));
+        this.imgRdr = imgRdr;
         this.fill = fill;
         this.shape = shape;
         this.flipX = flipX;
@@ -237,5 +241,17 @@ import org.apache.poi.util.Dimension2DDouble;
         xform.scale(scale.getWidth()/(isBitmapSrc ? flipX : 1.),scale.getHeight()/(isBitmapSrc ? flipY : 1.));
 
         return xform;
+    }
+
+    public ImageRenderer getImageRenderer() {
+        return imgRdr;
+    }
+
+    public PaintStyle.TexturePaint getFill() {
+        return fill;
+    }
+
+    public Shape getAwtShape() {
+        return shape;
     }
 }

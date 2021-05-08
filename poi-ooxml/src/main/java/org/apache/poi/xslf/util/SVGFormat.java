@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.draw.SVGPOIGraphics2D;
 import org.w3c.dom.DOMImplementation;
@@ -53,6 +54,7 @@ public class SVGFormat implements OutputFormat {
         Document document = domImpl.createDocument(svgNS, "svg", null);
         svgGenerator = new SVGPOIGraphics2D(document, textAsShapes);
         svgGenerator.setSVGCanvasSize(new Dimension((int)width, (int)height));
+        svgGenerator.setRenderingHint(Drawable.CACHE_IMAGE_SOURCE, true);
         return svgGenerator;
     }
 

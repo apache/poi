@@ -162,4 +162,23 @@ public interface ImageRenderer {
      * @param defaultCharset the default charset
      */
     default void setDefaultCharset(Charset defaultCharset) {}
+
+
+    /**
+     * Dis-/Enables caching of input data for later retrieval.
+     * Opposed to {@link #getImage()}, which returns a {@link BufferedImage}, the cached image can be later
+     * used to embedded the original, unmodified data
+     * @param enable dis-/enables caching - this is an optional operation. {@code false} removes already cached data
+     */
+    default void setCacheInput(boolean enable) {}
+
+    /**
+     * @return the cached image data
+     */
+    default byte[] getCachedImage() { return null; }
+
+    /**
+     * @return the cached content type
+     */
+    default String getCachedContentType() { return null; }
 }

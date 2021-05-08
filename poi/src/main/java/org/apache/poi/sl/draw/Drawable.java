@@ -50,6 +50,7 @@ public interface Drawable {
             case 13: return "BUFFERED_IMAGE";
             case 14: return "DEFAULT_CHARSET";
             case 15: return "EMF_FORCE_HEADER_BOUNDS";
+            case 16: return "CACHE_IMAGE_SOURCE";
             default: return "UNKNOWN_ID "+intKey();
             }
         }
@@ -165,6 +166,13 @@ public interface Drawable {
      * In most cases it's recommended to leave the default value.
      */
     DrawableHint EMF_FORCE_HEADER_BOUNDS = new DrawableHint(15);
+
+    /**
+     * A boolean value to instruct the bitmap image renderer to keep the original image bytes.
+     * Defaults to {@code false} if unset.
+     */
+    DrawableHint CACHE_IMAGE_SOURCE = new DrawableHint(16);
+
 
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
