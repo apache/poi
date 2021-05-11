@@ -1051,7 +1051,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since POI 4.0.0
      */
     public void setExternalId(String id) {
-        getCTChartSpace().addNewExternalData().setId(id);
         CTChartSpace ctChartSpace = getCTChartSpace();
         CTExternalData externalData = ctChartSpace.isSetExternalData()
                 ? ctChartSpace.getExternalData()
