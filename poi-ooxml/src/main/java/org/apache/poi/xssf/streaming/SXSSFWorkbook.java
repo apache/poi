@@ -694,15 +694,11 @@ public class SXSSFWorkbook implements Workbook {
         return createAndRegisterSXSSFSheet(_wb.createSheet());
     }
 
-    SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet)
-    {
+    SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet) {
         final SXSSFSheet sxSheet;
-        try
-        {
-            sxSheet=new SXSSFSheet(this,xSheet);
-        }
-        catch (IOException ioe)
-        {
+        try {
+            sxSheet = new SXSSFSheet(this,xSheet);
+        } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
         registerSheetMapping(sxSheet,xSheet);

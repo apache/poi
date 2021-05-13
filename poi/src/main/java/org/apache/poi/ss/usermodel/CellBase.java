@@ -22,7 +22,6 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.Removal;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -128,7 +127,8 @@ public abstract class CellBase implements Cell {
     /**
      * Implementation-specific setting the formula. Formula is not null.
      * Shall not change the value.
-     * @param formula
+	 *
+     * @param formula The text of the formula to set.
      */
     protected abstract void setCellFormulaImpl(String formula);
 

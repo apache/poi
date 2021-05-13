@@ -66,16 +66,16 @@ public class DateUtil {
     /**
      * The following patterns are used in {@link #isADateFormat(int, String)}
      */
-    private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
-    private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
+    private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$-.*?]");
+    private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
     // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
     private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
-    private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
+    private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)]");
 
     // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
-    private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum(1|2|3)\\]");
+    private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum([123])]");
 
     private static final DateTimeFormatter dateTimeFormats = new DateTimeFormatterBuilder()
             .appendPattern("[dd MMM[ yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
@@ -455,7 +455,7 @@ public class DateUtil {
             // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
             dayAdjust = 0;
         }
-        calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
+        calendar.set(startYear, Calendar.JANUARY, wholeDays + dayAdjust, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, millisecondsInDay);
         if (calendar.get(Calendar.MILLISECOND) == 0) {
             calendar.clear(Calendar.MILLISECOND);
@@ -544,9 +544,9 @@ public class DateUtil {
     // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
-    private static ThreadLocal<Integer> lastFormatIndex = ThreadLocal.withInitial(() -> -1);
-    private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
-    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> lastFormatIndex = ThreadLocal.withInitial(() -> -1);
+    private static final ThreadLocal<String> lastFormatString = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
 
     private static boolean isCached(String formatString, int formatIndex) {
         return formatIndex == lastFormatIndex.get()
@@ -735,7 +735,7 @@ public class DateUtil {
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values
      *  we infer it is a date if it is formatted as such.
-     * @param cell
+     * @param cell The cell to look at
      * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
@@ -750,7 +750,7 @@ public class DateUtil {
      *  we infer it is a date if it is formatted as such.
      *  Format is determined from applicable conditional formatting, if
      *  any, or cell style.
-     * @param cell
+	 * @param cell The cell to look at
      * @param cfEvaluator if available, or null
      * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
@@ -850,7 +850,7 @@ public class DateUtil {
      *
      * @return    days  number of days in years prior to yr.
      * @param     yr    a year (1900 < yr < 4000)
-     * @param use1904windowing
+	 * @param use1904windowing Should 1900 or 1904 date windowing be used?
      * @exception IllegalArgumentException if year is outside of range.
      */
 
