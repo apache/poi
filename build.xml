@@ -1059,14 +1059,22 @@ under the License.
                 </classpath>
             </javac>
 
-            <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
+			<local name="module-name"/>
+			<loadresource property="module-name">
+				<string>@{module}</string>
+				<filterchain>
+					<replacestring from="poi-" to=""/>
+				</filterchain>
+			</loadresource>
+
+			<!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
             <javac release="9"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="${basedir}/@{module}/src/main/java9"
                    includeantruntime="false"
                    fork="true"
                    unless:true="${isJava8}">
-                <compilerarg line="--patch-module org.apache.poi.@{module}=@{classes}"/>
+                <compilerarg line="--patch-module org.apache.poi.${module-name}=@{classes}"/>
                 <modulepath>
                     <lib/>
                 </modulepath>
@@ -1125,7 +1133,7 @@ under the License.
                    includeantruntime="false"
                    fork="true"
                    unless:true="${isJava8}" unless:blank="@{test}">
-                <compilerarg line="--patch-module org.apache.poi.@{module}=${merged}"/>
+                <compilerarg line="--patch-module org.apache.poi.${module-name}=${merged}"/>
                 <modulepath>
                     <lib/>
                 </modulepath>
@@ -2185,6 +2193,14 @@ under the License.
 
             <mkdir dir="@{src}/META-INF/versions/9"/>
 
+			<local name="module-name"/>
+			<loadresource property="module-name">
+				<string>@{module}</string>
+				<filterchain>
+					<replacestring from="poi-" to=""/>
+				</filterchain>
+			</loadresource>
+
             <javac release="9"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="@{src}/META-INF/versions/9"
@@ -2192,7 +2208,7 @@ under the License.
                    fork="true"
                    modulepath="${main.lib}"
                    unless:true="${isJava8}">
-                <compilerarg line="--patch-module org.apache.poi.@{module}=@{src}"/>
+                <compilerarg line="--patch-module org.apache.poi.${module-name}=@{src}"/>
                 <elements/>
             </javac>
 
