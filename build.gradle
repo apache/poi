@@ -81,7 +81,7 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
  */
 allprojects {
 //    apply plugin: 'eclipse'
-    apply plugin: 'idea'
+	apply plugin: 'idea'
 }
 
 /**
@@ -107,6 +107,12 @@ subprojects {
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.0.0'
         batikVersion = '1.14'
+
+		JAVA9_SRC = 'src/main/java9'
+		JAVA9_OUT = "${buildDir}/classes/java9/main/"
+		TEST9_SRC = 'src/test/java9'
+		TEST9_OUT = "${buildDir}/classes/java9/test/"
+		VERSIONS9 = 'META-INF/versions/9'
     }
 
     tasks.withType(JavaCompile) {

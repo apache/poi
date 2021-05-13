@@ -15,16 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'java-library'
-}
-
-final String JAVA9_SRC = 'src/main/java9'
-final String JAVA9_OUT = "${buildDir}/classes/java9/main/"
-final String VERSIONS9 = 'META-INF/versions/9'
-
 sourceSets {
     main {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
