@@ -3499,6 +3499,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
+    public void testBug63339() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0, CellType.FORMULA);
+            cell.setCellFormula("SUM(B1:E1)");
+
+            assertNotNull(((XSSFCell) cell).getCTCell().getF(),
+                    "Element 'f' should contain the formula now");
+
+            // this will actually set the "cached" value of the Formula
+            // you will need to use setCellType() to change the cell to
+            // a different type of value
+            cell.setCellValue(34.5);
+
+            assertNotNull(((XSSFCell) cell).getCTCell().getF(),
+                    "Element 'f' should not be set now");
+            assertEquals("34.5", ((XSSFCell) cell).getCTCell().getV(),
+                    "Element 'v' should contain the string now");
+
+            try (Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(0);
+
+                assertNotNull(((XSSFCell) cellBack).getCTCell().getF(),
+                        "Element 'f' should not be set now");
+                assertEquals("34.5", ((XSSFCell) cellBack).getCTCell().getV(),
+                        "Element 'v' should contain the string now");
+            }
+        }
+    }
+
+    @Test
     void testBug64508() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64508.xlsx")) {
             int activeSheet = wb.getActiveSheetIndex();

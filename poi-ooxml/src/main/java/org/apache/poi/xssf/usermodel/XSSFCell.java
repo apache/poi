@@ -138,9 +138,9 @@ public final class XSSFCell extends CellBase {
     /**
      * Copy cell value, formula and style, from srcCell per cell copy policy
      * If srcCell is null, clears the cell value and cell style per cell copy policy
-     * 
+     *
      * This does not shift references in formulas. Use {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter} to shift references in formulas.
-     * 
+     *
      * @param srcCell The cell to take value, formula and style from
      * @param policy The policy for copying the information, see {@link CellCopyPolicy}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
@@ -190,12 +190,12 @@ public final class XSSFCell extends CellBase {
                 setBlank();
             }
         }
-        
+
         // Copy CellStyle
         if (policy.isCopyCellStyle()) {
             setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
         }
-        
+
         final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
 
         if (policy.isMergeHyperlink()) {
@@ -444,7 +444,7 @@ public final class XSSFCell extends CellBase {
         // existing behavior - create a new XSSFEvaluationWorkbook for every call
         return getCellFormula(null);
     }
-    
+
     /**
      * package/hierarchy use only - reuse an existing evaluation workbook if available for caching
      *
@@ -513,7 +513,7 @@ public final class XSSFCell extends CellBase {
      * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
      * </p>
      * <p>
-     * Note, if there are any shared formulas, his will invalidate any 
+     * Note, if there are any shared formulas, his will invalidate any
      * {@link FormulaEvaluator} instances based on this workbook.
      * </p>
      *
@@ -539,11 +539,7 @@ public final class XSSFCell extends CellBase {
     private void setFormula(String formula, FormulaType formulaType) {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formulaType == FormulaType.ARRAY && formula == null) {
-            wb.onDeleteFormula(this);
-            if (_cell.isSetF()) {
-                _row.getSheet().onDeleteFormula(this, null);
-                _cell.unsetF();
-            }
+            removeFormulaImpl();
             return;
         }
 
@@ -630,7 +626,7 @@ public final class XSSFCell extends CellBase {
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, java.util.Map)}</p>
-     * 
+     *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different Workbook)
@@ -649,7 +645,7 @@ public final class XSSFCell extends CellBase {
             _cell.setS(idx);
         }
     }
-    
+
     /**
      * POI currently supports these formula types:
      * <ul>
@@ -666,7 +662,7 @@ public final class XSSFCell extends CellBase {
         }
         return false;
     }
-    
+
     /**
      * Return the cell type.  Tables in an array formula return
      * {@link CellType#FORMULA} for all cells, even though the formula is only defined
@@ -902,7 +898,7 @@ public final class XSSFCell extends CellBase {
     protected void setCellTypeImpl(CellType cellType) {
         setCellType(cellType, null);
     }
-    
+
     /**
      * Needed by bug #62834, which points out getCellFormula() expects an evaluation context or creates a new one,
      * so if there is one in use, it needs to be carried on through.
@@ -1125,10 +1121,10 @@ public final class XSSFCell extends CellBase {
     public CTCell getCTCell(){
         return _cell;
     }
-    
+
     /**
      * Set a new internal xml bean. This is only for internal use, do not call this from outside!
-     * 
+     *
      * This is necessary in some rare cases to work around XMLBeans specialties.
      */
     @Internal
@@ -1168,7 +1164,7 @@ public final class XSSFCell extends CellBase {
                 // fall-through
             case BLANK:
                 return false;
-                
+
             default:
                 throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
         }
@@ -1212,18 +1208,18 @@ public final class XSSFCell extends CellBase {
                 }
                 throw new IllegalStateException("Unexpected boolean cached formula value '"
                     + textValue + "'.");
-                
+
             case STRING:
                 // fall-through
             case NUMERIC:
                 // fall-through
             case ERROR:
                 return textValue;
-                
+
             default:
                 throw new IllegalStateException("Unexpected formula result type (" + cellType + ")");
         }
-        
+
     }
 
     @Override
@@ -1250,14 +1246,14 @@ public final class XSSFCell extends CellBase {
 
         CalculationChain calcChain = getSheet().getWorkbook().getCalculationChain();
         int sheetId = Math.toIntExact(getSheet().sheet.getSheetId());
-    
+
         //remove the reference in the calculation chain
         if(calcChain != null) calcChain.removeItem(sheetId, getReference());
-    
+
         CTCell ctCell = getCTCell();
         String r = new CellReference(getRowIndex(), getColumnIndex()).formatAsString();
         ctCell.setR(r);
     }
-        
+
 }
 
