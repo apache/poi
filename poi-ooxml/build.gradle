@@ -62,7 +62,7 @@ dependencies {
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
-    api 'org.apache.santuario:xmlsec:2.2.1'
+    api 'org.apache.santuario:xmlsec:2.2.2'
     api "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
     api 'com.github.virtuald:curvesapi:1.06'
     implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
