@@ -569,7 +569,7 @@ under the License.
     <target name="help" description="Prints Apache POI's Ant usage help">
       <echo>
   This is POI ${version.id}
-  Java Version ${ant.java.version}/${java.version}
+  Java Version ${ant.java.version}/${java.version}, isJava8: ${isJava8}
   Timestamp ${DSTAMP}
   The main targets of interest are:
     - clean       Erase all build work products (ie. everything in the build directory)
@@ -612,7 +612,7 @@ under the License.
 
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
-        <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}" />
+        <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}, isJava8: ${isJava8}" />
 
         <loadresource property="RELEASE_TAG">
             <string>REL_${version.id}</string>
@@ -1082,6 +1082,8 @@ under the License.
 
             <mkdir dir="build/dist/maven/${maven-name}"/>
 
+			<echo message="Building jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
+
             <!-- create classes jar -->
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
                 <fileset dir="@{classes}"/>
@@ -1138,6 +1140,8 @@ under the License.
                     <lib/>
                 </modulepath>
             </javac>
+
+			<echo message="Building test-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
 
             <!-- create test classes jar - using the module-info of the tests -->
             <jar destfile="build/dist/maven/${maven-name}-tests/${maven-name}-@{version}-tests.jar" unless:blank="@{test}">
@@ -2200,6 +2204,8 @@ under the License.
 					<replacestring from="poi-" to=""/>
 				</filterchain>
 			</loadresource>
+
+			<echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
 
             <javac release="9"
                    srcdir="${basedir}/@{module}/src/main/java9"
