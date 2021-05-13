@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -159,6 +160,56 @@ final class TestSheetUtil {
             Cell cell = row.createCell(0);
 
             cell.setCellValue("sometext");
+
+            assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+        }
+    }
+
+    @Test
+    void testGetColumnWidthBlankCell() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("sheet");
+            Row row = sheet.createRow(0);
+            sheet.createRow(1);
+            sheet.createRow(2);
+            Cell cell = row.createCell(0);
+
+            cell.setCellValue((String)null);
+
+            assertEquals(-1, SheetUtil.getColumnWidth(sheet, 0, true), "Having some width for rows with actual cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+        }
+    }
+
+    @Test
+    void testGetColumnWidthemptyString() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("sheet");
+            Row row = sheet.createRow(0);
+            sheet.createRow(1);
+            sheet.createRow(2);
+            Cell cell = row.createCell(0);
+
+            cell.setCellValue("");
+
+            assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+        }
+    }
+
+    @Test
+    void testGetColumnWidthNullString() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("sheet");
+            Row row = sheet.createRow(0);
+            sheet.createRow(1);
+            sheet.createRow(2);
+            Cell cell = row.createCell(0);
+
+            cell.setCellValue((String)null);
+			//noinspection deprecation
+			cell.setCellType(CellType.STRING);
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
             assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
