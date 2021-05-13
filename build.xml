@@ -979,7 +979,7 @@ under the License.
                fork="true"
                modulepath="lib/ooxml"
                unless:true="${isJava8}">
-            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}"/>
+            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}:${ooxml-schema.output.gen-classes.dir}"/>
         </javac>
 
         <mkdir dir="build/dist/maven/poi-ooxml-full"/>
@@ -1275,7 +1275,7 @@ under the License.
                fork="true"
                modulepath="${basedir}/lib/main-tests"
                unless:true="${isJava8}">
-            <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}"/>
+            <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}:${ooxml.lite.output.dir}"/>
         </javac>
 
         <jar destfile="${ooxml.lite.agent}">
