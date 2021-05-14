@@ -18,12 +18,12 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -336,7 +336,7 @@ public class Ole10Native {
     /**
      * Returns the size of the embedded file. If the size is 0 (zero), no data
      * has been embedded. To be sure, that no data has been embedded, check
-     * whether {@link #getDataBuffer()} returns <code>null</code>.
+     * whether {@link #getDataBuffer()} returns {@code null}.
      *
      * @return the dataSize
      */
@@ -346,10 +346,10 @@ public class Ole10Native {
 
     /**
      * Returns the buffer containing the embedded file's data, or
-     * <code>null</code> if no data was embedded. Note that an embedding may
+     * {@code null} if no data was embedded. Note that an embedding may
      * provide information about the data, but the actual data is not included.
      * (So label, filename etc. are available, but this method returns
-     * <code>null</code>.)
+     * {@code null}.)
      *
      * @return the dataBuffer
      */
@@ -372,7 +372,7 @@ public class Ole10Native {
 
         switch (mode) {
             case parsed: {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 try (LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
                     // total size, will be determined later ..
 

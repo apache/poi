@@ -19,14 +19,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -68,7 +68,7 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
     private static final QName[] OLE_OBJ = { new QName(PML_NS, "oleObj") };
     private static final QName[] CT_PICTURE = { new QName(PML_NS, "pic") };
 
-    private CTOleObject _oleObject;
+    private final CTOleObject _oleObject;
     private XSLFPictureData _data;
 
     /*package*/ XSLFObjectShape(CTGraphicalObjectFrame shape, XSLFSheet sheet){
@@ -193,56 +193,45 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         _oleObject.setProgId(md.getProgId());
         _oleObject.setName(md.getObjectName());
 
-        return new XSLFObjectOutputStream(rp.getDocumentPart().getPackagePart(),md);
+        return new ByteArrayOutputStream() {
+            @Override
+            public void close() throws IOException {
+                addUpdatedData(rp.getDocumentPart().getPackagePart(),md,this);
+            }
+        };
     }
 
-    private static class XSLFObjectOutputStream extends ByteArrayOutputStream {
-        final PackagePart objectPart;
-        final ObjectMetaData metaData;
-        private XSLFObjectOutputStream(final PackagePart objectPart, final ObjectMetaData metaData) {
-            super(100000);
-            this.objectPart = objectPart;
-            this.metaData = metaData;
-        }
+    private void addUpdatedData(PackagePart objectPart, ObjectMetaData metaData, ByteArrayOutputStream baos) throws IOException {
+        objectPart.clear();
+        try (InputStream bis = FileMagic.prepareToCheckMagic(baos.toInputStream());
+             final OutputStream os = objectPart.getOutputStream()) {
+            final FileMagic fm = FileMagic.valueOf(bis);
 
-        public void close() throws IOException {
-            objectPart.clear();
-            try (final OutputStream os = objectPart.getOutputStream()) {
-                final ByteArrayInputStream bis = new ByteArrayInputStream(this.buf, 0, size());
-                final FileMagic fm = FileMagic.valueOf(this.buf);
-
-                if (fm == FileMagic.OLE2) {
-                    try (final POIFSFileSystem poifs = new POIFSFileSystem(bis)) {
-                        poifs.getRoot().setStorageClsid(metaData.getClassID());
-                        poifs.writeFilesystem(os);
+            if (fm == FileMagic.OLE2) {
+                try (final POIFSFileSystem poifs = new POIFSFileSystem(bis)) {
+                    poifs.getRoot().setStorageClsid(metaData.getClassID());
+                    poifs.writeFilesystem(os);
+                }
+            } else if (metaData.getOleEntry() == null) {
+                // OLE Name hasn't been specified, pass the input through
+                baos.writeTo(os);
+            } else {
+                try (final POIFSFileSystem poifs = new POIFSFileSystem()) {
+                    final ClassID clsId = metaData.getClassID();
+                    if (clsId != null) {
+                        poifs.getRoot().setStorageClsid(clsId);
                     }
-                } else if (metaData.getOleEntry() == null) {
-                    // OLE Name hasn't been specified, pass the input through
-                    os.write(this.buf, 0, size());
-                } else {
-                    try (final POIFSFileSystem poifs = new POIFSFileSystem()) {
-                        final ClassID clsId = metaData.getClassID();
-                        if (clsId != null) {
-                            poifs.getRoot().setStorageClsid(clsId);
-                        }
-                        poifs.createDocument(bis, metaData.getOleEntry());
-
-                        Ole10Native.createOleMarkerEntry(poifs);
-
-                        poifs.writeFilesystem(os);
-                    }
+                    poifs.createDocument(bis, metaData.getOleEntry());
+                    Ole10Native.createOleMarkerEntry(poifs);
+                    poifs.writeFilesystem(os);
                 }
             }
         }
     }
 
-
     /**
-     *
-     *
      * @param shapeId 1-based shapeId
      * @param picRel relationship to the picture data in the ooxml package
-     * @return
      */
     static CTGraphicalObjectFrame prototype(int shapeId, String picRel){
         CTGraphicalObjectFrame frame = CTGraphicalObjectFrame.Factory.newInstance();

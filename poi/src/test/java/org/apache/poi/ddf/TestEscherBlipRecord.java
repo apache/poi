@@ -17,6 +17,7 @@
 
 package org.apache.poi.ddf;
 
+import static org.apache.poi.ddf.EscherRecordTypes.BLIP_PICT;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -100,7 +101,7 @@ final class TestEscherBlipRecord {
 
         EscherMetafileBlip blip1 = (EscherMetafileBlip)bse1.getBlipRecord();
         assertEquals(0x5430, blip1.getOptions());
-        assertEquals(EscherMetafileBlip.RECORD_ID_PICT, blip1.getRecordId());
+        assertEquals(BLIP_PICT.typeID, blip1.getRecordId());
         assertArrayEquals(new byte[]{
             0x57, 0x32, 0x7B, (byte)0x91, 0x23, 0x5D, (byte)0xDB, 0x36,
             0x7A, (byte)0xDB, (byte)0xFF, 0x17, (byte)0xFE, (byte)0xF3, (byte)0xA7, 0x05
@@ -151,11 +152,13 @@ final class TestEscherBlipRecord {
         byte[] data = _samples.readFile("47143.dat");
         EscherBSERecord bse = new EscherBSERecord();
         bse.fillFields(data, 0, new DefaultEscherRecordFactory());
-        bse.toString(); //assert that toString() works
+        //assert that toString() works
+        assertNotNull(bse.toString());
         assertTrue(bse.getBlipRecord() instanceof EscherMetafileBlip);
 
         EscherMetafileBlip blip = (EscherMetafileBlip)bse.getBlipRecord();
-        blip.toString(); //assert that toString() works
+        //assert that toString() works
+        assertNotNull(blip.toString());
         byte[] remaining = blip.getRemainingData();
         assertNotNull(remaining);
 

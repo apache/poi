@@ -17,13 +17,15 @@
 
 package org.apache.poi.hslf.blip;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -36,8 +38,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
-import static org.apache.logging.log4j.util.Unbox.box;
-
 /**
  * Represents Macintosh PICT picture data.
  */
@@ -46,7 +46,7 @@ public final class PICT extends Metafile {
 
     /**
      * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
-     *             {@link PICT}. This API led to detached {@link PICT} instances (See Bugzilla
+     *             PICT. This API led to detached PICT instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
     @Deprecated
@@ -72,7 +72,7 @@ public final class PICT extends Metafile {
         byte[] rawdata = getRawData();
         try {
             byte[] macheader = new byte[512];
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             out.write(macheader);
             int pos = CHECKSUM_SIZE*getUIDInstanceCount();
             byte[] pict = read(rawdata, pos);
@@ -93,7 +93,7 @@ public final class PICT extends Metafile {
             throw new EOFException();
         }
         byte[] chunk = new byte[4096];
-        ByteArrayOutputStream out = new ByteArrayOutputStream(header.getWmfSize());
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(header.getWmfSize());
         try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
             int count;
             while ((count = inflater.read(chunk)) >= 0) {
@@ -163,6 +163,7 @@ public final class PICT extends Metafile {
      *
      * @return PICT signature ({@code 0x5420} or {@code 0x5430})
      */
+    @Override
     public int getSignature(){
         return (getUIDInstanceCount() == 1 ? 0x5420 : 0x5430);
     }
@@ -170,6 +171,7 @@ public final class PICT extends Metafile {
     /**
      * Sets the PICT signature - either {@code 0x5420} or {@code 0x5430}
      */
+    @Override
     public void setSignature(int signature) {
         switch (signature) {
             case 0x5420:

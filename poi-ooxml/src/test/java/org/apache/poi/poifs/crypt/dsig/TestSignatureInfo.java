@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -77,6 +76,7 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -160,6 +160,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -210,36 +212,36 @@ class TestSignatureInfo {
     @Test
     void bug61182() throws Exception {
         final String pfxInput =
-                "H4sIAAAAAAAAAFXTfzzTeRwH8P2uGRmG6hKSmJh9a2HsuPy60VnHCEU6v86sieZH2Jr2qFl+s+ZHJ5tfUcfKb4uho/OjiFq1qTv5ceFyp0PqEK"+
-                        "fH4+66++Pz+Dwer9fj8f7r9cRzEd4QMBTPRWxDIM14ZN47NfAWsJgL34Bx4at4Lvwdngvd9b8KqgbjQpGbMXzzgRGovytVFTBEzIXU47kQCd4U"+
-                        "ofJPvHl8JwyTjRS55hbKoor3UJLDE1i/PcPKCBAIDATjQlKiK67XjVYdcnkZgD2txroiAUb8W9dtn57DvTsbM+3wIsdocXDEN7TdPKgaSl+tU1"+
-                        "xq9oqiB5yMaZCPho8uUEbFU9U6u3N7lEMLTJGeA0RfX+5FMRrpXPFrbrlJ8uNUCE2H247P28Ckyfqlsy32yeKg/HTbH5JpqUDNw2B32+SaiRw7"+
-                        "ofRMePUpaAoK7KYgmd5ZIc0rLLYjJBfOWCb28xlrGhbpJvdToFdqt5PXVjEz5YOJ6g7W0fskuKW9/iZP0yLEVpR9XkkHmb6tfpcE8YwCdWNCan"+
-                        "LvAsco25JdF1j2/FLAMVU79HdOex07main90dy40511OZtTGZ+TdVd3lKZ7D3clEg9hLESHwSNnZ6239X4yLM4xYSElQ/hqSbwdmiozYG9PhF2"+
-                        "Zf0XaZnxzTK0Iot+rJ3kYoxWTLE8DR9leV62Ywbtlg4mapYOxb3lT7fQ1x4EQ44flh2oFWSPLR8LMbsc6jzJsV6OZ3TrODjHEdw9W+8OD32vd8"+
-                        "XQ6iCaIHcrSOn6qS0TKLr786234eeSAhvAQbEsVn7vrvc/487Be/O2e/+5Y5zRq2zAtz6pfcNyraJNDqMW1inNkgJ3t3VESbZ3pNzyl3KHILs0"+
-                        "51dY6msDYSlWhw40TglXxj9rw95O6gFWIuN012W/vhS50jpKXcao4gc1aLaXtJXxirbRkpZ/0e7a0pD6TDa7+GxEdEEML3VGo9udD5YUKhU3y7"+
-                        "SzWAgN6WIEIglq7LilvCjqIVLIfg8CvVGL9f5iSsCDf5hef4vMxbyvcjINuy06gZu+iPYOWNxjfrwKGYzoqqotK2aywgYVrPMh0JovfkDuN95n"+
-                        "MdVlYHbN1Mnn4TxAwuv+u3AkBlDZvRUUCwoDMUGxeMNPhTaAgWl60xhhBgCBaEMgAACReMAav7n3x598IDYJ9GxGXRAwaPOT/kfO/1AgPqLQkp"+
-                        "MiIVaHthnUS4v2y32e2BjdMPyIImUTBW3cV3R5tjVQm0MOm+D2C5+bBW9vHLjLR4lun4toQiY3Ls/v4bES/OJ4EmpZk5xhL9i5ClofYZNEsxFn"+
-                        "An/q821Tg+Cq9Er4XYGQe8ogjjLJ2b7dUsJ3auFQFNUJF7Ke7yUL2EeYYxl6vz5l4q5u8704mRbFts1E1eWMp6WIy91GPrsVlRGvtuNERfrjfE"+
-                        "YtzUI3Flcv65zJUbUBEzUnTS0fEYso2XyToAl8kb251mUY2o2lJzv5dp/1htmcjeeP2MjxC+3S45ljx7jd52Pv9XAat+ryiauFOF7YgztkoWWD"+
-                        "h62tplPH1bzDV+d0NLdaE5AfVJ09HuUYTFS+iggtvT5Euyk+unj4N2XvzW91n+GNjtgWfKOHmkinUPvYRh70Jv+wlPJrVaT8mL7GxJLqDC9jbv"+
-                        "Gznoiae6es+wQejnk3XjU366MrK/zXxngBYj9J6NnXc9mMiTFLX8WqQ8iTelTAFs2NJzPoDzrBUz4JFIEOa6Dja6dULc68g1jFDTeEHZyra7RZ"+
-                        "2ElqGDEqcNRo3SNX6feMy9EF1GOyZK0Sa87KwjKw8aM68dpsIYjfLcTXaZ6atg0BKfMnl6axeUGEaIFSP7rzj9wjzumRbG3jgUVp2lX5AK/tsO"+
-                        "7R4TQX/9/H6RiN34c9KldmPZZGANXzzTajZS9mR2OSvlJ+F4AgSko4htrMAKFTBu51/5SWNsO1vlRaaG48ZRJ+8PzuHQMdvS36gNpRPi7jhF1S"+
-                        "H3B2ycI4y0VURv6SrqJNUY/X645ZFJQ+eBO+ptG7o8axf1dcqh2beiQk+GRTeZ37LVeUlaeo9vl1/+8tyBfyT2v5lFC5E19WdKIyCuZe7r99Px"+
-                        "D/Od4Qj0TA92+DQnbCQTCMy/wwse9O4gsEebkkpPIP5GBV3Q0YBsj75XE0uSFQ1tCZSW8bNa9MUJZ/nPBfExohHlgGAAA=";
+            "H4sIAAAAAAAAAFXTfzzTeRwH8P2uGRmG6hKSmJh9a2HsuPy60VnHCEU6v86sieZH2Jr2qFl+s+ZHJ5tfUcfKb4uho/OjiFq1qTv5ceFyp0PqEK"+
+            "fH4+66++Pz+Dwer9fj8f7r9cRzEd4QMBTPRWxDIM14ZN47NfAWsJgL34Bx4at4Lvwdngvd9b8KqgbjQpGbMXzzgRGovytVFTBEzIXU47kQCd4U"+
+            "ofJPvHl8JwyTjRS55hbKoor3UJLDE1i/PcPKCBAIDATjQlKiK67XjVYdcnkZgD2txroiAUb8W9dtn57DvTsbM+3wIsdocXDEN7TdPKgaSl+tU1"+
+            "xq9oqiB5yMaZCPho8uUEbFU9U6u3N7lEMLTJGeA0RfX+5FMRrpXPFrbrlJ8uNUCE2H247P28Ckyfqlsy32yeKg/HTbH5JpqUDNw2B32+SaiRw7"+
+            "ofRMePUpaAoK7KYgmd5ZIc0rLLYjJBfOWCb28xlrGhbpJvdToFdqt5PXVjEz5YOJ6g7W0fskuKW9/iZP0yLEVpR9XkkHmb6tfpcE8YwCdWNCan"+
+            "LvAsco25JdF1j2/FLAMVU79HdOex07main90dy40511OZtTGZ+TdVd3lKZ7D3clEg9hLESHwSNnZ6239X4yLM4xYSElQ/hqSbwdmiozYG9PhF2"+
+            "Zf0XaZnxzTK0Iot+rJ3kYoxWTLE8DR9leV62Ywbtlg4mapYOxb3lT7fQ1x4EQ44flh2oFWSPLR8LMbsc6jzJsV6OZ3TrODjHEdw9W+8OD32vd8"+
+            "XQ6iCaIHcrSOn6qS0TKLr786234eeSAhvAQbEsVn7vrvc/487Be/O2e/+5Y5zRq2zAtz6pfcNyraJNDqMW1inNkgJ3t3VESbZ3pNzyl3KHILs0"+
+            "51dY6msDYSlWhw40TglXxj9rw95O6gFWIuN012W/vhS50jpKXcao4gc1aLaXtJXxirbRkpZ/0e7a0pD6TDa7+GxEdEEML3VGo9udD5YUKhU3y7"+
+            "SzWAgN6WIEIglq7LilvCjqIVLIfg8CvVGL9f5iSsCDf5hef4vMxbyvcjINuy06gZu+iPYOWNxjfrwKGYzoqqotK2aywgYVrPMh0JovfkDuN95n"+
+            "MdVlYHbN1Mnn4TxAwuv+u3AkBlDZvRUUCwoDMUGxeMNPhTaAgWl60xhhBgCBaEMgAACReMAav7n3x598IDYJ9GxGXRAwaPOT/kfO/1AgPqLQkp"+
+            "MiIVaHthnUS4v2y32e2BjdMPyIImUTBW3cV3R5tjVQm0MOm+D2C5+bBW9vHLjLR4lun4toQiY3Ls/v4bES/OJ4EmpZk5xhL9i5ClofYZNEsxFn"+
+            "An/q821Tg+Cq9Er4XYGQe8ogjjLJ2b7dUsJ3auFQFNUJF7Ke7yUL2EeYYxl6vz5l4q5u8704mRbFts1E1eWMp6WIy91GPrsVlRGvtuNERfrjfE"+
+            "YtzUI3Flcv65zJUbUBEzUnTS0fEYso2XyToAl8kb251mUY2o2lJzv5dp/1htmcjeeP2MjxC+3S45ljx7jd52Pv9XAat+ryiauFOF7YgztkoWWD"+
+            "h62tplPH1bzDV+d0NLdaE5AfVJ09HuUYTFS+iggtvT5Euyk+unj4N2XvzW91n+GNjtgWfKOHmkinUPvYRh70Jv+wlPJrVaT8mL7GxJLqDC9jbv"+
+            "Gznoiae6es+wQejnk3XjU366MrK/zXxngBYj9J6NnXc9mMiTFLX8WqQ8iTelTAFs2NJzPoDzrBUz4JFIEOa6Dja6dULc68g1jFDTeEHZyra7RZ"+
+            "2ElqGDEqcNRo3SNX6feMy9EF1GOyZK0Sa87KwjKw8aM68dpsIYjfLcTXaZ6atg0BKfMnl6axeUGEaIFSP7rzj9wjzumRbG3jgUVp2lX5AK/tsO"+
+            "7R4TQX/9/H6RiN34c9KldmPZZGANXzzTajZS9mR2OSvlJ+F4AgSko4htrMAKFTBu51/5SWNsO1vlRaaG48ZRJ+8PzuHQMdvS36gNpRPi7jhF1S"+
+            "H3B2ycI4y0VURv6SrqJNUY/X645ZFJQ+eBO+ptG7o8axf1dcqh2beiQk+GRTeZ37LVeUlaeo9vl1/+8tyBfyT2v5lFC5E19WdKIyCuZe7r99Px"+
+            "D/Od4Qj0TA92+DQnbCQTCMy/wwse9O4gsEebkkpPIP5GBV3Q0YBsj75XE0uSFQ1tCZSW8bNa9MUJZ/nPBfExohHlgGAAA=";
 
         // Unix
         final String unixSignExp =
-                "QkqTFQZjXagjRAoOWKpAGa8AR0rKqkSfBtfSWqtjBmTgyjarn+t2POHkpySIpheHAbg+90GKSH88ACMtPHbG7q" +
-                        "FL4gtgAD9Kjew6j16j0IRBwy145UlPrSLFMfF7YF7UlU1k1LBkIlRJ6Fv4MAJl6XspuzZOZIUmHZrWrdxycUQ=";
+            "QkqTFQZjXagjRAoOWKpAGa8AR0rKqkSfBtfSWqtjBmTgyjarn+t2POHkpySIpheHAbg+90GKSH88ACMtPHbG7q" +
+            "FL4gtgAD9Kjew6j16j0IRBwy145UlPrSLFMfF7YF7UlU1k1LBkIlRJ6Fv4MAJl6XspuzZOZIUmHZrWrdxycUQ=";
 
         // Windows
         final String winSignExp =
-                "GmAlL7+bT1r3FsMHJOp3pKg8betblYieZTjhMIrPZPRBbSzjO7KsYRGNtr0aOE3qr8xzyYJN6/8QdF5X7pUEUc" +
-                        "2m8ctrm7s5o2vZTkAqk9ENJGDjBPXX7TnuVOiVeL1cJdtjHC2QpjtRwkFR+B54G6b1OXLOFuQpP3vqR3+/XXE=";
+            "GmAlL7+bT1r3FsMHJOp3pKg8betblYieZTjhMIrPZPRBbSzjO7KsYRGNtr0aOE3qr8xzyYJN6/8QdF5X7pUEUc" +
+            "2m8ctrm7s5o2vZTkAqk9ENJGDjBPXX7TnuVOiVeL1cJdtjHC2QpjtRwkFR+B54G6b1OXLOFuQpP3vqR3+/XXE=";
 
         // Mac
         final String macSignExp =
@@ -259,13 +261,13 @@ class TestSignatureInfo {
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(100000);
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             wb1.createSheet().createRow(1).createCell(1).setCellValue("Test");
             wb1.write(bos);
         }
 
-        try (OPCPackage pkg1 = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (OPCPackage pkg1 = OPCPackage.open(bos.toInputStream())) {
             si.setOpcPackage(pkg1);
             si.confirmSignature();
             assertTrue(si.verifySignature());
@@ -273,7 +275,7 @@ class TestSignatureInfo {
             pkg1.save(bos);
         }
 
-        try (XSSFWorkbook wb2 = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
             assertEquals("Test", wb2.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());
             OPCPackage pkg2 = wb2.getPackage();
             si.setOpcPackage(pkg2);
@@ -306,71 +308,65 @@ class TestSignatureInfo {
         }
     }
 
-    @Test
-    void getSignerUnsigned() throws Exception {
-        String[] testFiles = {
-                "hello-world-unsigned.docx",
-                "hello-world-unsigned.pptx",
-                "hello-world-unsigned.xlsx",
-                "hello-world-office-2010-technical-preview-unsigned.docx"
-        };
-
-        for (String testFile : testFiles) {
-            List<X509Certificate> result = new ArrayList<>();
-            try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
-                SignatureConfig sic = new SignatureConfig();
-                SignatureInfo si = new SignatureInfo();
-                si.setOpcPackage(pkg);
-                si.setSignatureConfig(sic);
-                for (SignaturePart sp : si.getSignatureParts()) {
-                    if (sp.validate()) {
-                        result.add(sp.getSigner());
-                    }
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "hello-world-unsigned.docx",
+        "hello-world-unsigned.pptx",
+        "hello-world-unsigned.xlsx",
+        "hello-world-office-2010-technical-preview-unsigned.docx"
+    })
+    void getSignerUnsigned(String testFile) throws Exception {
+        List<X509Certificate> result = new ArrayList<>();
+        try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
+            SignatureConfig sic = new SignatureConfig();
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(sic);
+            for (SignaturePart sp : si.getSignatureParts()) {
+                if (sp.validate()) {
+                    result.add(sp.getSigner());
                 }
-                pkg.revert();
             }
-            assertNotNull(result);
-            assertTrue(result.isEmpty());
+            pkg.revert();
         }
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
-    @Test
-    void getSigner() throws Exception {
-        String[] testFiles = {
-                "hyperlink-example-signed.docx",
-                "hello-world-signed.docx",
-                "hello-world-signed.pptx",
-                "hello-world-signed.xlsx",
-                "hello-world-office-2010-technical-preview.docx",
-                "ms-office-2010-signed.docx",
-                "ms-office-2010-signed.pptx",
-                "ms-office-2010-signed.xlsx",
-                "Office2010-SP1-XAdES-X-L.docx",
-                "signed.docx"
-        };
-
-        for (String testFile : testFiles) {
-            try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
-                SignatureConfig sic = new SignatureConfig();
-                SignatureInfo si = new SignatureInfo();
-                si.setOpcPackage(pkg);
-                si.setSignatureConfig(sic);
-                List<X509Certificate> result = new ArrayList<>();
-                for (SignaturePart sp : si.getSignatureParts()) {
-                    if (sp.validate()) {
-                        result.add(sp.getSigner());
-                    }
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "hyperlink-example-signed.docx",
+        "hello-world-signed.docx",
+        "hello-world-signed.pptx",
+        "hello-world-signed.xlsx",
+        "hello-world-office-2010-technical-preview.docx",
+        "ms-office-2010-signed.docx",
+        "ms-office-2010-signed.pptx",
+        "ms-office-2010-signed.xlsx",
+        "Office2010-SP1-XAdES-X-L.docx",
+        "signed.docx"
+    })
+    void getSigner(String testFile) throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
+            SignatureConfig sic = new SignatureConfig();
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(sic);
+            List<X509Certificate> result = new ArrayList<>();
+            for (SignaturePart sp : si.getSignatureParts()) {
+                if (sp.validate()) {
+                    result.add(sp.getSigner());
                 }
-
-                assertNotNull(result);
-                assertEquals(1, result.size(), "test-file: " + testFile);
-                X509Certificate signer = result.get(0);
-                LOG.atDebug().log("signer: {}", signer.getSubjectX500Principal());
-
-                boolean b = si.verifySignature();
-                assertTrue(b, "test-file: " + testFile);
-                pkg.revert();
             }
+
+            assertNotNull(result);
+            assertEquals(1, result.size(), "test-file: " + testFile);
+            X509Certificate signer = result.get(0);
+            LOG.atDebug().log("signer: {}", signer.getSubjectX500Principal());
+
+            boolean b = si.verifySignature();
+            assertTrue(b, "test-file: " + testFile);
+            pkg.revert();
         }
     }
 
@@ -474,7 +470,7 @@ class TestSignatureInfo {
     void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
 
         final String execTimestr;
 
@@ -613,7 +609,7 @@ class TestSignatureInfo {
             pkg.save(bos);
         }
 
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
             SignatureConfig signatureConfig = new SignatureConfig();
             signatureConfig.setUpdateConfigOnValidate(true);
 
@@ -752,7 +748,7 @@ class TestSignatureInfo {
     void bug65214() throws Exception {
         initKeyPair();
 
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
 	    try (XWPFDocument doc = new XWPFDocument()) {
             XWPFHyperlinkRun r = doc.createParagraph().createHyperlinkRun("http://poi.apache.org");
 	        r.setText("Hyperlink");
@@ -765,7 +761,7 @@ class TestSignatureInfo {
         signatureConfig.setKey(keyPair.getPrivate());
         signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
         signatureConfig.setDigestAlgo(HashAlgorithm.sha256);
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(signatureConfig);
@@ -776,7 +772,7 @@ class TestSignatureInfo {
             assumeTrue(e.getMessage().startsWith("Export Restrictions"));
         }
 
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(signatureConfig);
@@ -793,10 +789,10 @@ class TestSignatureInfo {
         try (SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10)) {
             wb1.setCompressTempFiles(true);
             wb1.removeSheetAt(0);
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
             wb1.write(os);
 
-            try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(os.toByteArray()))) {
+            try (OPCPackage pkg = OPCPackage.open(os.toInputStream())) {
                 initKeyPair();
                 SignatureConfig signatureConfig = new SignatureConfig();
                 signatureConfig.setKey(keyPair.getPrivate());

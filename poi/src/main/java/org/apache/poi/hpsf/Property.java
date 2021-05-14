@@ -17,7 +17,8 @@
 
 package org.apache.poi.hpsf;
 
-import java.io.ByteArrayOutputStream;
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +30,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -38,8 +40,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LocaleUtil;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A property in a {@link Section} of a {@link PropertySet}.<p>
@@ -115,7 +115,7 @@ public class Property {
     }
 
     /**
-     * Creates a {@link Property} instance by reading its bytes
+     * Creates a Property instance by reading its bytes
      * from the property set stream.
      *
      * @param id The property's ID.
@@ -153,7 +153,7 @@ public class Property {
     }
 
     /**
-     * Creates a {@link Property} instance by reading its bytes
+     * Creates a Property instance by reading its bytes
      * from the property set stream.
      *
      * @param id The property's ID.
@@ -272,7 +272,7 @@ public class Property {
 
         /* Variable length: */
         if (type == Variant.VT_LPSTR || type == Variant.VT_LPWSTR) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try {
                 length = write(bos, property) - 2*LittleEndianConsts.INT_SIZE;
                 /* Pad to multiples of 4. */
@@ -295,8 +295,6 @@ public class Property {
      * ID == 0 is a special case: It does not have a type, and its value is the
      * section's dictionary. Another special case are strings: Two properties
      * may have the different types Variant.VT_LPSTR and Variant.VT_LPWSTR;
-     *
-     * @see Object#equals(Object)
      */
     @Override
     public boolean equals(final Object o) {
@@ -366,22 +364,12 @@ public class Property {
             (t2 == Variant.VT_LPSTR && t1 == Variant.VT_LPWSTR));
     }
 
-
-
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Objects.hash(id,type,value);
 
     }
 
-
-
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return toString(Property.DEFAULT_CODEPAGE, null);
@@ -411,7 +399,7 @@ public class Property {
         if (value instanceof String) {
             b.append((String)value);
             b.append("\n");
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try {
                 write(bos, codepage);
             } catch (Exception e) {

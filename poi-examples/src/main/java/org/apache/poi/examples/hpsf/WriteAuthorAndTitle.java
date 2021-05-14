@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -165,7 +164,7 @@ public final class WriteAuthorAndTitle {
                 de.createDocument(event.getName(), is);
             }
 
-        } catch (MarkUnsupportedException | WritingNotSupportedException | IOException | NoPropertySetStreamException ex) {
+        } catch (WritingNotSupportedException | IOException | NoPropertySetStreamException ex) {
             // According to the definition of the processPOIFSReaderEvent method we cannot pass checked
             // exceptions to the caller.
             throw new HPSFRuntimeException("Could not read file " + event.getPath() + "/" + event.getName(), ex);

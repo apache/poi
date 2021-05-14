@@ -160,17 +160,16 @@ public abstract class BaseTestSlideShow<
     @Test
     void shapeAndSlideName() throws IOException {
         final String file = "SampleShow.ppt"+(getClass().getSimpleName().contains("XML")?"x":"");
-        //noinspection unchecked
         try (final InputStream is = slTests.openResourceAsStream(file);
-             final SlideShow<S,P> ppt = (SlideShow<S,P>)SlideShowFactory.create(is)) {
-            final List<S> shapes1 = ppt.getSlides().get(0).getShapes();
+             final SlideShow<? extends Shape<?,?>,?> ppt = SlideShowFactory.create(is)) {
+            final List<? extends Shape<?,?>> shapes1 = ppt.getSlides().get(0).getShapes();
             assertEquals("The Title", shapes1.get(0).getShapeName());
             assertEquals("Another Subtitle", shapes1.get(1).getShapeName());
-            final List<S> shapes2 = ppt.getSlides().get(1).getShapes();
+            final List<? extends Shape<?,?>> shapes2 = ppt.getSlides().get(1).getShapes();
             assertEquals("Title 1", shapes2.get(0).getShapeName());
             assertEquals("Content Placeholder 2", shapes2.get(1).getShapeName());
 
-            for (final Slide<S,P> slide : ppt.getSlides()) {
+            for (final Slide<? extends Shape<?,?>,?> slide : ppt.getSlides()) {
                 final String expected = slide.getSlideNumber()==1 ? "FirstSlide" : "Slide2";
                 assertEquals(expected, slide.getSlideName());
             }

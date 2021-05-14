@@ -19,7 +19,6 @@ package org.apache.poi.hslf.record;
 
 import static org.apache.poi.util.BitFieldFactory.getInstance;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStopPropCollection;
 import org.apache.poi.util.BitField;
@@ -120,7 +120,7 @@ public final class TextRulerAtom extends RecordAtom {
      */
     @Override
     public void writeOut(final OutputStream out) throws IOException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream(200);
+        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(200);
         final LittleEndianOutputStream lbos = new LittleEndianOutputStream(bos);
         int mask = 0;
         mask |= writeIf(lbos, numLevels, C_LEVELS);

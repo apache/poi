@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.Property;
@@ -44,7 +44,6 @@ import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
@@ -147,7 +146,7 @@ final class TestPOIFSFileSystem {
 		try (POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream(file))) {
 
 			// Write it into a temp output array
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 			fs.writeFilesystem(baos);
 
 			// Check sizes
@@ -186,7 +185,7 @@ final class TestPOIFSFileSystem {
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
 
-	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	   UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 	   fs.writeFilesystem(baos);
 	   byte[] fsData = baos.toByteArray();
 

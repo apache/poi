@@ -17,11 +17,12 @@
 
 package org.apache.poi.examples.hssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -188,14 +189,11 @@ public final class OfficeDrawing {
 
     }
 
-    private static int loadPicture( String path, HSSFWorkbook wb ) throws IOException
-    {
+    private static int loadPicture( String path, HSSFWorkbook wb ) throws IOException {
         int pictureIndex;
         try (FileInputStream fis = new FileInputStream(path);
-             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            int c;
-            while ((c = fis.read()) != -1)
-                bos.write(c);
+             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            IOUtils.copy(fis, bos);
             pictureIndex = wb.addPicture(bos.toByteArray(), Workbook.PICTURE_TYPE_PNG);
         }
         return pictureIndex;

@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +38,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -161,20 +161,20 @@ final class TestIOUtils {
 
     @Test
     void testSkipFullyByteArray() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
             assertEquals(LENGTH, IOUtils.copy(is, bos));
-            long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
+            long skipped = IOUtils.skipFully(bos.toInputStream(), 20000L);
             assertEquals(LENGTH, skipped);
         }
     }
 
     @Test
     void testSkipFullyByteArrayGtIntMax() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (InputStream is = new FileInputStream(TMP)) {
             assertEquals(LENGTH, IOUtils.copy(is, bos));
-            long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE + 20000L);
+            long skipped = IOUtils.skipFully(bos.toInputStream(), Integer.MAX_VALUE + 20000L);
             assertEquals(LENGTH, skipped);
         }
     }

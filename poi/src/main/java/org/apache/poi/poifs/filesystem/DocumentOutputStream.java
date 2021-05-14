@@ -18,10 +18,10 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.DocumentProperty;
 
@@ -37,13 +37,13 @@ public final class DocumentOutputStream extends OutputStream {
 	private boolean _closed = false;
 
 	/** the actual Document */
-	private POIFSDocument _document;
+	private final POIFSDocument _document;
 	/** and its Property */
-	private DocumentProperty _property;
+	private final DocumentProperty _property;
 
 	/** our buffer, when null we're into normal blocks */
-	private ByteArrayOutputStream _buffer =
-	        new ByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
+	private UnsynchronizedByteArrayOutputStream _buffer =
+	        new UnsynchronizedByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
 
 	/** our main block stream, when we're into normal blocks */
 	private POIFSStream _stream;
@@ -115,11 +115,11 @@ public final class DocumentOutputStream extends OutputStream {
             byte[] data = _buffer.toByteArray();
             _buffer = null;
             write(data, 0, data.length);
-        } else {
-            // So far, mini stream will work, keep going
         }
+        // otherwise mini stream will work, keep going
     }
 
+    @Override
     public void write(int b) throws IOException {
         write(new byte[] { (byte)b }, 0, 1);
     }
@@ -146,11 +146,12 @@ public final class DocumentOutputStream extends OutputStream {
         }
     }
 
+    @Override
     public void close() throws IOException {
         // Do we have a pending buffer for the mini stream?
         if (_buffer != null) {
             // It's not much data, so ask POIFSDocument to do it for us
-            _document.replaceContents(new ByteArrayInputStream(_buffer.toByteArray()));
+            _document.replaceContents(_buffer.toInputStream());
         }
         else {
             // We've been writing to the stream as we've gone along

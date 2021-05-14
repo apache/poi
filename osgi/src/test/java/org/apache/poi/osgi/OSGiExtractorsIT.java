@@ -36,7 +36,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -57,7 +57,7 @@ public class OSGiExtractorsIT extends BaseOSGiTestCase {
         box.setText("Hello, World!");
         box.setAnchor(new Rectangle(36, 15, 648, 65));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         ppt.write(out);
         return out.toByteArray();
     }
@@ -66,7 +66,7 @@ public class OSGiExtractorsIT extends BaseOSGiTestCase {
         Sheet s = wb.createSheet("OSGi");
         s.createRow(0).createCell(0).setCellValue("Hello, World!");
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         wb.write(out);
         return out.toByteArray();
 

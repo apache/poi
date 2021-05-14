@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 
@@ -226,8 +226,8 @@ public abstract class RecordContainer extends Record
 	 * @param out the stream to write to
 	 */
 	public void writeOut(byte headerA, byte headerB, long type, Record[] children, OutputStream out) throws IOException {
-		// Create a ByteArrayOutputStream to hold everything in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// Create a UnsynchronizedByteArrayOutputStream to hold everything in
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 
 		// Write out our header, less the size
 		baos.write(new byte[] {headerA,headerB});

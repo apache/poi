@@ -32,13 +32,13 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -1817,8 +1817,8 @@ public abstract class BaseTestBugzillaIssues {
             cell.setCellValue("Ernie & Bert are cool!");
             cell.setCellFormula("A1 & \" are cool!\"");
 
-            try (ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-                 ByteArrayOutputStream out2 = new ByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream out1 = new UnsynchronizedByteArrayOutputStream();
+                 UnsynchronizedByteArrayOutputStream out2 = new UnsynchronizedByteArrayOutputStream()) {
                 wb.write(out1);
                 wb.write(out2);
 

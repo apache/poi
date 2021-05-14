@@ -23,15 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Permission;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -39,7 +40,7 @@ import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
@@ -321,12 +322,11 @@ final class TestOldExcelExtractor {
     void testMain() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         PrintStream save = System.out;
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            PrintStream str = new PrintStream(out, false, "UTF-8");
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+             PrintStream str = new PrintStream(out, false, StandardCharsets.UTF_8.displayName())) {
             System.setOut(str);
             OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
-            String string = out.toString("UTF-8");
+            String string = out.toString(StandardCharsets.UTF_8);
             assertTrue(string.contains("Table C-13--Lemons"), "Had: " + string);
         } finally {
             System.setOut(save);

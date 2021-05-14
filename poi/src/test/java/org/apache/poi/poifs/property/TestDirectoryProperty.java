@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
@@ -187,7 +187,7 @@ final class TestDirectoryProperty {
     }
 
     private void verifyProperty() throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
 
         _property.writeData(stream);
         byte[] output = stream.toByteArray();
@@ -253,7 +253,7 @@ final class TestDirectoryProperty {
 
     private static void verifyReadingProperty(int index, byte[] input, int offset, String name) {
         DirectoryProperty property = new DirectoryProperty(index, input, offset);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
         byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
         try {
             property.writeData(stream);

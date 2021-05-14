@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.DVRecord;
@@ -61,7 +61,7 @@ final class TestDataValidation extends BaseTestDataValidation {
 	void assertDataValidation(Workbook wb) {
 
         byte[] generatedContent;
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(22000)) {
+		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(22000)) {
 			wb.write(baos);
             generatedContent = baos.toByteArray();
 		} catch (IOException e) {
@@ -133,7 +133,7 @@ final class TestDataValidation extends BaseTestDataValidation {
 
             sheet.addValidationData(dv);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             wb.write(baos);
 
             byte[] wbData = baos.toByteArray();

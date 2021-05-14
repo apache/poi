@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
@@ -43,7 +43,7 @@ public final class TestSlideAtom {
 	@Test
 	void testRecordType() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		assertEquals(1007l, sa.getRecordType());
+		assertEquals(1007L, sa.getRecordType());
 	}
 
     @Test
@@ -75,23 +75,23 @@ public final class TestSlideAtom {
     @Test
 	void testWrite() throws IOException {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		sa.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
     @Test
 	void testSSSlideInfoAtom() throws IOException {
-		HSLFSlideShow ss1 = new HSLFSlideShow();
-		HSLFSlide slide1 = ss1.createSlide(), slide2 = ss1.createSlide();
-		slide2.setHidden(true);
+		try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
+			HSLFSlide slide1 = ppt1.createSlide(), slide2 = ppt1.createSlide();
+			slide2.setHidden(true);
 
-		HSLFSlideShow ss2 = HSLFTestDataSamples.writeOutAndReadBack(ss1);
-		slide1 = ss2.getSlides().get(0);
-		slide2 = ss2.getSlides().get(1);
-		assertFalse(slide1.isHidden());
-		assertTrue(slide2.isHidden());
-		ss2.close();
-		ss1.close();
+			try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
+				slide1 = ppt2.getSlides().get(0);
+				slide2 = ppt2.getSlides().get(1);
+				assertFalse(slide1.isHidden());
+				assertTrue(slide2.isHidden());
+			}
+		}
 	}
 }

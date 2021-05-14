@@ -17,12 +17,11 @@
 
 package org.apache.poi.hssf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -56,11 +55,11 @@ public final class HSSFTestDataSamples {
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
 			original.write(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			return new HSSFWorkbook(bais);
+			try (InputStream is = baos.toInputStream()) {
+				return new HSSFWorkbook(is);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -23,11 +23,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.Notes;
@@ -40,7 +39,6 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.platform.commons.util.ExceptionUtils;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
@@ -51,28 +49,17 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         readPictures(ss);
 
         // write out the file
-        ByteArrayOutputStream out = writeToArray(ss);
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        ss.write(out);
 
         readContent(ss);
 
         // read in the written file
-        try (SlideShow<?, ?> read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()))) {
+        try (SlideShow<?, ?> read = SlideShowFactory.create(out.toInputStream())) {
             assertNotNull(read);
             readContent(read);
         }
     }
-
-    private ByteArrayOutputStream writeToArray(SlideShow<?,?> ss) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            ss.write(stream);
-        } finally {
-            stream.close();
-        }
-
-        return stream;
-    }
-
 
     private void readContent(SlideShow<?,?> ss) {
         for (Slide<?,?> s : ss.getSlides()) {

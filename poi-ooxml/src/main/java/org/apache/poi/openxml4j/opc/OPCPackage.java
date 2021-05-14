@@ -898,16 +898,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 		// Extract the zip entry content to put it in the part content
 		if (content != null) {
-			try {
-				OutputStream partOutput = addedPart.getOutputStream();
+			try (OutputStream partOutput = addedPart.getOutputStream()) {
 				if (partOutput == null) {
 					return null;
 				}
-
-				partOutput.write(content.toByteArray(), 0, content.size());
-				partOutput.close();
-
-			} catch (IOException ioe) {
+				content.writeTo(partOutput);
+			} catch (IOException ignored) {
 				return null;
 			}
 		} else {

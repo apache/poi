@@ -27,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
@@ -399,7 +399,7 @@ public class HemfPlusBrush {
         }
 
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try {
                 bos.write(getBrushBytes());
                 if (continuedObjectData != null) {
@@ -473,6 +473,7 @@ public class HemfPlusBrush {
     public static class EmfPlusHatchBrushData implements EmfPlusBrushData {
         private EmfPlusHatchStyle style;
         private Color foreColor, backColor;
+        @Override
         public long init(LittleEndianInputStream leis, long dataSize) {
             style = EmfPlusHatchStyle.valueOf(leis.readInt());
             foreColor = readARGB(leis.readInt());

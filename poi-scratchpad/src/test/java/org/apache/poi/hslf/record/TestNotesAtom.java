@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -52,7 +51,7 @@ public final class TestNotesAtom {
 	@Test
 	void testWrite() throws Exception {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		na.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}

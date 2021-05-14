@@ -17,16 +17,17 @@
 
 package org.apache.poi.openxml4j.opc.internal.marshallers;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -38,7 +39,7 @@ class TestZipPackagePropertiesMarshaller {
     private final PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
 
     private boolean marshall() throws OpenXML4JException {
-        return marshall(new ZipArchiveOutputStream(new ByteArrayOutputStream()));
+        return marshall(new ZipArchiveOutputStream(new UnsynchronizedByteArrayOutputStream()));
     }
 
     private boolean marshall(OutputStream zos) throws OpenXML4JException {
@@ -50,8 +51,7 @@ class TestZipPackagePropertiesMarshaller {
 
     @Test
     void nonZipOutputStream() {
-        OutputStream notAZipOutputStream = new ByteArrayOutputStream(0);
-        assertThrows(IllegalArgumentException.class, () -> marshall(notAZipOutputStream));
+        assertThrows(IllegalArgumentException.class, () -> marshall(NULL_OUTPUT_STREAM));
     }
 
     @Test
@@ -61,7 +61,7 @@ class TestZipPackagePropertiesMarshaller {
 
     @Test
     void ioException() {
-        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new ByteArrayOutputStream()) {
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new UnsynchronizedByteArrayOutputStream()) {
             @Override
             public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
                 throw new IOException("TestException");

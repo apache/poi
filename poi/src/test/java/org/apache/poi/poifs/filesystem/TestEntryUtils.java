@@ -24,12 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 class TestEntryUtils {
@@ -101,51 +102,52 @@ class TestEntryUtils {
 
     @Test
     void testAreDocumentsIdentical() throws IOException {
-       POIFSFileSystem fs = new POIFSFileSystem();
-       DirectoryEntry dirA = fs.createDirectory("DirA");
-       DirectoryEntry dirB = fs.createDirectory("DirB");
+       try (POIFSFileSystem fs = new POIFSFileSystem()) {
+          DirectoryEntry dirA = fs.createDirectory("DirA");
+          DirectoryEntry dirB = fs.createDirectory("DirB");
 
-       DocumentEntry entryA1 = dirA.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
-       DocumentEntry entryA1b = dirA.createDocument("Entry1b", new ByteArrayInputStream(dataSmallA));
-       DocumentEntry entryA2 = dirA.createDocument("Entry2", new ByteArrayInputStream(dataSmallB));
-       DocumentEntry entryB1 = dirB.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
-
-
-       // Names must match
-       assertNotEquals(entryA1.getName(), entryA1b.getName());
-       assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA1b));
-
-       // Contents must match
-       assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA2));
-
-       // Parents don't matter if contents + names are the same
-       assertNotEquals(entryA1.getParent(), entryB1.getParent());
-       assertTrue(EntryUtils.areDocumentsIdentical(entryA1, entryB1));
+          DocumentEntry entryA1 = dirA.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
+          DocumentEntry entryA1b = dirA.createDocument("Entry1b", new ByteArrayInputStream(dataSmallA));
+          DocumentEntry entryA2 = dirA.createDocument("Entry2", new ByteArrayInputStream(dataSmallB));
+          DocumentEntry entryB1 = dirB.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
 
 
-       // Can work with POIFS
-       ByteArrayOutputStream tmpO = new ByteArrayOutputStream();
-       fs.writeFilesystem(tmpO);
+          // Names must match
+          assertNotEquals(entryA1.getName(), entryA1b.getName());
+          assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA1b));
 
-       ByteArrayInputStream tmpI = new ByteArrayInputStream(tmpO.toByteArray());
-       POIFSFileSystem nfs = new POIFSFileSystem(tmpI);
+          // Contents must match
+          assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA2));
 
-       DirectoryEntry dN1 = (DirectoryEntry)nfs.getRoot().getEntry("DirA");
-       DirectoryEntry dN2 = (DirectoryEntry)nfs.getRoot().getEntry("DirB");
-       DocumentEntry eNA1 = (DocumentEntry)dN1.getEntry(entryA1.getName());
-       DocumentEntry eNA2 = (DocumentEntry)dN1.getEntry(entryA2.getName());
-       DocumentEntry eNB1 = (DocumentEntry)dN2.getEntry(entryB1.getName());
+          // Parents don't matter if contents + names are the same
+          assertNotEquals(entryA1.getParent(), entryB1.getParent());
+          assertTrue(EntryUtils.areDocumentsIdentical(entryA1, entryB1));
 
-       assertFalse(EntryUtils.areDocumentsIdentical(eNA1, eNA2));
-       assertTrue(EntryUtils.areDocumentsIdentical(eNA1, eNB1));
 
-       assertFalse(EntryUtils.areDocumentsIdentical(eNA1, entryA1b));
-       assertFalse(EntryUtils.areDocumentsIdentical(eNA1, entryA2));
+          // Can work with POIFS
+          try (UnsynchronizedByteArrayOutputStream tmpO = new UnsynchronizedByteArrayOutputStream()) {
+             fs.writeFilesystem(tmpO);
 
-       assertTrue(EntryUtils.areDocumentsIdentical(eNA1, entryA1));
-       assertTrue(EntryUtils.areDocumentsIdentical(eNA1, entryB1));
-       nfs.close();
-       fs.close();
+             try (InputStream tmpI = tmpO.toInputStream();
+                  POIFSFileSystem nfs = new POIFSFileSystem(tmpI)) {
+
+                DirectoryEntry dN1 = (DirectoryEntry) nfs.getRoot().getEntry("DirA");
+                DirectoryEntry dN2 = (DirectoryEntry) nfs.getRoot().getEntry("DirB");
+                DocumentEntry eNA1 = (DocumentEntry) dN1.getEntry(entryA1.getName());
+                DocumentEntry eNA2 = (DocumentEntry) dN1.getEntry(entryA2.getName());
+                DocumentEntry eNB1 = (DocumentEntry) dN2.getEntry(entryB1.getName());
+
+                assertFalse(EntryUtils.areDocumentsIdentical(eNA1, eNA2));
+                assertTrue(EntryUtils.areDocumentsIdentical(eNA1, eNB1));
+
+                assertFalse(EntryUtils.areDocumentsIdentical(eNA1, entryA1b));
+                assertFalse(EntryUtils.areDocumentsIdentical(eNA1, entryA2));
+
+                assertTrue(EntryUtils.areDocumentsIdentical(eNA1, entryA1));
+                assertTrue(EntryUtils.areDocumentsIdentical(eNA1, entryB1));
+             }
+          }
+       }
     }
 
     @Test

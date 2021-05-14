@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,12 +30,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.CustomProperty;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -70,7 +69,7 @@ class TestReadAllFiles {
      */
     @ParameterizedTest
     @MethodSource("files")
-    void read(File file) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+    void read(File file) throws IOException, NoPropertySetStreamException {
         /* Read the POI filesystem's property set streams: */
         for (POIFile pf : Util.readPropertySets(file)) {
             try (InputStream in = new ByteArrayInputStream(pf.getBytes())) {
@@ -84,7 +83,7 @@ class TestReadAllFiles {
     /**
      * This test method does a write and read back test with all POI
      * filesystems in the "data" directory by performing the following
-     * actions for each file:<p>
+     * actions for each file:
      *
      * <ul>
      * <li>Read its property set streams.
@@ -102,35 +101,35 @@ class TestReadAllFiles {
 
         /* Create a new POI filesystem containing the origin file's
          * property set streams: */
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
-        for (POIFile poifile : Util.readPropertySets(file)) {
-            final InputStream in = new ByteArrayInputStream(poifile.getBytes());
-            final PropertySet psIn = PropertySetFactory.create(in);
-            psMap.put(poifile.getName(), psIn);
-            bos.reset();
-            psIn.write(bos);
-            poiFs.createDocument(new ByteArrayInputStream(bos.toByteArray()), poifile.getName());
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (POIFSFileSystem poiFs = new POIFSFileSystem()) {
+            for (POIFile poifile : Util.readPropertySets(file)) {
+                final InputStream in = new ByteArrayInputStream(poifile.getBytes());
+                final PropertySet psIn = PropertySetFactory.create(in);
+                psMap.put(poifile.getName(), psIn);
+                bos.reset();
+                psIn.write(bos);
+                poiFs.createDocument(bos.toInputStream(), poifile.getName());
+            }
+
+            /* Read the property set streams from the POI filesystem just
+             * created. */
+            for (Map.Entry<String, PropertySet> me : psMap.entrySet()) {
+                final PropertySet ps1 = me.getValue();
+                final PropertySet ps2 = PropertySetFactory.create(poiFs.getRoot(), me.getKey());
+                assertNotNull(ps2);
+
+                /* Compare the property set stream with the corresponding one
+                 * from the origin file and check whether they are equal. */
+
+                // Because of missing 0-paddings in the original input files, the bytes might differ.
+                // This fixes the comparison
+                String ps1str = ps1.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)", "");
+                String ps2str = ps2.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)", "");
+
+                assertEquals(ps1str, ps2str, "Equality for file " + file.getName());
+            }
         }
-
-        /* Read the property set streams from the POI filesystem just
-         * created. */
-        for (Map.Entry<String,PropertySet> me : psMap.entrySet()) {
-            final PropertySet ps1 = me.getValue();
-            final PropertySet ps2 = PropertySetFactory.create(poiFs.getRoot(), me.getKey());
-            assertNotNull(ps2);
-
-            /* Compare the property set stream with the corresponding one
-             * from the origin file and check whether they are equal. */
-
-            // Because of missing 0-paddings in the original input files, the bytes might differ.
-            // This fixes the comparison
-            String ps1str = ps1.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
-            String ps2str = ps2.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
-
-            assertEquals(ps1str, ps2str, "Equality for file " + file.getName());
-        }
-        poiFs.close();
     }
 
     /**

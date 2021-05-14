@@ -20,10 +20,10 @@ package org.apache.poi.hssf.eventmodel;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.EOFRecord;
@@ -130,16 +131,15 @@ final class TestEventRecordFactory {
      * OBJECTIVE:  Test that the RecordFactory given an InputStream
      *             constructs the expected records.<P>
      * SUCCESS:    Record factory creates the expected records.<P>
-     * FAILURE:    The wrong records are created or contain the wrong values <P>
-     *
+     * FAILURE:    The wrong records are created or contain the wrong values
      */
     @Test
      void testContinuedUnknownRecord() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         for (byte[] b : CONTINUE_DATA) {
             bos.write(b);
         }
-        continueHelper(new ByteArrayInputStream(bos.toByteArray()));
+        continueHelper(bos.toInputStream());
     }
 
     @Test
@@ -156,7 +156,7 @@ final class TestEventRecordFactory {
         Iterator<byte[]> expectedData = Stream.of(CONTINUE_DATA).iterator();
 
         ERFListener listener = rec -> {
-            assertEquals(expectedType.next(), rec.getClass());
+            assertSame(expectedType.next(), rec.getClass());
             assertArrayEquals(expectedData.next(), rec.serialize());
             return true;
         };

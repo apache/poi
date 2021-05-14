@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -72,7 +72,7 @@ public class TestXSSFMemoryLeak {
             // not freed until we free up the Cell itself
             //verifier.addObject(ctCell);
 
-            try (OutputStream out = new ByteArrayOutputStream(8192)) {
+            try (OutputStream out = new UnsynchronizedByteArrayOutputStream(8192)) {
                 wb.write(out);
             }
 

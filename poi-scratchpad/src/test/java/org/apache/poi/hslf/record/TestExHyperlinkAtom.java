@@ -21,8 +21,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,7 +56,7 @@ public class TestExHyperlinkAtom {
 	@Test
 	void testWrite() throws Exception {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		eha.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}
@@ -71,7 +70,7 @@ public class TestExHyperlinkAtom {
 		eha.setNumber(1);
 
 		// Check it's now the same as a
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		eha.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}
@@ -85,7 +84,7 @@ public class TestExHyperlinkAtom {
 		eha.setNumber(4);
 
 		// Check bytes are now the same
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		eha.writeOut(baos);
 		assertArrayEquals(data_b, baos.toByteArray());
 	}

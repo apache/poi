@@ -29,7 +29,7 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,11 +48,12 @@ public class OSGiSpreadsheetIT extends BaseOSGiTestCase {
         s.createRow(0).createCell(0).setCellValue("With OSGi");
         s.createRow(1).createCell(0).setCellFormula("SUM(A1:B3)");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        wb.write(baos);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        wb = WorkbookFactory.create(bais);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            wb.write(baos);
+            try (InputStream bais = baos.toInputStream()) {
+                wb = WorkbookFactory.create(bais);
+            }
+        }
         assertEquals(1, wb.getNumberOfSheets());
 
         s = wb.getSheet("OSGi");

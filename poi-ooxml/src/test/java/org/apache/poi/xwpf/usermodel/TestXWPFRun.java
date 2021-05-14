@@ -16,15 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.xwpf.XWPFTestDataSamples.openSampleDocument;
+import static org.apache.poi.xwpf.XWPFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
@@ -296,7 +298,7 @@ class TestXWPFRun {
      */
     @Test
     void testExisting() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+        XWPFDocument doc = openSampleDocument("TestDocument.docx");
         XWPFParagraph p;
         XWPFRun run;
 
@@ -430,7 +432,7 @@ class TestXWPFRun {
 
     @Test
     void testPictureInHeader() throws IOException {
-        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
+        XWPFDocument sampleDoc = openSampleDocument("headerPic.docx");
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 
         XWPFHeader header = policy.getDefaultHeader();
@@ -486,7 +488,7 @@ class TestXWPFRun {
 
     @Test
     void testAddPicture() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+        XWPFDocument doc = openSampleDocument("TestDocument.docx");
         XWPFParagraph p = doc.getParagraphArray(2);
         XWPFRun r = p.getRuns().get(0);
 
@@ -498,7 +500,7 @@ class TestXWPFRun {
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
 
-        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        XWPFDocument docBack = writeOutAndReadBack(doc);
         XWPFParagraph pBack = docBack.getParagraphArray(2);
         XWPFRun rBack = pBack.getRuns().get(0);
 
@@ -513,39 +515,39 @@ class TestXWPFRun {
      */
     @Test
     void testAddPictureInHeader() throws IOException, InvalidFormatException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
-        XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
-        XWPFParagraph p = hdr.createParagraph();
-        XWPFRun r = p.createRun();
+        try (XWPFDocument doc = openSampleDocument("TestDocument.docx")) {
+            XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
+            XWPFParagraph p = hdr.createParagraph();
+            XWPFRun r = p.createRun();
 
-        assertEquals(0, hdr.getAllPictures().size());
-        assertEquals(0, r.getEmbeddedPictures().size());
+            assertEquals(0, hdr.getAllPictures().size());
+            assertEquals(0, r.getEmbeddedPictures().size());
 
-        r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+            r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
 
-        assertEquals(1, hdr.getAllPictures().size());
-        assertEquals(1, r.getEmbeddedPictures().size());
+            assertEquals(1, hdr.getAllPictures().size());
+            assertEquals(1, r.getEmbeddedPictures().size());
 
-        XWPFPicture pic = r.getEmbeddedPictures().get(0);
-        CTPicture ctPic = pic.getCTPicture();
-        CTBlipFillProperties ctBlipFill = ctPic.getBlipFill();
+            XWPFPicture pic = r.getEmbeddedPictures().get(0);
+            CTPicture ctPic = pic.getCTPicture();
+            CTBlipFillProperties ctBlipFill = ctPic.getBlipFill();
 
-        assertNotNull(ctBlipFill);
+            assertNotNull(ctBlipFill);
 
-        CTBlip ctBlip = ctBlipFill.getBlip();
+            CTBlip ctBlip = ctBlipFill.getBlip();
 
-        assertNotNull(ctBlip);
-        assertEquals("rId1", ctBlip.getEmbed());
+            assertNotNull(ctBlip);
+            assertEquals("rId1", ctBlip.getEmbed());
 
-        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        XWPFHeader hdrBack = docBack.getHeaderArray(0);
-        XWPFParagraph pBack = hdrBack.getParagraphArray(0);
-        XWPFRun rBack = pBack.getRuns().get(0);
+            try (XWPFDocument docBack = writeOutAndReadBack(doc)) {
+                XWPFHeader hdrBack = docBack.getHeaderArray(0);
+                XWPFParagraph pBack = hdrBack.getParagraphArray(0);
+                XWPFRun rBack = pBack.getRuns().get(0);
 
-        assertEquals(1, hdrBack.getAllPictures().size());
-        assertEquals(1, rBack.getEmbeddedPictures().size());
-        docBack.close();
-        doc.close();
+                assertEquals(1, hdrBack.getAllPictures().size());
+                assertEquals(1, rBack.getEmbeddedPictures().size());
+            }
+        }
     }
 
     /**
@@ -554,7 +556,7 @@ class TestXWPFRun {
      */
     @Test
     void testSetFontFamily_52288() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx")) {
+        try (XWPFDocument doc = openSampleDocument("52288.docx")) {
             doc.getParagraphs().stream()
                 .flatMap(p -> p.getRuns().stream())
                 .filter(p -> p != null && p.getText(0) != null)
@@ -565,157 +567,148 @@ class TestXWPFRun {
     @Test
     void testBug55476() throws IOException, InvalidFormatException {
         byte[] image = XWPFTestDataSamples.getImage("abstract1.jpg");
-        XWPFDocument document = new XWPFDocument();
+        try (XWPFDocument document = new XWPFDocument()) {
 
-        document.createParagraph().createRun().addPicture(
+            document.createParagraph().createRun().addPicture(
                 new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
 
-        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(document);
-        List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
-        assertEquals(1, pictures.size());
-        docBack.close();
-
-        /*OutputStream stream = new FileOutputStream("c:\\temp\\55476.docx");
-        try {
-            document.write(stream);
-        } finally {
-            stream.close();
-        }*/
-
-        document.close();
+            try (XWPFDocument docBack = writeOutAndReadBack(document)) {
+                List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
+                assertEquals(1, pictures.size());
+            }
+        }
     }
 
     @Test
     void testBug58922() throws IOException {
-        XWPFDocument document = new XWPFDocument();
+        try (XWPFDocument document = new XWPFDocument()) {
 
-        final XWPFRun run = document.createParagraph().createRun();
-
-
-        assertEquals(-1, run.getFontSize());
-
-        run.setFontSize(10);
-        assertEquals(10, run.getFontSize());
-
-        run.setFontSize(Short.MAX_VALUE-1);
-        assertEquals(Short.MAX_VALUE-1, run.getFontSize());
-
-        run.setFontSize(Short.MAX_VALUE);
-        assertEquals(Short.MAX_VALUE, run.getFontSize());
-
-        run.setFontSize(Short.MAX_VALUE+1);
-        assertEquals(Short.MAX_VALUE+1, run.getFontSize());
-
-        run.setFontSize(Integer.MAX_VALUE-1);
-        assertEquals(Integer.MAX_VALUE-1, run.getFontSize());
-
-        run.setFontSize(Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, run.getFontSize());
-
-        run.setFontSize(-1);
-        assertEquals(-1, run.getFontSize());
+            final XWPFRun run = document.createParagraph().createRun();
 
 
-        assertEquals(-1, run.getTextPosition());
+            assertEquals(-1, run.getFontSize());
 
-        run.setTextPosition(10);
-        assertEquals(10, run.getTextPosition());
+            run.setFontSize(10);
+            assertEquals(10, run.getFontSize());
 
-        run.setTextPosition(Short.MAX_VALUE-1);
-        assertEquals(Short.MAX_VALUE-1, run.getTextPosition());
+            run.setFontSize(Short.MAX_VALUE - 1);
+            assertEquals(Short.MAX_VALUE - 1, run.getFontSize());
 
-        run.setTextPosition(Short.MAX_VALUE);
-        assertEquals(Short.MAX_VALUE, run.getTextPosition());
+            run.setFontSize(Short.MAX_VALUE);
+            assertEquals(Short.MAX_VALUE, run.getFontSize());
 
-        run.setTextPosition(Short.MAX_VALUE+1);
-        assertEquals(Short.MAX_VALUE+1, run.getTextPosition());
+            run.setFontSize(Short.MAX_VALUE + 1);
+            assertEquals(Short.MAX_VALUE + 1, run.getFontSize());
 
-        run.setTextPosition(Short.MAX_VALUE+1);
-        assertEquals(Short.MAX_VALUE+1, run.getTextPosition());
+            run.setFontSize(Integer.MAX_VALUE - 1);
+            assertEquals(Integer.MAX_VALUE - 1, run.getFontSize());
 
-        run.setTextPosition(Integer.MAX_VALUE-1);
-        assertEquals(Integer.MAX_VALUE-1, run.getTextPosition());
+            run.setFontSize(Integer.MAX_VALUE);
+            assertEquals(Integer.MAX_VALUE, run.getFontSize());
 
-        run.setTextPosition(Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, run.getTextPosition());
+            run.setFontSize(-1);
+            assertEquals(-1, run.getFontSize());
 
-        run.setTextPosition(-1);
-        assertEquals(-1, run.getTextPosition());
 
-        document.close();
+            assertEquals(-1, run.getTextPosition());
+
+            run.setTextPosition(10);
+            assertEquals(10, run.getTextPosition());
+
+            run.setTextPosition(Short.MAX_VALUE - 1);
+            assertEquals(Short.MAX_VALUE - 1, run.getTextPosition());
+
+            run.setTextPosition(Short.MAX_VALUE);
+            assertEquals(Short.MAX_VALUE, run.getTextPosition());
+
+            run.setTextPosition(Short.MAX_VALUE + 1);
+            assertEquals(Short.MAX_VALUE + 1, run.getTextPosition());
+
+            run.setTextPosition(Short.MAX_VALUE + 1);
+            assertEquals(Short.MAX_VALUE + 1, run.getTextPosition());
+
+            run.setTextPosition(Integer.MAX_VALUE - 1);
+            assertEquals(Integer.MAX_VALUE - 1, run.getTextPosition());
+
+            run.setTextPosition(Integer.MAX_VALUE);
+            assertEquals(Integer.MAX_VALUE, run.getTextPosition());
+
+            run.setTextPosition(-1);
+            assertEquals(-1, run.getTextPosition());
+        }
     }
 
     @Test
-    void testSetters() {
-        XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
+    void testSetters() throws IOException {
+        try (XWPFDocument document = new XWPFDocument()) {
+            final XWPFRun run = document.createParagraph().createRun();
 
-        // at least trigger some of the setters to ensure classes are included in
-        // the poi-ooxml-lite
-        run.setBold(true);
-        run.setCapitalized(true);
-        run.setCharacterSpacing(2);
-        assertEquals(2, run.getCharacterSpacing());
-        run.setColor("000000");
-        run.setDoubleStrikethrough(true);
-        run.setEmbossed(true);
-        run.setFontFamily("Calibri");
-        assertEquals("Calibri", run.getFontFamily());
-        run.setFontSize(10);
-        assertEquals(10, run.getFontSize());
-        run.setImprinted(true);
-        run.setItalic(true);
+            // at least trigger some of the setters to ensure classes are included in
+            // the poi-ooxml-lite
+            run.setBold(true);
+            run.setCapitalized(true);
+            run.setCharacterSpacing(2);
+            assertEquals(2, run.getCharacterSpacing());
+            run.setColor("000000");
+            run.setDoubleStrikethrough(true);
+            run.setEmbossed(true);
+            run.setFontFamily("Calibri");
+            assertEquals("Calibri", run.getFontFamily());
+            run.setFontSize(10);
+            assertEquals(10, run.getFontSize());
+            run.setImprinted(true);
+            run.setItalic(true);
+        }
     }
 
     @Test
     void testSetGetTextScale() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
-        assertEquals(100, run.getTextScale());
-        run.setTextScale(200);
-        assertEquals(200, run.getTextScale());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            final XWPFRun run = document.createParagraph().createRun();
+            assertEquals(100, run.getTextScale());
+            run.setTextScale(200);
+            assertEquals(200, run.getTextScale());
+        }
     }
 
     @Test
     void testSetGetTextHighlightColor() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
-        assertEquals(STHighlightColor.NONE, run.getTextHightlightColor());
-        assertFalse(run.isHighlighted());
-        run.setTextHighlightColor("darkGreen"); // See 17.18.40 ST_HighlightColor (Text Highlight Colors)
-        assertEquals(STHighlightColor.DARK_GREEN, run.getTextHightlightColor());
-        assertTrue(run.isHighlighted());
-        run.setTextHighlightColor("none");
-        assertFalse(run.isHighlighted());
-
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            final XWPFRun run = document.createParagraph().createRun();
+            assertSame(STHighlightColor.NONE, run.getTextHightlightColor());
+            assertFalse(run.isHighlighted());
+            run.setTextHighlightColor("darkGreen"); // See 17.18.40 ST_HighlightColor (Text Highlight Colors)
+            assertSame(STHighlightColor.DARK_GREEN, run.getTextHightlightColor());
+            assertTrue(run.isHighlighted());
+            run.setTextHighlightColor("none");
+            assertFalse(run.isHighlighted());
+        }
     }
 
     @Test
     void testSetGetVanish() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
-        assertFalse(run.isVanish());
-        run.setVanish(true);
-        assertTrue(run.isVanish());
-        run.setVanish(false);
-        assertFalse(run.isVanish());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            final XWPFRun run = document.createParagraph().createRun();
+            assertFalse(run.isVanish());
+            run.setVanish(true);
+            assertTrue(run.isVanish());
+            run.setVanish(false);
+            assertFalse(run.isVanish());
+        }
     }
 
     @Test
     void testSetGetVerticalAlignment() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        XWPFRun run = document.createParagraph().createRun();
-        assertEquals(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
-        // Reset to a fresh run so we test case of run not having vertical alignment at all
-        run = document.createParagraph().createRun();
-        run.setVerticalAlignment("subscript");
-        assertEquals(STVerticalAlignRun.SUBSCRIPT, run.getVerticalAlignment());
-        run.setVerticalAlignment("superscript");
-        assertEquals(STVerticalAlignRun.SUPERSCRIPT, run.getVerticalAlignment());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            assertSame(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
+            // Reset to a fresh run so we test case of run not having vertical alignment at all
+            run = document.createParagraph().createRun();
+            run.setVerticalAlignment("subscript");
+            assertSame(STVerticalAlignRun.SUBSCRIPT, run.getVerticalAlignment());
+            run.setVerticalAlignment("superscript");
+            assertSame(STVerticalAlignRun.SUPERSCRIPT, run.getVerticalAlignment());
+        }
     }
 
     @Test
@@ -726,82 +719,81 @@ class TestXWPFRun {
         XWPFRun run = new XWPFRun(ctRun, irb);
 
         run.setSubscript(VerticalAlign.BASELINE);
-        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlignArray(0).getVal());
+        assertSame(STVerticalAlignRun.BASELINE, rpr.getVertAlignArray(0).getVal());
     }
 
     @Test
     void testSetGetEmphasisMark() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        XWPFRun run = document.createParagraph().createRun();
-        assertEquals(STEm.NONE, run.getEmphasisMark());
-        // Reset to a fresh run so we test case of run not having property at all
-        run = document.createParagraph().createRun();
-        run.setEmphasisMark("dot");
-        assertEquals(STEm.DOT, run.getEmphasisMark());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            assertSame(STEm.NONE, run.getEmphasisMark());
+            // Reset to a fresh run so we test case of run not having property at all
+            run = document.createParagraph().createRun();
+            run.setEmphasisMark("dot");
+            assertSame(STEm.DOT, run.getEmphasisMark());
+        }
     }
 
     @Test
     void testSetGetUnderlineColor() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        XWPFRun run = document.createParagraph().createRun();
-        assertEquals("auto", run.getUnderlineColor());
-        // Reset to a fresh run so we test case of run not having property at all
-        run = document.createParagraph().createRun();
-        String colorRgb = "C0F1a2";
-        run.setUnderlineColor(colorRgb);
-        assertEquals(colorRgb.toUpperCase(LocaleUtil.getUserLocale()), run.getUnderlineColor());
-        run.setUnderlineColor("auto");
-        assertEquals("auto", run.getUnderlineColor());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            assertEquals("auto", run.getUnderlineColor());
+            // Reset to a fresh run so we test case of run not having property at all
+            run = document.createParagraph().createRun();
+            String colorRgb = "C0F1a2";
+            run.setUnderlineColor(colorRgb);
+            assertEquals(colorRgb.toUpperCase(LocaleUtil.getUserLocale()), run.getUnderlineColor());
+            run.setUnderlineColor("auto");
+            assertEquals("auto", run.getUnderlineColor());
+        }
     }
 
     @Test
     void testSetGetUnderlineThemeColor() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        XWPFRun run = document.createParagraph().createRun();
-        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
-        // Reset to a fresh run so we test case of run not having property at all
-        run = document.createParagraph().createRun();
-        String colorName = "accent4";
-        run.setUnderlineThemeColor(colorName);
-        assertEquals(STThemeColor.Enum.forString(colorName), run.getUnderlineThemeColor());
-        run.setUnderlineThemeColor("none");
-        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
-        document.close();
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            assertSame(STThemeColor.NONE, run.getUnderlineThemeColor());
+            // Reset to a fresh run so we test case of run not having property at all
+            run = document.createParagraph().createRun();
+            String colorName = "accent4";
+            run.setUnderlineThemeColor(colorName);
+            assertSame(STThemeColor.Enum.forString(colorName), run.getUnderlineThemeColor());
+            run.setUnderlineThemeColor("none");
+            assertSame(STThemeColor.NONE, run.getUnderlineThemeColor());
+        }
     }
 
 
     @Test
     void testSetStyleId() throws IOException {
-        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
-        final XWPFRun run = document.createParagraph().createRun();
+        try (XWPFDocument document = openSampleDocument("SampleDoc.docx")) {
+            final XWPFRun run = document.createParagraph().createRun();
 
-        String styleId = "bolditalic";
-        run.setStyle(styleId);
-        String candStyleId = run.getCTR().getRPr().getRStyleArray(0).getVal();
-        assertNotNull( candStyleId, "Expected to find a run style ID" );
-        assertEquals(styleId, candStyleId);
+            String styleId = "bolditalic";
+            run.setStyle(styleId);
+            String candStyleId = run.getCTR().getRPr().getRStyleArray(0).getVal();
+            assertNotNull(candStyleId, "Expected to find a run style ID");
+            assertEquals(styleId, candStyleId);
 
-        assertEquals(styleId, run.getStyle());
-
-        document.close();
+            assertEquals(styleId, run.getStyle());
+        }
     }
 
     @Test
     void testGetEmptyStyle() throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
-        assertEquals("", run.getStyle());
+        try (XWPFDocument document = new XWPFDocument()) {
+            final XWPFRun run = document.createParagraph().createRun();
+            assertEquals("", run.getStyle());
 
-        run.getCTR().addNewRPr();
-        assertEquals("", run.getStyle());
-        document.close();
+            run.getCTR().addNewRPr();
+            assertEquals("", run.getStyle());
+        }
     }
 
     @Test
     void testGetDepthWidth() throws IOException, InvalidFormatException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx")) {
+        try (XWPFDocument doc = openSampleDocument("TestDocument.docx")) {
             XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
             XWPFParagraph p = hdr.createParagraph();
             XWPFRun r = p.createRun();
@@ -827,35 +819,28 @@ class TestXWPFRun {
                 "  The quick brown fox",
                 "\t\tjumped over the lazy dog"
         };
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (XWPFDocument doc = new XWPFDocument();) {
+        try (XWPFDocument doc1 = new XWPFDocument()) {
             for(String s : text) {
-                XWPFParagraph p1 = doc.createParagraph();
+                XWPFParagraph p1 = doc1.createParagraph();
                 XWPFRun r1 = p1.createRun();
                 r1.setText(s);
             }
 
-            doc.write(bos);
-            bos.flush();
-        }
-
-        try (
-                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-                XWPFDocument doc = new XWPFDocument(bis)
-        ) {
-            List<XWPFParagraph> paragraphs = doc.getParagraphs();
-            assertEquals(2, paragraphs.size());
-            for (int i = 0; i < text.length; i++) {
-                XWPFParagraph p1 = paragraphs.get(i);
-                String expected = text[i];
-                assertEquals(expected, p1.getText());
-                CTP ctp = p1.getCTP();
-                CTR ctr = ctp.getRArray(0);
-                CTText ctText = ctr.getTArray(0);
-                // if text has leading whitespace then expect xml-fragment to have xml:space="preserve" set
-                // <xml-fragment xml:space="preserve" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-                boolean isWhitespace = Character.isWhitespace(expected.charAt(0));
-                assertEquals(isWhitespace, ctText.isSetSpace());
+            try (XWPFDocument doc2 = writeOutAndReadBack(doc1)) {
+                List<XWPFParagraph> paragraphs = doc2.getParagraphs();
+                assertEquals(2, paragraphs.size());
+                for (int i = 0; i < text.length; i++) {
+                    XWPFParagraph p1 = paragraphs.get(i);
+                    String expected = text[i];
+                    assertEquals(expected, p1.getText());
+                    CTP ctp = p1.getCTP();
+                    CTR ctr = ctp.getRArray(0);
+                    CTText ctText = ctr.getTArray(0);
+                    // if text has leading whitespace then expect xml-fragment to have xml:space="preserve" set
+                    // <xml-fragment xml:space="preserve" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                    boolean isWhitespace = Character.isWhitespace(expected.charAt(0));
+                    assertEquals(isWhitespace, ctText.isSetSpace());
+                }
             }
         }
     }

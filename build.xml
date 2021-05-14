@@ -266,6 +266,7 @@ under the License.
     <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
+    <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.8.0" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
     <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.0" usage="main"/>
 
@@ -430,6 +431,7 @@ under the License.
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
         <pathelement location="${main.commons-math3.jar}"/>
+        <pathelement location="${main.commons-io.jar}"/>
         <pathelement location="${main.com.zaxxer.jar}"/>
         <pathelement location="${main.log4j-api.jar}"/>
     </path>
@@ -737,6 +739,7 @@ under the License.
                     <available file="${dsig.xmlsec.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
+                    <available file="${main.commons-io.jar}"/>
                     <available file="${main.com.zaxxer.jar}"/>
 
                     <!-- we had some CI failures when the extracted files for JaCoCo were missing somehow... -->
@@ -778,6 +781,7 @@ under the License.
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
+        <downloadfile src="${main.commons-io.url}" dest="${main.commons-io.jar}"/>
         <downloadfile src="${main.com.zaxxer.url}" dest="${main.com.zaxxer.jar}"/>
         <unzip src="${jacoco.zip}" dest="${util.lib}">
             <patternset>
@@ -2328,6 +2332,7 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
+                    <include name="commons-io-*.jar"/>
                     <include name="log4j-api-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
                 </fileset>
@@ -2687,6 +2692,7 @@ under the License.
             <auxClasspath path="${ooxml.commons-compress.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
+            <auxClasspath path="${main.commons-io.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.log4j-api.jar}" />

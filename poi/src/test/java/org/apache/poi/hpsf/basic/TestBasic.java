@@ -19,6 +19,7 @@ package org.apache.poi.hpsf.basic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,6 @@ import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.Filetime;
 import org.apache.poi.hpsf.HPSFException;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -109,8 +109,7 @@ final class TestBasic {
      * supported.
      */
     @Test
-    void testCreatePropertySets()
-    throws UnsupportedEncodingException, IOException {
+    void testCreatePropertySets() throws IOException {
         Class<?>[] expected = {
             SummaryInformation.class,
             DocumentSummaryInformation.class,
@@ -123,11 +122,11 @@ final class TestBasic {
             Object o;
             try {
                 o = PropertySetFactory.create(in);
-            } catch (NoPropertySetStreamException | MarkUnsupportedException ex) {
+            } catch (NoPropertySetStreamException ex) {
                 o = ex;
             }
             in.close();
-            assertEquals(expected[i], o.getClass());
+            assertSame(expected[i], o.getClass());
         }
     }
 

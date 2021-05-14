@@ -21,22 +21,18 @@
 package org.apache.poi.hslf;
 
 
+import static org.apache.poi.POIDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -47,23 +43,11 @@ import org.junit.jupiter.api.Test;
  *  which are part of the scratchpad (not main)
  */
 public final class TestPOIDocumentScratchpad {
-	// The POI Documents to work on
-	private POIDocument doc;
-	private POIDocument doc2;
-
-	/**
-	 * Set things up, using a PowerPoint document and
-	 *  a Word Document for our testing
-	 */
-	@BeforeEach
-    void setUp() throws IOException {
-		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
-		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");
-	}
-
 	@Test
-	void testReadProperties() {
-	    testReadPropertiesHelper(doc);
+	void testReadProperties() throws IOException {
+		try (POIDocument doc = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt")) {
+			testReadPropertiesHelper(doc);
+		}
 	}
 
 	private void testReadPropertiesHelper(POIDocument docPH) {
@@ -77,49 +61,46 @@ public final class TestPOIDocumentScratchpad {
 	}
 
 	@Test
-	void testReadProperties2() {
-		// Check again on the word one
-		assertNotNull(doc2.getDocumentSummaryInformation());
-		assertNotNull(doc2.getSummaryInformation());
+	void testReadProperties2() throws IOException {
+		try (POIDocument doc2 = HWPFTestDataSamples.openSampleFile("test2.doc")) {
+			// Check again on the word one
+			assertNotNull(doc2.getDocumentSummaryInformation());
+			assertNotNull(doc2.getSummaryInformation());
 
-		assertEquals("Hogwarts", doc2.getSummaryInformation().getAuthor());
-		assertEquals("", doc2.getSummaryInformation().getKeywords());
-		assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
+			assertEquals("Hogwarts", doc2.getSummaryInformation().getAuthor());
+			assertEquals("", doc2.getSummaryInformation().getKeywords());
+			assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
+		}
 	}
 
 	@Test
 	void testWriteProperties() throws IOException {
 		// Just check we can write them back out into a filesystem
-		POIFSFileSystem outFS = new POIFSFileSystem();
-		doc.writeProperties(outFS);
+		try (POIDocument doc = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
+			 POIFSFileSystem outFS = new POIFSFileSystem()) {
+			doc.writeProperties(outFS);
 
-		// Should now hold them
-		assertNotNull(outFS.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
-		assertNotNull(outFS.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME));
-		outFS.close();
+			// Should now hold them
+			assertNotNull(outFS.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+			assertNotNull(outFS.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME));
+		}
 	}
 
 	@Test
     void testWriteReadProperties() throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
     	// Write them out
-    	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.writeProperties(outFS);
-    	outFS.writeFilesystem(baos);
+		try (POIDocument doc = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
+    		POIFSFileSystem outFS = new POIFSFileSystem()) {
+			doc.writeProperties(outFS);
 
-    	// Create a new version
-    	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	POIFSFileSystem inFS = new POIFSFileSystem(bais);
+			// Check they're still there
+			try (POIFSFileSystem inFS = writeOutAndReadBack(outFS);
+				 POIDocument ppt = new HPSFPropertiesOnlyDocument(inFS)) {
+				ppt.readProperties();
 
-    	// Check they're still there
-    	POIDocument ppt = new HPSFPropertiesOnlyDocument(inFS);
-    	ppt.readProperties();
-
-    	// Delegate test
-    	testReadPropertiesHelper(ppt);
-
-    	ppt.close();
-    	inFS.close();
+				// Delegate test
+				testReadPropertiesHelper(ppt);
+			}
+		}
     }
 }

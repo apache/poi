@@ -17,12 +17,11 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -54,7 +53,7 @@ public interface ObjectShape<
      * @return the ProgID
      */
     String getProgId();
-    
+
     /**
      * Returns the full name of the embedded object,
      *  e.g. "Microsoft Word Document" or "Microsoft Office Excel Worksheet".
@@ -62,11 +61,11 @@ public interface ObjectShape<
      * @return the full name of the embedded object
      */
     String getFullName();
-    
+
     /**
      * Updates the ole data. If there wasn't an object registered before, a new
      * ole embedding is registered in the parent slideshow.<p>
-     * 
+     *
      * For HSLF this needs to be a {@link POIFSFileSystem} stream.
      *
      * @param application a preset application enum
@@ -81,10 +80,10 @@ public interface ObjectShape<
     /**
      * Reads the ole data as stream - the application specific stream is served
      * The {@link #readObjectDataRaw() raw data} serves the outer/wrapped object, which is usually a
-     * {@link POIFSFileSystem} stream, whereas this method return the unwrapped entry 
+     * {@link POIFSFileSystem} stream, whereas this method return the unwrapped entry
      *
      * @return an {@link InputStream} which serves the object data
-     * 
+     *
      * @throws IOException if the linked object data couldn't be found
      */
     default InputStream readObjectData() throws IOException {
@@ -97,8 +96,9 @@ public interface ObjectShape<
 
         final Application app = Application.lookup(progId);
 
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
-        try (final InputStream is = FileMagic.prepareToCheckMagic(readObjectDataRaw())) {
+        try (final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+             final InputStream is = FileMagic.prepareToCheckMagic(readObjectDataRaw())) {
+
             final FileMagic fm = FileMagic.valueOf(is);
             if (fm == FileMagic.OLE2) {
                 try (final POIFSFileSystem poifs = new POIFSFileSystem(is)) {
@@ -129,11 +129,10 @@ public interface ObjectShape<
             } else {
                 IOUtils.copy(is, bos);
             }
+            return bos.toInputStream();
         }
-
-        return new ByteArrayInputStream(bos.toByteArray());
     }
-    
+
     /**
      * Convenience method to return the raw data as {@code InputStream}
      *

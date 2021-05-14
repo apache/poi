@@ -17,17 +17,15 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.POIDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +36,7 @@ import org.apache.poi.poifs.property.Property;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verify the order of entries <code>DirectoryProperty</code> .
+ * Verify the order of entries {@code DirectoryProperty} .
  * <p>
  * In particular it is important to serialize ROOT._VBA_PROJECT_CUR.VBA node.
  * See bug 39234 in bugzilla. Thanks to Bill Seddon for providing the solution.
@@ -63,28 +61,29 @@ final class TestPropertySorter {
     }
 
     /**
-     * Test sorting of properties in <code>DirectoryProperty</code>
+     * Test sorting of properties in {@code DirectoryProperty}
      */
     @Test
     void testSortProperties() throws IOException {
-        POIFSFileSystem fs = openSampleFS();
-        Property[] props = getVBAProperties(fs);
+        try (POIFSFileSystem fs = openSampleFS()) {
+            Property[] props = getVBAProperties(fs);
 
-        assertEquals(_entries.length, props.length);
+            assertEquals(_entries.length, props.length);
 
-        // (1). See that there is a problem with the old case-sensitive property comparator
-        Arrays.sort(props, TestPropertySorter::oldCaseSensitivePropertyCompareTo);
+            // (1). See that there is a problem with the old case-sensitive property comparator
+            Arrays.sort(props, TestPropertySorter::oldCaseSensitivePropertyCompareTo);
 
-        String exp = String.join("", _entries);
-        String actOld = Stream.of(props).map(Property::getName).collect(Collectors.joining());
+            String exp = String.join("", _entries);
+            String actOld = Stream.of(props).map(Property::getName).collect(Collectors.joining());
 
-        assertNotEquals("expected old case-sensitive property comparator to return properties in wrong order", exp, actOld);
+            assertNotEquals("expected old case-sensitive property comparator to return properties in wrong order", exp, actOld);
 
-        // (2) Verify that the fixed property comparator works right
-        Arrays.sort(props, new DirectoryProperty.PropertyComparator());
-        String[] actNew = Stream.of(props).map(Property::getName).toArray(String[]::new);
+            // (2) Verify that the fixed property comparator works right
+            Arrays.sort(props, new DirectoryProperty.PropertyComparator());
+            String[] actNew = Stream.of(props).map(Property::getName).toArray(String[]::new);
 
-        assertArrayEquals(_entries, actNew);
+            assertArrayEquals(_entries, actNew);
+        }
     }
 
     private static int oldCaseSensitivePropertyCompareTo(Property o1, Property o2) {
@@ -99,19 +98,14 @@ final class TestPropertySorter {
      */
     @Test
     void testSerialization() throws IOException {
-        POIFSFileSystem fs = openSampleFS();
+        try (POIFSFileSystem fs = openSampleFS();
+             POIFSFileSystem fs2 = writeOutAndReadBack(fs)) {
+            Property[] props = getVBAProperties(fs2);
+            Arrays.sort(props, new DirectoryProperty.PropertyComparator());
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        fs.writeFilesystem(out);
-        out.close();
-        InputStream is = new ByteArrayInputStream(out.toByteArray());
-        fs = new POIFSFileSystem(is);
-        is.close();
-        Property[] props = getVBAProperties(fs);
-        Arrays.sort(props, new DirectoryProperty.PropertyComparator());
-
-        String[] act = Stream.of(props).map(Property::getName).toArray(String[]::new);
-        assertArrayEquals(_entries, act);
+            String[] act = Stream.of(props).map(Property::getName).toArray(String[]::new);
+            assertArrayEquals(_entries, act);
+        }
     }
 
     /**
@@ -128,10 +122,9 @@ final class TestPropertySorter {
         DirectoryProperty  p = (DirectoryProperty)vba.getProperty();
 
         List<Property> lst = new ArrayList<>();
-        for (Iterator<Property> it = p.getChildren(); it.hasNext();){
-            Property ch = it.next();
+        for (Property ch : p){
             lst.add(ch);
         }
-        return lst.toArray(new Property[ 0 ]);
+        return lst.toArray(new Property[0]);
     }
 }

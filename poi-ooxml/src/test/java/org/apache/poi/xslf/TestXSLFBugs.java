@@ -20,6 +20,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_HREF;
 import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_LABEL;
 import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
+import static org.apache.poi.xslf.XSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,6 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -76,13 +76,15 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xslf.util.DummyGraphics2d;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
@@ -121,89 +123,87 @@ class TestXSLFBugs {
 
     @Test
     void bug62736() throws Exception {
-        XMLSlideShow ss1 = openSampleDocument("bug62736.pptx");
+        try (XMLSlideShow ss1 = openSampleDocument("bug62736.pptx")) {
+            assertEquals(1, ss1.getSlides().size());
 
-        assertEquals(1, ss1.getSlides().size());
+            XSLFSlide slide0 = ss1.getSlides().get(0);
 
-        XSLFSlide slide0 = ss1.getSlides().get(0);
+            assertEquals(slide0.getShapes().size(), 4);
 
-        assertEquals(slide0.getShapes().size(), 4);
+            assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+            assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+            assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+            assertEquals(slide0.getRelations().size(), 2);
 
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-        assertEquals(slide0.getRelations().size(), 2);
+            List<XSLFPictureShape> pictures = new ArrayList<>();
+            for (XSLFShape shape : slide0.getShapes()) {
+                if (shape instanceof XSLFPictureShape) {
+                    pictures.add((XSLFPictureShape) shape);
+                }
+            }
 
-        List<XSLFPictureShape> pictures = new ArrayList<>();
-        for (XSLFShape shape : slide0.getShapes()) {
-            if (shape instanceof XSLFPictureShape) {
-                pictures.add((XSLFPictureShape) shape);
+            assertEquals(pictures.size(), 2);
+            assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
+            assertEquals(pictures.get(1).getPictureData().getFileName(), "image1.png");
+            // blipId is rId2 of both pictures
+
+            // remove just the first picture
+            slide0.removeShape(pictures.get(0));
+
+            assertEquals(slide0.getShapes().size(), 3);
+
+            assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+            assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+            // the bug is that the following relation is gone
+            assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+            assertEquals(slide0.getRelations().size(), 2);
+
+            // Save and re-load
+            try (XMLSlideShow ss2 = writeOutAndReadBack(ss1)) {
+                assertEquals(1, ss2.getSlides().size());
+
+                slide0 = ss2.getSlides().get(0);
+
+                assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+                assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+                assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+                assertEquals(slide0.getRelations().size(), 2);
+
+                pictures.clear();
+                for (XSLFShape shape : slide0.getShapes()) {
+                    if (shape instanceof XSLFPictureShape) {
+                        pictures.add((XSLFPictureShape) shape);
+                    }
+                }
+
+                assertEquals(pictures.size(), 1);
+                assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
+
+                slide0.removeShape(pictures.get(0));
+
+                assertEquals(slide0.getShapes().size(), 2);
+
+                assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+                assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+                assertNull(slide0.getRelationById("rId2"));
+                assertEquals(slide0.getRelations().size(), 1);
+
+                // Save and re-load
+                try (XMLSlideShow ss3 = writeOutAndReadBack(ss2)) {
+                    assertEquals(1, ss3.getSlides().size());
+
+                    slide0 = ss3.getSlides().get(0);
+
+                    assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+                    assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+                    assertEquals(slide0.getShapes().size(), 2);
+                }
             }
         }
-
-        assertEquals(pictures.size(), 2);
-        assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
-        assertEquals(pictures.get(1).getPictureData().getFileName(), "image1.png");
-        // blipId is rId2 of both pictures
-
-        // remove just the first picture
-        slide0.removeShape(pictures.get(0));
-
-        assertEquals(slide0.getShapes().size(), 3);
-
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-        // the bug is that the following relation is gone
-        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-        assertEquals(slide0.getRelations().size(), 2);
-
-        // Save and re-load
-        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
-        ss1.close();
-        assertEquals(1, ss2.getSlides().size());
-
-        slide0 = ss2.getSlides().get(0);
-
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-        assertEquals(slide0.getRelations().size(), 2);
-
-        pictures.clear();
-        for (XSLFShape shape : slide0.getShapes()) {
-            if (shape instanceof XSLFPictureShape) {
-                pictures.add((XSLFPictureShape) shape);
-            }
-        }
-
-        assertEquals(pictures.size(), 1);
-        assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
-
-        slide0.removeShape(pictures.get(0));
-
-        assertEquals(slide0.getShapes().size(), 2);
-
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-        assertNull(slide0.getRelationById("rId2"));
-        assertEquals(slide0.getRelations().size(), 1);
-
-        // Save and re-load
-        XMLSlideShow ss3 = XSLFTestDataSamples.writeOutAndReadBack(ss2);
-        ss2.close();
-        assertEquals(1, ss3.getSlides().size());
-
-        slide0 = ss3.getSlides().get(0);
-
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-        assertEquals(slide0.getShapes().size(), 2);
-        ss3.close();
     }
 
     @Test
     void bug61589() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (XMLSlideShow src = new XMLSlideShow();
              XMLSlideShow dest = new XMLSlideShow()) {
             XSLFSlide slide = src.createSlide();
@@ -229,71 +229,65 @@ class TestXSLFBugs {
             dest.createSlide().importContent(slide);
             dest.createSlide().importContent(slide2);
 
-            dest.write(bos);
+            try (XMLSlideShow ppt3 = writeOutAndReadBack(dest)) {
+                XSLFSlide slide3 = ppt3.getSlides().get(0);
+                XSLFTextBox shape3 = (XSLFTextBox) slide3.getShapes().get(0);
+                XSLFTextParagraph p3 = shape3.getTextParagraphs().get(1);
+                XSLFHyperlink h1 = p3.getTextRuns().get(0).getHyperlink();
+                assertNotNull(h1);
+                assertEquals("https://poi.apache.org", h1.getAddress());
+                XSLFHyperlink h2 = p3.getTextRuns().get(2).getHyperlink();
+                assertNotNull(h2);
+                // relative url will be resolved to an absolute url, therefore this doesn't equals to "slide2.xml"
+                assertEquals("/ppt/slides/slide2.xml", h2.getAddress());
+                RelationPart sldRef = slide3.getRelationPartById(h2.getXmlObject().getId());
+                assertTrue(sldRef.getDocumentPart() instanceof XSLFSlide);
+            }
         }
 
-        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
-            XSLFSlide slide = ppt.getSlides().get(0);
-            XSLFTextBox shape = (XSLFTextBox) slide.getShapes().get(0);
-            XSLFTextParagraph p = shape.getTextParagraphs().get(1);
-            XSLFHyperlink h1 = p.getTextRuns().get(0).getHyperlink();
-            assertNotNull(h1);
-            assertEquals("https://poi.apache.org", h1.getAddress());
-            XSLFHyperlink h2 = p.getTextRuns().get(2).getHyperlink();
-            assertNotNull(h2);
-            // relative url will be resolved to an absolute url, therefore this doesn't equals to "slide2.xml"
-            assertEquals("/ppt/slides/slide2.xml", h2.getAddress());
-            RelationPart sldRef = slide.getRelationPartById(h2.getXmlObject().getId());
-            assertTrue(sldRef.getDocumentPart() instanceof XSLFSlide);
-        }
     }
 
     @Test
     void bug62587() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (XMLSlideShow ppt = new XMLSlideShow()) {
-            Slide<?, ?> slide = ppt.createSlide();
-            XSLFPictureData pd = ppt.addPicture(slTests.getFile("wrench.emf"), PictureType.EMF);
-            PictureShape<?, ?> ps = slide.createPicture(pd);
-            ps.setAnchor(new Rectangle2D.Double(100, 100, 100, 100));
-            ppt.write(bos);
-        }
-
         Object[][] pics = {
             {"santa.wmf", PictureType.WMF, XSLFRelation.IMAGE_WMF},
             {"tomcat.png", PictureType.PNG, XSLFRelation.IMAGE_PNG},
             {"clock.jpg", PictureType.JPEG, XSLFRelation.IMAGE_JPEG}
         };
 
-        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
-            XSLFSlide s1 = ppt.getSlides().get(0);
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            Slide<?, ?> slide = ppt1.createSlide();
+            XSLFPictureData pd1 = ppt1.addPicture(slTests.getFile("wrench.emf"), PictureType.EMF);
+            PictureShape<?, ?> ps1 = slide.createPicture(pd1);
+            ps1.setAnchor(new Rectangle2D.Double(100, 100, 100, 100));
 
-            for (Object[] p : pics) {
-                XSLFSlide s2 = ppt.createSlide();
-                s2.importContent(s1);
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
+                XSLFSlide s1 = ppt2.getSlides().get(0);
 
-                XSLFPictureData pd = ppt.addPicture(slTests.getFile((String) p[0]), (PictureType) p[1]);
-                XSLFPictureShape ps = (XSLFPictureShape) s2.getShapes().get(0);
-                Rectangle2D anchor = ps.getAnchor();
-                s2.removeShape(ps);
-                ps = s2.createPicture(pd);
-                ps.setAnchor(anchor);
-            }
+                for (Object[] p : pics) {
+                    XSLFSlide s2 = ppt2.createSlide();
+                    s2.importContent(s1);
 
-            bos.reset();
-            ppt.write(bos);
-        }
+                    XSLFPictureData pd2 = ppt2.addPicture(slTests.getFile((String) p[0]), (PictureType) p[1]);
+                    XSLFPictureShape ps2 = (XSLFPictureShape) s2.getShapes().get(0);
+                    Rectangle2D anchor2 = ps2.getAnchor();
+                    s2.removeShape(ps2);
+                    ps2 = s2.createPicture(pd2);
+                    ps2.setAnchor(anchor2);
+                }
 
-        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
-            for (XSLFSlide sl : ppt.getSlides()) {
-                List<RelationPart> rels = sl.getRelationParts();
-                assertEquals(2, rels.size());
-                RelationPart rel0 = rels.get(0);
-                assertEquals("rId1", rel0.getRelationship().getId());
-                assertEquals(XSLFRelation.SLIDE_LAYOUT.getRelation(), rel0.getRelationship().getRelationshipType());
-                RelationPart rel1 = rels.get(1);
-                assertEquals("rId2", rel1.getRelationship().getId());
-                assertEquals(XSLFRelation.IMAGES.getRelation(), rel1.getRelationship().getRelationshipType());
+                try (XMLSlideShow ppt3 = writeOutAndReadBack(ppt2)) {
+                    for (XSLFSlide sl : ppt3.getSlides()) {
+                        List<RelationPart> rels = sl.getRelationParts();
+                        assertEquals(2, rels.size());
+                        RelationPart rel0 = rels.get(0);
+                        assertEquals("rId1", rel0.getRelationship().getId());
+                        assertEquals(XSLFRelation.SLIDE_LAYOUT.getRelation(), rel0.getRelationship().getRelationshipType());
+                        RelationPart rel1 = rels.get(1);
+                        assertEquals("rId2", rel1.getRelationship().getId());
+                        assertEquals(XSLFRelation.IMAGES.getRelation(), rel1.getRelationship().getRelationshipType());
+                    }
+                }
             }
         }
     }
@@ -301,78 +295,73 @@ class TestXSLFBugs {
 
     @Test
     void bug60499() throws IOException, InvalidFormatException {
-        InputStream is = slTests.openResourceAsStream("bug60499.pptx");
-        byte[] buf = IOUtils.toByteArray(is);
-        is.close();
-
         PackagePartName ppn = PackagingURIHelper.createPartName("/ppt/media/image1.png");
 
-        XMLSlideShow ppt1 = new XMLSlideShow(new ByteArrayInputStream(buf));
-        XSLFSlide slide1 = ppt1.getSlides().get(0);
+        try (XMLSlideShow ppt1 = openSampleDocument("bug60499.pptx")) {
+            XSLFSlide slide1 = ppt1.getSlides().get(0);
 
-        Optional<XSLFShape> shapeToDelete1 =
-            slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
+            Optional<XSLFShape> shapeToDelete1 =
+                slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
 
-        assertTrue(shapeToDelete1.isPresent());
-        slide1.removeShape(shapeToDelete1.get());
-        assertTrue(slide1.getRelationParts().stream()
-            .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId())));
+            assertTrue(shapeToDelete1.isPresent());
+            slide1.removeShape(shapeToDelete1.get());
+            assertTrue(slide1.getRelationParts().stream()
+                .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId())));
 
-        assertNotNull(ppt1.getPackage().getPart(ppn));
-        ppt1.close();
+            assertNotNull(ppt1.getPackage().getPart(ppn));
+        }
 
-        XMLSlideShow ppt2 = new XMLSlideShow(new ByteArrayInputStream(buf));
-        XSLFSlide slide2 = ppt2.getSlides().get(0);
+        try (XMLSlideShow ppt2 = openSampleDocument("bug60499.pptx")) {
+            XSLFSlide slide2 = ppt2.getSlides().get(0);
+            Optional<XSLFShape> shapeToDelete2 =
+                slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
+            assertTrue(shapeToDelete2.isPresent());
+            slide2.removeShape(shapeToDelete2.get());
+            assertTrue(slide2.getRelationParts().stream()
+                .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId())));
+            assertNotNull(ppt2.getPackage().getPart(ppn));
+        }
 
-        Optional<XSLFShape> shapeToDelete2 =
-            slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
-        assertTrue(shapeToDelete2.isPresent());
-        slide2.removeShape(shapeToDelete2.get());
-        assertTrue(slide2.getRelationParts().stream()
-            .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId())));
-        assertNotNull(ppt2.getPackage().getPart(ppn));
-        ppt2.close();
-
-        XMLSlideShow ppt3 = new XMLSlideShow(new ByteArrayInputStream(buf));
-        XSLFSlide slide3 = ppt3.getSlides().get(0);
-        slide3.getShapes().stream()
-            .filter(s -> s instanceof XSLFPictureShape)
-            .collect(Collectors.toList())
-            .forEach(slide3::removeShape);
-        assertNull(ppt3.getPackage().getPart(ppn));
-        ppt3.close();
+        try (XMLSlideShow ppt3 = openSampleDocument("bug60499.pptx")) {
+            XSLFSlide slide3 = ppt3.getSlides().get(0);
+            slide3.getShapes().stream()
+                .filter(s -> s instanceof XSLFPictureShape)
+                .collect(Collectors.toList())
+                .forEach(slide3::removeShape);
+            assertNull(ppt3.getPackage().getPart(ppn));
+        }
     }
 
     @Test
     void bug51187() throws Exception {
-        XMLSlideShow ss1 = openSampleDocument("51187.pptx");
+        try (XMLSlideShow ss1 = openSampleDocument("51187.pptx")) {
 
-        assertEquals(1, ss1.getSlides().size());
+            assertEquals(1, ss1.getSlides().size());
 
-        // Check the relations on it
-        // Note - rId3 is a self reference
-        XSLFSlide slide0 = ss1.getSlides().get(0);
+            // Check the relations on it
+            // Note - rId3 is a self reference
+            XSLFSlide slide0 = ss1.getSlides().get(0);
 
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
-        assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
-        assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
-        assertRelation(slide0, "/ppt/media/image1.png", "rId4");
+            assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+            assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
+            assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
+            assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
+            assertRelation(slide0, "/ppt/media/image1.png", "rId4");
 
-        // Save and re-load
-        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
-        ss1.close();
-        assertEquals(1, ss2.getSlides().size());
+            // Save and re-load
+            try (XMLSlideShow ss2 = writeOutAndReadBack(ss1)) {
+                assertEquals(1, ss2.getSlides().size());
 
-        slide0 = ss2.getSlides().get(0);
-        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
-        assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
-        assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
-        // TODO Fix this
-        assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
-        assertRelation(slide0, "/ppt/media/image1.png", "rId4");
+                slide0 = ss2.getSlides().get(0);
+                assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+                assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
+                assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
+                // TODO Fix this
+                assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
+                assertRelation(slide0, "/ppt/media/image1.png", "rId4");
 
-        ss2.close();
+            }
+        }
     }
 
     private static void assertRelation(XSLFSlide slide, String exp, String rId) {
@@ -386,41 +375,40 @@ class TestXSLFBugs {
      */
     @Test
     void tika705() throws Exception {
-        XMLSlideShow ss = openSampleDocument("with_japanese.pptx");
+        try (XMLSlideShow ss = openSampleDocument("with_japanese.pptx")) {
+            // Should have one slide
+            assertEquals(1, ss.getSlides().size());
+            XSLFSlide slide = ss.getSlides().get(0);
 
-        // Should have one slide
-        assertEquals(1, ss.getSlides().size());
-        XSLFSlide slide = ss.getSlides().get(0);
+            // Check the relations from this
+            Collection<RelationPart> rels = slide.getRelationParts();
 
-        // Check the relations from this
-        Collection<RelationPart> rels = slide.getRelationParts();
+            // Should have 6 relations:
+            //   1 external hyperlink (skipped from list)
+            //   4 internal hyperlinks
+            //   1 slide layout
+            assertEquals(5, rels.size());
+            int layouts = 0;
+            int hyperlinks = 0;
+            for (RelationPart p : rels) {
+                if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
+                    hyperlinks++;
+                } else if (p.getDocumentPart() instanceof XSLFSlideLayout) {
+                    layouts++;
+                }
+            }
+            assertEquals(1, layouts);
+            assertEquals(4, hyperlinks);
 
-        // Should have 6 relations:
-        //   1 external hyperlink (skipped from list)
-        //   4 internal hyperlinks
-        //   1 slide layout
-        assertEquals(5, rels.size());
-        int layouts = 0;
-        int hyperlinks = 0;
-        for (RelationPart p : rels) {
-            if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
-                hyperlinks++;
-            } else if (p.getDocumentPart() instanceof XSLFSlideLayout) {
-                layouts++;
+            // Hyperlinks should all be to #_ftn1 or #ftnref1
+            for (RelationPart p : rels) {
+                if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
+                    URI target = p.getRelationship().getTargetURI();
+                    String frag = target.getFragment();
+                    assertTrue(frag.equals("_ftn1") || frag.equals("_ftnref1"), "Invalid target " + frag + " on " + target);
+                }
             }
         }
-        assertEquals(1, layouts);
-        assertEquals(4, hyperlinks);
-
-        // Hyperlinks should all be to #_ftn1 or #ftnref1
-        for (RelationPart p : rels) {
-            if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
-                URI target = p.getRelationship().getTargetURI();
-                String frag = target.getFragment();
-                assertTrue(frag.equals("_ftn1") || frag.equals("_ftnref1"), "Invalid target " + frag + " on " + target);
-            }
-        }
-        ss.close();
     }
 
     /**
@@ -459,34 +447,34 @@ class TestXSLFBugs {
      */
     @Test
     void bug56812() throws Exception {
-        XMLSlideShow ppt = openSampleDocument("56812.pptx");
+        try (XMLSlideShow ppt = openSampleDocument("56812.pptx")) {
 
-        int internalPictures = 0;
-        int externalPictures = 0;
-        for (XSLFSlide slide : ppt.getSlides()) {
-            for (XSLFShape shape : slide.getShapes()) {
-                assertNotNull(shape);
+            int internalPictures = 0;
+            int externalPictures = 0;
+            for (XSLFSlide slide : ppt.getSlides()) {
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertNotNull(shape);
 
-                if (shape instanceof XSLFPictureShape) {
-                    XSLFPictureShape picture = (XSLFPictureShape) shape;
-                    if (picture.isExternalLinkedPicture()) {
-                        externalPictures++;
+                    if (shape instanceof XSLFPictureShape) {
+                        XSLFPictureShape picture = (XSLFPictureShape) shape;
+                        if (picture.isExternalLinkedPicture()) {
+                            externalPictures++;
 
-                        assertNotNull(picture.getPictureLink());
-                    } else {
-                        internalPictures++;
+                            assertNotNull(picture.getPictureLink());
+                        } else {
+                            internalPictures++;
 
-                        XSLFPictureData data = picture.getPictureData();
-                        assertNotNull(data);
-                        assertNotNull(data.getFileName());
+                            XSLFPictureData data = picture.getPictureData();
+                            assertNotNull(data);
+                            assertNotNull(data.getFileName());
+                        }
                     }
                 }
             }
-        }
 
-        assertEquals(2, internalPictures);
-        assertEquals(1, externalPictures);
-        ppt.close();
+            assertEquals(2, internalPictures);
+            assertEquals(1, externalPictures);
+        }
     }
 
     private String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
@@ -502,29 +490,29 @@ class TestXSLFBugs {
 
     @Test
     void bug57250() throws Exception {
-        XMLSlideShow ss = new XMLSlideShow();
-        for (String s : new String[]{"Slide1", "Slide2"}) {
-            ss.createSlide().createTextBox().setText(s);
+        try (XMLSlideShow ss = new XMLSlideShow()) {
+            for (String s : new String[]{"Slide1", "Slide2"}) {
+                ss.createSlide().createTextBox().setText(s);
+            }
+            validateSlides(ss, false, "Slide1", "Slide2");
+
+            XSLFSlide slide = ss.createSlide();
+            slide.createTextBox().setText("New slide");
+            validateSlides(ss, true, "Slide1", "Slide2", "New slide");
+
+            // Move backward
+            ss.setSlideOrder(slide, 0);
+            validateSlides(ss, true, "New slide", "Slide1", "Slide2");
+
+            // Move forward
+            ss.setSlideOrder(slide, 1);
+            validateSlides(ss, true, "Slide1", "New slide", "Slide2");
+
+            // Move to end
+            ss.setSlideOrder(slide, 0);
+            ss.setSlideOrder(slide, 2);
+            validateSlides(ss, true, "Slide1", "Slide2", "New slide");
         }
-        validateSlides(ss, false, "Slide1", "Slide2");
-
-        XSLFSlide slide = ss.createSlide();
-        slide.createTextBox().setText("New slide");
-        validateSlides(ss, true, "Slide1", "Slide2", "New slide");
-
-        // Move backward
-        ss.setSlideOrder(slide, 0);
-        validateSlides(ss, true, "New slide", "Slide1", "Slide2");
-
-        // Move forward
-        ss.setSlideOrder(slide, 1);
-        validateSlides(ss, true, "Slide1", "New slide", "Slide2");
-
-        // Move to end
-        ss.setSlideOrder(slide, 0);
-        ss.setSlideOrder(slide, 2);
-        validateSlides(ss, true, "Slide1", "Slide2", "New slide");
-        ss.close();
     }
 
     /**
@@ -533,89 +521,88 @@ class TestXSLFBugs {
      */
     @Test
     void test57552() throws Exception {
-        XMLSlideShow ss = new XMLSlideShow();
-        for (String s : new String[]{"Slide1", "Slide2"}) {
-            ss.createSlide().createTextBox().setText(s);
-        }
+        try (XMLSlideShow ss = new XMLSlideShow()) {
+            for (String s : new String[]{"Slide1", "Slide2"}) {
+                ss.createSlide().createTextBox().setText(s);
+            }
 
-        // Slide starts with just layout relation
-        XSLFSlide slide = ss.getSlides().get(0);
-        assertEquals(0, ss.getPictureData().size());
-        assertEquals(1, slide.getShapes().size());
+            // Slide starts with just layout relation
+            XSLFSlide slide = ss.getSlides().get(0);
+            assertEquals(0, ss.getPictureData().size());
+            assertEquals(1, slide.getShapes().size());
 
-        assertEquals(1, slide.getRelations().size());
+            assertEquals(1, slide.getRelations().size());
 
-        final XSLFRelation expected = XSLFRelation.SLIDE_LAYOUT;
-        final POIXMLDocumentPart relation = slide.getRelations().get(0);
+            final XSLFRelation expected = XSLFRelation.SLIDE_LAYOUT;
+            final POIXMLDocumentPart relation = slide.getRelations().get(0);
 
-        assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
-        assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
+            assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
+            assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
 
-        // Some dummy pictures
-        byte[][] pics = new byte[15][3];
-        for (int i = 0; i < pics.length; i++) {
-            Arrays.fill(pics[i], (byte) i);
-        }
+            // Some dummy pictures
+            byte[][] pics = new byte[15][3];
+            for (int i = 0; i < pics.length; i++) {
+                Arrays.fill(pics[i], (byte) i);
+            }
 
-        // Add a few pictures
-        addPictures(ss, slide, pics, 0, 10);
+            // Add a few pictures
+            addPictures(ss, slide, pics, 0, 10);
 
-        // Re-fetch the pictures and check
-        for (int i = 0; i < 10; i++) {
-            XSLFPictureShape shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
+            // Re-fetch the pictures and check
+            for (int i = 0; i < 10; i++) {
+                XSLFPictureShape shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
+                assertNotNull(shape.getPictureData());
+                assertArrayEquals(pics[i], shape.getPictureData().getData());
+            }
+
+            // Add past 10
+            addPictures(ss, slide, pics, 10, 15);
+
+            // Check all pictures
+            for (int i = 0; i < 15; i++) {
+                XSLFPictureShape shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
+                assertNotNull(shape.getPictureData());
+                assertArrayEquals(pics[i], shape.getPictureData().getData());
+            }
+
+            // Add a duplicate, check the right one is picked
+            XSLFPictureData data = ss.addPicture(pics[3], PictureType.JPEG);
+            assertEquals(3, data.getIndex());
+            assertEquals(15, ss.getPictureData().size());
+
+            XSLFPictureShape shape = slide.createPicture(data);
             assertNotNull(shape.getPictureData());
-            assertArrayEquals(pics[i], shape.getPictureData().getData());
+            assertArrayEquals(pics[3], shape.getPictureData().getData());
+            assertEquals(17, slide.getShapes().size());
+
+
+            // Save and re-load
+            try (XMLSlideShow ss2 = writeOutAndReadBack(ss)) {
+                slide = ss2.getSlides().get(0);
+
+                // Check the 15 individual ones added
+                for (int i = 0; i < 15; i++) {
+                    shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
+                    assertNotNull(shape.getPictureData());
+                    assertArrayEquals(pics[i], shape.getPictureData().getData());
+                }
+
+                // Check the duplicate
+                shape = (XSLFPictureShape) slide.getShapes().get(16);
+                assertNotNull(shape.getPictureData());
+                assertArrayEquals(pics[3], shape.getPictureData().getData());
+
+                // Add another duplicate
+                data = ss2.addPicture(pics[5], PictureType.JPEG);
+                assertEquals(5, data.getIndex());
+                assertEquals(15, ss2.getPictureData().size());
+
+                shape = slide.createPicture(data);
+                assertNotNull(shape.getPictureData());
+                assertArrayEquals(pics[5], shape.getPictureData().getData());
+                assertEquals(18, slide.getShapes().size());
+            }
         }
-
-        // Add past 10
-        addPictures(ss, slide, pics, 10, 15);
-
-        // Check all pictures
-        for (int i = 0; i < 15; i++) {
-            XSLFPictureShape shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
-            assertNotNull(shape.getPictureData());
-            assertArrayEquals(pics[i], shape.getPictureData().getData());
-        }
-
-        // Add a duplicate, check the right one is picked
-        XSLFPictureData data = ss.addPicture(pics[3], PictureType.JPEG);
-        assertEquals(3, data.getIndex());
-        assertEquals(15, ss.getPictureData().size());
-
-        XSLFPictureShape shape = slide.createPicture(data);
-        assertNotNull(shape.getPictureData());
-        assertArrayEquals(pics[3], shape.getPictureData().getData());
-        assertEquals(17, slide.getShapes().size());
-
-
-        // Save and re-load
-        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
-        slide = ss2.getSlides().get(0);
-
-        // Check the 15 individual ones added
-        for (int i = 0; i < 15; i++) {
-            shape = (XSLFPictureShape) slide.getShapes().get(i + 1);
-            assertNotNull(shape.getPictureData());
-            assertArrayEquals(pics[i], shape.getPictureData().getData());
-        }
-
-        // Check the duplicate
-        shape = (XSLFPictureShape) slide.getShapes().get(16);
-        assertNotNull(shape.getPictureData());
-        assertArrayEquals(pics[3], shape.getPictureData().getData());
-
-        // Add another duplicate
-        data = ss2.addPicture(pics[5], PictureType.JPEG);
-        assertEquals(5, data.getIndex());
-        assertEquals(15, ss2.getPictureData().size());
-
-        shape = slide.createPicture(data);
-        assertNotNull(shape.getPictureData());
-        assertArrayEquals(pics[5], shape.getPictureData().getData());
-        assertEquals(18, slide.getShapes().size());
-
-        ss2.close();
-        ss.close();
     }
 
     private void addPictures(XMLSlideShow ss, XSLFSlide slide, byte[][] pics, int start, int end) {
@@ -633,9 +620,9 @@ class TestXSLFBugs {
 
     private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) throws IOException {
         if (saveAndReload) {
-            XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
-            validateSlides(ss, slideTexts);
-            ss2.close();
+            try (XMLSlideShow ss2 = writeOutAndReadBack(ss)) {
+                validateSlides(ss2, slideTexts);
+            }
         } else {
             validateSlides(ss, slideTexts);
         }
@@ -652,69 +639,57 @@ class TestXSLFBugs {
 
     @Test
     void bug58205() throws IOException {
-        XMLSlideShow ss = openSampleDocument("themes.pptx");
-
-        int i = 1;
-        for (XSLFSlideMaster sm : ss.getSlideMasters()) {
-            assertEquals("rId" + (i++), ss.getRelationId(sm));
+        try (XMLSlideShow ss = openSampleDocument("themes.pptx")) {
+            int i = 1;
+            for (XSLFSlideMaster sm : ss.getSlideMasters()) {
+                assertEquals("rId" + (i++), ss.getRelationId(sm));
+            }
         }
-
-        ss.close();
     }
 
-    @Test
-    void bug55791a() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("45541_Footer.pptx");
-        removeAndCreateSlide(ppt);
-        ppt.close();
-    }
-
-    @Test
-    void bug55791b() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("SampleShow.pptx");
-        removeAndCreateSlide(ppt);
-        ppt.close();
-    }
-
-    private void removeAndCreateSlide(XMLSlideShow ppt) {
-        assertTrue(ppt.getSlides().size() > 1);
-        ppt.removeSlide(1);
-        assertNotNull(ppt.createSlide());
+    @ParameterizedTest
+    @ValueSource(strings = {"45541_Footer.pptx", "SampleShow.pptx"})
+    void bug55791(String fileName) throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument(fileName)) {
+            assertTrue(ppt.getSlides().size() > 1);
+            ppt.removeSlide(1);
+            assertNotNull(ppt.createSlide());
+        }
     }
 
     @Test
     void blibFillAlternateContent() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("2411-Performance_Up.pptx");
-        XSLFPictureShape ps = (XSLFPictureShape) ppt.getSlides().get(4).getShapes().get(0);
-        assertNotNull(ps.getPictureData());
-        ppt.close();
+        try (XMLSlideShow ppt = openSampleDocument("2411-Performance_Up.pptx")) {
+            XSLFPictureShape ps = (XSLFPictureShape) ppt.getSlides().get(4).getShapes().get(0);
+            assertNotNull(ps.getPictureData());
+        }
     }
 
     @Test
     void bug59434() throws IOException {
         String url1 = "https://poi.apache.org/changes.html";
         String url2 = "https://poi.apache.org/faq.html";
-        XMLSlideShow ppt1 = new XMLSlideShow();
-        PictureData pd1 = ppt1.addPicture(slTests.readFile("tomcat.png"), PictureType.PNG);
-        PictureData pd2 = ppt1.addPicture(slTests.readFile("santa.wmf"), PictureType.WMF);
-        XSLFSlide slide = ppt1.createSlide();
-        XSLFPictureShape ps1 = slide.createPicture(pd1);
-        ps1.setAnchor(new Rectangle2D.Double(20, 20, 100, 100));
-        XSLFHyperlink hl1 = ps1.createHyperlink();
-        hl1.linkToUrl(url1);
-        XSLFPictureShape ps2 = slide.createPicture(pd2);
-        ps2.setAnchor(new Rectangle2D.Double(120, 120, 100, 100));
-        XSLFHyperlink hl2 = ps2.createHyperlink();
-        hl2.linkToUrl(url2);
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
-        ppt1.close();
-        slide = ppt2.getSlides().get(0);
-        ps1 = (XSLFPictureShape) slide.getShapes().get(0);
-        ps2 = (XSLFPictureShape) slide.getShapes().get(1);
-        assertEquals(url1, ps1.getHyperlink().getAddress());
-        assertEquals(url2, ps2.getHyperlink().getAddress());
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            PictureData pd1 = ppt1.addPicture(slTests.readFile("tomcat.png"), PictureType.PNG);
+            PictureData pd2 = ppt1.addPicture(slTests.readFile("santa.wmf"), PictureType.WMF);
+            XSLFSlide slide = ppt1.createSlide();
+            XSLFPictureShape ps1 = slide.createPicture(pd1);
+            ps1.setAnchor(new Rectangle2D.Double(20, 20, 100, 100));
+            XSLFHyperlink hl1 = ps1.createHyperlink();
+            hl1.linkToUrl(url1);
+            XSLFPictureShape ps2 = slide.createPicture(pd2);
+            ps2.setAnchor(new Rectangle2D.Double(120, 120, 100, 100));
+            XSLFHyperlink hl2 = ps2.createHyperlink();
+            hl2.linkToUrl(url2);
 
-        ppt2.close();
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
+                slide = ppt2.getSlides().get(0);
+                ps1 = (XSLFPictureShape) slide.getShapes().get(0);
+                ps2 = (XSLFPictureShape) slide.getShapes().get(1);
+                assertEquals(url1, ps1.getHyperlink().getAddress());
+                assertEquals(url2, ps2.getHyperlink().getAddress());
+            }
+        }
     }
 
     @Test
@@ -723,27 +698,27 @@ class TestXSLFBugs {
         Color lineColor = new Color(25.3f / 255f, 1f, 0f, 0.4f);
         Color textColor = new Color(1f, 1f, 0f, 0.6f);
 
-        XMLSlideShow ppt1 = new XMLSlideShow();
-        XSLFSlide sl = ppt1.createSlide();
-        XSLFAutoShape as = sl.createAutoShape();
-        as.setShapeType(ShapeType.STAR_10);
-        as.setAnchor(new Rectangle2D.Double(100, 100, 300, 300));
-        as.setFillColor(fillColor);
-        as.setLineColor(lineColor);
-        as.setText("Alpha");
-        as.setVerticalAlignment(VerticalAlignment.MIDDLE);
-        as.setHorizontalCentered(true);
-        XSLFTextRun tr = as.getTextParagraphs().get(0).getTextRuns().get(0);
-        tr.setFontSize(32d);
-        tr.setFontColor(textColor);
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
-        ppt1.close();
-        sl = ppt2.getSlides().get(0);
-        as = (XSLFAutoShape) sl.getShapes().get(0);
-        checkColor(fillColor, as.getFillStyle().getPaint());
-        checkColor(lineColor, as.getStrokeStyle().getPaint());
-        checkColor(textColor, as.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor());
-        ppt2.close();
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            XSLFSlide sl = ppt1.createSlide();
+            XSLFAutoShape as = sl.createAutoShape();
+            as.setShapeType(ShapeType.STAR_10);
+            as.setAnchor(new Rectangle2D.Double(100, 100, 300, 300));
+            as.setFillColor(fillColor);
+            as.setLineColor(lineColor);
+            as.setText("Alpha");
+            as.setVerticalAlignment(VerticalAlignment.MIDDLE);
+            as.setHorizontalCentered(true);
+            XSLFTextRun tr = as.getTextParagraphs().get(0).getTextRuns().get(0);
+            tr.setFontSize(32d);
+            tr.setFontColor(textColor);
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
+                sl = ppt2.getSlides().get(0);
+                as = (XSLFAutoShape) sl.getShapes().get(0);
+                checkColor(fillColor, as.getFillStyle().getPaint());
+                checkColor(lineColor, as.getStrokeStyle().getPaint());
+                checkColor(textColor, as.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor());
+            }
+        }
     }
 
     private static void checkColor(Color expected, PaintStyle actualStyle) {
@@ -757,64 +732,60 @@ class TestXSLFBugs {
 
     @Test
     void bug55714() throws IOException {
-        XMLSlideShow srcPptx = openSampleDocument("pptx2svg.pptx");
-        XMLSlideShow newPptx = new XMLSlideShow();
-        XSLFSlide srcSlide = srcPptx.getSlides().get(0);
-        XSLFSlide newSlide = newPptx.createSlide();
+        try (XMLSlideShow srcPptx = openSampleDocument("pptx2svg.pptx");
+             XMLSlideShow newPptx = new XMLSlideShow()) {
+            XSLFSlide srcSlide = srcPptx.getSlides().get(0);
+            XSLFSlide newSlide = newPptx.createSlide();
 
-        XSLFSlideLayout srcSlideLayout = srcSlide.getSlideLayout();
-        XSLFSlideLayout newSlideLayout = newSlide.getSlideLayout();
-        newSlideLayout.importContent(srcSlideLayout);
+            XSLFSlideLayout srcSlideLayout = srcSlide.getSlideLayout();
+            XSLFSlideLayout newSlideLayout = newSlide.getSlideLayout();
+            newSlideLayout.importContent(srcSlideLayout);
 
-        XSLFSlideMaster srcSlideMaster = srcSlide.getSlideMaster();
-        XSLFSlideMaster newSlideMaster = newSlide.getSlideMaster();
-        newSlideMaster.importContent(srcSlideMaster);
+            XSLFSlideMaster srcSlideMaster = srcSlide.getSlideMaster();
+            XSLFSlideMaster newSlideMaster = newSlide.getSlideMaster();
+            newSlideMaster.importContent(srcSlideMaster);
 
-        newSlide.importContent(srcSlide);
-        XMLSlideShow rwPptx = XSLFTestDataSamples.writeOutAndReadBack(newPptx);
-
-        PaintStyle ps = rwPptx.getSlides().get(0).getBackground().getFillStyle().getPaint();
-        assertTrue(ps instanceof TexturePaint);
-
-        rwPptx.close();
-        newPptx.close();
-        srcPptx.close();
+            newSlide.importContent(srcSlide);
+            try (XMLSlideShow rwPptx = writeOutAndReadBack(newPptx)) {
+                PaintStyle ps = rwPptx.getSlides().get(0).getBackground().getFillStyle().getPaint();
+                assertTrue(ps instanceof TexturePaint);
+            }
+        }
     }
 
     @Test
     void bug59273() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("bug59273.potx");
-        ppt.getPackage().replaceContentType(
-            XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
-            XSLFRelation.MAIN.getContentType()
-        );
+        try (XMLSlideShow ppt = openSampleDocument("bug59273.potx")) {
+            ppt.getPackage().replaceContentType(
+                XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
+                XSLFRelation.MAIN.getContentType()
+            );
 
-        XMLSlideShow rwPptx = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        OPCPackage pkg = rwPptx.getPackage();
-        int size = pkg.getPartsByContentType(XSLFRelation.MAIN.getContentType()).size();
-        assertEquals(1, size);
-        size = pkg.getPartsByContentType(XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType()).size();
-        assertEquals(0, size);
-
-        rwPptx.close();
-        ppt.close();
+            try (XMLSlideShow rwPptx = writeOutAndReadBack(ppt)) {
+                OPCPackage pkg = rwPptx.getPackage();
+                int size = pkg.getPartsByContentType(XSLFRelation.MAIN.getContentType()).size();
+                assertEquals(1, size);
+                size = pkg.getPartsByContentType(XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType()).size();
+                assertEquals(0, size);
+            }
+        }
     }
 
 
     @Test
     void bug60373() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
-        XSLFSlide sl = ppt.createSlide();
-        XSLFTable t = sl.createTable();
-        XSLFTableRow r = t.addRow();
-        bug60373_addCell(r);
-        bug60373_addCell(r);
-        r = t.addRow();
-        XSLFTableCell c = bug60373_addCell(r);
-        // call getTextHeight, when table is not fully populated
-        double th = c.getTextHeight();
-        assertTrue(th > 10);
-        ppt.close();
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide sl = ppt.createSlide();
+            XSLFTable t = sl.createTable();
+            XSLFTableRow r = t.addRow();
+            bug60373_addCell(r);
+            bug60373_addCell(r);
+            r = t.addRow();
+            XSLFTableCell c = bug60373_addCell(r);
+            // call getTextHeight, when table is not fully populated
+            double th = c.getTextHeight();
+            assertTrue(th > 10);
+        }
     }
 
     private static XSLFTableCell bug60373_addCell(XSLFTableRow r) {
@@ -834,42 +805,39 @@ class TestXSLFBugs {
 
     @Test
     void bug60662() throws IOException {
-        XMLSlideShow src = new XMLSlideShow();
-        XSLFSlide sl = src.createSlide();
-        XSLFGroupShape gs = sl.createGroup();
-        gs.setAnchor(new Rectangle2D.Double(100, 100, 100, 100));
-        gs.setInteriorAnchor(new Rectangle2D.Double(0, 0, 100, 100));
-        XSLFAutoShape as = gs.createAutoShape();
-        as.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
-        as.setShapeType(ShapeType.STAR_24);
-        as.setFillColor(Color.YELLOW);
-        CTShape csh = (CTShape) as.getXmlObject();
-        CTOuterShadowEffect shadow = csh.getSpPr().addNewEffectLst().addNewOuterShdw();
-        shadow.setDir(270000);
-        shadow.setDist(100000);
-        shadow.addNewSrgbClr().setVal(new byte[]{0x00, (byte) 0xFF, 0x00});
+        try (XMLSlideShow src = new XMLSlideShow();
+             XMLSlideShow dst = new XMLSlideShow()) {
+            XSLFSlide sl = src.createSlide();
+            XSLFGroupShape gs = sl.createGroup();
+            gs.setAnchor(new Rectangle2D.Double(100, 100, 100, 100));
+            gs.setInteriorAnchor(new Rectangle2D.Double(0, 0, 100, 100));
+            XSLFAutoShape as = gs.createAutoShape();
+            as.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
+            as.setShapeType(ShapeType.STAR_24);
+            as.setFillColor(Color.YELLOW);
+            CTShape csh = (CTShape) as.getXmlObject();
+            CTOuterShadowEffect shadow = csh.getSpPr().addNewEffectLst().addNewOuterShdw();
+            shadow.setDir(270000);
+            shadow.setDist(100000);
+            shadow.addNewSrgbClr().setVal(new byte[]{0x00, (byte) 0xFF, 0x00});
 
-        XMLSlideShow dst = new XMLSlideShow();
-        XSLFSlide sl2 = dst.createSlide();
-        sl2.importContent(sl);
-        XSLFGroupShape gs2 = (XSLFGroupShape) sl2.getShapes().get(0);
-        XSLFAutoShape as2 = (XSLFAutoShape) gs2.getShapes().get(0);
-        CTShape csh2 = (CTShape) as2.getXmlObject();
-        assertTrue(csh2.getSpPr().isSetEffectLst());
-
-        dst.close();
-        src.close();
+            XSLFSlide sl2 = dst.createSlide();
+            sl2.importContent(sl);
+            XSLFGroupShape gs2 = (XSLFGroupShape) sl2.getShapes().get(0);
+            XSLFAutoShape as2 = (XSLFAutoShape) gs2.getShapes().get(0);
+            CTShape csh2 = (CTShape) as2.getXmlObject();
+            assertTrue(csh2.getSpPr().isSetEffectLst());
+        }
     }
 
     @Test
     void test60810() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("60810.pptx");
-        for (XSLFSlide slide : ppt.getSlides()) {
-            XSLFNotes notesSlide = ppt.getNotesSlide(slide);
-            assertNotNull(notesSlide);
+        try (XMLSlideShow ppt = openSampleDocument("60810.pptx")) {
+            for (XSLFSlide slide : ppt.getSlides()) {
+                XSLFNotes notesSlide = ppt.getNotesSlide(slide);
+                assertNotNull(notesSlide);
+            }
         }
-
-        ppt.close();
     }
 
     @Test
@@ -886,7 +854,7 @@ class TestXSLFBugs {
         try (XMLSlideShow ppt = openSampleDocument("61515.pptx")) {
             ppt.removeSlide(0);
             assertEquals(1, ppt.createSlide().getRelations().size());
-            try (XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+            try (XMLSlideShow saved = writeOutAndReadBack(ppt)) {
                 assertEquals(1, saved.getSlides().size());
                 XSLFSlide slide = saved.getSlides().get(0);
                 assertEquals(1, slide.getRelations().size());
@@ -897,7 +865,7 @@ class TestXSLFBugs {
     @Test
     void testAptia() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("aptia.pptx");
-             XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+             XMLSlideShow saved = writeOutAndReadBack(ppt)) {
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
     }
@@ -906,7 +874,7 @@ class TestXSLFBugs {
     @Test
     void testDivinoRevelado() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("Divino_Revelado.pptx");
-             XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+             XMLSlideShow saved = writeOutAndReadBack(ppt)) {
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
     }

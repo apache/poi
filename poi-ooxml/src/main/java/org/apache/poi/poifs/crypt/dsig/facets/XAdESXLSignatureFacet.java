@@ -28,7 +28,6 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CRLException;
@@ -47,6 +46,7 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
@@ -104,8 +104,8 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
-        QualifyingPropertiesDocument qualDoc = null;
-        QualifyingPropertiesType qualProps = null;
+        QualifyingPropertiesDocument qualDoc;
+        QualifyingPropertiesType qualProps;
 
         // check for XAdES-BES
         NodeList qualNl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
@@ -289,7 +289,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        ByteArrayOutputStream c14nValue = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream();
         try {
             for (Node node : nodeList) {
                 /*

@@ -17,22 +17,23 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 /**
  * Build an output stream for MemoryPackagePart.
  */
 public final class MemoryPackagePartOutputStream extends OutputStream {
 
-	private MemoryPackagePart _part;
+	private final MemoryPackagePart _part;
 
-	private ByteArrayOutputStream _buff;
+	private final UnsynchronizedByteArrayOutputStream _buff;
 
 	public MemoryPackagePartOutputStream(MemoryPackagePart part) {
 		this._part = part;
-		_buff = new ByteArrayOutputStream();
+		_buff = new UnsynchronizedByteArrayOutputStream();
 	}
 
 	@Override

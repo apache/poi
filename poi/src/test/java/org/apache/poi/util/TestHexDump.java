@@ -22,11 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.io.output.NullPrintStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class TestHexDump {
     @Test
     void testDump() throws IOException {
         byte[] testArray = testArray();
-        ByteArrayOutputStream streamAct = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream streamAct = new UnsynchronizedByteArrayOutputStream();
         HexDump.dump(testArray, 0, streamAct, 0);
         byte[] bytesAct = streamAct.toByteArray();
         byte[] bytesExp = toHexDump(0, 0);

@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hdgf;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.LZWDecompresser;
 
 /**
@@ -53,7 +53,7 @@ public class HDGFLZW extends LZWDecompresser {
     * @throws IOException when the InputStream can't be read
     */
    public byte[] compress(InputStream src) throws IOException {
-      ByteArrayOutputStream res = new ByteArrayOutputStream();
+      UnsynchronizedByteArrayOutputStream res = new UnsynchronizedByteArrayOutputStream();
       compress(src,res);
       return res.toByteArray();
    }

@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -46,6 +45,7 @@ import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -1175,9 +1175,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     void bug32191() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("27394.xls");
-             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-             ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-             ByteArrayOutputStream out3 = new ByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream out1 = new UnsynchronizedByteArrayOutputStream();
+             UnsynchronizedByteArrayOutputStream out2 = new UnsynchronizedByteArrayOutputStream();
+             UnsynchronizedByteArrayOutputStream out3 = new UnsynchronizedByteArrayOutputStream()) {
             wb.write(out1);
             wb.write(out2);
             wb.write(out3);
@@ -2220,7 +2220,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
 
     /**
      * Read, write, read for formulas point to cells in other files.
-     * See {@link #bug46670()} for the main test, this just
+     * See bug46670() for the main test, this just
      * covers reading an existing file and checking it.
      *
      * See base-test-class for some related tests that still fail
@@ -2331,7 +2331,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
             }
 
             // Convert BufferedImage to byte[]
-            ByteArrayOutputStream imageBAOS = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream imageBAOS = new UnsynchronizedByteArrayOutputStream();
             ImageIO.write(bimage, "jpeg", imageBAOS);
             imageBAOS.flush();
             byte[] imageBytes = imageBAOS.toByteArray();
@@ -2552,7 +2552,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
         "46904.xls, org.apache.poi.hssf.OldExcelFormatException, The supplied spreadsheet seems to be Excel",
         "51832.xls, org.apache.poi.EncryptedDocumentException, Default password is invalid for salt/verifier/verifierHash"
     })
-    void simpleTest(String fileName, String exClazz, String exMessage) throws IOException, ClassNotFoundException {
+    void simpleTest(String fileName, String exClazz, String exMessage) throws ClassNotFoundException {
         Class<? extends Exception> ex = (Class<? extends Exception>)Class.forName(exClazz);
         Exception e = assertThrows(ex, () -> simpleTest(fileName, null));
         assertTrue(e.getMessage().startsWith(exMessage));

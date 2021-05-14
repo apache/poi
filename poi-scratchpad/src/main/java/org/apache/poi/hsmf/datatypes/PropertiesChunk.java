@@ -17,8 +17,9 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hsmf.datatypes.PropertyValue.BooleanPropertyValue;
@@ -46,8 +48,6 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * <p>
@@ -76,13 +76,13 @@ public abstract class PropertiesChunk extends Chunk {
      * Holds properties, indexed by type. If a property is multi-valued, or
      * variable length, it will be held via a {@link ChunkBasedPropertyValue}.
      */
-    private Map<MAPIProperty, PropertyValue> properties = new HashMap<>();
+    private final Map<MAPIProperty, PropertyValue> properties = new HashMap<>();
 
     /**
      * The ChunkGroup that these properties apply to. Used when matching chunks
      * to variable sized and multi-valued properties
      */
-    private ChunkGroup parentGroup;
+    private final ChunkGroup parentGroup;
 
     /**
      * Creates a Properties Chunk.
@@ -254,7 +254,7 @@ public abstract class PropertiesChunk extends Chunk {
                 }
 
                 // Wrap and store
-                PropertyValue propVal = null;
+                PropertyValue propVal;
                 if (isPointer) {
                     // We'll match up the chunk later
                     propVal = new ChunkBasedPropertyValue(prop, flags, data, type);
@@ -302,16 +302,17 @@ public abstract class PropertiesChunk extends Chunk {
      *         If an I/O error occurs.
      */
     public void writeProperties(DirectoryEntry directory) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<PropertyValue> values = writeProperties(baos);
-        baos.close();
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            List<PropertyValue> values = writeProperties(baos);
 
-        // write the header data with the properties declaration
-        directory.createDocument(PropertiesChunk.NAME,
-            new ByteArrayInputStream(baos.toByteArray()));
+            // write the header data with the properties declaration
+            try (InputStream is = baos.toInputStream()) {
+                directory.createDocument(PropertiesChunk.NAME, is);
+            }
 
-        // write the property values
-        writeNodeData(directory, values);
+            // write the property values
+            writeNodeData(directory, values);
+        }
     }
 
     /**

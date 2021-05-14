@@ -17,7 +17,6 @@
 
 package org.apache.poi.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
@@ -33,6 +32,8 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
@@ -106,7 +107,7 @@ public final class IOUtils {
         checkByteSizeLimit(limit);
 
         stream.mark(limit);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(limit);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(limit);
         copy(new BoundedInputStream(stream, limit), bos);
 
         int readBytes = bos.size();
@@ -177,7 +178,7 @@ public final class IOUtils {
         }
 
         final int len = Math.min(length, maxLength);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
 
         byte[] buffer = new byte[4096];
         int totalBytes = 0, readBytes;

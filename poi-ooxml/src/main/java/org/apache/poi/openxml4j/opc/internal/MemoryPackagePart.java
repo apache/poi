@@ -18,11 +18,11 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -113,16 +113,14 @@ public final class MemoryPackagePart extends PackagePart {
 
 	@Override
 	public boolean load(InputStream ios) throws InvalidFormatException {
-	   // Grab the data
-	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	   try {
+	   try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+		   // Grab the data
 	      IOUtils.copy(ios, baos);
+		   // Save it
+		   data = baos.toByteArray();
 	   } catch(IOException e) {
 	      throw new InvalidFormatException(e.getMessage());
 	   }
-
-	   // Save it
-	   data = baos.toByteArray();
 
 	   // All done
 	   return true;

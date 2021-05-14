@@ -21,12 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 final class TestDrawingRecord {
@@ -39,7 +38,7 @@ final class TestDrawingRecord {
     void testReadContinued() throws IOException {
 
         //simulate a continues drawing record
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         //main part
         DrawingRecord dg = new DrawingRecord();
         byte[] data1 = new byte[8224];
@@ -53,7 +52,7 @@ final class TestDrawingRecord {
         ContinueRecord cn = new ContinueRecord(data2);
         out.write(cn.serialize());
 
-        List<org.apache.poi.hssf.record.Record> rec = RecordFactory.createRecords(new ByteArrayInputStream(out.toByteArray()));
+        List<org.apache.poi.hssf.record.Record> rec = RecordFactory.createRecords(out.toInputStream());
         assertEquals(2, rec.size());
         assertTrue(rec.get(0) instanceof DrawingRecord);
         assertTrue(rec.get(1) instanceof ContinueRecord);

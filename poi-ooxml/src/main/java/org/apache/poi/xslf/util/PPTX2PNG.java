@@ -121,6 +121,7 @@ public final class PPTX2PNG {
     private PPTX2PNG() {
     }
 
+    @SuppressWarnings("AssignmentToForLoopParameter")
     private boolean parseCommandLine(String[] args) {
         if (args.length == 0) {
             usage(null);
@@ -403,6 +404,7 @@ public final class PPTX2PNG {
         }
         GenericRecord gr = proxy.getRoot();
         try (GenericRecordJsonWriter fw = new GenericRecordJsonWriter(dumpfile) {
+            @Override
             protected boolean printBytes(String name, Object o) {
                 return false;
             }

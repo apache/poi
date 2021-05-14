@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -26,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 
@@ -36,9 +36,9 @@ import org.apache.poi.util.LittleEndian;
  *  defines the colours to be used
  */
 public final class ColorSchemeAtom extends RecordAtom {
-	private byte[] _header;
-	private static long _type = 2032l;
+	private static final long _type = 2032L;
 
+	private final byte[] _header;
 	private int backgroundColourRGB;
 	private int textAndLinesColourRGB;
 	private int shadowsColourRGB;
@@ -99,8 +99,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 	 */
 	protected ColorSchemeAtom(byte[] source, int start, int len) {
 		// Sanity Checking - we're always 40 bytes long
-		if(len < 40) {
-			len = 40;
+		if (len < 40) {
 			if(source.length - start < 40) {
 				throw new HSLFException("Not enough data to form a ColorSchemeAtom (always 40 bytes long) - found " + (source.length - start));
 			}
@@ -155,7 +154,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 		byte[] ret = new byte[3];
 
 		// Serialise to bytes, then grab the right ones out
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		try {
 			writeLittleEndian(rgb,baos);
 		} catch(IOException ie) {

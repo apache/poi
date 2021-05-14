@@ -22,7 +22,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -38,7 +38,7 @@ public class TestHWPFLister {
         "",
         " --dop --textPieces --textPiecesText --chpx --chpxProperties --chpxSprms --papx --papxProperties --papxSprms --paragraphs --paragraphsText --bookmarks --escher --fields --pictures --officeDrawings --styles --writereadback"
     })
-    void main(String args) throws Exception {
+    void main(String args) {
         String fileArgs = SAMPLES.getFile("SampleDoc.doc").getAbsolutePath() + args;
 
         PrintStream oldStdOut = System.out;

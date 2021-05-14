@@ -17,12 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.util.GenericRecordUtil;
 
@@ -34,7 +34,7 @@ import org.apache.poi.util.GenericRecordUtil;
  *  parent PPDrawing) will do the actual write out
  */
 public final class EscherTextboxWrapper extends RecordContainer {
-	private EscherTextboxRecord _escherRecord;
+	private final EscherTextboxRecord _escherRecord;
 	private long _type;
 	private int shapeId;
 	private StyleTextPropAtom styleTextPropAtom;
@@ -75,6 +75,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
 	/**
 	 * Return the type of the escher record (normally in the 0xFnnn range)
 	 */
+	@Override
 	public long getRecordType() { return _type; }
 
 	/**
@@ -83,11 +84,12 @@ public final class EscherTextboxWrapper extends RecordContainer {
 	 *  layer to do. Must be called before writeOut/serialize is called
 	 *  on the underlying Escher object!
 	 */
+	@Override
 	public void writeOut(OutputStream out) throws IOException {
 		// Write out our children, and stuff them into the Escher layer
 
 		// Grab the children's data
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		for (org.apache.poi.hslf.record.Record r : _children) r.writeOut(baos);
 		byte[] data = baos.toByteArray();
 

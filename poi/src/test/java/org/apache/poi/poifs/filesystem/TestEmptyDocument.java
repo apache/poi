@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
@@ -82,9 +82,9 @@ final class TestEmptyDocument {
 			DirectoryEntry dir = fs.getRoot();
 			emptyDoc.handle(dir);
 
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 			fs.writeFilesystem(out);
-			assertDoesNotThrow(() -> new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())));
+			assertDoesNotThrow(() -> new POIFSFileSystem(out.toInputStream()));
 		}
 	}
 
@@ -92,7 +92,7 @@ final class TestEmptyDocument {
 	void testEmptyDocumentBug11744() throws Exception {
 		byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 		try (POIFSFileSystem fs = new POIFSFileSystem()) {
 			fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
 			fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
@@ -100,7 +100,7 @@ final class TestEmptyDocument {
 		}
 
 		// This line caused the error.
-		try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()))) {
+		try (POIFSFileSystem fs = new POIFSFileSystem(out.toInputStream())) {
 			DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
 			assertEquals(0, entry.getSize(), "Expected zero size");
 			byte[] actualReadbackData;

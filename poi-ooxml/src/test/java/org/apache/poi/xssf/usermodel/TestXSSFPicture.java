@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +42,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         super(XSSFITestDataProvider.instance);
     }
 
+    @Override
     protected Picture getPictureShape(Drawing<?> pat, int picIdx) {
         return (Picture)((XSSFDrawing)pat).getShapes().get(picIdx);
     }
@@ -73,7 +75,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
 
             CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
             // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
-            assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
+            assertSame(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
         }
     }
 

@@ -17,14 +17,15 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -82,15 +83,13 @@ final class TestDocumentProperty {
             throws IOException {
         DocumentProperty      property = new DocumentProperty(index, input,
                                              offset);
-        ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
+        UnsynchronizedByteArrayOutputStream stream   = new UnsynchronizedByteArrayOutputStream(128);
         byte[]                expected = Arrays.copyOfRange(input, offset, offset+128);
         property.writeData(stream);
         byte[] output = stream.toByteArray();
 
         assertEquals(128, output.length);
-        for (int j = 0; j < 128; j++) {
-            assertEquals(expected[ j ], output[ j ], "mismatch at offset " + j);
-        }
+        assertArrayEquals(expected, output);
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());
     }
@@ -146,15 +145,10 @@ final class TestDocumentProperty {
         {
             testblock[ index * 2 ] = name_bytes[ index ];
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
 
         property.writeData(stream);
         byte[] output = stream.toByteArray();
-
-        assertEquals(testblock.length, output.length);
-        for (int j = 0; j < testblock.length; j++)
-        {
-            assertEquals(testblock[ j ], output[ j ], "mismatch at offset " + j);
-        }
+        assertArrayEquals(testblock, output);
     }
 }

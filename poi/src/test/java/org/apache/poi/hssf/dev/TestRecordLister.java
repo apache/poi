@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 

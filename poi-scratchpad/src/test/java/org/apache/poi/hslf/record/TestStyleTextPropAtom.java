@@ -26,15 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.util.HexDump;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -467,14 +466,9 @@ public final class TestStyleTextPropAtom {
         tpc.setValue(0xFE0033FF);
 
         // Should now be the same as data_a
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         stpa.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertEquals(data_a.length, b.length);
-        for(int i=0; i<data_a.length; i++) {
-            assertEquals(data_a[i],b[i]);
-        }
+        assertArrayEquals(data_a, baos.toByteArray());
     }
 
     /**
@@ -621,34 +615,20 @@ public final class TestStyleTextPropAtom {
                     assertEquals(tpa.getValue(), tpb.getValue());
                 }
 
-                ByteArrayOutputStream ba = new ByteArrayOutputStream();
-                ByteArrayOutputStream bb = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream ba = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bb = new UnsynchronizedByteArrayOutputStream();
 
                 ca.writeOut(ba);
                 cb.writeOut(bb);
-                byte[] cab = ba.toByteArray();
-                byte[] cbb = bb.toByteArray();
 
-                assertEquals(cbb.length, cab.length);
-                for(int j=0; j<cab.length; j++) {
-                    //System.out.println("On tp " + z + " " + i + " " + j + "\t" + cab[j] + "\t" + cbb[j]);
-                    assertEquals(cbb[j], cab[j]);
-                }
+                assertArrayEquals(bb.toByteArray(), ba.toByteArray());
             }
         }
 
-
-
         // Check byte level with b
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         stpa.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertEquals(data_b.length, b.length);
-        for(int i=0; i<data_b.length; i++) {
-            //System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
-            assertEquals(data_b[i],b[i]);
-        }
+        assertArrayEquals(data_b, baos.toByteArray());
     }
 
     @Test
@@ -694,13 +674,9 @@ public final class TestStyleTextPropAtom {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data, 0,data.length);
         if(textlen != -1) stpb.setParentTextSize(textlen);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         stpb.writeOut(out);
-        byte[] bytes = out.toByteArray();
-
-        assertEquals(expected.length, bytes.length);
-        assertArrayEquals(expected, bytes,
-            "Had: " + HexDump.toHex(expected) + "\nand: " + HexDump.toHex(bytes));
+        assertArrayEquals(expected, out.toByteArray());
     }
 
     @Test
@@ -759,12 +735,14 @@ public final class TestStyleTextPropAtom {
      *
      * From the test file attached to the bug:
      *
+     * {@code
      * <StyleTextPropAtom info="0" type="4001" size="94" offset="114782" header="00 00 A1 0F 5E 00 00 00 ">
      *   14 00 00 00 00 00 41 00 0A 00 06 00 50 00 07 00 01 00 00 00 00 00 00 00 02
      *   00 00 00 01 04 00 00 01 04 01 00 00 00 01 08 00 00 01 08 0C 00 00 00 01 0C
      *   00 00 01 0C 01 00 00 00 01 10 00 00 01 10 01 00 00 00 01 14 00 00 01 14 01
      *   00 00 00 01 18 00 00 01 18 01 00 00 00 01 1C 00 00 01 1C
      * </StyleTextPropAtom>
+     * }
      */
      @Test
     void test45815() throws IOException {

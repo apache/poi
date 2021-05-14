@@ -16,8 +16,9 @@
 ==================================================================== */
 package org.apache.poi.examples.xssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
@@ -37,9 +38,9 @@ public final class CustomXMLMapping {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
 
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xml = os.toString("UTF-8");
+                String xml = os.toString(StandardCharsets.UTF_8);
                 System.out.println(xml);
             }
         }

@@ -17,14 +17,13 @@
 
 package org.apache.poi.xssf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -62,8 +61,8 @@ public class XSSFTestDataSamples {
     }
 
     /**
-     * Write out workbook <code>wb</code> to {@link #TEST_OUTPUT_DIR}/testName.xlsx
-     * (or create a temporary file if <code>TEST_OUTPUT_DIR</code> is not defined).
+     * Write out workbook {@code wb} to {@link #TEST_OUTPUT_DIR}/testName.xlsx
+     * (or create a temporary file if {@code TEST_OUTPUT_DIR} is not defined).
      *
      * @param wb the workbook to write
      * @param testName a fragment of the filename
@@ -93,7 +92,7 @@ public class XSSFTestDataSamples {
         final File file;
         if (testOutputDir != null) {
             // In case user provided testName with a file extension, don't repeat the file extension a second time
-            final String testNameWithExtension = testName.endsWith(".xlsx") ? testName : testName + ".xlsx";
+            final String testNameWithExtension = (testName.endsWith(".xlsx") || testName.endsWith(".xlsxm")) ? testName : testName + ".xlsx";
             // FIXME: may want to defer to the TempFile with a persistent file creation strategy to the test output dir
             // This would add the random value in the middle of the filename so that test runs wouldn't overwrite files
             file = new File(testOutputDir, testNameWithExtension);
@@ -110,14 +109,14 @@ public class XSSFTestDataSamples {
     }
 
     /**
-     * Write out workbook <code>wb</code> to a memory buffer
+     * Write out workbook {@code wb} to a memory buffer
      *
      * @param wb the workbook to write
      * @return the memory buffer
      * @throws IOException If writing the file fails
      */
-    public static <R extends Workbook> ByteArrayOutputStream writeOut(R wb) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
+    public static <R extends Workbook> UnsynchronizedByteArrayOutputStream writeOut(R wb) throws IOException {
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(8192);
         wb.write(out);
         return out;
     }
@@ -130,10 +129,10 @@ public class XSSFTestDataSamples {
      * Make sure there are no references to any objects in the workbook
      * so that garbage collection may free the workbook.
      *
-     * After calling this method, null the reference to <code>wb</code>,
+     * After calling this method, null the reference to {@code wb},
      * then call {@link #readBack(File)} or {@link #readBackAndDelete(File)} to re-read the file.
      *
-     * Alternatively, use {@link #writeOutAndClose(Workbook)} to use a ByteArrayOutputStream/ByteArrayInputStream
+     * Alternatively, use {@link #writeOutAndClose(Workbook)} to use a UnsynchronizedByteArrayOutputStream/ByteArrayInputStream
      * to avoid creating a temporary file. However, this may complicate the calling
      * code to avoid having the workbook, BAOS, and BAIS open at the same time.
      *
@@ -156,15 +155,15 @@ public class XSSFTestDataSamples {
 
 
     /**
-     * Write out workbook <code>wb</code> to a memory buffer,
+     * Write out workbook {@code wb} to a memory buffer,
      * then close the workbook
      *
      * @param wb the workbook to write
      * @return the memory buffer
      * @throws RuntimeException If writing the file fails
      */
-    public static <R extends Workbook> ByteArrayOutputStream writeOutAndClose(R wb) throws IOException {
-        ByteArrayOutputStream out = writeOut(wb);
+    public static <R extends Workbook> UnsynchronizedByteArrayOutputStream writeOutAndClose(R wb) throws IOException {
+        UnsynchronizedByteArrayOutputStream out = writeOut(wb);
         // Do not close the workbook if there was a problem writing the workbook
         wb.close();
         return out;
@@ -211,8 +210,8 @@ public class XSSFTestDataSamples {
      * @return the read back workbook
      * @throws IOException If reading the file fails
      */
-    public static XSSFWorkbook readBack(ByteArrayOutputStream out) throws IOException {
-        try (InputStream is = new ByteArrayInputStream(out.toByteArray())) {
+    public static XSSFWorkbook readBack(UnsynchronizedByteArrayOutputStream out) throws IOException {
+        try (InputStream is = out.toInputStream()) {
             out.close();
             return new XSSFWorkbook(is);
         }
@@ -226,12 +225,12 @@ public class XSSFTestDataSamples {
      * Workbook wb = new XSSFWorkbook();
      * String testName = "example";
      *
-     * <code>
+     * {@code
      * File file = writeOutAndClose(wb, testName);
      * // clear all references that would prevent the workbook from getting garbage collected
      * wb = null;
      * Workbook wbBack = readBackAndDelete(file);
-     * </code>
+     * }
      *
      * @param wb the workbook to write out
      * @return the read back workbook

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.xwpf.XWPFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
@@ -170,15 +169,11 @@ class TestXWPFBugs {
     @Test
     void test59378() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx")) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            doc.write(out);
-            out.close();
-
-            try (XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()))) {
+            try (XWPFDocument doc2 = writeOutAndReadBack(doc)) {
                 assertNotNull(doc2);
             }
 
-            try (XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+            try (XWPFDocument docBack = writeOutAndReadBack(doc)) {
                 assertNotNull(docBack);
             }
         }

@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -29,7 +29,7 @@ public abstract class HWPFTestCase {
 
     @BeforeEach
     void setUp() throws Exception {
-        /** @todo verify the constructors */
+        // @TODO verify the constructors
         _hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
 
         _hWPFDocFixture.setUp();
@@ -40,7 +40,7 @@ public abstract class HWPFTestCase {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         if (_hWPFDocFixture != null) {
             _hWPFDocFixture.tearDown();
         }
@@ -49,15 +49,13 @@ public abstract class HWPFTestCase {
     }
 
     public HWPFDocument writeOutAndRead(HWPFDocument doc) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        HWPFDocument newDoc;
-        try {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
             doc.write(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            newDoc = new HWPFDocument(bais);
+            try (InputStream is = baos.toInputStream()) {
+                return new HWPFDocument(is);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return newDoc;
     }
 }

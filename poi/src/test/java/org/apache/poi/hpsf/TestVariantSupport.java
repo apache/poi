@@ -21,11 +21,12 @@ package org.apache.poi.hpsf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -51,7 +52,7 @@ class TestVariantSupport {
 
         Object hdrs =  s.getProperty(PropertyIDMap.PID_HEADINGPAIR);
         assertNotNull(hdrs);
-        assertEquals(byte[].class, hdrs.getClass());
+        assertSame(byte[].class, hdrs.getClass());
 
         // parse the value
         Vector v = new Vector((short)Variant.VT_VARIANT);
@@ -63,10 +64,10 @@ class TestVariantSupport {
 
         Object cp = items[0].getValue();
         assertNotNull(cp);
-        assertEquals(CodePageString.class, cp.getClass());
+        assertSame(CodePageString.class, cp.getClass());
         Object i = items[1].getValue();
         assertNotNull(i);
-        assertEquals(Integer.class, i.getClass());
+        assertSame(Integer.class, i.getClass());
         assertEquals(1, i);
 
     }
@@ -91,34 +92,33 @@ class TestVariantSupport {
                 {Variant.VT_R8, -999.99d},
         };
 
-        POIFSFileSystem poifs = new POIFSFileSystem();
-        DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
-        CustomProperties cpList = new CustomProperties();
-        for (Object[] o : exp) {
-            int type = (Integer)o[0];
-            Property p = new Property(PropertyIDMap.PID_MAX+type, type, o[1]);
-            cpList.put("testprop"+type, new CustomProperty(p, "testprop"+type));
+        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+            DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
+            CustomProperties cpList = new CustomProperties();
+            for (Object[] o : exp) {
+                int type = (Integer) o[0];
+                Property p = new Property(PropertyIDMap.PID_MAX + type, type, o[1]);
+                cpList.put("testprop" + type, new CustomProperty(p, "testprop" + type));
 
-        }
-        dsi.setCustomProperties(cpList);
-        dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        poifs.writeFilesystem(bos);
-        poifs.close();
-        poifs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        dsi = (DocumentSummaryInformation)PropertySetFactory.create(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        assertNotNull(dsi);
-        cpList = dsi.getCustomProperties();
-        int i=0;
-        for (Object[] o : exp) {
-            Object obj = cpList.get("testprop"+o[0]);
-            if (o[1] instanceof byte[]) {
-                assertArrayEquals((byte[])o[1], (byte[])obj, "property "+i);
-            } else {
-                assertEquals(o[1], obj, "property "+i);
             }
-            i++;
+            dsi.setCustomProperties(cpList);
+            dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+            try (POIFSFileSystem poifs2 = POIDataSamples.writeOutAndReadBack(poifs)) {
+                DocumentSummaryInformation dsi2 = (DocumentSummaryInformation) PropertySetFactory.create(poifs2.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+                assertNotNull(dsi2);
+                CustomProperties cpList2 = dsi2.getCustomProperties();
+                int i = 0;
+                for (Object[] o : exp) {
+                    Object obj = cpList2.get("testprop" + o[0]);
+                    if (o[1] instanceof byte[]) {
+                        assertArrayEquals((byte[]) o[1], (byte[]) obj, "property " + i);
+                    } else {
+                        assertEquals(o[1], obj, "property " + i);
+                    }
+                    i++;
+                }
+            }
         }
-        poifs.close();
     }
 }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -242,7 +243,7 @@ public final class TestUnfixedBugs {
 
         checkRows57423(testSheet);
 
-        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wbBack = writeOutAndReadBack(wb);
         /* XSSFTestDataSamples.writeOut(wb, "bug 57423 for manual review"); */
 
         wb.close();
@@ -277,12 +278,8 @@ public final class TestUnfixedBugs {
         checkRow57423(testSheet, 17, "17");
         checkRow57423(testSheet, 18, "18");
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            ((XSSFSheet)testSheet).write(stream);
-        } finally {
-            stream.close();
-        }
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        ((XSSFSheet)testSheet).write(stream);
 
         // verify that the resulting XML has the rows in correct order as required by Excel
         String xml = new String(stream.toByteArray(), StandardCharsets.UTF_8);
@@ -310,27 +307,21 @@ public final class TestUnfixedBugs {
 
     @Test
     void bug57423_shiftRowsByLargeOffset() throws IOException {
-        try (
-                XSSFWorkbook wb = new XSSFWorkbook()
-                //OutputStream out = new FileOutputStream("/tmp/57423." + wb.getClass().getName() + ".xlsx"));
-        ) {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             Sheet sh = wb.createSheet();
             sh.createRow(0).createCell(0).setCellValue("a");
             sh.createRow(1).createCell(0).setCellValue("b");
             sh.createRow(2).createCell(0).setCellValue("c");
             sh.shiftRows(0, 1, 3);
 
-            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            try (XSSFWorkbook wbBack = writeOutAndReadBack(wb)) {
+                assertThatRowsInAscendingOrder(wb);
+                assertThatRowsInAscendingOrder(wbBack);
 
-            assertThatRowsInAscendingOrder(wb);
-            assertThatRowsInAscendingOrder(wbBack);
-
-            //wbBack.write(out);
-            // Excel reports that the workbook is corrupt because the rows are not in ascending order
-            // LibreOffice doesn't complain when rows are not in ascending order
-
-            wbBack.close();
-
+                //wbBack.write(out);
+                // Excel reports that the workbook is corrupt because the rows are not in ascending order
+                // LibreOffice doesn't complain when rows are not in ascending order
+            }
             fail("Excel reports that the workbook is corrupt, LibreOffice can read it");
         }
     }

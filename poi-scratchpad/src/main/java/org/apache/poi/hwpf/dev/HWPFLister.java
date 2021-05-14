@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.dev;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -262,12 +261,11 @@ public final class HWPFLister {
 
     private static HWPFDocumentCore writeOutAndReadBack(
             HWPFDocumentCore original ) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream( 4096 );
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
             original.write( baos );
-            ByteArrayInputStream bais = new ByteArrayInputStream(
-                    baos.toByteArray() );
-            return loadDoc( bais );
+            try (InputStream is = baos.toInputStream()) {
+                return loadDoc(is);
+            }
         }
         catch ( IOException e ) {
             throw new RuntimeException( e );
@@ -388,7 +386,7 @@ public final class HWPFLister {
         }
     }
 
-    public void dumpFileSystem() throws Exception {
+    public void dumpFileSystem() {
         System.out.println( dumpFileSystem( _doc.getDirectory() ) );
     }
 
@@ -439,8 +437,7 @@ public final class HWPFLister {
         }
     }
 
-    public void dumpPapx( boolean withProperties, boolean withSprms )
-            throws Exception {
+    public void dumpPapx( boolean withProperties, boolean withSprms ) {
         if ( _doc instanceof HWPFDocument ) {
             System.out.println( "binary PAP pages " );
 
@@ -514,8 +511,8 @@ public final class HWPFLister {
             if ( dumpAssotiatedPapx ) {
                 boolean hasAssotiatedPapx = false;
                 for ( PAPX papx : _doc.getParagraphTable().getParagraphs() ) {
-                    if ( papx.getStart() <= endOfParagraphCharOffset.intValue()
-                            && endOfParagraphCharOffset.intValue() < papx
+                    if ( papx.getStart() <= endOfParagraphCharOffset
+                            && endOfParagraphCharOffset < papx
                                     .getEnd() ) {
                         hasAssotiatedPapx = true;
                         System.out.println( "* " + papx );

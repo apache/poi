@@ -24,8 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -38,6 +36,7 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -60,6 +59,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         baseUriDereferencer = signatureInfo.getSignatureFactory().getURIDereferencer();
     }
 
+    @Override
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
         if (uriReference == null) {
             throw new NullPointerException("URIReference cannot be null - call setSignatureInfo(...) before");
@@ -90,12 +90,12 @@ public class OOXMLURIDereferencer implements URIDereferencer {
                 // although xmlsec has an option to ignore line breaks, currently this
                 // only affects .rels files, so we only modify these
                 // http://stackoverflow.com/questions/4728300
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 for (int ch; (ch = dataStream.read()) != -1; ) {
                     if (ch == 10 || ch == 13) continue;
                     bos.write(ch);
                 }
-                dataStream = new ByteArrayInputStream(bos.toByteArray());
+                dataStream = bos.toInputStream();
             }
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);

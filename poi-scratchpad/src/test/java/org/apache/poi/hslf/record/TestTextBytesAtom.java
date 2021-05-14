@@ -21,9 +21,9 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -64,7 +64,7 @@ public final class TestTextBytesAtom {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tba.writeOut(baos);
 		assertArrayEquals(alt_data, baos.toByteArray());
 	}
@@ -72,7 +72,7 @@ public final class TestTextBytesAtom {
 	@Test
 	void testWrite() throws Exception {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tba.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}

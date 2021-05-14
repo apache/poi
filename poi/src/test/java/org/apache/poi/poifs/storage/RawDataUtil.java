@@ -17,25 +17,25 @@
 package org.apache.poi.poifs.storage;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
 
 /**
  * Test utility class.<br>
  *
- * Creates raw <code>byte[]</code> data from hex-dump String arrays.
+ * Creates raw {@code byte[]} data from hex-dump String arrays.
  */
 public final class RawDataUtil {
 
 	private RawDataUtil() {}
 
 	public static byte[] decode(String[] hexDataLines) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(hexDataLines.length * 32 + 32);
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32);
 
 		for (String hexDataLine : hexDataLines) {
 			byte[] lineData = HexRead.readFromString(hexDataLine);
@@ -64,7 +64,7 @@ public final class RawDataUtil {
      * @throws IOException usually not ...
      */
     public static String compress(byte[] data) throws IOException {
-        java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos);
         gz.write(data);
         gz.finish();

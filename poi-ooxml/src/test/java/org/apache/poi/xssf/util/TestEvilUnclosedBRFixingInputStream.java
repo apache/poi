@@ -20,10 +20,10 @@ package org.apache.poi.xssf.util;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.ReplacingInputStream;
 import org.junit.jupiter.api.Test;
@@ -68,23 +68,20 @@ public final class TestEvilUnclosedBRFixingInputStream {
         // Vary the buffer size, so that we can end up with the br in the
         //  overflow or only part in the buffer
         for(int i=5; i<orig.length; i++) {
-            EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
-
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            boolean going = true;
-            while(going) {
-                byte[] b = new byte[i];
-                int r = inp.read(b);
-                if(r > 0) {
+            try (EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
+                 UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream()) {
+                for (;;) {
+                    byte[] b = new byte[i];
+                    int r = inp.read(b);
+                    if (r <= 0) {
+                        break;
+                    }
                     bout.write(b, 0, r);
-                } else {
-                    going = false;
                 }
-            }
 
-            byte[] result = bout.toByteArray();
-            assertArrayEquals(fixed, result);
-            inp.close();
+                byte[] result = bout.toByteArray();
+                assertArrayEquals(fixed, result);
+            }
         }
     }
 

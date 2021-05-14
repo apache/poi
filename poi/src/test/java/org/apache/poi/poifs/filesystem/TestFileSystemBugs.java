@@ -20,8 +20,6 @@ package org.apache.poi.poifs.filesystem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -141,11 +140,10 @@ final class TestFileSystemBugs {
         EntryUtils.copyNodes(root, dest);
 
         // Re-load
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         root.getFileSystem().writeFilesystem(baos);
 
-        POIFSFileSystem read = new POIFSFileSystem(
-                new ByteArrayInputStream(baos.toByteArray()));
+        POIFSFileSystem read = new POIFSFileSystem(baos.toInputStream());
 
         // Check the structure matches
         checkSizes("/", read.getRoot(), entries);

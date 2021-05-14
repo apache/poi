@@ -17,10 +17,11 @@
 
 package org.apache.poi.ddf;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -29,21 +30,30 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import static org.apache.logging.log4j.util.Unbox.box;
+import org.apache.poi.util.Removal;
 
 public final class EscherMetafileBlip extends EscherBlipRecord {
     private static final Logger LOGGER = LogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
+    /** @deprecated use EscherRecordTypes.BLIP_EMF.typeID */
+    @Deprecated
+    @Removal(version = "5.3")
     public static final short RECORD_ID_EMF = EscherRecordTypes.BLIP_EMF.typeID;
+    /** @deprecated use EscherRecordTypes.BLIP_WMF.typeID */
+    @Deprecated
+    @Removal(version = "5.3")
     public static final short RECORD_ID_WMF = EscherRecordTypes.BLIP_WMF.typeID;
+    /** @deprecated use EscherRecordTypes.BLIP_PICT.typeID */
+    @Deprecated
+    @Removal(version = "5.3")
     public static final short RECORD_ID_PICT = EscherRecordTypes.BLIP_PICT.typeID;
 
     private static final int HEADER_SIZE = 8;
@@ -150,9 +160,10 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         data[pos] = field_6_fCompression; pos++;
         data[pos] = field_7_fFilter; pos++;
 
-        System.arraycopy( raw_pictureData, 0, data, pos, raw_pictureData.length ); pos += raw_pictureData.length;
+        System.arraycopy( raw_pictureData, 0, data, pos, raw_pictureData.length );
+        pos += raw_pictureData.length;
         if(remainingData != null) {
-            System.arraycopy( remainingData, 0, data, pos, remainingData.length ); pos += remainingData.length;
+            System.arraycopy( remainingData, 0, data, pos, remainingData.length );
         }
 
         listener.afterRecordSerialize(offset + getRecordSize(), getRecordId(), getRecordSize(), this);
@@ -166,15 +177,9 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      * @return the inflated picture data.
      */
     private static byte[] inflatePictureData(byte[] data) {
-        try {
-            InflaterInputStream in = new InflaterInputStream(
-                new ByteArrayInputStream( data ) );
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buf = new byte[4096];
-            int readBytes;
-            while ((readBytes = in.read(buf)) > 0) {
-                out.write(buf, 0, readBytes);
-            }
+        try (InflaterInputStream in = new InflaterInputStream(new ByteArrayInputStream(data));
+             UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+            IOUtils.copy(in, out);
             return out.toByteArray();
         } catch (IOException e) {
             LOGGER.atWarn().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
@@ -390,11 +395,10 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         // "... LZ compression algorithm in the format used by GNU Zip deflate/inflate with a 32k window ..."
         // not sure what to do, when lookup tables exceed 32k ...
 
-        try {
-	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	        DeflaterOutputStream dos = new DeflaterOutputStream(bos);
-	        dos.write(pictureData);
-	        dos.close();
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+	        try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+                dos.write(pictureData);
+            }
 	        raw_pictureData = bos.toByteArray();
         } catch (IOException e) {
         	throw new RuntimeException("Can't compress metafile picture data", e);

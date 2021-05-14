@@ -17,7 +17,6 @@
 
 package org.apache.poi.poifs.crypt.cryptoapi;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -188,7 +187,7 @@ public class CryptoAPIEncryptor extends Encryptor {
         bos.write(buf, 0, 8);
         bos.setSize(savedSize);
 
-        dir.createDocument(encryptedStream, new ByteArrayInputStream(bos.getBuf(), 0, savedSize));
+        dir.createDocument(encryptedStream, bos.toInputStream(savedSize));
     }
 
 //    protected int getKeySizeInBytes() {

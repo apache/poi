@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Generates escher records when provided the byte array containing those records.
@@ -72,24 +71,5 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
 
         // catch all
         return UnknownEscherRecord::new;
-    }
-
-
-    /**
-     * @deprecated this method is not used anymore to identify container records
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static boolean isContainer(short options, short recordId){
-        if(recordId >= EscherContainerRecord.DGG_CONTAINER &&  recordId
-                <= EscherContainerRecord.SOLVER_CONTAINER){
-            return true;
-        } else {
-            if (recordId == EscherTextboxRecord.RECORD_ID) {
-                return false;
-            } else {
-                return ( options & (short) 0x000F ) == (short) 0x000F;
-            }
-        }
     }
 }

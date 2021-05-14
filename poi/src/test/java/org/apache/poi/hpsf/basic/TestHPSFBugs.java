@@ -21,17 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -112,38 +110,37 @@ final class TestHPSFBugs {
     * reading junk
     */
    @Test
-   void test54233() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
-       InputStream is = _samples.openResourceAsStream("TestNon4ByteBoundary.doc");
-       POIFSFileSystem fs = new POIFSFileSystem(is);
-       is.close();
+   void test54233() throws IOException, NoPropertySetStreamException {
+       try (InputStream is = _samples.openResourceAsStream("TestNon4ByteBoundary.doc");
+        POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
-       SummaryInformation si = (SummaryInformation)
-           PropertySetFactory.create(fs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
-       DocumentSummaryInformation dsi = (DocumentSummaryInformation)
-           PropertySetFactory.create(fs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+           SummaryInformation si = (SummaryInformation)
+               PropertySetFactory.create(fs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
+           DocumentSummaryInformation dsi = (DocumentSummaryInformation)
+               PropertySetFactory.create(fs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-       // Test
-       assertEquals("Microsoft Word 10.0", si.getApplicationName());
-       assertEquals("", si.getTitle());
-       assertEquals("", si.getAuthor());
-       assertEquals("Cour de Justice", dsi.getCompany());
+           // Test
+           assertEquals("Microsoft Word 10.0", si.getApplicationName());
+           assertEquals("", si.getTitle());
+           assertEquals("", si.getAuthor());
+           assertEquals("Cour de Justice", dsi.getCompany());
 
 
-       // Write out and read back, should still be valid
-       POIDocument doc = new HPSFPropertiesOnlyDocument(fs);
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-       doc.write(baos);
-       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-       doc = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(bais));
-
-       // Check properties are still there
-       assertEquals("Microsoft Word 10.0", si.getApplicationName());
-       assertEquals("", si.getTitle());
-       assertEquals("", si.getAuthor());
-       assertEquals("Cour de Justice", dsi.getCompany());
-
-       doc.close();
-       fs.close();
+           // Write out and read back, should still be valid
+           UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+           try (POIDocument doc = new HPSFPropertiesOnlyDocument(fs)) {
+               doc.write(baos);
+           }
+           try (POIDocument doc = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(baos.toInputStream()))) {
+               si = doc.getSummaryInformation();
+               dsi = doc.getDocumentSummaryInformation();
+               // Check properties are still there
+               assertEquals("Microsoft Word 10.0", si.getApplicationName());
+               assertEquals("", si.getTitle());
+               assertEquals("", si.getAuthor());
+               assertEquals("Cour de Justice", dsi.getCompany());
+           }
+       }
    }
 
    /**

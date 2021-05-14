@@ -20,14 +20,13 @@ package org.apache.poi.hwpf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
@@ -48,20 +47,17 @@ public final class TestHWPFWrite extends HWPFTestCase {
      */
     @Test
     void testWriteStream() throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc")) {
+            Range r = doc.getRange();
+            assertEquals("I am a test document\r", r.getParagraph(0).text());
+            doc.write(baos);
+        }
 
-        Range r = doc.getRange();
-        assertEquals("I am a test document\r", r.getParagraph(0).text());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        doc.write(baos);
-        doc.close();
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        doc = new HWPFDocument(bais);
-        r = doc.getRange();
-        assertEquals("I am a test document\r", r.getParagraph(0).text());
-        doc.close();
+        try (HWPFDocument doc = new HWPFDocument(baos.toInputStream())) {
+            Range r = doc.getRange();
+            assertEquals("I am a test document\r", r.getParagraph(0).text());
+        }
     }
 
     /**

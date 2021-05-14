@@ -23,17 +23,18 @@ import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP95_DOCUMENT;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP97_DOCUMENT;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,6 +45,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
@@ -659,7 +662,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Writes out the slideshow to the currently open file.
      * <p>
-     * <p>This will fail (with an {@link IllegalStateException} if the
+     * This will fail (with an {@link IllegalStateException} if the
      * slideshow was opened read-only, opened from an {@link InputStream}
      * instead of a File, or if this is not the root document. For those cases,
      * you must use {@link #write(OutputStream)} or {@link #write(File)} to
@@ -686,7 +689,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * of this class.
      * <p>This will write out only the common OLE2 streams. If you require all
      * streams to be written out, use {@link #write(File, boolean)}
-     * with <code>preserveNodes</code> set to <code>true</code>.
+     * with {@code preserveNodes} set to {@code true}.
      *
      * @param newFile The File to write to.
      * @throws IOException If there is an unexpected IOException from writing to the File
@@ -701,7 +704,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Writes out the slideshow file the is represented by an instance
      * of this class.
      * If you require all streams to be written out (eg Marcos, embeded
-     * documents), then set <code>preserveNodes</code> set to <code>true</code>
+     * documents), then set {@code preserveNodes} set to {@code true}
      *
      * @param newFile       The File to write to.
      * @param preserveNodes Should all OLE2 streams be written back out, or only the common ones?
@@ -724,7 +727,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * of this class.
      * <p>This will write out only the common OLE2 streams. If you require all
      * streams to be written out, use {@link #write(OutputStream, boolean)}
-     * with <code>preserveNodes</code> set to <code>true</code>.
+     * with {@code preserveNodes} set to {@code true}.
      *
      * @param out The OutputStream to write to.
      * @throws IOException If there is an unexpected IOException from
@@ -740,7 +743,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Writes out the slideshow file the is represented by an instance
      * of this class.
      * If you require all streams to be written out (eg Marcos, embeded
-     * documents), then set <code>preserveNodes</code> set to <code>true</code>
+     * documents), then set {@code preserveNodes} set to {@code true}
      *
      * @param out           The OutputStream to write to.
      * @param preserveNodes Should all OLE2 streams be written back out, or only the common ones?
@@ -776,16 +779,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);
 
-            BufAccessBAOS baos = new BufAccessBAOS();
+            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
 
-            // For position dependent records, hold where they were and now are
-            // As we go along, update, and hand over, to any Position Dependent
-            // records we happen across
-            updateAndWriteDependantRecords(baos, null);
+                // For position dependent records, hold where they were and now are
+                // As we go along, update, and hand over, to any Position Dependent
+                // records we happen across
+                updateAndWriteDependantRecords(baos, null);
 
-            // Update our cached copy of the bytes that make up the PPT stream
-            _docstream = baos.toByteArray();
-            baos.close();
+                // Update our cached copy of the bytes that make up the PPT stream
+                _docstream = baos.toByteArray();
+            }
 
             // Write the PPT stream into the POIFS layer
             ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
@@ -796,25 +799,34 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             currentUser.writeToFS(outFS);
             writtenEntries.add("Current User");
 
-            if (_pictures.size() > 0) {
-                BufAccessBAOS pict = new BufAccessBAOS();
-                for (HSLFPictureData p : _pictures) {
-                    int offset = pict.size();
-                    p.write(pict);
-                    encryptedSS.encryptPicture(pict.getBuf(), offset);
-                }
-                outFS.createOrUpdateDocument(
-                    new ByteArrayInputStream(pict.getBuf(), 0, pict.size()), "Pictures"
+            if (!_pictures.isEmpty()) {
+                Enumeration<InputStream> pictEnum = IteratorUtils.asEnumeration(
+                    _pictures.stream().map(data -> encryptOnePicture(encryptedSS, data)).iterator()
                 );
-                writtenEntries.add("Pictures");
-                pict.close();
-            }
 
+                try (SequenceInputStream sis = new SequenceInputStream(pictEnum)) {
+                    outFS.createOrUpdateDocument(sis, "Pictures");
+                    writtenEntries.add("Pictures");
+                } catch (IllegalStateException e) {
+                    throw (IOException)e.getCause();
+                }
+            }
         }
 
         // If requested, copy over any other streams we spot, eg Macros
         if (copyAllOtherNodes) {
             EntryUtils.copyNodes(getDirectory().getFileSystem(), outFS, writtenEntries);
+        }
+    }
+
+    private static InputStream encryptOnePicture(HSLFSlideShowEncrypted encryptedSS, HSLFPictureData data) {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            data.write(baos);
+            byte[] pictBytes = baos.toByteArray();
+            encryptedSS.encryptPicture(pictBytes, 0);
+            return new ByteArrayInputStream(pictBytes);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1015,12 +1027,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     void replaceDirectoryImpl(DirectoryNode newDirectory) throws IOException {
         super.replaceDirectory(newDirectory);
-    }
-
-    private static class BufAccessBAOS extends ByteArrayOutputStream {
-        public byte[] getBuf() {
-            return buf;
-        }
     }
 
     private static class CountingOS extends OutputStream {

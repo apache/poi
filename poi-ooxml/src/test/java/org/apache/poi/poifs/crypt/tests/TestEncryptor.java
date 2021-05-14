@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.tests;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getMessageDigest;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +38,7 @@ import java.util.Random;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -59,7 +59,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.TempFilePOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -78,7 +77,7 @@ class TestEncryptor {
             payloadExpected = IOUtils.toByteArray(is);
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
             Encryptor enc = ei.getEncryptor();
@@ -92,7 +91,7 @@ class TestEncryptor {
         }
 
         final byte[] payloadActual;
-        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(bos.toInputStream())) {
             EncryptionInfo ei = new EncryptionInfo(fs);
             Decryptor dec = ei.getDecryptor();
             boolean b = dec.verifyPassword(password);
@@ -115,7 +114,7 @@ class TestEncryptor {
             payloadExpected = IOUtils.toByteArray(is);
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (POIFSFileSystem fs = new TempFilePOIFSFileSystem()) {
             EncryptionInfo ei = new EncryptionInfo(EncryptionMode.agile);
             Encryptor enc = ei.getEncryptor();
@@ -129,7 +128,7 @@ class TestEncryptor {
         }
 
         final byte[] payloadActual;
-        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(bos.toInputStream())) {
             EncryptionInfo ei = new EncryptionInfo(fs);
             Decryptor dec = ei.getDecryptor();
             boolean b = dec.verifyPassword(password);
@@ -202,7 +201,7 @@ class TestEncryptor {
         Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, integritySalt);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             try (OutputStream os = e.getDataStream(fs)) {
                 os.write(payloadExpected);
@@ -213,7 +212,7 @@ class TestEncryptor {
         final EncryptionInfo infoActual2;
         final byte[] payloadActual, encPackActual;
         final long decPackLenActual;
-        try (POIFSFileSystem nfs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(bos.toInputStream())) {
             infoActual2 = new EncryptionInfo(nfs.getRoot());
             Decryptor decActual = Decryptor.getInstance(infoActual2);
             boolean passed = decActual.verifyPassword(pass);
@@ -289,7 +288,7 @@ class TestEncryptor {
         // now we use a newly generated salt/verifier and check
         // if the file content is still the same
 
-        final byte[] encBytes;
+        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
 
             final EncryptionInfo infoActual2 = new EncryptionInfo(
@@ -308,13 +307,11 @@ class TestEncryptor {
                 os.write(payloadExpected);
             }
 
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
             fs.writeFilesystem(bos);
-            encBytes = bos.toByteArray();
         }
 
         final byte[] payloadActual;
-        try (POIFSFileSystem nfs = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(bos.toInputStream())) {
             final EncryptionInfo ei = new EncryptionInfo(nfs);
             Decryptor d2 = Decryptor.getInstance(ei);
             assertTrue(d2.verifyPassword(pass), "Unable to process: document is encrypted");
@@ -336,7 +333,7 @@ class TestEncryptor {
     @Test
     void encryptPackageWithoutCoreProperties() throws Exception {
         // Open our file without core properties
-        final byte[] encBytes;
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         try (InputStream is = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("OPCCompliance_NoCoreProperties.xlsx");
             OPCPackage pkg = OPCPackage.open(is)) {
 
@@ -358,14 +355,12 @@ class TestEncryptor {
                 }
 
                 // Save the resulting OLE2 document, and re-open it
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 fs.writeFilesystem(baos);
-                encBytes = baos.toByteArray();
             }
         }
 
 
-        try (POIFSFileSystem inpFS = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+        try (POIFSFileSystem inpFS = new POIFSFileSystem(baos.toInputStream())) {
             // Check we can decrypt it
             EncryptionInfo info = new EncryptionInfo(inpFS);
             Decryptor d = Decryptor.getInstance(info);
@@ -539,10 +534,10 @@ class TestEncryptor {
                 os.write(zipInput);
             }
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             fsNew.writeFilesystem(bos);
 
-            try (POIFSFileSystem fsReload = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+            try (POIFSFileSystem fsReload = new POIFSFileSystem(bos.toInputStream())) {
                 infoReload = new EncryptionInfo(fsReload);
                 try (InputStream epReload = fsReload.getRoot().createDocumentInputStream("EncryptedPackage")) {
                     epNewBytes = IOUtils.toByteArray(epReload, 9400);
@@ -633,9 +628,8 @@ class TestEncryptor {
             assertTrue(passOk);
 
             try (InputStream is = dec.getDataStream(poifs);
-                 DigestInputStream dis = new DigestInputStream(is, md);
-                 NullOutputStream nos = new NullOutputStream()) {
-                IOUtils.copy(dis, nos);
+                 DigestInputStream dis = new DigestInputStream(is, md)) {
+                IOUtils.copy(dis, NULL_OUTPUT_STREAM);
             }
         }
 

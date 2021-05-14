@@ -17,7 +17,6 @@
 package org.apache.poi.stress;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,10 +39,8 @@ class XSSFBFileHandler extends AbstractFileHandler {
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        IOUtils.copy(stream, out);
+        byte[] bytes = IOUtils.toByteArray(stream);
 
-        final byte[] bytes = out.toByteArray();
         try (OPCPackage opcPackage = OPCPackage.open(new ByteArrayInputStream(bytes))) {
             testOne(opcPackage);
         }

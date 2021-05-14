@@ -21,8 +21,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -60,7 +59,7 @@ public final class TestTextCharsAtom {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		tca.setText(alt_text);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tca.writeOut(baos);
 		assertArrayEquals(alt_data, baos.toByteArray());
 	}
@@ -68,7 +67,7 @@ public final class TestTextCharsAtom {
 	@Test
 	void testWrite() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tca.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}
@@ -82,7 +81,7 @@ public final class TestTextCharsAtom {
 		assertEquals(data_text, tca.getText());
 
 		// Check it's now like data
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tca.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}

@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +32,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -733,7 +733,7 @@ public class POIFSFileSystem extends BlockStore
         // _header.setPropertyStart has been updated on write ...
 
         // HeaderBlock
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(
                 _header.getBigBlockSize().getBigBlockSize()
         );
         _header.writeData(baos);

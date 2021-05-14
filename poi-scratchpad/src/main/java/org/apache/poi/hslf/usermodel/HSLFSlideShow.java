@@ -17,8 +17,9 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.awt.Dimension;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.POIDocument;
@@ -65,8 +67,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -708,9 +708,9 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	}
 
 	/**
-	 * Create a blank <code>Slide</code>.
+	 * Create a blank {@code Slide}.
 	 *
-	 * @return the created <code>Slide</code>
+	 * @return the created {@code Slide}
 	 */
 	@Override
 	public HSLFSlide createSlide() {
@@ -882,6 +882,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	 *
 	 * @since POI 4.1.0
 	 */
+	@Override
 	public HSLFFontInfo addFont(InputStream fontData) throws IOException {
 		Document doc = getDocumentRecord();
 		doc.getDocumentAtom().setSaveWithFonts(true);
@@ -893,7 +894,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	 *
 	 * @param idx
 	 *            0-based index of the font
-	 * @return of an instance of <code>PPFont</code> or <code>null</code> if not
+	 * @return of an instance of {@code PPFont} or {@code null} if not
 	 *         found
 	 */
 	public HSLFFontInfo getFont(int idx) {
@@ -1040,7 +1041,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         ExOleObjStg exOleObjStg = new ExOleObjStg();
         try {
             Ole10Native.createOleMarkerEntry(poiData);
-	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
 	        poiData.writeFilesystem(bos);
 	        exOleObjStg.setData(bos.toByteArray());
         } catch (IOException e) {
@@ -1246,7 +1247,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	}
 
 	@Override
-	public EncryptionInfo getEncryptionInfo() throws IOException {
+	public EncryptionInfo getEncryptionInfo() {
 		return getSlideShowImpl().getEncryptionInfo();
 	}
 

@@ -21,11 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hpsf.*;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
@@ -38,12 +41,11 @@ class TestPOIFSProperties {
     private static final String title = "Testing POIFS properties";
 
     @Test
-    void testFail() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        { // read the workbook, adjust the SummaryInformation and write the data to a byte array
-            POIFSFileSystem fs = openFileSystem();
-
-            HSSFWorkbook wb = new HSSFWorkbook(fs);
+    void testFail() throws IOException, NoPropertySetStreamException, WritingNotSupportedException {
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        // read the workbook, adjust the SummaryInformation and write the data to a byte array
+        try (POIFSFileSystem fs = openFileSystem();
+             HSSFWorkbook wb = new HSSFWorkbook(fs)) {
 
             //set POIFS properties after constructing HSSFWorkbook
             //(a piece of code that used to work up to POI 3.0.2)
@@ -51,8 +53,6 @@ class TestPOIFSProperties {
 
             //save the workbook and read the property
             wb.write(out);
-            out.close();
-            wb.close();
         }
 
         // process the byte array
@@ -61,18 +61,16 @@ class TestPOIFSProperties {
 
     @Test
     void testOK() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        { // read the workbook, adjust the SummaryInformation and write the data to a byte array
-            POIFSFileSystem fs = openFileSystem();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        // read the workbook, adjust the SummaryInformation and write the data to a byte array
+        try (POIFSFileSystem fs = openFileSystem()) {
 
             //set POIFS properties before constructing HSSFWorkbook
             setTitle(fs);
 
-            HSSFWorkbook wb = new HSSFWorkbook(fs);
-
-            wb.write(out);
-            out.close();
-            wb.close();
+            try (HSSFWorkbook wb = new HSSFWorkbook(fs)) {
+                wb.write(out);
+            }
         }
 
         // process the byte array
@@ -80,13 +78,12 @@ class TestPOIFSProperties {
     }
 
     private POIFSFileSystem openFileSystem() throws IOException {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
-        return fs;
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls")) {
+            return new POIFSFileSystem(is);
+        }
     }
 
-    private void setTitle(POIFSFileSystem fs) throws NoPropertySetStreamException, MarkUnsupportedException, IOException, WritingNotSupportedException {
+    private void setTitle(POIFSFileSystem fs) throws NoPropertySetStreamException, IOException, WritingNotSupportedException {
         SummaryInformation summary1 = (SummaryInformation) PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
         assertNotNull(summary1);
 
@@ -100,16 +97,15 @@ class TestPOIFSProperties {
         assertNotNull(summaryCheck);
     }
 
-    private void checkFromByteArray(byte[] bytes) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+    private void checkFromByteArray(byte[] bytes) throws IOException, NoPropertySetStreamException {
         // on some environments in CI we see strange failures, let's verify that the size is exactly right
         // this can be removed again after the problem is identified
         assertEquals(5120, bytes.length, "Had: " + HexDump.toHex(bytes));
 
-        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
-        SummaryInformation summary2 = (SummaryInformation) PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
-        assertNotNull(summary2);
-
-        assertEquals(title, summary2.getTitle());
-        fs2.close();
+        try (POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes))) {
+            SummaryInformation summary2 = (SummaryInformation) PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+            assertNotNull(summary2);
+            assertEquals(title, summary2.getTitle());
+        }
     }
 }

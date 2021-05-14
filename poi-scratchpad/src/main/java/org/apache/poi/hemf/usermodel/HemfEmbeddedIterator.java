@@ -18,7 +18,6 @@
 package org.apache.poi.hemf.usermodel;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -27,6 +26,7 @@ import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataFormat;
@@ -273,7 +273,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     private void compressGDIBitmap(EmfPlusImage img, HwmfEmbedded emb, HwmfEmbeddedType et) {
         BufferedImage bi = img.readGDIImage(emb.getRawData());
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             // use HwmfEmbeddedType literal for conversion
             ImageIO.write(bi, et.toString(), bos);
             emb.setData(bos.toByteArray());
@@ -298,7 +298,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         int totalSize = epo.getTotalObjectSize();
         IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(epo.getTotalObjectSize());
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(epo.getTotalObjectSize());
         try {
             for (;;) {
                 bos.write(img.getImageData());
@@ -315,8 +315,8 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     return emb;
                 }
             }
-        } catch (IOException e) {
-            // ByteArrayOutputStream doesn't throw IOException
+        } catch (IOException ignored) {
+            // UnsynchronizedByteArrayOutputStream doesn't throw IOException
             return null;
         } finally {
             emb.setData(bos.toByteArray());

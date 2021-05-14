@@ -29,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +37,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -114,7 +113,7 @@ class TestOleShape {
     @ParameterizedTest
     @MethodSource("data")
     void embedData(Api api, ObjectMetaData.Application app) throws IOException, ReflectiveOperationException {
-        final ByteArrayInputStream pptBytes;
+        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
         try (SlideShow<?,?> ppt = createSlideShow(api)) {
             final PictureData picData = ppt.addPicture(pictureFile,  PictureType.EMF);
             final Slide<?,?> slide = ppt.createSlide();
@@ -123,11 +122,9 @@ class TestOleShape {
             try (OutputStream os = oleShape.updateObjectData(app, null)) {
                 fillOleData(app, os);
             }
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
             ppt.write(bos);
-            pptBytes = new ByteArrayInputStream(bos.toByteArray());
         }
-        try (SlideShow<?,?> ppt = SlideShowFactory.create(pptBytes)) {
+        try (SlideShow<?,?> ppt = SlideShowFactory.create(bos.toInputStream())) {
             final ObjectShape<?,?> oleShape = (ObjectShape<?,?>)ppt.getSlides().get(0).getShapes().get(0);
             try (InputStream bis = oleShape.readObjectData()) {
                 validateOleData(app, bis);

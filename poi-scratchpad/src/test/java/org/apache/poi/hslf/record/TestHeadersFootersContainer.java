@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -76,7 +75,7 @@ public final class TestHeadersFootersContainer {
     @Test
 	void testWriteSlideHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		record.writeOut(baos);
 		assertArrayEquals(slideData, baos.toByteArray());
 	}
@@ -100,7 +99,7 @@ public final class TestHeadersFootersContainer {
         assertEquals(HeadersFootersContainer.FOOTERATOM, csFooter.getOptions() >> 4);
         csFooter.setText("My Footer - 1");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         assertArrayEquals(slideData, baos.toByteArray());
     }
@@ -129,7 +128,7 @@ public final class TestHeadersFootersContainer {
     @Test
 	void testWriteNotesHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		record.writeOut(baos);
 		assertArrayEquals(notesData, baos.toByteArray());
 	}
@@ -161,7 +160,7 @@ public final class TestHeadersFootersContainer {
         assertEquals(HeadersFootersContainer.FOOTERATOM, csFooter.getOptions() >> 4);
         csFooter.setText("Note Footer");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         assertArrayEquals(notesData, baos.toByteArray());
     }

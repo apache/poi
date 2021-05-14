@@ -19,11 +19,11 @@ package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -41,7 +41,7 @@ public final class EMF extends Metafile {
 
     /**
      * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
-     *             {@link EMF}. This API led to detached {@link EMF} instances (See Bugzilla
+     *             EMF. This API led to detached EMF instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
     @Deprecated
@@ -64,23 +64,19 @@ public final class EMF extends Metafile {
 
     @Override
     public byte[] getData(){
-        try {
-            byte[] rawdata = getRawData();
+        byte[] rawdata = getRawData();
+        Header header = new Header();
+        header.read(rawdata, CHECKSUM_SIZE);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            InputStream is = new ByteArrayInputStream( rawdata );
-            Header header = new Header();
-            header.read(rawdata, CHECKSUM_SIZE);
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+             InputStream is = new ByteArrayInputStream(rawdata);
+             InflaterInputStream inflater = new InflaterInputStream(is)) {
+
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
-            InflaterInputStream inflater = new InflaterInputStream( is );
-            byte[] chunk = new byte[4096];
-            int count;
-            while ((count = inflater.read(chunk)) >=0 ) {
-                out.write(chunk,0,count);
-            }
-            inflater.close();
+            IOUtils.copy(inflater, out);
+
             return out.toByteArray();
         } catch (IOException e){
             throw new HSLFException(e);
@@ -129,13 +125,15 @@ public final class EMF extends Metafile {
      *
      * @return EMF signature ({@code 0x3D40} or {@code 0x3D50})
      */
+    @Override
     public int getSignature(){
         return (getUIDInstanceCount() == 1 ? 0x3D40 : 0x3D50);
     }
-    
+
     /**
      * Sets the EMF signature - either {@code 0x3D40} or {@code 0x3D50}
      */
+    @Override
     public void setSignature(int signature) {
         switch (signature) {
             case 0x3D40:
@@ -146,6 +144,6 @@ public final class EMF extends Metafile {
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");
-        }        
+        }
     }
 }

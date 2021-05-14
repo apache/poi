@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
@@ -47,7 +47,7 @@ public final class FilePassRecord extends StandardRecord {
     private static final int ENCRYPTION_OTHER = 1;
 
 	private final int encryptionType;
-    private EncryptionInfo encryptionInfo;
+    private final EncryptionInfo encryptionInfo;
 
 	private FilePassRecord(FilePassRecord other) {
         super(other);
@@ -122,7 +122,7 @@ public final class FilePassRecord extends StandardRecord {
 
 	@Override
     protected int getDataSize() {
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
 	    LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
         serialize(leos);
         return bos.size();

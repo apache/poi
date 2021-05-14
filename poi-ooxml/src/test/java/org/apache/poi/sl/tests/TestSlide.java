@@ -24,11 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -56,10 +55,10 @@ class TestSlide {
         ppt1.createSlide().setHidden(true);
         ppt1.createSlide();
 
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
             ppt1.write(bos);
 
-            try (InputStream is = new ByteArrayInputStream(bos.toByteArray());
+            try (InputStream is = bos.toInputStream();
                  SlideShow<?, ?> ppt2 = SlideShowFactory.create(is)) {
 
                 Boolean[] hiddenState = ppt2.getSlides().stream().map(Slide::isHidden).toArray(Boolean[]::new);

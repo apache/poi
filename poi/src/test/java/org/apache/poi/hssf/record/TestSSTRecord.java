@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -49,7 +49,7 @@ final class TestSSTRecord {
      */
     private static byte[] concatHexDumps(String... hexDumpFileNames) throws IOException {
         int nFiles = hexDumpFileNames.length;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(nFiles * 8228);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(nFiles * 8228);
         for (String sampleFileName : hexDumpFileNames) {
             try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName)) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, LocaleUtil.CHARSET_1252));

@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;

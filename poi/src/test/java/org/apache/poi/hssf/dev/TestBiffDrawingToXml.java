@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -23,7 +25,6 @@ import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.NullOutputStream;
 
 class TestBiffDrawingToXml extends BaseTestIteratingXLS {
 
@@ -44,7 +45,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
 	@Override
 	void runOneFile(File pFile) throws Exception {
         try (InputStream wb = new FileInputStream(pFile)) {
-            BiffDrawingToXml.writeToFile(new NullOutputStream(), wb, false, new String[0]);
+            BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[0]);
         }
 	}
 }

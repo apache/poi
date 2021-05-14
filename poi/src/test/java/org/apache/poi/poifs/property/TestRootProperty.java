@@ -17,13 +17,15 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
@@ -39,7 +41,11 @@ final class TestRootProperty {
 	@Test
 	void testConstructor() throws IOException {
 		createBasicRootProperty();
-		verifyProperty();
+
+		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
+		_property.writeData(stream);
+		assertArrayEquals(_testblock, stream.toByteArray());
+
 	}
 
 	private void createBasicRootProperty() {
@@ -77,18 +83,6 @@ final class TestRootProperty {
 		}
 	}
 
-	private void verifyProperty() throws IOException {
-		ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
-
-		_property.writeData(stream);
-		byte[] output = stream.toByteArray();
-
-		assertEquals(_testblock.length, output.length);
-		for (int j = 0; j < _testblock.length; j++) {
-			assertEquals(_testblock[j], output[j], "mismatch at offset " + j);
-		}
-	}
-
 	@Test
 	void testSetSize() {
 		for (int j = 0; j < 10; j++) {
@@ -99,27 +93,21 @@ final class TestRootProperty {
 	}
 
 	@Test
-	void testReadingConstructor() {
-		String[] input = {
+	void testReadingConstructor() throws IOException {
+		String[] inputBytes = {
 			"52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
 			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
 			"16 00 05 01 FF FF FF FF FF FF FF FF 02 00 00 00 20 08 02 00 00 00 00 00 C0 00 00 00 00 00 00 46",
 			"00 00 00 00 00 00 00 00 00 00 00 00 C0 5C E8 23 9E 6B C1 01 FE FF FF FF 00 00 00 00 00 00 00 00",
 		};
-		verifyReadingProperty(0, RawDataUtil.decode(input), 0, "Root Entry",
-				"{00020820-0000-0000-C000-000000000046}");
-	}
+		int index = 0;
+		byte[] input = RawDataUtil.decode(inputBytes);
+		int offset = 0;
 
-	private void verifyReadingProperty(int index, byte[] input, int offset, String name,
-			String sClsId) {
 		RootProperty property = new RootProperty(index, input, offset);
-		ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
+		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
 		byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
-		try {
-			property.writeData(stream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		property.writeData(stream);
 		byte[] output = stream.toByteArray();
 
 		assertEquals(128, output.length);
@@ -127,8 +115,8 @@ final class TestRootProperty {
 			assertEquals(expected[j], output[j], "mismatch at offset " + j);
 		}
 		assertEquals(index, property.getIndex());
-		assertEquals(name, property.getName());
-        assertFalse(property.getChildren().hasNext());
-		assertEquals(property.getStorageClsid().toString(), sClsId);
+		assertEquals("Root Entry", property.getName());
+		assertFalse(property.getChildren().hasNext());
+		assertEquals(ClassIDPredefined.EXCEL_V8.getClassID(), property.getStorageClsid());
 	}
 }

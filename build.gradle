@@ -100,6 +100,7 @@ subprojects {
         bouncyCastleVersion = '1.68'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
+        commonsIoVersion = '2.8.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.7.1'
         log4jVersion = '2.14.0'
@@ -117,6 +118,8 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        options.compilerArgs << '-Xlint:unchecked'
+        options.deprecation = true
     }
 
     tasks.withType(Jar) {
@@ -371,6 +374,7 @@ rat {
     excludes.add("**/out/**")
     excludes.add("**/*.iml")
     excludes.add("**/*.log")
+    excludes.add("**/gradle-wrapper.properties")
     excludes.add("**/main/java/org/apache/poi/**/*-chart-data.txt")
     excludes.add("poi/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml")
     excludes.add("poi-ooxml/src/main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml")

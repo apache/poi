@@ -33,6 +33,7 @@ import org.apache.poi.hssf.record.EndSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * A textbox is a shape that may hold a rich text string.
@@ -68,7 +69,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
     /**
      * Construct a new textbox with the given parent and anchor.
      *
-     * @param parent
+     * @param parent the parent shape
      * @param anchor One of HSSFClientAnchor or HSSFChildAnchor
      */
     public HSSFTextbox(HSSFShape parent, HSSFAnchor anchor) {
@@ -104,7 +105,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
         spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
         spContainer.setOptions((short) 0x000F);
         sp.setRecordId(EscherSpRecord.RECORD_ID);
-        sp.setOptions((short) ((EscherAggregate.ST_TEXTBOX << 4) | 0x2));
+        sp.setOptions((short) ((ShapeType.TEXT_BOX.nativeId << 4) | 0x2));
 
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         opt.setRecordId(EscherOptRecord.RECORD_ID);

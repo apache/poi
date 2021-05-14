@@ -32,12 +32,12 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
@@ -272,7 +272,7 @@ public abstract class BaseTestPicture {
         g.draw(ell);
 
         g.dispose();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(2000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(2000);
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }

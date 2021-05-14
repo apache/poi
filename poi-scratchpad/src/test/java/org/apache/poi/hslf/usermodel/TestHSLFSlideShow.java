@@ -18,10 +18,10 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.junit.jupiter.api.Test;
@@ -38,15 +38,13 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
         assertNotNull(createSlideShow());
     }
 
+    @Override
     public HSLFSlideShow reopen(SlideShow<HSLFShape, HSLFTextParagraph> show) throws IOException {
-        BufAccessBAOS bos = new BufAccessBAOS();
-        show.write(bos);
-        return new HSLFSlideShow(new ByteArrayInputStream(bos.getBuf()));
-    }
-
-    private static class BufAccessBAOS extends ByteArrayOutputStream {
-        byte[] getBuf() {
-            return buf;
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            show.write(bos);
+            try (InputStream is = bos.toInputStream()) {
+                return new HSLFSlideShow(is);
+            }
         }
     }
 }

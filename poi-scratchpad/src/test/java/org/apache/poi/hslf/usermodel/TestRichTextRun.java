@@ -24,12 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
@@ -230,30 +229,30 @@ public final class TestRichTextRun {
 			assertEquals("Courier", rtr.getFontFamily());
 
 			// Write out and back in
-			HSLFSlideShow readS = HSLFTestDataSamples.writeOutAndReadBack(h);
+			try (HSLFSlideShow readS = HSLFTestDataSamples.writeOutAndReadBack(h)) {
 
-			// Tweak existing one again, to ensure really worked
-			rtr.setBold(false);
-			rtr.setFontSize(17d);
-			rtr.setFontFamily("CourierZZ");
+				// Tweak existing one again, to ensure really worked
+				rtr.setBold(false);
+				rtr.setFontSize(17d);
+				rtr.setFontFamily("CourierZZ");
 
-			// Check it took those changes
-			assertFalse(rtr.isBold());
-			assertEquals(17., rtr.getFontSize(), 0);
-			assertEquals("CourierZZ", rtr.getFontFamily());
+				// Check it took those changes
+				assertFalse(rtr.isBold());
+				assertEquals(17., rtr.getFontSize(), 0);
+				assertEquals("CourierZZ", rtr.getFontFamily());
 
 
-			// Now, look at the one we changed, wrote out, and read back in
-			// Ensure it does contain our original modifications
-			HSLFSlide slideOneRR = readS.getSlides().get(0);
-			List<List<HSLFTextParagraph>> textParassRR = slideOneRR.getTextParagraphs();
-			HSLFTextRun rtrRRa = textParassRR.get(0).get(0).getTextRuns().get(0);
+				// Now, look at the one we changed, wrote out, and read back in
+				// Ensure it does contain our original modifications
+				HSLFSlide slideOneRR = readS.getSlides().get(0);
+				List<List<HSLFTextParagraph>> textParassRR = slideOneRR.getTextParagraphs();
+				HSLFTextRun rtrRRa = textParassRR.get(0).get(0).getTextRuns().get(0);
 
-			assertTrue(rtrRRa.isBold());
-			assertNotNull(rtrRRa.getFontSize());
-			assertEquals(18., rtrRRa.getFontSize(), 0);
-			assertEquals("Courier", rtrRRa.getFontFamily());
-			readS.close();
+				assertTrue(rtrRRa.isBold());
+				assertNotNull(rtrRRa.getFontSize());
+				assertEquals(18., rtrRRa.getFontSize(), 0);
+				assertEquals("Courier", rtrRRa.getFontFamily());
+			}
 		}
 	}
 
@@ -370,29 +369,30 @@ public final class TestRichTextRun {
 	 */
 	private void assertMatchesSLTWC(HSLFSlideShow s) throws IOException {
 		// Grab a new copy of slideshow C
-		HSLFSlideShow refC = HSLFTestDataSamples.getSlideShow(filenameC);
+		try (HSLFSlideShow refC = HSLFTestDataSamples.getSlideShow(filenameC)) {
 
-		// Write out the 2nd SLWT in the active document
-		SlideListWithText refSLWT = refC.getDocumentRecord().getSlideListWithTexts()[1];
-		byte[] raw_slwt = writeRecord(refSLWT);
+			// Write out the 2nd SLWT in the active document
+			SlideListWithText refSLWT = refC.getDocumentRecord().getSlideListWithTexts()[1];
+			byte[] raw_slwt = writeRecord(refSLWT);
 
-		// Write out the same for the supplied slideshow
-		SlideListWithText s_SLWT = s.getDocumentRecord().getSlideListWithTexts()[1];
-		byte[] s_slwt = writeRecord(s_SLWT);
+			// Write out the same for the supplied slideshow
+			SlideListWithText s_SLWT = s.getDocumentRecord().getSlideListWithTexts()[1];
+			byte[] s_slwt = writeRecord(s_SLWT);
 
-		// Check the records are the same
-		assertEquals(refSLWT.getChildRecords().length, s_SLWT.getChildRecords().length);
-		for(int i=0; i<refSLWT.getChildRecords().length; i++) {
-			Record ref_r = refSLWT.getChildRecords()[i];
-			Record s_r = s_SLWT.getChildRecords()[i];
+			// Check the records are the same
+			assertEquals(refSLWT.getChildRecords().length, s_SLWT.getChildRecords().length);
+			for (int i = 0; i < refSLWT.getChildRecords().length; i++) {
+				Record ref_r = refSLWT.getChildRecords()[i];
+				Record s_r = s_SLWT.getChildRecords()[i];
 
-			byte[] r_rb = writeRecord(ref_r);
-			byte[] s_rb = writeRecord(s_r);
-			assertArrayEquals(r_rb, s_rb);
+				byte[] r_rb = writeRecord(ref_r);
+				byte[] s_rb = writeRecord(s_r);
+				assertArrayEquals(r_rb, s_rb);
+			}
+
+			// Check the bytes are the same
+			assertArrayEquals(raw_slwt, s_slwt);
 		}
-
-		// Check the bytes are the same
-		assertArrayEquals(raw_slwt, s_slwt);
 	}
 
 	/**
@@ -401,20 +401,20 @@ public final class TestRichTextRun {
 	 */
 	private static void assertMatchesFileC(HSLFSlideShow s) throws IOException {
 		// Grab the bytes of the file
-	    POIFSFileSystem fs = new POIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
-	    InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
-	    byte[] raw_file = IOUtils.toByteArray(is);
-	    is.close();
-	    fs.close();
+		byte[] raw_file;
+	    try (POIFSFileSystem fs = new POIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
+	    	InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
+			raw_file = IOUtils.toByteArray(is);
+		}
 
 		// Now write out the slideshow
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] raw_ss;
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		s.write(baos);
-		fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-		is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
-		byte[] raw_ss = IOUtils.toByteArray(is);
-        is.close();
-        fs.close();
+		try (POIFSFileSystem fs = new POIFSFileSystem(baos.toInputStream());
+			InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
+			raw_ss = IOUtils.toByteArray(is);
+		}
 
 		// different paragraph mask, because of sanitizing
 		raw_ss[169030] = 0x0a;
@@ -424,24 +424,24 @@ public final class TestRichTextRun {
 	}
 
 	private byte[] writeRecord( org.apache.poi.hslf.record.Record r) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		r.writeOut(baos);
 		return baos.toByteArray();
 	}
 
     @Test
 	void testIndentationLevel() throws Exception {
-		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ParagraphStylesShorterThanCharStyles.ppt");
-		for (HSLFSlide sl : ppt.getSlides()) {
-			for (List<HSLFTextParagraph> txt : sl.getTextParagraphs()) {
-				for (HSLFTextParagraph p : txt) {
-					int indent = p.getIndentLevel();
-					assertTrue(indent >= 0 && indent <= 4 );
-				}
+		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ParagraphStylesShorterThanCharStyles.ppt")) {
+			for (HSLFSlide sl : ppt.getSlides()) {
+				for (List<HSLFTextParagraph> txt : sl.getTextParagraphs()) {
+					for (HSLFTextParagraph p : txt) {
+						int indent = p.getIndentLevel();
+						assertTrue(indent >= 0 && indent <= 4);
+					}
 
+				}
 			}
 		}
-		ppt.close();
 	}
 
     @Test
@@ -502,54 +502,54 @@ public final class TestRichTextRun {
 
     @Test
 	void testSetParagraphStyles() throws IOException {
-		HSLFSlideShow ppt1 = new HSLFSlideShow();
+		try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
 
-		HSLFSlide slide = ppt1.createSlide();
+			HSLFSlide slide = ppt1.createSlide();
 
-		HSLFTextBox shape = new HSLFTextBox();
-		shape.setText(
+			HSLFTextBox shape = new HSLFTextBox();
+			shape.setText(
 				"Hello, World!\r" +
-				"This should be\r" +
-				"Multiline text");
-        HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
-        HSLFTextRun tr = rt.getTextRuns().get(0);
-		tr.setFontSize(42d);
-		rt.setBullet(true);
-		rt.setLeftMargin(50d);
-		rt.setIndent(0d);
-		rt.setBulletChar('\u263A');
-		slide.addShape(shape);
+					"This should be\r" +
+					"Multiline text");
+			HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
+			HSLFTextRun tr = rt.getTextRuns().get(0);
+			tr.setFontSize(42d);
+			rt.setBullet(true);
+			rt.setLeftMargin(50d);
+			rt.setIndent(0d);
+			rt.setBulletChar('\u263A');
+			slide.addShape(shape);
 
-		assertNotNull(tr.getFontSize());
-		assertEquals(42.0, tr.getFontSize(), 0);
-		assertTrue(rt.isBullet());
-		assertNotNull(rt.getLeftMargin());
-		assertEquals(50.0, rt.getLeftMargin(), 0);
-		assertNotNull(rt.getIndent());
-		assertEquals(0, rt.getIndent(), 0);
-		assertNotNull(rt.getBulletChar());
-		assertEquals('\u263A', (char)rt.getBulletChar());
+			assertNotNull(tr.getFontSize());
+			assertEquals(42.0, tr.getFontSize(), 0);
+			assertTrue(rt.isBullet());
+			assertNotNull(rt.getLeftMargin());
+			assertEquals(50.0, rt.getLeftMargin(), 0);
+			assertNotNull(rt.getIndent());
+			assertEquals(0, rt.getIndent(), 0);
+			assertNotNull(rt.getBulletChar());
+			assertEquals('\u263A', (char) rt.getBulletChar());
 
-		shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));
-		slide.addShape(shape);
+			shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));
+			slide.addShape(shape);
 
-		//serialize and read again
-		HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
-		slide = ppt2.getSlides().get(0);
-		shape = (HSLFTextBox)slide.getShapes().get(0);
-		rt = shape.getTextParagraphs().get(0);
-		tr = rt.getTextRuns().get(0);
-		assertNotNull(tr.getFontSize());
-		assertEquals(42.0, tr.getFontSize(), 0);
-		assertTrue(rt.isBullet());
-		assertNotNull(rt.getLeftMargin());
-		assertEquals(50.0, rt.getLeftMargin(), 0);
-		assertNotNull(rt.getIndent());
-		assertEquals(0, rt.getIndent(), 0);
-		assertNotNull(rt.getBulletChar());
-		assertEquals('\u263A', (char)rt.getBulletChar());
-		ppt2.close();
-		ppt1.close();
+			//serialize and read again
+			try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
+				slide = ppt2.getSlides().get(0);
+				shape = (HSLFTextBox) slide.getShapes().get(0);
+				rt = shape.getTextParagraphs().get(0);
+				tr = rt.getTextRuns().get(0);
+				assertNotNull(tr.getFontSize());
+				assertEquals(42.0, tr.getFontSize(), 0);
+				assertTrue(rt.isBullet());
+				assertNotNull(rt.getLeftMargin());
+				assertEquals(50.0, rt.getLeftMargin(), 0);
+				assertNotNull(rt.getIndent());
+				assertEquals(0, rt.getIndent(), 0);
+				assertNotNull(rt.getBulletChar());
+				assertEquals('\u263A', (char) rt.getBulletChar());
+			}
+		}
 	}
 
     @Test

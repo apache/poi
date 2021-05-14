@@ -18,16 +18,17 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -143,14 +144,10 @@ public final class TestComment2000 {
     @Test
     void testWrite() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, b);
 	}
 
 	// Change a few things
@@ -199,22 +196,16 @@ public final class TestComment2000 {
 		assertFalse(equals, "Arrays should not be equals");
 
 		// Check bytes are now the same
-		ByteArrayOutputStream baosa = new ByteArrayOutputStream();
-		ByteArrayOutputStream baosn = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baosa = new UnsynchronizedByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baosn = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baosa);
 		cn.writeOut(baosn);
 		byte[] ba = baosa.toByteArray();
 		byte[] bn = baosn.toByteArray();
 
 		// Should now be the same
-		assertEquals(data_b.length, ba.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],ba[i]);
-		}
-		assertEquals(data_b.length, bn.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],bn[i]);
-		}
+		assertArrayEquals(data_b, ba);
+		assertArrayEquals(data_b, bn);
 	}
 
     /**

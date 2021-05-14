@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ final class TestDocumentOutputStream {
 
             try {
                 for (byte b : expected) {
-                    dstream.write((int)b);
+                    dstream.write(b);
                 }
             } catch (IOException ignored) {
                 fail("stream exhausted too early");
@@ -115,7 +115,7 @@ final class TestDocumentOutputStream {
             root.createDocument("foo", expected.length, l);
 
             try (DocumentInputStream is = root.createDocumentInputStream("foo")) {
-                final ByteArrayOutputStream bos = new ByteArrayOutputStream(expected.length);
+                final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(expected.length);
                 IOUtils.copy(is, bos);
                 assertArrayEquals(expected, bos.toByteArray());
             }

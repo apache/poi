@@ -16,10 +16,11 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 /**
  * This class provides common functionality for the
@@ -86,7 +87,7 @@ public abstract class LZWDecompresser {
      * of the decompressed input.
      */
     public byte[] decompress(InputStream src) throws IOException {
-        ByteArrayOutputStream res = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream res = new UnsynchronizedByteArrayOutputStream();
         decompress(src, res);
         return res.toByteArray();
     }

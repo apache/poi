@@ -27,15 +27,15 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EndSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.FtCblsSubRecord;
 import org.apache.poi.hssf.record.LbsDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
- * 
+ *
  */
 public class HSSFCombobox extends HSSFSimpleShape {
 
@@ -65,7 +65,7 @@ public class HSSFCombobox extends HSSFSimpleShape {
         spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
         spContainer.setOptions((short) 0x000F);
         sp.setRecordId(EscherSpRecord.RECORD_ID);
-        sp.setOptions((short) ((EscherAggregate.ST_HOSTCONTROL << 4) | 0x2));
+        sp.setOptions((short) ((ShapeType.HOST_CONTROL.nativeId << 4) | 0x2));
 
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         opt.setRecordId(EscherOptRecord.RECORD_ID);

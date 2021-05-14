@@ -23,13 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
@@ -44,7 +43,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Basing on: src/examples/src/org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
  * This class tests reading and writing of meta data. No actual document is created. All information
- * is stored in a virtual document in a ByteArrayOutputStream
+ * is stored in a virtual document in a UnsynchronizedByteArrayOutputStream
  */
 final class TestMetaDataIPI {
 
@@ -520,7 +519,7 @@ final class TestMetaDataIPI {
 
 
     /**
-     * Closes the ByteArrayOutputStream and reads it into a ByteArrayInputStream.
+     * Closes the UnsynchronizedByteArrayOutputStream and reads it into a ByteArrayInputStream.
      * When finished writing information this method is used in the tests to
      * start reading from the created document and then the see if the results match.
      */
@@ -528,13 +527,13 @@ final class TestMetaDataIPI {
         dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         si.write(poifs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
 
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream();
         poifs.writeFilesystem(bout);
         poifs.close();
 
-        InputStream is = new ByteArrayInputStream(bout.toByteArray());
-        poifs = new POIFSFileSystem(is);
-        is.close();
+        try (InputStream is = bout.toInputStream()) {
+			poifs = new POIFSFileSystem(is);
+		}
 
         /* Read the document summary information. */
         DirectoryEntry dir = poifs.getRoot();

@@ -19,6 +19,8 @@
 
 package org.apache.poi.util;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -115,7 +117,7 @@ public class GenericRecordJsonWriter implements Closeable {
     protected int childIndex = 0;
 
     public GenericRecordJsonWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? new NullOutputStream() : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM : new FileOutputStream(fileName);
         aw = new AppendableWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
         fw = new PrintWriter(aw);
     }
@@ -529,23 +531,6 @@ public class GenericRecordJsonWriter implements Closeable {
         final String b = Long.toHexString(l);
         int len = b.length();
         return ZEROS.substring(0, Math.max(0,size-len)) + b.substring(Math.max(0,len-size), len);
-    }
-
-    static class NullOutputStream extends OutputStream {
-        NullOutputStream() {
-        }
-
-        @Override
-        public void write(byte[] b, int off, int len) {
-        }
-
-        @Override
-        public void write(int b) {
-        }
-
-        @Override
-        public void write(byte[] b) {
-        }
     }
 
     static class AppendableWriter extends Writer {

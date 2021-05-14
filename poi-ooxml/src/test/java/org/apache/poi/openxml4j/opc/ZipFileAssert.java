@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.xmlunit.builder.DiffBuilder;
@@ -52,15 +52,15 @@ public final class ZipFileAssert {
     }
 
     private static void equals(
-            TreeMap<String, ByteArrayOutputStream> file1,
-            TreeMap<String, ByteArrayOutputStream> file2) {
+            TreeMap<String, UnsynchronizedByteArrayOutputStream> file1,
+            TreeMap<String, UnsynchronizedByteArrayOutputStream> file2) {
         Set<String> listFile1 = file1.keySet();
         Assertions.assertEquals(listFile1.size(), file2.keySet().size(), "not the same number of files in zip:");
 
         for (String fileName : listFile1) {
             // extract the contents for both
-            ByteArrayOutputStream contain1 = file1.get(fileName);
-            ByteArrayOutputStream contain2 = file2.get(fileName);
+            UnsynchronizedByteArrayOutputStream contain1 = file1.get(fileName);
+            UnsynchronizedByteArrayOutputStream contain2 = file2.get(fileName);
 
             assertNotNull(contain2, fileName + " not found in 2nd zip");
             // no need to check for contain1. The key come from it
@@ -84,11 +84,11 @@ public final class ZipFileAssert {
         }
     }
 
-    private static TreeMap<String, ByteArrayOutputStream> decompress(
+    private static TreeMap<String, UnsynchronizedByteArrayOutputStream> decompress(
             File filename) throws IOException {
         // store the zip content in memory
         // let s assume it is not Go ;-)
-        TreeMap<String, ByteArrayOutputStream> zipContent = new TreeMap<>();
+        TreeMap<String, UnsynchronizedByteArrayOutputStream> zipContent = new TreeMap<>();
 
         try (
         /* Open file to decompress */
@@ -106,7 +106,7 @@ public final class ZipFileAssert {
             while ((entree = zis.getNextEntry()) != null) {
 
                 /* Create a array for the current entry */
-                ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream byteArray = new UnsynchronizedByteArrayOutputStream();
                 IOUtils.copy(zis, byteArray);
                 zipContent.put(entree.getName(), byteArray);
             }

@@ -19,13 +19,12 @@
 
 package org.apache.poi.xssf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -68,16 +67,14 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
             throw new IllegalArgumentException("Expected an instance of SXSSFWorkbook");
         }
 
-        XSSFWorkbook result;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
             wb.write(baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
-            result = new XSSFWorkbook(is);
+            try (InputStream is = baos.toInputStream()) {
+                return new XSSFWorkbook(is);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return result;
     }
 
     @Override

@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
@@ -62,25 +62,24 @@ class TestOle10Native {
         };
 
         for (File f : files) {
-            POIFSFileSystem fs = new POIFSFileSystem(f, true);
-            List<Entry> entries = new ArrayList<>();
-            findOle10(entries, fs.getRoot(), "/");
+            try (POIFSFileSystem fs = new POIFSFileSystem(f, true)) {
+                List<Entry> entries = new ArrayList<>();
+                findOle10(entries, fs.getRoot(), "/");
 
-            for (Entry e : entries) {
-                ByteArrayOutputStream bosExp = new ByteArrayOutputStream();
-                InputStream is = ((DirectoryNode)e.getParent()).createDocumentInputStream(e);
-                IOUtils.copy(is,bosExp);
-                is.close();
+                for (Entry e : entries) {
+                    UnsynchronizedByteArrayOutputStream bosExp = new UnsynchronizedByteArrayOutputStream();
+                    try (InputStream is = ((DirectoryNode) e.getParent()).createDocumentInputStream(e)) {
+                        IOUtils.copy(is, bosExp);
+                    }
 
-                Ole10Native ole = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)e.getParent());
+                    Ole10Native ole = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) e.getParent());
 
-                ByteArrayOutputStream bosAct = new ByteArrayOutputStream();
-                ole.writeOut(bosAct);
+                    UnsynchronizedByteArrayOutputStream bosAct = new UnsynchronizedByteArrayOutputStream();
+                    ole.writeOut(bosAct);
 
-                assertThat(bosExp.toByteArray(), equalTo(bosAct.toByteArray()));
+                    assertThat(bosExp.toByteArray(), equalTo(bosAct.toByteArray()));
+                }
             }
-
-            fs.close();
         }
     }
 

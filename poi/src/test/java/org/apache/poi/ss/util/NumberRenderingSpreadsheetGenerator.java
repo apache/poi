@@ -18,7 +18,6 @@
 package org.apache.poi.ss.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -148,25 +148,20 @@ public class NumberRenderingSpreadsheetGenerator {
 			sw.addTestRow(example.getRawDoubleBits(), example.getExcelRendering());
 		}
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			wb.write(baos);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		byte[] fileContent = baos.toByteArray();
-		replaceNaNs(fileContent, sw.getReplacementNaNs());
-
-
 		File outputFile = new File("ExcelNumberRendering.xls");
 
-		try {
-			FileOutputStream os = new FileOutputStream(outputFile);
+		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+			 FileOutputStream os = new FileOutputStream(outputFile)) {
+			wb.write(baos);
+
+			byte[] fileContent = baos.toByteArray();
+			replaceNaNs(fileContent, sw.getReplacementNaNs());
+
 			os.write(fileContent);
-			os.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 		System.out.println("Finished writing '" + outputFile.getAbsolutePath() + "'");
 	}
 

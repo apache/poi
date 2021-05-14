@@ -18,10 +18,9 @@ package org.apache.poi.stress;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.extractor.EmbeddedData;
 import org.apache.poi.ss.extractor.EmbeddedExtractor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,10 +44,10 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		readContent(wb);
 
 		// write once more
-		ByteArrayOutputStream out = writeToArray(wb);
+		UnsynchronizedByteArrayOutputStream out = writeToArray(wb);
 
 		// read in the written file
-		Workbook read = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()));
+		Workbook read = WorkbookFactory.create(out.toInputStream());
 
 		assertNotNull(read);
 
@@ -61,14 +60,9 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		read.close();
 	}
 
-	private ByteArrayOutputStream writeToArray(Workbook wb) throws IOException {
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			wb.write(stream);
-		} finally {
-			stream.close();
-		}
-
+	private UnsynchronizedByteArrayOutputStream writeToArray(Workbook wb) throws IOException {
+		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+		wb.write(stream);
 		return stream;
 	}
 

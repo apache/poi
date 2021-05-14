@@ -19,11 +19,11 @@ package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -41,7 +41,7 @@ public final class WMF extends Metafile {
 
     /**
      * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
-     *             {@link WMF}. This API led to detached {@link WMF} instances (See Bugzilla
+     *             WMF. This API led to detached WMF instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
     @Deprecated
@@ -67,7 +67,6 @@ public final class WMF extends Metafile {
         try {
             byte[] rawdata = getRawData();
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
@@ -76,15 +75,12 @@ public final class WMF extends Metafile {
             assert(skipped == skipLen);
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             aldus.write(out);
 
-            InflaterInputStream inflater = new InflaterInputStream( is );
-            byte[] chunk = new byte[4096];
-            int count;
-            while ((count = inflater.read(chunk)) >=0 ) {
-                out.write(chunk,0,count);
+            try (InflaterInputStream inflater = new InflaterInputStream( is )) {
+                IOUtils.copy(inflater, out);
             }
-            inflater.close();
             return out.toByteArray();
         } catch (IOException e){
             throw new HSLFException(e);
@@ -133,6 +129,7 @@ public final class WMF extends Metafile {
     /**
      * WMF signature is either {@code 0x2160} or {@code 0x2170}
      */
+    @Override
     public int getSignature(){
         return (getUIDInstanceCount() == 1 ? 0x2160 : 0x2170);
     }
@@ -140,6 +137,7 @@ public final class WMF extends Metafile {
     /**
      * Sets the WMF signature - either {@code 0x2160} or {@code 0x2170}
      */
+    @Override
     public void setSignature(int signature) {
         switch (signature) {
             case 0x2160:

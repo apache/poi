@@ -21,14 +21,15 @@ import static org.apache.poi.poifs.common.POIFSConstants.LARGER_BIG_BLOCK_SIZE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.stream.IntStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.IOUtils;
@@ -67,7 +68,7 @@ class TestDocument {
             // verify that output is correct
             POIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
             DocumentProperty property = document.getDocumentProperty();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
 
             property.writeData(stream);
             byte[] output = stream.toByteArray();
@@ -111,7 +112,7 @@ class TestDocument {
     private static byte[] checkValues(final int blockCountExp, POIFSDocument document, byte[] input) throws IOException {
         assertNotNull(document);
         assertNotNull(document.getDocumentProperty().getDocument());
-        assertEquals(document, document.getDocumentProperty().getDocument());
+        assertSame(document, document.getDocumentProperty().getDocument());
 
         ByteArrayInputStream bis = new ByteArrayInputStream(input);
 
@@ -134,7 +135,7 @@ class TestDocument {
 
         assertEquals(blockCountExp, blockCountAct);
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
         try (DocumentInputStream dis = document.getFileSystem().createDocumentInputStream(
                 document.getDocumentProperty().getName())) {
             IOUtils.copy(dis, stream);

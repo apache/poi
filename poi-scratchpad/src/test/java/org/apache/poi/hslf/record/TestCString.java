@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -70,24 +70,16 @@ public final class TestCString {
 	@Test
 	void testWrite() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, b);
 
 		CString cb = new CString(data_b, 0, data_a.length);
-		ByteArrayOutputStream baosB = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baosB = new UnsynchronizedByteArrayOutputStream();
 		cb.writeOut(baosB);
 		b = baosB.toByteArray();
-
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, b);
 	}
 
 	// Turn data_a into data_b
@@ -107,14 +99,9 @@ public final class TestCString {
 		}
 		assertFalse(equals, "Arrays should not be equals");
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		// Should now be the same
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, b);
 	}
 }

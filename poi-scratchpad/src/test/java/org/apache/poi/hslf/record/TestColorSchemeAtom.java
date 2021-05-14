@@ -18,10 +18,10 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -81,13 +81,10 @@ public final class TestColorSchemeAtom {
 	@Test
 	void testWrite() throws Exception {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		csa.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, b);
 	}
 }

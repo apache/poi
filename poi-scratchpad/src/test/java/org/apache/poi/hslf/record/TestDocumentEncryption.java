@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
@@ -44,7 +44,6 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
-import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -86,12 +85,12 @@ public class TestDocumentEncryption {
             DocumentEncryptionAtom documentEncryptionAtom = hss.getDocumentEncryptionAtom();
             assertNotNull(documentEncryptionAtom);
             EncryptionInfo ei = documentEncryptionAtom.getEncryptionInfo();
-            ((CryptoAPIEncryptionHeader) ei.getHeader()).setKeySize(0x78);
+            ei.getHeader().setKeySize(0x78);
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             hss.write(bos);
 
-            try (POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+            try (POIFSFileSystem fs2 = new POIFSFileSystem(bos.toInputStream());
                  HSLFSlideShowImpl hss2 = new HSLFSlideShowImpl(fs2)) {
                 List<HSLFPictureData> picsActual = hss2.getPictureData();
 
@@ -109,9 +108,9 @@ public class TestDocumentEncryption {
     void cryptoAPIEncryption() throws Exception {
         /* documents with multiple edits need to be normalized for encryption */
         String pptFile = "57272_corrupted_usereditatom.ppt";
-        ByteArrayOutputStream encrypted = new ByteArrayOutputStream();
-        ByteArrayOutputStream expected = new ByteArrayOutputStream();
-        ByteArrayOutputStream actual = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream encrypted = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream expected = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream actual = new UnsynchronizedByteArrayOutputStream();
         try {
             try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
                  HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
@@ -126,8 +125,9 @@ public class TestDocumentEncryption {
             }
 
             // decrypted
-            ByteArrayInputStream bis = new ByteArrayInputStream(encrypted.toByteArray());
-            try (POIFSFileSystem fs = new POIFSFileSystem(bis);
+
+            try (InputStream bis = encrypted.toInputStream();
+                 POIFSFileSystem fs = new POIFSFileSystem(bis);
                  HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);
                 hss.write(actual);

@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
 public class TestHMEFDumper {
@@ -38,13 +38,13 @@ public class TestHMEFDumper {
     }
 
     @Test
-    void main() throws Exception {
+    void main() {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
         assertDoesNotThrow(() -> doMain(file.getAbsolutePath()));
     }
 
     @Test
-    void mainFull() throws Exception {
+    void mainFull() {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
         assertDoesNotThrow(() -> doMain("--full", file.getAbsolutePath()));
     }

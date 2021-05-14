@@ -26,10 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
@@ -118,9 +117,9 @@ class TestWrite {
         /* Write it to a POIFS and the latter to disk: */
         try (OutputStream out = new FileOutputStream(filename);
              POIFSFileSystem poiFs = new POIFSFileSystem();
-             ByteArrayOutputStream psStream = new ByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
             assertThrows(NoFormatIDException.class, () -> ps.write(psStream));
-            poiFs.createDocument(new ByteArrayInputStream(psStream.toByteArray()), SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.createDocument(psStream.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
         }
     }
@@ -142,12 +141,12 @@ class TestWrite {
         /* Create a mutable property set and write it to a POIFS: */
         try (OutputStream out = new FileOutputStream(filename);
             POIFSFileSystem poiFs = new POIFSFileSystem();
-             ByteArrayOutputStream psStream = new ByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
             final PropertySet ps = new PropertySet();
             final Section s = ps.getSections().get(0);
             s.setFormatID(SummaryInformation.FORMAT_ID);
             ps.write(psStream);
-            poiFs.createDocument(new ByteArrayInputStream(psStream.toByteArray()), SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.createDocument(psStream.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
         }
 
@@ -254,9 +253,8 @@ class TestWrite {
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
-        final POIFSReaderListener listener = (event) -> {
+        final POIFSReaderListener listener = (event) ->
             assertDoesNotThrow(() -> psa[0] = PropertySetFactory.create(event.getStream()));
-        };
 
         r.registerListener(listener,STREAM_NAME);
         r.read(filename);
@@ -357,9 +355,8 @@ class TestWrite {
         p.setValue(TITLE);
         ms.setProperty(p);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         mps.write(out);
-        out.close();
         byte[] bytes = out.toByteArray();
 
         PropertySet psr = new PropertySet(bytes);
@@ -388,9 +385,8 @@ class TestWrite {
     private void check(final long variantType, final Object value, final int codepage)
     throws UnsupportedVariantTypeException, IOException
     {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         VariantSupport.write(out, variantType, value, codepage);
-        out.close();
         final byte[] b = out.toByteArray();
         final Object objRead =
             VariantSupport.read(b, 0, b.length + LittleEndianConsts.INT_SIZE, variantType, codepage);
@@ -402,7 +398,7 @@ class TestWrite {
     }
 
     /**
-     * <p>Tests writing and reading back a proper dictionary.</p>
+     * Tests writing and reading back a proper dictionary.
      */
     @Test
     void dictionary() throws IOException, HPSFException {
@@ -410,37 +406,36 @@ class TestWrite {
         copy.deleteOnExit();
 
         /* Write: */
-        final OutputStream out = new FileOutputStream(copy);
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final PropertySet ps1 = new PropertySet();
-        final Section s = ps1.getSections().get(0);
-        final Map<Long,String> m = new HashMap<>(3, 1.0f);
-        m.put(1L, "String 1");
-        m.put(2L, "String 2");
-        m.put(3L, "String 3");
-        s.setDictionary(m);
-        s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);
-        int codepage = CodePageUtil.CP_UNICODE;
-        s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
-        poiFs.createDocument(ps1.toInputStream(), "Test");
-        poiFs.writeFilesystem(out);
-        poiFs.close();
-        out.close();
+        try (OutputStream out = new FileOutputStream(copy);
+            POIFSFileSystem poiFs = new POIFSFileSystem()) {
+            final PropertySet ps1 = new PropertySet();
+            final Section s = ps1.getSections().get(0);
+            final Map<Long, String> m = new HashMap<>(3, 1.0f);
+            m.put(1L, "String 1");
+            m.put(2L, "String 2");
+            m.put(3L, "String 3");
+            s.setDictionary(m);
+            s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);
+            int codepage = CodePageUtil.CP_UNICODE;
+            s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
+            poiFs.createDocument(ps1.toInputStream(), "Test");
+            poiFs.writeFilesystem(out);
 
-        /* Read back: */
-        final List<POIFile> psf = Util.readPropertySets(copy);
-        assertEquals(1, psf.size());
-        final byte[] bytes = psf.get(0).getBytes();
-        final InputStream in = new ByteArrayInputStream(bytes);
-        final PropertySet ps2 = PropertySetFactory.create(in);
+            /* Read back: */
+            final List<POIFile> psf = Util.readPropertySets(copy);
+            assertEquals(1, psf.size());
+            final byte[] bytes = psf.get(0).getBytes();
+            final InputStream in = new ByteArrayInputStream(bytes);
+            final PropertySet ps2 = PropertySetFactory.create(in);
 
-        /* Check if the result is a DocumentSummaryInformation stream, as
-         * specified. */
-        assertTrue(ps2.isDocumentSummaryInformation());
+            /* Check if the result is a DocumentSummaryInformation stream, as
+             * specified. */
+            assertTrue(ps2.isDocumentSummaryInformation());
 
-        /* Compare the property set stream with the corresponding one
-         * from the origin file and check whether they are equal. */
-        assertEquals(ps1, ps2);
+            /* Compare the property set stream with the corresponding one
+             * from the origin file and check whether they are equal. */
+            assertEquals(ps1, ps2);
+        }
     }
 
     /**
@@ -543,9 +538,9 @@ class TestWrite {
             doufStream.close();
 
             // And also write to some bytes for checking
-            ByteArrayOutputStream sinfBytes = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream sinfBytes = new UnsynchronizedByteArrayOutputStream();
             sinf.write(sinfBytes);
-            ByteArrayOutputStream dinfBytes = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream dinfBytes = new UnsynchronizedByteArrayOutputStream();
             dinf.write(dinfBytes);
 
 
@@ -656,7 +651,7 @@ class TestWrite {
      * codepage. (HPSF writes Unicode dictionaries only.)
      */
     @Test
-    void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
+    void dictionaryWithInvalidCodepage() throws IOException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
 
@@ -696,8 +691,8 @@ class TestWrite {
      * method checks whether the application is runing in an environment
      * where the default character set is 16-bit-capable.</p>
      *
-     * @return <code>true</code> if the default character set is 16-bit-capable,
-     * else <code>false</code>.
+     * @return {@code true} if the default character set is 16-bit-capable,
+     * else {@code false}.
      */
     private boolean hasProperDefaultCharset() {
         final String charSetName = System.getProperty("file.encoding");

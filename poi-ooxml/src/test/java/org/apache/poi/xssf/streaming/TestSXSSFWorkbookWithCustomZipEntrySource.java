@@ -20,12 +20,11 @@
 package org.apache.poi.xssf.streaming;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
@@ -58,38 +58,40 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
     // write an unencrypted workbook to disk, but any temporary files are encrypted
     @Test
     void customZipEntrySource() throws IOException {
-        SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
-        SXSSFSheet sheet1 = workbook.createSheet(sheetName);
-        SXSSFRow row1 = sheet1.createRow(1);
-        SXSSFCell cell1 = row1.createCell(1);
-        cell1.setCellValue(cellValue);
-        ByteArrayOutputStream os = new ByteArrayOutputStream(8192);
-        workbook.write(os);
-        workbook.close();
-        workbook.dispose();
-        XSSFWorkbook xwb = new XSSFWorkbook(new ByteArrayInputStream(os.toByteArray()));
-        XSSFSheet xs1 = xwb.getSheetAt(0);
-        assertEquals(sheetName, xs1.getSheetName());
-        XSSFRow xr1 = xs1.getRow(1);
-        XSSFCell xc1 = xr1.getCell(1);
-        assertEquals(cellValue, xc1.getStringCellValue());
-        xwb.close();
+        UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream(8192);
+        try (SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource()) {
+            SXSSFSheet sheet1 = workbook.createSheet(sheetName);
+            SXSSFRow row1 = sheet1.createRow(1);
+            SXSSFCell cell1 = row1.createCell(1);
+            cell1.setCellValue(cellValue);
+            workbook.write(os);
+            workbook.close();
+            workbook.dispose();
+        }
+        try (XSSFWorkbook xwb = new XSSFWorkbook(os.toInputStream())) {
+            XSSFSheet xs1 = xwb.getSheetAt(0);
+            assertEquals(sheetName, xs1.getSheetName());
+            XSSFRow xr1 = xs1.getRow(1);
+            XSSFCell xc1 = xr1.getCell(1);
+            assertEquals(cellValue, xc1.getStringCellValue());
+        }
     }
 
     // write an encrypted workbook to disk, and encrypt any temporary files as well
     @Test
     void customZipEntrySourceForWriteAndRead() throws IOException, InvalidFormatException {
-        SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
-        SXSSFSheet sheet1 = workbook.createSheet(sheetName);
-        SXSSFRow row1 = sheet1.createRow(1);
-        SXSSFCell cell1 = row1.createCell(1);
-        cell1.setCellValue(cellValue);
         EncryptedTempData tempData = new EncryptedTempData();
-        try (OutputStream os = tempData.getOutputStream()) {
-            workbook.write(os);
+        try (SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource()) {
+            SXSSFSheet sheet1 = workbook.createSheet(sheetName);
+            SXSSFRow row1 = sheet1.createRow(1);
+            SXSSFCell cell1 = row1.createCell(1);
+            cell1.setCellValue(cellValue);
+            try (OutputStream os = tempData.getOutputStream()) {
+                workbook.write(os);
+            }
+            workbook.close();
+            workbook.dispose();
         }
-        workbook.close();
-        workbook.dispose();
         try (InputStream is = tempData.getInputStream();
              ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(is)) {
             tempData.dispose();
@@ -111,8 +113,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         SXSSFRow row1 = sheet1.createRow(1);
         SXSSFCell cell1 = row1.createCell(1);
         cell1.setCellValue(cellValue);
-        ByteArrayOutputStream os = new ByteArrayOutputStream(8192);
-        workbook.write(os);
+        workbook.write(NULL_OUTPUT_STREAM);
         workbook.close();
         List<File> tempFiles = workbook.getTempFiles();
         assertEquals(1, tempFiles.size());

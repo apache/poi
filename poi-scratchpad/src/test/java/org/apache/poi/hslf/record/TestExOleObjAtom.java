@@ -20,8 +20,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -50,7 +49,7 @@ public final class TestExOleObjAtom {
 	@Test
 	void testWrite() throws Exception {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		record.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}
@@ -65,7 +64,7 @@ public final class TestExOleObjAtom {
 		record.setObjStgDataRef(2);
 		record.setOptions(1283584);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		record.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}

@@ -17,12 +17,12 @@
 
 package org.apache.poi.poifs.crypt;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.getSampleFile;
+import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,9 +37,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class TestXorEncryption {
-
-    private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
-
     @Test
     void testXorEncryption() {
         // Xor-Password: abc
@@ -56,10 +53,9 @@ class TestXorEncryption {
         assertThat(xorArrExp, equalTo(xorArrAct));
     }
 
-    @SuppressWarnings("static-access")
     @Test
     void testUserFile() throws IOException {
-        File f = samples.getSampleFile("xor-encryption-abc.xls");
+        File f = getSampleFile("xor-encryption-abc.xls");
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try (POIFSFileSystem fs = new POIFSFileSystem(f, true);
              HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true)) {
@@ -75,16 +71,14 @@ class TestXorEncryption {
     @Test
     @Disabled("currently not supported")
     void encrypt() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             try (HSSFWorkbook hwb = HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls")) {
                 Biff8EncryptionKey.setCurrentUserPassword("abc");
                 hwb.getInternalWorkbook().getWorkbookRecordList()
                     .add(1, new FilePassRecord(EncryptionMode.xor));
-                hwb.write(bos);
-            }
-            try (HSSFWorkbook hwb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
-                assertEquals(3, hwb.getNumberOfSheets());
+                try (HSSFWorkbook hwb2 = writeOutAndReadBack(hwb)) {
+                    assertEquals(3, hwb2.getNumberOfSheets());
+                }
             }
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);

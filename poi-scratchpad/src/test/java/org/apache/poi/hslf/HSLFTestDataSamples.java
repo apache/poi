@@ -17,12 +17,11 @@
 
 package org.apache.poi.hslf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
@@ -50,32 +49,30 @@ public class HSLFTestDataSamples {
 	}
 
 	/**
-	 * Writes a slideshow to a {@code ByteArrayOutputStream} and reads it back
+	 * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
 	 * from a {@code ByteArrayInputStream}.<p>
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
 			original.write(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			return new HSLFSlideShowImpl(bais);
+			try (InputStream is = baos.toInputStream()) {
+				return new HSLFSlideShowImpl(is);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * Writes a slideshow to a {@code ByteArrayOutputStream} and reads it back
+	 * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
 	 * from a {@code ByteArrayInputStream}.<p>
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
 			original.write(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			return new HSLFSlideShow(bais);
+			return new HSLFSlideShow(baos.toInputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

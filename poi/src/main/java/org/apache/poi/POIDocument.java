@@ -21,8 +21,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.hpsf.PropertySetFactory.newDocumentSummaryInformation;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +30,7 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -323,18 +322,16 @@ public abstract class POIDocument implements Closeable {
      *      {@link POIFSFileSystem} occurs
      */
     private void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
-        try {
+        try (UnsynchronizedByteArrayOutputStream bOut = new UnsynchronizedByteArrayOutputStream()) {
             PropertySet mSet = new PropertySet(set);
-            ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-
             mSet.write(bOut);
-            byte[] data = bOut.toByteArray();
-            ByteArrayInputStream bIn = new ByteArrayInputStream(data);
 
-            // Create or Update the Property Set stream in the POIFS
-            outFS.createOrUpdateDocument(bIn, name);
+            try (InputStream bIn = bOut.toInputStream()) {
+                // Create or Update the Property Set stream in the POIFS
+                outFS.createOrUpdateDocument(bIn, name);
+            }
 
-            LOG.atInfo().log("Wrote property set {} of size {}", name, box(data.length));
+            LOG.atInfo().log("Wrote property set {} of size {}", name, box(bOut.size()));
         } catch(WritingNotSupportedException ignored) {
             LOG.atError().log("Couldn't write property set with name {} as not supported by HPSF yet", name);
         }

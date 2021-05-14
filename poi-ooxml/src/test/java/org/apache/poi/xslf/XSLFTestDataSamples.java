@@ -16,54 +16,32 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 public class XSLFTestDataSamples {
 
     public static XMLSlideShow openSampleDocument(String sampleName) {
-        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream(sampleName);
-        try {
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream(sampleName)) {
             return new XMLSlideShow(OPCPackage.open(is));
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
     public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-        try {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
             doc.write(baos);
+            try (InputStream bais = baos.toInputStream()) {
+                return new XMLSlideShow(bais);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        InputStream bais;
-        bais = new ByteArrayInputStream(baos.toByteArray());
-        try {
-            return new XMLSlideShow(OPCPackage.open(bais));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                baos.close();
-                bais.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 }

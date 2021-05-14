@@ -23,10 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,7 +35,7 @@ final class TestLittleEndianStreams {
 
 	@Test
 	void testRead() throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		try (LittleEndianOutputStream leo = new LittleEndianOutputStream(baos)) {
 			leo.writeInt(12345678);
 			leo.writeShort(12345);
@@ -47,7 +46,7 @@ final class TestLittleEndianStreams {
 			leo.writeDouble(123.456);
 		}
 
-		try (LittleEndianInputStream lei = new LittleEndianInputStream(new ByteArrayInputStream(baos.toByteArray()))) {
+		try (LittleEndianInputStream lei = new LittleEndianInputStream(baos.toInputStream())) {
 			assertEquals(12345678, lei.readInt());
 			assertEquals(12345, lei.readShort());
 			assertEquals(123, lei.readByte());

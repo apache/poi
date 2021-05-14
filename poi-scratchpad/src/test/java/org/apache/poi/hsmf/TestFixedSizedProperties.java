@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -33,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.ChunkBasedPropertyValue;
 import org.apache.poi.hsmf.datatypes.Chunks;
@@ -44,7 +44,6 @@ import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.NullPrintStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -167,7 +166,7 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with HSMFDump.
     */
    @Test
-   void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
+   void testReadMessageDateSucceedsWithHSMFDump() {
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
        assertDoesNotThrow(() -> dump.dump(new NullPrintStream()));
    }

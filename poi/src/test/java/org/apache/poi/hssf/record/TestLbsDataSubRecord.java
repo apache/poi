@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
@@ -166,7 +166,7 @@ final class TestLbsDataSubRecord {
         try (LittleEndianInputStream in = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             LbsDataSubRecord.LbsDropData lbs = new LbsDataSubRecord.LbsDropData(in);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
                 lbs.serialize(out);
 

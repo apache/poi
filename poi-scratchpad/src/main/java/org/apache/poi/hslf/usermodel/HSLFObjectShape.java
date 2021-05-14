@@ -17,11 +17,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.AbstractByteArrayOutputStream;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -51,7 +52,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     private ExEmbed _exEmbed;
 
     /**
-     * Create a new <code>OLEShape</code>
+     * Create a new {@code OLEShape}
      *
     * @param data the picture data
      */
@@ -60,7 +61,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     }
 
     /**
-     * Create a new <code>OLEShape</code>
+     * Create a new {@code OLEShape}
      *
      * @param data the picture data
      * @param parent the parent shape
@@ -70,10 +71,10 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     }
 
     /**
-      * Create a <code>OLEShape</code> object
+      * Create a {@code OLEShape} object
       *
-      * @param escherRecord the <code>EscherSpContainer</code> record which holds information about
-      *        this picture in the <code>Slide</code>
+      * @param escherRecord the {@code EscherSpContainer} record which holds information about
+      *        this picture in the {@code Slide}
       * @param parent the parent shape of this picture
       */
     public HSLFObjectShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
@@ -100,7 +101,11 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
     	EscherContainerRecord ecr = getSpContainer();
     	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
-        spRecord.setFlags(spRecord.getFlags()|EscherSpRecord.FLAG_OLESHAPE);
+    	if (spRecord != null) {
+            spRecord.setFlags(spRecord.getFlags() | EscherSpRecord.FLAG_OLESHAPE);
+        } else {
+    	    LOG.atWarn().log("Ole shape record not found.");
+        }
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
         ExObjRefAtom uer = null;
@@ -123,6 +128,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
      *
      * @return the unique identifier for the OLE object
      */
+    @Override
     public HSLFObjectData getObjectData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
         HSLFObjectData[] ole = ppt.getEmbeddedObjects();
@@ -184,7 +190,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
                     }
                 }
             }
-            
+
             if (_exEmbed == null && create) {
                 _exEmbed = new ExEmbed();
                 _exEmbed.getExOleObjAtom().setObjID(id);
@@ -193,8 +199,8 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
         }
         return _exEmbed;
     }
-    
-    
+
+
     /**
      * Returns the instance name of the embedded object, e.g. "Document" or "Workbook".
      *
@@ -231,45 +237,51 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
         }
     }
 
-    public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) throws IOException {
+    @Override
+    public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) {
         final ObjectMetaData md = (application != null) ? application.getMetaData() : metaData;
         if (md == null) {
             throw new RuntimeException("either application or metaData needs to be set");
         }
 
-        return new ByteArrayOutputStream(100000) {
+        // can't use UnsynchronizedByteArrayOutputStream here, because it's final
+        return new ByteArrayOutputStream() {
+            @Override
             public void close() throws IOException {
-                final FileMagic fm = FileMagic.valueOf(this.buf);
-                final ByteArrayInputStream bis = new ByteArrayInputStream(this.buf, 0, this.count);
-                final HSLFSlideShow ppt = getSheet().getSlideShow();
-
-                try (POIFSFileSystem poifs = (fm == FileMagic.OLE2) ? new POIFSFileSystem(bis) : new POIFSFileSystem()) {
-                    if (fm != FileMagic.OLE2) {
-                        poifs.createDocument(bis, md.getOleEntry());
-                    }
-
-                    Ole10Native.createOleMarkerEntry(poifs);
-
-                    poifs.getRoot().setStorageClsid(md.getClassID());
-
-                    int oid = getObjectID();
-                    if (oid == 0) {
-                        // assign new embedding
-                        oid = ppt.addEmbed(poifs);
-                        setObjectID(oid);
-                    } else {
-                        final HSLFObjectData od = getObjectData();
-                        if (od != null) {
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream(this.size()+1000);
-                            poifs.writeFilesystem(bos);
-                            od.setData(bos.toByteArray());
-                        }
-                    }
-
-                    setProgId(md.getProgId());
-                    setFullName(md.getObjectName());
-                }
+                addUpdatedData(md,this);
             }
         };
+    }
+
+    private void addUpdatedData(ObjectMetaData md, AbstractByteArrayOutputStream baos) throws IOException {
+        try (InputStream bis = FileMagic.prepareToCheckMagic(baos.toInputStream())) {
+            final FileMagic fm = FileMagic.valueOf(bis);
+            try (POIFSFileSystem poifs = (fm == FileMagic.OLE2) ? new POIFSFileSystem(bis) : new POIFSFileSystem()) {
+                if (fm != FileMagic.OLE2) {
+                    poifs.createDocument(bis, md.getOleEntry());
+                }
+                baos.reset();
+
+                Ole10Native.createOleMarkerEntry(poifs);
+
+                poifs.getRoot().setStorageClsid(md.getClassID());
+
+                int oid = getObjectID();
+                if (oid == 0) {
+                    // assign new embedding
+                    oid = getSheet().getSlideShow().addEmbed(poifs);
+                    setObjectID(oid);
+                } else {
+                    final HSLFObjectData od = getObjectData();
+                    if (od != null) {
+                        poifs.writeFilesystem(baos);
+                        od.setData(baos.toByteArray());
+                    }
+                }
+
+                setProgId(md.getProgId());
+                setFullName(md.getObjectName());
+            }
+        }
     }
 }

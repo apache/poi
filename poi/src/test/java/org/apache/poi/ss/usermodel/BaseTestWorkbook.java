@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
@@ -37,7 +37,6 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.NullOutputStream;
 import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestWorkbook {
@@ -775,7 +774,7 @@ public abstract class BaseTestWorkbook {
                 c.setCellStyle(cs);
                 c.setCellValue("AAA");
             }
-            assertDoesNotThrow(() -> workbook.write(new NullOutputStream()));
+            assertDoesNotThrow(() -> workbook.write(NULL_OUTPUT_STREAM));
         }
     }
 

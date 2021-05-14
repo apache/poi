@@ -20,11 +20,11 @@ package org.apache.poi.hslf.blip;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
@@ -44,7 +44,7 @@ public abstract class Metafile extends HSLFPictureData {
 
     /**
      * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
-     *             {@link Metafile}. This API led to detached {@link Metafile} instances (See Bugzilla
+     *             Metafile. This API led to detached Metafile instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
     @Deprecated
@@ -70,7 +70,7 @@ public abstract class Metafile extends HSLFPictureData {
      */
     public static class Header{
         private static final int RECORD_LENGTH = 34;
-        
+
         /**
          * size of the original file
          */
@@ -105,7 +105,7 @@ public abstract class Metafile extends HSLFPictureData {
             @SuppressWarnings("resource")
             LittleEndianInputStream leis = new LittleEndianInputStream(
                 new ByteArrayInputStream(data, offset, RECORD_LENGTH));
-            
+
             wmfsize = leis.readInt();
 
             int left = leis.readInt();
@@ -126,7 +126,7 @@ public abstract class Metafile extends HSLFPictureData {
         public void write(OutputStream out) throws IOException {
             @SuppressWarnings("resource")
             LittleEndianOutputStream leos = new LittleEndianOutputStream(out);
-            
+
             //hmf
             leos.writeInt(wmfsize);
             //left
@@ -140,8 +140,8 @@ public abstract class Metafile extends HSLFPictureData {
             //inch
             leos.writeInt(size.width);
             //inch
-            leos.writeInt(size.height); 
-            leos.writeInt(zipsize); 
+            leos.writeInt(size.height);
+            leos.writeInt(zipsize);
             leos.writeByte(compression);
             leos.writeByte(filter);
         }
@@ -187,15 +187,15 @@ public abstract class Metafile extends HSLFPictureData {
         public int getSize(){
             return 34;
         }
-        
+
         public int getWmfSize() {
             return wmfsize;
         }
-        
+
         protected void setWmfSize(int wmfSize) {
             this.wmfsize = wmfSize;
         }
-        
+
         protected void setZipSize(int zipSize) {
             this.zipsize = zipSize;
         }
@@ -203,25 +203,25 @@ public abstract class Metafile extends HSLFPictureData {
         public Rectangle getBounds() {
             return (Rectangle)bounds.clone();
         }
-        
+
         protected void setBounds(Rectangle bounds) {
             this.bounds.setBounds(bounds);
         }
-        
+
         protected void setDimension(Dimension size) {
             this.size.setSize(size);
         }
     }
 
     protected static byte[] compress(byte[] bytes, int offset, int length) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         try (DeflaterOutputStream deflater = new DeflaterOutputStream(out)) {
             deflater.write(bytes, offset, length);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             // IOException won't get thrown by the DeflaterOutputStream in this configuration because:
-            //  1. ByteArrayOutputStream doesn't throw an IOException during writes.
+            //  1. UnsynchronizedByteArrayOutputStream doesn't throw an IOException during writes.
             //  2. The DeflaterOutputStream is not finished until we're done writing.
-            throw new AssertionError("Won't happen", e);
+            throw new AssertionError("Won't happen", ignored);
         }
         return out.toByteArray();
     }

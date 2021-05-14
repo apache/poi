@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -46,7 +45,7 @@ final class TestEscherGraphics {
     private EscherGraphics graphics;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         workbook = new HSSFWorkbook();
 
         HSSFSheet sheet = workbook.createSheet("test");
@@ -82,7 +81,7 @@ final class TestEscherGraphics {
 
     @Test
     void testSetFont() {
-        Font f = new Font("Helvetica", 0, 12);
+        Font f = new Font("Helvetica", Font.PLAIN, 12);
         graphics.setFont(f);
         assertEquals(f, graphics.getFont());
     }
@@ -112,18 +111,15 @@ final class TestEscherGraphics {
     }
 
     @Test
-    void testGetDataBackAgain() throws Exception {
+    void testGetDataBackAgain() {
     	HSSFSheet s;
     	HSSFShapeGroup s1;
     	HSSFShapeGroup s2;
 
     	patriarch.setCoordinates(10, 20, 30, 40);
 
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	workbook.write(baos);
-    	workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
-    	s = workbook.getSheetAt(0);
-
+		workbook = writeOutAndReadBack(workbook);
+		s = workbook.getSheetAt(0);
     	patriarch = s.getDrawingPatriarch();
 
     	assertNotNull(patriarch);
@@ -160,11 +156,9 @@ final class TestEscherGraphics {
 
 
     	// Write and re-load once more, to check that's ok
-    	baos = new ByteArrayOutputStream();
-    	workbook.write(baos);
-    	workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
-    	s = workbook.getSheetAt(0);
-    	patriarch = s.getDrawingPatriarch();
+		workbook = writeOutAndReadBack(workbook);
+		s = workbook.getSheetAt(0);
+		patriarch = s.getDrawingPatriarch();
 
     	assertNotNull(patriarch);
     	assertEquals(10, patriarch.getX1());
@@ -202,11 +196,9 @@ final class TestEscherGraphics {
     	//  but not of their anchors
     	s1.setCoordinates(2, 3, 1021, 242);
 
-    	baos = new ByteArrayOutputStream();
-    	workbook.write(baos);
-    	workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
-    	s = workbook.getSheetAt(0);
-    	patriarch = s.getDrawingPatriarch();
+		workbook = writeOutAndReadBack(workbook);
+		s = workbook.getSheetAt(0);
+		patriarch = s.getDrawingPatriarch();
 
     	assertNotNull(patriarch);
     	assertEquals(10, patriarch.getX1());
@@ -254,12 +246,9 @@ final class TestEscherGraphics {
     	assertEquals(3, patriarch.getChildren().size());
 
 
-    	baos = new ByteArrayOutputStream();
-    	workbook.write(baos);
-    	workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
-    	s = workbook.getSheetAt(0);
-
-    	patriarch = s.getDrawingPatriarch();
+		workbook = writeOutAndReadBack(workbook);
+		s = workbook.getSheetAt(0);
+		patriarch = s.getDrawingPatriarch();
 
     	assertNotNull(patriarch);
     	assertEquals(10, patriarch.getX1());

@@ -19,6 +19,12 @@
 
 package org.apache.poi.xssf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -30,13 +36,6 @@ import org.apache.poi.xssf.streaming.DeferredSXSSFWorkbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
     public static final DeferredSXSSFITestDataProvider instance = new DeferredSXSSFITestDataProvider();
@@ -69,16 +68,14 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
             throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
         }
 
-        XSSFWorkbook result;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
             wb.write(baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
-            result = new XSSFWorkbook(is);
+            try (InputStream is = baos.toInputStream()) {
+                return new XSSFWorkbook(is);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return result;
     }
 
     @Override
@@ -87,7 +84,7 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
         instances.add(wb);
         return wb;
     }
-    
+
     //************ SXSSF-specific methods ***************//
     @Override
     public DeferredSXSSFWorkbook createWorkbook(int rowAccessWindowSize) {
@@ -95,13 +92,13 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
         instances.add(wb);
         return wb;
     }
-    
+
     @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {
         ((DeferredSXSSFSheet)sheet).trackAllColumnsForAutoSizing();
     }
     //************ End SXSSF-specific methods ***************//
-    
+
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator(((DeferredSXSSFWorkbook) wb).getXSSFWorkbook());

@@ -18,13 +18,14 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,18 +36,18 @@ import org.junit.jupiter.api.Test;
 public final class TestComment2000Atom {
 	// From a real file
 	private final byte[] data_a = new byte[] {
-		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
-		01, 00, 00, 00, 0xD6-256, 07, 01, 00,
-		02, 00, 0x18, 00, 0x0A, 00, 0x1A, 00,
-		0x0F, 00, 0xCD-256, 00, 0x92-256, 00,
-		00,	00, 0x92-256, 00, 00, 00
+		0, 0, 0xE1-256, 0x2E, 0x1C, 0, 0, 0,
+		1, 0, 0, 0, 0xD6-256, 7, 1, 0,
+		2, 0, 0x18, 0, 0x0A, 0, 0x1A, 0,
+		0x0F, 0, 0xCD-256, 0, 0x92-256, 0,
+		0,	0, 0x92-256, 0, 0, 0
 	};
 	private final byte[] data_b = new byte[] {
-		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
-		05, 00, 00, 00, 0xD6-256, 0x07, 01, 00,
-		02, 00, 0x18, 00, 0x15, 00, 0x19, 00, 03,
-		00, 0xD5-256, 02, 0x0A, 00, 00, 00,
-		0x0E, 00, 00, 00
+		0, 0, 0xE1-256, 0x2E, 0x1C, 0, 0, 0,
+		5, 0, 0, 0, 0xD6-256, 0x07, 1, 0,
+		2, 0, 0x18, 0, 0x15, 0, 0x19, 0, 3,
+		0, 0xD5-256, 2, 0x0A, 0, 0, 0,
+		0x0E, 0, 0, 0
 		};
 
     private static SimpleDateFormat sdf;
@@ -60,7 +61,7 @@ public final class TestComment2000Atom {
 	@Test
 	void testRecordType() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
-		assertEquals(12001l, ca.getRecordType());
+		assertEquals(12001L, ca.getRecordType());
 	}
 
 	@Test
@@ -105,14 +106,10 @@ public final class TestComment2000Atom {
 	@Test
     void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, b);
 	}
 
 	// Create A from scratch
@@ -130,14 +127,10 @@ public final class TestComment2000Atom {
 		a.setDate(date_a);
 
 		// Check it's now the same as a
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		a.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, b);
 	}
 
 	// Try to turn a into b
@@ -157,14 +150,9 @@ public final class TestComment2000Atom {
 		ca.setYOffset(0x0E);
 
 		// Check bytes are now the same
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-
-		// Should now be the same
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, b);
 	}
 }

@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
@@ -62,13 +62,13 @@ public class TestHMEFContentsExtractor {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         File winmailTNEFFile = samples.getFile("quick-winmail.dat");
         HMEFContentsExtractor extractor = new HMEFContentsExtractor(winmailTNEFFile);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        extractor.extractMessageBody(out);
-        assertTrue(out.size() > 0);
-        byte[] expectedMagic = new byte[] { '{', '\\', 'r', 't', 'f' };
-        byte[] magic = Arrays.copyOf(out.toByteArray(), 5);
-        assertArrayEquals(expectedMagic, magic, "RTF magic number");
-        out.close();
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+            extractor.extractMessageBody(out);
+            assertTrue(out.size() > 0);
+            byte[] expectedMagic = new byte[]{'{', '\\', 'r', 't', 'f'};
+            byte[] magic = Arrays.copyOf(out.toByteArray(), 5);
+            assertArrayEquals(expectedMagic, magic, "RTF magic number");
+        }
     }
 
     @Test

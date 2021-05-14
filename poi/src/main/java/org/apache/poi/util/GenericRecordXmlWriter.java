@@ -19,6 +19,8 @@
 
 package org.apache.poi.util;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -50,7 +52,6 @@ import java.util.stream.Stream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter.AppendableWriter;
-import org.apache.poi.util.GenericRecordJsonWriter.NullOutputStream;
 
 @SuppressWarnings("WeakerAccess")
 public class GenericRecordXmlWriter implements Closeable {
@@ -73,7 +74,7 @@ public class GenericRecordXmlWriter implements Closeable {
         boolean print(GenericRecordXmlWriter record, String name, Object object);
     }
 
-    private static final List<Map.Entry<Class, GenericRecordHandler>> handler = new ArrayList<>();
+    private static final List<Map.Entry<Class<?>, GenericRecordHandler>> handler = new ArrayList<>();
 
     static {
         char[] t = new char[255];
@@ -97,7 +98,7 @@ public class GenericRecordXmlWriter implements Closeable {
         handler(Object.class, GenericRecordXmlWriter::printObject);
     }
 
-    private static void handler(Class c, GenericRecordHandler printer) {
+    private static void handler(Class<?> c, GenericRecordHandler printer) {
         handler.add(new AbstractMap.SimpleEntry<>(c, printer));
     }
 
@@ -108,7 +109,7 @@ public class GenericRecordXmlWriter implements Closeable {
     private boolean attributePhase = true;
 
     public GenericRecordXmlWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? new NullOutputStream() : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM : new FileOutputStream(fileName);
         fw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
     }
 
@@ -150,10 +151,10 @@ public class GenericRecordXmlWriter implements Closeable {
 
     protected void write(final String name, GenericRecord record) {
         final String tabs = tabs();
-        Enum type = record.getGenericRecordType();
+        Enum<?> type = record.getGenericRecordType();
         String recordName = (type != null) ? type.name() : record.getClass().getSimpleName();
         fw.append(tabs);
-        fw.append("<"+name+" type=\"");
+        fw.append("<").append(name).append(" type=\"");
         fw.append(recordName);
         fw.append("\"");
         if (childIndex > 0) {
@@ -279,7 +280,7 @@ public class GenericRecordXmlWriter implements Closeable {
         }
     }
 
-    protected static boolean matchInstanceOrArray(Class key, Object instance) {
+    protected static boolean matchInstanceOrArray(Class<?> key, Object instance) {
         return key.isInstance(instance) || (Array.class.equals(key) && instance.getClass().isArray());
     }
 
@@ -332,8 +333,7 @@ public class GenericRecordXmlWriter implements Closeable {
         openName(name+">");
         int oldChildIndex = childIndex;
         childIndex = 0;
-        //noinspection unchecked
-        ((List)o).forEach(e -> { writeValue("item>", e); childIndex++; });
+        ((List<?>)o).forEach(e -> { writeValue("item>", e); childIndex++; });
         childIndex = oldChildIndex;
         closeName(name+">");
         return true;
@@ -478,7 +478,7 @@ public class GenericRecordXmlWriter implements Closeable {
                 case "&":
                     fw.write("&amp;");
                     break;
-                case "\'":
+                case "'":
                     fw.write("&apos;");
                     break;
                 case "\"":

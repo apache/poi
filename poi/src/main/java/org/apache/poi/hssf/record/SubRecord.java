@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -121,7 +121,7 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 	protected abstract int getDataSize();
 	public byte[] serialize() {
 		int size = getDataSize() + 4;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(size);
 		serialize(new LittleEndianOutputStream(baos));
 		if (baos.size() != size) {
 			throw new RuntimeException("write size mismatch");
@@ -134,7 +134,7 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 
     /**
      * Whether this record terminates the sub-record stream.
-     * There are two cases when this method must be overridden and return <code>true</code>
+     * There are two cases when this method must be overridden and return {@code true}
      *  - EndSubRecord (sid = 0x00)
      *  - LbsDataSubRecord (sid = 0x12)
      *

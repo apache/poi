@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.junit.jupiter.api.Test;
 
@@ -209,7 +209,7 @@ class TestDConRefRecord {
     private void testReadWrite(byte[] data, String message) throws IOException {
         RecordInputStream is = TestcaseRecordInputStream.create(81, data);
         DConRefRecord d = new DConRefRecord(is);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(data.length);
         LittleEndianOutputStream o = new LittleEndianOutputStream(bos);
         d.serialize(o);
         o.flush();

@@ -26,28 +26,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import org.apache.poi.hssf.model.WorkbookRecordList;
-import org.apache.poi.hssf.record.FilePassRecord;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.apache.poi.poifs.crypt.binaryrc4.BinaryRC4EncryptionHeader;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.junit.jupiter.api.Test;
@@ -110,14 +102,13 @@ class TestHxxFEncryption {
     private void newPassword(String newPass, POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
-        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
+        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f);
+             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
             Biff8EncryptionKey.setCurrentUserPassword(newPass);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try (POIDocument doc = (POIDocument) te1.getDocument()) {
                 doc.write(bos);
             }
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-            try (POITextExtractor te2 = ExtractorFactory.createExtractor(bis)) {
+            try (POITextExtractor te2 = ExtractorFactory.createExtractor(bos.toInputStream())) {
                 String actual = te2.getText().trim();
                 assertEquals(expected, actual);
             }
@@ -131,9 +122,9 @@ class TestHxxFEncryption {
     @MethodSource("data")
     void changeEncryption(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);
-        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
+        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f);
+             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
             // first remove encryption
             Biff8EncryptionKey.setCurrentUserPassword(null);
             try (POIDocument doc = (POIDocument) te1.getDocument()) {
@@ -141,7 +132,7 @@ class TestHxxFEncryption {
             }
             // then use default setting, which is cryptoapi
             String newPass = "newPass";
-            try (POITextExtractor te2 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()))) {
+            try (POITextExtractor te2 = ExtractorFactory.createExtractor(bos.toInputStream())) {
                 Biff8EncryptionKey.setCurrentUserPassword(newPass);
                 try (POIDocument doc = (POIDocument) te2.getDocument()) {
                     bos.reset();
@@ -149,7 +140,7 @@ class TestHxxFEncryption {
                 }
             }
             // and finally update cryptoapi setting
-            try (POITextExtractor te3 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+            try (POITextExtractor te3 = ExtractorFactory.createExtractor(bos.toInputStream());
                  POIDocument doc = (POIDocument) te3.getDocument()) {
                 // need to cache data (i.e. read all data) before changing the key size
                 Class<?> clazz = doc.getClass();
@@ -167,7 +158,7 @@ class TestHxxFEncryption {
                 doc.write(bos);
             }
             // check the setting
-            try (POITextExtractor te4 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+            try (POITextExtractor te4 = ExtractorFactory.createExtractor(bos.toInputStream());
                  POIDocument doc = (POIDocument) te4.getDocument()) {
                 EncryptionInfo ei = doc.getEncryptionInfo();
                 assertNotNull(ei);
@@ -181,7 +172,7 @@ class TestHxxFEncryption {
 
     @Test
     public void changeEncryptionMode() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(10_000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(10_000);
 
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             wb.createSheet().createRow(1).createCell(1).setCellValue("Test");
@@ -189,7 +180,7 @@ class TestHxxFEncryption {
             wb.write(bos);
         }
 
-        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (HSSFWorkbook wb = new HSSFWorkbook(bos.toInputStream())) {
             assertEquals(EncryptionMode.cryptoAPI, wb.getEncryptionMode());
             wb.setEncryptionMode(EncryptionMode.binaryRC4);
             Biff8EncryptionKey.setCurrentUserPassword("test2");
@@ -197,7 +188,7 @@ class TestHxxFEncryption {
             wb.write(bos);
         }
 
-        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (HSSFWorkbook wb = new HSSFWorkbook(bos.toInputStream())) {
             assertEquals(EncryptionMode.binaryRC4, wb.getEncryptionMode());
             wb.setEncryptionMode(null);
             bos.reset();
@@ -206,7 +197,7 @@ class TestHxxFEncryption {
 
         assertNull(Biff8EncryptionKey.getCurrentUserPassword());
 
-        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (HSSFWorkbook wb = new HSSFWorkbook(bos.toInputStream())) {
             assertNull(wb.getEncryptionMode());
             wb.setEncryptionMode(null);
             assertEquals("Test", wb.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());

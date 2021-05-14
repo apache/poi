@@ -32,7 +32,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
@@ -46,6 +45,7 @@ import com.microsoft.schemas.vml.CTGroup;
 import com.microsoft.schemas.vml.CTImageData;
 import com.microsoft.schemas.vml.CTShape;
 import com.microsoft.schemas.vml.STExt;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ooxml.POIXMLException;
@@ -290,7 +290,7 @@ public abstract class SignatureLine {
                 xsl.setSuggestedsigneremail(suggestedSignerEmail);
             }
             if (setupId == null) {
-                setupId = new ClassID("{"+ UUID.randomUUID().toString()+"}");
+                setupId = new ClassID("{"+ UUID.randomUUID() +"}");
             }
             xsl.setId(setupId.toString());
             xsl.setAllowcomments(STTrueFalse.T);
@@ -344,7 +344,7 @@ public abstract class SignatureLine {
         rnd.drawImage(gfx, new Rectangle2D.Double(0, 0, defaultWidth, defaultHeight));
         gfx.dispose();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }
@@ -429,7 +429,7 @@ public abstract class SignatureLine {
 
         gfx.dispose();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }

@@ -190,7 +190,7 @@ public class HwmfEscape implements HwmfRecord {
     }
 
     public interface HwmfEscapeData {
-        public int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException;
+        int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException;
     }
 
 

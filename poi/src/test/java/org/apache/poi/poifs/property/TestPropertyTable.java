@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +30,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 final class TestPropertyTable {
 
 	private static void confirmBlockEncoding(String expectedDataStr, PropertyTable table) throws IOException {
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
 		byte[] expectedData = RawDataUtil.decompress(expectedDataStr);
 
 		POIFSStream stream = new POIFSStream(null) {

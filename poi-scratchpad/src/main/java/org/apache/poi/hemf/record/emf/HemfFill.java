@@ -26,8 +26,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -793,14 +792,14 @@ public final class HemfFill {
             return (long)undefinedSpace1 + bitmap.init(leis, dibSize);
         }
 
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmi+cbBits);
+        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(cbBmi+cbBits);
         final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
         assert (cbBmiSrcAct == cbBmi);
         leis.skipFully(undefinedSpace2);
         final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBits);
         assert (cbBitsSrcAct == cbBits);
 
-        final LittleEndianInputStream leisDib = new LittleEndianInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        final LittleEndianInputStream leisDib = new LittleEndianInputStream(bos.toInputStream());
         final int dibSizeAct = bitmap.init(leisDib, dibSize);
         assert (dibSizeAct <= dibSize);
         return (long)undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;

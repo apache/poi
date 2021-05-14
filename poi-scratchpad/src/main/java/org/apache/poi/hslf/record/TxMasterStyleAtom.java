@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -64,7 +64,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
     private static final long _type = RecordTypes.TxMasterStyleAtom.typeID;
 
-    private byte[] _header;
+    private final byte[] _header;
     private byte[] _data;
 
     private List<TextPropCollection> paragraphStyles;
@@ -89,6 +89,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
      * @return type of this record
      * @see RecordTypes#TxMasterStyleAtom
      */
+    @Override
     public long getRecordType() {
         return _type;
     }
@@ -97,6 +98,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
      * Write the contents of the record back, so it can be written
      *  to disk
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         // Write out the (new) header
         out.write(_header);
@@ -126,7 +128,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
     /**
      * Return type of the text.
-     * Must be a constant defined in <code>TextHeaderAtom</code>
+     * Must be a constant defined in {@code TextHeaderAtom}
      *
      * @return type of the text
      * @see TextHeaderAtom
@@ -187,7 +189,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         int type = getTextType();
 
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
             int levels = paragraphStyles.size();
             leos.writeShort(levels);

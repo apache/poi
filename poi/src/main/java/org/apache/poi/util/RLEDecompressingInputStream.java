@@ -18,10 +18,11 @@
 package org.apache.poi.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 /**
  * Wrapper of InputStream which provides Run Length Encoding (RLE)
@@ -68,7 +69,6 @@ public class RLEDecompressingInputStream extends InputStream {
      * Creates a new wrapper RLE Decompression InputStream.
      *
      * @param in The stream to wrap with the RLE Decompression
-     * @throws IOException
      */
     public RLEDecompressingInputStream(InputStream in) throws IOException {
         this.in = in;
@@ -152,7 +152,6 @@ public class RLEDecompressingInputStream extends InputStream {
      * Reads a single chunk from the underlying inputstream.
      *
      * @return number of bytes that were read, or -1 if the end of the stream was reached.
-     * @throws IOException
      */
     private int readChunk() throws IOException {
         pos = 0;
@@ -216,7 +215,6 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Helper method to determine how many bits in the CopyToken are used for the CopyLength.
      *
-     * @param offset
      * @return returns the number of bits in the copy token (a value between 4 and 12)
      */
     static int getCopyLenBits(int offset) {
@@ -232,7 +230,6 @@ public class RLEDecompressingInputStream extends InputStream {
      * Convenience method for read a 2-bytes short in little endian encoding.
      *
      * @return short value from the stream, -1 if end of stream is reached
-     * @throws IOException
      */
     public int readShort() throws IOException {
         return readShort(this);
@@ -242,7 +239,6 @@ public class RLEDecompressingInputStream extends InputStream {
      * Convenience method for read a 4-bytes int in little endian encoding.
      *
      * @return integer value from the stream, -1 if end of stream is reached
-     * @throws IOException
      */
     public int readInt() throws IOException {
         return readInt(this);
@@ -281,12 +277,12 @@ public class RLEDecompressingInputStream extends InputStream {
     }
 
     public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        InputStream instream = new ByteArrayInputStream(compressed, offset, length);
-        InputStream stream = new RLEDecompressingInputStream(instream);
-        IOUtils.copy(stream, out);
-        stream.close();
-        out.close();
-        return out.toByteArray();
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            InputStream instream = new ByteArrayInputStream(compressed, offset, length);
+            InputStream stream = new RLEDecompressingInputStream(instream)) {
+
+            IOUtils.copy(stream, out);
+            return out.toByteArray();
+        }
     }
 }

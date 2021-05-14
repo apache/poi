@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.record;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +27,8 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-import org.apache.poi.util.BoundedInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -124,7 +124,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * @param data the embedded data.
      */
      public void setData(byte[] data) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         //first four bytes is the length of the raw data
         byte[] b = new byte[4];
         LittleEndian.putInt(b, 0, data.length);
@@ -133,6 +133,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
         DeflaterOutputStream def = new DeflaterOutputStream(out);
         def.write(data, 0, data.length);
         def.finish();
+        // TODO: CHECK if it's correct that DeflaterOutputStream is only finished and not closed?
         _data = out.toByteArray();
         LittleEndian.putInt(_header, 4, _data.length);
     }
@@ -142,6 +143,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      *
      * @return the record type.
      */
+    @Override
     public long getRecordType() {
         return RecordTypes.ExOleObjStg.typeID;
     }
@@ -162,6 +164,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * @param out the output stream to write to.
      * @throws IOException if an error occurs.
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
@@ -171,6 +174,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * Fetch our sheet ID, as found from a PersistPtrHolder.
      * Should match the RefId of our matching SlidePersistAtom
      */
+    @Override
     public int getPersistId() {
         return _persistId;
     }
@@ -178,6 +182,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
     /**
      * Set our sheet ID, as found from a PersistPtrHolder
      */
+    @Override
     public void setPersistId(int id) {
         _persistId = id;
     }

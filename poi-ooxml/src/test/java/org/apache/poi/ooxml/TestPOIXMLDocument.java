@@ -17,6 +17,7 @@
 
 package org.apache.poi.ooxml;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,7 +46,6 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -142,7 +141,7 @@ public final class TestPOIXMLDocument {
 
                 // Should not be able to write a document that has been closed
                 doc.close();
-                IOException e2 = assertThrows(IOException.class, () -> doc.write(new NullOutputStream()),
+                IOException e2 = assertThrows(IOException.class, () -> doc.write(NULL_OUTPUT_STREAM),
                     "Should not be able to write a document that has been closed.");
                 assertEquals("Cannot write data, document seems to have been closed already", e2.getMessage());
 
@@ -292,7 +291,7 @@ public final class TestPOIXMLDocument {
             XMLSlideShow ppt = new XMLSlideShow(is)) {
             POIXMLDocumentPart doc = ppt.getSlides().get(12).getRelationById("rId3");
             assertNotNull(doc);
-            assertEquals(POIXMLDocumentPart.class, doc.getClass());
+            assertSame(POIXMLDocumentPart.class, doc.getClass());
         }
     }
 
@@ -334,6 +333,7 @@ public final class TestPOIXMLDocument {
     private static class UncaughtHandler implements UncaughtExceptionHandler {
         Throwable e;
 
+        @Override
         public synchronized void uncaughtException(Thread t, Throwable e) {
             this.e = e;
         }

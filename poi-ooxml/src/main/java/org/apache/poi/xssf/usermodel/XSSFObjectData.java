@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -68,9 +67,6 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     /**
      * Prototype with the default structure of a new auto-shape.
      */
-    /**
-     * Prototype with the default structure of a new auto-shape.
-     */
     protected static CTShape prototype() {
         final String drawNS = "http://schemas.microsoft.com/office/drawing/2010/main";
 
@@ -92,7 +88,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
             cur.insertNamespace("a14", drawNS);
             cur.insertAttributeWithValue("spid", "_x0000_s1");
             cur.dispose();
-            
+
             nv.addNewCNvSpPr();
 
             CTShapeProperties sp = shape.addNewSpPr();
@@ -113,16 +109,16 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
         return prototype;
     }
 
-    
-    
-    
+
+
+
     @Override
     public String getOLE2ClassName() {
         return getOleObject().getProgId();
     }
 
     /**
-     * @return the CTOleObject associated with the shape 
+     * @return the CTOleObject associated with the shape
      */
     public CTOleObject getOleObject() {
         if (oleObject == null) {
@@ -134,16 +130,14 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
         }
         return oleObject;
     }
-    
+
     @Override
     public byte[] getObjectData() throws IOException {
-        InputStream is = getObjectPart().getInputStream();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOUtils.copy(is, bos);
-        is.close();
-        return bos.toByteArray();
+        try (InputStream is = getObjectPart().getInputStream()) {
+            return IOUtils.toByteArray(is);
+        }
     }
-    
+
     /**
      * @return the package part of the object data
      */
@@ -184,7 +178,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     public String getFileName() {
         return getObjectPart().getPartName().getName();
     }
-    
+
     protected XSSFSheet getSheet() {
         return (XSSFSheet)getDrawing().getParent();
     }

@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SSTRecord;
@@ -36,11 +36,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
@@ -185,7 +185,7 @@ final class TestUnicodeString {
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
 
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
 
        fr.serialize(out);
@@ -216,7 +216,7 @@ final class TestUnicodeString {
        assertEquals(0, ext.getPhRuns().length);
        assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
 
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
        ContinuableRecordOutput cout = new ContinuableRecordOutput(out, 0xffff);
 

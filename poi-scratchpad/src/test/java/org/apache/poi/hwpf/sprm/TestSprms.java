@@ -19,43 +19,29 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.junit.jupiter.api.Test;
 
 public class TestSprms {
-    private static HWPFDocument reload( HWPFDocument hwpfDocument )
-            throws IOException
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        hwpfDocument.write( baos );
-        return new HWPFDocument( new ByteArrayInputStream( baos.toByteArray() ) );
-    }
-
     /**
      * Test correct processing of "sprmPItap" (0x6649) and "sprmPFInTable"
      * (0x2416)
      */
     @Test
     void testInnerTable() throws Exception {
-        InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream( "innertable.doc" );
-        try (HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {
-            resourceAsStream.close();
-
+        try (HWPFDocument hwpfDocument = openSampleFile("innertable.doc")) {
             testInnerTable(hwpfDocument);
-            try (HWPFDocument hwpfDocument2 = reload(hwpfDocument)) {
+            try (HWPFDocument hwpfDocument2 = writeOutAndReadBack(hwpfDocument)) {
                 testInnerTable(hwpfDocument2);
             }
         }
@@ -87,20 +73,12 @@ public class TestSprms {
      */
     @Test
     void testSprmPJc() throws IOException {
-        try (InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream( "Bug49820.doc" );
-        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {
-            resourceAsStream.close();
+        try (HWPFDocument hwpfDocument = openSampleFile( "Bug49820.doc" )) {
+            assertEquals(1, hwpfDocument.getStyleSheet().getParagraphStyle(8).getJustification());
 
-            assertEquals(1, hwpfDocument.getStyleSheet().getParagraphStyle(8)
-                    .getJustification());
-
-            try (HWPFDocument hwpfDocument2 = reload(hwpfDocument)) {
-
-                assertEquals(1, hwpfDocument2.getStyleSheet().getParagraphStyle(8)
-                        .getJustification());
+            try (HWPFDocument hwpfDocument2 = writeOutAndReadBack(hwpfDocument)) {
+                assertEquals(1, hwpfDocument2.getStyleSheet().getParagraphStyle(8).getJustification());
             }
         }
-
     }
 }

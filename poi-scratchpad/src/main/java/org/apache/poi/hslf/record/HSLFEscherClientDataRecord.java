@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSerializationListener;
@@ -49,7 +49,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
         super(other);
         // TODO: for now only reference others children, later copy them when Record.copy is available
         // other._childRecords.stream().map(Record::copy).forEach(_childRecords::add);
-        other._childRecords.addAll(other._childRecords);
+        _childRecords.addAll(other._childRecords);
     }
 
 
@@ -96,15 +96,14 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
 
     @Override
     public byte[] getRemainingData() {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
             for (org.apache.poi.hslf.record.Record r : _childRecords) {
                 r.writeOut(bos);
             }
+            return bos.toByteArray();
         } catch (IOException e) {
             throw new HSLFException(e);
         }
-        return bos.toByteArray();
     }
 
     @Override
@@ -121,6 +120,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
         }
     }
 
+    @Override
     public String getRecordName() {
         return "HSLFClientData";
     }

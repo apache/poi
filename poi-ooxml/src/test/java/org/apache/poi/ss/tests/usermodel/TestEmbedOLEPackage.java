@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -121,9 +121,9 @@ class TestEmbedOLEPackage {
 
             try (POIFSFileSystem scratchFS = new POIFSFileSystem();
                 POIFSFileSystem ole1FS = new POIFSFileSystem(new ByteArrayInputStream(oleShapes.get(0).getObjectData()))) {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 scratch.writeOut(bos);
-                scratchFS.createDocument(new ByteArrayInputStream(bos.toByteArray()), Ole10Native.OLE10_NATIVE);
+                scratchFS.createDocument(bos.toInputStream(), Ole10Native.OLE10_NATIVE);
                 scratchFS.getRoot().setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
                 assertTrue(EntryUtils.areDirectoriesIdentical(ole1FS.getRoot(), scratchFS.getRoot()));
             }
@@ -220,7 +220,7 @@ class TestEmbedOLEPackage {
         sh1.setAnchor(new java.awt.Rectangle(50, 50, 100, 200));
         sh1.setFillColor(java.awt.Color.red);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         ppt.write(bos);
         ppt.close();
 

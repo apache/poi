@@ -17,12 +17,16 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextBox;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,46 +39,46 @@ public final class TestSetBoldItalic {
      */
     @Test
     void testTextBoxWrite() throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-        HSLFSlide sl = ppt.createSlide();
-        HSLFTextRun rt;
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide sl = ppt.createSlide();
+            HSLFTextRun rt;
 
-        String val = "Hello, World!";
+            String val = "Hello, World!";
 
-        // Create a new textbox, and give it lots of properties
-        HSLFTextBox txtbox = new HSLFTextBox();
-        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
-        txtbox.setText(val);
-        rt.setFontSize(42d);
-        rt.setBold(true);
-        rt.setItalic(true);
-        rt.setUnderlined(false);
-        sl.addShape(txtbox);
+            // Create a new textbox, and give it lots of properties
+            HSLFTextBox txtbox = new HSLFTextBox();
+            rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
+            txtbox.setText(val);
+            rt.setFontSize(42d);
+            rt.setBold(true);
+            rt.setItalic(true);
+            rt.setUnderlined(false);
+            sl.addShape(txtbox);
 
-        // Check it before save
-        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(val, rt.getRawText());
-        assertEquals(42, rt.getFontSize(), 0);
-        assertTrue(rt.isBold());
-        assertTrue(rt.isItalic());
+            // Check it before save
+            rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
+            assertEquals(val, rt.getRawText());
+            assertNotNull(rt.getFontSize());
+            assertEquals(42, rt.getFontSize(), 0);
+            assertTrue(rt.isBold());
+            assertTrue(rt.isItalic());
 
-        // Serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
-        out.close();
+            // Serialize and read again
+            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                sl = ppt2.getSlides().get(0);
 
-        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
-        sl = ppt.getSlides().get(0);
+                txtbox = (HSLFTextBox) sl.getShapes().get(0);
+                rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
 
-        txtbox = (HSLFTextBox)sl.getShapes().get(0);
-        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
-
-        // Check after save
-        assertEquals(val, rt.getRawText());
-        assertEquals(42, rt.getFontSize(), 0);
-        assertTrue(rt.isBold());
-        assertTrue(rt.isItalic());
-        assertFalse(rt.isUnderlined());
+                // Check after save
+                assertEquals(val, rt.getRawText());
+                assertNotNull(rt.getFontSize());
+                assertEquals(42, rt.getFontSize(), 0);
+                assertTrue(rt.isBold());
+                assertTrue(rt.isItalic());
+                assertFalse(rt.isUnderlined());
+            }
+        }
     }
 
 }

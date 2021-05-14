@@ -17,11 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -37,6 +32,7 @@ import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -48,8 +44,6 @@ import org.apache.poi.util.StringUtil;
  * setFlipVertical() or setFlipHorizontally().
  */
 public abstract class HSSFShape implements Shape {
-    private static final Logger LOG = LogManager.getLogger(HSSFShape.class);
-
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
     public static final int LINESTYLE__COLOR_DEFAULT = 0x08000040;
@@ -85,8 +79,6 @@ public abstract class HSSFShape implements Shape {
 
     /**
      * creates shapes from existing file
-     * @param spContainer
-     * @param objRecord
      */
     public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         this._escherContainer = spContainer;
@@ -115,7 +107,6 @@ public abstract class HSSFShape implements Shape {
      * remove escher container from the patriarch.escherAggregate
      * remove obj, textObj and note records if it's necessary
      * in case of ShapeGroup remove all contained shapes
-     * @param patriarch
      */
     protected abstract void afterRemove(HSSFPatriarch patriarch);
 
@@ -179,7 +170,7 @@ public abstract class HSSFShape implements Shape {
      * @see HSSFClientAnchor
      */
     public void setAnchor(HSSFAnchor anchor) {
-        int i = 0;
+        int i;
         int recordId = -1;
         if (parent == null) {
             if (anchor instanceof HSSFChildAnchor)
@@ -365,18 +356,13 @@ public abstract class HSSFShape implements Shape {
      * @return the rotation, in degrees, that is applied to a shape.
      */
     public int getRotationDegree(){
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TRANSFORM__ROTATION);
         if (null == property){
             return 0;
         }
-        try {
-            LittleEndian.putInt(property.getPropertyValue(), bos);
-            return LittleEndian.getShort(bos.toByteArray(), 2);
-        } catch (IOException e) {
-            LOG.atError().withThrowable(e).log("can't determine rotation degree");
-            return 0;
-        }
+        byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
+        LittleEndian.putInt(buf, 0, property.getPropertyValue());
+        return LittleEndian.getShort(buf, 2);
     }
 
     /**
@@ -385,7 +371,6 @@ public abstract class HSSFShape implements Shape {
      * Negative values specify rotation in the counterclockwise direction.
      * Rotation occurs around the center of the shape.
      * The default value for this property is 0x00000000
-     * @param value
      */
     public void setRotationDegree(short value){
         setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TRANSFORM__ROTATION , (value << 16)));
@@ -415,6 +400,7 @@ public abstract class HSSFShape implements Shape {
     /**
      * @return the name of this shape
      */
+    @Override
     public String getShapeName() {
         EscherOptRecord eor = getOptRecord();
         if (eor == null) {

@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -133,10 +133,9 @@ public abstract class BaseTestSlideShowFactory {
     }
 
     private static byte[] readExternalFile(String path) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 
-        try {
-            InputStream fis = new FileInputStream(path);
+        try (InputStream fis = new FileInputStream(path)) {
             byte[] buf = new byte[512];
             while (true) {
                 int bytesRead = fis.read(buf);
@@ -145,7 +144,6 @@ public abstract class BaseTestSlideShowFactory {
                 }
                 baos.write(buf, 0, bytesRead);
             }
-            fis.close();
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

@@ -18,7 +18,6 @@
 package org.apache.poi.xslf.util;
 
 import java.awt.Graphics2D;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,14 +25,16 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+
 public class DummyFormat implements OutputFormat {
 
-    private final ByteArrayOutputStream bos;
+    private final UnsynchronizedByteArrayOutputStream bos;
     private final DummyGraphics2d dummy2d;
 
     public DummyFormat() {
         try {
-            bos = new ByteArrayOutputStream();
+            bos = new UnsynchronizedByteArrayOutputStream();
             dummy2d = new DummyGraphics2d(new PrintStream(bos, true, StandardCharsets.UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -41,7 +42,7 @@ public class DummyFormat implements OutputFormat {
     }
 
     @Override
-    public Graphics2D addSlide(double width, double height) throws IOException {
+    public Graphics2D addSlide(double width, double height) {
         bos.reset();
         return dummy2d;
     }
@@ -55,7 +56,7 @@ public class DummyFormat implements OutputFormat {
     }
 
     @Override
-    public void writeDocument(MFProxy proxy, File outFile) throws IOException {
+    public void writeDocument(MFProxy proxy, File outFile) {
 
     }
 

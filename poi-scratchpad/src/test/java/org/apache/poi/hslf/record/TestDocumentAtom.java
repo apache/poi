@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,7 +40,7 @@ public final class TestDocumentAtom {
 	@Test
     void testRecordType() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
-		assertEquals(1001l, da.getRecordType());
+		assertEquals(1001L, da.getRecordType());
 	}
 
 	@Test
@@ -67,7 +66,7 @@ public final class TestDocumentAtom {
 	void testSlideDetails() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(1, da.getFirstSlideNum());
-		assertEquals(0, da.getSlideSizeType());
+		assertEquals(DocumentAtom.SlideSize.ON_SCREEN, da.getSlideSizeTypeEnum());
 	}
 
 	@Test
@@ -82,7 +81,7 @@ public final class TestDocumentAtom {
 	@Test
 	void testWrite() throws Exception {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		da.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}

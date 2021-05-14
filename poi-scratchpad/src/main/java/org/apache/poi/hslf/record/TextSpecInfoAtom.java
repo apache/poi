@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -46,7 +46,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
     /**
      * Record header.
      */
-    private byte[] _header;
+    private final byte[] _header;
 
     /**
      * Record data.
@@ -112,7 +112,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public void reset(int size){
         TextSpecInfoRun sir = new TextSpecInfoRun(size);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try {
             sir.writeOut(bos);
         } catch (IOException e) {
@@ -127,13 +127,11 @@ public final class TextSpecInfoAtom extends RecordAtom {
     /**
      * Adapts the size by enlarging the last {@link TextSpecInfoRun}
      * or chopping the runs to the given length
-     *
-     * @param size
      */
     public void setParentSize(int size) {
         assert(size > 0);
         int covered = 0;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         TextSpecInfoRun[] runs = getTextSpecInfoRuns();
         assert(runs.length > 0);
         for (int i=0; i<runs.length && covered < size; i++) {

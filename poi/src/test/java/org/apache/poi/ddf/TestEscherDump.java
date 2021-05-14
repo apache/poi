@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -63,8 +63,8 @@ class TestEscherDump {
         "cT19LR+PfTgjN4CKCS5Es4LS+7nLt9hQ7ejwGQnEyxebOgJzlHjotWUACpoZsFkAgGqBeUDZAzB6h4N2MFCNhmIuFJMAgPsH" +
         "eJr+iZEHAAA=";
 
-    private EscherDump dumper = new EscherDump();
-    private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private final EscherDump dumper = new EscherDump();
+    private final UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
     private PrintStream stream;
 
     @BeforeEach
@@ -126,7 +126,7 @@ class TestEscherDump {
     }
 
     private int countProperties() {
-        String data = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        String data = baos.toString(StandardCharsets.UTF_8);
         Matcher matcher = Pattern.compile(",? \"[^\"]+\": ").matcher(data);
         int count = 0;
         while (matcher.find()) {

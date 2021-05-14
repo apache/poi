@@ -50,14 +50,14 @@ public final class SummaryInformation extends PropertySet {
     }
 
     /**
-     * Creates an empty {@link SummaryInformation}.
+     * Creates an empty SummaryInformation.
      */
     public SummaryInformation() {
         getFirstSection().setFormatID(FORMAT_ID);
     }
 
     /**
-     * Creates a {@link SummaryInformation} from a given {@link
+     * Creates a SummaryInformation from a given {@link
      * PropertySet}.
      *
      * @param ps A property set which should be created from a summary
@@ -73,7 +73,7 @@ public final class SummaryInformation extends PropertySet {
     }
 
     /**
-     * Creates a {@link SummaryInformation} instance from an {@link
+     * Creates a SummaryInformation instance from an {@link
      * InputStream} in the Horrible Property Set Format.<p>
      *
      * The constructor reads the first few bytes from the stream
@@ -85,8 +85,6 @@ public final class SummaryInformation extends PropertySet {
      *
      * @param stream Holds the data making out the property set
      * stream.
-     * @throws MarkUnsupportedException
-     *    if the stream does not support the {@link InputStream#markSupported} method.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
      * @exception NoPropertySetStreamException
@@ -95,7 +93,7 @@ public final class SummaryInformation extends PropertySet {
      *    if a character encoding is not supported.
      */
     public SummaryInformation(final InputStream stream)
-    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
+    throws NoPropertySetStreamException, IOException {
         super(stream);
     }
 
@@ -481,10 +479,10 @@ public final class SummaryInformation extends PropertySet {
 
 
     /**
-     * Returns the page count or 0 if the {@link SummaryInformation} does
+     * Returns the page count or 0 if the SummaryInformation does
      * not contain a page count.
      *
-     * @return The page count or 0 if the {@link SummaryInformation} does not
+     * @return The page count or 0 if the SummaryInformation does not
      *         contain a page count.
      */
     public int getPageCount() {
@@ -514,7 +512,7 @@ public final class SummaryInformation extends PropertySet {
 
 
     /**
-     * Returns the word count or 0 if the {@link SummaryInformation} does
+     * Returns the word count or 0 if the SummaryInformation does
      * not contain a word count.
      *
      * @return The word count or {@code null}
@@ -546,7 +544,7 @@ public final class SummaryInformation extends PropertySet {
 
 
     /**
-     * Returns the character count or 0 if the {@link SummaryInformation}
+     * Returns the character count or 0 if the SummaryInformation
      * does not contain a char count.
      *
      * @return The character count or {@code null}
@@ -665,7 +663,7 @@ public final class SummaryInformation extends PropertySet {
      *
      * <ul>
      *
-     * <li>0 if the {@link SummaryInformation} does not contain a
+     * <li>0 if the SummaryInformation does not contain a
      * security field or if there is no security on the document. Use
      * {@link PropertySet#wasNull()} to distinguish between the two
      * cases!

@@ -54,8 +54,6 @@ public class PropertySetFactory {
     throws FileNotFoundException, NoPropertySetStreamException, IOException, UnsupportedEncodingException {
         try (DocumentInputStream inp = ((DirectoryNode)dir).createDocumentInputStream(name)) {
             return create(inp);
-        } catch (MarkUnsupportedException e) {
-            return null;
         }
     }
 
@@ -71,14 +69,12 @@ public class PropertySetFactory {
      * @return The created {@link PropertySet}.
      * @throws NoPropertySetStreamException if the stream does not
      * contain a property set.
-     * @throws MarkUnsupportedException if the stream does not support
-     * the {@code mark} operation.
      * @throws IOException if some I/O problem occurs.
      * @exception UnsupportedEncodingException if the specified codepage is not
      * supported.
      */
     public static PropertySet create(final InputStream stream)
-    throws NoPropertySetStreamException, MarkUnsupportedException, UnsupportedEncodingException, IOException {
+    throws NoPropertySetStreamException, IOException {
         stream.mark(PropertySet.OFFSET_HEADER+ClassID.LENGTH+1);
         LittleEndianInputStream leis = new LittleEndianInputStream(stream);
         int byteOrder =  leis.readUShort();

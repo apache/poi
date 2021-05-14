@@ -21,15 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
@@ -83,10 +84,10 @@ public final class TestHMEFMessage {
         assertNotNull(msg.getMessageAttribute(TNEFProperty.ID_MAPIPROPERTIES));
 
         // Check the order
-        assertEquals(TNEFProperty.ID_TNEFVERSION, msg.getMessageAttributes().get(0).getProperty());
-        assertEquals(TNEFProperty.ID_OEMCODEPAGE, msg.getMessageAttributes().get(1).getProperty());
-        assertEquals(TNEFProperty.ID_MESSAGECLASS, msg.getMessageAttributes().get(2).getProperty());
-        assertEquals(TNEFProperty.ID_MAPIPROPERTIES, msg.getMessageAttributes().get(3).getProperty());
+        assertSame(TNEFProperty.ID_TNEFVERSION, msg.getMessageAttributes().get(0).getProperty());
+        assertSame(TNEFProperty.ID_OEMCODEPAGE, msg.getMessageAttributes().get(1).getProperty());
+        assertSame(TNEFProperty.ID_MESSAGECLASS, msg.getMessageAttributes().get(2).getProperty());
+        assertSame(TNEFProperty.ID_MAPIPROPERTIES, msg.getMessageAttributes().get(3).getProperty());
 
         // Check some that aren't there
         assertNull(msg.getMessageAttribute(TNEFProperty.ID_AIDOWNER));
@@ -168,7 +169,7 @@ public final class TestHMEFMessage {
 
     @Test
     void testNoData() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 
         // Header
         LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
@@ -176,16 +177,14 @@ public final class TestHMEFMessage {
         // field
         LittleEndian.putUShort(0, out);
 
-        byte[] bytes = out.toByteArray();
-        InputStream str = new ByteArrayInputStream(bytes);
-        HMEFMessage msg = new HMEFMessage(str);
+        HMEFMessage msg = new HMEFMessage(out.toInputStream());
         assertNull(msg.getSubject());
         assertNull(msg.getBody());
     }
 
     @Test
     void testInvalidLevel() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 
         // Header
         LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
@@ -196,10 +195,9 @@ public final class TestHMEFMessage {
         // invalid level
         LittleEndian.putUShort(90, out);
 
-        InputStream str = new ByteArrayInputStream(out.toByteArray());
         IllegalStateException ex = assertThrows(
             IllegalStateException.class,
-            () -> new HMEFMessage(str)
+            () -> new HMEFMessage(out.toInputStream())
         );
         assertEquals("Unhandled level 90", ex.getMessage());
     }
@@ -226,7 +224,7 @@ public final class TestHMEFMessage {
 
         MAPIStringAttribute propE28b = (MAPIStringAttribute)msg.getMessageMAPIAttribute(propE28);
         assertNotNull(propE28b);
-        assertEquals(MAPIStringAttribute.class, propE28b.getClass());
+        assertSame(MAPIStringAttribute.class, propE28b.getClass());
         assertEquals("Zimbra - Mark Rogers", propE28b.getDataString().substring(10));
     }
 

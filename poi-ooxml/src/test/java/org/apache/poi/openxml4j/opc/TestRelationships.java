@@ -24,12 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
@@ -198,18 +197,16 @@ class TestRelationships {
 
 
 	    // Write out and re-load
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 	    pkg.save(baos);
 
 	    // use revert to not re-write the input file
         pkg.revert();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	    pkg = OPCPackage.open(bais);
+	    pkg = OPCPackage.open(baos.toInputStream());
 
 	    // Check again
-	    sheet = pkg.getPart(
-	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
+	    sheet = pkg.getPart(PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 
 	    assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
 
@@ -228,7 +225,7 @@ class TestRelationships {
 
     @Test
     void testCreateRelationsFromScratch() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         OPCPackage pkg = OPCPackage.create(baos);
 
         PackagePart partA =
@@ -255,8 +252,7 @@ class TestRelationships {
 
         // Save, and re-load
         pkg.close();
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        pkg = OPCPackage.open(bais);
+        pkg = OPCPackage.open(baos.toInputStream());
 
         partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
         partB = pkg.getPart(PackagingURIHelper.createPartName("/partB"));
@@ -297,20 +293,17 @@ class TestRelationships {
 
     @Test
     void testTargetWithSpecialChars() throws Exception{
-        OPCPackage pkg;
-
         String filepath = OpenXML4JTestDataSamples.getSampleFileName("50154.xlsx");
-        pkg = OPCPackage.open(filepath);
+        OPCPackage pkg = OPCPackage.open(filepath);
         assert_50154(pkg);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         pkg.save(baos);
 
         // use revert to not re-write the input file
         pkg.revert();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        pkg = OPCPackage.open(bais);
+        pkg = OPCPackage.open(baos.toInputStream());
 
         assert_50154(pkg);
     }
@@ -359,7 +352,7 @@ class TestRelationships {
 
    @Test
    void testSelfRelations_bug51187() throws Exception {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         PackageRelationship rel1;
     	try (OPCPackage pkg = OPCPackage.create(baos)) {
 
@@ -374,8 +367,7 @@ class TestRelationships {
             // Save, and re-load
         }
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	try (OPCPackage pkg = OPCPackage.open(bais)) {
+    	try (OPCPackage pkg = OPCPackage.open(baos.toInputStream())) {
             PackagePart partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
 
 
@@ -406,11 +398,10 @@ class TestRelationships {
             assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
             assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             pkg1.save(out);
-            out.close();
 
-            try (OPCPackage pkg2 = OPCPackage.open(new ByteArrayInputStream(out.toByteArray()))) {
+            try (OPCPackage pkg2 = OPCPackage.open(out.toInputStream())) {
                 sheetRels = pkg2.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
                 assertEquals(3, sheetRels.size());
                 rId1 = sheetRels.getRelationshipByID("rId1");

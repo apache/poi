@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -60,7 +60,7 @@ public class ReSave {
                         System.out.print("saving to " + outputFile + "...");
                     }
 
-                    try (OutputStream os = saveToMemory ? new ByteArrayOutputStream() : new FileOutputStream(outputFile)) {
+                    try (OutputStream os = saveToMemory ? new UnsynchronizedByteArrayOutputStream() : new FileOutputStream(outputFile)) {
                         wb.write(os);
                     }
                     System.out.println("done");

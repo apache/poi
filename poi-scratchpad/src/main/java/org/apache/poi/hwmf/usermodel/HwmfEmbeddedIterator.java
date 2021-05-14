@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwmf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hwmf.record.HwmfEscape;
 import org.apache.poi.hwmf.record.HwmfEscape.EscapeFunction;
 import org.apache.poi.hwmf.record.HwmfEscape.WmfEscapeEMF;
@@ -120,7 +120,7 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         final HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.EMF);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try {
             for (;;) {
                 bos.write(img.getEmfData());
@@ -132,8 +132,8 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     return emb;
                 }
             }
-        } catch (IOException e) {
-            // ByteArrayOutputStream doesn't throw IOException
+        } catch (IOException ignored) {
+            // UnsynchronizedByteArrayOutputStream doesn't throw IOException
             return null;
         } finally {
             emb.setData(bos.toByteArray());

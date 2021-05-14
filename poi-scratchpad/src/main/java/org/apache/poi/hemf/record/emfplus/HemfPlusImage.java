@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,6 +32,7 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
@@ -445,7 +445,7 @@ public class HemfPlusImage {
         }
 
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try {
                 bos.write(getImageData());
                 if (continuedObjectData != null) {
@@ -607,6 +607,7 @@ public class HemfPlusImage {
             return size + 5*LittleEndianConsts.INT_SIZE;
         }
 
+        @Override
         public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
         }

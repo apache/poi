@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -75,11 +75,12 @@ public class OSGiSlideShowIT extends BaseOSGiTestCase {
         }
         box2.setAnchor(new Rectangle(36, 80, 648, 400));
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ppt.write(baos);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        ppt = SlideShowFactory.create(bais);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            ppt.write(baos);
+            try (InputStream bais = baos.toInputStream()) {
+                ppt = SlideShowFactory.create(bais);
+            }
+        }
         assertEquals(1, ppt.getSlides().size());
         slide = (Slide) ppt.getSlides().iterator().next();
         assertEquals(2, slide.getShapes().size());

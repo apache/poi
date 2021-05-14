@@ -24,8 +24,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,7 +56,7 @@ public class TestInteractiveInfo {
 	@Test
 	void testWrite() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ii.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}
@@ -75,7 +74,7 @@ public class TestInteractiveInfo {
 		ia.setHyperlinkType((byte)8);
 
 		// Check it's now the same as a
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		ii.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
    }

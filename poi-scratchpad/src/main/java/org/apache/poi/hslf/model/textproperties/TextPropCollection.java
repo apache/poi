@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
@@ -355,10 +355,10 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("  chars covered: " + getCharactersCovered());
-        out.append("  special mask flags: 0x" + HexDump.toHex(getSpecialMask()) + "\n");
+        out.append("  chars covered: ").append(getCharactersCovered());
+        out.append("  special mask flags: 0x").append(HexDump.toHex(getSpecialMask())).append("\n");
         if (textPropType == TextPropType.paragraph) {
-            out.append("  indent level: "+getIndentLevel()+"\n");
+            out.append("  indent level: ").append(getIndentLevel()).append("\n");
         }
         for(TextProp p : getTextPropList()) {
             out.append("    ");
@@ -369,7 +369,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                 int i = 0;
                 for (String s : bm.getSubPropNames()) {
                     if (bm.getSubPropMatches()[i]) {
-                        out.append("          " + s + " = " + bm.getSubValue(i) + "\n");
+                        out.append("          ").append(s).append(" = ").append(bm.getSubValue(i)).append("\n");
                     }
                     i++;
                 }
@@ -379,7 +379,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
         out.append("  bytes that would be written: \n");
 
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             writeOut(baos);
             byte[] b = baos.toByteArray();
             out.append(HexDump.dump(b, 0, 0));

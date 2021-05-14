@@ -22,9 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
@@ -33,11 +32,11 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test <code>MovieShape</code> object.
+ * Test {@code MovieShape} object.
  */
 public final class TestMovieShape {
 
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
     void testCreate() throws Exception {
@@ -58,10 +57,10 @@ public final class TestMovieShape {
         shape.setAutoPlay(false);
         assertFalse(shape.isAutoPlay());
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         ppt.write(out);
 
-        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        ppt = new HSLFSlideShow(out.toInputStream());
         slide = ppt.getSlides().get(0);
         shape = (MovieShape)slide.getShapes().get(0);
         assertEquals(path, shape.getPath());

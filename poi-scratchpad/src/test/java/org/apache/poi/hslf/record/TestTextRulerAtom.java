@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +61,7 @@ public final class TestTextRulerAtom {
     @Test
 	void testWriteRuler() throws Exception {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 		ruler.writeOut(out);
 
 		byte[] result = out.toByteArray();
@@ -72,7 +72,7 @@ public final class TestTextRulerAtom {
 	void testRead2() throws Exception {
 		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
 		ruler.setParagraphIndent((short)249, (short)321);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 		ruler.writeOut(out);
 
 		byte[] result = out.toByteArray();

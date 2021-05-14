@@ -41,16 +41,18 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
     /**
      * Write out to the currently open file the properties changes, but nothing else
      */
+    @Override
     public void write() throws IOException {
         POIFSFileSystem fs = getDirectory().getFileSystem();
-        
-        validateInPlaceWritePossible();        
+
+        validateInPlaceWritePossible();
         writeProperties(fs, null);
         fs.writeFilesystem();
     }
     /**
      * Write out, with any properties changes, but nothing else
      */
+    @Override
     public void write(File newFile) throws IOException {
         try (POIFSFileSystem fs = POIFSFileSystem.create(newFile)) {
             write(fs);
@@ -60,25 +62,26 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
     /**
      * Write out, with any properties changes, but nothing else
      */
+    @Override
     public void write(OutputStream out) throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(out);
         }
     }
-    
+
     private void write(POIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, so far
         List<String> excepts = new ArrayList<>(2);
 
         // Write out our HPFS properties, with any changes
         writeProperties(fs, excepts);
-        
+
         // Copy over everything else unchanged
         FilteringDirectoryNode src = new FilteringDirectoryNode(getDirectory(), excepts);
         FilteringDirectoryNode dest = new FilteringDirectoryNode(fs.getRoot(), excepts);
         EntryUtils.copyNodes(src, dest);
-        
+
         // Caller will save the resultant POIFSFileSystem to the stream/file
     }
 }

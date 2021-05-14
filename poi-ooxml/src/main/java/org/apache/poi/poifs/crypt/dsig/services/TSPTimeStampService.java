@@ -24,7 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import java.io.ByteArrayOutputStream;
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.SimpleMessage;
@@ -72,8 +74,6 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
-import static org.apache.logging.log4j.util.Unbox.box;
-
 /**
  * A TSP time-stamp service implementation.
  */
@@ -95,7 +95,8 @@ public class TSPTimeStampService implements TimeStampService {
         }
     }
 
-    @SuppressWarnings({"unchecked","squid:S2647"})
+    @Override
+    @SuppressWarnings({"squid:S2647"})
     public byte[] timeStamp(SignatureInfo signatureInfo, byte[] data, RevocationData revocationData) throws Exception {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
@@ -124,7 +125,7 @@ public class TSPTimeStampService implements TimeStampService {
             proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
         }
 
-        ByteArrayOutputStream bos;
+        UnsynchronizedByteArrayOutputStream bos;
         String contentType;
         HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
         try {
@@ -163,7 +164,7 @@ public class TSPTimeStampService implements TimeStampService {
                 throw new RuntimeException("missing Content-Type header");
             }
 
-            bos = new ByteArrayOutputStream();
+            bos = new UnsynchronizedByteArrayOutputStream();
             IOUtils.copy(huc.getInputStream(), bos);
             LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(bos.toByteArray(), 0, 0)));
         } finally {

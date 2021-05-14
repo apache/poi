@@ -28,7 +28,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -40,6 +39,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -73,11 +73,11 @@ public class BitmapImageRenderer implements ImageRenderer {
     public void loadImage(InputStream data, String contentType) throws IOException {
         InputStream in = data;
         if (doCache) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             IOUtils.copy(data, bos);
             cachedImage = bos.toByteArray();
             cachedContentType = contentType;
-            in = new ByteArrayInputStream(cachedImage);
+            in = bos.toInputStream();
         }
         img = readImage(in, contentType);
     }
@@ -107,13 +107,13 @@ public class BitmapImageRenderer implements ImageRenderer {
         IOException lastException = null;
         BufferedImage img = null;
 
-        final ByteArrayInputStream bis;
+        final InputStream bis;
         if (data instanceof ByteArrayInputStream) {
-            bis = (ByteArrayInputStream)data;
+            bis = data;
         } else {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(0x3FFFF);
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(0x3FFFF);
             IOUtils.copy(data, bos);
-            bis = new ByteArrayInputStream(bos.toByteArray());
+            bis = bos.toInputStream();
         }
 
 
@@ -257,7 +257,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     @Override
     public BufferedImage getImage(Dimension2D dim) {
         if (img == null) {
-            return img;
+            return null;
         }
         double w_old = img.getWidth();
         double h_old = img.getHeight();

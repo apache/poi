@@ -19,9 +19,9 @@ package org.apache.poi.xwpf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -58,14 +58,14 @@ class TestChangeTracking {
             r1.setText("Lorem ipsum dolor sit amet.");
             doc.setTrackRevisions(true);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            doc.write(out);
+            try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+                doc.write(out);
 
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-            XWPFDocument document = new XWPFDocument(inputStream);
-            inputStream.close();
-
-            assertTrue(document.isTrackRevisions());
+                try (InputStream inputStream = out.toInputStream()) {
+                    XWPFDocument document = new XWPFDocument(inputStream);
+                    assertTrue(document.isTrackRevisions());
+                }
+            }
         }
     }
 }

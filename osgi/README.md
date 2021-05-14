@@ -9,6 +9,7 @@ The bundle embeds all the jars from lib/main:
 - SparseBitSet
 - curvesapi
 - commons-math3
+- commons-io
 - commons-compress
 - commons-collections4
 - commons-codec

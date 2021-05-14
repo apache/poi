@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.Chunk;
@@ -54,8 +54,6 @@ public class TestExtractEmbeddedMSG {
 
     /**
      * Initialize this test, load up the attachment_msg_pdf.msg mapi message.
-     *
-     * @throws Exception
      */
     @BeforeAll
     public static void setUp() throws IOException {
@@ -71,9 +69,6 @@ public class TestExtractEmbeddedMSG {
     /**
      * Test to see if embedded message properties can be read, extracted, and
      * re-parsed
-     *
-     * @throws ChunkNotFoundException
-     *
      */
     @Test
     void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
@@ -86,11 +81,9 @@ public class TestExtractEmbeddedMSG {
             testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
             // rebuild top level message from embedded message
             try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
-                try (ByteArrayOutputStream extractedAttachedMsgOut = new ByteArrayOutputStream()) {
+                try (UnsynchronizedByteArrayOutputStream extractedAttachedMsgOut = new UnsynchronizedByteArrayOutputStream()) {
                     extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
-                    byte[] extratedAttachedMsgRaw = extractedAttachedMsgOut.toByteArray();
-                    MAPIMessage extractedMsgTopLevel = new MAPIMessage(
-                            new ByteArrayInputStream(extratedAttachedMsgRaw));
+                    MAPIMessage extractedMsgTopLevel = new MAPIMessage(extractedAttachedMsgOut.toInputStream());
                     // test properties of rebuilt embedded message
                     testFixedAndVariableLengthPropertiesOfAttachedMSG(extractedMsgTopLevel);
                 }
@@ -104,7 +97,7 @@ public class TestExtractEmbeddedMSG {
         Calendar messageDate = msg.getMessageDate();
         assertNotNull(messageDate);
         Calendar expectedMessageDate = LocaleUtil.getLocaleCalendar();
-        expectedMessageDate.set(2010, 05, 17, 23, 52, 19); // 2010/06/17 23:52:19 GMT
+        expectedMessageDate.set(2010, Calendar.JUNE, 17, 23, 52, 19); // 2010/06/17 23:52:19 GMT
         expectedMessageDate.setTimeZone(TimeZone.getTimeZone("GMT"));
         expectedMessageDate.set(Calendar.MILLISECOND, 0);
         assertEquals(expectedMessageDate.getTimeInMillis(), messageDate.getTimeInMillis());
@@ -178,7 +171,7 @@ public class TestExtractEmbeddedMSG {
                 MAPIType type = Types.getById(iType);
                 if (type != null && type != Types.UNKNOWN) {
                     MAPIProperty mprop = MAPIProperty.createCustom(chunk.getChunkId(), type, chunk.getEntryName());
-                    ByteArrayOutputStream data = new ByteArrayOutputStream();
+                    UnsynchronizedByteArrayOutputStream data = new UnsynchronizedByteArrayOutputStream();
                     chunk.writeValue(data);
                     PropertyValue pval = new PropertyValue(mprop, MessagePropertiesChunk.PROPERTIES_FLAG_READABLE
                             | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE, data.toByteArray(), type);

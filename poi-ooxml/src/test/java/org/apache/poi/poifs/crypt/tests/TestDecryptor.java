@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import javax.crypto.Cipher;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -142,7 +142,7 @@ class TestDecryptor {
             Decryptor d = Decryptor.getInstance(info);
             d.verifyPassword("pwd123");
 
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
+            final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(10000);
             try (final ZipArchiveInputStream zis = new ZipArchiveInputStream(d.getDataStream(fs))) {
                 int[] sizes = { 3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910 };
                 for (int size : sizes) {

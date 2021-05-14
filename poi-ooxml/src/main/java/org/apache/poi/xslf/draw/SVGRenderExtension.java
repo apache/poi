@@ -43,7 +43,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
@@ -60,6 +59,7 @@ import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGPaintDescriptor;
 import org.apache.batik.svggen.SVGTexturePaint;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawTexturePaint;
 import org.apache.poi.sl.draw.Drawable;
@@ -274,12 +274,12 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
             null, SVG_VIEW_BOX_ATTRIBUTE, x+" "+ y+" "+ w+" "+h
         );
 
-        org.apache.poi.sl.usermodel.Shape slShape = fill.getShape();
+        org.apache.poi.sl.usermodel.Shape<?,?> slShape = fill.getShape();
 
         // TODO: the rotation handling is incomplete and the scale handling is missing
         //  see DrawTexturePaint on how to do it for AWT
         if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape) {
-            double rot = ((SimpleShape)slShape).getRotation();
+            double rot = ((SimpleShape<?,?>)slShape).getRotation();
             if (rot != 0) {
                 setAttribute(genCtx, patternDef,
                     null, SVG_PATTERN_TRANSFORM_ATTRIBUTE, "rotate(" + genCtx.doubleString(-rot) + ")");
@@ -311,7 +311,7 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
         }
         if (imgData == null) {
             BufferedImage bi = imgRdr.getImage();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try {
                 ImageIO.write(bi, "PNG", bos);
             } catch (IOException e) {

@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ final class TestCellRangeAddress {
         CellRangeAddress ref = new CellRangeAddress(0, 0, 0, 0);
 
         byte[] recordBytes;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
             // With nothing set
             ref.serialize(out);
@@ -100,7 +100,7 @@ final class TestCellRangeAddress {
     }
 
     @Test
-    void testCopy() throws IOException {
+    void testCopy() {
         CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         CellRangeAddress copy = ref.copy();
         assertEquals(ref.toString(), copy.toString());

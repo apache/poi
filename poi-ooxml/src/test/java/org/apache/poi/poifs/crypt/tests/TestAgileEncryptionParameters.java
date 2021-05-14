@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ import java.util.stream.Stream;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -79,7 +78,7 @@ class TestAgileEncryptionParameters {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength(ca.jceId);
         assumeTrue(maxKeyLen >= ca.defaultKeySize, "Please install JCE Unlimited Strength Jurisdiction Policy files");
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
 
         POIFSFileSystem fsEnc = new POIFSFileSystem();
         EncryptionInfo infoEnc = new EncryptionInfo(EncryptionMode.agile, ca, ha, -1, -1, cm);
@@ -92,7 +91,7 @@ class TestAgileEncryptionParameters {
         fsEnc.writeFilesystem(bos);
         fsEnc.close();
 
-        POIFSFileSystem fsDec = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+        POIFSFileSystem fsDec = new POIFSFileSystem(bos.toInputStream());
         EncryptionInfo infoDec = new EncryptionInfo(fsDec);
         Decryptor dec = infoDec.getDecryptor();
         boolean passed = dec.verifyPassword("foobaa");

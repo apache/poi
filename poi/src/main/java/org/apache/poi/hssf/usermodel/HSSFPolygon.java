@@ -32,9 +32,9 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EndSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -65,6 +65,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
     /**
      * Generates the shape records for this shape.
      */
+    @Override
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
         EscherSpRecord sp = new EscherSpRecord();
@@ -74,7 +75,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
         spContainer.setOptions((short) 0x000F);
         sp.setRecordId(EscherSpRecord.RECORD_ID);
-        sp.setOptions((short) ((EscherAggregate.ST_NOT_PRIMATIVE << 4) | 0x2));
+        sp.setOptions((short) ((ShapeType.NOT_PRIMITIVE.nativeId << 4) | 0x2));
         if (getParent() == null) {
             sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         } else {
@@ -115,6 +116,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
     /**
      * Creates the low level OBJ record for this shape.
      */
+    @Override
     protected ObjRecord createObjRecord() {
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
@@ -216,8 +218,6 @@ public class HSSFPolygon  extends HSSFSimpleShape {
 
     /**
      * Defines the width and height of the points in the polygon
-     * @param width
-     * @param height
      */
     public void setPolygonDrawArea(int width, int height) {
         setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__RIGHT, width));

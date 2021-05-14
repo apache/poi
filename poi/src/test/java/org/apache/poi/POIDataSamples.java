@@ -16,12 +16,15 @@
 ==================================================================== */
 package org.apache.poi;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Centralises logic for finding/opening sample files
@@ -47,7 +50,7 @@ public final class POIDataSamples {
     private static POIDataSamples _instXmlDSign;
 
     private File _resolvedDataDir;
-    /** {@code true} if standard system propery is not set,
+    /** {@code true} if standard system property is not set,
      * but the data is available on the test runtime classpath */
     private boolean _sampleDataIsAvaliableOnClassPath;
     private final String _moduleDir;
@@ -260,24 +263,19 @@ public final class POIDataSamples {
      * @return byte array of sample file content from file found in standard test-data directory
      */
     public byte[] readFile(String fileName) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        try {
-            InputStream fis = openResourceAsStream(fileName);
-
-            byte[] buf = new byte[512];
-            while (true) {
-                int bytesRead = fis.read(buf);
-                if (bytesRead < 1) {
-                    break;
-                }
-                bos.write(buf, 0, bytesRead);
-            }
-            fis.close();
+        try (InputStream fis = openResourceAsStream(fileName);
+             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            IOUtils.copy(fis, bos);
+            return bos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return bos.toByteArray();
     }
 
+    public static POIFSFileSystem writeOutAndReadBack(POIFSFileSystem original) throws IOException {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            original.writeFilesystem(baos);
+            return new POIFSFileSystem(baos.toInputStream());
+        }
+    }
 }

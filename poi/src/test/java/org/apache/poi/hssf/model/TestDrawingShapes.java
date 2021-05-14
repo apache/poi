@@ -469,152 +469,152 @@ class TestDrawingShapes {
 
     @Test
     void testRemoveShapes() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb1.createSheet();
+            HSSFPatriarch patriarch1 = sheet1.createDrawingPatriarch();
 
-        HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor());
-        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+            HSSFSimpleShape rectangle = patriarch1.createSimpleShape(new HSSFClientAnchor());
+            rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
-        int idx = wb1.addPicture(new byte[]{1,2,3}, Workbook.PICTURE_TYPE_JPEG);
-        patriarch.createPicture(new HSSFClientAnchor(), idx);
+            int idx = wb1.addPicture(new byte[]{1, 2, 3}, Workbook.PICTURE_TYPE_JPEG);
+            patriarch1.createPicture(new HSSFClientAnchor(), idx);
 
-        patriarch.createCellComment(new HSSFClientAnchor());
+            patriarch1.createCellComment(new HSSFClientAnchor());
 
-        HSSFPolygon polygon = patriarch.createPolygon(new HSSFClientAnchor());
-        polygon.setPoints(new int[]{1,2}, new int[]{2,3});
+            HSSFPolygon polygon1 = patriarch1.createPolygon(new HSSFClientAnchor());
+            polygon1.setPoints(new int[]{1, 2}, new int[]{2, 3});
 
-        patriarch.createTextbox(new HSSFClientAnchor());
+            patriarch1.createTextbox(new HSSFClientAnchor());
 
-        HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
-        group.createTextbox(new HSSFChildAnchor());
-        group.createPicture(new HSSFChildAnchor(), idx);
+            HSSFShapeGroup group1 = patriarch1.createGroup(new HSSFClientAnchor());
+            group1.createTextbox(new HSSFChildAnchor());
+            group1.createPicture(new HSSFChildAnchor(), idx);
 
-        assertEquals(patriarch.getChildren().size(), 6);
-        assertEquals(group.getChildren().size(), 2);
+            assertEquals(patriarch1.getChildren().size(), 6);
+            assertEquals(group1.getChildren().size(), 2);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 12);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
+            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch1).getShapeToObjMapping().size(), 12);
+            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch1).getTailRecords().size(), 1);
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                HSSFSheet sheet2 = wb2.getSheetAt(0);
+                HSSFPatriarch patriarch2 = sheet2.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 12);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
+                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getShapeToObjMapping().size(), 12);
+                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getTailRecords().size(), 1);
 
-        assertEquals(patriarch.getChildren().size(), 6);
+                assertEquals(patriarch2.getChildren().size(), 6);
 
-        group = (HSSFShapeGroup) patriarch.getChildren().get(5);
-        group.removeShape(group.getChildren().get(0));
+                HSSFShapeGroup group2 = (HSSFShapeGroup) patriarch2.getChildren().get(5);
+                group2.removeShape(group2.getChildren().get(0));
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 10);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
+                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getShapeToObjMapping().size(), 10);
+                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getTailRecords().size(), 1);
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
-        sheet = wb3.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    HSSFSheet sheet3 = wb3.getSheetAt(0);
+                    HSSFPatriarch patriarch3 = sheet3.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 10);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
+                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getShapeToObjMapping().size(), 10);
+                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getTailRecords().size(), 1);
 
-        group = (HSSFShapeGroup) patriarch.getChildren().get(5);
-        patriarch.removeShape(group);
+                    HSSFShapeGroup group3 = (HSSFShapeGroup) patriarch3.getChildren().get(5);
+                    patriarch3.removeShape(group3);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 8);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
+                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getShapeToObjMapping().size(), 8);
+                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getTailRecords().size(), 1);
 
-        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
-        wb3.close();
-        sheet = wb4.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                    try (HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3)) {
+                        HSSFSheet sheet4 = wb4.getSheetAt(0);
+                        HSSFPatriarch patriarch4 = sheet4.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 8);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 5);
+                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getShapeToObjMapping().size(), 8);
+                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getTailRecords().size(), 1);
+                        assertEquals(patriarch4.getChildren().size(), 5);
 
-        HSSFShape shape = patriarch.getChildren().get(0);
-        patriarch.removeShape(shape);
+                        HSSFShape shape4 = patriarch4.getChildren().get(0);
+                        patriarch4.removeShape(shape4);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 6);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 4);
+                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getShapeToObjMapping().size(), 6);
+                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getTailRecords().size(), 1);
+                        assertEquals(patriarch4.getChildren().size(), 4);
 
-        HSSFWorkbook wb5 = HSSFTestDataSamples.writeOutAndReadBack(wb4);
-        wb4.close();
-        sheet = wb5.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                        try (HSSFWorkbook wb5 = HSSFTestDataSamples.writeOutAndReadBack(wb4)) {
+                            HSSFSheet sheet5 = wb5.getSheetAt(0);
+                            HSSFPatriarch patriarch5 = sheet5.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 6);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 4);
+                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getShapeToObjMapping().size(), 6);
+                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getTailRecords().size(), 1);
+                            assertEquals(patriarch5.getChildren().size(), 4);
 
-        HSSFPicture picture = (HSSFPicture) patriarch.getChildren().get(0);
-        patriarch.removeShape(picture);
+                            HSSFPicture picture5 = (HSSFPicture) patriarch5.getChildren().get(0);
+                            patriarch5.removeShape(picture5);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 5);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 3);
+                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getShapeToObjMapping().size(), 5);
+                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getTailRecords().size(), 1);
+                            assertEquals(patriarch5.getChildren().size(), 3);
 
-        HSSFWorkbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5);
-        wb5.close();
-        sheet = wb6.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                            try (HSSFWorkbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5)) {
+                                HSSFSheet sheet6 = wb6.getSheetAt(0);
+                                HSSFPatriarch patriarch6 = sheet6.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 5);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 3);
+                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getShapeToObjMapping().size(), 5);
+                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getTailRecords().size(), 1);
+                                assertEquals(patriarch6.getChildren().size(), 3);
 
-        HSSFComment comment = (HSSFComment) patriarch.getChildren().get(0);
-        patriarch.removeShape(comment);
+                                HSSFComment comment6 = (HSSFComment) patriarch6.getChildren().get(0);
+                                patriarch6.removeShape(comment6);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 3);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 2);
+                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getShapeToObjMapping().size(), 3);
+                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getTailRecords().size(), 0);
+                                assertEquals(patriarch6.getChildren().size(), 2);
 
-        HSSFWorkbook wb7 = HSSFTestDataSamples.writeOutAndReadBack(wb6);
-        wb6.close();
-        sheet = wb7.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                                try (HSSFWorkbook wb7 = HSSFTestDataSamples.writeOutAndReadBack(wb6)) {
+                                    HSSFSheet sheet7 = wb7.getSheetAt(0);
+                                    HSSFPatriarch patriarch7 = sheet7.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 3);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 2);
+                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getShapeToObjMapping().size(), 3);
+                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getTailRecords().size(), 0);
+                                    assertEquals(patriarch7.getChildren().size(), 2);
 
-        polygon = (HSSFPolygon) patriarch.getChildren().get(0);
-        patriarch.removeShape(polygon);
+                                    HSSFPolygon polygon7 = (HSSFPolygon) patriarch7.getChildren().get(0);
+                                    patriarch7.removeShape(polygon7);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 2);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 1);
+                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getShapeToObjMapping().size(), 2);
+                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getTailRecords().size(), 0);
+                                    assertEquals(patriarch7.getChildren().size(), 1);
 
-        HSSFWorkbook wb8 = HSSFTestDataSamples.writeOutAndReadBack(wb7);
-        wb7.close();
-        sheet = wb8.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                                    try (HSSFWorkbook wb8 = HSSFTestDataSamples.writeOutAndReadBack(wb7)) {
+                                        HSSFSheet sheet8 = wb8.getSheetAt(0);
+                                        HSSFPatriarch patriarch8 = sheet8.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 2);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 1);
+                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getShapeToObjMapping().size(), 2);
+                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getTailRecords().size(), 0);
+                                        assertEquals(patriarch8.getChildren().size(), 1);
 
-        HSSFTextbox textbox = (HSSFTextbox) patriarch.getChildren().get(0);
-        patriarch.removeShape(textbox);
+                                        HSSFTextbox textbox8 = (HSSFTextbox) patriarch8.getChildren().get(0);
+                                        patriarch8.removeShape(textbox8);
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 0);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 0);
+                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getShapeToObjMapping().size(), 0);
+                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getTailRecords().size(), 0);
+                                        assertEquals(patriarch8.getChildren().size(), 0);
 
-        HSSFWorkbook wb9 = HSSFTestDataSamples.writeOutAndReadBack(wb8);
-        wb8.close();
-        sheet = wb9.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                                        try (HSSFWorkbook wb9 = HSSFTestDataSamples.writeOutAndReadBack(wb8)) {
+                                            HSSFSheet sheet9 = wb9.getSheetAt(0);
+                                            HSSFPatriarch patriarch9 = sheet9.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 0);
-        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 0);
-        wb9.close();
+                                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch9).getShapeToObjMapping().size(), 0);
+                                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch9).getTailRecords().size(), 0);
+                                            assertEquals(patriarch9.getChildren().size(), 0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Test

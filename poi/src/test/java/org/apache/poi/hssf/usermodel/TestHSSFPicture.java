@@ -47,6 +47,7 @@ final class TestHSSFPicture extends BaseTestPicture {
         super(HSSFITestDataProvider.instance);
     }
 
+    @Override
     protected Picture getPictureShape(Drawing<?> pat, int picIdx) {
         return (Picture)((HSSFPatriarch)pat).getChildren().get(picIdx);
     }

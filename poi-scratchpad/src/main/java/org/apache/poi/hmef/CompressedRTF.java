@@ -70,6 +70,7 @@ public final class CompressedRTF extends LZWDecompresser {
     *  if you need to know how much of the result is
     *  real. (Padding may be up to 7 bytes).
     */
+   @Override
    public void decompress(InputStream src, OutputStream res) throws IOException {
       // Validate the header on the front of the RTF
       compressedSize = LittleEndian.readInt(src);

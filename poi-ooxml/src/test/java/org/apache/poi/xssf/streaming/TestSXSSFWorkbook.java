@@ -19,6 +19,7 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -29,14 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -48,7 +48,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -74,7 +73,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     protected void cloneSheet() throws IOException {
-        RuntimeException e = assertThrows(RuntimeException.class, () -> super.cloneSheet());
+        RuntimeException e = assertThrows(RuntimeException.class, super::cloneSheet);
         assertEquals("Not Implemented", e.getMessage());
     }
 
@@ -84,7 +83,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     protected void sheetClone() {
-        RuntimeException e = assertThrows(RuntimeException.class, () -> super.sheetClone());
+        RuntimeException e = assertThrows(RuntimeException.class, super::sheetClone);
         assertEquals("Not Implemented", e.getMessage());
     }
 
@@ -407,8 +406,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     private static void saveTwice(Workbook wb) throws Exception {
         for (int i = 0; i < 2; i++) {
-            try (NullOutputStream out = new NullOutputStream()) {
-                wb.write(out);
+            try {
+                wb.write(NULL_OUTPUT_STREAM);
             } catch (Exception e) {
                 throw new Exception("ERROR: failed on " + (i + 1)
                         + "th time calling " + wb.getClass().getName()
@@ -471,7 +470,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 }
             }
 
-            assertDoesNotThrow(() -> swb.write(new NullOutputStream()));
+            assertDoesNotThrow(() -> swb.write(NULL_OUTPUT_STREAM));
             swb.dispose();
         }
     }
@@ -489,7 +488,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
 
         try (OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ)) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             try (XSSFWorkbook xssf = new XSSFWorkbook(pkg)) {
                 try (SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2)) {
                     Sheet s = wb.createSheet(sheetName);
@@ -506,7 +505,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 }
             }
 
-            try (XSSFWorkbook xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+            try (XSSFWorkbook xssf = new XSSFWorkbook(bos.toInputStream())) {
                 Sheet s = xssf.getSheet(sheetName);
                 assertEquals(10, s.getLastRowNum());
                 assertTrue(s.getRow(0).getCell(0).getBooleanCellValue());
@@ -518,20 +517,17 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void test56557() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
-
-        // Using streaming XSSFWorkbook makes the output file invalid
-        wb = new SXSSFWorkbook(((XSSFWorkbook) wb));
-
-        // Should not throw POIXMLException: java.io.IOException: Unable to parse xml bean when reading back
-        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
-        wbBack.close();
-
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
+             // Using streaming XSSFWorkbook makes the output file invalid
+             Workbook wb2 = new SXSSFWorkbook(wb);
+             // Should not throw POIXMLException: java.io.IOException: Unable to parse xml bean when reading back
+             Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb2)
+         ) {
+            assertNotNull(wbBack);
+        }
     }
 
+    @Disabled("not implemented")
     void changeSheetNameWithSharedFormulas() {
-        /* not implemented */
     }
 }

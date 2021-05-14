@@ -66,7 +66,7 @@ public final class DocumentAtom extends RecordAtom {
 
 
 	private final byte[] _header = new byte[8];
-	private static long _type = RecordTypes.DocumentAtom.typeID;
+	private static final long _type = RecordTypes.DocumentAtom.typeID;
 
 	private long slideSizeX; // PointAtom, assume 1st 4 bytes = X
 	private long slideSizeY; // PointAtom, assume 2nd 4 bytes = Y
@@ -75,18 +75,18 @@ public final class DocumentAtom extends RecordAtom {
 	private long serverZoomFrom; // RatioAtom, assume 1st 4 bytes = from
 	private long serverZoomTo;   // RatioAtom, assume 2nd 4 bytes = to
 
-	private long notesMasterPersist; // ref to NotesMaster, 0 if none
-	private long handoutMasterPersist; // ref to HandoutMaster, 0 if none
+	private final long notesMasterPersist; // ref to NotesMaster, 0 if none
+	private final long handoutMasterPersist; // ref to HandoutMaster, 0 if none
 
-	private int firstSlideNum;
+	private final int firstSlideNum;
 	private int slideSizeType; // see DocumentAtom.SlideSize
 
 	private byte saveWithFonts;
-	private byte omitTitlePlace;
-	private byte rightToLeft;
-	private byte showComments;
+	private final byte omitTitlePlace;
+	private final byte rightToLeft;
+	private final byte showComments;
 
-	private byte[] reserved;
+	private final byte[] reserved;
 
 
 	public long getSlideSizeX() { return slideSizeX; }
@@ -197,12 +197,14 @@ public final class DocumentAtom extends RecordAtom {
 	/**
 	 * We are of type 1001
 	 */
+	@Override
 	public long getRecordType() { return _type; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
+	@Override
 	public void writeOut(OutputStream out) throws IOException {
 		// Header
 		out.write(_header);

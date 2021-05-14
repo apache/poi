@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
@@ -113,7 +113,7 @@ class TestDrawingAggregate {
          * @return the raw data being aggregated
          */
         byte[] getRawBytes(){
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             for (RecordBase rb : aggRecords) {
                 Record r = (org.apache.poi.hssf.record.Record) rb;
                 try {
@@ -216,7 +216,7 @@ class TestDrawingAggregate {
         assertEquals(dgBytes.length, pos, "data was not fully read");
 
         // serialize to byte array
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         for(EscherRecord r : records) {
             out.write(r.serialize());
         }
@@ -242,7 +242,7 @@ class TestDrawingAggregate {
     }
 
     private static byte[] toByteArray(List<RecordBase> records) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         for (RecordBase rb : records) {
             Record r = (org.apache.poi.hssf.record.Record) rb;
             try {

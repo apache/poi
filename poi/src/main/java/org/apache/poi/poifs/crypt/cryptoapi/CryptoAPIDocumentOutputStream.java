@@ -16,11 +16,13 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.cryptoapi;
 
-import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.Internal;
 
@@ -38,8 +40,8 @@ import org.apache.poi.util.Internal;
         cipher = encryptor.initCipherForBlock(null, 0);
     }
 
-    public byte[] getBuf() {
-        return buf;
+    public InputStream toInputStream(long maxSize) {
+        return new BoundedInputStream(toInputStream(), maxSize);
     }
 
     public void setSize(int count) {

@@ -16,14 +16,13 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +34,8 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.output.NullPrintStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.examples.ss.ExcelComparator;
 import org.apache.poi.examples.xssf.eventusermodel.FromHowTo;
@@ -50,7 +51,6 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
@@ -70,12 +70,12 @@ class XSSFFileHandler extends SpreadsheetHandler {
 
         // make sure the potentially large byte-array is freed up quickly again
         {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             IOUtils.copy(stream, out);
-            ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
 
             if (pass != null) {
-                POIFSFileSystem poifs = new POIFSFileSystem(bytes);
+                POIFSFileSystem poifs = new POIFSFileSystem(out.toInputStream());
                 EncryptionInfo ei = new EncryptionInfo(poifs);
                 Decryptor dec = ei.getDecryptor();
                 try {
@@ -91,11 +91,9 @@ class XSSFFileHandler extends SpreadsheetHandler {
                 IOUtils.copy(is, out);
                 is.close();
                 poifs.close();
-                bytes = new ByteArrayInputStream(out.toByteArray());
             }
-            checkXSSFReader(OPCPackage.open(bytes));
-            bytes.reset();
-            wb = new XSSFWorkbook(bytes);
+            checkXSSFReader(OPCPackage.open(out.toInputStream()));
+            wb = new XSSFWorkbook(out.toInputStream());
         }
 
         // use the combined handler for HSSF/XSSF
@@ -157,9 +155,7 @@ class XSSFFileHandler extends SpreadsheetHandler {
             TransformerException {
         for (XSSFMap map : wb.getCustomXMLMappings()) {
             XSSFExportToXml exporter = new XSSFExportToXml(map);
-
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            exporter.exportToXML(os, true);
+            exporter.exportToXML(NULL_OUTPUT_STREAM, true);
         }
     }
 

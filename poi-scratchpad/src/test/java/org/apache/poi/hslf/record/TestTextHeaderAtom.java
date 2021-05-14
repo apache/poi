@@ -21,8 +21,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +53,7 @@ public final class TestTextHeaderAtom {
 	@Test
 	void testWrite() throws Exception {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		tha.writeOut(baos);
 		assertArrayEquals(notes_data, baos.toByteArray());
 	}

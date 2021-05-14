@@ -21,12 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -60,73 +59,70 @@ final class TestOLE2Embeding {
 
     @Test
     void testReallyEmbedSomething() throws Exception {
-    	HSSFWorkbook wb1 = new HSSFWorkbook();
-    	HSSFSheet sheet = wb1.createSheet();
-    	HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+    	try (HSSFWorkbook wb1 = new HSSFWorkbook();
+             POIFSFileSystem pptPoifs = getSamplePPT();
+             POIFSFileSystem xlsPoifs = getSampleXLS()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-    	byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
-    	byte[] picturePPT = POIDataSamples.getSlideShowInstance().readFile("clock.jpg");
-    	int imgIdx = wb1.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
-    	POIFSFileSystem pptPoifs = getSamplePPT();
-    	int pptIdx = wb1.addOlePackage(pptPoifs, "Sample-PPT", "sample.ppt", "sample.ppt");
-    	POIFSFileSystem xlsPoifs = getSampleXLS();
-    	int imgPPT = wb1.addPicture(picturePPT, HSSFWorkbook.PICTURE_TYPE_JPEG);
-    	int xlsIdx = wb1.addOlePackage(xlsPoifs, "Sample-XLS", "sample.xls", "sample.xls");
-    	int txtIdx = wb1.addOlePackage(getSampleTXT(), "Sample-TXT", "sample.txt", "sample.txt");
+            byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
+            byte[] picturePPT = POIDataSamples.getSlideShowInstance().readFile("clock.jpg");
+            int imgIdx = wb1.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
 
-        int rowoffset = 5;
-        int coloffset = 5;
+            int pptIdx = wb1.addOlePackage(pptPoifs, "Sample-PPT", "sample.ppt", "sample.ppt");
+            int imgPPT = wb1.addPicture(picturePPT, HSSFWorkbook.PICTURE_TYPE_JPEG);
+            int xlsIdx = wb1.addOlePackage(xlsPoifs, "Sample-XLS", "sample.xls", "sample.xls");
+            int txtIdx = wb1.addOlePackage(getSampleTXT(), "Sample-TXT", "sample.txt", "sample.txt");
 
-        CreationHelper ch = wb1.getCreationHelper();
-        HSSFClientAnchor anchor = (HSSFClientAnchor)ch.createClientAnchor();
-        anchor.setAnchor((short)(2+coloffset), 1+rowoffset, 0, 0, (short)(3+coloffset), 5+rowoffset, 0, 0);
-        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+            int rowoffset = 5;
+            int coloffset = 5;
 
-        patriarch.createObjectData(anchor, pptIdx, imgPPT);
+            CreationHelper ch = wb1.getCreationHelper();
+            HSSFClientAnchor anchor = (HSSFClientAnchor) ch.createClientAnchor();
+            anchor.setAnchor((short) (2 + coloffset), 1 + rowoffset, 0, 0, (short) (3 + coloffset), 5 + rowoffset, 0, 0);
+            anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 
-        anchor = (HSSFClientAnchor)ch.createClientAnchor();
-        anchor.setAnchor((short)(5+coloffset), 1+rowoffset, 0, 0, (short)(6+coloffset), 5+rowoffset, 0, 0);
-        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+            patriarch.createObjectData(anchor, pptIdx, imgPPT);
 
-        patriarch.createObjectData(anchor, xlsIdx, imgIdx);
+            anchor = (HSSFClientAnchor) ch.createClientAnchor();
+            anchor.setAnchor((short) (5 + coloffset), 1 + rowoffset, 0, 0, (short) (6 + coloffset), 5 + rowoffset, 0, 0);
+            anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 
-        anchor = (HSSFClientAnchor)ch.createClientAnchor();
-        anchor.setAnchor((short)(3+coloffset), 10+rowoffset, 0, 0, (short)(5+coloffset), 11+rowoffset, 0, 0);
-        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+            patriarch.createObjectData(anchor, xlsIdx, imgIdx);
 
-        patriarch.createObjectData(anchor, txtIdx, imgIdx);
+            anchor = (HSSFClientAnchor) ch.createClientAnchor();
+            anchor.setAnchor((short) (3 + coloffset), 10 + rowoffset, 0, 0, (short) (5 + coloffset), 11 + rowoffset, 0, 0);
+            anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 
-        anchor = (HSSFClientAnchor)ch.createClientAnchor();
-        anchor.setAnchor((short)(1+coloffset), -2+rowoffset, 0, 0, (short)(7+coloffset), 14+rowoffset, 0, 0);
-        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+            patriarch.createObjectData(anchor, txtIdx, imgIdx);
 
-        HSSFSimpleShape circle = patriarch.createSimpleShape(anchor);
-        circle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
-        circle.setNoFill(true);
+            anchor = (HSSFClientAnchor) ch.createClientAnchor();
+            anchor.setAnchor((short) (1 + coloffset), -2 + rowoffset, 0, 0, (short) (7 + coloffset), 14 + rowoffset, 0, 0);
+            anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
+            HSSFSimpleShape circle = patriarch.createSimpleShape(anchor);
+            circle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
+            circle.setNoFill(true);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        HSSFObjectData od = wb2.getAllEmbeddedObjects().get(0);
-        Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
-        bos.reset();
-        pptPoifs.writeFilesystem(bos);
-        assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                HSSFObjectData od = wb2.getAllEmbeddedObjects().get(0);
+                Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) od.getDirectory());
+                bos.reset();
+                pptPoifs.writeFilesystem(bos);
+                assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
-        od = wb2.getAllEmbeddedObjects().get(1);
-        ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
-        bos.reset();
-        xlsPoifs.writeFilesystem(bos);
-        assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
+                od = wb2.getAllEmbeddedObjects().get(1);
+                ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) od.getDirectory());
+                bos.reset();
+                xlsPoifs.writeFilesystem(bos);
+                assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
-        od = wb2.getAllEmbeddedObjects().get(2);
-        ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
-        assertArrayEquals(ole10.getDataBuffer(), getSampleTXT());
-
-        xlsPoifs.close();
-        pptPoifs.close();
-        wb2.close();
+                od = wb2.getAllEmbeddedObjects().get(2);
+                ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) od.getDirectory());
+                assertArrayEquals(ole10.getDataBuffer(), getSampleTXT());
+            }
+        }
     }
 
     static POIFSFileSystem getSamplePPT() throws IOException {
@@ -139,15 +135,15 @@ final class TestOLE2Embeding {
     }
 
     static POIFSFileSystem getSampleXLS() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        sheet.createRow(5).createCell(2).setCellValue("yo dawg i herd you like embeddet objekts, so we put a ole in your ole so you can save a file while you save a file");
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            sheet.createRow(5).createCell(2).setCellValue("yo dawg i herd you like embeddet objekts, so we put a ole in your ole so you can save a file while you save a file");
 
-    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    	wb.write(bos);
-    	wb.close();
+            wb.write(bos);
+        }
 
-        return new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+        return new POIFSFileSystem(bos.toInputStream());
     }
 
     static byte[] getSampleTXT() {

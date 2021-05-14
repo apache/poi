@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hslf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.record.ExOleObjStg;
 import org.apache.poi.sl.usermodel.ObjectData;
@@ -35,12 +33,10 @@ import org.apache.poi.sl.usermodel.ObjectData;
  * A class that represents object data embedded in a slide show.
  */
 public class HSLFObjectData implements ObjectData, GenericRecord {
-    private static final Logger LOG = LogManager.getLogger(HSLFObjectData.class);
-
     /**
      * The record that contains the object data.
      */
-    private ExOleObjStg storage;
+    private final ExOleObjStg storage;
 
     /**
      * Creates the object data wrapping the record that contains the object data.
@@ -55,10 +51,12 @@ public class HSLFObjectData implements ObjectData, GenericRecord {
     public InputStream getInputStream() {
         return storage.getData();
     }
-    
+
     @Override
-    public OutputStream getOutputStream() throws IOException {
-        return new ByteArrayOutputStream(100000) {
+    public OutputStream getOutputStream() {
+        // can't use UnsynchronizedByteArrayOutputStream here, because it's final
+        return new ByteArrayOutputStream() {
+            @Override
             public void close() throws IOException {
                 setData(getBytes());
             }
@@ -71,7 +69,7 @@ public class HSLFObjectData implements ObjectData, GenericRecord {
      * @param data the embedded data.
      */
      public void setData(byte[] data) throws IOException {
-        storage.setData(data);    
+        storage.setData(data);
     }
 
     /**

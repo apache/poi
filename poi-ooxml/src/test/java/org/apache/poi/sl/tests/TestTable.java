@@ -29,11 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -42,6 +40,8 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TestTable {
 
@@ -51,26 +51,23 @@ class TestTable {
 
         // Test of table dimensions of same slideshow saved as ppt/x
         // to check if both return similar (points) value
-        SlideShow<?,?> ppt = openSampleSlideshow("table_test.ppt");
-        TableShape<?,?> ts = (TableShape<?,?>)ppt.getSlides().get(0).getShapes().get(0);
+        try (SlideShow<?,?> ppt = openSampleSlideshow("table_test.ppt");
+             SlideShow<?,?> pptx = openSampleSlideshow("table_test.pptx")) {
+            TableShape<?, ?> ts = (TableShape<?, ?>) ppt.getSlides().get(0).getShapes().get(0);
+            TableShape<?, ?> tsx = (TableShape<?, ?>) pptx.getSlides().get(0).getShapes().get(0);
 
-        SlideShow<?,?> pptx = openSampleSlideshow("table_test.pptx");
-        TableShape<?,?> tsx = (TableShape<?,?>)pptx.getSlides().get(0).getShapes().get(0);
+            // assume table shape should be equal to itself
+            confirmTableShapeEqual(ts, ts);
+            confirmTableShapeEqual(tsx, tsx);
 
-        // assume table shape should be equal to itself
-        confirmTableShapeEqual(ts, ts);
-        confirmTableShapeEqual(tsx, tsx);
+            // assert ppt and pptx versions of the same table have the same shape
+            confirmTableShapeEqual(ts, tsx);
 
-        // assert ppt and pptx versions of the same table have the same shape
-        confirmTableShapeEqual(ts, tsx);
-
-        // change row height and validate again
-        tsx.setRowHeight(1, 50);
-        ts.setRowHeight(1, 50);
-        confirmTableShapeEqual(ts, tsx);
-
-        pptx.close();
-        ppt.close();
+            // change row height and validate again
+            tsx.setRowHeight(1, 50);
+            ts.setRowHeight(1, 50);
+            confirmTableShapeEqual(ts, tsx);
+        }
     }
 
     private void confirmTableShapeEqual(TableShape<?,?> tableA, TableShape<?,?> tableB) {
@@ -95,16 +92,16 @@ class TestTable {
     @Test
     void directionHSLF() throws IOException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt1 = SlideShowFactory.create(false);
-        testTextDirection(ppt1);
-        ppt1.close();
+        try (SlideShow<?,?> ppt1 = SlideShowFactory.create(false)) {
+            testTextDirection(ppt1);
+        }
     }
 
     @Test
     void directionXSLF() throws IOException {
-        SlideShow<?,?> ppt1 = new XMLSlideShow();
-        testTextDirection(ppt1);
-        ppt1.close();
+        try (SlideShow<?,?> ppt1 = new XMLSlideShow()) {
+            testTextDirection(ppt1);
+        }
     }
 
     private void testTextDirection(SlideShow<?,?> ppt1) throws IOException {
@@ -128,27 +125,26 @@ class TestTable {
             }
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         ppt1.write(bos);
-        ppt1.close();
 
-        InputStream is = new ByteArrayInputStream(bos.toByteArray());
-        SlideShow<?,?> ppt2 = SlideShowFactory.create(is);
-        TableShape<?,?> tbl2 = (TableShape<?,?>)ppt2.getSlides().get(0).getShapes().get(0);
+        try (SlideShow<?,?> ppt2 = SlideShowFactory.create(bos.toInputStream())) {
+            TableShape<?, ?> tbl2 = (TableShape<?, ?>) ppt2.getSlides().get(0).getShapes().get(0);
 
-        col = 0;
-        for (TextDirection td : tds) {
-            TableCell<?,?> c = tbl2.getCell(0, col++);
-            assertEquals(td, c.getTextDirection());
+            col = 0;
+            for (TextDirection td : tds) {
+                TableCell<?, ?> c = tbl2.getCell(0, col++);
+                assertEquals(td, c.getTextDirection());
+            }
         }
-        ppt2.close();
     }
 
-    @Test
-    void tableSpan() throws IOException {
-        String[] files = (xslfOnly()) ? new String[]{"bug60993.pptx"} : new String[]{"bug60993.pptx", "bug60993.ppt"};
-        for (String f : files) {
-            SlideShow<?,?> ppt = openSampleSlideshow(f);
+    @ParameterizedTest
+    @ValueSource(strings = {"bug60993.pptx", "bug60993.ppt"})
+    void tableSpan(String file) throws IOException {
+        assumeFalse(file.endsWith("ppt") && xslfOnly());
+
+        try (SlideShow<?,?> ppt = openSampleSlideshow(file)) {
             Slide<?,?> slide = ppt.getSlides().get(0);
             TableShape<?,?> ts = (TableShape<?,?>)slide.getShapes().get(0);
             int cols = ts.getNumberOfColumns();
@@ -157,11 +153,11 @@ class TestTable {
                 for (int c=0; c<cols; c++) {
                     TableCell<?,?> tc = ts.getCell(r, c);
                     int rc = r*10+c;
-                    String msg = f+" (r"+r+",c"+c+")";
+                    String msg = file+" (r"+r+",c"+c+")";
                     switch (rc) {
                         case 22:
                         case 51:
-                            if (f.endsWith("ppt")) {
+                            if (file.endsWith("ppt")) {
                                 assertNull(tc, msg);
                             } else {
                                 assertNotNull(tc, msg);
@@ -189,7 +185,6 @@ class TestTable {
                     }
                 }
             }
-            ppt.close();
         }
     }
 }

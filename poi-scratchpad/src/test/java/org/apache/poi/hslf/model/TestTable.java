@@ -17,18 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
+import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -42,18 +41,15 @@ import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test <code>Table</code> object.
+ * Test {@code Table} object.
  */
 public final class TestTable {
-    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
     /**
-     * Test that ShapeFactory works properly and returns <code>Table</code>
+     * Test that ShapeFactory works properly and returns {@code Table}
      */
     @Test
     void testShapeFactory() throws IOException {
         final int noColumns, noRows;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
 
@@ -73,16 +69,15 @@ public final class TestTable {
             assertEquals(noColumns, tbl2.getNumberOfColumns());
             assertEquals(noRows, tbl2.getNumberOfRows());
 
-            ppt.write(out);
+            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                HSLFSlide slide2 = ppt2.getSlides().get(0);
+                assertTrue(slide2.getShapes().get(0) instanceof HSLFTable);
+                HSLFTable tbl3 = (HSLFTable) slide2.getShapes().get(0);
+                assertEquals(noColumns, tbl3.getNumberOfColumns());
+                assertEquals(noRows, tbl3.getNumberOfRows());
+            }
         }
 
-        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()))) {
-            HSLFSlide slide = ppt.getSlides().get(0);
-            assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
-            HSLFTable tbl3 = (HSLFTable) slide.getShapes().get(0);
-            assertEquals(noColumns, tbl3.getNumberOfColumns());
-            assertEquals(noRows, tbl3.getNumberOfRows());
-        }
     }
 
     /**
@@ -132,7 +127,7 @@ public final class TestTable {
      */
     @Test
     void test57820() throws IOException {
-        try (SlideShow<?,?> ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"))) {
+        try (SlideShow<?,?> ppt = getSlideShow("bug57820-initTableNullRefrenceException.ppt")) {
 
             List<? extends Slide<?, ?>> slides = ppt.getSlides();
             assertEquals(1, slides.size());

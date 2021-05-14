@@ -38,7 +38,7 @@ import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.BoundedInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**

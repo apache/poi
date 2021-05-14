@@ -21,11 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 class TestRLEDecompressingInputStream {
@@ -55,7 +54,7 @@ class TestRLEDecompressingInputStream {
      *
      */
     @Test
-    void noCompressionExample() {
+    void noCompressionExample() throws IOException {
         final byte[] compressed = {
             0x01, 0x19, (byte)0xB0, 0x00, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x00, 0x69, 0x6A, 0x6B, 0x6C,
             0x6D, 0x6E, 0x6F, 0x70, 0x00, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x2E
@@ -92,7 +91,7 @@ class TestRLEDecompressingInputStream {
      *     76 77 78 79 7A 61 61 61
      */
     @Test
-    void normalCompressionExample() {
+    void normalCompressionExample() throws IOException {
         final byte[] compressed = {
             0x01, 0x2F, (byte)0xB0, 0x00, 0x23, 0x61, 0x61, 0x61, 0x62, 0x63, 0x64, 0x65, (byte)0x82, 0x66, 0x00, 0x70,
             0x61, 0x67, 0x68, 0x69, 0x6A, 0x01, 0x38, 0x08, 0x61, 0x6B, 0x6C, 0x00, 0x30, 0x6D, 0x6E, 0x6F,
@@ -129,7 +128,7 @@ class TestRLEDecompressingInputStream {
      *     61 61 61 61 61 61 61 61  61
      */
     @Test
-    void maximumCompressionExample() {
+    void maximumCompressionExample() throws IOException {
         final byte[] compressed = {
             0x01, 0x03, (byte)0xB0, 0x02, 0x61, 0x45, 0x00
         };
@@ -147,26 +146,13 @@ class TestRLEDecompressingInputStream {
         assertArrayEquals(expected, expanded);
     }
 
-    private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) {
+    private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) throws IOException {
         InputStream compressedStream = new ByteArrayInputStream(runLengthEncodedData);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            InputStream stream = new RLEDecompressingInputStream(compressedStream);
-            try {
-                IOUtils.copy(stream, out);
-            } finally {
-                out.close();
-                stream.close();
-            }
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        try (InputStream stream = new RLEDecompressingInputStream(compressedStream)) {
+            IOUtils.copy(stream, out);
         }
-        String expanded;
-        try {
-            expanded = out.toString(StringUtil.UTF8.name());
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        String expanded = out.toString(StringUtil.UTF8);
         assertEquals(expected, expanded);
     }
 }

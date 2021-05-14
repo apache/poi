@@ -202,8 +202,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get the category property.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getCategoryProperty()
      */
+    @Override
     public Optional<String> getCategoryProperty() {
         return category;
     }
@@ -211,8 +211,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get content status.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getContentStatusProperty()
      */
+    @Override
     public Optional<String> getContentStatusProperty() {
         return contentStatus;
     }
@@ -220,8 +220,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get content type.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getContentTypeProperty()
      */
+    @Override
     public Optional<String> getContentTypeProperty() {
         return contentType;
     }
@@ -229,8 +229,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get created date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getCreatedProperty()
      */
+    @Override
     public Optional<Date> getCreatedProperty() {
         return created;
     }
@@ -247,8 +247,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get creator.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getCreatorProperty()
      */
+    @Override
     public Optional<String> getCreatorProperty() {
         return creator;
     }
@@ -256,8 +256,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get description.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getDescriptionProperty()
      */
+    @Override
     public Optional<String> getDescriptionProperty() {
         return description;
     }
@@ -265,8 +265,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get identifier.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getIdentifierProperty()
      */
+    @Override
     public Optional<String> getIdentifierProperty() {
         return identifier;
     }
@@ -274,8 +274,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get keywords.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getKeywordsProperty()
      */
+    @Override
     public Optional<String> getKeywordsProperty() {
         return keywords;
     }
@@ -283,8 +283,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get the language.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getLanguageProperty()
      */
+    @Override
     public Optional<String> getLanguageProperty() {
         return language;
     }
@@ -292,8 +292,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get the author of last modifications.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getLastModifiedByProperty()
      */
+    @Override
     public Optional<String> getLastModifiedByProperty() {
         return lastModifiedBy;
     }
@@ -301,8 +301,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get last printed date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getLastPrintedProperty()
      */
+    @Override
     public Optional<Date> getLastPrintedProperty() {
         return lastPrinted;
     }
@@ -319,8 +319,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get modified date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getModifiedProperty()
      */
+    @Override
     public Optional<Date> getModifiedProperty() {
         return modified;
     }
@@ -340,8 +340,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get revision.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getRevisionProperty()
      */
+    @Override
     public Optional<String> getRevisionProperty() {
         return revision;
     }
@@ -349,8 +349,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get subject.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getSubjectProperty()
      */
+    @Override
     public Optional<String> getSubjectProperty() {
         return subject;
     }
@@ -358,8 +358,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get title.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getTitleProperty()
      */
+    @Override
     public Optional<String> getTitleProperty() {
         return title;
     }
@@ -367,8 +367,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Get version.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#getVersionProperty()
      */
+    @Override
     public Optional<String> getVersionProperty() {
         return version;
     }
@@ -376,8 +376,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the category.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setCategoryProperty(java.lang.String)
      */
+    @Override
     public void setCategoryProperty(String category) {
         this.category = setStringValue(category);
     }
@@ -385,15 +385,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the category.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setCategoryProperty(java.util.Optional)
      */
+    @Override
     public void setCategoryProperty(Optional<String> category) { this.category = category; }
 
     /**
      * Set the content status.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setContentStatusProperty(java.lang.String)
      */
+    @Override
     public void setContentStatusProperty(String contentStatus) {
         this.contentStatus = setStringValue(contentStatus);
     }
@@ -401,15 +401,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the content status.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setContentStatusProperty(java.util.Optional)
      */
+    @Override
     public void setContentStatusProperty(Optional<String> contentStatus) { this.contentStatus = contentStatus; }
 
     /**
      * Set the content type.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setContentTypeProperty(java.lang.String)
      */
+    @Override
     public void setContentTypeProperty(String contentType) {
         this.contentType = setStringValue(contentType);
     }
@@ -417,8 +417,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the content type.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setContentTypeProperty(java.util.Optional)
      */
+    @Override
     public void setContentTypeProperty(Optional<String> contentType) { this.contentType = contentType; }
 
     /**
@@ -426,6 +426,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      *
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(java.util.Optional)
      */
+    @Override
     public void setCreatedProperty(String created) {
         try {
             this.created = setDateValue(created);
@@ -437,8 +438,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the created date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(java.util.Optional)
      */
+    @Override
     public void setCreatedProperty(Optional<Date> created) {
         if (created.isPresent())
             this.created = created;
@@ -447,8 +448,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the creator.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatorProperty(java.lang.String)
      */
+    @Override
     public void setCreatorProperty(String creator) {
         this.creator = setStringValue(creator);
     }
@@ -456,15 +457,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the creator.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatorProperty(java.util.Optional)
      */
+    @Override
     public void setCreatorProperty(Optional<String> creator) { this.creator = creator; }
 
     /**
      * Set the description.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setDescriptionProperty(java.lang.String)
      */
+    @Override
     public void setDescriptionProperty(String description) {
         this.description = setStringValue(description);
     }
@@ -472,15 +473,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set the description.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setDescriptionProperty(java.util.Optional)
      */
+    @Override
     public void setDescriptionProperty(Optional<String> description) { this.description = description; }
 
     /**
      * Set identifier.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setIdentifierProperty(java.lang.String)
      */
+    @Override
     public void setIdentifierProperty(String identifier) {
         this.identifier = setStringValue(identifier);
     }
@@ -488,15 +489,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set identifier.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setIdentifierProperty(java.util.Optional)
      */
+    @Override
     public void setIdentifierProperty(Optional<String> identifier) { this.identifier = identifier; }
 
     /**
      * Set keywords.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setKeywordsProperty(java.lang.String)
      */
+    @Override
     public void setKeywordsProperty(String keywords) {
         this.keywords = setStringValue(keywords);
     }
@@ -504,15 +505,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set keywords.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setKeywordsProperty(java.util.Optional)
      */
+    @Override
     public void setKeywordsProperty(Optional<String> keywords) { this.keywords = keywords; }
 
     /**
      * Set language.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setLanguageProperty(java.lang.String)
      */
+    @Override
     public void setLanguageProperty(String language) {
         this.language = setStringValue(language);
     }
@@ -520,15 +521,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set language.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setLanguageProperty(java.util.Optional)
      */
+    @Override
     public void setLanguageProperty(Optional<String> language) { this.language = language; }
 
     /**
      * Set last modifications author.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastModifiedByProperty(java.lang.String)
      */
+    @Override
     public void setLastModifiedByProperty(String lastModifiedBy) {
         this.lastModifiedBy = setStringValue(lastModifiedBy);
     }
@@ -536,8 +537,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set last modifications author.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastModifiedByProperty(java.util.Optional)
      */
+    @Override
     public void setLastModifiedByProperty(Optional<String> lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
@@ -547,6 +548,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      *
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(java.util.Optional)
      */
+    @Override
     public void setLastPrintedProperty(String lastPrinted) {
         try {
             this.lastPrinted = setDateValue(lastPrinted);
@@ -559,8 +561,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set last printed date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(java.util.Optional)
      */
+    @Override
     public void setLastPrintedProperty(Optional<Date> lastPrinted) {
         if (lastPrinted.isPresent())
             this.lastPrinted = lastPrinted;
@@ -571,6 +573,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      *
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(java.util.Optional)
      */
+    @Override
     public void setModifiedProperty(String modified) {
         try {
             this.modified = setDateValue(modified);
@@ -583,8 +586,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set last modification date.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(java.util.Optional)
      */
+    @Override
     public void setModifiedProperty(Optional<Date> modified) {
         if (modified.isPresent())
             this.modified = modified;
@@ -593,23 +596,23 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set revision.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setRevisionProperty(java.util.Optional)
      */
+    @Override
     public void setRevisionProperty(Optional<String> revision) { this.revision = revision; }
 
     /**
      * Set revision.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setRevisionProperty(java.lang.String)
      */
+    @Override
     public void setRevisionProperty(String revision) {
         this.revision = setStringValue(revision);
     }
     /**
      * Set subject.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setSubjectProperty(java.lang.String)
      */
+    @Override
     public void setSubjectProperty(String subject) {
         this.subject = setStringValue(subject);
     }
@@ -617,15 +620,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set subject.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setSubjectProperty(java.util.Optional)
      */
+    @Override
     public void setSubjectProperty(Optional<String> subject) { this.subject = subject; }
 
     /**
      * Set title.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setTitleProperty(java.lang.String)
      */
+    @Override
     public void setTitleProperty(String title) {
         this.title = setStringValue(title);
     }
@@ -633,15 +636,15 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set title.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setTitleProperty(java.util.Optional)
      */
+    @Override
     public void setTitleProperty(Optional<String> title) { this.title = title; }
 
     /**
      * Set version.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setVersionProperty(java.lang.String)
      */
+    @Override
     public void setVersionProperty(String version) {
         this.version = setStringValue(version);
     }
@@ -649,12 +652,12 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Set version.
      *
-     * @see org.apache.poi.openxml4j.opc.PackageProperties#setVersionProperty(java.util.Optional)
      */
+    @Override
     public void setVersionProperty(Optional<String> version) { this.version = version; }
 
     /**
-     * Convert a string value into a Optional<String>
+     * Convert a string value into a {@code Optional<String>}
      */
     private Optional<String> setStringValue(String s) {
         if (s == null || s.isEmpty()) {
@@ -664,7 +667,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     }
 
     /**
-     * Convert a string value represented a date into a Optional<Date>.
+     * Convert a string value represented a date into a {@code Optional<Date>}
      *
      * @throws InvalidFormatException
      *             Throws if the date format isnot valid.
@@ -707,7 +710,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     }
 
     /**
-     * Convert a Optional<Date> into a String.
+     * Convert a {@code Optional<Date>} into a String.
      *
      * @param d
      *            The Date to convert.

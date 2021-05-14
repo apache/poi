@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.dev;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -41,19 +41,15 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 
 public final class PPTXMLDump {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
     private static final int HEADER_SIZE = 8; //size of the record header
     private static final int PICT_HEADER_SIZE = 25; //size of the picture header
     private static final String PICTURES_ENTRY = "Pictures";
     private static final String CR = System.getProperty("line.separator");
 
     private Writer out;
-    private byte[] docstream;
-    private byte[] pictstream;
-    private boolean hexHeader = true;
+    private final byte[] docstream;
+    private final byte[] pictstream;
+    private final boolean hexHeader = true;
 
     public PPTXMLDump(File ppt) throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem(ppt, true)) {
@@ -68,8 +64,8 @@ public final class PPTXMLDump {
         if (!dn.hasEntry(entry)) {
             return null;
         }
-        try (InputStream is = dn.createDocumentInputStream(entry)) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (InputStream is = dn.createDocumentInputStream(entry);
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
             IOUtils.copy(is, bos);
             return bos.toByteArray();
         }
@@ -77,7 +73,7 @@ public final class PPTXMLDump {
 
     /**
      * Dump the structure of the supplied PPT file into XML
-     * @param outWriter <code>Writer</code> to write out
+     * @param outWriter {@code Writer} to write out
      * @throws java.io.IOException If writing to the writer fails
      */
     public void dump(Writer outWriter) throws IOException {
@@ -229,7 +225,7 @@ public final class PPTXMLDump {
 
 
     /**
-     *  write a string to <code>out</code> with the specified padding
+     *  write a string to {@code out} with the specified padding
      */
     private static void write(Writer out, String str, int padding) throws IOException {
         for (int i = 0; i < padding; i++) out.write("  ");
@@ -250,7 +246,7 @@ public final class PPTXMLDump {
     }
 
     /**
-     *  dump binary data to <code>out</code> with the specified padding
+     *  dump binary data to {@code out} with the specified padding
      */
     private static void dump(Writer out, byte[] data, int offset, int length, int padding, boolean nl) throws IOException {
         int linesize = 25;

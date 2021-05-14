@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
 public class TestVSDDumper {

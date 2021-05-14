@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.poi.EmptyFileException;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

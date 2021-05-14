@@ -20,7 +20,6 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +35,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocument;
@@ -65,19 +65,37 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 
 /**
- * <p>High(ish) level class for working with .docx files.</p>
+ * High(ish) level class for working with .docx files.
  * <p>
- * <p>This class tries to hide some of the complexity
+ * This class tries to hide some of the complexity
  * of the underlying file format, but as it's not a
  * mature and stable API yet, certain parts of the
  * XML structure come through. You'll therefore almost
  * certainly need to refer to the OOXML specifications
  * from
  * http://www.ecma-international.org/publications/standards/Ecma-376.htm
- * at some point in your use.</p>
+ * at some point in your use.
  */
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
@@ -103,9 +121,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
      */
-    private IdentifierManager drawingIdManager = new IdentifierManager(0L, 4294967295L);
+    private final IdentifierManager drawingIdManager = new IdentifierManager(0L, 4294967295L);
 
-    private FootnoteEndnoteIdManager footnoteIdManager = new FootnoteEndnoteIdManager(this);
+    private final FootnoteEndnoteIdManager footnoteIdManager = new FootnoteEndnoteIdManager(this);
 
     /**
      * Handles the joy of different headers/footers for different pages
@@ -137,7 +155,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected static OPCPackage newPackage() {
         OPCPackage pkg = null;
         try {
-            pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(new UnsynchronizedByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship
@@ -306,8 +324,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * returns an Iterator with paragraphs and tables
-     *
-     * @see IBody#getBodyElements()
      */
     @Override
     public List<IBodyElement> getBodyElements() {
@@ -318,17 +334,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return bodyElements.iterator();
     }
 
-    /**
-     * @see IBody#getParagraphs()
-     */
     @Override
     public List<XWPFParagraph> getParagraphs() {
         return Collections.unmodifiableList(paragraphs);
     }
 
-    /**
-     * @see IBody#getTables()
-     */
     @Override
     public List<XWPFTable> getTables() {
         return Collections.unmodifiableList(tables);
@@ -341,9 +351,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return Collections.unmodifiableList(charts);
     }
 
-    /**
-     * @see IBody#getTableArray(int)
-     */
     @Override
     public XWPFTable getTableArray(int pos) {
         if (pos >= 0 && pos < tables.size()) {
@@ -755,8 +762,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * verifies that cursor is on the right position
-     *
-     * @param cursor
      */
     private boolean isCursorInBody(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
@@ -818,9 +823,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Gets the index of the relation we're trying to create
-     *
-     * @param relation
-     * @return i
      */
     private int getRelationIndex(XWPFRelation relation) {
         int i = 1;
@@ -843,11 +845,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         paragraphs.add(p);
         return p;
     }
-    
-    
+
+
     /**
      * Creates an empty comments for the document if one does not already exist
-     * 
+     *
      * @return comments
      */
     public XWPFComments createComments() {
@@ -953,7 +955,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * remove a BodyElement from bodyElements array list
      *
-     * @param pos
      * @return true if removing was successfully, else return false
      */
     public boolean removeBodyElement(int pos) {
@@ -977,9 +978,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * copies content of a paragraph to a existing paragraph in the list paragraphs at position pos
-     *
-     * @param paragraph
-     * @param pos
      */
     public void setParagraph(XWPFParagraph paragraph, int pos) {
         paragraphs.set(pos, paragraph);
@@ -1012,10 +1010,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Create an empty table with a number of rows and cols specified
-     *
-     * @param rows
-     * @param cols
-     * @return table
      */
     public XWPFTable createTable(int rows, int cols) {
         XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this, rows, cols);
@@ -1045,9 +1039,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Replace content of table in array tables at position pos with a
-     *
-     * @param pos
-     * @param table
      */
     public void setTable(int pos, XWPFTable table) {
         tables.set(pos, table);
@@ -1289,7 +1280,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Validates the existing password
      *
-     * @param password
      * @return true, only if password was set and equals, false otherwise
      */
     public boolean validateProtectionPassword(String password) {
@@ -1324,7 +1314,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Check if revision tracking is turned on.
      *
-     * @return <code>true</code> if revision tracking is turned on
+     * @return {@code true} if revision tracking is turned on
      */
     public boolean isTrackRevisions() {
         return settings.isTrackRevisions();
@@ -1333,7 +1323,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Enable or disable revision tracking.
      *
-     * @param enable <code>true</code> to turn on revision tracking, <code>false</code> to turn off revision tracking
+     * @param enable {@code true} to turn on revision tracking, {@code false} to turn off revision tracking
      */
     public void setTrackRevisions(boolean enable) {
         settings.setTrackRevisions(enable);
@@ -1394,9 +1384,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
-     *
-     * @param pos
-     * @param table
      */
     @Override
     public void insertTable(int pos, XWPFTable table) {
@@ -1506,7 +1493,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * get the next free ImageNumber
      *
-     * @param format
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the format of the picture is not known.
      */
@@ -1525,7 +1511,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * returns the PictureData by blipID
      *
-     * @param blipID
      * @return XWPFPictureData of a specificID
      */
     public XWPFPictureData getPictureDataByID(String blipID) {
@@ -1567,9 +1552,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * get a table by its CTTbl-Object
      *
-     * @param ctTbl
      * @return a table by its CTTbl-Object or null
-     * @see IBody#getTable(CTTbl)
      */
     @Override
     public XWPFTable getTable(CTTbl ctTbl) {
@@ -1591,8 +1574,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Returns the paragraph that of position pos
-     *
-     * @see IBody#getParagraphArray(int)
      */
     @Override
     public XWPFParagraph getParagraphArray(int pos) {
@@ -1606,8 +1587,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
      * Actually it is needed of the class XWPFTableCell. Because you have to know to which part the tableCell
      * belongs.
-     *
-     * @see IBody#getPart()
      */
     @Override
     public POIXMLDocumentPart getPart() {
@@ -1618,8 +1597,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * get the PartType of the body, for example
      * DOCUMENT, HEADER, FOOTER, FOOTNOTE,
-     *
-     * @see IBody#getPartType()
      */
     @Override
     public BodyType getPartType() {
@@ -1628,8 +1605,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * get the TableCell which belongs to the TableCell
-     *
-     * @param cell
      */
     @Override
     public XWPFTableCell getTableCell(CTTc cell) {
@@ -1668,8 +1643,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * no need to read MS-Word file and modify charts
      *
      * @return This method return object of XWPFChart Object with default height and width
-     * @throws InvalidFormatException
-     * @throws IOException
      * @since POI 4.0.0
      */
     public XWPFChart createChart() throws InvalidFormatException, IOException {
@@ -1683,8 +1656,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param width  width of chart in document
      * @param height height of chart in document
      * @return This method return object of XWPFChart
-     * @throws InvalidFormatException
-     * @throws IOException
      * @since POI 4.0.0
      */
     public XWPFChart createChart(int width, int height) throws InvalidFormatException, IOException {
@@ -1697,8 +1668,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param width in EMU.
      * @param height in EMU.
      * @return the new chart.
-     * @throws InvalidFormatException
-     * @throws IOException
      * @since POI 4.1.2
      */
     public XWPFChart createChart(XWPFRun run, int width, int height) throws InvalidFormatException, IOException {
@@ -1729,8 +1698,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFFootnote createFootnote() {
         XWPFFootnotes footnotes = this.createFootnotes();
 
-        XWPFFootnote footnote = footnotes.createFootnote();
-        return footnote;
+        return footnotes.createFootnote();
     }
 
     /**
@@ -1757,8 +1725,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFEndnote createEndnote() {
         XWPFEndnotes endnotes = this.createEndnotes();
 
-        XWPFEndnote endnote = endnotes.createEndnote();
-        return endnote;
+        return endnotes.createEndnote();
 
     }
 

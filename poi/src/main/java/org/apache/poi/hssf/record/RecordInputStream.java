@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -56,7 +56,6 @@ public final class RecordInputStream implements LittleEndianInput {
 	 * For use in {@link BiffViewer} which may construct {@link Record}s that don't completely
 	 * read all available data.  This exception should never be thrown otherwise.
 	 */
-	@SuppressWarnings("serial")
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
 			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase(Locale.ROOT)
@@ -311,6 +310,7 @@ public final class RecordInputStream implements LittleEndianInput {
 		return Double.longBitsToDouble(readLong());
 	}
 
+	@Override
 	public void readPlain(byte[] buf, int off, int len) {
 	    readFully(buf, 0, buf.length, true);
 	}
@@ -459,7 +459,7 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Deprecated
     public byte[] readAllContinuedRemainder() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE);
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE);
 
         while (true) {
             byte[] b = readRemainder();
@@ -486,7 +486,7 @@ public final class RecordInputStream implements LittleEndianInput {
 
 	/**
 	 *
-	 * @return <code>true</code> when a {@link ContinueRecord} is next.
+	 * @return {@code true} when a {@link ContinueRecord} is next.
 	 */
 	private boolean isContinueNext() {
 		if (_currentDataLength != DATA_LEN_NEEDS_TO_BE_READ && _currentDataOffset != _currentDataLength) {

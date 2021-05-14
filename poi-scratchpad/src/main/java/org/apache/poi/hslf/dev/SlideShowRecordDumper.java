@@ -17,12 +17,11 @@
 
 package org.apache.poi.hslf.dev;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
@@ -44,9 +43,9 @@ import org.apache.poi.util.HexDump;
 public final class SlideShowRecordDumper {
     static final String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
-    private boolean optVerbose;
-    private boolean optEscher;
-    private HSLFSlideShowImpl doc;
+    private final boolean optVerbose;
+    private final boolean optEscher;
+    private final HSLFSlideShowImpl doc;
     private final PrintStream ps;
 
     /**
@@ -59,7 +58,7 @@ public final class SlideShowRecordDumper {
 
         int ndx = 0;
         for (; ndx < args.length; ndx++) {
-            if (!args[ndx].substring(0, 1).equals("-"))
+            if (args[ndx].charAt(0) != '-')
                 break;
 
             if (args[ndx].equals("-escher")) {
@@ -147,7 +146,7 @@ public final class SlideShowRecordDumper {
     public int getDiskLen(org.apache.poi.hslf.record.Record r) throws IOException {
         int diskLen = 0;
         if (r != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             r.writeOut(baos);
             diskLen = baos.size();
         }
@@ -159,7 +158,7 @@ public final class SlideShowRecordDumper {
             return "<<null>>";
         }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         r.writeOut(baos);
         byte[] b = baos.toByteArray();
         return HexDump.dump(b, 0, 0);
@@ -259,7 +258,7 @@ public final class SlideShowRecordDumper {
             if (optEscher && cname.equals("PPDrawing")) {
                 DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
                 r.writeOut(baos);
                 byte[] b = baos.toByteArray();
 

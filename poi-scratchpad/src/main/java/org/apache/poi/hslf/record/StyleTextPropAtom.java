@@ -17,7 +17,8 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
@@ -33,8 +35,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties
@@ -55,7 +55,7 @@ public final class StyleTextPropAtom extends RecordAtom {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-    private byte[] _header;
+    private final byte[] _header;
     private byte[] reserved;
 
     private byte[] rawContents; // Holds the contents between write-outs
@@ -312,7 +312,7 @@ public final class StyleTextPropAtom extends RecordAtom {
             // Only update the style bytes, if the styles have been potentially
             // changed
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 
             // First up, we need to serialise the paragraph properties
             for(TextPropCollection tpc : paragraphStyles) {

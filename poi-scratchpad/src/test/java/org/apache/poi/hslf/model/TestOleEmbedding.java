@@ -21,13 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
@@ -146,10 +145,10 @@ public final class TestOleEmbedding {
         slide2.addShape(oleShape2);
         oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
 
-    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
     	ppt.write(bos);
 
-    	ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
+    	ppt = new HSLFSlideShow(bos.toInputStream());
     	HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
         byte[] compData = IOUtils.toByteArray(comp.getObjectData().getInputStream());
 

@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +58,7 @@ public final class TestExOleObjStg {
         assertEquals(RecordTypes.ExOleObjStg.typeID, record.getRecordType());
 
         int len = record.getDataLength();
-        byte[] oledata = readAll(record.getData());
+        byte[] oledata = IOUtils.toByteArray(record.getData());
         assertEquals(len, oledata.length);
 
         try (POIFSFileSystem fs = new POIFSFileSystem(record.getData())) {
@@ -70,7 +70,7 @@ public final class TestExOleObjStg {
     @Test
     void testWrite() throws Exception {
         ExOleObjStg record = new ExOleObjStg(data, 0, data.length);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
@@ -80,7 +80,7 @@ public final class TestExOleObjStg {
     @Test
     void testNewRecord() throws Exception {
         ExOleObjStg src = new ExOleObjStg(data, 0, data.length);
-        byte[] oledata = readAll(src.getData());
+        byte[] oledata = IOUtils.toByteArray(src.getData());
 
         ExOleObjStg tgt = new ExOleObjStg();
         tgt.setData(oledata);
@@ -88,22 +88,11 @@ public final class TestExOleObjStg {
 
         assertEquals(src.getDataLength(), tgt.getDataLength());
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         tgt.writeOut(out);
         byte[] b = out.toByteArray();
 
         assertEquals(data.length, b.length);
         assertArrayEquals(data, b);
-    }
-
-    private byte[] readAll(InputStream is) throws IOException {
-        int pos;
-        byte[] chunk = new byte[1024];
-        ByteArrayOutputStream out = new  ByteArrayOutputStream();
-        while((pos = is.read(chunk)) > 0){
-            out.write(chunk, 0, pos);
-        }
-        return out.toByteArray();
-
     }
 }

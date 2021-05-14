@@ -25,12 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
@@ -56,7 +55,7 @@ public final class TestReWrite {
              HSLFSlideShowImpl hss = new HSLFSlideShowImpl(pfs)) {
 
             // Write out to a byte array, and to a temp file
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             hss.write(baos);
 
             final File file = TempFile.createTempFile("TestHSLF", ".ppt");
@@ -66,8 +65,7 @@ public final class TestReWrite {
 
 
             // Build an input stream of it, and read back as a POIFS from the stream
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            try (POIFSFileSystem npfS = new POIFSFileSystem(bais);
+            try (POIFSFileSystem npfS = new POIFSFileSystem(baos.toInputStream());
                 // And the same on the temp file
                 POIFSFileSystem npfF = new POIFSFileSystem(file)) {
 
@@ -97,18 +95,16 @@ public final class TestReWrite {
             assertNotNull(pfsC.getRoot().getEntry("Macros"));
 
             // Write out normally, will loose the macro stream
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
             hssC.write(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            try (POIFSFileSystem pfsNew = new POIFSFileSystem(bais)) {
+            try (POIFSFileSystem pfsNew = new POIFSFileSystem(baos.toInputStream())) {
                 assertFalse(pfsNew.getRoot().hasEntry("Macros"));
             }
 
             // But if we write out with nodes preserved, will be there
             baos.reset();
             hssC.write(baos, true);
-            bais = new ByteArrayInputStream(baos.toByteArray());
-            try (POIFSFileSystem pfsNew = new POIFSFileSystem(bais)) {
+            try (POIFSFileSystem pfsNew = new POIFSFileSystem(baos.toInputStream())) {
                 assertTrue(pfsNew.getRoot().hasEntry("Macros"));
             }
         }
@@ -138,14 +134,11 @@ public final class TestReWrite {
         assertDoesNotThrow(ss::getNotes);
 
         // Now write out to a byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         hss.write(baos);
 
-        // Build an input stream of it
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
         // Use POIFS to query that lot
-        try (POIFSFileSystem npfs = new POIFSFileSystem(bais)) {
+        try (POIFSFileSystem npfs = new POIFSFileSystem(baos.toInputStream())) {
             assertSame(pfs, npfs);
         }
     }

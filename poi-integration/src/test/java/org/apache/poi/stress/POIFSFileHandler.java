@@ -18,13 +18,12 @@ package org.apache.poi.stress;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -58,13 +57,14 @@ class POIFSFileHandler extends AbstractFileHandler {
 	}
 
 	protected void handlePOIDocument(POIDocument doc) throws Exception {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		doc.write(out);
+		try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+            doc.write(out);
 
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		POIFSFileSystem fs = new POIFSFileSystem(in);
-		handlePOIFSFileSystem(fs);
-		fs.close();
+            try (InputStream in = out.toInputStream();
+                POIFSFileSystem fs = new POIFSFileSystem(in)) {
+                handlePOIFSFileSystem(fs);
+            }
+        }
 	}
 
     // a test-case to test this locally without executing the full TestAllFiles

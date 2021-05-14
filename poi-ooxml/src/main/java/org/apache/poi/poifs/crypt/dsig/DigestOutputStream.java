@@ -17,7 +17,6 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
@@ -26,6 +25,7 @@ import java.security.PrivateKey;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -54,7 +54,7 @@ import org.ietf.jgss.Oid;
         }
         md = CryptoFunctions.getMessageDigest(algo);
     }
-    
+
     @Override
     public void write(final int b) throws IOException {
         md.update((byte)b);
@@ -66,7 +66,7 @@ import org.ietf.jgss.Oid;
     }
 
     public byte[] sign() throws IOException, GeneralSecurityException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         bos.write(getHashMagic());
         bos.write(md.digest());
 
@@ -74,7 +74,7 @@ import org.ietf.jgss.Oid;
             , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
         return cipher.doFinal(bos.toByteArray());
     }
-    
+
     static boolean isMSCapi(final PrivateKey key) {
         return key != null && key.getClass().getName().contains("mscapi");
     }
@@ -84,7 +84,7 @@ import org.ietf.jgss.Oid;
      * Each digest method has its own ASN1 header
      *
      * @return the ASN1 header bytes for the signatureValue / digestInfo
-     * 
+     *
      * @see <a href="https://tools.ietf.org/html/rfc2313#section-10.1.2">Data encoding</a>
      */
     byte[] getHashMagic() {
@@ -94,7 +94,7 @@ import org.ietf.jgss.Oid;
         try {
             final byte[] oidBytes = new Oid(algo.rsaOid).getDER();
 
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             bos.write(0x30);
             bos.write(algo.hashSize+oidBytes.length+6);
             bos.write(0x30);
@@ -102,7 +102,7 @@ import org.ietf.jgss.Oid;
             bos.write(oidBytes);
             bos.write(new byte[] {5,0,4});
             bos.write(algo.hashSize);
-            
+
             return bos.toByteArray();
         } catch (GSSException|IOException e) {
             throw new IllegalStateException(e);

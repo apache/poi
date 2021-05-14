@@ -23,7 +23,6 @@ import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAME
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,6 +46,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
@@ -942,7 +942,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<T> it;
-        private T cursor;
 
         @SuppressWarnings("unchecked")
         public SheetIterator() {
@@ -956,8 +955,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
         @Override
         public T next() throws NoSuchElementException {
-            cursor = it.next();
-            return cursor;
+            return it.next();
         }
 
         /**
@@ -1994,9 +1992,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             }
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        poiData.writeFilesystem(bos);
-        return addOlePackage(bos.toByteArray(), label, fileName, command);
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            poiData.writeFilesystem(bos);
+            return addOlePackage(bos.toByteArray(), label, fileName, command);
+        }
     }
 
     @Override
@@ -2021,9 +2020,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         Ole10Native.createOleMarkerEntry(oleDir);
 
         Ole10Native oleNative = new Ole10Native(label, fileName, command, oleData);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        oleNative.writeOut(bos);
-        oleDir.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            oleNative.writeOut(bos);
+            oleDir.createDocument(Ole10Native.OLE10_NATIVE, bos.toInputStream());
+        }
 
         return storageId;
     }

@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
@@ -185,7 +185,7 @@ final class TestRecordFactory {
 		assertTrue(records.get(4) instanceof ObjRecord);
 
 		//serialize and verify that the serialized data is the same as the original
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
 		for(org.apache.poi.hssf.record.Record rec : records){
 			out.write(rec.serialize());
 		}
@@ -204,7 +204,7 @@ final class TestRecordFactory {
 			BOFRecord.createSheetBOF(),
 			EOFRecord.instance,
 		};
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		for (org.apache.poi.hssf.record.Record rec : recs) {
 			try {
 				baos.write(rec.serialize());
@@ -222,13 +222,13 @@ final class TestRecordFactory {
 		}
 
 
-		POIFSFileSystem fs = new POIFSFileSystem();
-        fs.createDocument(new ByteArrayInputStream(baos.toByteArray()), "dummy");
-		InputStream is = fs.getRoot().createDocumentInputStream("dummy");
+		try (POIFSFileSystem fs = new POIFSFileSystem()) {
+			fs.createDocument(baos.toInputStream(), "dummy");
+			InputStream is = fs.getRoot().createDocumentInputStream("dummy");
 
-		List<org.apache.poi.hssf.record.Record> outRecs = RecordFactory.createRecords(is);
-		// Buffer underrun - requested 512 bytes but 192 was available
-		assertEquals(5, outRecs.size());
-		fs.close();
+			List<org.apache.poi.hssf.record.Record> outRecs = RecordFactory.createRecords(is);
+			// Buffer underrun - requested 512 bytes but 192 was available
+			assertEquals(5, outRecs.size());
+		}
 	}
 }

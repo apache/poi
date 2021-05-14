@@ -19,12 +19,13 @@ package org.apache.poi.hslf.record;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
@@ -78,16 +79,22 @@ public final class TestFontCollection {
         assertEquals(child.length, 3);
 
         // Check we get the right font name for the indicies
-        assertEquals("Times New Roman", fonts.getFontInfo(0).getTypeface());
-        assertEquals("Helvetica", fonts.getFontInfo(1).getTypeface());
-        assertEquals("Arial", fonts.getFontInfo(2).getTypeface());
+        fi = fonts.getFontInfo(0);
+        assertNotNull(fi);
+        assertEquals("Times New Roman", fi.getTypeface());
+        fi = fonts.getFontInfo(1);
+        assertNotNull(fi);
+        assertEquals("Helvetica", fi.getTypeface());
+        fi = fonts.getFontInfo(2);
+        assertNotNull(fi);
+        assertEquals("Arial", fi.getTypeface());
         assertNull(fonts.getFontInfo(3));
     }
 
     @Test
     void testWrite() throws Exception {
         FontCollection fonts = new FontCollection(data, 0, data.length);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         fonts.writeOut(out);
         byte[] recdata = out.toByteArray();
         assertArrayEquals(recdata, data);

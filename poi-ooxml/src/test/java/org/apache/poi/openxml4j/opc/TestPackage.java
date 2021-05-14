@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,6 +57,8 @@ import com.google.common.io.Files;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
@@ -217,7 +218,7 @@ public final class TestPackage {
 	 */
     @Test
 	void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		try (OPCPackage pkg = OPCPackage.create(baos)) {
 
 			// Add a core document
@@ -675,7 +676,7 @@ public final class TestPackage {
     @Test
     void zipBombCreateAndHandle()
     throws IOException, EncryptedDocumentException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
+		UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(2500000);
 
         try (ZipFile zipFile = ZipHelper.openZipFile(getSampleFile("sample.xlsx"));
 			 ZipArchiveOutputStream append = new ZipArchiveOutputStream(bos)) {
@@ -693,21 +694,19 @@ public final class TestPackage {
 				append.putArchiveEntry(eOut);
 				if (!eOut.isDirectory()) {
 					try (InputStream is = zipFile.getInputStream(eIn)) {
-						if (eOut.getName().equals("[Content_Types].xml")) {
-							ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
-							IOUtils.copy(is, bos2);
-							long size = bos2.size() - "</Types>".length();
-							append.write(bos2.toByteArray(), 0, (int) size);
+						if ("[Content_Types].xml".equals(eOut.getName())) {
+							byte[] suffix = "</Types>".getBytes(StandardCharsets.UTF_8);
+							CountingOutputStream cos = new CountingOutputStream(append);
+							IOUtils.copy(is, cos, eOut.getSize() - suffix.length);
+
                             byte[] spam = new byte[0x7FFF];
 							Arrays.fill(spam, (byte) ' ');
 							// 0x7FFF0000 is the maximum for 32-bit zips, but less still works
-							while (size < 0x7FFF00) {
-								append.write(spam);
-								size += spam.length;
+							while (cos.getByteCount() < 0x7FFF00) {
+								cos.write(spam);
 							}
-							append.write("</Types>".getBytes(StandardCharsets.UTF_8));
-							size += 8;
-							eOut.setSize(size);
+							cos.write(suffix);
+							eOut.setSize(cos.getByteCount());
 						} else {
 							IOUtils.copy(is, append);
 						}
@@ -717,10 +716,7 @@ public final class TestPackage {
 			}
 		}
 
-		IOException ex = assertThrows(
-			IOException.class,
-			() -> WorkbookFactory.create(new ByteArrayInputStream(bos.toByteArray()))
-		);
+		IOException ex = assertThrows(IOException.class, () -> WorkbookFactory.create(bos.toInputStream()));
         assertTrue(ex.getMessage().contains("Zip bomb detected!"));
     }
 

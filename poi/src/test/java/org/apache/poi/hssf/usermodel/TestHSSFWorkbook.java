@@ -28,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
@@ -72,6 +71,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -554,21 +554,17 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     @Test
     void bug47920() throws IOException {
-        POIFSFileSystem fs1 = new POIFSFileSystem(samples.openResourceAsStream("47920.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(fs1);
-        ClassID clsid1 = fs1.getRoot().getStorageClsid();
+        try (POIFSFileSystem fs1 = new POIFSFileSystem(samples.openResourceAsStream("47920.xls"));
+             HSSFWorkbook wb = new HSSFWorkbook(fs1)) {
+            ClassID clsid1 = fs1.getRoot().getStorageClsid();
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-        wb.write(out);
-        byte[] bytes = out.toByteArray();
-        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
-        ClassID clsid2 = fs2.getRoot().getStorageClsid();
-
-        assertEquals(clsid1, clsid2);
-
-        fs2.close();
-        wb.close();
-        fs1.close();
+            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(4096);
+            wb.write(out);
+            try (POIFSFileSystem fs2 = new POIFSFileSystem(out.toInputStream())) {
+                ClassID clsid2 = fs2.getRoot().getStorageClsid();
+                assertEquals(clsid1, clsid2);
+            }
+        }
     }
 
     /**
@@ -582,8 +578,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         "testEXCEL_95.xls,BIFF5"
     })
     void helpfulExceptionOnOldFiles(String file, String format) throws Exception {
-        POIDataSamples xlsData = samples;
-        try (InputStream is = xlsData.openResourceAsStream(file)) {
+        try (InputStream is = samples.openResourceAsStream(file)) {
             OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new HSSFWorkbook(is),
                 "Shouldn't be able to load an Excel " + format + " file");
             assertContains(e.getMessage(), format);
@@ -978,7 +973,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertNotNull(name);
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
 		wb.write(stream);
 
 		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
@@ -989,15 +984,15 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
 		assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream stream2 = new UnsynchronizedByteArrayOutputStream();
 		wb.write(stream2);
 
 		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
 		assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()));
+		HSSFWorkbook wb2 = new HSSFWorkbook(stream.toInputStream());
 		expectName(wb2, nameName, "ASheet!A1");
-		HSSFWorkbook wb3 = new HSSFWorkbook(new ByteArrayInputStream(stream2.toByteArray()));
+		HSSFWorkbook wb3 = new HSSFWorkbook(stream2.toInputStream());
 		expectName(wb3, nameName, "ASheet!A1");
 		wb3.close();
 		wb2.close();
@@ -1078,7 +1073,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     private void writeAndCloseWorkbook(Workbook workbook, File file)
     throws IOException {
-        final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream bytesOut = new UnsynchronizedByteArrayOutputStream();
         workbook.write(bytesOut);
         workbook.close();
 
@@ -1183,7 +1178,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    void createDrawing() throws Exception {
+    @Disabled
+    void createDrawing() {
         // the dimensions for this image are different than for XSSF and SXSSF
     }
 }

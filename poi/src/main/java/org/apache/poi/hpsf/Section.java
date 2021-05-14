@@ -17,7 +17,6 @@
 
 package org.apache.poi.hpsf;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -66,7 +66,7 @@ public class Section {
      * established when the section's size is calculated and can be reused
      * later. If the array is empty, the section was modified and the bytes need to be regenerated.
      */
-    private final ByteArrayOutputStream sectionBytes = new ByteArrayOutputStream();
+    private final UnsynchronizedByteArrayOutputStream sectionBytes = new UnsynchronizedByteArrayOutputStream();
 
     /**
      * The offset of the section in the stream.
@@ -86,7 +86,7 @@ public class Section {
     private transient boolean wasNull;
 
     /**
-     * Creates an empty {@link Section}.
+     * Creates an empty Section.
      */
     public Section() {
         this._offset = -1;
@@ -112,7 +112,7 @@ public class Section {
 
 
     /**
-     * Creates a {@link Section} instance from a byte array.
+     * Creates a Section instance from a byte array.
      *
      * @param src Contains the complete property set stream.
      * @param offset The position in the stream that points to the
@@ -428,7 +428,6 @@ public class Section {
      * @see #getProperty
      * @see Variant
      */
-    @SuppressWarnings("deprecation")
     public void setProperty(final int id, final long variantType, final Object value) {
         setProperty(new Property(id, variantType, value));
     }
@@ -601,7 +600,7 @@ public class Section {
 
     /**
      * Returns the PID string associated with a property ID. The ID
-     * is first looked up in the {@link Section Sections} private dictionary.
+     * is first looked up in the Sections private dictionary.
      * If it is not found there, the property PID string is taken
      * from sections format IDs namespace.
      * If the PID is also undefined there, i.e. it is not well-known,
@@ -641,14 +640,14 @@ public class Section {
      *
      * <ul>
      *
-     * <li>The other object is not a {@link Section}.
+     * <li>The other object is not a Section.
      *
      * <li>The format IDs of the two sections are not equal.
      *
      * <li>The sections have a different number of properties. However,
      * properties with ID 1 (codepage) are not counted.
      *
-     * <li>The other object is not a {@link Section}.
+     * <li>The other object is not a Section.
      *
      * <li>The properties have different values. The order of the properties
      * is irrelevant.
@@ -736,7 +735,7 @@ public class Section {
         }
 
         final int[][] offsets = new int[properties.size()][2];
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         final LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
 
         /* Write the section's length - dummy value, fixed later */
@@ -932,19 +931,11 @@ public class Section {
         }
     }
 
-
-
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(new Object[]{getFormatID(),getProperties()});
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return toString(null);
@@ -1008,7 +999,7 @@ public class Section {
      */
     public int getCodepage() {
         final Integer codepage = (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
-        return (codepage == null) ? -1 : codepage.intValue();
+        return (codepage == null) ? -1 : codepage;
     }
 
     /**

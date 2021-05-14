@@ -20,8 +20,7 @@ package org.apache.poi.hslf.record;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -54,7 +53,7 @@ public final class TestTextSpecInfoAtom  {
     @Test
     void testWrite() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         spec.writeOut(out);
         assertArrayEquals(data_1, out.toByteArray());
 	}
@@ -70,7 +69,7 @@ public final class TestTextSpecInfoAtom  {
         assertEquals(32, run[0].getLength());
 
         //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         spec.writeOut(out);
 
         byte[] result = out.toByteArray();

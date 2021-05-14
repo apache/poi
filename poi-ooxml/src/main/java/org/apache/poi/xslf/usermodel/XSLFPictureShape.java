@@ -25,8 +25,6 @@ import java.awt.Insets;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -35,6 +33,7 @@ import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -127,6 +126,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
      * Return the data on the (internal) picture.
      * For an external linked picture, will return null
      */
+    @Override
     public XSLFPictureData getPictureData() {
         if(_data == null){
             String blipId = getBlipId();
@@ -320,16 +320,16 @@ public class XSLFPictureShape extends XSLFSimpleShape
             : new Rectangle2D.Double(0,0, Units.pixelToPoints((int)dim.getWidth()), Units.pixelToPoints((int)dim.getHeight()));
 
         PictureType pt = (previewType != null) ? previewType : PictureType.PNG;
-        if (pt != PictureType.JPEG || pt != PictureType.GIF || pt != PictureType.PNG) {
+        if (pt != PictureType.JPEG && pt != PictureType.GIF && pt != PictureType.PNG) {
             pt = PictureType.PNG;
         }
 
         BufferedImage thmBI = renderer.getImage(dim);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(100000);
         // use extension instead of enum name, because of "jpeg"
         ImageIO.write(thmBI, pt.extension.substring(1), bos);
 
-        XSLFPictureData pngPic = sheet.getSlideShow().addPicture(new ByteArrayInputStream(bos.toByteArray()), pt);
+        XSLFPictureData pngPic = sheet.getSlideShow().addPicture(bos.toInputStream(), pt);
 
         XSLFPictureShape shape = sheet.createPicture(pngPic);
         shape.setAnchor(anc);
@@ -375,7 +375,6 @@ public class XSLFPictureShape extends XSLFSimpleShape
         if(blip.isSetExtLst()) {
             // TODO: check for SVG copying
             CTOfficeArtExtensionList extLst = blip.getExtLst();
-            //noinspection deprecation
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
                 String xpath = "declare namespace a14='"+ MS_DML_NS +"' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);

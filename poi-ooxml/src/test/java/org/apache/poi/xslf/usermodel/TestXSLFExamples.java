@@ -21,12 +21,10 @@ import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERT
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 

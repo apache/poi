@@ -17,7 +17,8 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openComplianceSampleStream;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getOutputFile;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,7 +34,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -44,7 +43,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -81,13 +79,13 @@ public final class TestOPCComplianceCoreProperties {
 
     @Test
     void testCorePropertiesPart() throws IOException {
-        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
+        try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
             assertDoesNotThrow(() -> OPCPackage.open(is).close());
         }
     }
 
     private static String extractInvalidFormatMessage(String sampleNameSuffix) throws IOException {
-        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix)) {
+        try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix)) {
             InvalidFormatException e = assertThrows(InvalidFormatException.class,
                 () -> OPCPackage.open(is).revert(), "expected OPC compliance exception was not thrown");
             return e.getMessage();
@@ -137,7 +135,7 @@ public final class TestOPCComplianceCoreProperties {
      */
     @Test
     void testOnlyOneCorePropertiesPart_AddRelationship() throws IOException, InvalidFormatException {
-        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
+        try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
             OPCPackage pkg = OPCPackage.open(is);
             URI partUri = createURI("/docProps/core2.xml");
             InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
@@ -155,7 +153,7 @@ public final class TestOPCComplianceCoreProperties {
     @Test
     void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException, IOException {
         String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
-        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
+        try (OPCPackage pkg = OPCPackage.open(getSampleFile(sampleFileName).getPath())) {
 
             URI partUri = createURI("/docProps/core2.xml");
             InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
@@ -218,9 +216,9 @@ public final class TestOPCComplianceCoreProperties {
     @Test
     void testNoCoreProperties_saveNew() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 
-        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
+        try (OPCPackage pkg = OPCPackage.open(getSampleFile(sampleFileName).getPath())) {
             // Verify it has empty properties
             assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
             assertNotNull(pkg.getPackageProperties());
@@ -232,7 +230,7 @@ public final class TestOPCComplianceCoreProperties {
             pkg.revert();
         }
 
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()))) {
+        try (OPCPackage pkg = OPCPackage.open(baos.toInputStream())) {
             // An Empty Properties part has been added in the save/load
             assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
             assertNotNull(pkg.getPackageProperties());
@@ -241,14 +239,14 @@ public final class TestOPCComplianceCoreProperties {
         }
 
         // Open a new copy of it
-        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
+        try (OPCPackage pkg = OPCPackage.open(getSampleFile(sampleFileName).getPath())) {
             // Save and re-load, without having touched the properties yet
             baos.reset();
             pkg.save(baos);
             pkg.revert();
         }
 
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()))) {
+        try (OPCPackage pkg = OPCPackage.open(baos.toInputStream())) {
             // Check that this too added empty properties without error
             assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
             assertNotNull(pkg.getPackageProperties());
@@ -266,9 +264,9 @@ public final class TestOPCComplianceCoreProperties {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
 
         // Copy this into a temp file, so we can play with it
-        File tmp = TempFile.createTempFile("poi-test", ".opc");
+        File tmp = getOutputFile("poi-test.opc");
         try (FileOutputStream out = new FileOutputStream(tmp);
-            InputStream in = POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName)) {
+            InputStream in = openSampleStream(sampleFileName)) {
             IOUtils.copy(in, out);
         }
 

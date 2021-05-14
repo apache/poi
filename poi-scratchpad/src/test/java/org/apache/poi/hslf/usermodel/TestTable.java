@@ -19,6 +19,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -108,58 +107,49 @@ public class TestTable {
 
     @Test
     void testAddText() throws IOException {
-        HSLFSlideShow ppt1 = new HSLFSlideShow();
-        HSLFSlide slide = ppt1.createSlide();
-        HSLFTable tab = slide.createTable(4, 5);
+        try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
+            HSLFSlide slide = ppt1.createSlide();
+            HSLFTable tab = slide.createTable(4, 5);
 
-        int rows = tab.getNumberOfRows();
-        int cols = tab.getNumberOfColumns();
-        for (int row=0; row<rows; row++) {
-            for (int col=0; col<cols; col++) {
-                HSLFTableCell c = tab.getCell(row, col);
-                assertNotNull(c);
-                c.setText("r"+(row+1)+"c"+(col+1));
+            int rows = tab.getNumberOfRows();
+            int cols = tab.getNumberOfColumns();
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
+                    HSLFTableCell c = tab.getCell(row, col);
+                    assertNotNull(c);
+                    c.setText("r" + (row + 1) + "c" + (col + 1));
+                }
+            }
+
+            try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
+                slide = ppt2.getSlides().get(0);
+                tab = (HSLFTable) slide.getShapes().get(0);
+
+                rows = tab.getNumberOfRows();
+                cols = tab.getNumberOfColumns();
+                for (int row = 0; row < rows; row++) {
+                    for (int col = 0; col < cols; col++) {
+                        HSLFTableCell c = tab.getCell(row, col);
+                        assertNotNull(c);
+                        c.setText(c.getText() + "...");
+                    }
+                }
+
+                try (HSLFSlideShow ppt3 = writeOutAndReadBack(ppt2)) {
+                    slide = ppt3.getSlides().get(0);
+                    tab = (HSLFTable) slide.getShapes().get(0);
+
+                    rows = tab.getNumberOfRows();
+                    cols = tab.getNumberOfColumns();
+                    for (int row = 0; row < rows; row++) {
+                        for (int col = 0; col < cols; col++) {
+                            HSLFTableCell c = tab.getCell(row, col);
+                            assertNotNull(c);
+                            assertEquals("r" + (row + 1) + "c" + (col + 1) + "...", c.getText());
+                        }
+                    }
+                }
             }
         }
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ppt1.write(bos);
-        ppt1.close();
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        HSLFSlideShow ppt2 = new HSLFSlideShow(bis);
-        slide = ppt2.getSlides().get(0);
-        tab = (HSLFTable)slide.getShapes().get(0);
-
-        rows = tab.getNumberOfRows();
-        cols = tab.getNumberOfColumns();
-        for (int row=0; row<rows; row++) {
-            for (int col=0; col<cols; col++) {
-                HSLFTableCell c = tab.getCell(row, col);
-                assertNotNull(c);
-                c.setText(c.getText()+"...");
-            }
-        }
-
-        bos.reset();
-        ppt2.write(bos);
-        ppt2.close();
-
-        bis = new ByteArrayInputStream(bos.toByteArray());
-        HSLFSlideShow ppt3 = new HSLFSlideShow(bis);
-        slide = ppt3.getSlides().get(0);
-        tab = (HSLFTable)slide.getShapes().get(0);
-
-        rows = tab.getNumberOfRows();
-        cols = tab.getNumberOfColumns();
-        for (int row=0; row<rows; row++) {
-            for (int col=0; col<cols; col++) {
-                HSLFTableCell c = tab.getCell(row, col);
-                assertNotNull(c);
-                assertEquals("r"+(row+1)+"c"+(col+1)+"...", c.getText());
-            }
-        }
-
-        ppt3.close();
     }
 }

@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -45,6 +44,7 @@ import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STStrokeJoinStyle;
 import com.microsoft.schemas.vml.impl.CTShapetypeImpl;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -62,8 +62,8 @@ class TestXSSFVMLDrawing {
         assertEquals(2, items.size());
         assertTrue(items.get(0) instanceof CTShapeLayout);
         CTShapeLayout layout = (CTShapeLayout)items.get(0);
-        assertEquals(STExt.EDIT, layout.getExt());
-        assertEquals(STExt.EDIT, layout.getIdmap().getExt());
+        assertSame(STExt.EDIT, layout.getExt());
+        assertSame(STExt.EDIT, layout.getIdmap().getExt());
         assertEquals("1", layout.getIdmap().getData());
 
         assertTrue(items.get(1) instanceof CTShapetype);
@@ -72,8 +72,8 @@ class TestXSSFVMLDrawing {
         assertEquals(202.0f, type.getSpt(), 0);
         assertEquals("m,l,21600r21600,l21600,xe", type.getPath2());
         assertEquals("_x0000_t202", type.getId());
-        assertEquals(STTrueFalse.T, type.getPathArray(0).getGradientshapeok());
-        assertEquals(STConnectType.RECT, type.getPathArray(0).getConnecttype());
+        assertSame(STTrueFalse.T, type.getPathArray(0).getGradientshapeok());
+        assertSame(STConnectType.RECT, type.getPathArray(0).getConnecttype());
 
         CTShape shape = vml.newCommentShape();
         items = vml.getItems();
@@ -82,16 +82,16 @@ class TestXSSFVMLDrawing {
         assertEquals("#_x0000_t202", shape.getType());
         assertEquals("position:absolute; visibility:hidden", shape.getStyle());
         assertEquals("#ffffe1", shape.getFillcolor());
-        assertEquals(STInsetMode.AUTO, shape.getInsetmode());
+        assertSame(STInsetMode.AUTO, shape.getInsetmode());
         assertEquals("#ffffe1", shape.getFillArray(0).getColor());
         CTShadow shadow = shape.getShadowArray(0);
-        assertEquals(STTrueFalse.T, shadow.getOn());
+        assertSame(STTrueFalse.T, shadow.getOn());
         assertEquals("black", shadow.getColor());
-        assertEquals(STTrueFalse.T, shadow.getObscured());
-        assertEquals(STConnectType.NONE, shape.getPathArray(0).getConnecttype());
+        assertSame(STTrueFalse.T, shadow.getObscured());
+        assertSame(STConnectType.NONE, shape.getPathArray(0).getConnecttype());
         assertEquals("mso-direction-alt:auto", shape.getTextboxArray(0).getStyle());
         CTClientData cldata = shape.getClientDataArray(0);
-        assertEquals(STObjectType.NOTE, cldata.getObjectType());
+        assertSame(STObjectType.NOTE, cldata.getObjectType());
         assertEquals(1, cldata.sizeOfMoveWithCellsArray());
         assertEquals(1, cldata.sizeOfSizeWithCellsArray());
         assertEquals("1, 15, 0, 2, 3, 15, 3, 16", cldata.getAnchorArray(0));
@@ -103,11 +103,11 @@ class TestXSSFVMLDrawing {
         assertEquals("[True]", cldata.getVisibleList().toString());
 
         //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         vml.write(out);
 
         XSSFVMLDrawing vml2 = new XSSFVMLDrawing();
-        vml2.read(new ByteArrayInputStream(out.toByteArray()));
+        vml2.read(out.toInputStream());
         List<XmlObject> items2 = vml2.getItems();
         assertEquals(3, items2.size());
         assertTrue(items2.get(0) instanceof CTShapeLayout);
@@ -208,6 +208,6 @@ class TestXSSFVMLDrawing {
         XmlObject xst = objs.get(0);
         assertTrue(xst instanceof CTShapetypeImpl);
         CTShapetype st = (CTShapetype)xst;
-        assertEquals(STStrokeJoinStyle.MITER, st.getStrokeArray(0).getJoinstyle());
+        assertSame(STStrokeJoinStyle.MITER, st.getStrokeArray(0).getJoinstyle());
     }
 }

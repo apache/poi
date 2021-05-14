@@ -17,17 +17,15 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -53,29 +51,21 @@ public final class TestSavedByTable {
      * Tests reading in the entries, comparing them against the expected
      * entries. Then tests writing the document out and reading the entries yet
      * again.
-     *
-     * @throws Exception if an unexpected error occurs.
      */
     @Test
     void testReadWrite() throws IOException {
         // This document is widely available on the internet as "blair.doc".
         // I tried stripping the content and saving the document but my version
         // of Word (from Office XP) strips this table out.
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("saved-by-table.doc");
+        try (HWPFDocument doc = openSampleFile("saved-by-table.doc")) {
+            // Check what we just read.
+            assertEquals(expected, doc.getSavedByTable().getEntries(), "List of saved-by entries was not as expected");
 
-        // Check what we just read.
-        assertEquals( expected, doc.getSavedByTable().getEntries(), "List of saved-by entries was not as expected" );
-
-        // Now write the entire document out, and read it back in...
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        doc.write(byteStream);
-        InputStream copyStream = new ByteArrayInputStream(byteStream.toByteArray());
-        doc.close();
-        HWPFDocument copy = new HWPFDocument(copyStream);
-
-        // And check again.
-        assertEquals( expected, copy.getSavedByTable().getEntries(), "List of saved-by entries was incorrect after writing" );
-
-        copy.close();
+            // Now write the entire document out, and read it back in...
+            try (HWPFDocument copy = writeOutAndReadBack(doc)) {
+                // And check again.
+                assertEquals(expected, copy.getSavedByTable().getEntries(), "List of saved-by entries was incorrect after writing");
+            }
+        }
     }
 }

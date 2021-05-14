@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 /**
- * Centralises logic for finding/opening sample files for ooxml4j unit tests 
+ * Centralises logic for finding/opening sample files for ooxml4j unit tests
  */
 public final class OpenXML4JTestDataSamples {
     private static final POIDataSamples _samples = POIDataSamples.getOpenXML4JInstance();
@@ -40,19 +40,13 @@ public final class OpenXML4JTestDataSamples {
 	public static String getSampleFileName(String sampleFileName) {
 		return getSampleFile(sampleFileName).getAbsolutePath();
 	}
-	
+
 	public static File getSampleFile(String sampleFileName) {
 		return _samples.getFile(sampleFileName);
 	}
-	
+
 	public static File getOutputFile(String outputFileName) throws IOException {
-        String suffix = outputFileName.substring(outputFileName.lastIndexOf('.'));
-        return TempFile.createTempFile(outputFileName, suffix);
+		int idx = outputFileName.lastIndexOf('.');
+        return TempFile.createTempFile(outputFileName.substring(0,idx), outputFileName.substring(idx));
 	}
-
-
-	public static InputStream openComplianceSampleStream(String sampleFileName) {
-        return _samples.openResourceAsStream(sampleFileName);
-	}
-
 }

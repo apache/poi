@@ -22,14 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests to verify that we can read attachments from msg file
@@ -74,32 +76,21 @@ public class TestFileWithAttachmentsRead {
     /**
      * Bug 60550: Test to see if we get the correct Content-IDs of inline images`.
      */
-    @Test
-    void testReadContentIDField() throws IOException {
-        AttachmentChunks[] attachments = inlineImgMsgAttachments.getAttachmentFiles();
+    @ParameterizedTest
+    @CsvSource({
+        "0, image001.png@01D0A524.96D40F30",
+        "1, image002.png@01D0A524.96D40F30",
+        "2, image003.png@01D0A526.B4C739C0",
+        "3, image006.jpg@01D0A526.B649E220"
+    })
+    void testReadContentIDField(int index, String contentId) {
+        AttachmentChunks attachment = inlineImgMsgAttachments.getAttachmentFiles()[index];
+        String fileName = contentId.substring(0, contentId.indexOf("@"));
+        String extension = fileName.substring(fileName.lastIndexOf("."));
 
-        AttachmentChunks attachment;
-
-        // Check in Content-ID field
-        attachment = inlineImgMsgAttachments.getAttachmentFiles()[0];
-        assertEquals("image001.png", attachment.getAttachFileName().getValue());
-        assertEquals(".png", attachment.getAttachExtension().getValue());
-        assertEquals("image001.png@01D0A524.96D40F30", attachment.getAttachContentId().getValue());
-
-        attachment = inlineImgMsgAttachments.getAttachmentFiles()[1];
-        assertEquals("image002.png", attachment.getAttachFileName().getValue());
-        assertEquals(".png", attachment.getAttachExtension().getValue());
-        assertEquals("image002.png@01D0A524.96D40F30", attachment.getAttachContentId().getValue());
-
-        attachment = inlineImgMsgAttachments.getAttachmentFiles()[2];
-        assertEquals("image003.png", attachment.getAttachFileName().getValue());
-        assertEquals(".png", attachment.getAttachExtension().getValue());
-        assertEquals("image003.png@01D0A526.B4C739C0", attachment.getAttachContentId().getValue());
-
-        attachment = inlineImgMsgAttachments.getAttachmentFiles()[3];
-        assertEquals("image006.jpg", attachment.getAttachFileName().getValue());
-        assertEquals(".jpg", attachment.getAttachExtension().getValue());
-        assertEquals("image006.jpg@01D0A526.B649E220", attachment.getAttachContentId().getValue());
+        assertEquals(fileName, attachment.getAttachFileName().getValue());
+        assertEquals(extension, attachment.getAttachExtension().getValue());
+        assertEquals(contentId, attachment.getAttachContentId().getValue());
     }
 
 
@@ -128,7 +119,7 @@ public class TestFileWithAttachmentsRead {
         assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
         assertEquals(".doc", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        ByteArrayOutputStream attachmentstream = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream attachmentstream = new UnsynchronizedByteArrayOutputStream();
         attachment.getAttachData().writeValue(attachmentstream);
         assertEquals(24064, attachmentstream.size());
         // or compare the hashes of the attachment data
@@ -141,7 +132,7 @@ public class TestFileWithAttachmentsRead {
         assertNull(attachment.getAttachMimeTag());
         // or compare the hashes of the attachment data
         assertEquals(89, attachment.getAttachData().getValue().length);
-        attachmentstream = new ByteArrayOutputStream();
+        attachmentstream.reset();
         attachment.getAttachData().writeValue(attachmentstream);
         assertEquals(89, attachmentstream.size());
     }

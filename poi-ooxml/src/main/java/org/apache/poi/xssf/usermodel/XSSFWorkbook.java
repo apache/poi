@@ -21,8 +21,6 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validatePassword;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +41,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassIDPredefined;
@@ -485,7 +484,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         OPCPackage pkg = null;
         try {
-            pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(new UnsynchronizedByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
@@ -639,9 +638,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
             srcSheet.write(out);
-            try (ByteArrayInputStream bis = new ByteArrayInputStream(out.toByteArray())) {
+            try (InputStream bis = out.toInputStream()) {
                 clonedSheet.read(bis);
             }
         } catch (IOException e){
@@ -2346,12 +2345,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500)) {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(oleData.length+500)) {
             ole10.writeOut(bos);
 
             try (POIFSFileSystem poifs = new POIFSFileSystem()) {
                 DirectoryNode root = poifs.getRoot();
-                root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+                root.createDocument(Ole10Native.OLE10_NATIVE, bos.toInputStream());
                 root.setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
 
                 // TODO: generate CombObj stream

@@ -34,7 +34,7 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -150,7 +150,7 @@ public class TestPOIFSDump {
     }
 
     @Test
-    void testMainNoArgs() throws Exception {
+    void testMainNoArgs() {
         SecurityManager sm = System.getSecurityManager();
         try {
             System.setSecurityManager(new SecurityManager() {

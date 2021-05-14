@@ -17,13 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
@@ -44,8 +44,8 @@ public final class PPDrawingGroup extends RecordAtom {
     private static final int MAX_RECORD_LENGTH = 10_485_760;
 
 
-    private byte[] _header;
-    private EscherContainerRecord dggContainer;
+    private final byte[] _header;
+    private final EscherContainerRecord dggContainer;
     //cached dgg
     private EscherDggRecord dgg;
 
@@ -65,6 +65,7 @@ public final class PPDrawingGroup extends RecordAtom {
     /**
      * We are type 1035
      */
+    @Override
     public long getRecordType() {
         return RecordTypes.PPDrawingGroup.typeID;
     }
@@ -72,17 +73,19 @@ public final class PPDrawingGroup extends RecordAtom {
     /**
      * We're pretending to be an atom, so return null
      */
+    @Override
     public org.apache.poi.hslf.record.Record[] getChildRecords() {
         return null;
     }
 
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream();
         for (EscherRecord r : dggContainer) {
             if (r.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER){
                 EscherContainerRecord bstore = (EscherContainerRecord)r;
 
-                ByteArrayOutputStream b2 = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream b2 = new UnsynchronizedByteArrayOutputStream();
                 for (EscherRecord br : bstore) {
                     byte[] b = new byte[36+8];
                     br.serialize(0, b);
@@ -114,8 +117,7 @@ public final class PPDrawingGroup extends RecordAtom {
         out.write(dgghead);
 
         // Finally, write out the children
-        out.write(bout.toByteArray());
-
+        bout.writeTo(out);
     }
 
     public EscherContainerRecord getDggContainer(){

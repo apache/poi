@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -55,7 +54,7 @@ public final class TestHeadersFootersAtom {
     @Test
 	void testWrite() throws Exception {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 		record.writeOut(baos);
 		assertArrayEquals(data, baos.toByteArray());
 	}
@@ -67,7 +66,7 @@ public final class TestHeadersFootersAtom {
         record.setFlag(HeadersFootersAtom.fHasTodayDate, true);
         record.setFlag(HeadersFootersAtom.fHasFooter, true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

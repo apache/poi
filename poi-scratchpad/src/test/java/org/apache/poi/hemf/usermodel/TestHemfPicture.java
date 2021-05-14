@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
@@ -52,7 +52,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("StatementWithEmptyBody")
 public class TestHemfPicture {
 
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
@@ -286,10 +285,10 @@ public class TestHemfPicture {
     @Test
     void testInfiniteLoopOnByteArray() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
             IOUtils.copy(is, bos);
 
-            HemfPicture pic = new HemfPicture(new ByteArrayInputStream(bos.toByteArray()));
+            HemfPicture pic = new HemfPicture(bos.toInputStream());
             assertThrows(RecordFormatException.class, () -> pic.forEach(r -> {}));
         }
     }

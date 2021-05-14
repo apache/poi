@@ -18,13 +18,13 @@
 package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -37,6 +37,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.sl.image.ImageHeaderPNG;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -120,10 +121,10 @@ public final class Picture {
         }
     }
 
-    private void fillImageContent()
-    {
-        if ( content != null && content.length > 0 )
+    private void fillImageContent() {
+        if ( content != null && content.length > 0 ) {
             return;
+        }
 
         byte[] rawContent = getRawContent();
 
@@ -134,33 +135,21 @@ public final class Picture {
          * similarity in the data block contents.
          */
         if ( matchSignature( rawContent, COMPRESSED1, 32 )
-                || matchSignature( rawContent, COMPRESSED2, 32 ) )
-        {
-            try
-            {
-                InflaterInputStream in = new InflaterInputStream(
-                        new ByteArrayInputStream( rawContent, 33,
-                                rawContent.length - 33 ) );
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                byte[] buf = new byte[4096];
-                int readBytes;
-                while ( ( readBytes = in.read( buf ) ) > 0 )
-                {
-                    out.write( buf, 0, readBytes );
-                }
+                || matchSignature( rawContent, COMPRESSED2, 32 ) ) {
+            try (ByteArrayInputStream bis = new ByteArrayInputStream( rawContent, 33, rawContent.length - 33 );
+                InflaterInputStream in = new InflaterInputStream(bis);
+                 UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+
+                IOUtils.copy(in, out);
                 content = out.toByteArray();
-            }
-            catch ( IOException e )
-            {
+            } catch (IOException e) {
                 /*
                  * Problems reading from the actual ByteArrayInputStream should
                  * never happen so this will only ever be a ZipException.
                  */
                 LOGGER.atInfo().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
             }
-        }
-        else
-        {
+        } else {
             // Raw data is not compressed.
             content = new ImageHeaderPNG(rawContent).extractPNG();
         }
@@ -186,8 +175,8 @@ public final class Picture {
         byte[] jpegContent = getContent();
 
         int pointer = 2;
-        int firstByte = jpegContent[pointer];
-        int secondByte = jpegContent[pointer + 1];
+        int firstByte;
+        int secondByte;
         int endOfPicture = jpegContent.length;
         while ( pointer < endOfPicture - 1 )
         {

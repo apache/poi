@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.dev;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.NotesAtom;
@@ -136,7 +136,7 @@ public final class SlideIdListing {
                         System.out.println("  Knows about sheet " + id);
                         System.out.println("    That sheet lives at " + offset);
 
-                        Record atPos = findRecordAtPos(offset.intValue());
+                        Record atPos = findRecordAtPos(offset);
                         System.out.println("    The record at that pos is of type " + atPos.getRecordType());
                         System.out.println("    The record at that pos has class " + atPos.getClass().getName());
 
@@ -147,7 +147,7 @@ public final class SlideIdListing {
                 }
 
                 // Increase the position by the on disk size
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
                 r.writeOut(baos);
                 pos += baos.size();
             }

@@ -19,7 +19,6 @@ package org.apache.poi.ss.extractor;
 
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassID;
@@ -162,7 +162,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     protected EmbeddedData extract(DirectoryNode dn) throws IOException {
         assert(canExtract(dn));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(20000);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(20000);
         try (POIFSFileSystem dest = new POIFSFileSystem()) {
             copyNodes(dn, dest.getRoot());
             // start with a reasonable big size
@@ -204,7 +204,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
-            try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 InputStream is = dn.createDocumentInputStream("CONTENTS")) {
                 IOUtils.copy(is, bos);
                 return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);

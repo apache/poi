@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.NullPrintStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
@@ -32,13 +32,16 @@ class TestEFBiffViewer extends BaseTestIteratingXLS {
     @Override
     protected Map<String, Class<? extends Throwable>> getExcludes() {
         Map<String, Class<? extends Throwable>> excludes = super.getExcludes();
-        excludes.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header
+		// unsupported crypto api header
+        excludes.put("35897-type4.xls", EncryptedDocumentException.class);
         excludes.put("51832.xls", EncryptedDocumentException.class);
         excludes.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
         excludes.put("password.xls", EncryptedDocumentException.class);
-        excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
+		// HSSFWorkbook cannot open it as well
+        excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);
         excludes.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
-        // EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
+		// "Buffer overrun"
+        excludes.put("XRefCalc.xls", RuntimeException.class);
         return excludes;
     }
 

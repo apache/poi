@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayOutputStream;
-
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -68,7 +67,7 @@ public final class TestExVideoContainer {
     @Test
     void testWrite() throws Exception {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
@@ -79,7 +78,7 @@ public final class TestExVideoContainer {
         record.getExMediaAtom().setObjectId(1);
         record.getPathAtom().setText("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
