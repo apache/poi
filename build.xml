@@ -1286,7 +1286,7 @@ under the License.
                fork="true"
                modulepath="${basedir}/lib/main-tests"
                unless:true="${isJava8}">
-            <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}:${ooxml.lite.output.dir}"/>
+            <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}${path.separator}${ooxml.lite.output.dir}"/>
         </javac>
 
         <jar destfile="${ooxml.lite.agent}">
