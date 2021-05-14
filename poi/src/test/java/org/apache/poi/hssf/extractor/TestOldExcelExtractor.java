@@ -41,6 +41,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.commons.io.output.NullPrintStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
@@ -323,7 +324,7 @@ final class TestOldExcelExtractor {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         PrintStream save = System.out;
         try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-             PrintStream str = new PrintStream(out, false, StandardCharsets.UTF_8.displayName())) {
+             PrintStream str = new PrintStream(out, false, StandardCharsets.UTF_8.displayName(LocaleUtil.getUserLocale()))) {
             System.setOut(str);
             OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
             String string = out.toString(StandardCharsets.UTF_8);
