@@ -68,7 +68,7 @@ under the License.
         <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
     </condition>
 
-    <condition property="isJava8">
+    <condition property="isJava8" else="false">
         <equals arg1="${ant.java.version}" arg2="1.8"/>
     </condition>
 
@@ -615,6 +615,8 @@ under the License.
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
         <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}, isJava8: ${isJava8}" />
+		<echo if:true="${isJava8}">Compiling for Java 8</echo>
+		<echo unless:true="${isJava8}">Compiling for Java 9+</echo>
 
         <loadresource property="RELEASE_TAG">
             <string>REL_${version.id}</string>
