@@ -22,11 +22,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -214,7 +214,7 @@ public final class PPTXMLDump {
                     dump.dump(out);
                     out.close();
                 } else {
-                    StringWriter out = new StringWriter();
+                    StringBuilderWriter out = new StringBuilderWriter(1024);
                     dump.dump(out);
                     System.out.println(out);
                 }

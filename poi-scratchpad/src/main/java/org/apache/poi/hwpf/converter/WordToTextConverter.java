@@ -18,7 +18,6 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,6 +29,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -172,7 +172,7 @@ public class WordToTextConverter extends AbstractWordConverter
 
     public String getText() throws Exception
     {
-        StringWriter stringWriter = new StringWriter();
+        StringBuilderWriter stringWriter = new StringBuilderWriter(1024);
         DOMSource domSource = new DOMSource( getDocument() );
         StreamResult streamResult = new StreamResult( stringWriter );
 

@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,6 +30,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
@@ -428,7 +428,7 @@ public enum XSSFBuiltinTableStyle {
         // add a dummy node to adjust properly.
         dxfsNode.insertBefore(dxfsNode.getOwnerDocument().createElement("dxf"), dxfsNode.getFirstChild());
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
                 .append("<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" ")
                 .append("xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" ")
@@ -441,8 +441,8 @@ public enum XSSFBuiltinTableStyle {
         return sb.toString();
     }
 
-    private static String writeToString(Node node) throws IOException, TransformerException {
-        try (StringWriter sw = new StringWriter()){
+    private static String writeToString(Node node) throws TransformerException {
+        try (StringBuilderWriter sw = new StringBuilderWriter(1024)){
             Transformer transformer = XMLHelper.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.transform(new DOMSource(node), new StreamResult(sw));
