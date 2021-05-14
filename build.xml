@@ -985,7 +985,7 @@ under the License.
                fork="true"
                modulepath="lib/ooxml"
                unless:true="${isJava8}">
-            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}:${ooxml-schema.output.gen-classes.dir}"/>
+            <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}${path.separator}${ooxml-schema.output.gen-classes.dir}"/>
         </javac>
 
         <mkdir dir="build/dist/maven/poi-ooxml-full"/>
