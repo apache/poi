@@ -72,7 +72,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Test
-    protected void cloneSheet() throws IOException {
+    public void cloneSheet() throws IOException {
         RuntimeException e = assertThrows(RuntimeException.class, super::cloneSheet);
         assertEquals("Not Implemented", e.getMessage());
     }
@@ -82,7 +82,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Override
     @Test
-    protected void sheetClone() {
+    public void sheetClone() {
         RuntimeException e = assertThrows(RuntimeException.class, super::sheetClone);
         assertEquals("Not Implemented", e.getMessage());
     }
@@ -358,6 +358,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Disabled("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
             + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
+	@Test
     void bug53515a() throws Exception {
         File out = new File("Test.xlsx");
         assertTrue(!out.exists() || out.delete());
@@ -528,6 +529,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Disabled("not implemented")
+	@Test
     void changeSheetNameWithSharedFormulas() {
     }
 }

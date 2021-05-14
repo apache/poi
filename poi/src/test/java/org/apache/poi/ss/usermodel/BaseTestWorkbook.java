@@ -441,7 +441,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    protected void cloneSheet() throws IOException {
+    public void cloneSheet() throws IOException {
         try (Workbook book = _testDataProvider.createWorkbook()) {
             Sheet sheet = book.createSheet("TEST");
             sheet.createRow(0).createCell(0).setCellValue("Test");
@@ -804,7 +804,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    protected void sheetClone() throws IOException {
+    public void sheetClone() throws IOException {
         // First up, try a simple file
         try (Workbook b = _testDataProvider.createWorkbook();
              Workbook bBack = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls")) {
