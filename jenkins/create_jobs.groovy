@@ -52,7 +52,9 @@ def poijobs = [
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
         ],
-        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
+        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true,
+		  // not needed any more now that we use Gradle for SonarQube
+		  disabled: true
         ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
@@ -70,8 +72,7 @@ def poijobs = [
 		  // replaced by Gradle-based build now
 		  disabled: true
         ],
-        // set trigger empty as it is not stable yet, we can remove the Sonar Maven run when this is fully working
-        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: '', gradle: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', gradle: true, sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
