@@ -32,6 +32,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Permission;
 
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
@@ -40,7 +41,6 @@ import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
