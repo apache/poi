@@ -181,6 +181,8 @@ rm -rf examples excelant integrationtest main ooxml ooxml-schema scratchpad buil
 
 # show which files are currently modified in the working copy
 svn status || true
+# make sure no changed module-class-files are lingering on
+svn revert poi*/src/*/java9/module-info.class || true
 
 # print out information about which exact version of java we are using
 echo Java-Home: $JAVA_HOME
@@ -214,6 +216,8 @@ def shellCmdsWin =
         '''@echo off
 :: show which files are currently modified in the working copy
 svn status
+:: make sure no changed module-class-files are lingering on
+svn revert poi*\\src\\*\\java9\\module-info.class
 
 :: print out information about which exact version of java we are using
 echo Java-Home: %JAVA_HOME%
