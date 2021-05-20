@@ -56,8 +56,13 @@ public class XWPFComments extends POIXMLDocumentPart {
      *
      * @param part the package part holding the data of the footnotes,
      */
-    public XWPFComments(PackagePart part) {
-        super(part);
+    public XWPFComments(POIXMLDocumentPart parent, PackagePart part) {
+        super(parent, part);
+        this.document = (XWPFDocument) getParent();
+
+        if (this.document == null) {
+            throw new NullPointerException();
+        }
     }
 
     /**

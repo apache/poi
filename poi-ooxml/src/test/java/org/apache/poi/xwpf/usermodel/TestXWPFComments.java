@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,6 +57,19 @@ class TestXWPFComments {
             comment = docIn.getCommentByID("0");
             assertTrue(null != comment);
             assertEquals("Author", comment.getAuthor());
+        }
+    }
+
+    @Test
+    void testReadComments() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("testComment.docx")) {
+            XWPFComments docComments = doc.getDocComments();
+            assertNotNull(docComments);
+            XWPFComment[] comments = doc.getComments();
+            assertEquals(1, comments.length);
+
+            List<XWPFPictureData> allPictures = docComments.getAllPictures();
+            assertEquals(1, allPictures.size());
         }
     }
 
