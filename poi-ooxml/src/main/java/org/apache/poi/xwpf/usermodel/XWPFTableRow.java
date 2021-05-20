@@ -63,6 +63,7 @@ public class XWPFTableRow {
      */
     public XWPFTableCell createCell() {
         XWPFTableCell tableCell = new XWPFTableCell(ctRow.addNewTc(), this, table.getBody());
+        ensureBlockLevelElement(tableCell);
         tableCells.add(tableCell);
         return tableCell;
     }
@@ -87,8 +88,17 @@ public class XWPFTableRow {
     public XWPFTableCell addNewTableCell() {
         CTTc cell = ctRow.addNewTc();
         XWPFTableCell tableCell = new XWPFTableCell(cell, this, table.getBody());
+        ensureBlockLevelElement(tableCell);
         tableCells.add(tableCell);
         return tableCell;
+    }
+
+    private void ensureBlockLevelElement(XWPFTableCell tableCell) {
+        // If a table cell does not include at least one block-level element,
+        // then this document shall be considered corrupt.
+        if (tableCell.getParagraphs().isEmpty()) {
+            tableCell.addParagraph();
+        }
     }
 
     /**

@@ -542,7 +542,7 @@ class TestXWPFTable {
     }
 
     @Test
-    void testCreateTable() throws Exception {
+    public void testCreateTable() throws Exception {
         // open an empty document
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
 
@@ -554,23 +554,15 @@ class TestXWPFTable {
             // assert the table is empty
             List<XWPFTableRow> rows = table.getRows();
             assertEquals(noRows, rows.size(), "Table has less rows than requested.");
-            int row = 0;
             for (XWPFTableRow xwpfRow : rows) {
                 assertNotNull(xwpfRow);
-                assertEquals(noCols, xwpfRow.getTableCells().size(),
-                        "Row has less columns than requested.");
                 for (int i = 0; i < 7; i++) {
                     XWPFTableCell xwpfCell = xwpfRow.getCell(i);
                     assertNotNull(xwpfCell);
-                    assertEquals(row != 0 || i != 0 ? 0 : 1, xwpfCell.getParagraphs().size(),
-                            "Empty cells should not have one paragraph: " + i);
-
+                    assertEquals(1, xwpfCell.getParagraphs().size(), "Empty cells should not have one paragraph.");
                     xwpfCell = xwpfRow.getCell(i);
-                    assertEquals(row != 0 || i != 0 ? 0 : 1, xwpfCell.getParagraphs().size(),
-                            "Calling 'getCell' must not modify cells content: " + i);
+                    assertEquals(1, xwpfCell.getParagraphs().size(), "Calling 'getCell' must not modify cells content.");
                 }
-
-                row++;
             }
             doc.getPackage().revert();
         }

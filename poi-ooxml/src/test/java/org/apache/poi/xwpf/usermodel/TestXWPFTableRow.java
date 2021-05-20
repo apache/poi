@@ -43,6 +43,21 @@ class TestXWPFTableRow {
     }
 
     @Test
+    void testCreateCell() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable(1, 2);
+            XWPFTableRow tr = table.createRow();
+            XWPFTableCell cell = tr.createCell();
+            assertNotNull(cell);
+            assertTrue(cell.getParagraphs().size() >= 1);
+
+            cell = tr.addNewTableCell();
+            assertNotNull(cell);
+            assertTrue(cell.getParagraphs().size() >= 1);
+        }
+    }
+
+    @Test
     void testSetGetCantSplitRow() throws IOException {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
