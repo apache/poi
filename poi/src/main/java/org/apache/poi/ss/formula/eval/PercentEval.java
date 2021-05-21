@@ -22,7 +22,7 @@ import org.apache.poi.ss.formula.functions.Function;
 
 
 /**
- * Implementation of Excel formula token '%'. <p>
+ * Implementation of Excel formula token '%'.
  */
 public final class PercentEval extends Fixed1ArgFunction {
 
@@ -32,6 +32,7 @@ public final class PercentEval extends Fixed1ArgFunction {
 		// enforce singleton
 	}
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		double d;
 		try {

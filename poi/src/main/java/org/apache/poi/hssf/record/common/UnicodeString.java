@@ -42,7 +42,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * Unicode String - just standard fields that are in several records.
  * It is considered more desirable then repeating it in all of them.<p>
- * This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
+ * This is often called a XLUnicodeRichExtendedString in MS documentation.
  */
 public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
     private static final Logger LOG = LogManager.getLogger(UnicodeString.class);
@@ -445,6 +445,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         }
     }
 
+    @Override
     public int compareTo(UnicodeString str) {
 
         int result = getString().compareTo(str.getString());

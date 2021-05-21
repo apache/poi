@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -85,15 +86,15 @@ allprojects {
 }
 
 /**
-
  Define things that are only necessary in sub-projects, but not in the master-project itself
-
  */
 subprojects {
     //Put instructions for each sub project, but not the master
     apply plugin: 'java-library'
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
 
     version = '5.0.1-SNAPSHOT'
     ext {
@@ -122,12 +123,8 @@ subprojects {
         options.deprecation = true
     }
 
-    tasks.withType(Jar) {
-        duplicatesStrategy = 'fail'
-    }
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenCentral()
@@ -145,13 +142,58 @@ subprojects {
 
     task wrapper(type: Wrapper){
         // https://stackoverflow.com/a/65701523/2066598
-        gradleVersion = '6.8'
+        gradleVersion = '7.0.1'
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    javadoc {
+        failOnError = true
+        maxMemory = "1024M"
+        doFirst {
+            options {
+                if (JavaVersion.current().isJava9Compatible()) {
+                    addBooleanOption('html5', true)
+                }
+                addBooleanOption('Xdoclint:all,-missing', true)
+                links 'https://poi.apache.org/apidocs/dev/'
+                links 'https://docs.oracle.com/javase/8/docs/api/'
+                links 'https://xmlbeans.apache.org/docs/5.0.0/'
+                use = true
+                splitIndex = true
+                source = "1.8"
+            }
+        }
+    }
+
+    tasks.withType(Jar) {
+        duplicatesStrategy = 'fail'
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+        doLast {
+            ant.checksum(file: it.archivePath, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
+            ant.checksum(file: it.archivePath, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
+        }
     }
 
     jar {
         manifest {
             attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': project.version
         }
+    }
+
+    javadocJar {
+        // if javadocs and binaries are in the same directory, JPMS complaints about duplicated modules
+        // in the module-path
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-javadoc")
+    }
+
+    sourcesJar {
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        exclude 'META-INF/services/**'
     }
 
     test {
@@ -176,7 +218,21 @@ subprojects {
         maxHeapSize = "768m"
 
         // Specifying the local via system properties did not work, so we set them this way
-        jvmArgs '-Duser.language=en -Duser.country=US'
+        jvmArgs << [
+            '-Djava.io.tmpdir=build',
+            '-DPOI.testdata.path=../test-data',
+            '-Djava.awt.headless=true',
+            '-Djava.locale.providers=JRE,CLDR',
+            '-Duser.language=en',
+            '-Duser.country=US',
+            '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
+            "-Dversion.id=${project.version}",
+            '-ea',
+            '-Djunit.jupiter.execution.parallel.enabled=true',
+            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
+            // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
+        ]
 
         // show standard out and standard error of the test JVM(s) on the console
         //testLogging.showStandardStreams = true
@@ -190,6 +246,23 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         systemProperties['junit.jupiter.execution.parallel.enabled'] = 'false'
+
+        doFirst {
+            if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+                jvmArgs += [
+                    '-Dsun.reflect.debugModuleAccessChecks=true',
+                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+                    '--illegal-access=warn',
+
+                    // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
+                    // opposed to the recommendation there, it doesn't work to add ... to the dependencies
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
+                    // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
+                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
+                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
+                ]
+            }
+        }
     }
 
     jacoco {
@@ -242,10 +315,15 @@ subprojects {
         publications {
             POI(MavenPublication) {
                 groupId 'org.apache.poi'
+                artifactId project.archivesBaseName
+
+                from components.java
 
                 pom {
                     packaging = 'jar'
                     url = 'https://poi.apache.org/'
+                    name = 'Apache POI'
+                    description = 'Apache POI - Java API To Access Microsoft Format Files'
 
                     mailingLists {
                         mailingList {
@@ -278,7 +356,9 @@ subprojects {
                     withXml {
                         def r = asElement()
                         def doc = r.getOwnerDocument()
-                        def asl = doc.createComment(new File('../legal/HEADER').text)
+                        def hdr = new File('../legal/HEADER')
+                        if (!hdr.exists()) hdr = new File('legal/HEADER')
+                        def asl = doc.createComment(hdr.text)
                         // adding ASF header before root node is ignored
                         // doc.insertBefore(asl, doc.getDocumentElement())
                         r.insertBefore(asl, r.getFirstChild())
@@ -287,18 +367,12 @@ subprojects {
             }
         }
     }
-}
 
-// Make JavaDoc behave similar to Ant, i.e. be a bit more lenient
-// and define amount of memory
-// https://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
-if (JavaVersion.current().isJava8Compatible()) {
-	allprojects {
-		tasks.withType(Javadoc) {
-			options.addStringOption('Xdoclint:none', '-quiet')
-			maxMemory="384M"
-		}
-	}
+    generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"
+
+    signing {
+        sign publishing.publications.POI
+    }
 }
 
 // initial try to provide a combined JavaDoc, grouping is still missing here, though!
@@ -313,6 +387,7 @@ task allJavaDoc(type: Javadoc) {
 	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
 	options.use = true
 	options.splitIndex = true
+    options.addBooleanOption('Xdoclint:all,-missing', true)
 
 	title = 'POI API Documentation'
 	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or\n' +

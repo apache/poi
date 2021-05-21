@@ -47,8 +47,8 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 public class XWPFComments extends POIXMLDocumentPart {
 
     XWPFDocument document;
-    private List<XWPFComment> comments = new ArrayList<>();
-    private List<XWPFPictureData> pictures = new ArrayList<>();
+    private final List<XWPFComment> comments = new ArrayList<>();
+    private final List<XWPFPictureData> pictures = new ArrayList<>();
     private CTComments ctComments;
 
     /**
@@ -192,8 +192,6 @@ public class XWPFComments extends POIXMLDocumentPart {
 
     /**
      * Get the list of {@link XWPFComment} in the Comments part.
-     *
-     * @return
      */
     public List<XWPFComment> getComments() {
         return comments;
@@ -203,7 +201,6 @@ public class XWPFComments extends POIXMLDocumentPart {
      * Get the specified comment by position
      *
      * @param pos Array position of the comment
-     * @return
      */
     public XWPFComment getComment(int pos) {
         if (pos >= 0 && pos < ctComments.sizeOfCommentArray()) {
@@ -229,14 +226,11 @@ public class XWPFComments extends POIXMLDocumentPart {
 
     /**
      * Get the specified comment by ctComment
-     *
-     * @param ctComment
-     * @return
      */
     public XWPFComment getComment(CTComment ctComment) {
-        for (int i = 0; i < comments.size(); i++) {
-            if (comments.get(i).getCtComment() == ctComment) {
-                return comments.get(i);
+        for (XWPFComment comment : comments) {
+            if (comment.getCtComment() == ctComment) {
+                return comment;
             }
         }
         return null;
@@ -246,7 +240,6 @@ public class XWPFComments extends POIXMLDocumentPart {
      * Create a new comment and add it to the document.
      *
      * @param cid comment Id
-     * @return
      */
     public XWPFComment createComment(BigInteger cid) {
         CTComment ctComment = ctComments.addNewComment();

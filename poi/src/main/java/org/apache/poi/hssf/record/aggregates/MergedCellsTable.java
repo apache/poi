@@ -40,7 +40,6 @@ public final class MergedCellsTable extends RecordAggregate {
 
 	/**
 	 * reads zero or more consecutive {@link MergeCellsRecord}s
-	 * @param rs
 	 */
 	public void read(RecordStream rs) {
         while (rs.peekNextClass() == MergeCellsRecord.class) {
@@ -92,8 +91,8 @@ public final class MergedCellsTable extends RecordAggregate {
 		}
 	}
 	public void addRecords(MergeCellsRecord[] mcrs) {
-		for (int i = 0; i < mcrs.length; i++) {
-			addMergeCellsRecord(mcrs[i]);
+		for (MergeCellsRecord mcr : mcrs) {
+			addMergeCellsRecord(mcr);
 		}
 	}
 

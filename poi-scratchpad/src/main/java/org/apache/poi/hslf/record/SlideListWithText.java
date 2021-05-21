@@ -64,7 +64,7 @@ public final class SlideListWithText extends RecordContainer {
 	 */
 	public static final int NOTES = 2;
 
-	private byte[] _header;
+	private final byte[] _header;
 
 	private SlideAtomsSet[] slideAtomsSets;
 
@@ -124,7 +124,6 @@ public final class SlideListWithText extends RecordContainer {
 	/**
 	 * Add a new SlidePersistAtom, to the end of the current list,
 	 *  and update the internal list of SlidePersistAtoms
-	 * @param spa
 	 */
 	public void addSlidePersistAtom(SlidePersistAtom spa) {
 		// Add the new SlidePersistAtom at the end
@@ -164,12 +163,14 @@ public final class SlideListWithText extends RecordContainer {
 	/**
 	 * Return the value we were given at creation
 	 */
+	@Override
 	public long getRecordType() { return _type; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
+	@Override
 	public void writeOut(OutputStream out) throws IOException {
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
@@ -182,8 +183,8 @@ public final class SlideListWithText extends RecordContainer {
 	 *  along with some others.
 	 */
 	public static class SlideAtomsSet {
-		private SlidePersistAtom slidePersistAtom;
-		private org.apache.poi.hslf.record.Record[] slideRecords;
+		private final SlidePersistAtom slidePersistAtom;
+		private final org.apache.poi.hslf.record.Record[] slideRecords;
 
 		/** Get the SlidePersistAtom, which gives details on the Slide this text is associated with */
 		public SlidePersistAtom getSlidePersistAtom() { return slidePersistAtom; }

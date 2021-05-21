@@ -119,9 +119,8 @@ public class XWPFTableCell implements IBody, ICell {
 
     /**
      * returns an Iterator with paragraphs and tables
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
      */
+    @Override
     public List<IBodyElement> getBodyElements() {
         return Collections.unmodifiableList(bodyElements);
     }
@@ -136,6 +135,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * returns a list of paragraphs
      */
+    @Override
     public List<XWPFParagraph> getParagraphs() {
         return Collections.unmodifiableList(paragraphs);
     }
@@ -221,7 +221,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * Get the vertical alignment of the cell.
      *
-     * @return the cell alignment enum value or <code>null</code>
+     * @return the cell alignment enum value or {@code null}
      * if no vertical alignment is set.
      */
     public XWPFVertAlign getVerticalAlignment() {
@@ -253,6 +253,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @param cursor The XmlCursor structure created with XmlBeans
      * @return the inserted paragraph
      */
+    @Override
     public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
         if (!isCursorInTableCell(cursor)) {
             return null;
@@ -291,6 +292,7 @@ public class XWPFTableCell implements IBody, ICell {
         return newP;
     }
 
+    @Override
     public XWPFTable insertNewTbl(final XmlCursor cursor) {
         if (isCursorInTableCell(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
@@ -339,9 +341,7 @@ public class XWPFTableCell implements IBody, ICell {
         return result;
     }
 
-    /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
-     */
+    @Override
     public XWPFParagraph getParagraphArray(int pos) {
         if (pos >= 0 && pos < paragraphs.size()) {
             return paragraphs.get(pos);
@@ -351,25 +351,21 @@ public class XWPFTableCell implements IBody, ICell {
 
     /**
      * get the to which the TableCell belongs
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         return tableRow.getTable().getPart();
     }
 
-    /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
-     */
+    @Override
     public BodyType getPartType() {
         return BodyType.TABLECELL;
     }
 
     /**
      * get a table by its CTTbl-Object
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
      */
+    @Override
     public XWPFTable getTable(CTTbl ctTable) {
         for (int i = 0; i < tables.size(); i++) {
             if (getTables().get(i).getCTTbl() == ctTable) return getTables().get(i);
@@ -377,9 +373,7 @@ public class XWPFTableCell implements IBody, ICell {
         return null;
     }
 
-    /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
-     */
+    @Override
     public XWPFTable getTableArray(int pos) {
         if(pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
@@ -387,18 +381,15 @@ public class XWPFTableCell implements IBody, ICell {
         return null;
     }
 
-    /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
-     */
+    @Override
     public List<XWPFTable> getTables() {
         return Collections.unmodifiableList(tables);
     }
 
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int, org.apache.poi.xwpf.usermodel.XWPFTable)
      */
+    @Override
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
@@ -482,6 +473,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * get the TableCell which belongs to the TableCell
      */
+    @Override
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
         cursor.toParent();
@@ -508,6 +500,7 @@ public class XWPFTableCell implements IBody, ICell {
         return tr.getTableCell(cell);
     }
 
+    @Override
     public XWPFDocument getXWPFDocument() {
         return part.getXWPFDocument();
     }

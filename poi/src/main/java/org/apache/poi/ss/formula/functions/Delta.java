@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel DELTA() function.<p>
+ * Implementation for Excel DELTA() function.
  * <p>
  * <b>Syntax</b>:<br> <b>DELTA </b>(<b>number1</b>,<b>number2</b> )<br>
  * <p>
@@ -45,6 +45,7 @@ public final class Delta extends Fixed2ArgFunction implements FreeRefFunction {
     private static final NumberEval ONE = new NumberEval(1);
     private static final NumberEval ZERO = new NumberEval(0);
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
         try {
             Double number1 = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
@@ -62,6 +63,7 @@ public final class Delta extends Fixed2ArgFunction implements FreeRefFunction {
         }
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
          if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);

@@ -39,11 +39,8 @@ public class DocumentFormatException extends RuntimeException {
 
     /**
      * Syntactic sugar to check whether a DocumentFormatException should
-     * be thrown.  If assertTrue is <code>false</code>, this will throw this
+     * be thrown.  If assertTrue is {@code false}, this will throw this
      * exception with the message.
-     *
-     * @param assertTrue
-     * @param message
      */
     public static void check(boolean assertTrue, String message) {
         if (!assertTrue) {

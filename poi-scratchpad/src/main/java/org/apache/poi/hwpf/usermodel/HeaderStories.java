@@ -34,7 +34,7 @@ import org.apache.poi.hwpf.model.SubdocumentType;
  *  as offsets are not yet updated!
  */
 public final class HeaderStories {
-	private Range headerStories;
+	private final Range headerStories;
 	private PlexOfCps plcfHdd;
 
 	private boolean stripFields;
@@ -50,7 +50,7 @@ public final class HeaderStories {
 
         if (fib.getSubdocumentTextStreamLength( SubdocumentType.HEADER ) == 0)
 		    return;
-		
+
 		if(fib.getPlcfHddSize() == 0) {
 			return;
 		}
@@ -58,7 +58,7 @@ public final class HeaderStories {
         // Handle the PlcfHdd
         /*
          * Page 88:
-         * 
+         *
          * "The plcfhdd, a table whose location and length within the file is
          * stored in fib.fcPlcfhdd and fib.cbPlcfhdd, describes where the text
          * of each header/footer begins. If there are n headers/footers stored
@@ -69,11 +69,11 @@ public final class HeaderStories {
          * plcfhdd. Note: at the limit CP - 1, Word always places a chEop as a
          * placeholder which is never displayed as part of the header/footer.
          * This allows Word to change an existing header/footer to be empty.
-         * 
+         *
          * If there are n header/footers, the n+2nd CP entry value is always 1
          * greater than the n+1st CP entry value. A paragraph end (ASCII 13) is
          * always stored at the file position marked by the n+1st CP value.
-         * 
+         *
          * The transformation in a full saved file from a header/footer CP to an
          * offset from the beginning of a file (fc) is
          * fc=fib.fcMin+ccpText+ccpFtn+cp."
@@ -83,7 +83,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFootnoteSeparator()
@@ -92,7 +92,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFootnoteContSeparator()
@@ -101,7 +101,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFootnoteContNote()
@@ -110,7 +110,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getEndnoteSeparator()
@@ -119,7 +119,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getEndnoteContSeparator()
@@ -128,7 +128,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getEndnoteContNote()
@@ -167,27 +167,27 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
 	@Deprecated
 	public String getEvenHeader() {
 		return getAt(6+0);
 	}
 	/**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getOddHeader() {
 		return getAt(6+1);
 	}
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFirstHeader() {
 		return getAt(6+4);
 	}
-	
+
 
     public Range getEvenHeaderSubrange() {
         return getSubrangeAt(6+0);
@@ -198,7 +198,7 @@ public final class HeaderStories {
     public Range getFirstHeaderSubrange() {
         return getSubrangeAt(6+4);
     }
-    
+
 	/**
 	 * Returns the correct, defined header for the given
 	 *  one based page
@@ -226,7 +226,7 @@ public final class HeaderStories {
 	}
 
 	/**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getEvenFooter()
@@ -235,7 +235,7 @@ public final class HeaderStories {
     }
 
 	/**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getOddFooter()
@@ -244,7 +244,7 @@ public final class HeaderStories {
     }
 
     /**
-     * @deprecated 3.8 beta 4 
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFirstFooter()
@@ -370,7 +370,7 @@ public final class HeaderStories {
 
 	/**
 	 * Are fields currently being stripped from
-	 *  the text that this {@link HeaderStories} returns?
+	 *  the text that this HeaderStories returns?
 	 *  Default is false, but can be changed
 	 */
 	public boolean areFieldsStripped() {
@@ -380,7 +380,6 @@ public final class HeaderStories {
 	 * Should fields (eg macros) be stripped from
 	 *  the text that this class returns?
 	 * Default is not to strip.
-	 * @param stripFields
 	 */
 	public void setAreFieldsStripped(boolean stripFields) {
 		this.stripFields = stripFields;

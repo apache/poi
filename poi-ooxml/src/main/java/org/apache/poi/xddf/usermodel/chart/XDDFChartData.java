@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -81,7 +82,7 @@ public abstract class XDDFChartData {
     }
 
     /**
-     * Calls to <code>getSeries().add(series)</code> or to <code>getSeries().remove(series)</code>
+     * Calls to {@code getSeries().add(series)} or to {@code getSeries().remove(series)}
      * may corrupt the workbook.
      *
      * <p>
@@ -94,9 +95,9 @@ public abstract class XDDFChartData {
      * </ul>
      *
      * @deprecated since POI 4.1.1
-     * @return
      */
     @Deprecated
+    @Removal(version = "5.3")
     public List<Series> getSeries() {
         return Collections.unmodifiableList(series);
     }
@@ -119,18 +120,15 @@ public abstract class XDDFChartData {
     }
 
     /**
-     * This method should be implemented in every class that extends <code>XDDFChartData</code>.
+     * This method should be implemented in every class that extends {@code XDDFChartData}.
      * <p>
      * A typical implementation would be
      *
-     * <pre><code>
-    protected void removeCTSeries(int n) {
-        chart.removeSer(n);
-    }
-
-     * </code></pre>
-     *
-     * @param n
+     * <pre>{@code
+     * protected void removeCTSeries(int n) {
+     *    chart.removeSer(n);
+     * }
+     * }</pre>
      */
     @Internal
     protected abstract void removeCTSeries(int n);
@@ -195,7 +193,7 @@ public abstract class XDDFChartData {
                     }
                     if (cache.sizeOfPtArray() < 1) {
                         cache.addNewPtCount().setVal(1);
-                        cache.addNewPt().setIdx(0);;
+                        cache.addNewPt().setIdx(0);
                     }
                     cache.getPtArray(0).setV(title);
                 }
@@ -255,7 +253,7 @@ public abstract class XDDFChartData {
         }
 
         /**
-         * If a data point definition with the given <code>index</code> exists, then remove it.
+         * If a data point definition with the given {@code index} exists, then remove it.
          * Otherwise do nothing.
          *
          * @param index
@@ -267,19 +265,19 @@ public abstract class XDDFChartData {
             for (int i = 0; i < points.size(); i++) {
                 if (points.get(i).getIdx().getVal() == index) {
                     points.remove(i);
-                    i = points.size();
+                    break;
                 }
             }
         }
 
         /**
-         * If a data point definition with the given <code>index</code> exists, then return it.
+         * If a data point definition with the given {@code index} exists, then return it.
          * Otherwise create a new data point definition and return it.
          *
          * @param index
          *      data point index.
          * @return
-         *      the data point with the given <code>index</code>.
+         *      the data point with the given {@code index}.
          * @since POI 5.0.1
          */
         public XDDFDataPoint getDataPoint(long index) {

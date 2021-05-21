@@ -17,24 +17,30 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 /**
  * Represents a SpreadsheetML Chart
@@ -60,7 +66,7 @@ public final class XSSFChart extends XDDFChart {
      * @param part
      *            the package part holding the chart data, the content type must
      *            be
-     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     *            {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
      *
      * @since POI 3.14-Beta1
      */
@@ -204,8 +210,6 @@ public final class XSSFChart extends XDDFChart {
 
     /**
      * Set the formula expression to use for the chart title
-     *
-     * @param formula
      */
     public void setTitleFormula(String formula) {
         CTTitle ctTitle;

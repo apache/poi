@@ -48,7 +48,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 @Beta
 public class XDDFTextRun {
-    private XDDFTextParagraph _parent;
+    private final XDDFTextParagraph _parent;
     private XDDFRunProperties _properties;
     private CTTextLineBreak _tlb;
     private CTTextField _tf;
@@ -320,9 +320,6 @@ public class XDDFTextRun {
      *  <p>
      *     The size is specified using a percentage.
      *     Positive values indicate superscript, negative values indicate subscript.
-     *  </p>
-     *
-     * @param offset
      */
     public void setBaseline(Double offset) {
         if (offset == null) {
@@ -336,9 +333,6 @@ public class XDDFTextRun {
      * Set whether the text in this run is formatted as superscript.
      * <p>
      * The size is specified using a percentage.
-     * </p>
-     *
-     * @param offset
      */
     public void setSuperscript(Double offset) {
         setBaseline(offset == null ? null : Math.abs(offset));
@@ -348,9 +342,6 @@ public class XDDFTextRun {
      * Set whether the text in this run is formatted as subscript.
      * <p>
      * The size is specified using a percentage.
-     * </p>
-     *
-     * @param offset
      */
     public void setSubscript(Double offset) {
         setBaseline(offset == null ? null : -Math.abs(offset));
@@ -407,7 +398,7 @@ public class XDDFTextRun {
 
     /**
      * @param size
-     *            font size in points. The value <code>null</code> unsets the
+     *            font size in points. The value {@code null} unsets the
      *            size for this run.
      *            <dl>
      *            <dt>Minimum inclusive =</dt>
@@ -432,7 +423,7 @@ public class XDDFTextRun {
     /**
      * Set the kerning of characters within a text run.
      * <p>
-     * The value <code>null</code> unsets the kerning for this run.
+     * The value {@code null} unsets the kerning for this run.
      * </p>
      *
      * @param kerning
@@ -451,7 +442,7 @@ public class XDDFTextRun {
     /**
      *
      * @return the kerning of characters within a text run,
-     * If this attribute is omitted then returns <code>null</code>.
+     * If this attribute is omitted then returns {@code null}.
      */
     public Double getCharacterKerning() {
         return findDefinedProperty(
@@ -468,7 +459,7 @@ public class XDDFTextRun {
      * negative values to condense.
      * </p>
      * <p>
-     * The value <code>null</code> unsets the spacing for this run.
+     * The value {@code null} unsets the spacing for this run.
      * </p>
      *
      * @param spacing
@@ -487,7 +478,7 @@ public class XDDFTextRun {
     /**
      *
      * @return the spacing between characters within a text run,
-     * If this attribute is omitted then returns <code>null</code>.
+     * If this attribute is omitted then returns {@code null}.
      */
     public Double getCharacterSpacing() {
         return findDefinedProperty(

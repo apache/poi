@@ -26,10 +26,10 @@ import java.util.Arrays;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function FREQUENCY()<br>
- * Returns a frequency distribution as a vertical array<p>
+ * Returns a frequency distribution as a vertical array
  * <p>
  * <b>Syntax</b><br>
- * <b>FREQUENCY</b>(<b>data_array</b>, <b>bins_array</b>)<p>
+ * <b>FREQUENCY</b>(<b>data_array</b>, <b>bins_array</b>)
  * <p>
  * <b>data_array</b> Required. An array of or reference to a set of values for which you want to count frequencies.
  * If data_array contains no values, FREQUENCY returns an array of zeros.<br>
@@ -43,6 +43,7 @@ public class Frequency extends Fixed2ArgFunction {
         // enforce singleton
     }
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         MatrixFunction.MutableValueCollector collector = new MatrixFunction.MutableValueCollector(false, false);
 

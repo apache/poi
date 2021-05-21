@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 
 /**
- * Implementation for Excel FACTDOUBLE() function.<p>
+ * Implementation for Excel FACTDOUBLE() function.
  * <p>
  * <b>Syntax</b>:<br> <b>FACTDOUBLE  </b>(<b>number</b>)<br>
  * <p>
@@ -46,6 +46,7 @@ public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
     //Caching of previously calculated factorial for speed
     static HashMap<Integer, BigInteger> cache = new HashMap<>();
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         int number;
         try {
@@ -75,6 +76,7 @@ public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
         return result;
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 1) {
             return ErrorEval.VALUE_INVALID;

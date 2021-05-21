@@ -29,12 +29,12 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
- * Implementation for the Excel EOMONTH() function.<p>
+ * Implementation for the Excel EOMONTH() function.
  * <p>
- * EOMONTH() returns the date of the last day of a month..<p>
+ * EOMONTH() returns the date of the last day of a month.
  * <p>
  * <b>Syntax</b>:<br>
- * <b>EOMONTH</b>(<b>start_date</b>,<b>months</b>)<p>
+ * <b>EOMONTH</b>(<b>start_date</b>,<b>months</b>)
  * <p>
  * <b>start_date</b> is the starting date of the calculation
  * <b>months</b> is the number of months to be added to <b>start_date</b>,

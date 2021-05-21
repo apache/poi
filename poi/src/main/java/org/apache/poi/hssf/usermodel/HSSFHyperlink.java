@@ -66,9 +66,7 @@ public class HSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Initialize the hyperlink by a <code>HyperlinkRecord</code> record
-     *
-     * @param record
+     * Initialize the hyperlink by a {@code HyperlinkRecord} record
      */
     protected HSSFHyperlink( HyperlinkRecord record )
     {

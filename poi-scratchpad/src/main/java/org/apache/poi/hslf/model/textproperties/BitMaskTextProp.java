@@ -37,9 +37,9 @@ import org.apache.poi.util.GenericRecordUtil;
 public abstract class BitMaskTextProp extends TextProp {
     protected static final Logger LOG = LogManager.getLogger(BitMaskTextProp.class);
 
-	private String[] subPropNames;
-	private int[] subPropMasks;
-	private boolean[] subPropMatches;
+	private final String[] subPropNames;
+	private final int[] subPropMasks;
+	private final boolean[] subPropMatches;
 
 	/** Fetch the list of the names of the sub properties */
 	public String[] getSubPropNames() { return subPropNames; }
@@ -141,9 +141,6 @@ public abstract class BitMaskTextProp extends TextProp {
 
 	/**
 	 * Convenience method to set a value with mask, without splitting it into the subvalues
-	 *
-	 * @param val
-	 * @param writeMask
 	 */
 	public void setValueWithMask(int val, int writeMask) {
 	    setWriteMask(writeMask);

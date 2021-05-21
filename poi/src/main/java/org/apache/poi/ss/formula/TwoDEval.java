@@ -38,25 +38,27 @@ public interface TwoDEval extends ValueEval {
 	int getHeight();
 
 	/**
-	 * @return <code>true</code> if the area has just a single row, this also includes
+	 * @return {@code true} if the area has just a single row, this also includes
 	 * the trivial case when the area has just a single cell.
 	 */
-	boolean isRow();
+	default boolean isRow() {
+		return false;
+	}
 
 	/**
-	 * @return <code>true</code> if the area has just a single column, this also includes
+	 * @return {@code true} if the area has just a single column, this also includes
 	 * the trivial case when the area has just a single cell.
 	 */
 	boolean isColumn();
 
 	/**
 	 * @param rowIndex relative row index (zero based)
-	 * @return a single row {@link TwoDEval}
+	 * @return a single row TwoDEval
 	 */
 	TwoDEval getRow(int rowIndex);
 	/**
 	 * @param columnIndex relative column index (zero based)
-	 * @return a single column {@link TwoDEval}
+	 * @return a single column TwoDEval
 	 */
 	TwoDEval getColumn(int columnIndex);
 
@@ -65,10 +67,8 @@ public interface TwoDEval extends ValueEval {
      * @return true if the  cell at row and col is a subtotal
      */
     boolean isSubTotal(int rowIndex, int columnIndex);
-    
+
     /**
-     *
-     * @param rowIndex
      * @return true if the row is hidden
      * @see Subtotal
      */

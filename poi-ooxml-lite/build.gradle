@@ -1,6 +1,4 @@
-import java.util.function.Function
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -89,7 +87,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+processResources.dependsOn 'compileOoxmlLite'
 compileJava.dependsOn 'compileOoxmlLite'
+sourcesJar.dependsOn 'compileOoxmlLite'
 
 task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
     sourceCompatibility = 9

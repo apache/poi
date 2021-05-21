@@ -191,8 +191,6 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     /**
-     * @param sheet
-     * @param row
      * @return height in twips (1/20th of point) for row or default
      */
     private static float getRowHeight(XSSFSheet sheet, int row) {
@@ -208,54 +206,59 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         return cell2 != null ? cell2 : calcCell(getCell1(), size.getCx(), size.getCy());
     }
 
+    @Override
     public short getCol1() {
         return (short)getCell1().getCol();
     }
 
     /**
      * @throws NullPointerException if cell1 is null (fixed position)
-     * @see org.apache.poi.ss.usermodel.ClientAnchor#setCol1(int)
      */
+    @Override
     public void setCol1(int col1) {
         cell1.setCol(col1);
     }
 
+    @Override
     public short getCol2() {
         return (short) getCell2().getCol();
     }
 
     /**
      * @throws NullPointerException if cell2 is null (fixed size)
-     * @see org.apache.poi.ss.usermodel.ClientAnchor#setCol2(int)
      */
+    @Override
     public void setCol2(int col2) {
         cell2.setCol(col2);
     }
 
+    @Override
     public int getRow1() {
         return getCell1().getRow();
     }
 
     /**
      * @throws NullPointerException if cell1 is null (fixed position)
-     * @see org.apache.poi.ss.usermodel.ClientAnchor#setRow1(int)
      */
+    @Override
     public void setRow1(int row1) {
         cell1.setRow(row1);
     }
 
+    @Override
     public int getRow2() {
         return getCell2().getRow();
     }
 
     /**
      * @throws NullPointerException if cell2 is null (fixed size)
-     * @see org.apache.poi.ss.usermodel.ClientAnchor#setRow2(int)
      */
+    @Override
     public void setRow2(int row2) {
         cell2.setRow(row2);
     }
 
+    @Override
     public int getDx1() {
         return Math.toIntExact(POIXMLUnits.parseLength(getCell1().xgetColOff()));
     }
@@ -264,10 +267,12 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @throws NullPointerException if cell1 is null (fixed position)
      * @see org.apache.poi.ss.usermodel.ChildAnchor#setDx1(int)
      */
+    @Override
     public void setDx1(int dx1) {
         cell1.setColOff(dx1);
     }
 
+    @Override
     public int getDy1() {
         return Math.toIntExact(POIXMLUnits.parseLength(getCell1().xgetRowOff()));
     }
@@ -276,10 +281,12 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @throws NullPointerException if cell1 is null (fixed position)
      * @see org.apache.poi.ss.usermodel.ChildAnchor#setDy1(int)
      */
+    @Override
     public void setDy1(int dy1) {
         cell1.setRowOff(dy1);
     }
 
+    @Override
     public int getDy2() {
         return Math.toIntExact(POIXMLUnits.parseLength(getCell2().xgetRowOff()));
     }
@@ -288,10 +295,12 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @throws NullPointerException if cell2 is null (fixed size)
      * @see org.apache.poi.ss.usermodel.ChildAnchor#setDy2(int)
      */
+    @Override
     public void setDy2(int dy2) {
         cell2.setRowOff(dy2);
     }
 
+    @Override
     public int getDx2() {
         return Math.toIntExact(POIXMLUnits.parseLength(getCell2().xgetColOff()));
     }
@@ -300,13 +309,14 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @throws NullPointerException if cell2 is null (fixed size)
      * @see org.apache.poi.ss.usermodel.ChildAnchor#setDx2(int)
      */
+    @Override
     public void setDx2(int dx2) {
         cell2.setColOff(dx2);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof XSSFClientAnchor)) return false;
+        if (!(o instanceof XSSFClientAnchor)) return false;
 
         XSSFClientAnchor anchor = (XSSFClientAnchor) o;
         return  getDx1() == anchor.getDx1() &&
@@ -369,7 +379,6 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Sets the top-left absolute position of the object.  To use this, "from" must be set to null.
-     * @param position
      * @since POI 3.17 beta 1
      */
     public void setPosition(CTPoint2D position) {
@@ -387,7 +396,6 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Sets the size of the object.  To use this, "to" must be set to null.
-     * @param size
      * @since POI 3.17 beta 1
      */
     public void setSize(CTPositiveSize2D size) {

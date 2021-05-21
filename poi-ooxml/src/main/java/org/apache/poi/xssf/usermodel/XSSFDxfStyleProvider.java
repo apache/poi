@@ -38,9 +38,7 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
     private final int stripeSize;
 
     /**
-     * @param dxf
      * @param stripeSize 0 for non-stripe styles, &gt; 1 for stripes
-     * @param colorMap
      */
     public XSSFDxfStyleProvider(CTDxf dxf, int stripeSize, IndexedColorMap colorMap) {
         this.stripeSize = stripeSize;
@@ -63,22 +61,27 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
         }
     }
 
+    @Override
     public BorderFormatting getBorderFormatting() {
         return border;
     }
 
+    @Override
     public FontFormatting getFontFormatting() {
         return font;
     }
 
+    @Override
     public ExcelNumberFormat getNumberFormat() {
         return number;
     }
 
+    @Override
     public PatternFormatting getPatternFormatting() {
         return fill;
     }
 
+    @Override
     public int getStripeSize() {
         return stripeSize;
     }

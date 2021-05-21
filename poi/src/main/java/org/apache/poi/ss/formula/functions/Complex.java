@@ -27,12 +27,11 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel COMPLEX () function.<p>
+ * Implementation for Excel COMPLEX () function.
  * <p>
  * <b>Syntax</b>:<br> <b>COMPLEX   </b>(<b>real_num</b>,<b>i_num</b>,<b>suffix </b> )<br>
  * <p>
  * Converts real and imaginary coefficients into a complex number of the form x + yi or x + yj.
- * <p>
  * <p>
  * All complex number functions accept "i" and "j" for suffix, but neither "I" nor "J".
  * Using uppercase results in the #VALUE! error value. All functions that accept two
@@ -41,10 +40,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <b>real_num</b> The real coefficient of the complex number.
  * If this argument is nonnumeric, this function returns the #VALUE! error value.
  * <p>
- * <p>
  * <b>i_num</b> The imaginary coefficient of the complex number.
  * If this argument is nonnumeric, this function returns the #VALUE! error value.
- * <p>
  * <p>
  * <b>suffix</b> The suffix for the imaginary component of the complex number.
  * <ul>
@@ -59,10 +56,12 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
     public static final String DEFAULT_SUFFIX = "i";
     public static final String SUPPORTED_SUFFIX = "j";
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval real_num, ValueEval i_num) {
         return this.evaluate(srcRowIndex, srcColumnIndex, real_num, i_num, new StringEval(DEFAULT_SUFFIX));
     }
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval real_num, ValueEval i_num, ValueEval suffix) {
         ValueEval veText1;
         try {
@@ -135,6 +134,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         return (number == Math.floor(number)) && !Double.isInfinite(number);
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);

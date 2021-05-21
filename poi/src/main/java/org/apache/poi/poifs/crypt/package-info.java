@@ -18,7 +18,7 @@
 /**
  * Implementation of the ECMA-376 and MS-propritary document encryptions<p>
  *
- * The implementation is split into the following packages:<p>
+ * The implementation is split into the following packages:
  *
  * <ul>
  * <li>This package contains common functions for both current implemented cipher modes.</li>

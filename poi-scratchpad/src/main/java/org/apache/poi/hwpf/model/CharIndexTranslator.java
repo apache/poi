@@ -44,7 +44,6 @@ public interface CharIndexTranslator {
     /**
      * Check if index is in table
      *
-     * @param bytePos
      * @return true if index in table, false if not
      */
     boolean isIndexInTable(int bytePos);
@@ -52,7 +51,6 @@ public interface CharIndexTranslator {
     /**
      * Return first index &gt;= bytePos that is in table
      *
-     * @param bytePos
      * @return  first index greater or equal to bytePos that is in table
      */
     int lookIndexForward(int bytePos);
@@ -60,7 +58,6 @@ public interface CharIndexTranslator {
     /**
      * Return last index &lt;= bytePos that is in table
      *
-     * @param bytePos
      * @return last index less of equal to bytePos that is in table
      */
     int lookIndexBackward(int bytePos);

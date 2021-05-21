@@ -40,9 +40,6 @@ public class DoubleByteUtil
      * We know MS zero-padded ascii, and we drop those.
      * There may be areas for improvement in this.
      *
-     * @param data
-     * @param offset
-     * @param lengthInBytes
      * @return Decoded String
      */
     public static String cp950ToString(byte[] data, int offset, int lengthInBytes) {

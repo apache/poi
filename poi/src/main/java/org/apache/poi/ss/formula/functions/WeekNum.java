@@ -29,12 +29,11 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
- * Implementation for Excel WeekNum() function.<p>
+ * Implementation for Excel WeekNum() function.
  * <p>
  * <b>Syntax</b>:<br> <b>WeekNum  </b>(<b>Serial_num</b>,<b>Return_type</b>)<br>
  * <p>
  * Returns a number that indicates where the week falls numerically within a year.
- * <p>
  * <p>
  * Serial_num     is a date within the week. Dates should be entered by using the DATE function,
  * or as results of other formulas or functions. For example, use DATE(2008,5,23)
@@ -46,6 +45,7 @@ import org.apache.poi.util.LocaleUtil;
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new WeekNum();
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval serialNumVE, ValueEval returnTypeVE) {
         double serialNum;
         try {
@@ -80,6 +80,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);

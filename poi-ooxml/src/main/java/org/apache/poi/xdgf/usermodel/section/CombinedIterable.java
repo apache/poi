@@ -21,13 +21,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.SortedMap;
 
 /**
  * An iterator used to iterate over the base and master items
- *
- * @param <T>
  */
 public class CombinedIterable<T> implements Iterable<T> {
 
@@ -43,14 +40,8 @@ public class CombinedIterable<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
 
-        final Iterator<Entry<Long, T>> vmasterI;
-
-        if (_masterItems != null) {
-            vmasterI = _masterItems.entrySet().iterator();
-        } else {
-            final Set<Entry<Long, T>> empty = Collections.emptySet();
-            vmasterI = empty.iterator();
-        }
+        final Iterator<Entry<Long, T>> vmasterI = (_masterItems == null)
+            ? Collections.emptyIterator() : _masterItems.entrySet().iterator();
 
         return new Iterator<T>() {
 
@@ -60,8 +51,8 @@ public class CombinedIterable<T> implements Iterable<T> {
             Entry<Long, T> currentMaster;
 
             // grab the iterator for both
-            Iterator<Entry<Long, T>> baseI = _baseItems.entrySet().iterator();
-            Iterator<Entry<Long, T>> masterI = vmasterI;
+            final Iterator<Entry<Long, T>> baseI = _baseItems.entrySet().iterator();
+            final Iterator<Entry<Long, T>> masterI = vmasterI;
 
             @Override
             public boolean hasNext() {

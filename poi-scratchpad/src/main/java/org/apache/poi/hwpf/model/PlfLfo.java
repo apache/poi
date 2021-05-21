@@ -162,7 +162,6 @@ public class PlfLfo
     /**
      * @param ilfo 1-based index
      * @return The {@link LFO} stored at the given index
-     * @throws NoSuchElementException
      */
     public LFO getLfo( int ilfo ) throws NoSuchElementException
     {
@@ -177,7 +176,6 @@ public class PlfLfo
     /**
      * @param ilfo 1-based index
      * @return The {@link LFOData} stored at the given index
-     * @throws NoSuchElementException
      */
     public LFOData getLfoData( int ilfo ) throws NoSuchElementException
     {

@@ -36,7 +36,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 
 	private String formula1;
 	private String formula2;
-	private int validationType = -1;
+	private final int validationType;
 	private int operator = -1;
 	private String[] explicitListOfValues;
 
@@ -73,10 +73,8 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/**
 	 * This is the constructor called using the OOXML raw data.  Excel overloads formula1 to also encode explicit value lists,
 	 * so this constructor has to check for and parse that syntax.
-	 * @param validationType
-	 * @param operator
 	 * @param formula1 Overloaded: formula1 or list of explicit values
-	 * @param formula2 (formula1 is a list of explicit values, this is ignored: use <code>null</code>)
+	 * @param formula2 (formula1 is a list of explicit values, this is ignored: use {@code null})
 	 */
 	public XSSFDataValidationConstraint(int validationType, int operator, String formula1, String formula2) {
 		super();
@@ -101,6 +99,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getExplicitListValues()
 	 */
+	@Override
 	public String[] getExplicitListValues() {
 		return explicitListOfValues;
 	}
@@ -108,6 +107,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getFormula1()
 	 */
+	@Override
 	public String getFormula1() {
 		return formula1;
 	}
@@ -115,6 +115,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getFormula2()
 	 */
+	@Override
 	public String getFormula2() {
 		return formula2;
 	}
@@ -122,6 +123,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getOperator()
 	 */
+	@Override
 	public int getOperator() {
 		return operator;
 	}
@@ -129,6 +131,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getValidationType()
 	 */
+	@Override
 	public int getValidationType() {
 		return validationType;
 	}
@@ -136,6 +139,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setExplicitListValues(java.lang.String[])
 	 */
+	@Override
 	public void setExplicitListValues(String[] explicitListValues) {
 		this.explicitListOfValues = explicitListValues;
 
@@ -143,8 +147,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		// further, Excel has no escaping for commas in explicit lists, so we don't need to worry about that.
 		if ( explicitListOfValues!=null && explicitListOfValues.length > 0 ) {
 			StringBuilder builder = new StringBuilder(QUOTE);
-			for (int i = 0; i < explicitListValues.length; i++) {
-				String string = explicitListValues[i];
+			for (String string : explicitListValues) {
 				if (builder.length() > 1) {
 					builder.append(LIST_SEPARATOR);
 				}
@@ -158,6 +161,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setFormula1(java.lang.String)
 	 */
+	@Override
 	public void setFormula1(String formula1) {
 		this.formula1 = removeLeadingEquals(formula1);
 	}
@@ -182,6 +186,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
 	 */
+	@Override
 	public void setFormula2(String formula2) {
 		this.formula2 = removeLeadingEquals(formula2);
 	}
@@ -189,6 +194,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setOperator(int)
 	 */
+	@Override
 	public void setOperator(int operator) {
 		this.operator = operator;
 	}

@@ -33,13 +33,7 @@ import org.apache.poi.util.LittleEndian;
 public final class OldCHPBinTable extends CHPBinTable
 {
   /**
-   * Constructor used to read an old-style binTable
-   *  in from a Word document.
-   *
-   * @param documentStream
-   * @param offset
-   * @param size
-   * @param fcMin
+   * Constructor used to read an old-style binTable in from a Word document.
    */
   public OldCHPBinTable(byte[] documentStream, int offset,
                      int size, int fcMin, OldTextPieceTable tpt)

@@ -49,6 +49,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
      * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
      * @since POI 4.1.0
      */
+    @Override
     public boolean isRowHidden(int rowIndex) {
         SXSSFRow row = _xs.getRow(rowIndex);
         if (row == null) return false;

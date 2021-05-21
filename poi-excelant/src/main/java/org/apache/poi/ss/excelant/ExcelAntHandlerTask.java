@@ -23,7 +23,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 /**
- * This is the class that backs the <handler> tag in the Ant task.
+ * This is the class that backs the {@code <handler>} tag in the Ant task.
  * <p>
  * Its purpose is to provide a way to manipulate a workbook in the course
  * of an ExcelAnt task.  The idea being to model a way for test writers to
@@ -36,7 +36,7 @@ import org.apache.tools.ant.Task;
  * class you write to manipulate the workbook.
  * <p>
  * In order to use this tag you must write a class that implements the
- * <code>IExcelAntWorkbookHandler</code> interface.  After writing the
+ * {@code IExcelAntWorkbookHandler} interface.  After writing the
  * class you should package it and it's dependencies into a jar file to
  * add as library in your Ant build file.
  */

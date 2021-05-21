@@ -68,7 +68,7 @@ public class XWPFChart extends XDDFChart {
      * Construct a chart from a package part.
      *
      * @param part the package part holding the chart data,
-     *             the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     *             the content type must be {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
      * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
@@ -105,30 +105,7 @@ public class XWPFChart extends XDDFChart {
 
     @Override
     public boolean equals(Object obj) {
-        /**
-         * In case two objects ARE equal, but its not the same instance, this
-         * implementation will always run through the whole
-         * byte-array-comparison before returning true. If this will turn into a
-         * performance issue, two possible approaches are available:<br>
-         * a) Use the checksum only and take the risk that two images might have
-         * the same CRC32 sum, although they are not the same.<br>
-         * b) Use a second (or third) checksum algorithm to minimise the chance
-         * that two images have the same checksums but are not equal (e.g.
-         * CRC32, MD5 and SHA-1 checksums, additionally compare the
-         * data-byte-array lengths).
-         */
-        if (obj == this) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof XWPFChart)) {
-            return false;
-        }
-        return false;
+        return obj == this;
     }
 
     @Override
@@ -141,8 +118,6 @@ public class XWPFChart extends XDDFChart {
      *
      * @param chartRelId the relation id of this chart in its parent document.
      * @param run the text run to which this chart will be inlined.
-     * @throws InvalidFormatException
-     * @throws IOException
      * @since POI 4.0.0
      */
     protected void attach(String chartRelId, XWPFRun run)
@@ -215,7 +190,6 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Top
      *
-     * @param margin
      * @since POI 4.0.0
      */
     public long getChartTopMargin(long margin) {
@@ -235,7 +209,6 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Bottom
      *
-     * @param margin
      * @since POI 4.0.0
      */
     public long getChartBottomMargin(long margin) {
@@ -255,7 +228,6 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from left
      *
-     * @param margin
      * @since POI 4.0.0
      */
     public long getChartLeftMargin(long margin) {
@@ -275,7 +247,6 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Right
      *
-     * @param margin
      * @since POI 4.0.0
      */
     public long getChartRightMargin(long margin) {

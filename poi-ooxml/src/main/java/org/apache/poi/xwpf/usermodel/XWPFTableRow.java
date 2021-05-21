@@ -41,8 +41,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
  * the child {@link XWPFTableCell}s
  */
 public class XWPFTableRow {
-    private CTRow ctRow;
-    private XWPFTable table;
+    private final CTRow ctRow;
+    private final XWPFTable table;
     private List<XWPFTableCell> tableCells;
 
     public XWPFTableRow(CTRow row, XWPFTable table) {
@@ -123,8 +123,6 @@ public class XWPFTableRow {
      * its attribute values). If omitted, then the table row shall automatically
      * resize its height to the height required by its contents (the equivalent
      * of an hRule value of auto).
-     *
-     * @param height
      */
     public void setHeight(int height) {
         CTTrPr properties = getTrPr();
@@ -221,9 +219,9 @@ public class XWPFTableRow {
      * if there is no XWPFTableCell which belongs to the parameter CTTc cell null will be returned
      */
     public XWPFTableCell getTableCell(CTTc cell) {
-        for (int i = 0; i < tableCells.size(); i++) {
-            if (tableCells.get(i).getCTTc() == cell)
-                return tableCells.get(i);
+        for (XWPFTableCell tableCell : tableCells) {
+            if (tableCell.getCTTc() == cell)
+                return tableCell;
         }
         return null;
     }

@@ -42,7 +42,7 @@ public final class XSSFConnector extends XSSFShape {
 
     private static CTConnector prototype;
 
-    private CTConnector ctShape;
+    private final CTConnector ctShape;
 
     /**
      * Construct a new XSSFConnector object.
@@ -128,6 +128,7 @@ public final class XSSFConnector extends XSSFShape {
         ctShape.getSpPr().getPrstGeom().setPrst(STShapeType.Enum.forInt(type));
     }
 
+    @Override
     protected CTShapeProperties getShapeProperties(){
         return ctShape.getSpPr();
     }

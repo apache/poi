@@ -31,10 +31,9 @@ public interface HwmfRecord extends GenericRecord {
      *
      * @param leis the little endian input stream
      * @return count of processed bytes
-     * @throws IOException
      */
     int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException;
-    
+
     /**
      * Apply the record settings to the graphics context
      *
@@ -43,7 +42,7 @@ public interface HwmfRecord extends GenericRecord {
     void draw(HwmfGraphics ctx);
 
     @Override
-    default Enum getGenericRecordType() {
+    default Enum<?> getGenericRecordType() {
         return getWmfRecordType();
     }
 }

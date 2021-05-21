@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNo
 public final class XSSFPicture extends XSSFShape implements Picture {
     private static final Logger LOG = LogManager.getLogger(XSSFPicture.class);
 
-    /**
+    /*
      * Column width measured as the number of characters of the maximum digit width of the
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
      * padding (two on each side), plus 1 pixel padding for the gridlines.
@@ -63,7 +63,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     /**
      * This object specifies a picture object and all its properties
      */
-    private CTPicture ctPicture;
+    private final CTPicture ctPicture;
 
     /**
      * Construct a new XSSFPicture object. This constructor is called from
@@ -140,6 +140,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @see #resize(double, double)
      */
+    @Override
     public void resize(){
         resize(Double.MAX_VALUE);
     }
@@ -149,6 +150,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @see #resize(double, double)
      */
+    @Override
     public void resize(double scale) {
         resize(scale, scale);
     }
@@ -159,19 +161,18 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
      * If the default font is changed the resized image can be streched vertically or horizontally.
-     * </p>
      * <p>
-     * <code>resize(1.0,1.0)</code> keeps the original size,<br>
-     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br>
-     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br>
+     * {@code resize(1.0,1.0)} keeps the original size,<br>
+     * {@code resize(0.5,0.5)} resize to 50% of the original,<br>
+     * {@code resize(2.0,2.0)} resizes to 200% of the original.<br>
      * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image.
-     * </p>
      *
      * @param scaleX the amount by which the image width is multiplied relative to the original width,
      *  when set to {@link Double#MAX_VALUE} the width of the embedded image is used
      * @param scaleY the amount by which the image height is multiplied relative to the original height,
      *  when set to {@link Double#MAX_VALUE} the height of the embedded image is used
      */
+    @Override
     public void resize(double scaleX, double scaleY){
         XSSFClientAnchor anchor = getClientAnchor();
         XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
@@ -197,6 +198,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @return XSSFClientAnchor with the preferred size for this image
      */
+    @Override
     public XSSFClientAnchor getPreferredSize(){
         return getPreferredSize(1);
     }
@@ -218,6 +220,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * @param scaleY the amount by which image height is multiplied relative to the original height.
      * @return XSSFClientAnchor with the preferred size for this image
      */
+    @Override
     public XSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
         Dimension dim = ImageUtils.setPreferredSize(this, scaleX, scaleY);
         CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
@@ -250,6 +253,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @return image dimension in pixels
      */
+    @Override
     public Dimension getImageDimension() {
         XSSFPictureData picData = getPictureData();
         return getImageDimension(picData.getPackagePart(), picData.getPictureType());
@@ -260,11 +264,13 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @return picture data for this shape
      */
+    @Override
     public XSSFPictureData getPictureData() {
         String blipId = ctPicture.getBlipFill().getBlip().getEmbed();
         return  (XSSFPictureData)getDrawing().getRelationById(blipId);
     }
 
+    @Override
     protected CTShapeProperties getShapeProperties(){
         return ctPicture.getSpPr();
     }

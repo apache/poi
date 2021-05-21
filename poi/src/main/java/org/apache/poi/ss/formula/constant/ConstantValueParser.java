@@ -24,7 +24,7 @@ import org.apache.poi.util.StringUtil;
 /**
  * To support Constant Values (2.5.7) as required by the CRN record.
  * This class is also used for two dimensional arrays which are encoded by
- * EXTERNALNAME (5.39) records and Array tokens.<p>
+ * EXTERNALNAME (5.39) records and Array tokens.
  */
 public final class ConstantValueParser {
 	// note - these (non-combinable) enum values are sparse.
@@ -59,7 +59,7 @@ public final class ConstantValueParser {
 				in.readLong(); // 8 byte 'not used' field
 				return EMPTY_REPRESENTATION;
 			case TYPE_NUMBER:
-				return Double.valueOf(in.readDouble());
+				return in.readDouble();
 			case TYPE_STRING:
 				return StringUtil.readUnicodeString(in);
 			case TYPE_BOOLEAN:
@@ -88,7 +88,7 @@ public final class ConstantValueParser {
 
 	public static int getEncodedSize(Object[] values) {
 		// start with one byte 'type' code for each value
-		int result = values.length * 1;
+		int result = values.length;
 		for (Object value : values) {
 			result += getEncodedSize(value);
 		}
@@ -126,14 +126,14 @@ public final class ConstantValueParser {
 		if (value instanceof Boolean) {
 			Boolean bVal = ((Boolean)value);
 			out.writeByte(TYPE_BOOLEAN);
-			long longVal = bVal.booleanValue() ? 1L : 0L;
+			long longVal = bVal ? 1L : 0L;
 			out.writeLong(longVal);
 			return;
 		}
 		if (value instanceof Double) {
 			Double dVal = (Double) value;
 			out.writeByte(TYPE_NUMBER);
-			out.writeDouble(dVal.doubleValue());
+			out.writeDouble(dVal);
 			return;
 		}
 		if (value instanceof String) {

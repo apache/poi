@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Locale Collection<p>
+ * Locale Collection
  * <p>
  * This enum can be used to map between Windows LCID and Java {@link java.util.Locale Locales}
  *

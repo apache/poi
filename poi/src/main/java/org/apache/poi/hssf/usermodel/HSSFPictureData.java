@@ -42,7 +42,7 @@ public class HSSFPictureData implements PictureData
     /**
      * Underlying escher blip record containing the bitmap data.
      */
-    private EscherBlipRecord blip;
+    private final EscherBlipRecord blip;
 
     /**
      * Constructs a picture object.
@@ -57,6 +57,7 @@ public class HSSFPictureData implements PictureData
     /* (non-Javadoc)
      * @see org.apache.poi.hssf.usermodel.PictureData#getData()
      */
+    @Override
     public byte[] getData() {
         return new ImageHeaderPNG(blip.getPicturedata()).extractPNG();
     }
@@ -77,8 +78,9 @@ public class HSSFPictureData implements PictureData
 
     /**
     * @see #getFormat
-    * @return 'wmf', 'jpeg' etc depending on the format. never <code>null</code>
+    * @return 'wmf', 'jpeg' etc depending on the format. never {@code null}
     */
+    @Override
     public String suggestFileExtension() {
         switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
             case BLIP_WMF:
@@ -93,14 +95,17 @@ public class HSSFPictureData implements PictureData
                 return "jpeg";
             case BLIP_DIB:
                 return "dib";
+            case BLIP_TIFF:
+                return "tif";
             default:
                 return "";
         }
     }
-    
+
     /**
      * Returns the mime type for the image
      */
+    @Override
     public String getMimeType() {
        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
            case BLIP_WMF:
@@ -115,11 +120,13 @@ public class HSSFPictureData implements PictureData
                return "image/jpeg";
            case BLIP_DIB:
                return "image/bmp";
+           case BLIP_TIFF:
+               return "image/tiff";
            default:
                return "image/unknown";
        }
     }
-    
+
     /**
      * @return the POI internal image type, 0 if unknown image type (was -1 prior to 5.0.0 but
      * that was inconsistent with other {@link PictureData} implementations)
@@ -131,6 +138,7 @@ public class HSSFPictureData implements PictureData
      * @see Workbook#PICTURE_TYPE_PNG
      * @see Workbook#PICTURE_TYPE_WMF
      */
+    @Override
     public int getPictureType() {
         switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
             case BLIP_WMF:
@@ -145,8 +153,10 @@ public class HSSFPictureData implements PictureData
                 return Workbook.PICTURE_TYPE_JPEG;
             case BLIP_DIB:
                 return Workbook.PICTURE_TYPE_DIB;
+            case BLIP_TIFF:
+                // not another int constant ...
             default:
                 return 0;
-        }        
+        }
     }
 }

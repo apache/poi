@@ -46,6 +46,7 @@ dependencies {
     testImplementation project(path:':poi-ooxml', configuration:'tests')
     testImplementation project(path:':poi-scratchpad', configuration:'tests')
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
+    testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
 }
 
 final String MODULE_NAME = 'org.apache.poi.stress'
@@ -125,45 +126,15 @@ test {
 
     dependsOn { testJar }
 
-    useJUnitPlatform()
-
     doFirst {
-        jvmArgs = [
-            '-Djava.io.tmpdir=build',
-            '-DPOI.testdata.path=../test-data',
-            '-Djava.awt.headless=true',
-            '-Djava.locale.providers=JRE,CLDR',
-            '-Duser.language=en',
-            '-Duser.country=US',
-            '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
-            "-Dversion.id=${project.version}",
-            '-ea',
+        jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
-
-            '-Djunit.jupiter.execution.parallel.enabled=true',
-            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
-            // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
-                '-Dsun.reflect.debugModuleAccessChecks=true',
-                '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
-                '--illegal-access=warn',
-
                 '--add-modules', MODULE_NAME,
-
-                // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
-                // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
-                // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
-
                 '--module-path', '../build/dist/maven/poi-integration-tests:' + files(TEST_MODULE_PATH).asPath,
             ]
         }
     }
 }
-
-generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"

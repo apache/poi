@@ -89,7 +89,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
     @Override
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
-        FtrDocument ftrDocument = null;
+        FtrDocument ftrDocument;
         try (InputStream is = getPackagePart().getInputStream()) {
             ftrDocument = FtrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             headerFooter = ftrDocument.getFtr();
@@ -125,6 +125,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return BodyType.FOOTER;
     }

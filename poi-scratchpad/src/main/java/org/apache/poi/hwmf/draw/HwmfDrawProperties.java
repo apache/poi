@@ -322,8 +322,6 @@ public class HwmfDrawProperties {
     /**
      * Sets the current palette.
      * It's the callers duty to set a modifiable copy of the palette.
-     *
-     * @param palette
      */
     public void setPalette(List<PaletteEntry> palette) {
         this.palette = palette;

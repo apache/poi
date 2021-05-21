@@ -41,7 +41,7 @@ public interface IBody {
      *
      * @return the Part, to which the body belongs
      */
-    public POIXMLDocumentPart getPart();
+    POIXMLDocumentPart getPart();
 
     /**
      * get the PartType of the body, for example
@@ -49,26 +49,26 @@ public interface IBody {
      *
      * @return the PartType of the body
      */
-    public BodyType getPartType();
+    BodyType getPartType();
 
     /**
      * Returns an Iterator with paragraphs and tables,
      * in the order that they occur in the text.
      */
-    public List<IBodyElement> getBodyElements();
+    List<IBodyElement> getBodyElements();
 
     /**
      * Returns the paragraph(s) that holds
      * the text of the header or footer.
      */
-    public List<XWPFParagraph> getParagraphs();
+    List<XWPFParagraph> getParagraphs();
 
     /**
      * Return the table(s) that holds the text
      * of the IBodyPart, for complex cases
      * where a paragraph isn't used.
      */
-    public List<XWPFTable> getTables();
+    List<XWPFTable> getTables();
 
     /**
      * Returns the paragraph corresponding to the provided {@link CTP}.
@@ -77,58 +77,47 @@ public interface IBody {
      * @return The paragraph corresponding to the {@link CTP}, or {@code null} if there is no corresponding paragraph in
      * this body.
      */
-    public XWPFParagraph getParagraph(CTP p);
+    XWPFParagraph getParagraph(CTP p);
 
     /**
      * if there is a corresponding {@link XWPFTable} of the parameter ctTable in the tableList of this header
      * the method will return this table
      * if there is no corresponding {@link XWPFTable} the method will return null
-     *
-     * @param ctTable
      */
-    public XWPFTable getTable(CTTbl ctTable);
+    XWPFTable getTable(CTTbl ctTable);
 
     /**
      * Returns the paragraph that of position pos
      */
-    public XWPFParagraph getParagraphArray(int pos);
+    XWPFParagraph getParagraphArray(int pos);
 
     /**
      * Returns the table at position pos
      */
-    public XWPFTable getTableArray(int pos);
+    XWPFTable getTableArray(int pos);
 
     /**
      * inserts a new paragraph at position of the cursor
-     *
-     * @param cursor
      */
-    public XWPFParagraph insertNewParagraph(XmlCursor cursor);
+    XWPFParagraph insertNewParagraph(XmlCursor cursor);
 
     /**
      * inserts a new Table at the cursor position.
-     *
-     * @param cursor
      */
-    public XWPFTable insertNewTbl(XmlCursor cursor);
+    XWPFTable insertNewTbl(XmlCursor cursor);
 
     /**
      * inserts a new Table at position pos
-     *
-     * @param pos
-     * @param table
      */
     void insertTable(int pos, XWPFTable table);
 
     /**
      * returns the TableCell to which the Table belongs
-     *
-     * @param cell
      */
-    public XWPFTableCell getTableCell(CTTc cell);
+    XWPFTableCell getTableCell(CTTc cell);
 
     /**
      * Return XWPFDocument
      */
-    public XWPFDocument getXWPFDocument();
+    XWPFDocument getXWPFDocument();
 }

@@ -91,7 +91,7 @@ public class XSSFTextRun {
     /**
      *
      * @param fontSize  font size in points.
-     * The value of <code>-1</code> unsets the Sz attribute from the underlying xml bean
+     * The value of {@code -1} unsets the Sz attribute from the underlying xml bean
      */
     public void setFontSize(double fontSize){
         CTTextCharacterProperties rPr = getRPr();
@@ -158,7 +158,7 @@ public class XSSFTextRun {
      * Specifies the typeface, or name of the font that is to be used for this text run.
      *
      * @param typeface  the font to apply to this text run.
-     * The value of <code>null</code> unsets the Typeface attribute from the underlying xml.
+     * The value of {@code null} unsets the Typeface attribute from the underlying xml.
      */
     public void setFont(String typeface){
         setFontFamily(typeface, (byte)-1, (byte)-1, false);
@@ -241,9 +241,6 @@ public class XSSFTextRun {
      *  <p>
      *     The size is specified using a percentage.
      *     Positive values indicate superscript, negative values indicate subscript.
-     *  </p>
-     *
-     * @param baselineOffset
      */
     public void setBaselineOffset(double baselineOffset){
         getRPr().setBaseline((int) baselineOffset * 1000);

@@ -23,10 +23,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * <p>Implementation for Excel QUOTIENT () function.<p>
+ * <p>Implementation for Excel QUOTIENT () function.
  * <p>
  * <b>Syntax</b>:<br> <b>QUOTIENT</b>(<b>Numerator</b>,<b>Denominator</b>)<br>
- * <p>
  * <p>
  * Numerator     is the dividend.
  * Denominator     is the divisor.
@@ -41,16 +40,17 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new Quotient();
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval venumerator, ValueEval vedenominator) {
 
-        double enumerator = 0;
+        double enumerator;
         try {
             enumerator = OperandResolver.coerceValueToDouble(venumerator);
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
 
-        double denominator = 0;
+        double denominator;
         try {
             denominator = OperandResolver.coerceValueToDouble(vedenominator);
         } catch (EvaluationException e) {
@@ -64,6 +64,7 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
         return new NumberEval((int)(enumerator / denominator));
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 2) {
             return ErrorEval.VALUE_INVALID;

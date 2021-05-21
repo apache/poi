@@ -27,7 +27,6 @@ public final class HSSFChildAnchor extends HSSFAnchor {
 
     /**
      * create anchor from existing file
-     * @param escherChildAnchorRecord
      */
     public HSSFChildAnchor(EscherChildAnchorRecord escherChildAnchorRecord) {
         this._escherChildAnchor = escherChildAnchorRecord;
@@ -108,11 +107,13 @@ public final class HSSFChildAnchor extends HSSFAnchor {
     }
 
 
+    @Override
     public boolean isHorizontallyFlipped() {
         return _isHorizontallyFlipped;
     }
 
 
+    @Override
     public boolean isVerticallyFlipped() {
         return _isVerticallyFlipped;
     }

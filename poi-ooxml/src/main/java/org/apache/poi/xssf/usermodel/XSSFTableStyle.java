@@ -49,8 +49,6 @@ public class XSSFTableStyle implements TableStyle {
 
     /**
      * @param index style definition index or built-in ordinal depending on use
-     * @param dxfs
-     * @param tableStyle
      * @param colorMap indexed color map - default or custom
      * @see TableStyle#getIndex()
      */
@@ -99,10 +97,12 @@ public class XSSFTableStyle implements TableStyle {
         }
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getIndex() {
         return index;
     }
@@ -110,10 +110,12 @@ public class XSSFTableStyle implements TableStyle {
     /**
      * Always false for these, these are user defined styles
      */
+    @Override
     public boolean isBuiltin() {
         return false;
     }
 
+    @Override
     public DifferentialStyleProvider getStyle(TableStyleType type) {
         return elementMap.get(type);
     }

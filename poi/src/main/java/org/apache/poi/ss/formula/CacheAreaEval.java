@@ -31,47 +31,50 @@ import org.apache.poi.ss.util.CellReference;
  */
 
 public final class CacheAreaEval extends AreaEvalBase {
-    
+
     /* Value Containter */
     private final ValueEval[] _values;
-    
+
     public CacheAreaEval(AreaI ptg, ValueEval[] values) {
         super(ptg);
         _values = values;
     }
-    
+
     public CacheAreaEval(int firstRow, int firstColumn, int lastRow, int lastColumn, ValueEval[] values) {
         super(firstRow, firstColumn, lastRow, lastColumn);
         _values = values;
     }
-    
+
+    @Override
     public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
         return getRelativeValue(-1, relativeRowIndex, relativeColumnIndex);
     }
-    
+
+    @Override
     public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
         int oneDimensionalIndex = relativeRowIndex * getWidth() + relativeColumnIndex;
         return _values[oneDimensionalIndex];
     }
 
+    @Override
     public AreaEval offset(int relFirstRowIx, int relLastRowIx,
             int relFirstColIx, int relLastColIx) {
-        
+
         AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
                 relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
-        
+
         int height = area.getLastRow() - area.getFirstRow() + 1;
         int width = area.getLastColumn() - area.getFirstColumn() + 1;
 
         ValueEval[] newVals = new ValueEval[height * width];
-        
+
         int startRow = area.getFirstRow() - getFirstRow();
         int startCol = area.getFirstColumn() - getFirstColumn();
-        
+
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 ValueEval temp;
-                
+
                 /* CacheAreaEval is only temporary value representation, does not equal sheet selection
                  * so any attempts going beyond the selection results in BlankEval
                  */
@@ -81,13 +84,14 @@ public final class CacheAreaEval extends AreaEvalBase {
                 else {
                     temp = _values[(startRow + j) * getWidth() + (startCol + i)];
                 }
-                newVals[j * width + i] = temp;     
+                newVals[j * width + i] = temp;
             }
         }
 
         return new CacheAreaEval(area, newVals);
     }
 
+    @Override
     public TwoDEval getRow(int rowIndex) {
         if (rowIndex >= getHeight()) {
             throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
@@ -95,13 +99,14 @@ public final class CacheAreaEval extends AreaEvalBase {
         }
         int absRowIndex = getFirstRow() + rowIndex;
         ValueEval[] values = new ValueEval[getWidth()];
-        
+
         for (int i = 0; i < values.length; i++) {
             values[i] = getRelativeValue(rowIndex, i);
         }
         return new CacheAreaEval(absRowIndex, getFirstColumn() , absRowIndex, getLastColumn(), values);
     }
 
+    @Override
     public TwoDEval getColumn(int columnIndex) {
         if (columnIndex >= getWidth()) {
             throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
@@ -109,14 +114,14 @@ public final class CacheAreaEval extends AreaEvalBase {
         }
         int absColIndex = getFirstColumn() + columnIndex;
         ValueEval[] values = new ValueEval[getHeight()];
-        
+
         for (int i = 0; i < values.length; i++) {
             values[i] = getRelativeValue(i, columnIndex);
         }
-        
+
         return new CacheAreaEval(getFirstRow(), absColIndex, getLastRow(), absColIndex, values);
     }
-    
+
     public String toString() {
         CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
         CellReference crB = new CellReference(getLastRow(), getLastColumn());

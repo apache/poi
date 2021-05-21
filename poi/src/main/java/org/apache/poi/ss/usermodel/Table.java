@@ -71,9 +71,9 @@ public interface Table {
      * Returns the index of a given named column in the table (names are case insensitive in XSSF).
      * Note this list is lazily loaded and cached for performance.
      * Changes to the underlying table structure are not reflected in later calls
-     * unless <code>XSSFTable.updateHeaders()</code> is called to reset the cache.
+     * unless {@code XSSFTable.updateHeaders()} is called to reset the cache.
      * @param columnHeader the column header name to get the table column index of
-     * @return column index corresponding to <code>columnHeader</code>
+     * @return column index corresponding to {@code columnHeader}
      */
     int findColumnIndex(String columnHeader);
     /**
@@ -115,7 +115,6 @@ public interface Table {
 
     /**
      * checks if the given cell is part of the table.  Includes checking that they are on the same sheet.
-     * @param cell
      * @return true if the table and cell are on the same sheet and the cell is within the table range.
      * @since 3.17 beta 1
      * @see #contains(CellReference) (prefered, faster execution and handles undefined cells)

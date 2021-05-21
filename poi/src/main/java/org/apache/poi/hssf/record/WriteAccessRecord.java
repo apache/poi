@@ -31,7 +31,7 @@ import org.apache.poi.util.StringUtil;
  * Title: Write Access Record (0x005C)<p>
  *
  * Description: Stores the username of that who owns the spreadsheet generator (on unix the user's
- * login, on Windoze its the name you typed when you installed the thing)<p>
+ * login, on Windoze its the name you typed when you installed the thing)
  */
 public final class WriteAccessRecord extends StandardRecord {
 	public static final short sid = 0x005C;
@@ -124,6 +124,7 @@ public final class WriteAccessRecord extends StandardRecord {
 		return field_1_username;
 	}
 
+	@Override
 	public void serialize(LittleEndianOutput out) {
 		String username = getUsername();
 		boolean is16bit = StringUtil.hasMultibyte(username);
@@ -140,10 +141,12 @@ public final class WriteAccessRecord extends StandardRecord {
 		out.write(PADDING, 0, paddingSize);
 	}
 
+	@Override
 	protected int getDataSize() {
 		return DATA_SIZE;
 	}
 
+	@Override
 	public short getSid() {
 		return sid;
 	}

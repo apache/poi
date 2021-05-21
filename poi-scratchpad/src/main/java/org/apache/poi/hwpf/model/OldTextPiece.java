@@ -52,7 +52,6 @@ public class OldTextPiece extends TextPiece {
 
     /**
      * @return nothing, ever. Always throws an UnsupportedOperationException
-     * @throws UnsupportedOperationException
      */
     @NotImplemented
     @Override
@@ -77,8 +76,8 @@ public class OldTextPiece extends TextPiece {
      *
      * @param start Local start position, in characters
      * @param end   Local end position, in characters
-     * @throws UnsupportedOperationException
      */
+    @Override
     @Deprecated
     @NotImplemented
     public String substring(int start, int end) {
@@ -89,6 +88,7 @@ public class OldTextPiece extends TextPiece {
      * Not implemented for OldTextPiece.
      * Always throws UnsupportedOperationException
      */
+    @Override
     @Deprecated
     @NotImplemented
     public void adjustForDelete(int start, int length) {
@@ -98,6 +98,7 @@ public class OldTextPiece extends TextPiece {
     /**
      * Returns the length, in bytes
      */
+    @Override
     public int bytesLength() {
         return rawBytes.length;
     }

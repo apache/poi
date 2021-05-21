@@ -43,12 +43,6 @@ final String MODULE_NAME = 'org.apache.poi.examples'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    withSourcesJar()
-}
-
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
@@ -82,8 +76,4 @@ jar {
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
     }
-}
-
-sourcesJar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 }

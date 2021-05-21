@@ -32,9 +32,7 @@ import org.apache.poi.hpsf.ClassID;
  * managed by a Filesystem instance.
  */
 
-public interface DirectoryEntry
-    extends Entry, Iterable<Entry>
-{
+public interface DirectoryEntry extends Entry, Iterable<Entry> {
 
     /**
      * get an iterator of the Entry instances contained directly in
@@ -47,7 +45,7 @@ public interface DirectoryEntry
      *         implementations of Entry.
      */
 
-    public Iterator<Entry> getEntries();
+    Iterator<Entry> getEntries();
 
     /**
      * get the names of all the Entries contained directly in this
@@ -58,7 +56,7 @@ public interface DirectoryEntry
      *         getEntry(String), which may be empty (if this
      *         DirectoryEntry is empty)
      */
-    public Set<String> getEntryNames();
+    Set<String> getEntryNames();
 
     /**
      * is this DirectoryEntry empty?
@@ -66,7 +64,7 @@ public interface DirectoryEntry
      * @return true if this instance contains no Entry instances
      */
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * find out how many Entry instances are contained directly within
@@ -76,13 +74,13 @@ public interface DirectoryEntry
      *         Entry instances
      */
 
-    public int getEntryCount();
+    int getEntryCount();
 
     /**
      * Checks if entry with specified name present
      */
 
-    public boolean hasEntry( final String name );
+    boolean hasEntry( final String name );
 
     /**
      * get a specified Entry by name
@@ -96,8 +94,7 @@ public interface DirectoryEntry
      *            name exists in this DirectoryEntry
      */
 
-    public Entry getEntry(final String name)
-        throws FileNotFoundException;
+    Entry getEntry(final String name) throws FileNotFoundException;
 
     /**
      * create a new DocumentEntry
@@ -107,12 +104,9 @@ public interface DirectoryEntry
      *               DocumentEntry
      *
      * @return the new DocumentEntry
-     *
-     * @exception IOException
      */
 
-    public DocumentEntry createDocument(final String name,
-                                        final InputStream stream)
+    DocumentEntry createDocument(final String name, final InputStream stream)
         throws IOException;
 
     /**
@@ -123,12 +117,9 @@ public interface DirectoryEntry
      * @param writer the writer of the new DocumentEntry
      *
      * @return the new DocumentEntry
-     *
-     * @exception IOException
      */
 
-    public DocumentEntry createDocument(final String name, final int size,
-                                        final POIFSWriterListener writer)
+    DocumentEntry createDocument(final String name, final int size, final POIFSWriterListener writer)
         throws IOException;
 
     /**
@@ -137,26 +128,21 @@ public interface DirectoryEntry
      * @param name the name of the new DirectoryEntry
      *
      * @return the new DirectoryEntry
-     *
-     * @exception IOException
      */
-
-    public DirectoryEntry createDirectory(final String name)
-        throws IOException;
+    DirectoryEntry createDirectory(final String name) throws IOException;
 
     /**
      * Gets the storage clsid of the directory entry
      *
      * @return storage Class ID
      */
-    public ClassID getStorageClsid();
+    ClassID getStorageClsid();
 
     /**
      * Sets the storage clsid for the directory entry
      *
      * @param clsidStorage storage Class ID
      */
-    public void setStorageClsid(ClassID clsidStorage);
-
-}   // end public interface DirectoryEntry
+    void setStorageClsid(ClassID clsidStorage);
+}
 

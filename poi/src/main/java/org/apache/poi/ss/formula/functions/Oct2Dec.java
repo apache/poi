@@ -23,7 +23,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * <p>Implementation for Excel Oct2Dec() function.<p>
+ * <p>Implementation for Excel Oct2Dec() function.
  * <p>
  * Converts an octal number to decimal.
  * </p>
@@ -44,6 +44,7 @@ public class Oct2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     static final int MAX_NUMBER_OF_PLACES = 10;
     static final int OCTAL_BASE = 8;
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         String octal = OperandResolver.coerceValueToString(numberVE);
         try {
@@ -53,6 +54,7 @@ public class Oct2Dec extends Fixed1ArgFunction implements FreeRefFunction {
         }
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 1) {
             return ErrorEval.VALUE_INVALID;

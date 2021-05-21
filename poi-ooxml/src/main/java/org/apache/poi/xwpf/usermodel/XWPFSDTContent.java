@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
@@ -26,11 +27,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 /**
  * Experimental class to offer rudimentary read-only processing of
  * of the contentblock of an SDT/ContentControl.
- * <p>
- * <p>
- * <p>
- * WARNING - APIs expected to change rapidly
  */
+@Beta
 public class XWPFSDTContent implements ISDTContent {
 
     // private final IBody part;
@@ -39,7 +37,7 @@ public class XWPFSDTContent implements ISDTContent {
     // private List<XWPFTable> tables = new ArrayList<>();
     // private List<XWPFRun> runs = new ArrayList<>();
     // private List<XWPFSDT> contentControls = new ArrayList<>();
-    private List<ISDTContents> bodyElements = new ArrayList<>();
+    private final List<ISDTContents> bodyElements = new ArrayList<>();
 
     public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent) {
         if (sdtRun == null) {

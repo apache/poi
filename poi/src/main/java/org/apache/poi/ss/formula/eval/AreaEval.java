@@ -50,7 +50,7 @@ public interface AreaEval extends TwoDEval, ThreeDEval {
 
     /**
      * @return the ValueEval from within this area at the specified row and col index. Never
-     * <code>null</code> (possibly {@link BlankEval}).  The specified indexes should be absolute
+     * {@code null} (possibly {@link BlankEval}).  The specified indexes should be absolute
      * indexes in the sheet and not relative indexes within the area.
      */
     ValueEval getAbsoluteValue(int row, int col);
@@ -59,34 +59,32 @@ public interface AreaEval extends TwoDEval, ThreeDEval {
      * returns true if the cell at row and col specified
      * as absolute indexes in the sheet is contained in
      * this area.
-     * @param row
-     * @param col
      */
     boolean contains(int row, int col);
 
     /**
      * returns true if the specified col is in range
-     * @param col
      */
     boolean containsColumn(int col);
 
     /**
      * returns true if the specified row is in range
-     * @param row
      */
     boolean containsRow(int row);
 
+    @Override
     int getWidth();
+    @Override
     int getHeight();
     /**
      * @return the ValueEval from within this area at the specified relativeRowIndex and
-     * relativeColumnIndex. Never <code>null</code> (possibly {@link BlankEval}). The
+     * relativeColumnIndex. Never {@code null} (possibly {@link BlankEval}). The
      * specified indexes should relative to the top left corner of this area.
      */
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
 
     /**
-     * Creates an {@link AreaEval} offset by a relative amount from from the upper left cell
+     * Creates an AreaEval offset by a relative amount from from the upper left cell
      * of this area
      */
     AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);

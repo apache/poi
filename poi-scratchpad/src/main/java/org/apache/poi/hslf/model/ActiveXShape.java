@@ -46,7 +46,7 @@ public final class ActiveXShape extends HSLFPictureShape {
     public static final int DEFAULT_ACTIVEX_THUMBNAIL = -1;
 
     /**
-     * Create a new <code>Picture</code>
+     * Create a new {@code Picture}
      *
     * @param pictureData the picture data
      */
@@ -56,10 +56,10 @@ public final class ActiveXShape extends HSLFPictureShape {
     }
 
     /**
-      * Create a <code>Picture</code> object
+      * Create a {@code Picture} object
       *
-      * @param escherRecord the <code>EscherSpContainer</code> record which holds information about
-      *        this picture in the <code>Slide</code>
+      * @param escherRecord the {@code EscherSpContainer} record which holds information about
+      *        this picture in the {@code Slide}
       * @param parent the parent shape of this picture
       */
      protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
@@ -69,13 +69,14 @@ public final class ActiveXShape extends HSLFPictureShape {
     /**
      * Create a new Placeholder and initialize internal structures
      *
-     * @return the created <code>EscherContainerRecord</code> which holds shape data
+     * @return the created {@code EscherContainerRecord} which holds shape data
      */
     @Override
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
         EscherContainerRecord ecr = super.createSpContainer(idx, isChild);
 
         EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
+        assert(spRecord != null);
         spRecord.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE | EscherSpRecord.FLAG_OLESHAPE);
 
         setShapeType(ShapeType.HOST_CONTROL);
@@ -114,8 +115,6 @@ public final class ActiveXShape extends HSLFPictureShape {
 
     /**
      * Set a property of this ActiveX control
-     * @param key
-     * @param value
      */
     public void setProperty(String key, String value){
 
@@ -133,7 +132,7 @@ public final class ActiveXShape extends HSLFPictureShape {
         if (lst == null) {
             return null;
         }
-        
+
         for (Record ch : lst.getChildRecords()) {
             if(ch instanceof ExControl){
                 ExControl c = (ExControl)ch;

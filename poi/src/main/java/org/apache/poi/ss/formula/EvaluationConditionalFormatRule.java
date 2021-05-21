@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -102,12 +103,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private final DecimalFormat decimalTextFormat;
 
     /**
-     *
-     * @param workbookEvaluator
-     * @param sheet
-     * @param formatting
      * @param formattingIndex for priority, zero based
-     * @param rule
      * @param ruleIndex for priority, zero based, if this is an HSSF rule.  Unused for XSSF rules
      * @param regions could be read from formatting, but every call creates new objects in a new array.
      *                  this allows calling it once per formatting instance, and re-using the array.
@@ -241,7 +237,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
     /**
      * Defined as equal sheet name and formatting and rule indexes
-     * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -263,7 +258,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
      * <p>
      * HSSF priority is based on definition/persistence order.
      *
-     * @param o
      * @return comparison based on sheet name, formatting index, and rule priority
      */
     @Override
@@ -294,7 +288,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     }
 
     /**
-     * @param ref
      * @return true if this rule evaluates to true for the given cell
      */
     /* package */ boolean matches(CellReference ref) {
@@ -448,74 +441,15 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                 return false;
             }
 
-            return getMeaningfulValues(region, false, new ValueFunction() {
-                @Override
-                public Set<ValueAndFormat> evaluate(List<ValueAndFormat> allValues) {
-                    final ConditionFilterData conf = rule.getFilterConfiguration();
-
-                    if (! conf.getBottom()) {
-                        allValues.sort(Collections.reverseOrder());
-                    } else {
-                        Collections.sort(allValues);
-                    }
-
-                    int limit = Math.toIntExact(conf.getRank());
-                    if (conf.getPercent()) {
-                        limit = allValues.size() * limit / 100;
-                    }
-                    if (allValues.size() <= limit) {
-                        return new HashSet<>(allValues);
-                    }
-
-                    return new HashSet<>(allValues.subList(0, limit));
-                }
-            }).contains(cv);
+            return getMeaningfulValues(region, false, this::evaluateTop10).contains(cv);
         case UNIQUE_VALUES:
             // Per Excel help, "duplicate" means matching value AND format
             // https://support.office.com/en-us/article/Filter-for-unique-values-or-remove-duplicate-values-ccf664b0-81d6-449b-bbe1-8daaec1e83c2
-            return getMeaningfulValues(region, true, new ValueFunction() {
-                @Override
-                public Set<ValueAndFormat> evaluate(List<ValueAndFormat> allValues) {
-                    Collections.sort(allValues);
-
-                    final Set<ValueAndFormat> unique = new HashSet<>();
-
-                    for (int i = 0; i < allValues.size(); i++) {
-                        final ValueAndFormat v = allValues.get(i);
-                        // skip this if the current value matches the next one, or is the last one and matches the previous one
-                        if ( (i < allValues.size()-1 && v.equals(allValues.get(i+1)) ) || ( i > 0 && i == allValues.size()-1 && v.equals(allValues.get(i-1)) ) ) {
-                            // current value matches next value, skip both
-                            i++;
-                            continue;
-                        }
-                        unique.add(v);
-                    }
-
-                    return unique;
-                }
-            }).contains(cv);
+            return getMeaningfulValues(region, true, this::evaluateUniqueValues).contains(cv);
         case DUPLICATE_VALUES:
             // Per Excel help, "duplicate" means matching value AND format
             // https://support.office.com/en-us/article/Filter-for-unique-values-or-remove-duplicate-values-ccf664b0-81d6-449b-bbe1-8daaec1e83c2
-            return getMeaningfulValues(region, true, new ValueFunction() {
-                @Override
-                public Set<ValueAndFormat> evaluate(List<ValueAndFormat> allValues) {
-                    Collections.sort(allValues);
-
-                    final Set<ValueAndFormat> dup = new HashSet<>();
-
-                    for (int i = 0; i < allValues.size(); i++) {
-                        final ValueAndFormat v = allValues.get(i);
-                        // skip this if the current value matches the next one, or is the last one and matches the previous one
-                        if ( (i < allValues.size()-1 && v.equals(allValues.get(i+1)) ) || ( i > 0 && i == allValues.size()-1 && v.equals(allValues.get(i-1)) ) ) {
-                            // current value matches next value, add one
-                            dup.add(v);
-                            i++;
-                        }
-                    }
-                    return dup;
-                }
-            }).contains(cv);
+            return getMeaningfulValues(region, true, this::evaluateDuplicateValues).contains(cv);
         case ABOVE_AVERAGE:
             // from testing, Excel only operates on numbers and dates (which are stored as numbers) in the range.
             // numbers stored as text are ignored, but numbers formatted as text are treated as numbers.
@@ -523,33 +457,15 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             final ConditionFilterData conf = rule.getFilterConfiguration();
 
             // actually ordered, so iteration order is predictable
-            List<ValueAndFormat> values = new ArrayList<>(getMeaningfulValues(region, false, new ValueFunction() {
-                @Override
-                public Set<ValueAndFormat> evaluate(List<ValueAndFormat> allValues) {
-                    double total = 0;
-                    ValueEval[] pop = new ValueEval[allValues.size()];
-                    for (int i = 0; i < allValues.size(); i++) {
-                        ValueAndFormat v = allValues.get(i);
-                        total += v.value.doubleValue();
-                        pop[i] = new NumberEval(v.value.doubleValue());
-                    }
-
-                    final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
-                    avgSet.add(new ValueAndFormat(Double.valueOf(allValues.size() == 0 ? 0 : total / allValues.size()), null, decimalTextFormat));
-
-                    final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
-                    avgSet.add(new ValueAndFormat(Double.valueOf(stdDev), null, decimalTextFormat));
-                    return avgSet;
-                }
-            }));
+            List<ValueAndFormat> values = new ArrayList<>(getMeaningfulValues(region, false, this::evaluateAboveAverage));
 
             Double val = cv.isNumber() ? cv.getValue() : null;
             if (val == null) {
                 return false;
             }
 
-            double avg = values.get(0).value.doubleValue();
-            double stdDev = values.get(1).value.doubleValue();
+            double avg = values.get(0).value;
+            double stdDev = values.get(1).value;
 
             /*
              * use StdDev, aboveAverage, equalAverage to find:
@@ -557,7 +473,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
              * operator type
              */
 
-            Double comp = Double.valueOf(conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg) ;
+            Double comp = conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg;
 
             final OperatorEnum op;
             if (conf.getAboveAverage()) {
@@ -576,10 +492,10 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             return op.isValid(val, comp, null);
         case CONTAINS_TEXT:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return text == null ? false : cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
+            return text != null && cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case NOT_CONTAINS_TEXT:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return text == null ? true : ! cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
+            return text == null || !cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case BEGINS_WITH:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
             return cv.toString().toLowerCase(LocaleUtil.getUserLocale()).startsWith(lowerText);
@@ -616,14 +532,88 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         }
     }
 
+    private Set<ValueAndFormat> evaluateTop10(List<ValueAndFormat> allValues) {
+        final ConditionFilterData conf = rule.getFilterConfiguration();
+
+        if (! conf.getBottom()) {
+            allValues.sort(Collections.reverseOrder());
+        } else {
+            Collections.sort(allValues);
+        }
+
+        int limit = Math.toIntExact(conf.getRank());
+        if (conf.getPercent()) {
+            limit = allValues.size() * limit / 100;
+        }
+        if (allValues.size() <= limit) {
+            return new HashSet<>(allValues);
+        }
+
+        return new HashSet<>(allValues.subList(0, limit));
+    }
+
+    private Set<ValueAndFormat> evaluateUniqueValues(List<ValueAndFormat> allValues) {
+        Collections.sort(allValues);
+
+        final Set<ValueAndFormat> unique = new HashSet<>();
+
+        for (int i = 0; i < allValues.size(); i++) {
+            final ValueAndFormat v = allValues.get(i);
+            // skip this if the current value matches the next one, or is the last one and matches the previous one
+            if ( (i < allValues.size()-1 && v.equals(allValues.get(i+1)) ) || ( i > 0 && i == allValues.size()-1 && v.equals(allValues.get(i-1)) ) ) {
+                // current value matches next value, skip both
+                i++;
+                continue;
+            }
+            unique.add(v);
+        }
+
+        return unique;
+    }
+
+    public Set<ValueAndFormat> evaluateDuplicateValues(List<ValueAndFormat> allValues) {
+        Collections.sort(allValues);
+
+        final Set<ValueAndFormat> dup = new HashSet<>();
+
+        for (int i = 0; i < allValues.size(); i++) {
+            final ValueAndFormat v = allValues.get(i);
+            // skip this if the current value matches the next one, or is the last one and matches the previous one
+            if ( (i < allValues.size()-1 && v.equals(allValues.get(i+1)) ) || ( i > 0 && i == allValues.size()-1 && v.equals(allValues.get(i-1)) ) ) {
+                // current value matches next value, add one
+                dup.add(v);
+                i++;
+            }
+        }
+        return dup;
+    }
+
+    private Set<ValueAndFormat> evaluateAboveAverage(List<ValueAndFormat> allValues) {
+        double total = 0;
+        ValueEval[] pop = new ValueEval[allValues.size()];
+        for (int i = 0; i < allValues.size(); i++) {
+            ValueAndFormat v = allValues.get(i);
+            total += v.value;
+            pop[i] = new NumberEval(v.value);
+        }
+
+        final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
+        avgSet.add(new ValueAndFormat(allValues.size() == 0 ? 0 : total / allValues.size(), null, decimalTextFormat));
+
+        final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
+        avgSet.add(new ValueAndFormat(stdDev, null, decimalTextFormat));
+        return avgSet;
+    }
+
     /**
      * from testing, Excel only operates on numbers and dates (which are stored as numbers) in the range.
      * numbers stored as text are ignored, but numbers formatted as text are treated as numbers.
      *
-     * @param region
+     * @param func instances evaluate the values for a region and return the positive matches for the function type.
+     *
      * @return the meaningful values in the range of cells specified
      */
-    private Set<ValueAndFormat> getMeaningfulValues(CellRangeAddress region, boolean withText, ValueFunction func) {
+    private Set<ValueAndFormat> getMeaningfulValues(CellRangeAddress region, boolean withText, Function<List<ValueAndFormat>,Set<ValueAndFormat>> func) {
         Set<ValueAndFormat> values = meaningfulRegionValues.get(region);
         if (values != null) {
             return values;
@@ -645,7 +635,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             }
         }
 
-        values = func.evaluate(allValues);
+        values = func.apply(allValues);
         meaningfulRegionValues.put(region, values);
 
         return values;
@@ -660,7 +650,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             }
             switch (type) {
                 case NUMERIC:
-                    return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), format, decimalTextFormat);
+                    return new ValueAndFormat(cell.getNumericCellValue(), format, decimalTextFormat);
                 case STRING:
                 case BOOLEAN:
                     return new ValueAndFormat(cell.getStringCellValue(), format);
@@ -669,192 +659,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             }
         }
         return new ValueAndFormat("", "");
-    }
-    /**
-     * instances evaluate the values for a region and return the positive matches for the function type.
-     * TODO: when we get to use Java 8, this is obviously a Lambda Function.
-     */
-    protected interface ValueFunction {
-
-        /**
-         *
-         * @param values
-         * @return the desired values for the rules implemented by the current instance
-         */
-        Set<ValueAndFormat> evaluate(List<ValueAndFormat> values);
-    }
-
-    /**
-     * Not calling it OperatorType to avoid confusion for now with other classes.
-     * Definition order matches OOXML type ID indexes.
-     * Note that this has NO_COMPARISON as the first item, unlike the similar
-     * DataValidation operator enum. Thanks, Microsoft.
-     */
-    public static enum OperatorEnum {
-        NO_COMPARISON {
-            /** always false/invalid */
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                return false;
-            }
-        },
-        BETWEEN {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        double n1 = 0;
-                        double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
-                        return Double.compare( ((Number) cellValue).doubleValue(), n1) >= 0 && Double.compare(((Number) cellValue).doubleValue(), n2) <= 0;
-                    } else if (cellValue instanceof String) {
-                        String n1 = "";
-                        String n2 = v2 == null ? "" : (String) v2;
-                        return ((String) cellValue).compareToIgnoreCase(n1) >= 0 && ((String) cellValue).compareToIgnoreCase(n2) <= 0;
-                    } else if (cellValue instanceof Boolean) return false;
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) >= 0 && cellValue.compareTo(v2) <= 0;
-            }
-        },
-        NOT_BETWEEN {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        double n1 = 0;
-                        double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
-                        return Double.compare( ((Number) cellValue).doubleValue(), n1) < 0 || Double.compare(((Number) cellValue).doubleValue(), n2) > 0;
-                    } else if (cellValue instanceof String) {
-                        String n1 = "";
-                        String n2 = v2 == null ? "" : (String) v2;
-                        return ((String) cellValue).compareToIgnoreCase(n1) < 0 || ((String) cellValue).compareToIgnoreCase(n2) > 0;
-                    } else if (cellValue instanceof Boolean) return true;
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) < 0 || cellValue.compareTo(v2) > 0;
-            }
-
-            public boolean isValidForIncompatibleTypes() {
-                return true;
-            }
-        },
-        EQUAL {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        return Double.compare( ((Number) cellValue).doubleValue(), 0) == 0;
-                    } else if (cellValue instanceof String) {
-                        return false; // even an empty string is not equal the empty cell, only another empty cell is, handled higher up
-                    } else if (cellValue instanceof Boolean) return false;
-                    return false; // just in case - not a typical possibility
-                }
-                // need to avoid instanceof, to work around a 1.6 compiler bug
-                if (cellValue.getClass() == String.class) {
-                    return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
-                }
-                return cellValue.compareTo(v1) == 0;
-            }
-        },
-        NOT_EQUAL {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    return true; // non-null not equal null, returns true
-                }
-                // need to avoid instanceof, to work around a 1.6 compiler bug
-                if (cellValue.getClass() == String.class) {
-                    return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
-                }
-                return cellValue.compareTo(v1) != 0;
-            }
-
-            public boolean isValidForIncompatibleTypes() {
-                return true;
-            }
-        },
-        GREATER_THAN {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        return Double.compare( ((Number) cellValue).doubleValue(), 0) > 0;
-                    } else if (cellValue instanceof String) {
-                        return true; // non-null string greater than empty cell
-                    } else if (cellValue instanceof Boolean) return true;
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) > 0;
-            }
-        },
-        LESS_THAN {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        return Double.compare( ((Number) cellValue).doubleValue(), 0) < 0;
-                    } else if (cellValue instanceof String) {
-                        return false; // non-null string greater than empty cell
-                    } else if (cellValue instanceof Boolean) return false;
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) < 0;
-            }
-        },
-        GREATER_OR_EQUAL {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        return Double.compare( ((Number) cellValue).doubleValue(), 0) >= 0;
-                    } else if (cellValue instanceof String) {
-                        return true; // non-null string greater than empty cell
-                    } else if (cellValue instanceof Boolean) return true;
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) >= 0;
-            }
-        },
-        LESS_OR_EQUAL {
-            @Override
-            public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (v1 == null) {
-                    if (cellValue instanceof Number) {
-                        // use zero for null
-                        return Double.compare( ((Number) cellValue).doubleValue(), 0) <= 0;
-                    } else if (cellValue instanceof String) {
-                        return false; // non-null string not less than empty cell
-                    } else if (cellValue instanceof Boolean) return false; // for completeness
-                    return false; // just in case - not a typical possibility
-                }
-                return cellValue.compareTo(v1) <= 0;
-            }
-        },
-        ;
-
-        /**
-         * Evaluates comparison using operator instance rules
-         * @param cellValue won't be null, assumption is previous checks handled that
-         * @param v1 if null, per Excel behavior various results depending on the type of cellValue and the specific enum instance
-         * @param v2 null if not needed.  If null when needed, various results, per Excel behavior
-         * @return true if the comparison is valid
-         */
-        public abstract <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2);
-
-        /**
-         * Called when the cell and comparison values are of different data types
-         * Needed for negation operators, which should return true.
-         * @return true if this comparison is true when the types to compare are different
-         */
-        public boolean isValidForIncompatibleTypes() {
-            return false;
-        }
     }
 
     /**
@@ -914,7 +718,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
         /**
          * Note: this class has a natural ordering that is inconsistent with equals.
-         * @param o
          * @return value comparison
          */
         @Override

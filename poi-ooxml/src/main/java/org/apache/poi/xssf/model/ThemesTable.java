@@ -49,12 +49,12 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
        HLINK(10,"Hlink"),
        FOLHLINK(11,"FolHlink"),
        UNKNOWN(-1,null);
-       
+
        public static ThemeElement byId(int idx) {
            if (idx >= values().length || idx < 0) return UNKNOWN;
            return values()[idx];
        }
-       private ThemeElement(int idx, String name) {
+       ThemeElement(int idx, String name) {
            this.idx = idx; this.name = name;
        }
        public final int idx;
@@ -62,7 +62,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
    }
 
     private IndexedColorMap colorMap;
-    private ThemeDocument theme;
+    private final ThemeDocument theme;
 
     /**
      * Create a new, empty ThemesTable
@@ -72,23 +72,23 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
         theme = ThemeDocument.Factory.newInstance();
         theme.addNewTheme().addNewThemeElements();
     }
-    
+
     /**
      * Construct a ThemesTable.
      * @param part A PackagePart.
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     public ThemesTable(PackagePart part) throws IOException {
         super(part);
-        
+
         try {
            theme = ThemeDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS);
         } catch(XmlException e) {
            throw new IOException(e.getLocalizedMessage(), e);
         }
     }
-    
+
     /**
      * Construct a ThemesTable from an existing ThemeDocument.
      * @param theme A ThemeDocument.
@@ -99,12 +99,11 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
 
     /**
      * called from {@link StylesTable} when setting theme, used to adjust colors if a custom indexed mapping is defined
-     * @param colorMap
      */
     protected void setColorMap(IndexedColorMap colorMap) {
         this.colorMap = colorMap;
     }
-    
+
     /**
      * Convert a theme "index" (as used by fonts etc) into a color.
      * @param idx A theme "index"
@@ -133,7 +132,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
             default: return null;
         }
 
-        byte[] rgb = null;
+        byte[] rgb;
         if (ctColor.isSetSrgbClr()) {
             // Color is a regular one
             rgb = ctColor.getSrgbClr().getVal();
@@ -143,9 +142,9 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
         } else {
             return null;
         }
-        return new XSSFColor(rgb, colorMap);        
+        return new XSSFColor(rgb, colorMap);
     }
-    
+
     /**
      * If the colour is based on a theme, then inherit
      *  information (currently just colours) from it as
@@ -170,10 +169,10 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
 
        // All done
     }
-    
+
     /**
      * Write this table out as XML.
-     * 
+     *
      * @param out The stream to write to.
      * @throws IOException if an error occurs while writing.
      */

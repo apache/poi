@@ -56,13 +56,6 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    withJavadocJar()
-    withSourcesJar()
-}
-
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
@@ -142,23 +135,9 @@ task testJar(type: Jar, dependsOn: testClasses) {
     }
 }
 
-sourcesJar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-    exclude 'META-INF/services/**'
-}
-
 javadoc {
-	failOnError = true
 	doFirst {
 		options {
-			if (JavaVersion.current().isJava9Compatible()) {
-				addBooleanOption('html5', true)
-			}
-			links 'https://poi.apache.org/apidocs/dev/'
-			links 'https://docs.oracle.com/javase/8/docs/api/'
-			use = true
-			splitIndex = true
-			source = "1.8"
 			classpath += configurations.javadocs.files
 		}
 	}
@@ -171,39 +150,10 @@ artifacts {
 test {
     dependsOn { testJar }
 
-    useJUnitPlatform()
-
    doFirst {
-        jvmArgs = [
-            '-Djava.io.tmpdir=build',
-            '-DPOI.testdata.path=../test-data',
-            '-Djava.awt.headless=true',
-            '-Djava.locale.providers=JRE,CLDR',
-            '-Duser.language=en',
-            '-Duser.country=US',
-            '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
-            "-Dversion.id=${project.version}",
-            '-ea',
-            '-Djunit.jupiter.execution.parallel.enabled=true',
-            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
-            // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
-        ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
-                '-Dsun.reflect.debugModuleAccessChecks=true',
-                '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
-                '--illegal-access=warn',
-
                 '--add-modules', MODULE_NAME,
-
-                // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
-                // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
-                // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
-
                 '--module-path', '../build/dist/maven/poi-scratchpad-tests:' + files(TEST_MODULE_PATH).asPath,
             ]
         }
@@ -213,10 +163,6 @@ test {
 publishing {
     publications {
         POI(MavenPublication) {
-            artifactId project.archivesBaseName
-
-            from components.java
-
             pom {
                 name = 'Apache POI'
                 description = 'Apache POI - Java API To Access Microsoft Format Files (Scratchpad)'
@@ -224,5 +170,3 @@ publishing {
         }
     }
 }
-
-generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"

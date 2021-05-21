@@ -42,23 +42,23 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 
 /**
- * <p>This class copies a POI file system to a new file and compares the copy
- * with the original.</p>
+ * This class copies a POI file system to a new file and compares the copy
+ * with the original.
  * <p>
- * <p>Property set streams are copied logically, i.e. the application
+ * Property set streams are copied logically, i.e. the application
  * establishes a {@link org.apache.poi.hpsf.PropertySet} of an original property
  * set, creates a {@link org.apache.poi.hpsf.PropertySet} and writes the
  * {@link org.apache.poi.hpsf.PropertySet} to the destination POI file
  * system. - Streams which are no property set streams are copied bit by
- * bit.</p>
+ * bit.
  * <p>
- * <p>The comparison of the POI file systems is done logically. That means that
+ * The comparison of the POI file systems is done logically. That means that
  * the two disk files containing the POI file systems do not need to be
  * exactly identical. However, both POI file systems must contain the same
  * files, and most of these files must be bitwise identical. Property set
  * streams, however, are compared logically: they must have the same sections
  * with the same attributes, and the sections must contain the same properties.
- * Details like the ordering of the properties do not matter.</p>
+ * Details like the ordering of the properties do not matter.
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public final class CopyCompare {

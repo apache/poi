@@ -34,19 +34,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * <p>
- * A {@link PropertyTemplate} is a template that can be applied to any sheet in
+ * A PropertyTemplate is a template that can be applied to any sheet in
  * a project. It contains all the border type and color attributes needed to
  * draw all the borders for a single sheet. That template can be applied to any
  * sheet in any workbook.
- * 
- * This class requires the full spreadsheet to be in memory, so 
+ *
+ * This class requires the full spreadsheet to be in memory, so
  * {@link org.apache.poi.xssf.streaming.SXSSFWorkbook} Spreadsheets are not
- * supported. The same {@link PropertyTemplate} can, however, be applied to both
+ * supported. The same PropertyTemplate can, however, be applied to both
  * {@link HSSFWorkbook} and {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}
  * objects if necessary. Portions of the border that fall outside the max range
  * of the {@link Workbook} sheet are ignored.
  * </p>
- * 
+ *
  * <p>
  * This would replace {@link RegionUtil}.
  * </p>
@@ -57,7 +57,7 @@ public final class PropertyTemplate {
      * This is a list of cell properties for one shot application to a range of
      * cells at a later time.
      */
-    private Map<CellAddress, Map<String, Object>> _propertyTemplate;
+    private final Map<CellAddress, Map<String, Object>> _propertyTemplate;
 
     /**
      * Create a PropertyTemplate object
@@ -65,7 +65,7 @@ public final class PropertyTemplate {
     public PropertyTemplate() {
         _propertyTemplate = new HashMap<>();
     }
-    
+
     /**
      * Create a PropertyTemplate object from another PropertyTemplate
      *
@@ -77,11 +77,11 @@ public final class PropertyTemplate {
             _propertyTemplate.put(new CellAddress(entry.getKey()), cloneCellProperties(entry.getValue()));
         }
     }
-    
+
     private Map<CellAddress,Map<String, Object>> getTemplate() {
         return _propertyTemplate;
     }
-    
+
     private static Map<String, Object> cloneCellProperties(Map<String, Object> properties) {
         Map<String, Object> newProperties = new HashMap<>();
         for(Map.Entry<String, Object> entry : properties.entrySet()) {
@@ -89,12 +89,12 @@ public final class PropertyTemplate {
         }
         return newProperties;
     }
-    
+
     /**
      * Draws a group of cell borders for a cell range. The borders are not
      * applied to the cells at this time, just the template is drawn. To apply
      * the drawn borders to a sheet, use {@link #applyBorders}.
-     * 
+     *
      * @param range
      *            - {@link CellRangeAddress} range of cells on which borders are
      *            drawn.
@@ -158,7 +158,7 @@ public final class PropertyTemplate {
      * Draws a group of cell borders for a cell range. The borders are not
      * applied to the cells at this time, just the template is drawn. To apply
      * the drawn borders to a sheet, use {@link #applyBorders}.
-     * 
+     *
      * @param range
      *            - {@link CellRangeAddress} range of cells on which borders are
      *            drawn.
@@ -183,7 +183,7 @@ public final class PropertyTemplate {
      * <p>
      * Draws the top border for a range of cells
      * </p>
-     * 
+     *
      * @param range
      *            - {@link CellRangeAddress} range of cells on which borders are
      *            drawn.
@@ -206,7 +206,7 @@ public final class PropertyTemplate {
      * <p>
      * Draws the bottom border for a range of cells
      * </p>
-     * 
+     *
      * @param range
      *            - {@link CellRangeAddress} range of cells on which borders are
      *            drawn.
@@ -405,10 +405,10 @@ public final class PropertyTemplate {
     }
 
     /**
-     * Removes all border properties from this {@link PropertyTemplate} for the
+     * Removes all border properties from this PropertyTemplate for the
      * specified range.
-     * 
-     * @parm range - {@link CellRangeAddress} range of cells to remove borders.
+     *
+     * @param range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorders(CellRangeAddress range) {
         Set<String> properties = new HashSet<>();
@@ -752,10 +752,10 @@ public final class PropertyTemplate {
     }
 
     /**
-     * Removes all border properties from this {@link PropertyTemplate} for the
+     * Removes all border properties from this PropertyTemplate for the
      * specified range.
-     * 
-     * @parm range - {@link CellRangeAddress} range of cells to remove borders.
+     *
+     * @param range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorderColors(CellRangeAddress range) {
         Set<String> properties = new HashSet<>();
@@ -772,24 +772,14 @@ public final class PropertyTemplate {
     }
 
     /**
-     * Adds a property to this {@link PropertyTemplate} for a given cell
-     *
-     * @param row
-     * @param col
-     * @param property
-     * @param value
+     * Adds a property to this PropertyTemplate for a given cell
      */
     private void addProperty(int row, int col, String property, short value) {
         addProperty(row, col, property, Short.valueOf(value));
     }
 
     /**
-     * Adds a property to this {@link PropertyTemplate} for a given cell
-     *
-     * @param row
-     * @param col
-     * @param property
-     * @param value
+     * Adds a property to this PropertyTemplate for a given cell
      */
     private void addProperty(int row, int col, String property, Object value) {
         CellAddress cell = new CellAddress(row, col);
@@ -802,12 +792,8 @@ public final class PropertyTemplate {
     }
 
     /**
-     * Removes a set of properties from this {@link PropertyTemplate} for a
+     * Removes a set of properties from this PropertyTemplate for a
      * given cell
-     *
-     * @param row
-     * @param col
-     * @param properties
      */
     private void removeProperties(int row, int col, Set<String> properties) {
         CellAddress cell = new CellAddress(row, col);
@@ -824,8 +810,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the number of borders assigned to a cell
-     *
-     * @param cell
      */
     public int getNumBorders(CellAddress cell) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
@@ -849,9 +833,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the number of borders assigned to a cell
-     *
-     * @param row
-     * @param col
      */
     public int getNumBorders(int row, int col) {
         return getNumBorders(new CellAddress(row, col));
@@ -859,8 +840,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the number of border colors assigned to a cell
-     *
-     * @param cell
      */
     public int getNumBorderColors(CellAddress cell) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
@@ -884,9 +863,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the number of border colors assigned to a cell
-     *
-     * @param row
-     * @param col
      */
     public int getNumBorderColors(int row, int col) {
         return getNumBorderColors(new CellAddress(row, col));
@@ -894,9 +870,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
-     * 
-     * @param cell
-     * @param property
      */
     public BorderStyle getBorderStyle(CellAddress cell, String property) {
         BorderStyle value = BorderStyle.NONE;
@@ -912,10 +885,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
-     * 
-     * @param row
-     * @param col
-     * @param property
      */
     public BorderStyle getBorderStyle(int row, int col, String property) {
         return getBorderStyle(new CellAddress(row, col), property);
@@ -923,9 +892,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
-     * 
-     * @param cell
-     * @param property
      */
     public short getTemplateProperty(CellAddress cell, String property) {
         short value = 0;
@@ -941,10 +907,6 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
-     * 
-     * @param row
-     * @param col
-     * @param property
      */
     public short getTemplateProperty(int row, int col, String property) {
         return getTemplateProperty(new CellAddress(row, col), property);

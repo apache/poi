@@ -315,7 +315,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     /**
      * Walk up the inheritance tree and fetch shape properties.<p>
      *
-     * The following order of inheritance is assumed:<p>
+     * The following order of inheritance is assumed:
      * <ol>
      * <li>slide
      * <li>slideLayout

@@ -41,23 +41,27 @@ final class LazyAreaEval extends AreaEvalBase {
 		_evaluator = evaluator;
 	}
 
-    public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+    @Override
+	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
         return getRelativeValue(getFirstSheetIndex(), relativeRowIndex, relativeColumnIndex);
     }
-    public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
+    @Override
+	public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
 		int rowIx = (relativeRowIndex + getFirstRow() ) ;
 		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
 		return _evaluator.getEvalForCell(sheetIndex, rowIx, colIx);
 	}
 
+	@Override
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 		return new LazyAreaEval(area, _evaluator);
 	}
-	public LazyAreaEval getRow(int rowIndex) {
+	@Override
+    public LazyAreaEval getRow(int rowIndex) {
 		if (rowIndex >= getHeight()) {
 			throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
 					+ ".  Allowable range is (0.." + getHeight() + ").");
@@ -65,6 +69,7 @@ final class LazyAreaEval extends AreaEvalBase {
 		int absRowIx = getFirstRow() + rowIndex;
 		return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
 	}
+	@Override
 	public LazyAreaEval getColumn(int columnIndex) {
 		if (columnIndex >= getWidth()) {
 			throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
@@ -89,17 +94,18 @@ final class LazyAreaEval extends AreaEvalBase {
     /**
      * @return  whether cell at rowIndex and columnIndex is a subtotal
     */
-    public boolean isSubTotal(int rowIndex, int columnIndex){
+    @Override
+	public boolean isSubTotal(int rowIndex, int columnIndex){
         // delegate the query to the sheet evaluator which has access to internal ptgs
         SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
         return _sre.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
     }
-    
+
     /**
      * @return whether the row at rowIndex is hidden
-     * @see org.apache.poi.ss.formula.eval.AreaEvalBase#isRowHidden(int)
      */
-    public boolean isRowHidden(int rowIndex) {
+    @Override
+	public boolean isRowHidden(int rowIndex) {
         // delegate the query to the sheet evaluator which has access to internal ptgs
         SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
         return _sre.isRowHidden(getFirstRow() + rowIndex);

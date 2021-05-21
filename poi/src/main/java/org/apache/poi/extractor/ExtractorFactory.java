@@ -30,6 +30,7 @@ import java.util.stream.StreamSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
+import org.apache.poi.OldFileFormatException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;

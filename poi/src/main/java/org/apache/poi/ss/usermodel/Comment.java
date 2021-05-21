@@ -24,17 +24,17 @@ public interface Comment {
     /**
      * Sets whether this comment is visible.
      *
-     * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
+     * @param visible {@code true} if the comment is visible, {@code false} otherwise
      */
     void setVisible(boolean visible);
 
     /**
      * Returns whether this comment is visible.
      *
-     * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
+     * @return {@code true} if the comment is visible, {@code false} otherwise
      */
     boolean isVisible();
-    
+
     /**
      * Get the address of the cell that this comment is attached to
      *
@@ -42,20 +42,17 @@ public interface Comment {
      * @since 3.15-beta1
      */
     CellAddress getAddress();
-    
+
     /**
      * Set the address of the cell that this comment is attached to
      *
-     * @param addr
      * @since 3.15-beta1
      */
     void setAddress(CellAddress addr);
-    
+
     /**
      * Set the address of the cell that this comment is attached to
      *
-     * @param row
-     * @param col
      * @since 3.15-beta1
      */
     void setAddress(int row, int col);
@@ -101,11 +98,11 @@ public interface Comment {
      * @param author the name of the original author of the comment
      */
     void setAuthor(String author);
-    
+
     /**
      * Fetches the rich text string of the comment
      */
-    public RichTextString getString();
+    RichTextString getString();
 
     /**
      * Sets the rich text string used by this comment.
@@ -118,10 +115,10 @@ public interface Comment {
      * Return defines position of this anchor in the sheet.
      * The anchor is the yellow box/balloon that is rendered on top of the sheets
      * when the comment is visible.
-     * 
+     *
      * To associate a comment with a different cell, use {@link #setAddress}.
      *
      * @return defines position of this anchor in the sheet
      */
-    public ClientAnchor getClientAnchor();
+    ClientAnchor getClientAnchor();
 }

@@ -30,15 +30,19 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
+import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Units;
 
 /**
  * Represents embedded picture extracted from Word Document
@@ -264,40 +268,40 @@ public final class Picture {
 
     /**
      * @return The amount the picture has been cropped on the left in twips
-     * @deprecated POI 3.8 beta 4.
      */
-    @Deprecated
-    public int getDxaCropLeft()
-    {
-        // TODO: use new properties
-        // if (_picfAndOfficeArtData == null || _picfAndOfficeArtData.getShape()
-        // == null)
-        // return 0;
-        //
-        // final EscherContainerRecord shape = _picfAndOfficeArtData.getShape();
-        // EscherOptRecord optRecord = shape.getChildById( (short) 0xF00B );
-        // if (optRecord == null)
-        // return 0;
-        //
-        // EscherProperty property = optRecord.lookup( 0x0102 );
-        // if (property == null || !(property instanceof EscherSimpleProperty))
-        // return 0;
-        //
-        // EscherSimpleProperty simpleProperty = (EscherSimpleProperty)
-        // property;
-        // return simpleProperty.getPropertyValue();
-
+    public int getDxaCropLeft() {
         return _picf.getDxaReserved1();
     }
 
     /**
-     * @return The amount the picture has been cropped on the right in twips
-     * @deprecated POI 3.8 beta 4.
+     * The location, expressed as a fraction of the image width, of the left side of
+     * the crop rectangle. A value of 0 specifies that the left side of the image is uncropped.
+     * Positive values specify cropping into the image. Negative values specify cropping out from the
+     * image. The default value for this property is 0.
+     *
+     * @return the left crop percent
      */
-    @Deprecated
-    public int getDxaCropRight()
-    {
+    public double getCropLeft() {
+        return getCrop(EscherPropertyTypes.BLIP__CROPFROMLEFT);
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the right in twips
+     */
+    public int getDxaCropRight() {
         return _picf.getDxaReserved2();
+    }
+
+    /**
+     * the location of the right side, expressed as a fraction of the image width, of
+     * the crop rectangle. A value of 0 specifies that the right side of the image is uncropped.
+     * Positive values specify cropping into the image. Negative values specify cropping out from the
+     * image. The default value for this property is 0.
+     *
+     * @return the right crop percent
+     */
+    public double getCropRight() {
+        return getCrop(EscherPropertyTypes.BLIP__CROPFROMRIGHT);
     }
 
     /**
@@ -313,22 +317,55 @@ public final class Picture {
 
     /**
      * @return The amount the picture has been cropped on the bottom in twips
-     * @deprecated POI 3.8 beta 5.
      */
-    @Deprecated
-    public int getDyaCropBottom()
-    {
+    public int getDyaCropBottom() {
         return _picf.getDyaReserved2();
     }
 
     /**
-     * @return The amount the picture has been cropped on the top in twips
-     * @deprecated POI 3.8 beta 5.
+     * the location, expressed as a fraction of the image height, of the bottom of
+     * the crop rectangle. A value of 0 specifies that the bottom of the image is uncropped.
+     * Positive values specify cropping into the image. Negative values specify cropping out from the
+     * image. The default value for this property is 0
+     *
+     * @return the bottom crop percent
      */
-    @Deprecated
-    public int getDyaCropTop()
-    {
+    public double getCropBottom() {
+        return getCrop(EscherPropertyTypes.BLIP__CROPFROMBOTTOM);
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the top in twips
+     */
+    public int getDyaCropTop() {
         return _picf.getDyaReserved1();
+    }
+
+    /**
+     * the location, expressed as a fraction of the image height, of the top of the crop
+     * rectangle. A value of 0 specifies that the top of the image is uncropped. Positive values
+     * specify cropping into the image. Negative values specify cropping out from the image. The default
+     * value for this property is 0.
+     *
+     * @return the top crop percent
+     */
+    public double getCropTop() {
+        return getCrop(EscherPropertyTypes.BLIP__CROPFROMTOP);
+    }
+
+    private double getCrop(EscherPropertyTypes propType) {
+        EscherContainerRecord shape;
+        if (_picfAndOfficeArtData != null && (shape = _picfAndOfficeArtData.getShape()) != null) {
+            EscherOptRecord optRecord = shape.getChildById(EscherRecordTypes.OPT.typeID);
+            if (optRecord != null) {
+                EscherProperty property = optRecord.lookup(propType);
+                if (property instanceof EscherSimpleProperty) {
+                    EscherSimpleProperty simpleProperty = (EscherSimpleProperty) property;
+                    return Units.fixedPointToDouble(simpleProperty.getPropertyValue());
+                }
+            }
+        }
+        return 0;
     }
 
     /**
@@ -490,62 +527,59 @@ public final class Picture {
                 + ( fileExt.length() > 0 ? "." + fileExt : "" );
     }
 
-    public PictureType suggestPictureType()
-    {
+    public PictureType suggestPictureType() {
         if (_blipRecords.size() != 1 ) {
             return PictureType.UNKNOWN;
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        switch ( escherRecord.getRecordId() )
-        {
-        case (short) 0xF007:
-        {
+        if (escherRecord instanceof EscherBSERecord) {
             EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
-            switch ( bseRecord.getBlipTypeWin32() )
-            {
-            case 0x00:
-                return PictureType.UNKNOWN;
-            case 0x01:
-                return PictureType.UNKNOWN;
-            case 0x02:
-                return PictureType.EMF;
-            case 0x03:
-                return PictureType.WMF;
-            case 0x04:
-                return PictureType.PICT;
-            case 0x05:
-                return PictureType.JPEG;
-            case 0x06:
-                return PictureType.PNG;
-            case 0x07:
-                return PictureType.BMP;
-            case 0x11:
-                return PictureType.TIFF;
-            case 0x12:
-                return PictureType.JPEG;
-            default:
-                return PictureType.UNKNOWN;
+            switch ( bseRecord.getBlipTypeWin32() ) {
+                case 0x00:
+                    return PictureType.UNKNOWN;
+                case 0x01:
+                    return PictureType.UNKNOWN;
+                case 0x02:
+                    return PictureType.EMF;
+                case 0x03:
+                    return PictureType.WMF;
+                case 0x04:
+                    return PictureType.PICT;
+                case 0x05:
+                    return PictureType.JPEG;
+                case 0x06:
+                    return PictureType.PNG;
+                case 0x07:
+                    return PictureType.BMP;
+                case 0x11:
+                    return PictureType.TIFF;
+                case 0x12:
+                    return PictureType.JPEG;
+                default:
+                    return PictureType.UNKNOWN;
             }
         }
-        case (short) 0xF01A:
-            return PictureType.EMF;
-        case (short) 0xF01B:
-            return PictureType.WMF;
-        case (short) 0xF01C:
-            return PictureType.PICT;
-        case (short) 0xF01D:
-            return PictureType.JPEG;
-        case (short) 0xF01E:
-            return PictureType.PNG;
-        case (short) 0xF01F:
-            return PictureType.BMP;
-        case (short) 0xF029:
-            return PictureType.TIFF;
-        case (short) 0xF02A:
-            return PictureType.JPEG;
-        default:
-            return PictureType.UNKNOWN;
+
+        Enum<?> recordType = escherRecord.getGenericRecordType();
+        assert (recordType instanceof EscherRecordTypes);
+        switch ((EscherRecordTypes)recordType) {
+            case BLIP_EMF:
+                return PictureType.EMF;
+            case BLIP_WMF:
+                return PictureType.WMF;
+            case BLIP_PICT:
+                return PictureType.PICT;
+            case BLIP_JPEG:
+                return PictureType.JPEG;
+            case BLIP_PNG:
+                return PictureType.PNG;
+            case BLIP_DIB:
+                return PictureType.BMP;
+            case BLIP_TIFF:
+                return PictureType.TIFF;
+            default:
+                return PictureType.UNKNOWN;
         }
     }
 

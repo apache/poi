@@ -59,30 +59,37 @@ public abstract class AreaEvalBase implements AreaEval {
 	    this(sheets, ptg.getFirstRow(), ptg.getFirstColumn(), ptg.getLastRow(), ptg.getLastColumn());
 	}
 
+	@Override
 	public final int getFirstColumn() {
 		return _firstColumn;
 	}
 
+	@Override
 	public final int getFirstRow() {
 		return _firstRow;
 	}
 
+	@Override
 	public final int getLastColumn() {
 		return _lastColumn;
 	}
 
+	@Override
 	public final int getLastRow() {
 		return _lastRow;
 	}
 
+	@Override
 	public int getFirstSheetIndex() {
 	    return _firstSheet;
     }
-    public int getLastSheetIndex() {
+    @Override
+	public int getLastSheetIndex() {
         return _lastSheet;
     }
 
-    public final ValueEval getAbsoluteValue(int row, int col) {
+    @Override
+	public final ValueEval getAbsoluteValue(int row, int col) {
 		int rowOffsetIx = row - _firstRow;
 		int colOffsetIx = col - _firstColumn;
 
@@ -97,40 +104,50 @@ public abstract class AreaEvalBase implements AreaEval {
 		return getRelativeValue(rowOffsetIx, colOffsetIx);
 	}
 
+	@Override
 	public final boolean contains(int row, int col) {
 		return _firstRow <= row && _lastRow >= row
 			&& _firstColumn <= col && _lastColumn >= col;
 	}
 
+	@Override
 	public final boolean containsRow(int row) {
 		return _firstRow <= row && _lastRow >= row;
 	}
 
+	@Override
 	public final boolean containsColumn(int col) {
 		return _firstColumn <= col && _lastColumn >= col;
 	}
 
+	@Override
 	public final boolean isColumn() {
 		return _firstColumn == _lastColumn;
 	}
 
+	@Override
 	public final boolean isRow() {
 		return _firstRow == _lastRow;
 	}
+	@Override
 	public int getHeight() {
 		return _lastRow-_firstRow+1;
 	}
 
-	public final ValueEval getValue(int row, int col) {
+	@Override
+    public final ValueEval getValue(int row, int col) {
 		return getRelativeValue(row, col);
 	}
-    public final ValueEval getValue(int sheetIndex, int row, int col) {
+    @Override
+	public final ValueEval getValue(int sheetIndex, int row, int col) {
         return getRelativeValue(sheetIndex, row, col);
     }
 
+	@Override
 	public abstract ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
     public abstract ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex);
 
+	@Override
 	public int getWidth() {
 		return _lastColumn-_firstColumn+1;
 	}
@@ -139,7 +156,8 @@ public abstract class AreaEvalBase implements AreaEval {
      * @return  whether cell at rowIndex and columnIndex is a subtotal.
      * By default return false which means 'don't care about subtotals'
     */
-    public boolean isSubTotal(int rowIndex, int columnIndex) {
+    @Override
+	public boolean isSubTotal(int rowIndex, int columnIndex) {
         return false;
     }
 
@@ -147,7 +165,8 @@ public abstract class AreaEvalBase implements AreaEval {
      * @return false by default, meaning all rows are calculated
      * @see org.apache.poi.ss.formula.TwoDEval#isRowHidden(int)
      */
-    public boolean isRowHidden(int rowIndex) {
+    @Override
+	public boolean isRowHidden(int rowIndex) {
         return false;
     }
 }

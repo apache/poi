@@ -24,12 +24,11 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel Roman() function.<p>
+ * Implementation for Excel Roman() function.
  * <p>
  * <b>Syntax</b>:<br> <b>Roman  </b>(<b>number</b>,<b>form</b>)<br>
  * <p>
  * Converts an arabic numeral to roman, as text.
- * <p>
  * <p>
  * Number  Required. The Arabic numeral you want converted.<p>
  * Form    Optional. A number specifying the type of roman numeral you want.
@@ -79,6 +78,7 @@ public class Roman extends Fixed2ArgFunction {
 
 
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE, ValueEval formVE) {
         final int number;
         try {

@@ -73,6 +73,11 @@ dependencies {
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.26'
     testImplementation 'com.google.guava:guava:30.0-jre'
 
+    // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.30 dependency
+    // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
+    testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+
+
     broken "org.apache.xmlgraphics:batik-script:${batikVersion}"
 
     javadocs project(':poi')
@@ -88,14 +93,6 @@ final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    withJavadocJar()
-    withSourcesJar()
-}
-
 
 compileJava {
     dependsOn 'fixBatik'
@@ -180,11 +177,6 @@ task testJar(type: Jar, dependsOn: testClasses) {
     }
 }
 
-sourcesJar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-    exclude 'META-INF/services/**'
-}
-
 // based on https://github.com/moditect/moditect-gradle-plugin/issues/12
 task fixBatik(type: Zip) {
     ant.mkdir(dir: "${buildDir}/brokenJars")
@@ -223,41 +215,13 @@ test {
 
     dependsOn { testJar }
 
-    useJUnitPlatform()
-
     doFirst {
-        jvmArgs = [
-            '-Djava.io.tmpdir=build',
-            '-DPOI.testdata.path=../test-data',
-            '-Djava.awt.headless=true',
-            '-Djava.locale.providers=JRE,CLDR',
-            '-Duser.language=en',
-            '-Duser.country=US',
-            '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
-            "-Dversion.id=${project.version}",
-            '-ea',
+        jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
-
-            '-Djunit.jupiter.execution.parallel.enabled=true',
-            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
-            // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
-                '-Dsun.reflect.debugModuleAccessChecks=true',
-                '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
-                '--illegal-access=warn',
-
                 '--add-modules', MODULE_NAME,
-
-                // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
-                // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
-                // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
-                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
-
                 '--module-path', '../build/dist/maven/poi-ooxml-tests:' + files(TEST_MODULE_PATH).asPath,
             ]
         }
@@ -267,10 +231,6 @@ test {
 publishing {
     publications {
         POI(MavenPublication) {
-            artifactId project.archivesBaseName
-
-            from components.java
-
             pom {
                 name = 'Apache POI - API based on OPC and OOXML schemas'
                 description = 'Apache POI - Java API To Access Microsoft Format Files'
@@ -278,5 +238,3 @@ publishing {
         }
     }
 }
-
-generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"

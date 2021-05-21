@@ -48,8 +48,6 @@ public class RevocationData {
 
     /**
      * Adds a CRL to this revocation data set.
-     *
-     * @param encodedCrl
      */
     public void addCRL(byte[] encodedCrl) {
         this.crls.add(encodedCrl);
@@ -57,8 +55,6 @@ public class RevocationData {
 
     /**
      * Adds a CRL to this revocation data set.
-     *
-     * @param crl
      */
     public void addCRL(X509CRL crl) {
         byte[] encodedCrl;
@@ -73,8 +69,6 @@ public class RevocationData {
 
     /**
      * Adds an OCSP response to this revocation data set.
-     *
-     * @param encodedOcsp
      */
     public void addOCSP(byte[] encodedOcsp) {
         this.ocsps.add(encodedOcsp);
@@ -99,10 +93,10 @@ public class RevocationData {
     }
 
     /**
-     * Returns <code>true</code> if this revocation data set holds OCSP
+     * Returns {@code true} if this revocation data set holds OCSP
      * responses.
      *
-     * @return <code>true</code> if this revocation data set holds OCSP
+     * @return {@code true} if this revocation data set holds OCSP
      * responses.
      */
     public boolean hasOCSPs() {
@@ -110,18 +104,18 @@ public class RevocationData {
     }
 
     /**
-     * Returns <code>true</code> if this revocation data set holds CRLs.
+     * Returns {@code true} if this revocation data set holds CRLs.
      *
-     * @return <code>true</code> if this revocation data set holds CRLs.
+     * @return {@code true} if this revocation data set holds CRLs.
      */
     public boolean hasCRLs() {
         return !this.crls.isEmpty();
     }
 
     /**
-     * Returns <code>true</code> if this revocation data is not empty.
+     * Returns {@code true} if this revocation data is not empty.
      *
-     * @return <code>true</code> if this revocation data is not empty.
+     * @return {@code true} if this revocation data is not empty.
      */
     public boolean hasRevocationDataEntries() {
         return hasOCSPs() || hasCRLs();

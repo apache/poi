@@ -223,6 +223,7 @@ public class HwmfEscape implements HwmfRecord {
         return escapeFunction;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends HwmfEscapeData> T getEscapeData() {
         return (T)escapeData;
     }

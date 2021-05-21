@@ -24,7 +24,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel REPT () function.<p>
+ * Implementation for Excel REPT () function.
  * <p>
  * <b>Syntax</b>:<br> <b>REPT  </b>(<b>text</b>,<b>number_times</b> )<br>
  * <p>
@@ -41,6 +41,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public class Rept extends Fixed2ArgFunction  {
 
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval text, ValueEval number_times) {
 
         ValueEval veText1;
@@ -50,7 +51,7 @@ public class Rept extends Fixed2ArgFunction  {
             return e.getErrorEval();
         }
         String strText1 = OperandResolver.coerceValueToString(veText1);
-        double numberOfTime = 0;
+        double numberOfTime;
         try {
             numberOfTime = OperandResolver.coerceValueToDouble(number_times);
         } catch (EvaluationException e) {

@@ -79,6 +79,7 @@ public enum EscherRecordTypes {
     BLIP_JPEG(0xf018 + 5 /* 0xf01d */, "BlipJpeg", null, EscherBitmapBlip::new),
     BLIP_PNG(0xf018 + 6 /* 0xf01e */, "BlipPng", null, EscherBitmapBlip::new),
     BLIP_DIB(0xf018 + 7 /* 0xf01f */, "BlipDib", null, EscherBitmapBlip::new),
+    BLIP_TIFF(0xf018 + 17 /* 0xf029 */, "BlipTiff", null, EscherBitmapBlip::new),
     BLIP_END(0xf117, "Blip", "msofbtBlip", null),
     REGROUP_ITEMS(0xf118, null, null, null),
     SELECTION(0xf119, null, null, null),
@@ -111,6 +112,11 @@ public enum EscherRecordTypes {
         Stream.of(values()).collect(Collectors.toMap(EscherRecordTypes::getTypeId, Function.identity()));
 
     public static EscherRecordTypes forTypeID(int typeID) {
+        // Section 2.2.23: 0xF02A is treated as 0xF01D
+        if (typeID == 0xF02A) {
+            return EscherRecordTypes.BLIP_JPEG;
+        }
+
         EscherRecordTypes rt = LOOKUP.get((short)typeID);
         return (rt != null) ? rt : EscherRecordTypes.UNKNOWN;
     }

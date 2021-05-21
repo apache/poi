@@ -33,9 +33,8 @@ public interface HSSFShapeContainer extends ShapeContainer<HSSFShape>
 
     /**
      * add shape to the list of child records
-     * @param shape
      */
-    public void addShape(HSSFShape shape);
+    void addShape(HSSFShape shape);
 
     /**
      * set coordinates of this group relative to the parent
@@ -47,27 +46,27 @@ public interface HSSFShapeContainer extends ShapeContainer<HSSFShape>
     /**
      *@return The top left x coordinate of this group.
      */
-    public int getX1();
+    int getX1();
 
     /**
      *@return The top left y coordinate of this group.
      */
-    public int getY1();
+    int getY1();
 
     /**
      *@return The bottom right x coordinate of this group.
      */
-    public int getX2();
+    int getX2();
 
     /**
      * @return The bottom right y coordinate of this group.
      */
-    public int getY2();
+    int getY2();
 
     /**
      * remove first level shapes
      * @param shape to be removed
      * @return true if shape is removed else return false
      */
-    public boolean removeShape(HSSFShape shape);
+    boolean removeShape(HSSFShape shape);
 }

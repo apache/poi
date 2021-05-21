@@ -23,15 +23,12 @@ import org.apache.poi.hssf.util.HSSFColor;
  */
 public class DefaultIndexedColorMap implements IndexedColorMap {
 
-    /**
-     * @see org.apache.poi.xssf.usermodel.IndexedColorMap#getRGB(int)
-     */
+    @Override
     public byte[] getRGB(int index) {
         return getDefaultRGB(index);
     }
 
     /**
-     * @param index
      * @return RGB bytes from HSSF default color by index
      */
     public static byte[] getDefaultRGB(int index) {

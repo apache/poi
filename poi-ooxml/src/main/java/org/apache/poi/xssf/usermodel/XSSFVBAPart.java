@@ -33,18 +33,19 @@ public class XSSFVBAPart extends POIXMLDocumentPart {
      * Construct XSSFVBAPart from a package part
      *
      * @param part the package part holding the VBA data,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     protected XSSFVBAPart(PackagePart part) {
         super(part);
     }
-    
+
     /**
      * Like *PictureData, VBA objects store the actual content in the part
      * directly without keeping a copy like all others therefore we need to
      * handle them differently.
      */
+    @Override
     protected void prepareForCommit() {
         // do not clear the part here
     }

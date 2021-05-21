@@ -49,10 +49,9 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -99,12 +98,12 @@ public final class XSSFCell extends CellBase {
      * Table of strings shared across this workbook.
      * If two cells contain the same string, then the cell value is the same index into SharedStringsTable
      */
-    private SharedStringsTable _sharedStringSource;
+    private final SharedStringsTable _sharedStringSource;
 
     /**
      * Table of cell styles shared across all cells in a workbook.
      */
-    private StylesTable _stylesSource;
+    private final StylesTable _stylesSource;
 
     /**
      * Construct a XSSFCell.
@@ -127,9 +126,6 @@ public final class XSSFCell extends CellBase {
         _stylesSource = row.getSheet().getWorkbook().getStylesSource();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected SpreadsheetVersion getSpreadsheetVersion() {
         return SpreadsheetVersion.EXCEL2007;
@@ -290,7 +286,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a number
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     @Override
@@ -320,9 +316,6 @@ public final class XSSFCell extends CellBase {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setCellValueImpl(double value) {
         _cell.setT(STCellType.N);
@@ -385,10 +378,14 @@ public final class XSSFCell extends CellBase {
                     }
                 }
                 break;
-            case FORMULA:
-                checkFormulaCachedValueType(CellType.STRING, getBaseCellType(false));
+            case FORMULA: {
+                CellType cachedValueType = getBaseCellType(false);
+                if (cachedValueType != CellType.STRING) {
+                    throw typeMismatch(CellType.STRING, cachedValueType, true);
+                }
                 rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
                 break;
+            }
             default:
                 throw typeMismatch(CellType.STRING, cellType, false);
         }
@@ -396,23 +393,11 @@ public final class XSSFCell extends CellBase {
         return rt;
     }
 
-    private static void checkFormulaCachedValueType(CellType expectedTypeCode, CellType cachedValueType) {
-        if (cachedValueType != expectedTypeCode) {
-            throw typeMismatch(expectedTypeCode, cachedValueType, true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(String value) {
         setCellValueImpl(new XSSFRichTextString(value));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(RichTextString str) {
         CellType cellType = getCellType();
@@ -434,7 +419,7 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
+     * Return a formula for the cell, for example, {@code SUM(C4:E4)}
      *
      * @return a formula for the cell
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
@@ -517,8 +502,8 @@ public final class XSSFCell extends CellBase {
      * {@link FormulaEvaluator} instances based on this workbook.
      * </p>
      *
-     * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
-     *  If the argument is <code>null</code> then the current formula is removed.
+     * @param formula the formula to set, e.g. {@code "SUM(C4:E4)"}.
+     *  If the argument is {@code null} then the current formula is removed.
      * @throws org.apache.poi.ss.formula.FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      * @throws IllegalStateException if the operation is not allowed, for example,
      *  when the cell is a part of a multi-cell array formula
@@ -657,10 +642,8 @@ public final class XSSFCell extends CellBase {
      * @return true if the cell is of a formula type POI can handle
      */
     private boolean isFormulaCell() {
-        if ( (_cell.isSetF() && _cell.getF().getT() != STCellFormulaType.DATA_TABLE ) || getSheet().isCellInArrayFormulaContext(this)) {
-            return true;
-        }
-        return false;
+        return (_cell.isSetF() && _cell.getF().getT() != STCellFormulaType.DATA_TABLE)
+            || getSheet().isCellInArrayFormulaContext(this);
     }
 
     /**
@@ -732,7 +715,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override
@@ -753,7 +736,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a LocalDateTime
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override
@@ -767,27 +750,18 @@ public final class XSSFCell extends CellBase {
         return DateUtil.getLocalDateTime(value, date1904);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(Date value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(LocalDateTime value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(Calendar value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
@@ -861,9 +835,6 @@ public final class XSSFCell extends CellBase {
         _cell.setV(error.getString());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setAsActiveCell() {
         getSheet().setActiveCell(getAddress());
@@ -902,7 +873,6 @@ public final class XSSFCell extends CellBase {
     /**
      * Needed by bug #62834, which points out getCellFormula() expects an evaluation context or creates a new one,
      * so if there is one in use, it needs to be carried on through.
-     * @param cellType
      * @param evalWb BaseXSSFEvaluationWorkbook already in use, or null if a new implicit one should be used
      */
     protected void setCellType(CellType cellType, BaseXSSFEvaluationWorkbook evalWb) {
@@ -1003,7 +973,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      *
      * @return the raw cell value as contained in the underlying CTCell bean,
-     *     <code>null</code> for blank cells.
+     *     {@code null} for blank cells.
      */
     public String getRawValue() {
         return _cell.getV();
@@ -1034,7 +1004,7 @@ public final class XSSFCell extends CellBase {
     /**
      * Returns cell comment associated with this cell
      *
-     * @return the cell comment associated with this cell or <code>null</code>
+     * @return the cell comment associated with this cell or {@code null}
      */
     @Override
     public XSSFComment getCellComment() {
@@ -1074,7 +1044,7 @@ public final class XSSFCell extends CellBase {
     /**
      * Returns hyperlink associated with this cell
      *
-     * @return hyperlink associated with this cell or <code>null</code> if not found
+     * @return hyperlink associated with this cell or {@code null} if not found
      */
     @Override
     public XSSFHyperlink getHyperlink() {

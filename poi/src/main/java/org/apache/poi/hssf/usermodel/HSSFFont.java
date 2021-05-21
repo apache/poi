@@ -49,8 +49,8 @@ public final class HSSFFont implements Font {
     public static final String FONT_ARIAL = "Arial";
 
 
-    private FontRecord font;
-    private int index;
+    private final FontRecord font;
+    private final int index;
 
     /** Creates a new instance of HSSFFont */
 
@@ -66,6 +66,7 @@ public final class HSSFFont implements Font {
      * @see #FONT_ARIAL
      */
 
+    @Override
     public void setFontName(String name)
     {
         font.setFontName(name);
@@ -76,6 +77,7 @@ public final class HSSFFont implements Font {
      * @return String representing the name of the font to use
      * @see #FONT_ARIAL
      */
+    @Override
     public String getFontName()
     {
         return font.getFontName();
@@ -99,6 +101,7 @@ public final class HSSFFont implements Font {
      * @see #setFontHeightInPoints(short)
      */
 
+    @Override
     public void setFontHeight(short height)
     {
         font.setFontHeight(height);
@@ -110,6 +113,7 @@ public final class HSSFFont implements Font {
      * @see #setFontHeight(short)
      */
 
+    @Override
     public void setFontHeightInPoints(short height)
     {
         font.setFontHeight(( short ) (height * Font.TWIPS_PER_POINT));
@@ -122,6 +126,7 @@ public final class HSSFFont implements Font {
      * @see #getFontHeightInPoints()
      */
 
+    @Override
     public short getFontHeight()
     {
         return font.getFontHeight();
@@ -133,6 +138,7 @@ public final class HSSFFont implements Font {
      * @see #getFontHeight()
      */
 
+    @Override
     public short getFontHeightInPoints()
     {
         return ( short ) (font.getFontHeight() / Font.TWIPS_PER_POINT);
@@ -143,6 +149,7 @@ public final class HSSFFont implements Font {
      * @param italic italics or not
      */
 
+    @Override
     public void setItalic(boolean italic)
     {
         font.setItalic(italic);
@@ -153,6 +160,7 @@ public final class HSSFFont implements Font {
      * @return italics or not
      */
 
+    @Override
     public boolean getItalic()
     {
         return font.isItalic();
@@ -163,6 +171,7 @@ public final class HSSFFont implements Font {
      * @param strikeout or not
      */
 
+    @Override
     public void setStrikeout(boolean strikeout)
     {
         font.setStrikeout(strikeout);
@@ -173,6 +182,7 @@ public final class HSSFFont implements Font {
      * @return strikeout or not
      */
 
+    @Override
     public boolean getStrikeout()
     {
         return font.isStruckout();
@@ -185,6 +195,7 @@ public final class HSSFFont implements Font {
      * @see #COLOR_RED
      */
 
+    @Override
     public void setColor(short color)
     {
         font.setColorPaletteIndex(color);
@@ -197,6 +208,7 @@ public final class HSSFFont implements Font {
      * @see #COLOR_RED
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      */
+    @Override
     public short getColor()
     {
         return font.getColorPaletteIndex();
@@ -214,6 +226,7 @@ public final class HSSFFont implements Font {
     /**
      * sets the font to be bold or not
      */
+    @Override
     public void setBold(boolean bold)
     {
         if (bold)
@@ -225,6 +238,7 @@ public final class HSSFFont implements Font {
     /**
      * get if the font is bold or not
      */
+    @Override
     public boolean getBold()
     {
         return font.getBoldWeight() == BOLDWEIGHT_BOLD;
@@ -238,6 +252,7 @@ public final class HSSFFont implements Font {
      * @see #SS_SUB
      */
 
+    @Override
     public void setTypeOffset(short offset)
     {
         font.setSuperSubScript(offset);
@@ -251,6 +266,7 @@ public final class HSSFFont implements Font {
      * @see #SS_SUB
      */
 
+    @Override
     public short getTypeOffset()
     {
         return font.getSuperSubScript();
@@ -266,6 +282,7 @@ public final class HSSFFont implements Font {
      * @see #U_DOUBLE_ACCOUNTING
      */
 
+    @Override
     public void setUnderline(byte underline)
     {
         font.setUnderline(underline);
@@ -281,6 +298,7 @@ public final class HSSFFont implements Font {
      * @see #U_DOUBLE_ACCOUNTING
      */
 
+    @Override
     public byte getUnderline()
     {
         return font.getUnderline();
@@ -294,6 +312,7 @@ public final class HSSFFont implements Font {
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
+    @Override
     public int getCharSet()
     {
         byte charset = font.getCharset();
@@ -310,6 +329,7 @@ public final class HSSFFont implements Font {
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
+    @Override
     public void setCharSet(int charset)
     {
         byte cs = (byte)charset;
@@ -325,6 +345,7 @@ public final class HSSFFont implements Font {
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
+    @Override
     public void setCharSet(byte charset)
     {
         font.setCharset(charset);
@@ -347,14 +368,14 @@ public final class HSSFFont implements Font {
 		if (obj instanceof HSSFFont) {
 			final HSSFFont other = (HSSFFont) obj;
 			if (font == null) {
-				if (other.font != null)
-					return false;
-			} else if (!font.equals(other.font))
-				return false;
-			if (index != other.index)
-				return false;
-			return true;
-		}
+				if (other.font != null) {
+                    return false;
+                }
+			} else if (!font.equals(other.font)) {
+                return false;
+            }
+            return index == other.index;
+        }
 		return false;
 	}
 }

@@ -141,7 +141,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     // Unused: UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD
     //protected List<String> styleIDs;
     protected IBody part;
-    private CTTbl ctTbl;
+    private final CTTbl ctTbl;
 
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
         this(table, part);
@@ -243,8 +243,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (tableRows.size() == 0) {
             createRow();
         }
-        for (int i = 0; i < tableRows.size(); i++) {
-            tableRows.get(i).createCell();
+        for (XWPFTableRow tableRow : tableRows) {
+            tableRow.createCell();
         }
     }
 
@@ -1046,7 +1046,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     /**
      * inserts a new tablerow
      *
-     * @param pos
      * @return the inserted row
      */
     public XWPFTableRow insertNewTableRow(int pos) {
@@ -1081,8 +1080,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * returns the type of the BodyElement Table
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
      */
     @Override
     public BodyElementType getElementType() {
@@ -1195,14 +1192,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         switch (typeValue.intValue()) {
         case STTblWidth.INT_NIL:
             return TableWidthType.NIL;
-        case STTblWidth.INT_AUTO:
-            return TableWidthType.AUTO;
         case STTblWidth.INT_DXA:
             return TableWidthType.DXA;
         case STTblWidth.INT_PCT:
             return TableWidthType.PCT;
         default:
-            // Should never get here
+        case STTblWidth.INT_AUTO:
             return TableWidthType.AUTO;
         }
     }
@@ -1284,11 +1279,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (!currentType.equals(widthType)) {
             STTblWidth.Enum stWidthType = widthType.getStWidthType();
             ctWidth.setType(stWidthType);
-            switch (stWidthType.intValue()) {
-            case STTblWidth.INT_PCT:
+            if (stWidthType.intValue() == STTblWidth.INT_PCT) {
                 setWidthPercentage(ctWidth, DEFAULT_PERCENTAGE_WIDTH);
-                break;
-            default:
+            } else {
                 ctWidth.setW(BigInteger.ZERO);
             }
         }

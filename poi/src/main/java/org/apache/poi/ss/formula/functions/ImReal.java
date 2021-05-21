@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel ImReal() function.<p>
+ * Implementation for Excel ImReal() function.
  * <p>
  * <b>Syntax</b>:<br> <b>ImReal  </b>(<b>Inumber</b>)<br>
  * <p>
@@ -45,6 +45,7 @@ public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new ImReal();
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval inumberVE) {
         ValueEval veText1;
         try {
@@ -55,38 +56,24 @@ public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
         String iNumber = OperandResolver.coerceValueToString(veText1);
 
         Matcher m = Imaginary.COMPLEX_NUMBER_PATTERN.matcher(iNumber);
-        boolean result = m.matches();
-
-        String real = "";
-        if (result) {
-            String realGroup = m.group(2);
-            boolean hasRealPart = realGroup.length() != 0;
-
-            if (realGroup.length() == 0) {
-                return new StringEval(String.valueOf(0));
-            }
-
-            if (hasRealPart) {
-                String sign = "";
-                String realSign = m.group(Imaginary.GROUP1_REAL_SIGN);
-                if (realSign.length() != 0 && !(realSign.equals("+"))) {
-                    sign = realSign;
-                }
-
-                String groupRealNumber = m.group(Imaginary.GROUP2_IMAGINARY_INTEGER_OR_DOUBLE);
-                if (groupRealNumber.length() != 0) {
-                    real = sign + groupRealNumber;
-                } else {
-                    real = sign + "1";
-                }
-            }
-        } else {
+        if (!m.matches()) {
             return ErrorEval.NUM_ERROR;
         }
 
-        return new StringEval(real);
+        String realGroup = m.group(2);
+        if (realGroup.isEmpty()) {
+            return new StringEval("0");
+        }
+
+        String realSign = m.group(Imaginary.GROUP1_REAL_SIGN);
+        String groupRealNumber = m.group(Imaginary.GROUP2_IMAGINARY_INTEGER_OR_DOUBLE);
+        String sign = "+".equals(realSign) ? "" : realSign;
+        String real = groupRealNumber.isEmpty() ? "1" : groupRealNumber;
+
+        return new StringEval(sign + real);
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 1) {
             return ErrorEval.VALUE_INVALID;

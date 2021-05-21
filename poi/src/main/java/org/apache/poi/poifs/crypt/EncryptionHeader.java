@@ -30,24 +30,6 @@ import org.apache.poi.common.usermodel.GenericRecord;
  * The constants are largely based on ZIP constants.
  */
 public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
-    public static final int ALGORITHM_RC4 = CipherAlgorithm.rc4.ecmaId;
-    public static final int ALGORITHM_AES_128 = CipherAlgorithm.aes128.ecmaId;
-    public static final int ALGORITHM_AES_192 = CipherAlgorithm.aes192.ecmaId;
-    public static final int ALGORITHM_AES_256 = CipherAlgorithm.aes256.ecmaId;
-
-    public static final int HASH_NONE   = HashAlgorithm.none.ecmaId;
-    public static final int HASH_SHA1   = HashAlgorithm.sha1.ecmaId;
-    public static final int HASH_SHA256 = HashAlgorithm.sha256.ecmaId;
-    public static final int HASH_SHA384 = HashAlgorithm.sha384.ecmaId;
-    public static final int HASH_SHA512 = HashAlgorithm.sha512.ecmaId;
-
-    public static final int PROVIDER_RC4 = CipherProvider.rc4.ecmaId;
-    public static final int PROVIDER_AES = CipherProvider.aes.ecmaId;
-
-    public static final int MODE_ECB = ChainingMode.ecb.ecmaId;
-    public static final int MODE_CBC = ChainingMode.cbc.ecmaId;
-    public static final int MODE_CFB = ChainingMode.cfb.ecmaId;
-
     private int flags;
     private int sizeExtra;
     private CipherAlgorithm cipherAlgorithm;
@@ -125,8 +107,6 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
      * Sets the keySize (in bits). Before calling this method, make sure
      * to set the cipherAlgorithm, as the amount of keyBits gets validated against
      * the list of allowed keyBits of the corresponding cipherAlgorithm
-     *
-     * @param keyBits
      */
     public void setKeySize(int keyBits) {
         this.keyBits = keyBits;
@@ -170,6 +150,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         this.cspName = cspName;
     }
 
+    @Override
     public abstract EncryptionHeader copy();
 
     @Override

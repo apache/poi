@@ -39,8 +39,8 @@ public final class PlexOfCps {
     private static final int MAX_RECORD_LENGTH = 10_485_760;
 
     private int _iMac;
-    private int _cbStruct;
-    private List<GenericPropertyNode> _props;
+    private final int _cbStruct;
+    private final List<GenericPropertyNode> _props;
 
     public PlexOfCps(int sizeOfStruct) {
         _props = new ArrayList<>();
@@ -69,18 +69,10 @@ public final class PlexOfCps {
     void adjust(int startCp, int shift) {
         for (GenericPropertyNode node : _props) {
             if (node.getStart() > startCp) {
-                if (node.getStart() + shift < startCp) {
-                    node.setStart(startCp);
-                } else {
-                    node.setStart(node.getStart() + shift);
-                }
+                node.setStart(Math.max(node.getStart() + shift, startCp));
             }
             if (node.getEnd() >= startCp) {
-                if (node.getEnd() + shift < startCp) {
-                    node.setEnd(startCp);
-                } else {
-                    node.setEnd(node.getEnd() + shift);
-                }
+                node.setEnd(Math.max(node.getEnd() + shift, startCp));
             }
         }
     }

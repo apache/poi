@@ -86,14 +86,6 @@ import org.apache.poi.util.Units;
 public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
     private static final Logger LOG = LogManager.getLogger(HSLFTextParagraph.class);
 
-    /**
-     * How to align the text
-     */
-    /* package */static final int AlignLeft = 0;
-    /* package */static final int AlignCenter = 1;
-    /* package */static final int AlignRight = 2;
-    /* package */static final int AlignJustify = 3;
-
     // Note: These fields are protected to help with unit testing
     // Other classes shouldn't really go playing with them!
     private final TextHeaderAtom _headerAtom;
@@ -120,19 +112,23 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             this.tabStop = tabStop;
         }
 
+        @Override
         public double getPositionInPoints() {
             return tabStop.getPositionInPoints();
         }
 
+        @Override
         public void setPositionInPoints(double position) {
             tabStop.setPositionInPoints(position);
             setDirty();
         }
 
+        @Override
         public TabStopType getType() {
             return tabStop.getType();
         }
 
+        @Override
         public void setType(TabStopType type) {
             tabStop.setType(type);
             setDirty();
@@ -163,18 +159,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _charAtom = tca;
         this.parentList = parentList;
         setParagraphStyle(new TextPropCollection(1, TextPropType.paragraph));
-    }
-
-    /* package */HSLFTextParagraph(HSLFTextParagraph other) {
-        _headerAtom = other._headerAtom;
-        _byteAtom = other._byteAtom;
-        _charAtom = other._charAtom;
-        _parentShape = other._parentShape;
-        _sheet = other._sheet;
-        _ruler = other._ruler;
-        shapeId = other.shapeId;
-        parentList = other.parentList;
-        setParagraphStyle(other._paragraphStyle);
     }
 
     public void addTextRun(HSLFTextRun run) {
@@ -248,8 +232,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     /**
      * Sets the index of the paragraph in the SLWT container
-     *
-     * @param index
      */
     protected void setIndex(int index) {
         if (_headerAtom != null) {
@@ -636,7 +618,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Sets the bullet character
      */
     public void setBulletChar(Character c) {
-        Integer val = (c == null) ? null : (int)c.charValue();
+        Integer val = (c == null) ? null : (int) c;
         setParagraphTextPropVal("bullet.char", val);
     }
 
@@ -765,23 +747,21 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public List<? extends TabStop> getTabStops() {
         final List<HSLFTabStop> tabStops;
-        final TextRulerAtom textRuler;
         if (getSheet() instanceof HSLFSlideMaster) {
             final HSLFTabStopPropCollection tpc = getMasterPropVal(_paragraphStyle, HSLFTabStopPropCollection.NAME);
             if (tpc == null) {
                 return null;
             }
             tabStops = tpc.getTabStops();
-            textRuler = null;
         } else {
-            textRuler = (TextRulerAtom)_headerAtom.getParentRecord().findFirstOfType(RecordTypes.TextRulerAtom.typeID);
+            final TextRulerAtom textRuler = (TextRulerAtom) _headerAtom.getParentRecord().findFirstOfType(RecordTypes.TextRulerAtom.typeID);
             if (textRuler == null) {
                 return null;
             }
             tabStops = textRuler.getTabStops();
         }
 
-        return tabStops.stream().map((tabStop) -> new HSLFTabStopDecorator(tabStop)).collect(Collectors.toList());
+        return tabStops.stream().map(HSLFTabStopDecorator::new).collect(Collectors.toList());
     }
 
     @Override
@@ -836,11 +816,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     private boolean getFlag(int index) {
         BitMaskTextProp tp = getPropVal(_paragraphStyle, ParagraphFlagsTextProp.NAME);
-        return (tp == null) ? false : tp.getSubValue(index);
+        return tp != null && tp.getSubValue(index);
     }
 
     private void setFlag(int index, boolean value) {
-        BitMaskTextProp tp = (BitMaskTextProp)_paragraphStyle.addWithName(ParagraphFlagsTextProp.NAME);
+        BitMaskTextProp tp = _paragraphStyle.addWithName(ParagraphFlagsTextProp.NAME);
         tp.setSubValue(value, index);
         setDirty();
     }
@@ -1047,7 +1027,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             StringUtil.putCompressedUnicode(rawText, byteText, 0);
             byteAtom.setText(byteText);
         }
-        assert (newRecord != null);
 
         RecordContainer _txtbox = headerAtom.getParentRecord();
         Record[] cr = _txtbox.getChildRecords();
@@ -1528,7 +1507,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                     break;
                 }
                 List<HSLFTextRun> runs = p.getTextRuns();
-                for (int rlen=0,rIdx=0; rIdx < runs.size(); csIdx+=rlen, rIdx++) {
+                for (int rlen,rIdx=0; rIdx < runs.size(); csIdx+=rlen, rIdx++) {
                     HSLFTextRun run = runs.get(rIdx);
                     rlen = run.getLength();
                     if (csIdx < h.getEndIndex() && h.getStartIndex() < csIdx+rlen) {
@@ -1722,8 +1701,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @see RoundTripHFPlaceholder12
      */
     @Override

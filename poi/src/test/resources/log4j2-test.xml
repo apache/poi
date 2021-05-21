@@ -31,8 +31,8 @@
     <Logger name="org.apache.poi.hdgf.chunks.ChunkFactory" level="ERROR" />
     <Logger name="org.apache.poi.hslf.model.textproperties.BitMaskTextProp" level="ERROR" />
     <Logger name="org.apache.poi.hslf.usermodel.HSLFTextParagraph" level="ERROR" />
-    <Logger name="org.apache.poi.openxml4j.opc.ZipPackage" level="ERROR" />
-    <Logger name="org.apache.poi.POIDocument" level="WARN" />
+    <Logger name="org.apache.poi.openxml4j.opc.ZipPackage" level="FATAL" />
+    <Logger name="org.apache.poi.POIDocument" level="FATAL" />
     <Logger name="org.apache.poi.openxml4j.opc.OPCPackage" level="ERROR" />
     <Logger name="org.apache.poi.xssf.usermodel.XSSFWorkbook" level="ERROR" />
     <Logger name="org.apache.poi.hslf.usermodel.HSLFGroupShape" level="WARN" />

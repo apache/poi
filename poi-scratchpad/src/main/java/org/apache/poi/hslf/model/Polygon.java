@@ -40,7 +40,7 @@ public final class Polygon extends HSLFAutoShape {
     /**
      * Create a Polygon object and initialize it from the supplied Record container.
      *
-     * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
+     * @param escherRecord       {@code EscherSpContainer} container which holds information about this shape
      * @param parent    the parent of the shape
      */
    protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
@@ -69,9 +69,6 @@ public final class Polygon extends HSLFAutoShape {
 
     /**
      * Set the polygon vertices
-     *
-     * @param xPoints
-     * @param yPoints
      */
     public void setPoints(float[] xPoints, float[] yPoints)
     {
@@ -147,10 +144,9 @@ public final class Polygon extends HSLFAutoShape {
     private float findBiggest( float[] values )
     {
         float result = Float.MIN_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
-            if (values[i] > result)
-                result = values[i];
+        for (float value : values) {
+            if (value > result)
+                result = value;
         }
         return result;
     }
@@ -158,10 +154,9 @@ public final class Polygon extends HSLFAutoShape {
     private float findSmallest( float[] values )
     {
         float result = Float.MAX_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
-            if (values[i] < result)
-                result = values[i];
+        for (float value : values) {
+            if (value < result)
+                result = value;
         }
         return result;
     }

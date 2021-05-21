@@ -48,15 +48,14 @@ import java.text.AttributedCharacterIterator;
  * verticalPointsPerPixel.  This the amount the font should be scaled by when
  * you issue commands such as drawString().  A good way to calculate this
  * is to use the follow formula:
- * <p>
- * <pre>
- *      multipler = groupHeightInPoints / heightOfGroup
- * </pre>
+ * <pre>{@code
+ *      multiplier = groupHeightInPoints / heightOfGroup
+ * }</pre>
  * <p>
  * The height of the group is calculated fairly simply by calculating the
  * difference between the y coordinates of the bounding box of the shape.  The
  * height of the group can be calculated by using a convenience called
- * <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
+ * {@code HSSFClientAnchor.getAnchorHeightInPoints()}.
  * </blockquote>
  */
 public class EscherGraphics extends Graphics {
@@ -64,7 +63,7 @@ public class EscherGraphics extends Graphics {
 
     private final HSSFShapeGroup escherGroup;
     private final HSSFWorkbook workbook;
-    private float verticalPointsPerPixel = 1.0f;
+    private final float verticalPointsPerPixel;
     private final float verticalPixelsPerPoint;
     private Color foreground;
     private Color background = Color.white;
@@ -290,7 +289,7 @@ public class EscherGraphics extends Graphics {
         if (str == null || str.isEmpty())
             return;
 
-        Font excelFont = font;
+        Font excelFont;
         if ( font.getName().equals( "SansSerif" ) )
         {
             excelFont = new Font( "Arial", font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ) );
@@ -374,18 +373,18 @@ public class EscherGraphics extends Graphics {
      * Fills a (closed) polygon, as defined by a pair of arrays, which
      *  hold the <i>x</i> and <i>y</i> coordinates.
      * <p>
-     * This draws the polygon, with <code>nPoint</code> line segments.
-     * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
+     * This draws the polygon, with {@code nPoint} line segments.
+     * The first {@code nPoint&nbsp;-&nbsp;1} line segments are
      *  drawn between sequential points
-     *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
+     *  ({@code xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]}).
      * The final line segment is a closing one, from the last point to
      *  the first (assuming they are different).
      * <p>
      * The area inside of the polygon is defined by using an
      *  even-odd fill rule (also known as the alternating rule), and
      *  the area inside of it is filled.
-     * @param xPoints array of the <code>x</code> coordinates.
-     * @param yPoints array of the <code>y</code> coordinates.
+     * @param xPoints array of the {@code x} coordinates.
+     * @param yPoints array of the {@code y} coordinates.
      * @param nPoints the total number of points in the polygon.
      * @see   Graphics#drawPolygon(int[], int[], int)
      */
@@ -407,10 +406,9 @@ public class EscherGraphics extends Graphics {
     private int findBiggest( int[] values )
     {
         int result = Integer.MIN_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
-            if (values[i] > result)
-                result = values[i];
+        for (int value : values) {
+            if (value > result)
+                result = value;
         }
         return result;
     }
@@ -418,10 +416,9 @@ public class EscherGraphics extends Graphics {
     private int findSmallest( int[] values )
     {
         int result = Integer.MAX_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
-            if (values[i] < result)
-                result = values[i];
+        for (int value : values) {
+            if (value < result)
+                result = value;
         }
         return result;
     }

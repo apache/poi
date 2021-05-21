@@ -32,9 +32,9 @@ import org.apache.poi.util.StringUtil;
  */
 @Internal
 public class TextPiece extends PropertyNode<TextPiece> {
-    private boolean _usesUnicode;
+    private final boolean _usesUnicode;
 
-    private PieceDescriptor _pd;
+    private final PieceDescriptor _pd;
 
     public TextPiece(TextPiece other) {
         super(other);
@@ -142,6 +142,7 @@ public class TextPiece extends PropertyNode<TextPiece> {
      * @param start  The start position for the delete, in characters
      * @param length The number of characters to delete
      */
+    @Override
     @Deprecated
     public void adjustForDelete(int start, int length) {
         int myStart = getStart();

@@ -36,7 +36,7 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
     public HSSFSheet getHSSFSheet() {
         return _hs;
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
      * @since POI 4.0.0
@@ -50,6 +50,7 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
      * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
      * @since POI 4.1.0
      */
+    @Override
     public boolean isRowHidden(int rowIndex) {
         HSSFRow row = _hs.getRow(rowIndex);
         if (row == null) return false;
@@ -71,7 +72,7 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
 
     /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
      * @since POI 3.15 beta 3
-     */    
+     */
     @Override
     public void clearAllCachedResultValues() {
     }

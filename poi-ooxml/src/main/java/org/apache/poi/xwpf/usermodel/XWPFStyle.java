@@ -25,21 +25,10 @@ public class XWPFStyle {
     protected XWPFStyles styles;
     private CTStyle ctStyle;
 
-    /**
-     * constructor
-     *
-     * @param style
-     */
     public XWPFStyle(CTStyle style) {
         this(style, null);
     }
 
-    /**
-     * constructor
-     *
-     * @param style
-     * @param styles
-     */
     public XWPFStyle(CTStyle style, XWPFStyles styles) {
         this.ctStyle = style;
         this.styles = styles;
@@ -56,8 +45,6 @@ public class XWPFStyle {
 
     /**
      * set styleID
-     *
-     * @param styleId
      */
     public void setStyleId(String styleId) {
         ctStyle.setStyleId(styleId);
@@ -74,8 +61,6 @@ public class XWPFStyle {
 
     /**
      * set styleType
-     *
-     * @param type
      */
     public void setType(STStyleType.Enum type) {
         ctStyle.setType(type);
@@ -83,8 +68,6 @@ public class XWPFStyle {
 
     /**
      * set style
-     *
-     * @param style
      */
     public void setStyle(CTStyle style) {
         this.ctStyle = style;
@@ -144,8 +127,6 @@ public class XWPFStyle {
 
     /**
      * compares the names of the Styles
-     *
-     * @param compStyle
      */
     public boolean hasSameName(XWPFStyle compStyle) {
         CTStyle ctCompStyle = compStyle.getCTStyle();
@@ -153,4 +134,4 @@ public class XWPFStyle {
         return name.equals(ctStyle.getName().getVal());
     }
 
-}//end class
+}

@@ -171,10 +171,12 @@ public class HwmfFill {
          */
         int regionIndex;
 
+        @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.paintRegion;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             regionIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;

@@ -32,7 +32,7 @@ public final class GenericRecordUtil {
 
     public static Map<String, Supplier<?>>
     getGenericProperties(String val1, Supplier<?> sup1) {
-        return Collections.unmodifiableMap(Collections.singletonMap(val1, sup1));
+        return Collections.singletonMap(val1, sup1);
     }
 
     public static Map<String, Supplier<?>> getGenericProperties(

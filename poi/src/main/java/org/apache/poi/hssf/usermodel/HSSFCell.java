@@ -56,7 +56,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -68,7 +67,6 @@ import org.apache.poi.util.Removal;
  * <p>
  * Cells should have their number (0 based) before being added to a row.  Only
  * cells that have values should be added.
- * <p>
  */
 public class HSSFCell extends CellBase {
     private static final String FILE_FORMAT_NAME  = "BIFF8";
@@ -119,9 +117,6 @@ public class HSSFCell extends CellBase {
         setCellType(CellType.BLANK, false, row, col,xfindex);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected SpreadsheetVersion getSpreadsheetVersion() {
         return SpreadsheetVersion.EXCEL97;
@@ -132,6 +127,7 @@ public class HSSFCell extends CellBase {
      *
      * @return the HSSFSheet that owns this cell
      */
+    @Override
     public HSSFSheet getSheet() {
         return _sheet;
     }
@@ -141,6 +137,7 @@ public class HSSFCell extends CellBase {
      *
      * @return the HSSFRow that owns this cell
      */
+    @Override
     public HSSFRow getRow() {
         int rowIndex = getRowIndex();
         return _sheet.getRow(rowIndex);
@@ -190,13 +187,11 @@ public class HSSFCell extends CellBase {
                 _stringValue = new HSSFRichTextString(book.getWorkbook(), (LabelSSTRecord ) cval);
                 break;
 
-            case BLANK :
-                break;
-
             case FORMULA :
                 _stringValue=new HSSFRichTextString(((FormulaRecordAggregate) cval).getStringValue());
                 break;
 
+            case BLANK :
             default :
                 break;
         }
@@ -428,9 +423,6 @@ public class HSSFCell extends CellBase {
         return _cellType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @SuppressWarnings("fallthrough")
     protected void setCellValueImpl(double value) {
@@ -458,6 +450,7 @@ public class HSSFCell extends CellBase {
      * @see DateUtil
      * @see org.apache.poi.ss.usermodel.DateUtil
      */
+    @Override
     protected void setCellValueImpl(Date value) {
         setCellValue(DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
     }
@@ -469,29 +462,21 @@ public class HSSFCell extends CellBase {
      * @see DateUtil
      * @see org.apache.poi.ss.usermodel.DateUtil
      */
+    @Override
     protected void setCellValueImpl(LocalDateTime value) {
         setCellValue(DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(Calendar value) {
         setCellValue( DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(String value) {
         setCellValueImpl(new HSSFRichTextString(value));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellValueImpl(RichTextString value) {
         if (_cellType == CellType.FORMULA) {
@@ -526,9 +511,6 @@ public class HSSFCell extends CellBase {
         _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setCellFormulaImpl(String formula) {
         // formula cells always have a value. If the cell is blank (either initially or after removing an
@@ -640,6 +622,7 @@ public class HSSFCell extends CellBase {
         }
     }
 
+    @Override
     public String getCellFormula() {
         if (!(_record instanceof FormulaRecordAggregate)) {
             throw typeMismatch(CellType.FORMULA, _cellType, true);
@@ -668,6 +651,7 @@ public class HSSFCell extends CellBase {
      *  number into a string similar to that which
      *  Excel would render this number as.
      */
+    @Override
     public double getNumericCellValue() {
 
         switch(_cellType) {
@@ -692,6 +676,7 @@ public class HSSFCell extends CellBase {
      * See {@link HSSFDataFormatter} for formatting
      *  this date into a string similar to how excel does.
      */
+    @Override
     public Date getDateCellValue() {
 
         if (_cellType == CellType.BLANK) {
@@ -711,6 +696,7 @@ public class HSSFCell extends CellBase {
      * See {@link HSSFDataFormatter} for formatting
      *  this date into a string similar to how excel does.
      */
+    @Override
     public LocalDateTime getLocalDateTimeCellValue() {
 
         if (_cellType == CellType.BLANK) {
@@ -728,6 +714,7 @@ public class HSSFCell extends CellBase {
      * For blank cells we return an empty string.
      * For formulaCells that are not string Formulas, we throw an exception
      */
+    @Override
     public String getStringCellValue()
     {
       HSSFRichTextString str = getRichStringCellValue();
@@ -739,6 +726,7 @@ public class HSSFCell extends CellBase {
      * For blank cells we return an empty string.
      * For formulaCells that are not string Formulas, we throw an exception
      */
+    @Override
     public HSSFRichTextString getRichStringCellValue() {
 
         switch(_cellType) {
@@ -764,6 +752,7 @@ public class HSSFCell extends CellBase {
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
+    @Override
     @SuppressWarnings("fallthrough")
     public void setCellValue(boolean value) {
         int row=_record.getRow();
@@ -793,6 +782,8 @@ public class HSSFCell extends CellBase {
      *        For error code byte, see {@link FormulaError}.
      * @deprecated 3.15 beta 2. Use {@link #setCellErrorValue(FormulaError)} instead.
      */
+    @Override
+    @Deprecated
     public void setCellErrorValue(byte errorCode) {
         FormulaError error = FormulaError.forInt(errorCode);
         setCellErrorValue(error);
@@ -948,6 +939,7 @@ public class HSSFCell extends CellBase {
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
      */
+    @Override
     public void setCellStyle(CellStyle style) {
         setCellStyle( (HSSFCellStyle)style );
     }
@@ -977,6 +969,7 @@ public class HSSFCell extends CellBase {
      * object.
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
      */
+    @Override
     public HSSFCellStyle getCellStyle()
     {
       short styleIndex=_record.getXFIndex();
@@ -1006,9 +999,6 @@ public class HSSFCell extends CellBase {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setAsActiveCell()
     {
@@ -1062,6 +1052,7 @@ public class HSSFCell extends CellBase {
      *
      * @param comment comment associated with this cell
      */
+    @Override
     public void setCellComment(Comment comment){
         if(comment == null) {
             removeCellComment();
@@ -1078,6 +1069,7 @@ public class HSSFCell extends CellBase {
      *
      * @return comment associated with this cell
      */
+     @Override
      public HSSFComment getCellComment(){
         if (_comment == null) {
             _comment = _sheet.findCellComment(_record.getRow(), _record.getColumn());
@@ -1091,6 +1083,7 @@ public class HSSFCell extends CellBase {
      * WARNING - some versions of excel will loose
      *  all comments after performing this action!
      */
+    @Override
     public void removeCellComment() {
         HSSFComment comment = _sheet.findCellComment(_record.getRow(), _record.getColumn());
         _comment = null;
@@ -1101,7 +1094,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * @return hyperlink associated with this cell or <code>null</code> if not found
+     * @return hyperlink associated with this cell or {@code null} if not found
      */
     @Override
     public HSSFHyperlink getHyperlink(){
@@ -1151,6 +1144,7 @@ public class HSSFCell extends CellBase {
     /**
      * Removes the hyperlink for this cell, if there is one.
      */
+    @Override
     public void removeHyperlink() {
         for (Iterator<RecordBase> it = _sheet.getSheet().getRecords().iterator(); it.hasNext();) {
             RecordBase rec = it.next();
@@ -1193,6 +1187,7 @@ public class HSSFCell extends CellBase {
         agg.setParsedExpression(ptgsForCell);
     }
 
+    @Override
     public CellRangeAddress getArrayFormulaRange() {
         if (_cellType != CellType.FORMULA) {
             String ref = new CellReference(this).formatAsString();
@@ -1202,6 +1197,7 @@ public class HSSFCell extends CellBase {
         return ((FormulaRecordAggregate)_record).getArrayFormulaRange();
     }
 
+    @Override
     public boolean isPartOfArrayFormulaGroup() {
         return _cellType == CellType.FORMULA && ((FormulaRecordAggregate) _record).isPartOfArrayFormula();
     }

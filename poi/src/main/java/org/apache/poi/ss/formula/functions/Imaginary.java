@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Implementation for Excel IMAGINARY() function.<p>
+ * Implementation for Excel IMAGINARY() function.
  * <p>
  * <b>Syntax</b>:<br> <b>IMAGINARY  </b>(<b>Inumber</b>)<br>
  * <p>
@@ -56,6 +56,7 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
     public static final int GROUP3_IMAGINARY_SIGN = 3;
     public static final int GROUP4_IMAGINARY_INTEGER_OR_DOUBLE = 4;
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval inumberVE) {
         ValueEval veText1;
         try {
@@ -98,6 +99,7 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
         return new StringEval(imaginary);
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 1) {
             return ErrorEval.VALUE_INVALID;

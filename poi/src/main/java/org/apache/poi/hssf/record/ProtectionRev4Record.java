@@ -26,7 +26,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes whether this is a protected shared/tracked workbook<p>
+ * Describes whether this is a protected shared/tracked workbook
  */
 public final class ProtectionRev4Record extends StandardRecord {
     public static final short sid = 0x01AF;
@@ -69,14 +69,17 @@ public final class ProtectionRev4Record extends StandardRecord {
         return protectedFlag.isSet(_options);
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_options);
     }
 
+    @Override
     protected int getDataSize() {
         return 2;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }

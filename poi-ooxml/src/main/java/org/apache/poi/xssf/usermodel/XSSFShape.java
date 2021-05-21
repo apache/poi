@@ -125,8 +125,6 @@ public abstract class XSSFShape implements Shape {
 
     /**
      * Sets the line style.
-     *
-     * @param lineStyle
      */
     public void setLineStyle( int lineStyle ) {
         CTShapeProperties props = getShapeProperties();

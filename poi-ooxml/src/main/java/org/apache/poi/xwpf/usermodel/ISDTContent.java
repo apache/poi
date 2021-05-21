@@ -17,18 +17,17 @@
 package org.apache.poi.xwpf.usermodel;
 
 
+import org.apache.poi.util.Beta;
+
 /**
  * Experimental interface to offer rudimentary read-only processing of
  * of the contentblock of an SDT/ContentControl.
- * <p>
- * <p>
- * <p>
- * WARNING - APIs expected to change rapidly
  */
+@Beta
 public interface ISDTContent {
 
-    public String getText();
+    String getText();
 
-    public String toString();
+    String toString();
 
 }

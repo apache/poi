@@ -18,7 +18,6 @@ package org.apache.poi.hwpf.model;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -114,7 +113,7 @@ public class TextPieceTable implements CharIndexTranslator {
         // into order, if they're not already
         Collections.sort(_textPieces);
         _textPiecesFCOrder = new ArrayList<>(_textPieces);
-        _textPiecesFCOrder.sort(new FCComparator());
+        _textPiecesFCOrder.sort(byFilePosition());
     }
 
     protected TextPiece newTextPiece(int nodeStartChars, int nodeEndChars, byte[] buf, PieceDescriptor pd) {
@@ -125,7 +124,7 @@ public class TextPieceTable implements CharIndexTranslator {
         _textPieces.add(piece);
         _textPiecesFCOrder.add(piece);
         Collections.sort(_textPieces);
-        _textPiecesFCOrder.sort(new FCComparator());
+        _textPiecesFCOrder.sort(byFilePosition());
     }
 
     /**
@@ -169,6 +168,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return false;
     }
 
+    @Override
     public int getByteIndex(int charPos) {
         int byteCount = 0;
         for (TextPiece tp : _textPieces) {
@@ -308,6 +308,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return _textPieces.hashCode();
     }
 
+    @Override
     public boolean isIndexInTable(int bytePos) {
         for (TextPiece tp : _textPiecesFCOrder) {
             int pieceStart = tp.getPieceDescriptor().getFilePosition();
@@ -339,6 +340,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return false;
     }
 
+    @Override
     public int lookIndexBackward(final int startBytePos) {
         int bytePos = startBytePos;
         int lastEnd = 0;
@@ -361,6 +363,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return bytePos;
     }
 
+    @Override
     public int lookIndexForward(final int startBytePos) {
         if (_textPiecesFCOrder.isEmpty())
             throw new IllegalStateException("Text pieces table is empty");
@@ -433,10 +436,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return textPlex.toByteArray();
     }
 
-    protected static class FCComparator implements Comparator<TextPiece>, Serializable {
-        public int compare(TextPiece textPiece, TextPiece textPiece1) {
-            return Integer.compare(textPiece.getPieceDescriptor().fc, textPiece1
-                    .getPieceDescriptor().fc);
-        }
+    static Comparator<TextPiece> byFilePosition() {
+        return Comparator.comparing(t -> t.getPieceDescriptor().getFilePosition());
     }
 }

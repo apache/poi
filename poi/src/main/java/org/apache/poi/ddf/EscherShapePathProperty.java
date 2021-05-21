@@ -30,9 +30,6 @@ public class EscherShapePathProperty extends EscherSimpleProperty {
 
     /**
      * Create an instance of an escher shape path property.
-     *
-     * @param propertyNumber
-     * @param shapePath
      */
     public EscherShapePathProperty( short propertyNumber, int shapePath ) {
         super( propertyNumber, false, false, shapePath );

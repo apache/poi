@@ -38,8 +38,6 @@ public class SharedFormula {
      * were it not shared.
      *
      * @param ptgs parsed tokens of the shared formula
-     * @param formulaRow
-     * @param formulaColumn
      */
     public Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
 
@@ -72,9 +70,8 @@ public class SharedFormula {
             } else if (ptg instanceof OperandPtg) {
                 // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
                 ptg = ((OperandPtg) ptg).copy();
-            } else {
-            	// all other Ptgs are immutable and can be shared
             }
+            // all other Ptgs are immutable and can be shared
             newPtgStack[k] = ptg;
         }
         return newPtgStack;

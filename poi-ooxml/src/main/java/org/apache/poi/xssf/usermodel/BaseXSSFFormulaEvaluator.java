@@ -47,10 +47,11 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
      * Turns a XSSFCell / SXSSFCell into a XSSFEvaluationCell
      */
     protected abstract EvaluationCell toEvaluationCell(Cell cell);
-    
+
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      */
+    @Override
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         EvaluationCell evalCell = toEvaluationCell(cell);
         ValueEval eval = _bookEvaluator.evaluate(evalCell);
@@ -71,7 +72,8 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         }
         throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
-    
+
+    @Override
     protected void setCellType(Cell cell, CellType cellType) {
         if (cell instanceof  XSSFCell) {
             EvaluationWorkbook evaluationWorkbook = getEvaluationWorkbook();

@@ -32,14 +32,12 @@ import java.util.Locale;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.usermodel.TableStyleInfo;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
@@ -358,6 +356,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @return the name of the Table, if set
      */
+    @Override
     public String getName() {
         if (name == null && ctTable.getName() != null) {
             setName(ctTable.getName());
@@ -383,6 +382,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return the table style name, if set
      * @since 3.17 beta 1
      */
+    @Override
     public String getStyleName() {
         if (styleName == null && ctTable.isSetTableStyleInfo()) {
             setStyleName(ctTable.getTableStyleInfo().getName());
@@ -628,7 +628,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * and {@link #getEndCellReference()}.
      * The next call to {@link #getStartCellReference()} and
      * {@link #getEndCellReference()} will synchronize the
-     * cell references with the underlying <code>CTTable</code>.
+     * cell references with the underlying {@code CTTable}.
      * Thus this method is inexpensive.
      *
      * @since POI 3.15 beta 3
@@ -645,7 +645,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * {@linkplain #getTotalsRowCount() totals rows}. (Note: in this version
      * autofiltering is ignored)
      *
-     * Returns <code>0</code> if the start or end cell references are not set.
+     * Returns {@code 0} if the start or end cell references are not set.
      *
      * Does not track updates to underlying changes to CTTable To synchronize
      * with changes to the underlying CTTable, call {@link #updateReferences()}.
@@ -667,7 +667,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Get the number of data rows in this table. This does not include any
      * header rows or totals rows.
      *
-     * Returns <code>0</code> if the start or end cell references are not set.
+     * Returns {@code 0} if the start or end cell references are not set.
      *
      * Does not track updates to underlying changes to CTTable To synchronize
      * with changes to the underlying CTTable, call {@link #updateReferences()}.
@@ -821,9 +821,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
-     * Gets the relative column index of a column in this table having the header name <code>column</code>.
+     * Gets the relative column index of a column in this table having the header name {@code column}.
      * The column index is relative to the left-most column in the table, 0-indexed.
-     * Returns <code>-1</code> if <code>column</code> is not a header name in table.
+     * Returns {@code -1} if {@code column} is not a header name in table.
      *
      * Column Header names are case-insensitive
      *
@@ -832,6 +832,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      *
      * @since 3.15 beta 2
      */
+    @Override
     public int findColumnIndex(String columnHeader) {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
@@ -849,12 +850,13 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         // Table column names with special characters need a single quote escape
         // but the escape is not present in the column definition
         Integer idx = columnMap.get(caseInsensitive(columnHeader.replace("'", "")));
-        return idx == null ? -1 : idx.intValue();
+        return idx == null ? -1 : idx;
     }
 
     /**
      * @since 3.15 beta 2
      */
+    @Override
     public String getSheetName() {
         return getXSSFSheet().getSheetName();
     }
@@ -866,6 +868,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @since 3.15 beta 2
      * @see #getTotalsRowCount()
      */
+    @Override
     public boolean isHasTotalsRow() {
         return ctTable.getTotalsRowShown();
     }
@@ -876,6 +879,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * doesn't define how they would be implemented.
      * @since 3.17 beta 1
      */
+    @Override
     public int getTotalsRowCount() {
         return (int) ctTable.getTotalsRowCount();
     }
@@ -885,6 +889,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Values &gt; 1 might be used by Excel for pivot tables?
      * @since 3.17 beta 1
      */
+    @Override
     public int getHeaderRowCount() {
         return (int) ctTable.getHeaderRowCount();
     }
@@ -892,6 +897,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @since 3.15 beta 2
      */
+    @Override
     public int getStartColIndex() {
         return getStartCellReference().getCol();
     }
@@ -899,6 +905,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @since 3.15 beta 2
      */
+    @Override
     public int getStartRowIndex() {
         return getStartCellReference().getRow();
     }
@@ -906,6 +913,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @since 3.15 beta 2
      */
+    @Override
     public int getEndColIndex() {
         return getEndCellReference().getCol();
     }
@@ -913,6 +921,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @since 3.15 beta 2
      */
+    @Override
     public int getEndRowIndex() {
         return getEndCellReference().getRow();
     }
@@ -920,6 +929,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @since 3.17 beta 1
      */
+    @Override
     public TableStyleInfo getStyle() {
         if (! ctTable.isSetTableStyleInfo()) return null;
         return new XSSFTableStyleInfo(((XSSFSheet) getParent()).getWorkbook().getStylesSource(), ctTable.getTableStyleInfo());
@@ -929,18 +939,16 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @see org.apache.poi.ss.usermodel.Table#contains(org.apache.poi.ss.usermodel.Cell)
      * @since 3.17 beta 1
      */
+    @Override
     public boolean contains(CellReference cell) {
         if (cell == null) return false;
         // check if cell is on the same sheet as the table
         if ( ! getSheetName().equals(cell.getSheetName())) return false;
         // check if the cell is inside the table
-        if (cell.getRow() >= getStartRowIndex()
+        return cell.getRow() >= getStartRowIndex()
             && cell.getRow() <= getEndRowIndex()
             && cell.getCol() >= getStartColIndex()
-            && cell.getCol() <= getEndColIndex()) {
-            return true;
-        }
-        return false;
+            && cell.getCol() <= getEndColIndex();
     }
 
     /**

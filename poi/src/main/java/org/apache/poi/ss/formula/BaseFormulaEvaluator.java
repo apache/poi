@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- * Common functionality across file formats for evaluating formula cells.<p>
+ * Common functionality across file formats for evaluating formula cells.
  */
 public abstract class BaseFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
     protected final WorkbookEvaluator _bookEvaluator;
@@ -91,8 +91,8 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      * evaluateInCell() when the call should not modify the contents of the
      * original cell.
      *
-     * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
-     * @return <code>null</code> if the supplied cell is <code>null</code> or blank
+     * @param cell may be {@code null} signifying that the cell is not present (or blank)
+     * @return {@code null} if the supplied cell is {@code null} or blank
      */
     @Override
     public CellValue evaluate(Cell cell) {
@@ -281,13 +281,11 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);

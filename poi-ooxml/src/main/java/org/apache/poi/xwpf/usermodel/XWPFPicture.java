@@ -25,9 +25,9 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
 public class XWPFPicture {
 
-    private CTPicture ctPic;
-    private String description;
-    private XWPFRun run;
+    private final CTPicture ctPic;
+    private final String description;
+    private final XWPFRun run;
 
     public XWPFPicture(CTPicture ctPic, XWPFRun run) {
         this.run = run;
@@ -37,8 +37,6 @@ public class XWPFPicture {
 
     /**
      * Link Picture with PictureData
-     *
-     * @param rel
      */
     public void setPictureReference(PackageRelationship rel) {
         ctPic.getBlipFill().getBlip().setEmbed(rel.getId());

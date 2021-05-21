@@ -32,7 +32,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The Tick record defines how tick marks and label positioning/formatting<p>
+ * The Tick record defines how tick marks and label positioning/formatting
  */
 public final class TickRecord extends StandardRecord {
     public static final short sid = 0x101E;
@@ -90,6 +90,7 @@ public final class TickRecord extends StandardRecord {
         field_12_zero5        = in.readShort();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeByte(field_1_majorTickType);
         out.writeByte(field_2_minorTickType);
@@ -105,10 +106,12 @@ public final class TickRecord extends StandardRecord {
         out.writeShort(field_12_zero5);
     }
 
+    @Override
     protected int getDataSize() {
         return 1 + 1 + 1 + 1 + 4 + 8 + 8 + 2 + 2 + 2;
     }
 
+    @Override
     public short getSid()
     {
         return sid;

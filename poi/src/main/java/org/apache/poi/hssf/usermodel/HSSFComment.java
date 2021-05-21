@@ -66,7 +66,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     /**
      * Construct a new comment with the given parent and anchor.
      *
-     * @param parent
      * @param anchor defines position of this anchor in the sheet
      */
     public HSSFComment(HSSFShape parent, HSSFAnchor anchor) {
@@ -100,6 +99,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = super.createSpContainer();
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        assert(opt != null);
         opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTLEFT);
         opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTRIGHT);
         opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTTOP);
@@ -147,7 +147,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     /**
      * Sets whether this comment is visible.
      *
-     * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
+     * @param visible {@code true} if the comment is visible, {@code false} otherwise
      */
     @Override
     public void setVisible(boolean visible) {
@@ -158,7 +158,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     /**
      * Returns whether this comment is visible.
      *
-     * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
+     * @return {@code true} if the comment is visible, {@code false} otherwise
      */
     @Override
     public boolean isVisible() {
@@ -253,9 +253,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * Do we know which cell this comment belongs to?
      */
     public boolean hasPosition() {
-        if (_note == null) return false;
-        if (getColumn() < 0 || getRow() < 0) return false;
-        return true;
+        return _note != null && getColumn() >= 0 && getRow() >= 0;
     }
 
     @Override

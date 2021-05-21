@@ -16,7 +16,7 @@
 
    2012 - Alfresco Software, Ltd.
    Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
@@ -32,16 +32,15 @@ public class ExcelNumberFormat {
 
     private final int idx;
     private final String format;
-    
+
     /**
-     * @param style
      * @return null if the style is null, instance from style data format values otherwise
      */
     public static ExcelNumberFormat from(CellStyle style) {
         if (style == null) return null;
         return new ExcelNumberFormat(style.getDataFormat(), style.getDataFormatString());
     }
-    
+
     /**
     * @param cell cell to extract format from
     * @param cfEvaluator ConditionalFormattingEvaluator to use, or null if none in this context
@@ -49,9 +48,9 @@ public class ExcelNumberFormat {
     */
    public static ExcelNumberFormat from(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
        if (cell == null) return null;
-       
+
        ExcelNumberFormat nf = null;
-       
+
        if (cfEvaluator != null) {
            // first one wins (priority order, per Excel help)
            List<EvaluationConditionalFormatRule> rules = cfEvaluator.getConditionalFormattingForCell(cell);
@@ -66,7 +65,7 @@ public class ExcelNumberFormat {
        }
        return nf;
    }
-   
+
     /**
      * Use this carefully, prefer factory methods to ensure id/format relationships are not broken or confused.
      * Left public so {@link ConditionalFormattingRule#getNumberFormat()} implementations can use it.
@@ -77,8 +76,8 @@ public class ExcelNumberFormat {
         this.idx = idx;
         this.format = format;
     }
-    
-    
+
+
 
     /**
      *
@@ -87,7 +86,7 @@ public class ExcelNumberFormat {
     public int getIdx() {
         return idx;
     }
-    
+
     /**
      *
      * @return Excel number format string for the index

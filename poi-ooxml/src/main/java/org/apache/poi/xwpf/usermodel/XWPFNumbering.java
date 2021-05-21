@@ -68,7 +68,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      */
     @Override
     protected void onDocumentRead() throws IOException {
-        NumberingDocument numberingDoc = null;
+        NumberingDocument numberingDoc;
         InputStream is;
         is = getPackagePart().getInputStream();
         try {
@@ -105,8 +105,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * Sets the ctNumbering
-     *
-     * @param numbering
      */
     public void setNumbering(CTNumbering numbering) {
         ctNumbering = numbering;
@@ -116,7 +114,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     /**
      * Checks whether number with numID exists
      *
-     * @param numID
      * @return boolean        true if num exist, false if num not exist
      */
     public boolean numExist(BigInteger numID) {
@@ -129,8 +126,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * add a new number to the numbering document
-     *
-     * @param num
      */
     public BigInteger addNum(XWPFNum num) {
         ctNumbering.addNewNum();
@@ -157,9 +152,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * Add a new num with an abstractNumID and a numID
-     *
-     * @param abstractNumID
-     * @param numID
      */
     public void addNum(BigInteger abstractNumID, BigInteger numID) {
         CTNum ctNum = this.ctNumbering.addNewNum();
@@ -173,7 +165,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     /**
      * get Num by NumID
      *
-     * @param numID
      * @return abstractNum with NumId if no Num exists with that NumID
      * null will be returned
      */
@@ -188,7 +179,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     /**
      * get AbstractNum by abstractNumID
      *
-     * @param abstractNumID
      * @return abstractNum with abstractNumId if no abstractNum exists with that abstractNumID
      * null will be returned
      */
@@ -207,7 +197,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * the BigInteger Value of it will be returned.
      * If no equal abstractNum is existing null will be returned
      *
-     * @param abstractNum
      * @return BigInteger
      */
     public BigInteger getIdOfAbstractNum(XWPFAbstractNum abstractNum) {
@@ -227,8 +216,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * add a new AbstractNum and return its AbstractNumID
-     *
-     * @param abstractNum
      */
     public BigInteger addAbstractNum(XWPFAbstractNum abstractNum) {
         int pos = abstractNums.size();
@@ -246,7 +233,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     /**
      * remove an existing abstractNum
      *
-     * @param abstractNumID
      * @return true if abstractNum with abstractNumID exists in NumberingArray,
      * false if abstractNum with abstractNumID not exists
      */
@@ -268,7 +254,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * If the AbstractNumID not exists
      * return null
      *
-     * @param numID
      * @return abstractNumID
      */
     public BigInteger getAbstractNumID(BigInteger numID) {

@@ -60,7 +60,6 @@ public interface SignatureFacet {
      * @param document the signature document to be used for imports
      * @param references list of reference definitions
      * @param objects objects to be signed/included in the signature document
-     * @throws XMLSignatureException
      */
     default void preSign(
           SignatureInfo signatureInfo
@@ -78,7 +77,6 @@ public interface SignatureFacet {
      *
      * @param signatureInfo the signature info object holding the OPCPackage and other document related data
      * @param document the signature document to be modified
-     * @throws MarshalException
      */
     default void postSign(SignatureInfo signatureInfo, Document document) throws MarshalException {
 

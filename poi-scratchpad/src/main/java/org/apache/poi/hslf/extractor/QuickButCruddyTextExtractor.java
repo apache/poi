@@ -55,7 +55,7 @@ import org.apache.poi.util.LittleEndian;
 public final class QuickButCruddyTextExtractor {
     private POIFSFileSystem fs;
     private InputStream is;
-    private byte[] pptContents;
+    private final byte[] pptContents;
 
     /**
      * Really basic text extractor, that will also return lots of crud text.
@@ -78,7 +78,6 @@ public final class QuickButCruddyTextExtractor {
 
     /**
      * Creates an extractor from a given file name
-     * @param fileName
      */
     @SuppressWarnings("resource")
     public QuickButCruddyTextExtractor(String fileName) throws IOException {
@@ -87,7 +86,6 @@ public final class QuickButCruddyTextExtractor {
 
     /**
      * Creates an extractor from a given input stream
-     * @param iStream
      */
     @SuppressWarnings("resource")
     public QuickButCruddyTextExtractor(InputStream iStream) throws IOException {
@@ -97,7 +95,6 @@ public final class QuickButCruddyTextExtractor {
 
     /**
      * Creates an extractor from a POIFS Filesystem
-     * @param poifs
      */
     public QuickButCruddyTextExtractor(POIFSFileSystem poifs) throws IOException {
         fs = poifs;
@@ -192,9 +189,7 @@ public final class QuickButCruddyTextExtractor {
             String text = cs.getText();
 
             // Ignore the ones we know to be rubbish
-            if(text.equals("___PPT10")) {
-            } else if(text.equals("Default Design")) {
-            } else {
+            if (!"___PPT10".equals(text) && !"Default Design".equals(text)) {
                 textV.add(text);
             }
         }

@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
@@ -343,7 +342,7 @@ public enum XSSFBuiltinTableStyle {
      */
     private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<>(XSSFBuiltinTableStyle.class);
 
-    private XSSFBuiltinTableStyle() {
+    XSSFBuiltinTableStyle() {
     }
 
     /**
@@ -357,7 +356,6 @@ public enum XSSFBuiltinTableStyle {
     /**
      * NOTE: only checks by name, not definition.
      *
-     * @param style
      * @return true if the style represents a built-in style, false if it is null or a custom style
      */
     public static boolean isBuiltinStyle(TableStyle style) {
@@ -423,22 +421,20 @@ public enum XSSFBuiltinTableStyle {
         }
     }
 
-    private static String styleXML(Node dxfsNode, Node tableStyleNode) throws IOException, TransformerException {
+    private static String styleXML(Node dxfsNode, Node tableStyleNode) throws TransformerException {
         // built-ins doc uses 1-based dxf indexing, Excel uses 0 based.
         // add a dummy node to adjust properly.
         dxfsNode.insertBefore(dxfsNode.getOwnerDocument().createElement("dxf"), dxfsNode.getFirstChild());
 
-        StringBuilder sb = new StringBuilder(1024);
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
-                .append("<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" ")
-                .append("xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" ")
-                .append("xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" ")
-                .append("xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" ")
-                .append("mc:Ignorable=\"x14ac x16r2\">\n");
-        sb.append(writeToString(dxfsNode));
-        sb.append(writeToString(tableStyleNode));
-        sb.append("</styleSheet>");
-        return sb.toString();
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" " +
+            "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" " +
+            "xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" " +
+            "xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" " +
+            "mc:Ignorable=\"x14ac x16r2\">\n" +
+            writeToString(dxfsNode) +
+            writeToString(tableStyleNode) +
+            "</styleSheet>";
     }
 
     private static String writeToString(Node node) throws TransformerException {
@@ -458,27 +454,27 @@ public enum XSSFBuiltinTableStyle {
         private final XSSFBuiltinTableStyle builtIn;
         private final TableStyle style;
 
-        /**
-         * @param builtIn
-         * @param style
-         */
         protected XSSFBuiltinTypeStyleStyle(XSSFBuiltinTableStyle builtIn, TableStyle style) {
             this.builtIn = builtIn;
             this.style = style;
         }
 
+        @Override
         public String getName() {
             return style.getName();
         }
 
+        @Override
         public int getIndex() {
             return builtIn.ordinal();
         }
 
+        @Override
         public boolean isBuiltin() {
             return true;
         }
 
+        @Override
         public DifferentialStyleProvider getStyle(TableStyleType type) {
             return style.getStyle(type);
         }

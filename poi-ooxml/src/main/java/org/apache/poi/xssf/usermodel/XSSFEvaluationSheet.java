@@ -51,17 +51,18 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     public int getLastRowNum() {
         return _xs.getLastRowNum();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
      * @since POI 4.1.0
      */
+    @Override
     public boolean isRowHidden(int rowIndex) {
         final XSSFRow row = _xs.getRow(rowIndex);
         if (row == null) return false;
         return row.getZeroHeight();
     }
-    
+
     /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
      * @since POI 3.15 beta 3
      */
@@ -69,7 +70,7 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     public void clearAllCachedResultValues() {
         _cellCache = null;
     }
-    
+
     @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         // shortcut evaluation if reference is outside the bounds of existing data
@@ -91,10 +92,10 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
                 }
             }
         }
-        
+
         final CellKey key = new CellKey(rowIndex, columnIndex);
         EvaluationCell evalcell = _cellCache.get(key);
-        
+
         // If cache is stale, update cache with this one cell
         // This is a compromise between rebuilding the entire cache
         // (which would quickly defeat the benefit of the cache)
@@ -115,17 +116,17 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
 
         return evalcell;
     }
-    
+
     private static class CellKey {
         private final int _row;
         private final int _col;
         private int _hash = -1; //lazily computed
-        
+
         protected CellKey(int row, int col) {
             _row = row;
             _col = col;
         }
-        
+
         @Override
         public int hashCode() {
             if ( _hash == -1 ) {
@@ -133,7 +134,7 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
             }
             return _hash;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof CellKey)) {

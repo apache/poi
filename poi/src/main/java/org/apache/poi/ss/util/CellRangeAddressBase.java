@@ -52,8 +52,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
         /** range ending columns are equal */
         RIGHT,
         /** a cell or range is completely inside another range, without touching any edges (a cell in this position can't be in any others) */
-        INSIDE,
-        ;
+        INSIDE
     }
 	private int _firstRow;
 	private int _firstCol;
@@ -81,7 +80,6 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 	}
 	/**
 	 * Runs a bounds check for row numbers
-	 * @param row
 	 */
 	private static void validateRow(int row, SpreadsheetVersion ssVersion) {
 		int maxrow = ssVersion.getLastRowIndex();
@@ -91,7 +89,6 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
 	/**
 	 * Runs a bounds check for column numbers
-	 * @param column
 	 */
 	private static void validateColumn(int column, SpreadsheetVersion ssVersion) {
 		int maxcol = ssVersion.getLastColumnIndex();
@@ -231,8 +228,6 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
 	/**
 	 * Useful for logic like table/range styling, where some elements apply based on relative position in a range.
-	 * @param rowInd
-	 * @param colInd
 	 * @return set of {@link CellPosition}s occupied by the given coordinates.  Empty if the coordinates are not in the range, never null.
 	 * @since 3.17 beta 1
 	 */

@@ -33,11 +33,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
     private boolean rowStripes;
     private boolean firstColumn;
     private boolean lastColumn;
-    
-    /**
-     * @param stylesTable 
-     * @param tableStyleInfo 
-     */
+
     public XSSFTableStyleInfo(StylesTable stylesTable, CTTableStyleInfo tableStyleInfo) {
         this.columnStripes = tableStyleInfo.getShowColumnStripes();
         this.rowStripes = tableStyleInfo.getShowRowStripes();
@@ -48,6 +44,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         this.styleInfo = tableStyleInfo;
     }
 
+    @Override
     public boolean isShowColumnStripes() {
         return columnStripes;
     }
@@ -56,6 +53,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         styleInfo.setShowColumnStripes(show);
     }
 
+    @Override
     public boolean isShowRowStripes() {
         return rowStripes;
     }
@@ -64,6 +62,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         styleInfo.setShowRowStripes(show);
     }
 
+    @Override
     public boolean isShowFirstColumn() {
         return firstColumn;
     }
@@ -72,6 +71,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         styleInfo.setShowFirstColumn(showFirstColumn);
     }
 
+    @Override
     public boolean isShowLastColumn() {
         return lastColumn;
     }
@@ -80,6 +80,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         styleInfo.setShowLastColumn(showLastColumn);
     }
 
+    @Override
     public String getName() {
         return style.getName();
     }
@@ -88,6 +89,7 @@ public class XSSFTableStyleInfo implements TableStyleInfo {
         style = stylesTable.getTableStyle(name);
     }
 
+    @Override
     public TableStyle getStyle() {
         return style;
     }

@@ -42,9 +42,8 @@ public class XSSFEvenHeader extends XSSFHeaderFooter implements Header {
     /**
      * Create an instance of XSSFEvenHeader from the supplied XML bean. If an even
      * header is created, The property "DifferentOddEven" is set for this sheet as well.
-     * 
+     *
      * @see XSSFSheet#getEvenHeader()
-     * @param headerFooter
      */
     protected XSSFEvenHeader(CTHeaderFooter headerFooter) {
         super(headerFooter);
@@ -53,7 +52,7 @@ public class XSSFEvenHeader extends XSSFHeaderFooter implements Header {
 
     /**
      * Get the content text representing this header
-     * 
+     *
      * @return text
      */
     @Override
@@ -65,7 +64,7 @@ public class XSSFEvenHeader extends XSSFHeaderFooter implements Header {
      * Set a text for the header. If null, unset the value. If unsetting and there is no
      * Even Footer for this sheet, the "DifferentEvenOdd" property for this sheet is
      * unset.
-     * 
+     *
      * @see XSSFHeaderFooter to see how to create a string with Header/Footer
      *      Formatting Syntax
      * @param text

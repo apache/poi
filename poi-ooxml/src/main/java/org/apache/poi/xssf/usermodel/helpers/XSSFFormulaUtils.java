@@ -19,7 +19,6 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -59,11 +58,9 @@ public final class XSSFFormulaUtils {
      * Update sheet name in all charts, formulas and named ranges.
      * Called from {@link XSSFWorkbook#setSheetName(int, String)}
      * <p>
-     * <p>
      * The idea is to parse every formula and render it back to string
      * with the updated sheet name. This is done by parsing into Ptgs,
      * looking for ones with sheet references in them, and changing those
-     * </p>
      *
      * @param sheetIndex the 0-based index of the sheet being changed
      * @param oldName    the old sheet name
@@ -93,9 +90,7 @@ public final class XSSFFormulaUtils {
         for (POIXMLDocumentPart r : rels) {
             if (r instanceof XSSFDrawing) {
                 XSSFDrawing dg = (XSSFDrawing) r;
-                Iterator<XSSFChart> it = dg.getCharts().iterator();
-                while (it.hasNext()) {
-                    XSSFChart chart = it.next();
+                for (XSSFChart chart : dg.getCharts()) {
                     Node dom = chart.getCTChartSpace().getDomNode();
                     updateDomSheetReference(dom, oldName, newName);
                 }

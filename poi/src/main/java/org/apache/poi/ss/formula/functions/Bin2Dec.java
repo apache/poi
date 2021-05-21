@@ -24,7 +24,7 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel Bin2Dec() function.<p>
+ * Implementation for Excel Bin2Dec() function.
  * <p>
  * <b>Syntax</b>:<br> <b>Bin2Dec  </b>(<b>number</b>)<br>
  * <p>
@@ -42,6 +42,7 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new Bin2Dec();
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         final String number;
         if (numberVE instanceof RefEval) {
@@ -113,6 +114,7 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
         return s2;
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 1) {
             return ErrorEval.VALUE_INVALID;

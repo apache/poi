@@ -41,10 +41,10 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 /**
  * An example that outputs a simple generated workbook that is password protected.
  * The example highlights how to do this in streaming way.
- * <p><ul>
+ * <ul>
  * <li>The example demonstrates that all temp files are removed.
- * <li><code>SXSSFWorkbookWithCustomZipEntrySource</code> extends SXSSFWorkbook to ensure temp files are encrypted.
- * </ul><p>
+ * <li>{@code SXSSFWorkbookWithCustomZipEntrySource} extends SXSSFWorkbook to ensure temp files are encrypted.
+ * </ul>
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class SavePasswordProtectedXlsx {

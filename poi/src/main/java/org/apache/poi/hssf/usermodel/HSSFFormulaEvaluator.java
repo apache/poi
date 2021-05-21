@@ -50,7 +50,7 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     }
     /**
      * @param workbook  The workbook to perform the formula evaluations in
-     * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+     * @param stabilityClassifier used to optimise caching performance. Pass {@code null}
      * for the (conservative) assumption that any cell may have its definition changed after
      * evaluation begins.
      */
@@ -60,10 +60,10 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
 
     /**
      * @param workbook  The workbook to perform the formula evaluations in
-     * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+     * @param stabilityClassifier used to optimise caching performance. Pass {@code null}
      * for the (conservative) assumption that any cell may have its definition changed after
      * evaluation begins.
-     * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+     * @param udfFinder pass {@code null} for default (AnalysisToolPak only)
      */
     private HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
         super(new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder));
@@ -72,15 +72,15 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
 
     /**
      * @param workbook  The workbook to perform the formula evaluations in
-     * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+     * @param stabilityClassifier used to optimise caching performance. Pass {@code null}
      * for the (conservative) assumption that any cell may have its definition changed after
      * evaluation begins.
-     * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+     * @param udfFinder pass {@code null} for default (AnalysisToolPak only)
      */
     public static HSSFFormulaEvaluator create(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
         return new HSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
     }
-    
+
     @Override
     protected RichTextString createRichTextString(String str) {
         return new HSSFRichTextString(str);
@@ -140,7 +140,7 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     public void notifySetFormula(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
     }
-    
+
     @Override
     public HSSFCell evaluateInCell(Cell cell) {
         return (HSSFCell) super.evaluateInCell(cell);
@@ -196,6 +196,7 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param cell The cell with the formula
      */
+    @Override
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
         if (eval instanceof BoolEval) {
@@ -216,13 +217,11 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
         throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);

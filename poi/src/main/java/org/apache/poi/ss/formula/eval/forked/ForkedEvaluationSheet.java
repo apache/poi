@@ -42,7 +42,7 @@ import org.apache.poi.util.Internal;
 final class ForkedEvaluationSheet implements EvaluationSheet {
 
     private final EvaluationSheet _masterSheet;
-    
+
     /**
      * Only cells which have been split are put in this map.  (This has been done to conserve memory).
      */
@@ -52,7 +52,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
         _masterSheet = masterSheet;
         _sharedCellsByRowCol = new HashMap<>();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
      * @since POI 4.0.0
@@ -61,15 +61,16 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
     public int getLastRowNum() {
         return _masterSheet.getLastRowNum();
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
      * @since POI 4.1.0
      */
+    @Override
     public boolean isRowHidden(int rowIndex) {
         return _masterSheet.isRowHidden(rowIndex);
     }
-    
+
     @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         RowColKey key = new RowColKey(rowIndex, columnIndex);
@@ -102,8 +103,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
         RowColKey[] keys = new RowColKey[_sharedCellsByRowCol.size()];
         _sharedCellsByRowCol.keySet().toArray(keys);
         Arrays.sort(keys);
-        for (int i = 0; i < keys.length; i++) {
-            RowColKey key = keys[i];
+        for (RowColKey key : keys) {
             Row row = sheet.getRow(key.getRowIndex());
             if (row == null) {
                 row = sheet.createRow(key.getRowIndex());
@@ -125,14 +125,14 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
     /* (non-Javadoc)
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
-     * 
+     *
      * @since POI 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {
         _masterSheet.clearAllCachedResultValues();
     }
-    
+
     // FIXME: serves same purpose as org.apache.poi.xssf.usermodel.XSSFEvaluationSheet$CellKey
     private static final class RowColKey implements Comparable<RowColKey>{
         private final int _rowIndex;

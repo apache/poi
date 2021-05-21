@@ -115,9 +115,6 @@ public final class LocaleUtil {
     /**
      * Convenience method - month is 0-based as in java.util.Calendar
      *
-     * @param year
-     * @param month
-     * @param day
      * @return a calendar for the user locale and time zone, and the given date
      */
     public static Calendar getLocaleCalendar(int year, int month, int day) {
@@ -127,12 +124,6 @@ public final class LocaleUtil {
     /**
      * Convenience method - month is 0-based as in java.util.Calendar
      *
-     * @param year
-     * @param month
-     * @param day
-     * @param hour
-     * @param minute
-     * @param second
      * @return a calendar for the user locale and time zone, and the given date
      */
     public static Calendar getLocaleCalendar(int year, int month, int day, int hour, int minute, int second) {

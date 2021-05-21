@@ -43,7 +43,7 @@ public final class XSSFGraphicFrame extends XSSFShape {
 
 	private static CTGraphicalObjectFrame prototype;
 
-	private CTGraphicalObjectFrame graphicFrame;
+	private final CTGraphicalObjectFrame graphicFrame;
 
 	/**
 	 * Construct a new XSSFGraphicFrame object.
@@ -145,7 +145,8 @@ public final class XSSFGraphicFrame extends XSSFShape {
 	 * Returns the frame anchor.
 	 * @return the XSSFClientAnchor anchor this frame is attached to
 	 */
-	public XSSFClientAnchor getAnchor() {
+	@Override
+    public XSSFClientAnchor getAnchor() {
 		return (XSSFClientAnchor) anchor;
 	}
 
@@ -174,7 +175,7 @@ public final class XSSFGraphicFrame extends XSSFShape {
 
 	/**
 	 * The low level code to insert {@code <c:chart>} tag into
-	 * {@code<a:graphicData>}.
+	 * {@code <a:graphicData>}.
 	 *
 	 * Here is the schema (ECMA-376):
 	 * <pre>

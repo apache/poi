@@ -33,18 +33,18 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * Note, that in certain cases creating too many HSSFRichTextString cells may cause Excel 2003 and lower to crash
  * when changing the color of the cells and then saving the Excel file. Compare two snippets that produce equivalent output:
  *
- * <p><blockquote><pre>
+ * <pre>{@code
  *  HSSFCell hssfCell = row.createCell(idx);
  *  //rich text consists of two runs
  *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
  *  richString.applyFont( 0, 6, font1 );
  *  richString.applyFont( 6, 13, font2 );
  *  hssfCell.setCellValue( richString );
- * </pre></blockquote>
+ * }</pre>
  *
  * and
  *
- * <p><blockquote><pre>
+ * <pre>{@code
  *  //create a cell style and assign the first font to it
  *  HSSFCellStyle style = workbook.createCellStyle();
  *  style.setFont(font1);
@@ -56,7 +56,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
  *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
  *  richString.applyFont( 6, 13, font2 );
  *  hssfCell.setCellValue( richString );
- * </pre></blockquote><p>
+ * }</pre><p>
  *
  * Excel always uses the latter approach: for a reach text containing N runs Excel saves the font of the first run in the cell's
  * style and subsequent N-1 runs override this font.
@@ -126,6 +126,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param endIndex      The end index to apply the font to (exclusive)
      * @param fontIndex     The font to use.
      */
+    @Override
     public void applyFont(int startIndex, int endIndex, short fontIndex) {
         if (startIndex > endIndex)
             throw new IllegalArgumentException("Start index must be less than end index.");
@@ -167,6 +168,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param endIndex      The end index to apply to font to (exclusive)
      * @param font          The index of the font to use.
      */
+    @Override
     public void applyFont(int startIndex, int endIndex, Font font) {
         applyFont(startIndex, endIndex, (short)font.getIndex());
     }
@@ -175,6 +177,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * Sets the font of the entire string.
      * @param font          The font to use.
      */
+    @Override
     public void applyFont(Font font) {
         applyFont(0, _string.getCharCount(), font);
     }
@@ -182,6 +185,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * Removes any formatting that may have been applied to the string.
      */
+    @Override
     public void clearFormatting() {
       _string = cloneStringIfRequired();
       _string.clearFormatting();
@@ -191,6 +195,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * Returns the plain string representation.
      */
+    @Override
     public String getString() {
         return _string.getString();
     }
@@ -224,6 +229,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * @return  the number of characters in the text.
      */
+    @Override
     public int length() {
         return _string.getCharCount();
     }
@@ -258,6 +264,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *
      * @see #NO_FONT
      */
+    @Override
     public int numFormattingRuns() {
         return _string.getFormatRunCount();
     }
@@ -267,6 +274,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param index     the index of the formatting run
      * @return  the index within the string.
      */
+    @Override
     public int getIndexOfFormattingRun(int index) {
         FormatRun r = _string.getFormatRun(index);
         return r.getCharacterPos();
@@ -286,6 +294,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * Compares one rich text string to another.
      */
+    @Override
     public int compareTo(HSSFRichTextString r) {
        return _string.compareTo(r._string);
     }
@@ -318,6 +327,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *
      * @param fontIndex  the font to apply.
      */
+    @Override
     public void applyFont( short fontIndex ) {
         applyFont(0, _string.getCharCount(), fontIndex);
     }

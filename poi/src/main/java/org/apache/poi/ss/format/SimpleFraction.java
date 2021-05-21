@@ -59,14 +59,13 @@ public class SimpleFraction {
      * <li><a href="http://mathworld.wolfram.com/ContinuedFraction.html">
      * Continued Fraction</a> equations (11) and (22)-(26)</li>
      * </ul>
-     * </p>
      *
      *  Based on org.apache.commons.math.fraction.Fraction from Apache Commons-Math.
      *  YK: The only reason of having this class is to avoid dependency on the Commons-Math jar.
      *
      * @param value the double value to convert to a fraction.
      * @param epsilon maximum error allowed.  The resulting fraction is within
-     *        <code>epsilon</code> of <code>value</code>, in absolute terms.
+     *        {@code epsilon} of {@code value}, in absolute terms.
      * @param maxDenominator maximum denominator value allowed.
      * @param maxIterations maximum number of convergents
      * @throws RuntimeException if the continued fraction failed to
@@ -79,7 +78,7 @@ public class SimpleFraction {
         double r0 = value;
         long a0 = (long)Math.floor(r0);
         if (a0 > overflow) {
-            throw new IllegalArgumentException("Overflow trying to convert "+value+" to fraction ("+a0+"/"+1l+")");
+            throw new IllegalArgumentException("Overflow trying to convert "+value+" to fraction ("+a0+"/"+ 1L +")");
         }
 
         // check for (almost) integer arguments, which should not go
@@ -141,7 +140,7 @@ public class SimpleFraction {
 
     /**
      * Create a fraction given a numerator and denominator.
-     * @param numerator
+     * @param numerator the numerator
      * @param denominator maxDenominator The maximum allowed value for denominator
      */
     public SimpleFraction(int numerator, int denominator)

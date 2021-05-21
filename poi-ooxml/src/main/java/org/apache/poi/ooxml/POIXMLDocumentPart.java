@@ -196,6 +196,7 @@ public class POIXMLDocumentPart {
      * @throws IllegalStateException  if there are more than one core document relations
      */
     protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
+        // TODO: check why pkg parameter is not used ???
         PackageRelationshipCollection cores =
                 packagePart.getRelationshipsByType(coreDocumentRel);
         if (cores.size() != 1) {
@@ -240,10 +241,10 @@ public class POIXMLDocumentPart {
     }
 
     /**
-     * Returns the target {@link POIXMLDocumentPart}, where a
+     * Returns the target POIXMLDocumentPart, where a
      * {@link PackageRelationship} is set from the {@link PackagePart} of this
-     * {@link POIXMLDocumentPart} to the {@link PackagePart} of the target
-     * {@link POIXMLDocumentPart} with a {@link PackageRelationship#getId()}
+     * POIXMLDocumentPart to the {@link PackagePart} of the target
+     * POIXMLDocumentPart with a {@link PackageRelationship#getId()}
      * matching the given parameter value.
      *
      * @param id The relation id to look for
@@ -257,8 +258,8 @@ public class POIXMLDocumentPart {
     /**
      * Returns the target {@link RelationPart}, where a
      * {@link PackageRelationship} is set from the {@link PackagePart} of this
-     * {@link POIXMLDocumentPart} to the {@link PackagePart} of the target
-     * {@link POIXMLDocumentPart} with a {@link PackageRelationship#getId()}
+     * POIXMLDocumentPart to the {@link PackagePart} of the target
+     * POIXMLDocumentPart with a {@link PackageRelationship#getId()}
      * matching the given parameter value.
      *
      * @param id The relation id to look for
@@ -272,13 +273,13 @@ public class POIXMLDocumentPart {
     /**
      * Returns the first {@link PackageRelationship#getId()} of the
      * {@link PackageRelationship}, that sources from the {@link PackagePart} of
-     * this {@link POIXMLDocumentPart} to the {@link PackagePart} of the given
-     * parameter value.<p>
+     * this POIXMLDocumentPart to the {@link PackagePart} of the given
+     * parameter value.
      * <p>
-     * There can be multiple references to the given {@link POIXMLDocumentPart}
+     * There can be multiple references to the given POIXMLDocumentPart
      * and only the first in the order of creation is returned.
      *
-     * @param part The {@link POIXMLDocumentPart} for which the according
+     * @param part The POIXMLDocumentPart for which the according
      *             relation-id shall be found.
      * @return The value of the {@link PackageRelationship#getId()} or null, if
      * parts are not related.
@@ -326,7 +327,7 @@ public class POIXMLDocumentPart {
 
     /**
      * Remove the relation to the specified part in this package and remove the
-     * part, if it is no longer needed.<p>
+     * part, if it is no longer needed.
      * <p>
      * If there are multiple relationships to the same part, this will only
      * remove the first relationship in the order of creation. The removal
@@ -340,7 +341,7 @@ public class POIXMLDocumentPart {
 
     /**
      * Remove the relation to the specified part in this package and remove the
-     * part, if it is no longer needed and flag is set to true.<p>
+     * part, if it is no longer needed and flag is set to true.
      * <p>
      * If there are multiple relationships to the same part, this will only
      * remove the first relationship in the order of creation. The removal
@@ -358,7 +359,7 @@ public class POIXMLDocumentPart {
 
     /**
      * Remove the relation to the specified part in this package and remove the
-     * part, if it is no longer needed.<p>
+     * part, if it is no longer needed.
      * <p>
      * If there are multiple relationships to the same part, this will only
      * remove the first relationship in the order of creation. The removal
@@ -413,7 +414,7 @@ public class POIXMLDocumentPart {
     /**
      * Returns the parent POIXMLDocumentPart. All parts except root have not-null parent.
      *
-     * @return the parent POIXMLDocumentPart or <code>null</code> for the root element.
+     * @return the parent POIXMLDocumentPart or {@code null} for the root element.
      */
     public final POIXMLDocumentPart getParent() {
         return parent;
@@ -719,8 +720,8 @@ public class POIXMLDocumentPart {
 
     /**
      * Internal method, do not use!
-     * <p>
-     * This method only exists to allow access to protected {@link POIXMLDocumentPart#onDocumentRead()}
+     *
+     * @deprecated This method only exists to allow access to protected {@link POIXMLDocumentPart#onDocumentRead()}
      * from {@link XWPFDocument} without reflection. It should be removed.
      *
      * @param part the part which is to be read

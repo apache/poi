@@ -18,7 +18,7 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Utility to identify built-in formats.  The following is a list of the formats as
- * returned by this class.<p>
+ * returned by this class.
  *<p>
  *       0, "General"<br>
  *       1, "0"<br>
@@ -59,7 +59,6 @@ package org.apache.poi.ss.usermodel;
  *       0x30, "##0.0E+0"<br>
  *       0x31, "@" - This is text format.<br>
  *       0x31  "text" - Alias for "@"<br>
- * <p>
  */
 public final class BuiltinFormats {
 	/**
@@ -108,7 +107,7 @@ public final class BuiltinFormats {
         "reserved-0x22",
         "reserved-0x23",
         "reserved-0x24",
-        
+
         "#,##0_);(#,##0)",
         "#,##0_);[Red](#,##0)",
         "#,##0.00_);(#,##0.00)",
@@ -135,7 +134,7 @@ public final class BuiltinFormats {
 	 * Get the format string that matches the given format index
 	 *
 	 * @param index of a built in format
-	 * @return string represented at index of format or <code>null</code> if there is not a built-in format at that index
+	 * @return string represented at index of format or {@code null} if there is not a built-in format at that index
 	 */
 	public static String getBuiltinFormat(int index) {
 		if (index < 0 || index >=_formats.length) {
@@ -147,7 +146,7 @@ public final class BuiltinFormats {
 	/**
 	 * Get the format index that matches the given format string.<br>
 	 * Automatically converts "text" to excel's format string to represent text.
-	 * 
+	 *
 	 * @param pFmt string matching a built-in format
 	 * @return index of format or -1 if undefined.
 	 */
@@ -158,10 +157,10 @@ public final class BuiltinFormats {
 		for (String f : _formats) {
 		    i++;
 		    if (f.equals(fmt)) {
-		        return i; 
+		        return i;
 		    }
 		}
-		
+
 		return -1;
 	}
 }

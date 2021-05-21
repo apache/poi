@@ -100,7 +100,7 @@ public class TestWordToHtmlConverter {
 
     })
     void testFile(String file, String contains) throws Exception {
-        boolean emulatePictureStorage = file.contains("picture");
+        boolean emulatePictureStorage = !file.contains("equation");
 
         String result = getHtmlText(file, emulatePictureStorage);
         assertNotNull(result);

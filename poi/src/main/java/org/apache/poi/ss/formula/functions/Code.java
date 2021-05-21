@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel CODE () function.<p>
+ * Implementation for Excel CODE () function.
  * <p>
  * <b>Syntax</b>:<br> <b>CODE   </b>(<b>text</b> )<br>
  * <p>
@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.eval.*;
  */
 public class Code extends Fixed1ArgFunction {
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval textArg) {
 
         ValueEval veText1;

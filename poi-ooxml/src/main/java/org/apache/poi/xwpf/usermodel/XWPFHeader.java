@@ -86,13 +86,11 @@ public class XWPFHeader extends XWPFHeaderFooter {
 
     /**
      * reads the document
-     *
-     * @throws IOException
      */
     @Override
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
-        HdrDocument hdrDocument = null;
+        HdrDocument hdrDocument;
         try (InputStream is = getPackagePart().getInputStream()) {
             hdrDocument = HdrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             headerFooter = hdrDocument.getHdr();
@@ -128,6 +126,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return BodyType.HEADER;
     }

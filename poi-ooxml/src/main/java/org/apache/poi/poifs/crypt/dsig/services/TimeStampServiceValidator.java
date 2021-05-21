@@ -35,7 +35,6 @@ public interface TimeStampServiceValidator {
     /**
      * Validates the given certificate chain.
      *
-     * @param certificateChain
      * @param revocationData
      *            the optional data container that should be filled with
      *            revocation data that was used to validate the given

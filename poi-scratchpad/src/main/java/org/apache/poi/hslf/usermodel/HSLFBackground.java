@@ -30,6 +30,7 @@ public final class HSLFBackground extends HSLFShape implements Background<HSLFSh
         super(escherRecord, parent);
     }
 
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild) {
         return null;
     }

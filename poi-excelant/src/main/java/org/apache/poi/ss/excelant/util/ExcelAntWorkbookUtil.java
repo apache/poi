@@ -187,8 +187,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns the Workbook instance associated with this WorkbookUtil.
-     *
-     * @return
      */
     public Workbook getWorkbook() {
         return workbook;
@@ -197,8 +195,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * Returns the fileName that was used to initialize this instance. May
      * return null if the instance was constructed from a Workbook object.
-     *
-     * @return
      */
     public String getFileName() {
         return excelFileName;
@@ -206,8 +202,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns the list of sheet names.
-     *
-     * @return
      */
     public List<String> getSheets() {
     	ArrayList<String> sheets = new ArrayList<>();
@@ -224,9 +218,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * This method uses a String in standard Excel format (SheetName!CellId) to
      * locate the cell and set it to the value of the double in value.
-     *
-     * @param cellName
-     * @param value
      */
     public void setDoubleValue(String cellName, double value) {
         log("starting setCellValue()", Project.MSG_DEBUG);
@@ -240,9 +231,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Utility method for setting the value of a Cell with a String.
-     *
-     * @param cellName
-     * @param value
      */
     public void setStringValue(String cellName, String value) {
         Cell cell = getCell(cellName);
@@ -251,9 +239,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Utility method for setting the value of a Cell with a Formula.
-     *
-     * @param cellName
-     * @param formula
      */
     public void setFormulaValue(String cellName, String formula) {
         Cell cell = getCell(cellName);
@@ -262,8 +247,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Utility method for setting the value of a Cell with a Date.
-     * @param cellName
-     * @param date
      */
     public void setDateValue(String cellName, Date date) {
         Cell cell = getCell(cellName);
@@ -272,15 +255,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * Uses a String in standard Excel format (SheetName!CellId) to locate a
      * cell and evaluate it.
-     *
-     * @param cellName
-     * @param expectedValue
-     * @param precision
      */
     public ExcelAntEvaluationResult evaluateCell(String cellName, double expectedValue,
             double precision) {
 
-        ExcelAntEvaluationResult evalResults = null;
+        ExcelAntEvaluationResult evalResults;
 
         Cell cell = getCell(cellName);
 
@@ -304,12 +283,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
                         "Evaluation passed without error within in range.", delta, cellName);
             }
         } else {
-            String errorMeaning = null;
+            String errorMeaning;
             try {
                 errorMeaning = FormulaError.forInt(resultOfEval.getErrorValue()).getString();
             } catch(IllegalArgumentException iae) {
-                errorMeaning =  "unknown error code: " +
-                                Byte.toString(resultOfEval.getErrorValue());
+                errorMeaning =  "unknown error code: " + resultOfEval.getErrorValue();
             }
 
             evalResults = new ExcelAntEvaluationResult(true, false,
@@ -325,9 +303,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns a Cell as a String value.
-     *
-     * @param cellName
-     * @return
      */
     public String getCellAsString(String cellName) {
     	Cell cell = getCell(cellName);
@@ -337,9 +312,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns the value of the Cell as a double.
-     *
-     * @param cellName
-     * @return
      */
     public double getCellAsDouble(String cellName) {
     	Cell cell = getCell(cellName);
@@ -349,9 +321,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns a cell reference based on a String in standard Excel format
      * (SheetName!CellId).  This method will create a new cell if the
      * requested cell isn't initialized yet.
-     *
-     * @param cellName
-     * @return
      */
     private Cell getCell(String cellName) {
         CellReference cellRef = new CellReference(cellName);

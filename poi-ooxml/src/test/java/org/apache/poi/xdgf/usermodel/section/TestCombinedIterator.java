@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 class TestCombinedIterator {
 
-    void testIteration(CombinedIterable<String> iterable, String... expected) {
+    void testIteration(Iterable<String> iterable, String... expected) {
 
         Iterator<String> iter = iterable.iterator();
 
@@ -49,8 +49,7 @@ class TestCombinedIterator {
         base.put(2L, "B2");
         base.put(3L, "B3");
 
-        testIteration(new CombinedIterable<>(base, null), "B1", "B2",
-                "B3");
+        testIteration(createIter(base, null), "B1", "B2", "B3");
     }
 
     @Test
@@ -66,8 +65,7 @@ class TestCombinedIterator {
         master.put(5L, "M5");
         master.put(6L, "M6");
 
-        testIteration(new CombinedIterable<>(base, master), "B1", "B2",
-                "B3", "M4", "M5", "M6");
+        testIteration(createIter(base, master), "B1", "B2", "B3", "M4", "M5", "M6");
     }
 
     @Test
@@ -83,8 +81,7 @@ class TestCombinedIterator {
         master.put(2L, "M2");
         master.put(3L, "M3");
 
-        testIteration(new CombinedIterable<>(base, master), "M1", "M2",
-                "M3", "B4", "B5", "B6");
+        testIteration(createIter(base, master), "M1", "M2", "M3", "B4", "B5", "B6");
     }
 
     @Test
@@ -100,8 +97,7 @@ class TestCombinedIterator {
         master.put(4L, "M4");
         master.put(6L, "M6");
 
-        testIteration(new CombinedIterable<>(base, master), "B1", "M2",
-                "B3", "M4", "B5", "M6");
+        testIteration(createIter(base, master), "B1", "M2", "B3", "M4", "B5", "M6");
     }
 
     @Test
@@ -119,8 +115,7 @@ class TestCombinedIterator {
         master.put(7L, "M7");
         master.put(8L, "M8");
 
-        testIteration(new CombinedIterable<>(base, master), "B1", "B2",
-                "M3", "M4", "B5", "B6", "M7", "M8");
+        testIteration(createIter(base, master), "B1", "B2", "M3", "M4", "B5", "B6", "M7", "M8");
     }
 
     @Test
@@ -136,8 +131,7 @@ class TestCombinedIterator {
         master.put(2L, "M2");
         master.put(3L, "M3");
 
-        testIteration(new CombinedIterable<>(base, master), "B1", "B2",
-                "B3");
+        testIteration(createIter(base, master), "B1", "B2", "B3");
     }
 
     @Test
@@ -154,7 +148,12 @@ class TestCombinedIterator {
         master.put(3L, "M3");
         master.put(4L, "M4");
 
-        testIteration(new CombinedIterable<>(base, master), "B1", "B2",
-                "B3", "M4");
+        testIteration(createIter(base, master), "B1", "B2", "B3", "M4");
+    }
+
+
+    private static <T> Iterable<T> createIter(SortedMap<Long, T> map1, SortedMap<Long, T> map2) {
+        // TODO: try to use commons collection and remove CombinedIterable
+        return new CombinedIterable<>(map1, map2);
     }
 }

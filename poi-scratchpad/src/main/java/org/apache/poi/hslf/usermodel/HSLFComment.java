@@ -25,7 +25,7 @@ import java.awt.geom.Point2D;
 import java.util.Date;
 
 public final class HSLFComment implements Comment {
-    private Comment2000 _comment2000;
+    private final Comment2000 _comment2000;
 
     public HSLFComment(Comment2000 comment2000) {
         _comment2000 = comment2000;
@@ -38,6 +38,7 @@ public final class HSLFComment implements Comment {
     /**
      * Get the Author of this comment
      */
+    @Override
     public String getAuthor() {
         return _comment2000.getAuthor();
     }
@@ -45,6 +46,7 @@ public final class HSLFComment implements Comment {
     /**
      * Set the Author of this comment
      */
+    @Override
     public void setAuthor(String author) {
         _comment2000.setAuthor(author);
     }
@@ -52,6 +54,7 @@ public final class HSLFComment implements Comment {
     /**
      * Get the Author's Initials of this comment
      */
+    @Override
     public String getAuthorInitials() {
         return _comment2000.getAuthorInitials();
     }
@@ -59,6 +62,7 @@ public final class HSLFComment implements Comment {
     /**
      * Set the Author's Initials of this comment
      */
+    @Override
     public void setAuthorInitials(String initials) {
         _comment2000.setAuthorInitials(initials);
     }
@@ -66,6 +70,7 @@ public final class HSLFComment implements Comment {
     /**
      * Get the text of this comment
      */
+    @Override
     public String getText() {
         return _comment2000.getText();
     }
@@ -73,6 +78,7 @@ public final class HSLFComment implements Comment {
     /**
      * Set the text of this comment
      */
+    @Override
     public void setText(String text) {
         _comment2000.setText(text);
     }

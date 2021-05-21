@@ -51,10 +51,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STIconSetType;
  */
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
-    private XSSFSheet _sh;
+    private final XSSFSheet _sh;
 
-    private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<>();
-    private static Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<>();
+    private static final Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<>();
+    private static final Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<>();
     static {
         typeLookup.put(STCfType.CELL_IS, ConditionType.CELL_VALUE_IS);
         typeLookup.put(STCfType.EXPRESSION, ConditionType.FORMULA);
@@ -95,7 +95,6 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
     /**
      * NOTE: does not set priority, so this assumes the rule will not be added to the sheet yet
-     * @param sh
      */
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();
@@ -126,12 +125,14 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return dxf;
     }
 
+    @Override
     public int getPriority() {
         final int priority = _cfRule.getPriority();
         // priorities start at 1, if it is less, it is undefined, use definition order in caller
         return priority >=1 ? priority : 0;
     }
 
+    @Override
     public boolean getStopIfTrue() {
         return _cfRule.getStopIfTrue();
     }
@@ -140,8 +141,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * Create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
      *
-     * @return - border formatting object, never returns <code>null</code>.
+     * @return - border formatting object, never returns {@code null}.
      */
+    @Override
     public XSSFBorderFormatting createBorderFormatting(){
         CTDxf dxf = getDxf(true);
         CTBorder border;
@@ -155,8 +157,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
 
     /**
-     * @return - border formatting object  if defined,  <code>null</code> otherwise
+     * @return - border formatting object  if defined,  {@code null} otherwise
      */
+    @Override
     public XSSFBorderFormatting getBorderFormatting(){
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetBorder()) return null;
@@ -168,8 +171,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * Create a new font formatting structure if it does not exist,
      * otherwise just return existing object.
      *
-     * @return - font formatting object, never returns <code>null</code>.
+     * @return - font formatting object, never returns {@code null}.
      */
+    @Override
     public XSSFFontFormatting createFontFormatting(){
         CTDxf dxf = getDxf(true);
         CTFont font;
@@ -183,8 +187,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
 
     /**
-     * @return - font formatting object  if defined,  <code>null</code> otherwise
+     * @return - font formatting object  if defined,  {@code null} otherwise
      */
+    @Override
     public XSSFFontFormatting getFontFormatting(){
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetFont()) return null;
@@ -196,8 +201,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * Create a new pattern formatting structure if it does not exist,
      * otherwise just return existing object.
      *
-     * @return - pattern formatting object, never returns <code>null</code>.
+     * @return - pattern formatting object, never returns {@code null}.
      */
+    @Override
     public XSSFPatternFormatting createPatternFormatting(){
         CTDxf dxf = getDxf(true);
         CTFill fill;
@@ -211,8 +217,9 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
 
     /**
-     * @return - pattern formatting object  if defined,  <code>null</code> otherwise
+     * @return - pattern formatting object  if defined,  {@code null} otherwise
      */
+    @Override
     public XSSFPatternFormatting getPatternFormatting(){
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetFill()) return null;
@@ -221,8 +228,6 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
 
     /**
-     *
-     * @param color
      * @return data bar formatting
      */
     public XSSFDataBarFormatting createDataBarFormatting(XSSFColor color) {
@@ -234,12 +239,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         _cfRule.setType(STCfType.DATA_BAR);
 
         // Ensure the right element
-        CTDataBar bar = null;
-        if (_cfRule.isSetDataBar()) {
-            bar = _cfRule.getDataBar();
-        } else {
-            bar = _cfRule.addNewDataBar();
-        }
+        CTDataBar bar = _cfRule.isSetDataBar() ? _cfRule.getDataBar() : _cfRule.addNewDataBar();
         // Set the color
         bar.setColor(color.getCTColor());
 
@@ -252,6 +252,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         // Wrap and return
         return new XSSFDataBarFormatting(bar, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
+    @Override
     public XSSFDataBarFormatting getDataBarFormatting() {
         if (_cfRule.isSetDataBar()) {
             CTDataBar bar = _cfRule.getDataBar();
@@ -270,12 +271,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         _cfRule.setType(STCfType.ICON_SET);
 
         // Ensure the right element
-        CTIconSet icons = null;
-        if (_cfRule.isSetIconSet()) {
-            icons = _cfRule.getIconSet();
-        } else {
-            icons = _cfRule.addNewIconSet();
-        }
+        CTIconSet icons = _cfRule.isSetIconSet() ? _cfRule.getIconSet() : _cfRule.addNewIconSet();
         // Set the type of the icon set
         if (iconSet.name != null) {
             STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(iconSet.name);
@@ -294,6 +290,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         // Wrap and return
         return new XSSFIconMultiStateFormatting(icons);
     }
+    @Override
     public XSSFIconMultiStateFormatting getMultiStateFormatting() {
         if (_cfRule.isSetIconSet()) {
             CTIconSet icons = _cfRule.getIconSet();
@@ -312,12 +309,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         _cfRule.setType(STCfType.COLOR_SCALE);
 
         // Ensure the right element
-        CTColorScale scale = null;
-        if (_cfRule.isSetColorScale()) {
-            scale = _cfRule.getColorScale();
-        } else {
-            scale = _cfRule.addNewColorScale();
-        }
+        CTColorScale scale = _cfRule.isSetColorScale() ? _cfRule.getColorScale() : _cfRule.addNewColorScale();
 
         // Add a default set of thresholds and colors
         if (scale.sizeOfCfvoArray() == 0) {
@@ -338,6 +330,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         // Wrap and return
         return new XSSFColorScaleFormatting(scale, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
+    @Override
     public XSSFColorScaleFormatting getColorScaleFormatting() {
         if (_cfRule.isSetColorScale()) {
             CTColorScale scale = _cfRule.getColorScale();
@@ -349,8 +342,8 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
     /**
      * Return the number format from the dxf style record if present, null if not
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getNumberFormat()
      */
+    @Override
     public ExcelNumberFormat getNumberFormat() {
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetNumFmt()) return null;
@@ -369,12 +362,13 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
     /**
      * Will return null if {@link #getConditionType()} != {@link ConditionType#FILTER}
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getConditionFilterType()
      */
+    @Override
     public ConditionFilterType getConditionFilterType() {
         return filterTypeLookup.get(_cfRule.getType());
     }
 
+    @Override
     public ConditionFilterData getFilterConfiguration() {
         return new XSSFConditionFilterData(_cfRule);
     }
@@ -384,7 +378,6 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * {@link ConditionType#CELL_VALUE_IS}
      * <p>
      *     MUST be a constant from {@link org.apache.poi.ss.usermodel.ComparisonOperator}
-     * </p>
      *
      * @return the conditional format operator
      */
@@ -413,13 +406,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * this field is the first operand of the comparison.
      * If type is {@link ConditionType#FORMULA}, this formula is used
      * to determine if the conditional formatting is applied.
-     * </p>
      * <p>
      * If comparison type is {@link ConditionType#FORMULA} the formula MUST be a Boolean function
-     * </p>
      *
      * @return  the first formula
      */
+    @Override
     public String getFormula1(){
         return _cfRule.sizeOfFormulaArray() > 0 ? _cfRule.getFormulaArray(0) : null;
     }
@@ -431,10 +423,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      *
      * @return  the second formula
      */
+    @Override
     public String getFormula2(){
         return _cfRule.sizeOfFormulaArray() == 2 ? _cfRule.getFormulaArray(1) : null;
     }
 
+    @Override
     public String getText() {
         return _cfRule.getText();
     }
@@ -443,6 +437,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * Conditional format rules don't define stripes, so always 0
      * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()
      */
+    @Override
     public int getStripeSize() {
         return 0;
     }

@@ -81,14 +81,13 @@ public class SheetBuilder {
      * cells), creates cells if either corresponding array value is not
      * null or createEmptyCells property is true.
      * The conversion is performed in the following way:
-     * <p>
      * <ul>
      * <li>Numbers become numeric cells.</li>
-     * <li><code>java.util.Date</code> or <code>java.util.Calendar</code>
+     * <li>{@code java.util.Date} or {@code java.util.Calendar}
      * instances become date cells.</li>
      * <li>String with leading '=' char become formulas (leading '='
      * will be truncated).</li>
-     * <li>Other objects become strings via <code>Object.toString()</code>
+     * <li>Other objects become strings via {@code Object.toString()}
      * method call.</li>
      * </ul>
      *

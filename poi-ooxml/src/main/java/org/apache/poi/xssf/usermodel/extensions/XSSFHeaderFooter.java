@@ -121,15 +121,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  *
  */
 public abstract class XSSFHeaderFooter implements HeaderFooter {
-	private HeaderFooterHelper helper;
-	private CTHeaderFooter headerFooter;
+	private final HeaderFooterHelper helper;
+	private final CTHeaderFooter headerFooter;
 
 	private boolean stripFields;
 
 	/**
 	 * Create an instance of XSSFAbstractHeaderFooter from the supplied XML bean
-	 *
-	 * @param headerFooter
 	 */
 	public XSSFHeaderFooter(CTHeaderFooter headerFooter) {
         this.headerFooter = headerFooter;
@@ -160,7 +158,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 
 	/**
 	 * Are fields currently being stripped from the text that this
-	 * {@link XSSFHeaderFooter} returns? Default is false, but can be changed
+	 * XSSFHeaderFooter returns? Default is false, but can be changed
 	 */
 	public boolean areFieldsStripped() {
 		return stripFields;
@@ -169,8 +167,6 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * Should fields (eg macros) be stripped from the text that this class
 	 * returns? Default is not to strip.
-	 *
-	 * @param stripFields
 	 */
 	public void setAreFieldsStripped(boolean stripFields) {
 		this.stripFields = stripFields;

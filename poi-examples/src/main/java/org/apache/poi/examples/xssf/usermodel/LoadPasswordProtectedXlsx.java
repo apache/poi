@@ -32,10 +32,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * An example that loads a password protected workbook and counts the sheets.
- * <p><ul>
+ * <ul>
  * <li>The example demonstrates that all temp files are removed.
- * <li><code>AesZipFileZipEntrySource</code> is used to ensure that temp files are encrypted.
- * </ul></p>
+ * <li>{@code AesZipFileZipEntrySource} is used to ensure that temp files are encrypted.
+ * </ul>
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class LoadPasswordProtectedXlsx {

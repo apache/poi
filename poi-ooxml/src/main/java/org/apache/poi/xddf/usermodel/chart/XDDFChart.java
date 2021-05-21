@@ -141,7 +141,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param part
      *            the package part holding the chart data, the content type must
      *            be
-     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     *            {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
      * @since POI 3.14-Beta1
      */
     protected XDDFChart(PackagePart part) throws IOException, XmlException {
@@ -411,13 +411,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.plot();
             XDDFDataSource<?> categoryDS = series.getCategoryData();
             XDDFNumericalDataSource<? extends Number> valuesDS = series.getValuesData();
-            if (categoryDS == null || valuesDS == null
-                    || categoryDS.isCellRange() || valuesDS.isCellRange()
-                    || categoryDS.isLiteral() || valuesDS.isLiteral()) {
-                // let's assume the data is already in the sheet
-            } else {
+            if (categoryDS != null && !categoryDS.isCellRange() && !categoryDS.isLiteral() &&
+                valuesDS != null && !valuesDS.isCellRange() && !valuesDS.isLiteral()) {
                 fillSheet(sheet, categoryDS, valuesDS);
             }
+            // otherwise let's assume the data is already in the sheet
         }
     }
 
@@ -774,7 +772,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param chartFactory
      *            factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
      * @return return the new package part
-     * @throws InvalidFormatException
      * @since POI 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory)
@@ -787,10 +784,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     /**
      * this method write the XSSFWorkbook object data into embedded excel file
      *
-     * @param workbook
-     *            XSSFworkbook object
-     * @throws IOException
-     * @throws InvalidFormatException
+     * @param workbook XSSFworkbook object
      * @since POI 4.0.0
      */
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
@@ -953,8 +947,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * @param range
-     * @return
      * @since POI 4.0.0
      */
     public String formatRange(CellRangeAddress range) {
@@ -969,12 +961,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since POI 4.0.0
      */
     private XSSFSheet getSheet() {
-        XSSFSheet sheet = null;
         try {
-            sheet = getWorkbook().getSheetAt(0);
-        } catch (InvalidFormatException | IOException ife) {
+            return getWorkbook().getSheetAt(0);
+        } catch (InvalidFormatException | IOException ignored) {
+            return null;
         }
-        return sheet;
     }
 
     /**
@@ -983,7 +974,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * writing xssfworkbook object into output stream of embedded part
      *
      * @return returns the packagepart of embedded file
-     * @throws InvalidFormatException
      * @since POI 4.0.0
      */
     private PackagePart getWorksheetPart() throws InvalidFormatException {
@@ -1006,8 +996,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * @return returns the workbook object of embedded excel file
-     * @throws IOException
-     * @throws InvalidFormatException
      * @since POI 4.0.0
      */
     public XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
@@ -1087,8 +1075,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     public void replaceReferences(XSSFSheet newSheet) {
         for (XDDFChartData data : getChartSeries()) {
             for (XDDFChartData.Series series : data.series) {
-                XDDFDataSource newCategory = series.categoryData;
-                XDDFNumericalDataSource newValues = series.valuesData;
+                XDDFDataSource<?> newCategory = series.categoryData;
+                XDDFNumericalDataSource<? extends Number> newValues = series.valuesData;
                 try {
                     if (series.categoryData != null && series.categoryData.isReference()) {
                         String ref = series.categoryData.getDataRangeReference();
@@ -1097,7 +1085,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
                                 ? XDDFDataSourcesFactory.fromNumericCellRange(newSheet, rangeAddress)
                                 : XDDFDataSourcesFactory.fromStringCellRange(newSheet, rangeAddress);
                         if (newCategory.isNumeric()) {
-                            ((XDDFNumericalDataSource) newCategory).setFormatCode(series.categoryData.getFormatCode());
+                            ((XDDFNumericalDataSource<? extends Number>) newCategory).setFormatCode(series.categoryData.getFormatCode());
                         }
                     }
                     if (series.valuesData!= null && series.valuesData.isReference()) {

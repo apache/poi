@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * Implementation for the DATEVALUE() Excel function.<p>
  *
  * <b>Syntax:</b><br>
- * <b>DATEVALUE</b>(<b>date_text</b>)<p>
+ * <b>DATEVALUE</b>(<b>date_text</b>)
  * <p>
  * The <b>DATEVALUE</b> function converts a date that is stored as text to a serial number that Excel
  * recognizes as a date. For example, the formula <b>=DATEVALUE("1/1/2008")</b> returns 39448, the

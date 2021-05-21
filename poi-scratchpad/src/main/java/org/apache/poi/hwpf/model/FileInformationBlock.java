@@ -38,7 +38,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * <p>The File Information Block (FIB). Holds pointers
  *  to various bits of the file, and lots of flags which
- *  specify properties of the document.<p>
+ *  specify properties of the document.
  * <ul>
  * <li>The {@link FibBase} class, holds the first 32 bytes.</li>
  * <li>The next part, the fibRgW / FibRgW97, is handled by the {@link FibRgW97}.</li>
@@ -244,12 +244,12 @@ public final class FileInformationBlock {
 
         // field info
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
-            knownFieldSet.add( Integer.valueOf( part.getFibFieldsField() ) );
+            knownFieldSet.add(part.getFibFieldsField());
 
         // bookmarks
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBKF ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBKL ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFBKMK ) );
+        knownFieldSet.add(FIBFieldHandler.PLCFBKF);
+        knownFieldSet.add(FIBFieldHandler.PLCFBKL);
+        knownFieldSet.add(FIBFieldHandler.STTBFBKMK);
 
         // notes
         for ( NoteType noteType : NoteType.values() ) {
