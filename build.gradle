@@ -18,10 +18,12 @@
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
     }
 
     dependencies {
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.1.1"
+        classpath "de.thetaphi:forbiddenapis:3.1"
     }
 }
 
@@ -94,7 +96,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-
+    apply plugin: 'de.thetaphi.forbiddenapis'
 
     version = '5.0.1-SNAPSHOT'
     ext {
@@ -302,6 +304,19 @@ subprojects {
 				property "sonar.projectVersion", version
             }
         }
+    }
+
+    forbiddenApis {
+        bundledSignatures = [ 'jdk-unsafe', 'jdk-deprecated', 'jdk-internal', 'jdk-non-portable', 'jdk-reflection' ]
+        signaturesFiles = files('../src/resources/devtools/forbidden-signatures.txt')
+        ignoreFailures = false
+        suppressAnnotations = [ 'org.apache.poi.util.SuppressForbidden' ]
+        // forbiddenapis bundled signatures max supported version is 14
+        targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
+    }
+
+    forbiddenApisMain {
+        signaturesFiles = files('../src/resources/devtools/forbidden-signatures-prod.txt')
     }
 
     task jenkins

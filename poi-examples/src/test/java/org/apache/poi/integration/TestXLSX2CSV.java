@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -37,11 +38,11 @@ public class TestXLSX2CSV {
 	private final UnsynchronizedByteArrayOutputStream errorBytes = new UnsynchronizedByteArrayOutputStream();
 
 	@BeforeEach
-	public void setUp() {
+	public void setUp() throws UnsupportedEncodingException {
 		// remember and replace default error streams
 		err = System.err;
 
-		PrintStream error = new PrintStream(errorBytes);
+		PrintStream error = new PrintStream(errorBytes, true, "UTF-8");
 		System.setErr(error);
 	}
 
@@ -77,7 +78,7 @@ public class TestXLSX2CSV {
 	@Test
 	public void testSampleFile() throws Exception {
 		final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-		PrintStream out = new PrintStream(outputBytes);
+		PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
 
 		// The package open is instantaneous, as it should be.
 		try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
@@ -96,7 +97,7 @@ public class TestXLSX2CSV {
 	@Test
 	public void testMinColumns() throws Exception {
 		final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-		PrintStream out = new PrintStream(outputBytes);
+		PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
 
 		// The package open is instantaneous, as it should be.
 		try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {

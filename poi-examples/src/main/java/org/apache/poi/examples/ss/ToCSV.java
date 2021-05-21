@@ -28,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -132,6 +134,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class ToCSV {
+    private static final Logger LOG = LogManager.getLogger(ToCSV.class);
 
     private Workbook workbook;
     private ArrayList<ArrayList<String>> csvData;
@@ -691,10 +694,7 @@ public class ToCSV {
         // program. It should however, ideally be replaced with one or more
         // catch clauses optimised to handle more specific problems.
         catch(Exception ex) {
-            System.out.println("Caught an: " + ex.getClass().getName());
-            System.out.println("Message: " + ex.getMessage());
-            System.out.println("Stacktrace follows:.....");
-            ex.printStackTrace(System.out);
+            LOG.atWarn().withThrowable(ex).log("Unexpected exception");
             converted = false;
         }
 

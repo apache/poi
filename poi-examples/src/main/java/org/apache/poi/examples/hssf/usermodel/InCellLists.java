@@ -18,12 +18,13 @@
 
 package org.apache.poi.examples.hssf.usermodel;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -49,6 +50,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public class InCellLists {
+    private static final Logger LOG = LogManager.getLogger(InCellLists.class);
+
 
     // This character looks like a solid, black, loser case letter 'o'
     // positioned up from the base line of the text.
@@ -65,7 +68,7 @@ public class InCellLists {
      * @param outputFilename A String that encapsulates the name of and path to
      *                       the Excel spreadsheet file this code will create.
      */
-    public void demonstrateMethodCalls(String outputFilename) throws IOException {
+    public void demonstrateMethodCalls(String outputFilename) {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet("In Cell Lists");
             HSSFRow row = sheet.createRow(0);
@@ -161,14 +164,11 @@ public class InCellLists {
             row.setHeight((short) 2800);
 
             // Save the completed workbook
-            try (FileOutputStream fos = new FileOutputStream(new File(outputFilename))) {
+            try (FileOutputStream fos = new FileOutputStream(outputFilename)) {
                 workbook.write(fos);
             }
         } catch (IOException ioEx) {
-            System.out.println("Caught a: " + ioEx.getClass().getName());
-            System.out.println("Message: " + ioEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            ioEx.printStackTrace(System.out);
+            LOG.atWarn().withThrowable(ioEx).log("Unexpected IOException");
         }
     }
 
@@ -496,10 +496,10 @@ public class InCellLists {
      * complex list structures descending through two, three or even more
      * levels.
      */
-    public final class MultiLevelListItem {
+    public static final class MultiLevelListItem {
 
-        private String itemText;
-        private List<String> lowerLevelItems;
+        private final String itemText;
+        private final List<String> lowerLevelItems;
 
         /**
          * Create a new instance of the MultiLevelListItem class using the
