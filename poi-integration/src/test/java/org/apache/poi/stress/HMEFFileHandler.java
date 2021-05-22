@@ -34,58 +34,58 @@ import org.junit.jupiter.api.Test;
 
 class HMEFFileHandler extends AbstractFileHandler {
 
-	@Override
-	public void handleExtracting(File file) throws Exception {
-		FileMagic fm = FileMagic.valueOf(file);
-		if (fm == FileMagic.OLE2) {
-			super.handleExtracting(file);
-		}
-	}
+    @Override
+    public void handleExtracting(File file) throws Exception {
+        FileMagic fm = FileMagic.valueOf(file);
+        if (fm == FileMagic.OLE2) {
+            super.handleExtracting(file);
+        }
+    }
 
-	@Override
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-		HMEFMessage msg = new HMEFMessage(stream);
+        HMEFMessage msg = new HMEFMessage(stream);
 
-		// there are test-files that have no body...
-		String[] HTML_BODY = {
-			"Testing TNEF Message", "TNEF test message with attachments", "Test"
-		};
-		String bodyStr;
-		if(Arrays.asList(HTML_BODY).contains(msg.getSubject())) {
-			MAPIAttribute bodyHtml = msg.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
-			assertNotNull(bodyHtml);
-			bodyStr = new String(bodyHtml.getData(), getEncoding(msg));
-		} else {
-			bodyStr = msg.getBody();
-		}
-		assertNotNull( bodyStr, "Body is not set" );
-		assertNotNull( msg.getSubject(), "Subject is not set" );
-	}
+        // there are test-files that have no body...
+        String[] HTML_BODY = {
+            "Testing TNEF Message", "TNEF test message with attachments", "Test"
+        };
+        String bodyStr;
+        if(Arrays.asList(HTML_BODY).contains(msg.getSubject())) {
+            MAPIAttribute bodyHtml = msg.getMessageMAPIAttribute(MAPIProperty.BODY_HTML);
+            assertNotNull(bodyHtml);
+            bodyStr = new String(bodyHtml.getData(), getEncoding(msg));
+        } else {
+            bodyStr = msg.getBody();
+        }
+        assertNotNull( bodyStr, "Body is not set" );
+        assertNotNull( msg.getSubject(), "Subject is not set" );
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
-	void test() throws Exception {
-	    String path = "test-data/hmef/quick-winmail.dat";
-		try (InputStream stream = new FileInputStream(path)) {
-			handleFile(stream, path);
-		}
-	}
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    void test() throws Exception {
+        String path = "test-data/hmef/quick-winmail.dat";
+        try (InputStream stream = new FileInputStream(path)) {
+            handleFile(stream, path);
+        }
+    }
 
-	private String getEncoding(HMEFMessage tnefDat) {
-		TNEFAttribute oemCP = tnefDat.getMessageAttribute(TNEFProperty.ID_OEMCODEPAGE);
-		MAPIAttribute cpId = tnefDat.getMessageMAPIAttribute(MAPIProperty.INTERNET_CPID);
-		int codePage = 1252;
-		if (oemCP != null) {
-			codePage = LittleEndian.getInt(oemCP.getData());
-		} else if (cpId != null) {
-			codePage =  LittleEndian.getInt(cpId.getData());
-		}
-		switch (codePage) {
-			// see http://en.wikipedia.org/wiki/Code_page for more
-			case 1252: return "Windows-1252";
-			case 20127: return "US-ASCII";
-			default: return "cp"+codePage;
-		}
-	}
+    private String getEncoding(HMEFMessage tnefDat) {
+        TNEFAttribute oemCP = tnefDat.getMessageAttribute(TNEFProperty.ID_OEMCODEPAGE);
+        MAPIAttribute cpId = tnefDat.getMessageMAPIAttribute(MAPIProperty.INTERNET_CPID);
+        int codePage = 1252;
+        if (oemCP != null) {
+            codePage = LittleEndian.getInt(oemCP.getData());
+        } else if (cpId != null) {
+            codePage =  LittleEndian.getInt(cpId.getData());
+        }
+        switch (codePage) {
+            // see http://en.wikipedia.org/wiki/Code_page for more
+            case 1252: return "Windows-1252";
+            case 20127: return "US-ASCII";
+            default: return "cp"+codePage;
+        }
+    }
 
 }

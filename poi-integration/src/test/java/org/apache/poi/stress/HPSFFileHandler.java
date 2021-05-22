@@ -66,30 +66,30 @@ class HPSFFileHandler extends POIFSFileHandler {
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
-		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(poifs);
-		DocumentSummaryInformation dsi = hpsf.getDocumentSummaryInformation();
-		SummaryInformation si = hpsf.getSummaryInformation();
-		boolean hasDSI = hasPropertyStream(poifs, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-		boolean hasSI = hasPropertyStream(poifs, SummaryInformation.DEFAULT_STREAM_NAME);
+        POIFSFileSystem poifs = new POIFSFileSystem(stream);
+        HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(poifs);
+        DocumentSummaryInformation dsi = hpsf.getDocumentSummaryInformation();
+        SummaryInformation si = hpsf.getSummaryInformation();
+        boolean hasDSI = hasPropertyStream(poifs, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        boolean hasSI = hasPropertyStream(poifs, SummaryInformation.DEFAULT_STREAM_NAME);
 
-		assertEquals(hasDSI, dsi != null);
+        assertEquals(hasDSI, dsi != null);
         assertEquals(hasSI, si != null);
 
-		handlePOIDocument(hpsf);
-	}
+        handlePOIDocument(hpsf);
+    }
 
-	private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException {
+    private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException {
         DirectoryNode root = poifs.getRoot();
-	    if (!root.hasEntry(streamName)) {
-	        return false;
-	    }
+        if (!root.hasEntry(streamName)) {
+            return false;
+        }
         try (DocumentInputStream dis = root.createDocumentInputStream(streamName)) {
             return PropertySet.isPropertySetStream(dis);
         }
-	}
+    }
 
-	private static File getTempFile() {
+    private static File getTempFile() {
         File f = null;
         try {
             f = TempFile.createTempFile("hpsfCopy", "out");
@@ -112,16 +112,16 @@ class HPSFFileHandler extends POIFSFileHandler {
     }
 
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
     @SuppressWarnings("java:S2699")
-	void test() throws Exception {
-	    String path = "test-data/diagram/44501.vsd";
+    void test() throws Exception {
+        String path = "test-data/diagram/44501.vsd";
         try (InputStream stream = new FileInputStream(path)) {
             handleFile(stream, path);
         }
-	}
+    }
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test

@@ -29,13 +29,13 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
 public final class POIXMLDocumentHandler {
-	protected void handlePOIXMLDocument(POIXMLDocument doc) throws Exception {
-		assertNotNull(doc.getAllEmbeddedParts());
-		assertNotNull(doc.getPackage());
-		assertNotNull(doc.getPackagePart());
-		assertNotNull(doc.getProperties());
-		assertNotNull(doc.getRelations());
-	}
+    protected void handlePOIXMLDocument(POIXMLDocument doc) throws Exception {
+        assertNotNull(doc.getAllEmbeddedParts());
+        assertNotNull(doc.getPackage());
+        assertNotNull(doc.getPackagePart());
+        assertNotNull(doc.getProperties());
+        assertNotNull(doc.getRelations());
+    }
 
     protected static boolean isEncrypted(InputStream stream) throws IOException {
         if (FileMagic.valueOf(stream) == FileMagic.OLE2) {

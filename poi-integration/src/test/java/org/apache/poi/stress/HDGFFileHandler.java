@@ -32,47 +32,47 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
 class HDGFFileHandler extends POIFSFileHandler {
-	@Override
-	public void handleFile(InputStream stream, String path) throws IOException {
-	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
-		HDGFDiagram diagram = new HDGFDiagram(poifs);
-		Stream[] topLevelStreams = diagram.getTopLevelStreams();
-		assertNotNull(topLevelStreams);
-		for(Stream str : topLevelStreams) {
-			assertTrue(str.getPointer().getLength() >= 0);
-		}
+    @Override
+    public void handleFile(InputStream stream, String path) throws IOException {
+        POIFSFileSystem poifs = new POIFSFileSystem(stream);
+        HDGFDiagram diagram = new HDGFDiagram(poifs);
+        Stream[] topLevelStreams = diagram.getTopLevelStreams();
+        assertNotNull(topLevelStreams);
+        for(Stream str : topLevelStreams) {
+            assertTrue(str.getPointer().getLength() >= 0);
+        }
 
-		TrailerStream trailerStream = diagram.getTrailerStream();
-		assertNotNull(trailerStream);
-		assertTrue(trailerStream.getPointer().getLength() >= 0);
-		diagram.close();
-		poifs.close();
+        TrailerStream trailerStream = diagram.getTrailerStream();
+        assertNotNull(trailerStream);
+        assertTrue(trailerStream.getPointer().getLength() >= 0);
+        diagram.close();
+        poifs.close();
 
-		// writing is not yet implemented... handlePOIDocument(diagram);
-	}
+        // writing is not yet implemented... handlePOIDocument(diagram);
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
-	void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/diagram/44501.vsd");
 
         InputStream stream = new FileInputStream(file);
-		try {
-			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
+        try {
+            handleFile(stream, file.getPath());
+        } finally {
+            stream.close();
+        }
 
-		handleExtracting(file);
+        handleExtracting(file);
 
-		stream = new FileInputStream(file);
-		try {
-			try (VisioTextExtractor extractor = new VisioTextExtractor(stream)) {
-				assertNotNull(extractor.getText());
-			}
-		} finally {
-			stream.close();
-		}
-	}
+        stream = new FileInputStream(file);
+        try {
+            try (VisioTextExtractor extractor = new VisioTextExtractor(stream)) {
+                assertNotNull(extractor.getText());
+            }
+        } finally {
+            stream.close();
+        }
+    }
 }

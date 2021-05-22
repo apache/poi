@@ -28,40 +28,40 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
 class HPBFFileHandler extends POIFSFileHandler {
-	@Override
-	public void handleFile(InputStream stream, String path) throws Exception {
-		HPBFDocument pub = new HPBFDocument(new POIFSFileSystem(stream));
-		assertNotNull(pub.getEscherDelayStm());
-		assertNotNull(pub.getMainContents());
-		assertNotNull(pub.getQuillContents());
+    @Override
+    public void handleFile(InputStream stream, String path) throws Exception {
+        HPBFDocument pub = new HPBFDocument(new POIFSFileSystem(stream));
+        assertNotNull(pub.getEscherDelayStm());
+        assertNotNull(pub.getMainContents());
+        assertNotNull(pub.getQuillContents());
 
-		// writing is not yet implemented... handlePOIDocument(pub);
-		pub.close();
-	}
+        // writing is not yet implemented... handlePOIDocument(pub);
+        pub.close();
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
-	void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/publisher/SampleBrochure.pub");
 
         InputStream stream = new FileInputStream(file);
-		try {
-			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
+        try {
+            handleFile(stream, file.getPath());
+        } finally {
+            stream.close();
+        }
 
-		handleExtracting(file);
+        handleExtracting(file);
 
-		stream = new FileInputStream(file);
-		try {
-			try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
-				assertNotNull(extractor.getText());
-			}
-		} finally {
-			stream.close();
-		}
-	}
+        stream = new FileInputStream(file);
+        try {
+            try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
+                assertNotNull(extractor.getText());
+            }
+        } finally {
+            stream.close();
+        }
+    }
 
 }

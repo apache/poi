@@ -31,55 +31,55 @@ import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.junit.jupiter.api.Test;
 
 class XSLFFileHandler extends SlideShowHandler {
-	@Override
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-	    try (XMLSlideShow slide = new XMLSlideShow(stream);
-			 XSLFSlideShow slideInner = new XSLFSlideShow(slide.getPackage())) {
-			;
-			assertNotNull(slideInner.getPresentation());
-			assertNotNull(slideInner.getSlideMasterReferences());
-			assertNotNull(slideInner.getSlideReferences());
+        try (XMLSlideShow slide = new XMLSlideShow(stream);
+             XSLFSlideShow slideInner = new XSLFSlideShow(slide.getPackage())) {
+            ;
+            assertNotNull(slideInner.getPresentation());
+            assertNotNull(slideInner.getSlideMasterReferences());
+            assertNotNull(slideInner.getSlideReferences());
 
-			new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
+            new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
 
-			handleSlideShow(slide);
-		} catch (POIXMLException e) {
-	    	Exception cause = (Exception)e.getCause();
-	    	throw cause == null ? e : cause;
-		}
-	}
+            handleSlideShow(slide);
+        } catch (POIXMLException e) {
+            Exception cause = (Exception)e.getCause();
+            throw cause == null ? e : cause;
+        }
+    }
 
-	@Override
+    @Override
     public void handleExtracting(File file) throws Exception {
         super.handleExtracting(file);
 
 
         // additionally try the other getText() methods
-		try (SlideShowExtractor<?,?> extractor = (SlideShowExtractor<?, ?>) ExtractorFactory.createExtractor(file)) {
-			assertNotNull(extractor);
-			extractor.setSlidesByDefault(true);
-			extractor.setNotesByDefault(true);
-			extractor.setMasterByDefault(true);
+        try (SlideShowExtractor<?,?> extractor = (SlideShowExtractor<?, ?>) ExtractorFactory.createExtractor(file)) {
+            assertNotNull(extractor);
+            extractor.setSlidesByDefault(true);
+            extractor.setNotesByDefault(true);
+            extractor.setMasterByDefault(true);
 
-			assertNotNull(extractor.getText());
+            assertNotNull(extractor.getText());
 
-			extractor.setSlidesByDefault(false);
-			extractor.setNotesByDefault(false);
-			extractor.setMasterByDefault(false);
+            extractor.setSlidesByDefault(false);
+            extractor.setNotesByDefault(false);
+            extractor.setMasterByDefault(false);
 
-			assertEquals("", extractor.getText(), "With all options disabled we should not get text");
-		}
+            assertEquals("", extractor.getText(), "With all options disabled we should not get text");
+        }
     }
 
     // a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    @Override
     @Test
-	void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/slideshow/ca.ubc.cs.people_~emhill_presentations_HowWeRefactor.pptx");
-		try (InputStream stream = new FileInputStream(file)) {
-			handleFile(stream, file.getPath());
-		}
+        try (InputStream stream = new FileInputStream(file)) {
+            handleFile(stream, file.getPath());
+        }
 
-		handleExtracting(file);
-	}
+        handleExtracting(file);
+    }
 }

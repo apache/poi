@@ -28,61 +28,61 @@ import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.junit.jupiter.api.Test;
 
 class HSMFFileHandler extends POIFSFileHandler {
-	@Override
-	public void handleFile(InputStream stream, String path) throws Exception {
-		MAPIMessage mapi = new MAPIMessage(stream);
-		assertNotNull(mapi.getAttachmentFiles());
-		assertNotNull(mapi.getDisplayBCC());
-		assertNotNull(mapi.getMessageDate());
+    @Override
+    public void handleFile(InputStream stream, String path) throws Exception {
+        MAPIMessage mapi = new MAPIMessage(stream);
+        assertNotNull(mapi.getAttachmentFiles());
+        assertNotNull(mapi.getDisplayBCC());
+        assertNotNull(mapi.getMessageDate());
 
-		AttachmentChunks[] attachments = mapi.getAttachmentFiles();
+        AttachmentChunks[] attachments = mapi.getAttachmentFiles();
 
-		for(AttachmentChunks attachment : attachments) {
+        for(AttachmentChunks attachment : attachments) {
 
-		   DirectoryChunk chunkDirectory = attachment.getAttachmentDirectory();
-		   if(chunkDirectory != null) {
-			   MAPIMessage attachmentMSG = chunkDirectory.getAsEmbeddedMessage();
-			   assertNotNull(attachmentMSG);
-			   String body = attachmentMSG.getTextBody();
-			   assertNotNull(body);
-		   }
-		}
+           DirectoryChunk chunkDirectory = attachment.getAttachmentDirectory();
+           if(chunkDirectory != null) {
+               MAPIMessage attachmentMSG = chunkDirectory.getAsEmbeddedMessage();
+               assertNotNull(attachmentMSG);
+               String body = attachmentMSG.getTextBody();
+               assertNotNull(body);
+           }
+        }
 
-		/* => Writing isn't yet supported...
-		// write out the file
-		File file = TempFile.createTempFile("StressTest", ".msg");
-		writeToFile(mapi, file);
+        /* => Writing isn't yet supported...
+        // write out the file
+        File file = TempFile.createTempFile("StressTest", ".msg");
+        writeToFile(mapi, file);
 
-		MAPIMessage read = new MAPIMessage(file.getAbsolutePath());
-		assertNotNull(read.getAttachmentFiles());
-		assertNotNull(read.getDisplayBCC());
-		assertNotNull(read.getMessageDate());
-		*/
+        MAPIMessage read = new MAPIMessage(file.getAbsolutePath());
+        assertNotNull(read.getAttachmentFiles());
+        assertNotNull(read.getDisplayBCC());
+        assertNotNull(read.getMessageDate());
+        */
 
-		// writing is not yet supported... handlePOIDocument(mapi);
+        // writing is not yet supported... handlePOIDocument(mapi);
 
-		mapi.close();
-	}
+        mapi.close();
+    }
 
-//	private void writeToFile(MAPIMessage mapi, File file)
-//			throws FileNotFoundException, IOException {
-//		OutputStream stream = new FileOutputStream(file);
-//		try {
-//			mapi.write(stream);
-//		} finally {
-//			stream.close();
-//		}
-//	}
+//  private void writeToFile(MAPIMessage mapi, File file)
+//          throws FileNotFoundException, IOException {
+//      OutputStream stream = new FileOutputStream(file);
+//      try {
+//          mapi.write(stream);
+//      } finally {
+//          stream.close();
+//      }
+//  }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
-	void test() throws Exception {
+    void test() throws Exception {
         File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
-		try (InputStream stream = new FileInputStream(file)) {
-			handleFile(stream, file.getPath());
-		}
+        try (InputStream stream = new FileInputStream(file)) {
+            handleFile(stream, file.getPath());
+        }
 
-		handleExtracting(file);
-	}
+        handleExtracting(file);
+    }
 }

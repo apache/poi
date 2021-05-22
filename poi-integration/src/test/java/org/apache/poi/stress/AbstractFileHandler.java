@@ -46,7 +46,7 @@ public abstract class AbstractFileHandler implements FileHandler {
     public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>();
     static {
         // password protected files without password
-    	// ... currently none ...
+        // ... currently none ...
 
         // unsupported file-types, no supported OLE2 parts
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/quick-winmail.dat");
@@ -75,9 +75,9 @@ public abstract class AbstractFileHandler implements FileHandler {
         /* Did fail for some documents with special XML contents...
         try {
             OOXMLPrettyPrint.main(new String[] { file.getAbsolutePath(),
-            		"/tmp/pretty-" + file.getName() });
+                    "/tmp/pretty-" + file.getName() });
         } catch (ZipException e) {
-        	// ignore, not a Zip/OOXML file
+            // ignore, not a Zip/OOXML file
         }*/
     }
 

@@ -37,90 +37,90 @@ import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
 class HSSFFileHandler extends SpreadsheetHandler {
-	private final POIFSFileHandler delegate = new POIFSFileHandler();
-	@Override
+    private final POIFSFileHandler delegate = new POIFSFileHandler();
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-		HSSFWorkbook wb = new HSSFWorkbook(stream);
-		handleWorkbook(wb);
+        HSSFWorkbook wb = new HSSFWorkbook(stream);
+        handleWorkbook(wb);
 
-		// TODO: some documents fail currently...
+        // TODO: some documents fail currently...
         // Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
         // IntersectionPtg.  However it is still not capable of parsing it.
         // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
         //HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         //evaluator.evaluateAll();
 
-		delegate.handlePOIDocument(wb);
+        delegate.handlePOIDocument(wb);
 
-		// also try to see if some of the Records behave incorrectly
-		// TODO: still fails on some records... RecordsStresser.handleWorkbook(wb);
+        // also try to see if some of the Records behave incorrectly
+        // TODO: still fails on some records... RecordsStresser.handleWorkbook(wb);
 
-		HSSFOptimiser.optimiseCellStyles(wb);
-		for(Sheet sheet : wb) {
-			for (Row row : sheet) {
-				for (Cell cell : row) {
-					assertNotNull(cell.getCellStyle());
-				}
-			}
-		}
+        HSSFOptimiser.optimiseCellStyles(wb);
+        for(Sheet sheet : wb) {
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    assertNotNull(cell.getCellStyle());
+                }
+            }
+        }
 
-		HSSFOptimiser.optimiseFonts(wb);
-	}
+        HSSFOptimiser.optimiseFonts(wb);
+    }
 
-	private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<>();
-	static {
-		// encrypted
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/35897-type4.xls");
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/password.xls");
-		// broken files
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/43493.xls");
-		// TODO: ok to ignore?
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/50833.xls");
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/51832.xls");
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/XRefCalc.xls");
-		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/61300.xls");
-	}
+    private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<>();
+    static {
+        // encrypted
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/35897-type4.xls");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/password.xls");
+        // broken files
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/43493.xls");
+        // TODO: ok to ignore?
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/50833.xls");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/51832.xls");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/XRefCalc.xls");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/61300.xls");
+    }
 
-	@Override
-	public void handleAdditional(File file) throws Exception {
-		// redirect stdout as the examples often write lots of text
-		PrintStream oldOut = System.out;
-		String fileWithParent = file.getParentFile().getName() + "/" + file.getName();
-		try {
-			System.setOut(new NullPrintStream());
+    @Override
+    public void handleAdditional(File file) throws Exception {
+        // redirect stdout as the examples often write lots of text
+        PrintStream oldOut = System.out;
+        String fileWithParent = file.getParentFile().getName() + "/" + file.getName();
+        try {
+            System.setOut(new NullPrintStream());
 
-			BiffViewer.main(new String[]{file.getAbsolutePath()});
+            BiffViewer.main(new String[]{file.getAbsolutePath()});
 
-			assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
-		} catch (OldExcelFormatException e) {
-			// old excel formats are not supported here
-		} catch (RuntimeException e) {
-			if(!EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent)) {
-				throw e;
-			}
-		} finally {
-			System.setOut(oldOut);
-		}
-	}
+            assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
+        } catch (OldExcelFormatException e) {
+            // old excel formats are not supported here
+        } catch (RuntimeException e) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent)) {
+                throw e;
+            }
+        } finally {
+            System.setOut(oldOut);
+        }
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
-	void test() throws Exception {
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    void test() throws Exception {
         File file = new File("../test-data/spreadsheet/59074.xls");
 
-		try (InputStream stream = new FileInputStream(file)) {
-			handleFile(stream, file.getPath());
-		}
+        try (InputStream stream = new FileInputStream(file)) {
+            handleFile(stream, file.getPath());
+        }
 
-		handleExtracting(file);
+        handleExtracting(file);
 
-		handleAdditional(file);
-	}
+        handleAdditional(file);
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
+    // a test-case to test this locally without executing the full TestAllFiles
     @Test
-	@SuppressWarnings("java:S2699")
+    @SuppressWarnings("java:S2699")
     void testExtractor() throws Exception {
         handleExtracting(new File("../test-data/spreadsheet/59074.xls"));
     }

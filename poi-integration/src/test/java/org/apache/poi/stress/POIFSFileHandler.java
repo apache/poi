@@ -31,15 +31,15 @@ import org.junit.jupiter.api.Test;
 
 class POIFSFileHandler extends AbstractFileHandler {
 
-	@Override
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         try (POIFSFileSystem fs = new POIFSFileSystem(stream)) {
             handlePOIFSFileSystem(fs);
             handleHPSFProperties(fs);
         }
-	}
+    }
 
-	private void handleHPSFProperties(POIFSFileSystem fs) throws IOException {
+    private void handleHPSFProperties(POIFSFileSystem fs) throws IOException {
         try (HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
             // can be null
             ext.getDocSummaryInformation();
@@ -52,12 +52,12 @@ class POIFSFileHandler extends AbstractFileHandler {
     }
 
     private void handlePOIFSFileSystem(POIFSFileSystem fs) {
-		assertNotNull(fs);
-		assertNotNull(fs.getRoot());
-	}
+        assertNotNull(fs);
+        assertNotNull(fs.getRoot());
+    }
 
-	protected void handlePOIDocument(POIDocument doc) throws Exception {
-		try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+    protected void handlePOIDocument(POIDocument doc) throws Exception {
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
             doc.write(out);
 
             try (InputStream in = out.toInputStream();
@@ -65,7 +65,7 @@ class POIFSFileHandler extends AbstractFileHandler {
                 handlePOIFSFileSystem(fs);
             }
         }
-	}
+    }
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test

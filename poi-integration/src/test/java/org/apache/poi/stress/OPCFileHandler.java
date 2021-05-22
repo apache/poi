@@ -31,7 +31,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Test;
 
 class OPCFileHandler extends AbstractFileHandler {
-	@Override
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
@@ -59,15 +59,15 @@ class OPCFileHandler extends AbstractFileHandler {
         // text-extraction is not possible currently for these types of files
     }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
-	void test() throws Exception {
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    void test() throws Exception {
         File file = new File("test-data/diagram/test.vsdx");
 
         try (InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000)) {
             handleFile(stream, file.getPath());
         }
 
-		handleExtracting(file);
-	}
+        handleExtracting(file);
+    }
 }
