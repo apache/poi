@@ -30,10 +30,10 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  PPT 2000/XP/etc. (PPT 97 uses plain Escher Text Boxes for comments)
  */
 public final class Comment2000 extends RecordContainer {
-	private byte[] _header;
-	private static final long _type = RecordTypes.Comment2000.typeID;
+    private byte[] _header;
+    private static final long _type = RecordTypes.Comment2000.typeID;
 
-	// Links to our more interesting children
+    // Links to our more interesting children
 
     /**
      * An optional string that specifies the name of the author of the presentation comment.
@@ -53,68 +53,68 @@ public final class Comment2000 extends RecordContainer {
      */
     private Comment2000Atom commentAtom;
 
-	/**
-	 * Returns the Comment2000Atom of this Comment
-	 */
-	public Comment2000Atom getComment2000Atom() { return commentAtom; }
+    /**
+     * Returns the Comment2000Atom of this Comment
+     */
+    public Comment2000Atom getComment2000Atom() { return commentAtom; }
 
-	/**
-	 * Get the Author of this comment
-	 */
-	public String getAuthor() {
-		return authorRecord == null ? null : authorRecord.getText();
-	}
-	/**
-	 * Set the Author of this comment
-	 */
-	public void setAuthor(String author) {
-		authorRecord.setText(author);
-	}
+    /**
+     * Get the Author of this comment
+     */
+    public String getAuthor() {
+        return authorRecord == null ? null : authorRecord.getText();
+    }
+    /**
+     * Set the Author of this comment
+     */
+    public void setAuthor(String author) {
+        authorRecord.setText(author);
+    }
 
-	/**
-	 * Get the Author's Initials of this comment
-	 */
-	public String getAuthorInitials() {
-		return authorInitialsRecord == null ? null : authorInitialsRecord.getText();
-	}
-	/**
-	 * Set the Author's Initials of this comment
-	 */
-	public void setAuthorInitials(String initials) {
-		authorInitialsRecord.setText(initials);
-	}
+    /**
+     * Get the Author's Initials of this comment
+     */
+    public String getAuthorInitials() {
+        return authorInitialsRecord == null ? null : authorInitialsRecord.getText();
+    }
+    /**
+     * Set the Author's Initials of this comment
+     */
+    public void setAuthorInitials(String initials) {
+        authorInitialsRecord.setText(initials);
+    }
 
-	/**
-	 * Get the text of this comment
-	 */
-	public String getText() {
-		return commentRecord == null ? null : commentRecord.getText();
-	}
-	/**
-	 * Set the text of this comment
-	 */
-	public void setText(String text) {
-		commentRecord.setText(text);
-	}
+    /**
+     * Get the text of this comment
+     */
+    public String getText() {
+        return commentRecord == null ? null : commentRecord.getText();
+    }
+    /**
+     * Set the text of this comment
+     */
+    public void setText(String text) {
+        commentRecord.setText(text);
+    }
 
-	/**
-	 * Set things up, and find our more interesting children
-	 */
-	protected Comment2000(byte[] source, int start, int len) {
-		// Grab the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+    /**
+     * Set things up, and find our more interesting children
+     */
+    protected Comment2000(byte[] source, int start, int len) {
+        // Grab the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Find our children
-		_children = org.apache.poi.hslf.record.Record.findChildRecords(source,start+8,len-8);
-		findInterestingChildren();
-	}
+        // Find our children
+        _children = org.apache.poi.hslf.record.Record.findChildRecords(source,start+8,len-8);
+        findInterestingChildren();
+    }
 
-	/**
-	 * Go through our child records, picking out the ones that are
-	 *  interesting, and saving those for use by the easy helper
-	 *  methods.
-	 */
-	private void findInterestingChildren() {
+    /**
+     * Go through our child records, picking out the ones that are
+     *  interesting, and saving those for use by the easy helper
+     *  methods.
+     */
+    private void findInterestingChildren() {
 
         for(org.apache.poi.hslf.record.Record r : _children){
             if (r instanceof CString){
@@ -129,47 +129,47 @@ public final class Comment2000 extends RecordContainer {
             } else if (r instanceof Comment2000Atom){
                 commentAtom = (Comment2000Atom)r;
             } else {
-				LOG.atWarn().log("Unexpected record with type={} in Comment2000: {}", box(r.getRecordType()),r.getClass().getName());
+                LOG.atWarn().log("Unexpected record with type={} in Comment2000: {}", box(r.getRecordType()),r.getClass().getName());
             }
         }
 
-	}
+    }
 
-	/**
-	 * Create a new Comment2000, with blank fields
-	 */
-	public Comment2000() {
-		_header = new byte[8];
-		_children = new org.apache.poi.hslf.record.Record[4];
+    /**
+     * Create a new Comment2000, with blank fields
+     */
+    public Comment2000() {
+        _header = new byte[8];
+        _children = new org.apache.poi.hslf.record.Record[4];
 
-		// Setup our header block
-		_header[0] = 0x0f; // We are a container record
-		LittleEndian.putShort(_header, 2, (short)_type);
+        // Setup our header block
+        _header[0] = 0x0f; // We are a container record
+        LittleEndian.putShort(_header, 2, (short)_type);
 
-		// Setup our child records
-		CString csa = new CString();
-		CString csb = new CString();
-		CString csc = new CString();
-		csa.setOptions(0x00);
-		csb.setOptions(0x10);
-		csc.setOptions(0x20);
-		_children[0] = csa;
-		_children[1] = csb;
-		_children[2] = csc;
-		_children[3] = new Comment2000Atom();
-		findInterestingChildren();
-	}
+        // Setup our child records
+        CString csa = new CString();
+        CString csb = new CString();
+        CString csc = new CString();
+        csa.setOptions(0x00);
+        csb.setOptions(0x10);
+        csc.setOptions(0x20);
+        _children[0] = csa;
+        _children[1] = csb;
+        _children[2] = csc;
+        _children[3] = new Comment2000Atom();
+        findInterestingChildren();
+    }
 
-	/**
-	 * We are of type 1200
-	 */
-	public long getRecordType() { return _type; }
+    /**
+     * We are of type 1200
+     */
+    public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		writeOut(_header[0],_header[1],_type,_children,out);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        writeOut(_header[0],_header[1],_type,_children,out);
+    }
 }

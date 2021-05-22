@@ -30,10 +30,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public final class TestStreamBasics extends StreamTest {
-	private static byte[] compressedStream, uncompressedStream;
+    private static byte[] compressedStream, uncompressedStream;
 
-	@BeforeAll
-	public static void init() throws IOException {
+    @BeforeAll
+    public static void init() throws IOException {
         compressedStream = decompress(
             "H4sIAAAAAAAAAAFTAaz+e8QC6/ABAAC48/BO4PsBAAPr8AoFBOvwFQnr8Gfr8CLc/zQPRg94WA/5/u"+
             "T3hRUALIYB/GgP6PMoniBOZr3//uJAKL2Pt3SeqwJCewltqwKnDsi7rbHe/XhuS/f2FPrn9Bbr8PSv"+
@@ -52,44 +52,44 @@ public final class TestStreamBasics extends StreamTest {
             "I0MRA8NiBuwuvAHES5xCGZPKGRgugP1lBAo951DGwEYGBj42kIg9yHaXUEa5DgYGLbAaF6DIFtdQxr"+
             "ROmAgIAAD6SJPAdAIAAA=="
         );
-	}
+    }
 
 
-	@Test
-	void testCompressedStream() {
-		// Create a fake pointer
-		Pointer ptr = new TestPointer(true, 0, compressedStream.length, -1, (short)-1);
-		// Now the stream
-		Stream stream = Stream.createStream(ptr, compressedStream, null, null);
+    @Test
+    void testCompressedStream() {
+        // Create a fake pointer
+        Pointer ptr = new TestPointer(true, 0, compressedStream.length, -1, (short)-1);
+        // Now the stream
+        Stream stream = Stream.createStream(ptr, compressedStream, null, null);
 
-		// Check
-		assertNotNull(stream.getPointer());
-		assertNotNull(stream.getStore());
-		assertTrue(stream.getStore() instanceof CompressedStreamStore);
-		assertTrue(stream instanceof UnknownStream);
+        // Check
+        assertNotNull(stream.getPointer());
+        assertNotNull(stream.getStore());
+        assertTrue(stream.getStore() instanceof CompressedStreamStore);
+        assertTrue(stream instanceof UnknownStream);
 
-		// Check the stream store
-		CompressedStreamStore ss = (CompressedStreamStore)stream.getStore();
-		assertEquals(4, ss._getBlockHeader().length);
-		assertEquals(compressedStream.length, ss._getCompressedContents().length);
-		assertEquals(uncompressedStream.length, ss.getContents().length);
+        // Check the stream store
+        CompressedStreamStore ss = (CompressedStreamStore)stream.getStore();
+        assertEquals(4, ss._getBlockHeader().length);
+        assertEquals(compressedStream.length, ss._getCompressedContents().length);
+        assertEquals(uncompressedStream.length, ss.getContents().length);
 
-		for(int i=0; i<uncompressedStream.length; i++) {
-			assertEquals(uncompressedStream[i], ss.getContents()[i]);
-		}
-	}
+        for(int i=0; i<uncompressedStream.length; i++) {
+            assertEquals(uncompressedStream[i], ss.getContents()[i]);
+        }
+    }
 
-	@Test
+    @Test
     void testUncompressedStream() {
-		// Create a fake pointer
-		Pointer ptr = new TestPointer(false, 0, uncompressedStream.length, -1, (short)-1);
-		// Now the stream
-		Stream stream = Stream.createStream(ptr, uncompressedStream, null, null);
+        // Create a fake pointer
+        Pointer ptr = new TestPointer(false, 0, uncompressedStream.length, -1, (short)-1);
+        // Now the stream
+        Stream stream = Stream.createStream(ptr, uncompressedStream, null, null);
 
-		// Check
-		assertNotNull(stream.getPointer());
-		assertNotNull(stream.getStore());
-		assertFalse(stream.getStore() instanceof CompressedStreamStore);
-		assertTrue(stream instanceof UnknownStream);
-	}
+        // Check
+        assertNotNull(stream.getPointer());
+        assertNotNull(stream.getStore());
+        assertFalse(stream.getStore() instanceof CompressedStreamStore);
+        assertTrue(stream instanceof UnknownStream);
+    }
 }

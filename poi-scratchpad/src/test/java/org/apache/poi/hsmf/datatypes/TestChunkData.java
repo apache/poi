@@ -26,14 +26,14 @@ import org.junit.jupiter.api.Test;
  * that will break the library.
  */
 public final class TestChunkData {
-	@Test
-	void testChunkCreate() {
-	   Chunk chunk;
+    @Test
+    void testChunkCreate() {
+       Chunk chunk;
 
-		chunk = new StringChunk(0x0200, Types.createCustom(0x001E));
-		assertEquals("__substg1.0_0200001E", chunk.getEntryName());
-		assertEquals(0x0200, chunk.getChunkId());
-		assertEquals(0x001E, chunk.getType().getId());
+        chunk = new StringChunk(0x0200, Types.createCustom(0x001E));
+        assertEquals("__substg1.0_0200001E", chunk.getEntryName());
+        assertEquals(0x0200, chunk.getChunkId());
+        assertEquals(0x001E, chunk.getType().getId());
 
       chunk = new StringChunk("__substg1.0_", 0x0200, Types.createCustom(0x001E));
       assertEquals("__substg1.0_0200001E", chunk.getEntryName());
@@ -45,46 +45,46 @@ public final class TestChunkData {
       assertEquals(0x0200, chunk.getChunkId());
       assertEquals(0x001E, chunk.getType().getId());
 
-		/* test the lower and upper limits of the chunk ids */
-		chunk = new StringChunk(0x0000, Types.createCustom(0x001E));
-		assertEquals("__substg1.0_0000001E", chunk.getEntryName());
+        /* test the lower and upper limits of the chunk ids */
+        chunk = new StringChunk(0x0000, Types.createCustom(0x001E));
+        assertEquals("__substg1.0_0000001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, Types.createCustom(0x001E));
-		assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
+        chunk = new StringChunk(0xFFFF, Types.createCustom(0x001E));
+        assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, Types.createCustom(0x001F));
-		assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
-	}
+        chunk = new StringChunk(0xFFFF, Types.createCustom(0x001F));
+        assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
+    }
 
-	@Test
-	void testTextBodyChunk() {
-		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
-		assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
-	}
+    @Test
+    void testTextBodyChunk() {
+        StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
+        assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
+    }
 
-	@Test
-	void testDisplayToChunk() {
-		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
+    @Test
+    void testDisplayToChunk() {
+        StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_TO.id);
-	}
+    }
 
 
-	@Test
-	void testDisplayCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
+    @Test
+    void testDisplayCCChunk() {
+        StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_CC.id);
-	}
+    }
 
-	@Test
-	void testDisplayBCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
+    @Test
+    void testDisplayBCCChunk() {
+        StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_BCC.id);
-	}
+    }
 
-	@Test
-	void testSubjectChunk() {
-		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
+    @Test
+    void testSubjectChunk() {
+        Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.SUBJECT.id);
-	}
+    }
 
 }

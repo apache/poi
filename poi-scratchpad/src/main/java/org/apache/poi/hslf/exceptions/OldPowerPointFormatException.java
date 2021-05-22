@@ -24,7 +24,7 @@ import org.apache.poi.OldFileFormatException;
  *  it's too old for us.
  */
 public class OldPowerPointFormatException extends OldFileFormatException {
-	public OldPowerPointFormatException(String s) {
-		super(s);
-	}
+    public OldPowerPointFormatException(String s) {
+        super(s);
+    }
 }

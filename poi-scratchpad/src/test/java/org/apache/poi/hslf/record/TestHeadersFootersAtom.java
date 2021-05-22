@@ -30,15 +30,15 @@ import org.junit.jupiter.api.Test;
  * Tests that {@link HeadersFootersAtom} works properly
  */
 public final class TestHeadersFootersAtom {
-	// From a real file
-	private final byte[] data = new byte[] {
+    // From a real file
+    private final byte[] data = new byte[] {
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 0,
             0x00, 0x00, 0x23, 0x00 };
 
     @Test
     void testRead() {
-		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
-		assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
+        HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
+        assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
 
         assertEquals(0, record.getFormatId());
         assertEquals(0x23, record.getMask());
@@ -52,12 +52,12 @@ public final class TestHeadersFootersAtom {
     }
 
     @Test
-	void testWrite() throws Exception {
-		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+    void testWrite() throws Exception {
+        HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 
     @Test
     void testNewRecord() throws Exception {

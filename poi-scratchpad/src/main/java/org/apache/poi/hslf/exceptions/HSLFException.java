@@ -23,11 +23,11 @@ package org.apache.poi.hslf.exceptions;
 public final class HSLFException extends RuntimeException {
 
     public HSLFException() {
-	    super();
+        super();
     }
 
    public HSLFException(String message) {
-	    super(message);
+        super(message);
     }
 
    public HSLFException(String message, Throwable cause) {

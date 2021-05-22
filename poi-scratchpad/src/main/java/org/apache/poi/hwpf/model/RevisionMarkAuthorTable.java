@@ -31,61 +31,61 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class RevisionMarkAuthorTable {
-	/**
-	 * Array of entries.
-	 */
-	private String[] entries;
+    /**
+     * Array of entries.
+     */
+    private String[] entries;
 
-	/**
-	 * Constructor to read the table from the table stream.
-	 *
-	 * @param tableStream the table stream.
-	 * @param offset the offset into the byte array.
-	 * @param size the size of the table in the byte array.
-	 */
+    /**
+     * Constructor to read the table from the table stream.
+     *
+     * @param tableStream the table stream.
+     * @param offset the offset into the byte array.
+     * @param size the size of the table in the byte array.
+     */
     public RevisionMarkAuthorTable( byte[] tableStream, int offset, int size )
             throws IOException
     {
         entries = SttbUtils.readSttbfRMark( tableStream, offset );
     }
 
-	/**
-	 * Gets the entries. The returned list cannot be modified.
-	 *
-	 * @return the list of entries.
-	 */
-	public List<String> getEntries() {
-		return Collections.unmodifiableList(Arrays.asList(entries));
-	}
+    /**
+     * Gets the entries. The returned list cannot be modified.
+     *
+     * @return the list of entries.
+     */
+    public List<String> getEntries() {
+        return Collections.unmodifiableList(Arrays.asList(entries));
+    }
 
-	/**
-	 * Get an author by its index.  Returns null if it does not exist.
-	 *
-	 * @return the revision mark author
-	 */
-	public String getAuthor(int index) {
-		String auth = null;
-		if(index >= 0 && index < entries.length) {
-			auth = entries[index];
-		}
-		return auth;
-	}
+    /**
+     * Get an author by its index.  Returns null if it does not exist.
+     *
+     * @return the revision mark author
+     */
+    public String getAuthor(int index) {
+        String auth = null;
+        if(index >= 0 && index < entries.length) {
+            auth = entries[index];
+        }
+        return auth;
+    }
 
-	/**
-	 * Gets the number of entries.
-	 *
-	 * @return the number of entries.
-	 */
-	public int getSize() {
-		return entries.length;
-	}
+    /**
+     * Gets the number of entries.
+     *
+     * @return the number of entries.
+     */
+    public int getSize() {
+        return entries.length;
+    }
 
-	/**
-	 * Writes this table to the table stream.
-	 *
-	 * @param tableStream  the table stream to write to.
-	 * @throws IOException  if an error occurs while writing.
-	 */
+    /**
+     * Writes this table to the table stream.
+     *
+     * @param tableStream  the table stream to write to.
+     * @throws IOException  if an error occurs while writing.
+     */
     public void writeTo( ByteArrayOutputStream tableStream ) throws IOException
     {
         SttbUtils.writeSttbfRMark( entries, tableStream );

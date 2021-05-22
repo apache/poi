@@ -33,70 +33,70 @@ import org.junit.jupiter.params.provider.ValueSource;
 public final class TestVisioExtractor {
     private static final POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
 
-	private final String defFilename = "Test_Visio-Some_Random_Text.vsd";
-	private final int defTextChunks = 5;
+    private final String defFilename = "Test_Visio-Some_Random_Text.vsd";
+    private final int defTextChunks = 5;
 
-	/**
-	 * Test the 3 different ways of creating one
-	 */
-	@Test
-	void testCreation() throws IOException {
-		try (VisioTextExtractor extractor1 = openExtractor(defFilename)) {
-			assertNotNull(extractor1);
-			assertNotNull(extractor1.getAllText());
-			assertEquals(defTextChunks, extractor1.getAllText().length);
-		}
+    /**
+     * Test the 3 different ways of creating one
+     */
+    @Test
+    void testCreation() throws IOException {
+        try (VisioTextExtractor extractor1 = openExtractor(defFilename)) {
+            assertNotNull(extractor1);
+            assertNotNull(extractor1.getAllText());
+            assertEquals(defTextChunks, extractor1.getAllText().length);
+        }
 
-		try (InputStream is2 = _dgTests.openResourceAsStream(defFilename);
-			 POIFSFileSystem poifs2 = new POIFSFileSystem(is2);
-			 VisioTextExtractor extractor2 = new VisioTextExtractor(poifs2)) {
-			assertNotNull(extractor2);
-			assertNotNull(extractor2.getAllText());
-			assertEquals(defTextChunks, extractor2.getAllText().length);
-		}
+        try (InputStream is2 = _dgTests.openResourceAsStream(defFilename);
+             POIFSFileSystem poifs2 = new POIFSFileSystem(is2);
+             VisioTextExtractor extractor2 = new VisioTextExtractor(poifs2)) {
+            assertNotNull(extractor2);
+            assertNotNull(extractor2.getAllText());
+            assertEquals(defTextChunks, extractor2.getAllText().length);
+        }
 
         try (InputStream is3 = _dgTests.openResourceAsStream(defFilename);
-			 POIFSFileSystem poifs3 = new POIFSFileSystem(is3);
-			 HDGFDiagram hdgf3 = new HDGFDiagram(poifs3);
-			 VisioTextExtractor extractor3 = new VisioTextExtractor(hdgf3)) {
-			assertNotNull(extractor3);
-			assertNotNull(extractor3.getAllText());
-			assertEquals(defTextChunks, extractor3.getAllText().length);
-		}
-	}
+             POIFSFileSystem poifs3 = new POIFSFileSystem(is3);
+             HDGFDiagram hdgf3 = new HDGFDiagram(poifs3);
+             VisioTextExtractor extractor3 = new VisioTextExtractor(hdgf3)) {
+            assertNotNull(extractor3);
+            assertNotNull(extractor3.getAllText());
+            assertEquals(defTextChunks, extractor3.getAllText().length);
+        }
+    }
 
     @Test
-	void testExtraction() throws Exception {
-		try (VisioTextExtractor extractor = openExtractor(defFilename)) {
+    void testExtraction() throws Exception {
+        try (VisioTextExtractor extractor = openExtractor(defFilename)) {
 
-			// Check the array fetch
-			String[] text = extractor.getAllText();
-			assertNotNull(text);
-			assertEquals(defTextChunks, text.length);
+            // Check the array fetch
+            String[] text = extractor.getAllText();
+            assertNotNull(text);
+            assertEquals(defTextChunks, text.length);
 
-			assertEquals("text\n", text[0]);
-			assertEquals("View\n", text[1]);
-			assertEquals("Test View\n", text[2]);
-			assertEquals("I am a test view\n", text[3]);
-			assertEquals("Some random text, on a page\n", text[4]);
+            assertEquals("text\n", text[0]);
+            assertEquals("View\n", text[1]);
+            assertEquals("Test View\n", text[2]);
+            assertEquals("I am a test view\n", text[3]);
+            assertEquals("Some random text, on a page\n", text[4]);
 
-			// And the all-in fetch
-			String textS = extractor.getText();
-			assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page\n", textS);
-		}
-	}
+            // And the all-in fetch
+            String textS = extractor.getText();
+            assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page\n", textS);
+        }
+    }
 
     @ParameterizedTest
-	@ValueSource(strings = {
-		"44594.vsd", "44594-2.vsd",
-		"ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",
-		"NegativeChunkLength.vsd", "NegativeChunkLength2.vsd"
-	})
-	void testProblemFiles(String file) throws Exception {
-		try (VisioTextExtractor ex = openExtractor(file)) {
-			assertNotNull(ex.getText());
-		}
-	}
+    @ValueSource(strings = {
+        "44594.vsd", "44594-2.vsd",
+        "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",
+        "NegativeChunkLength.vsd", "NegativeChunkLength2.vsd"
+    })
+    void testProblemFiles(String file) throws Exception {
+        try (VisioTextExtractor ex = openExtractor(file)) {
+            assertNotNull(ex.getText());
+        }
+    }
 
     private VisioTextExtractor openExtractor(String fileName) throws IOException {
         try (InputStream is = _dgTests.openResourceAsStream(fileName)) {

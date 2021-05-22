@@ -26,38 +26,38 @@ import java.util.Map;
 
 public abstract class PositionDependentRecordContainer extends RecordContainer implements PositionDependentRecord
 {
-	private int sheetId; // Found from PersistPtrHolder
+    private int sheetId; // Found from PersistPtrHolder
 
-	/**
-	 * Fetch our sheet ID, as found from a PersistPtrHolder.
-	 * Should match the RefId of our matching SlidePersistAtom
-	 */
-	public int getSheetId() { return sheetId; }
+    /**
+     * Fetch our sheet ID, as found from a PersistPtrHolder.
+     * Should match the RefId of our matching SlidePersistAtom
+     */
+    public int getSheetId() { return sheetId; }
 
-	/**
-	 * Set our sheet ID, as found from a PersistPtrHolder
-	 */
-	public void setSheetId(int id) { sheetId = id; }
+    /**
+     * Set our sheet ID, as found from a PersistPtrHolder
+     */
+    public void setSheetId(int id) { sheetId = id; }
 
 
-	/** Our location on the disk, as of the last write out */
-	private int myLastOnDiskOffset;
+    /** Our location on the disk, as of the last write out */
+    private int myLastOnDiskOffset;
 
-	/** Fetch our location on the disk, as of the last write out */
-	public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
+    /** Fetch our location on the disk, as of the last write out */
+    public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
 
-	/**
-	 * Update the Record's idea of where on disk it lives, after a write out.
-	 * Use with care...
-	 */
-	public void setLastOnDiskOffset(int offset) {
-		myLastOnDiskOffset = offset;
-	}
+    /**
+     * Update the Record's idea of where on disk it lives, after a write out.
+     * Use with care...
+     */
+    public void setLastOnDiskOffset(int offset) {
+        myLastOnDiskOffset = offset;
+    }
 
-	/**
-	 * Since we're a container, we don't mind if other records move about.
-	 * If we're told they have, just return straight off.
-	 */
-	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
-	}
+    /**
+     * Since we're a container, we don't mind if other records move about.
+     * If we're told they have, just return straight off.
+     */
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
+    }
 }

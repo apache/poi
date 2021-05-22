@@ -62,21 +62,21 @@ public final class FontEntityAtom extends RecordAtom {
      */
     private final byte[] _header;
 
-	/**
+    /**
      * record data
      */
-	private byte[] _recdata;
+    private byte[] _recdata;
 
     /**
      * Build an instance of <code>FontEntityAtom</code> from on-disk data
      */
-	/* package */ FontEntityAtom(byte[] source, int start, int len) {
-		// Get the header
+    /* package */ FontEntityAtom(byte[] source, int start, int len) {
+        // Get the header
         _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Grab the record data
-		_recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
-	}
+        // Grab the record data
+        _recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+    }
 
     /**
      * Create a new instance of <code>FontEntityAtom</code>
@@ -97,19 +97,19 @@ public final class FontEntityAtom extends RecordAtom {
     /**
      * A null-terminated string that specifies the typeface name of the font.
      * The length of this string must not exceed 32 characters
-	 *  including the null terminator.
+     *  including the null terminator.
      * @return font name
      */
     public String getFontName(){
-    	final int maxLen = Math.min(_recdata.length,64)/2;
-    	return StringUtil.getFromUnicodeLE0Terminated(_recdata, 0, maxLen);
+        final int maxLen = Math.min(_recdata.length,64)/2;
+        return StringUtil.getFromUnicodeLE0Terminated(_recdata, 0, maxLen);
     }
 
     /**
      * Set the name of the font.
      * The length of this string must not exceed 32 characters
-	 *  including the null terminator.
-	 * Will be converted to null-terminated if not already
+     *  including the null terminator.
+     * Will be converted to null-terminated if not already
      * @param name of the font
      */
     public void setFontName(String name) {
@@ -220,13 +220,13 @@ public final class FontEntityAtom extends RecordAtom {
     }
 
     /**
-	 * Write the contents of the record back, so it can be written to disk
-	 */
-	@Override
+     * Write the contents of the record back, so it can be written to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		out.write(_header);
-		out.write(_recdata);
-	}
+        out.write(_header);
+        out.write(_recdata);
+    }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

@@ -189,7 +189,7 @@ public final class ListLevel
      * the numbering does not restart or {@code -1} if no restart is applicable
      */
     public short getRestart() {
-    	return _lvlf.isFNoRestart() ? _lvlf.getIlvlRestartLim() : -1;
+        return _lvlf.isFNoRestart() ? _lvlf.getIlvlRestartLim() : -1;
     }
 
     /**
@@ -202,7 +202,7 @@ public final class ListLevel
      * significant levels must be overridden; {@code false} otherwise
      */
     public boolean isLegalNumbering() {
-    	return _lvlf.isFLegal();
+        return _lvlf.isFLegal();
     }
 
     /**
@@ -213,7 +213,7 @@ public final class ListLevel
      * @return {@code 0}-terminated array, unless it is full
      */
     public byte[] getLevelNumberingPlaceholderOffsets() {
-    	return _lvlf.getRgbxchNums();
+        return _lvlf.getRgbxchNums();
     }
 
     int read( final byte[] data, final int startOffset )

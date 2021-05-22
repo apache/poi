@@ -29,53 +29,53 @@ import org.junit.jupiter.api.Test;
 
 public final class TestTextRulerAtom {
 
-	//from a real file
-	private final byte[] data_1 = new byte[] {
-		0x00, 0x00, (byte)0xA6, 0x0F, 0x18, 0x00, 0x00, 0x00,
-		(byte)0xF8, 0x1F, 0x00, 0x00, 0x75, 0x00, (byte)0xE2, 0x00, 0x59,
-		0x01, (byte)0xC3, 0x01, 0x1A, 0x03, (byte)0x87, 0x03, (byte)0xF8,
-		0x03, 0x69, 0x04, (byte)0xF6, 0x05, (byte)0xF6, 0x05
-	};
+    //from a real file
+    private final byte[] data_1 = new byte[] {
+        0x00, 0x00, (byte)0xA6, 0x0F, 0x18, 0x00, 0x00, 0x00,
+        (byte)0xF8, 0x1F, 0x00, 0x00, 0x75, 0x00, (byte)0xE2, 0x00, 0x59,
+        0x01, (byte)0xC3, 0x01, 0x1A, 0x03, (byte)0x87, 0x03, (byte)0xF8,
+        0x03, 0x69, 0x04, (byte)0xF6, 0x05, (byte)0xF6, 0x05
+    };
 
-	private final byte[] data_2 = new byte[] {
-		0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
-		0x08, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
-	};
-
-	@Test
-	void testReadRuler() {
-		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-		assertEquals(ruler.getNumberOfLevels(), 0);
-		assertEquals(ruler.getDefaultTabSize(), 0);
-
-		List<HSLFTabStop> tabStops = ruler.getTabStops();
-		assertNotNull(tabStops);
-
-		Integer[] textOffsets = ruler.getTextOffsets();
-		assertArrayEquals(new Integer[]{117, 345, 794, 1016, 1526}, textOffsets);
-
-		Integer[] bulletOffsets = ruler.getBulletOffsets();
-		assertArrayEquals(new Integer[]{226, 451, 903, 1129, 1526}, bulletOffsets);
-	}
+    private final byte[] data_2 = new byte[] {
+        0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
+        0x08, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
+    };
 
     @Test
-	void testWriteRuler() throws Exception {
-		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-		ruler.writeOut(out);
+    void testReadRuler() {
+        TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
+        assertEquals(ruler.getNumberOfLevels(), 0);
+        assertEquals(ruler.getDefaultTabSize(), 0);
 
-		byte[] result = out.toByteArray();
-		assertArrayEquals(result, data_1);
-	}
+        List<HSLFTabStop> tabStops = ruler.getTabStops();
+        assertNotNull(tabStops);
+
+        Integer[] textOffsets = ruler.getTextOffsets();
+        assertArrayEquals(new Integer[]{117, 345, 794, 1016, 1526}, textOffsets);
+
+        Integer[] bulletOffsets = ruler.getBulletOffsets();
+        assertArrayEquals(new Integer[]{226, 451, 903, 1129, 1526}, bulletOffsets);
+    }
 
     @Test
-	void testRead2() throws Exception {
-		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
-		ruler.setParagraphIndent((short)249, (short)321);
-		UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-		ruler.writeOut(out);
+    void testWriteRuler() throws Exception {
+        TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        ruler.writeOut(out);
 
-		byte[] result = out.toByteArray();
-		assertArrayEquals(data_2, result);
-	}
+        byte[] result = out.toByteArray();
+        assertArrayEquals(result, data_1);
+    }
+
+    @Test
+    void testRead2() throws Exception {
+        TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
+        ruler.setParagraphIndent((short)249, (short)321);
+        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        ruler.writeOut(out);
+
+        byte[] result = out.toByteArray();
+        assertArrayEquals(data_2, result);
+    }
 }

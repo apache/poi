@@ -110,7 +110,7 @@ public final class DIB extends Bitmap {
         int fileSize = data.length + HEADER_SIZE;
         int offset = fileSize - imageSize;
 
-		// specifies the size, in bytes, of the bitmap file - must add the length of the header
+        // specifies the size, in bytes, of the bitmap file - must add the length of the header
         LittleEndian.putInt(header, 2, fileSize);
         // Reserved; set to zero
         LittleEndian.putInt(header, 6, 0);

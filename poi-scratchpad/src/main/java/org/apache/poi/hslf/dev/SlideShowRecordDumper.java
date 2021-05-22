@@ -165,14 +165,14 @@ public final class SlideShowRecordDumper {
     }
 
     public void printEscherRecord(EscherRecord er, int indent) {
-		if (er instanceof EscherContainerRecord) {
-			printEscherContainerRecord( (EscherContainerRecord)er, indent );
-		} else if (er instanceof EscherTextboxRecord) {
-		    printEscherTextBox( (EscherTextboxRecord)er, indent );
-		} else {
-		    ps.print( tabs.substring(0, indent) );
-		    ps.println(er);
-		}
+        if (er instanceof EscherContainerRecord) {
+            printEscherContainerRecord( (EscherContainerRecord)er, indent );
+        } else if (er instanceof EscherTextboxRecord) {
+            printEscherTextBox( (EscherTextboxRecord)er, indent );
+        } else {
+            ps.print( tabs.substring(0, indent) );
+            ps.println(er);
+        }
     }
 
     private void printEscherTextBox( EscherTextboxRecord tbRecord, int indent ) {

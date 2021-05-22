@@ -428,7 +428,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-        	LOG.atInfo().log("NYI: toListItemNumberLabel(): {}", box(format));
+            LOG.atInfo().log("NYI: toListItemNumberLabel(): {}", box(format));
 
         return String.valueOf( number );
     }

@@ -35,16 +35,16 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  with HWPF.
  */
 public final class Word6Extractor implements POIOLE2TextExtractor {
-	private HWPFOldDocument doc;
-	private boolean doCloseFilesystem = true;
+    private HWPFOldDocument doc;
+    private boolean doCloseFilesystem = true;
 
-	/**
-	 * Create a new Word Extractor
-	 * @param is InputStream containing the word file
-	 */
-	public Word6Extractor(InputStream is) throws IOException {
-		this( new POIFSFileSystem(is) );
-	}
+    /**
+     * Create a new Word Extractor
+     * @param is InputStream containing the word file
+     */
+    public Word6Extractor(InputStream is) throws IOException {
+        this( new POIFSFileSystem(is) );
+    }
 
     /**
      * Create a new Word Extractor
@@ -68,42 +68,42 @@ public final class Word6Extractor implements POIOLE2TextExtractor {
         this( new HWPFOldDocument( dir ) );
     }
 
-	/**
-	 * Create a new Word Extractor
-	 * @param doc The HWPFOldDocument to extract from
-	 */
-	public Word6Extractor(HWPFOldDocument doc) {
-		this.doc = doc;
-	}
+    /**
+     * Create a new Word Extractor
+     * @param doc The HWPFOldDocument to extract from
+     */
+    public Word6Extractor(HWPFOldDocument doc) {
+        this.doc = doc;
+    }
 
     /**
      * Get the text from the word file, as an array with one String
      *  per paragraph
      */
-	@Deprecated
-	public String[] getParagraphText() {
-	    String[] ret;
+    @Deprecated
+    public String[] getParagraphText() {
+        String[] ret;
 
-	    // Extract using the model code
-	    try {
-	        Range r = doc.getRange();
+        // Extract using the model code
+        try {
+            Range r = doc.getRange();
 
-	        ret = WordExtractor.getParagraphText(r);
-	    } catch (Exception e) {
+            ret = WordExtractor.getParagraphText(r);
+        } catch (Exception e) {
             // Something's up with turning the text pieces into paragraphs
             // Fall back to ripping out the text pieces
-	        ret = new String[doc.getTextTable().getTextPieces().size()];
-	        for(int i=0; i<ret.length; i++) {
-	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
+            ret = new String[doc.getTextTable().getTextPieces().size()];
+            for(int i=0; i<ret.length; i++) {
+                ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
 
-	            // Fix the line endings
-	            ret[i] = ret[i].replaceAll("\r", "\ufffe");
-	            ret[i] = ret[i].replaceAll("\ufffe","\r\n");
-	        }
-	    }
+                // Fix the line endings
+                ret[i] = ret[i].replaceAll("\r", "\ufffe");
+                ret[i] = ret[i].replaceAll("\ufffe","\r\n");
+            }
+        }
 
-	    return ret;
-	}
+        return ret;
+    }
 
     public String getText() {
         try {

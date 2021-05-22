@@ -22,6 +22,6 @@ package org.apache.poi.hslf.record;
  *  parent is, and how it wants to be told which record is its parent.
  */
 public interface ParentAwareRecord {
-	public org.apache.poi.hslf.record.RecordContainer getParentRecord();
-	public void setParentRecord(RecordContainer parentRecord);
+    public org.apache.poi.hslf.record.RecordContainer getParentRecord();
+    public void setParentRecord(RecordContainer parentRecord);
 }

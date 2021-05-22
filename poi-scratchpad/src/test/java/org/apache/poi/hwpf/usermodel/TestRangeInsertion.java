@@ -26,97 +26,97 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.junit.jupiter.api.Test;
 
 /**
- *	Test to see if Range.insertBefore() works even if the Range contains a
- *	CharacterRun that uses Unicode characters.
+ *  Test to see if Range.insertBefore() works even if the Range contains a
+ *  CharacterRun that uses Unicode characters.
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
 public final class TestRangeInsertion {
 
-	// u201c and u201d are "smart-quotes"
-	private static final String originalText =
-		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d " +
-		"(U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
-	private static final String textToInsert = "Look at me!  I'm cool!  ";
-	private static final int insertionPoint = 122;
+    // u201c and u201d are "smart-quotes"
+    private static final String originalText =
+        "It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d " +
+        "(U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
+    private static final String textToInsert = "Look at me!  I'm cool!  ";
+    private static final int insertionPoint = 122;
 
-	private static final String illustrativeDocFile = "testRangeInsertion.doc";
+    private static final String illustrativeDocFile = "testRangeInsertion.doc";
 
-	/**
-	 * Test just opening the files
-	 */
-	@Test
-	void testOpen() throws IOException {
-		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
-			assertEquals(3, daDoc.getParagraphTable().getParagraphs().size());
-		}
-	}
+    /**
+     * Test just opening the files
+     */
+    @Test
+    void testOpen() throws IOException {
+        try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
+            assertEquals(3, daDoc.getParagraphTable().getParagraphs().size());
+        }
+    }
 
-	/**
-	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
-	 */
-	@Test
-	void testDocStructure() throws IOException {
-		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
+    /**
+     * Test (more "confirm" than test) that we have the general structure that we expect to have.
+     */
+    @Test
+    void testDocStructure() throws IOException {
+        try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
-			Range range = daDoc.getRange();
+            Range range = daDoc.getRange();
 
-			assertEquals(1, range.numSections());
-			Section section = range.getSection(0);
+            assertEquals(1, range.numSections());
+            Section section = range.getSection(0);
 
-			assertEquals(3, section.numParagraphs());
-			Paragraph para = section.getParagraph(2);
-			assertEquals(originalText, para.text());
+            assertEquals(3, section.numParagraphs());
+            Paragraph para = section.getParagraph(2);
+            assertEquals(originalText, para.text());
 
-			assertEquals(3, para.numCharacterRuns());
-			String text =
-					para.getCharacterRun(0).text() +
-							para.getCharacterRun(1).text() +
-							para.getCharacterRun(2).text();
+            assertEquals(3, para.numCharacterRuns());
+            String text =
+                    para.getCharacterRun(0).text() +
+                            para.getCharacterRun(1).text() +
+                            para.getCharacterRun(2).text();
 
-			assertEquals(originalText, text);
+            assertEquals(originalText, text);
 
-			assertEquals(insertionPoint, para.getStartOffset());
-		}
-	}
+            assertEquals(insertionPoint, para.getStartOffset());
+        }
+    }
 
-	/**
-	 * Test that we can insert text in our CharacterRun with Unicode text.
-	 */
-	@Test
-	void testRangeInsertion() throws IOException {
-		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
+    /**
+     * Test that we can insert text in our CharacterRun with Unicode text.
+     */
+    @Test
+    void testRangeInsertion() throws IOException {
+        try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
-//		if (false) { // TODO - delete or resurrect this code
-//			Range range = daDoc.getRange();
-//			Section section = range.getSection(0);
-//			Paragraph para = section.getParagraph(2);
-//			String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-//			para.getCharacterRun(2).text();
+//      if (false) { // TODO - delete or resurrect this code
+//          Range range = daDoc.getRange();
+//          Section section = range.getSection(0);
+//          Paragraph para = section.getParagraph(2);
+//          String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
+//          para.getCharacterRun(2).text();
 //
-//			System.out.println(text);
-//		}
+//          System.out.println(text);
+//      }
 
-			Range range = new Range(insertionPoint, (insertionPoint + 2), daDoc);
-			range.insertBefore(textToInsert);
+            Range range = new Range(insertionPoint, (insertionPoint + 2), daDoc);
+            range.insertBefore(textToInsert);
 
-			// we need to let the model re-calculate the Range before we evaluate it
-			range = daDoc.getRange();
+            // we need to let the model re-calculate the Range before we evaluate it
+            range = daDoc.getRange();
 
-			assertEquals(1, range.numSections());
-			Section section = range.getSection(0);
+            assertEquals(1, range.numSections());
+            Section section = range.getSection(0);
 
-			assertEquals(3, section.numParagraphs());
-			Paragraph para = section.getParagraph(2);
-			assertEquals((textToInsert + originalText), para.text());
+            assertEquals(3, section.numParagraphs());
+            Paragraph para = section.getParagraph(2);
+            assertEquals((textToInsert + originalText), para.text());
 
-			assertEquals(3, para.numCharacterRuns());
-			String text =
-				para.getCharacterRun(0).text() +
-				para.getCharacterRun(1).text() +
-				para.getCharacterRun(2).text();
+            assertEquals(3, para.numCharacterRuns());
+            String text =
+                para.getCharacterRun(0).text() +
+                para.getCharacterRun(1).text() +
+                para.getCharacterRun(2).text();
 
-			assertEquals((textToInsert + originalText), text);
-		}
-	}
+            assertEquals((textToInsert + originalText), text);
+        }
+    }
 }

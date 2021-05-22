@@ -42,7 +42,7 @@ public abstract class SprmUncompressor
     {
       return true;
     }
-	return false;
+    return false;
   }
 
 

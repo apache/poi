@@ -24,8 +24,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
  *
  */
 public final class EscherStm extends EscherPart {
-	private static final String[] PATH = { "Escher", "EscherStm", };
-	public EscherStm(DirectoryNode baseDir) throws IOException {
-		super(baseDir, PATH);
-	}
+    private static final String[] PATH = { "Escher", "EscherStm", };
+    public EscherStm(DirectoryNode baseDir) throws IOException {
+        super(baseDir, PATH);
+    }
 }

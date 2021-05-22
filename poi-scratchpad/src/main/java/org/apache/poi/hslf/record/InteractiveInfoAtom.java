@@ -158,7 +158,7 @@ public class InteractiveInfoAtom extends RecordAtom {
 
         // Must be at least 16 bytes long
         if(_data.length < 16) {
-        	throw new IllegalArgumentException("The length of the data for a InteractiveInfoAtom must be at least 16 bytes, but was only " + _data.length);
+            throw new IllegalArgumentException("The length of the data for a InteractiveInfoAtom must be at least 16 bytes, but was only " + _data.length);
         }
 
         // First 4 bytes - no idea, normally 0
@@ -197,7 +197,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * @param val a reference to a sound in the sound collection
      */
     public void setSoundRef(int val) {
-    	LittleEndian.putInt(_data, 0, val);
+        LittleEndian.putInt(_data, 0, val);
     }
 
     /**
@@ -221,7 +221,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * @param val hyperlink action.
      */
     public void setAction(byte val) {
-    	_data[8] = val;
+        _data[8] = val;
     }
 
     /**
@@ -235,7 +235,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * Only valid when action == OLEAction. OLE verb to use, 0 = first verb, 1 = second verb, etc.
      */
     public void setOleVerb(byte val) {
-    	_data[9] = val;
+        _data[9] = val;
     }
 
     /**
@@ -259,7 +259,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * @param val jump
      */
     public void setJump(byte val) {
-    	_data[10] = val;
+        _data[10] = val;
     }
 
     /**
@@ -285,7 +285,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * </ul>
      */
     public void setFlags(byte val) {
-    	_data[11] = val;
+        _data[11] = val;
     }
 
     /**
@@ -303,7 +303,7 @@ public class InteractiveInfoAtom extends RecordAtom {
      * @param val hyperlink type
      */
     public void setHyperlinkType(byte val) {
-    	_data[12] = val;
+        _data[12] = val;
     }
 
     /**

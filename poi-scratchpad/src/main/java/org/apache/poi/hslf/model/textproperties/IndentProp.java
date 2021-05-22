@@ -34,13 +34,13 @@ public class IndentProp implements GenericRecord {
     private int charactersCovered;
     private short indentLevel;
 
-	/** 
-	 * Generate the definition of a given text indent
-	 */
-	public IndentProp(int charactersCovered, short indentLevel) {
-	    this.charactersCovered = charactersCovered;
-	    this.indentLevel = indentLevel;
-	}
+    /** 
+     * Generate the definition of a given text indent
+     */
+    public IndentProp(int charactersCovered, short indentLevel) {
+        this.charactersCovered = charactersCovered;
+        this.indentLevel = indentLevel;
+    }
 
     /** Fetch the number of characters this styling applies to */
     public int getCharactersCovered() { return charactersCovered; }

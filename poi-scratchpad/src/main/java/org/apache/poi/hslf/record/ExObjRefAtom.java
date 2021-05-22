@@ -34,14 +34,14 @@ import org.apache.poi.util.LittleEndian;
  */
 
 public final class ExObjRefAtom extends RecordAtom {
-	private byte[] _header;
+    private byte[] _header;
 
-	/**
-	 * A 4-byte unsigned integer that specifies a reference to an external object.
-	 * It MUST be equal to the value of the exObjId field of an ExMediaAtom record
-	 * or the value of the exObjId field of an ExOleObjAtom record.
-	 */
-	private int exObjIdRef;
+    /**
+     * A 4-byte unsigned integer that specifies a reference to an external object.
+     * It MUST be equal to the value of the exObjId field of an ExMediaAtom record
+     * or the value of the exObjId field of an ExOleObjAtom record.
+     */
+    private int exObjIdRef;
 
     /**
      * Create a new instance of <code>ExObjRefAtom</code>
@@ -61,16 +61,16 @@ public final class ExObjRefAtom extends RecordAtom {
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
-	protected ExObjRefAtom(byte[] source, int start, int len) {
+    protected ExObjRefAtom(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
         exObjIdRef = (int)LittleEndian.getUInt(source, start+8);
-	}
+    }
 
     /**
      * @return type of this record {@link RecordTypes#ExObjRefAtom}.
      */
-	public long getRecordType() {
-	    return RecordTypes.ExObjRefAtom.typeID;
+    public long getRecordType() {
+        return RecordTypes.ExObjRefAtom.typeID;
     }
 
     public int getExObjIdRef(){
@@ -82,17 +82,17 @@ public final class ExObjRefAtom extends RecordAtom {
     }
 
    /**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		out.write(_header);
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        out.write(_header);
 
         byte[] recdata = new byte[4];
         LittleEndian.putUInt(recdata, 0, exObjIdRef);
 
         out.write(recdata);
-	}
+    }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

@@ -25,8 +25,8 @@ import org.apache.poi.hdgf.pointers.Pointer;
  *  of ChunkStream, it seems
  */
 public final class StringsStream extends Stream {
-	protected StringsStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
-		super(pointer, store);
-//		super(pointer, store, chunkFactory);
-	}
+    protected StringsStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
+        super(pointer, store);
+//      super(pointer, store, chunkFactory);
+    }
 }

@@ -25,24 +25,24 @@ import org.apache.poi.util.StringUtil;
  */
 public final class QCTextBit extends QCBit {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	public QCTextBit(String thingType, String bitType, byte[] data) {
-		super(thingType, bitType, data);
-	}
+    public QCTextBit(String thingType, String bitType, byte[] data) {
+        super(thingType, bitType, data);
+    }
 
-	/**
-	 * Returns the text. Note that line endings
-	 *  are \r and not \n
-	 */
-	public String getText() {
-		return StringUtil.getFromUnicodeLE(getData());
-	}
+    /**
+     * Returns the text. Note that line endings
+     *  are \r and not \n
+     */
+    public String getText() {
+        return StringUtil.getFromUnicodeLE(getData());
+    }
 
-	public void setText(String text) {
+    public void setText(String text) {
         byte[] data = IOUtils.safelyAllocate(text.length() * 2L, MAX_RECORD_LENGTH);
-		StringUtil.putUnicodeLE(text, data, 0);
-		setData(data);
-	}
+        StringUtil.putUnicodeLE(text, data, 0);
+        setData(data);
+    }
 }

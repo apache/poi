@@ -26,39 +26,39 @@ import org.junit.jupiter.api.Test;
 
 public final class TestBug46610 {
 
-	@Test
-	void testUtf() throws Exception {
-		String text = runExtract("Bug46610_1.doc");
-		assertNotNull(text);
-	}
+    @Test
+    void testUtf() throws Exception {
+        String text = runExtract("Bug46610_1.doc");
+        assertNotNull(text);
+    }
 
-	@Test
-	void testUtf2() throws Exception {
-		String text = runExtract("Bug46610_2.doc");
-		assertNotNull(text);
-	}
+    @Test
+    void testUtf2() throws Exception {
+        String text = runExtract("Bug46610_2.doc");
+        assertNotNull(text);
+    }
 
-	@Test
-	void testExtraction() throws Exception {
-		String text = runExtract("Bug46610_3.doc");
-		assertContains(text, "\u0421\u0412\u041e\u042e");
-	}
+    @Test
+    void testExtraction() throws Exception {
+        String text = runExtract("Bug46610_3.doc");
+        assertContains(text, "\u0421\u0412\u041e\u042e");
+    }
 
-	private static String runExtract(String sampleName) throws Exception {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(sampleName);
-		StringBuilder out = new StringBuilder();
+    private static String runExtract(String sampleName) throws Exception {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(sampleName);
+        StringBuilder out = new StringBuilder();
 
-		Range globalRange = doc.getRange();
-		for (int i = 0; i < globalRange.numParagraphs(); i++) {
-			Paragraph p = globalRange.getParagraph(i);
-			out.append(p.text());
-			out.append("\n");
-			for (int j = 0; j < p.numCharacterRuns(); j++) {
-				CharacterRun characterRun = p.getCharacterRun(j);
-				characterRun.text();
-			}
-		doc.close();
-		}
-		return out.toString();
-	}
+        Range globalRange = doc.getRange();
+        for (int i = 0; i < globalRange.numParagraphs(); i++) {
+            Paragraph p = globalRange.getParagraph(i);
+            out.append(p.text());
+            out.append("\n");
+            for (int j = 0; j < p.numCharacterRuns(); j++) {
+                CharacterRun characterRun = p.getCharacterRun(j);
+                characterRun.text();
+            }
+        doc.close();
+        }
+        return out.toString();
+    }
 }

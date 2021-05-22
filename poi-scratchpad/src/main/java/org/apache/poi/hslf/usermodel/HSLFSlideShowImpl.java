@@ -232,10 +232,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //   <little endian 2 byte "type">
         //   <little endian 4 byte "length">
         // If it has a zero length, following it will be another record
-        //		<xx xx yy yy 00 00 00 00> <xx xx yy yy zz zz zz zz>
+        //      <xx xx yy yy 00 00 00 00> <xx xx yy yy zz zz zz zz>
         // If it has a length, depending on its type it may have children or data
         // If it has children, these will follow straight away
-        //		<xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
+        //      <xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
         // If it has data, this will come straigh after, and run for the length
         //      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
         // All lengths given exclude the 8 byte record header
@@ -892,7 +892,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         return offset;
     }
 
-	/* ******************* fetching methods follow ********************* */
+    /* ******************* fetching methods follow ********************* */
 
 
     /**

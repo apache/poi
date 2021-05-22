@@ -56,5 +56,5 @@ public final class TestWordExtractorBugs {
                 assertNotNull(extractor.getParagraphText());
             }
         }
-	}
+    }
 }

@@ -27,45 +27,45 @@ import org.apache.poi.util.GenericRecordUtil;
  * Definition for the font alignment property.
  */
 public class FontAlignmentProp extends TextProp {
-	public static final String NAME = "fontAlign";
-	public static final int BASELINE = 0;
-	public static final int TOP = 1;
-	public static final int CENTER = 2;
-	public static final int BOTTOM = 3;
+    public static final String NAME = "fontAlign";
+    public static final int BASELINE = 0;
+    public static final int TOP = 1;
+    public static final int CENTER = 2;
+    public static final int BOTTOM = 3;
 
-	public FontAlignmentProp() {
-		super(2, 0x10000, NAME);
-	}
+    public FontAlignmentProp() {
+        super(2, 0x10000, NAME);
+    }
 
-	public FontAlignmentProp(FontAlignmentProp other) {
-		super(other);
-	}
+    public FontAlignmentProp(FontAlignmentProp other) {
+        super(other);
+    }
 
-	public FontAlign getFontAlign() {
-		switch (getValue()) {
-			default:
-				return FontAlign.AUTO;
-			case BASELINE:
-				return FontAlign.BASELINE;
-			case TOP:
-				return FontAlign.TOP;
-			case CENTER:
-				return FontAlign.CENTER;
-			case BOTTOM:
-				return FontAlign.BOTTOM;
-		}
-	}
+    public FontAlign getFontAlign() {
+        switch (getValue()) {
+            default:
+                return FontAlign.AUTO;
+            case BASELINE:
+                return FontAlign.BASELINE;
+            case TOP:
+                return FontAlign.TOP;
+            case CENTER:
+                return FontAlign.CENTER;
+            case BOTTOM:
+                return FontAlign.BOTTOM;
+        }
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"base", super::getGenericProperties,
-			"fontAlign", this::getFontAlign
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "fontAlign", this::getFontAlign
+        );
+    }
 
-	@Override
-	public FontAlignmentProp copy() {
-		return new FontAlignmentProp(this);
-	}
+    @Override
+    public FontAlignmentProp copy() {
+        return new FontAlignmentProp(this);
+    }
 }

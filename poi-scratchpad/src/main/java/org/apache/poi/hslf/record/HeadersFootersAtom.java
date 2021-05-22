@@ -131,21 +131,21 @@ public final class HeadersFootersAtom extends RecordAtom {
      */
     private final byte[] _header;
 
-	/**
+    /**
      * record data
      */
-	private final byte[] _recdata;
+    private final byte[] _recdata;
 
     /**
      * Build an instance of {@code HeadersFootersAtom} from on-disk data
      */
-	protected HeadersFootersAtom(byte[] source, int start, int len) {
-		// Get the header
+    protected HeadersFootersAtom(byte[] source, int start, int len) {
+        // Get the header
         _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Grab the record data
-		_recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
-	}
+        // Grab the record data
+        _recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+    }
 
     /**
      * Create a new instance of {@code HeadersFootersAtom}
@@ -164,13 +164,13 @@ public final class HeadersFootersAtom extends RecordAtom {
     }
 
     /**
-	 * Write the contents of the record back, so it can be written to disk
-	 */
-	@Override
+     * Write the contents of the record back, so it can be written to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		out.write(_header);
-		out.write(_recdata);
-	}
+        out.write(_header);
+        out.write(_recdata);
+    }
 
     /**
      * A signed integer that specifies the format ID to be used to style the datetime.

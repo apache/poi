@@ -38,79 +38,79 @@ import org.apache.poi.util.GenericRecordUtil;
  *  TextProps is stored in the different record classes
  */
 public class TextProp implements Duplicatable, GenericRecord {
-	private int sizeOfDataBlock; // Number of bytes the data part uses
-	private String propName;
-	private int dataValue;
-	private int maskInHeader;
+    private int sizeOfDataBlock; // Number of bytes the data part uses
+    private String propName;
+    private int dataValue;
+    private int maskInHeader;
 
-	/**
-	 * Generate the definition of a given type of text property.
-	 */
-	public TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
-		this.sizeOfDataBlock = sizeOfDataBlock;
-		this.maskInHeader = maskInHeader;
-		this.propName = propName;
-		this.dataValue = 0;
-	}
-
-	/**
-	 * Clones the property
-	 */
-	public TextProp(TextProp other) {
-	    this.sizeOfDataBlock = other.sizeOfDataBlock;
-	    this.maskInHeader = other.maskInHeader;
-	    this.propName = other.propName;
-	    this.dataValue = other.dataValue;
-	}
-
-	/**
-	 * Name of the text property
-	 */
-	public String getName() { return propName; }
-
-	/**
-	 * Size of the data section of the text property (2 or 4 bytes)
-	 */
-	public int getSize() { return sizeOfDataBlock; }
-
-	/**
-	 * Mask in the paragraph or character "contains" header field
-	 *  that indicates that this text property is present.
-	 */
-	public int getMask() { return maskInHeader; }
-	/**
-	 * Get the mask that's used at write time. Only differs from
-	 *  the result of getMask() for the mask based properties
-	 */
-	public int getWriteMask() { return getMask(); }
-
-	/**
-	 * Fetch the value of the text property (meaning is specific to
-	 *  each different kind of text property)
-	 */
-	public int getValue() { return dataValue; }
-
-	/**
-	 * Set the value of the text property.
-	 */
-	public void setValue(int val) { dataValue = val; }
-
-	/**
-	 * Clone, eg when you want to actually make use of one of these.
-	 */
-	@Override
-	public TextProp copy(){
-		// subclasses need to override copy()
-		assert(TextProp.class.equals(this.getClass()));
-		return new TextProp(this);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(dataValue, maskInHeader, propName, sizeOfDataBlock);
+    /**
+     * Generate the definition of a given type of text property.
+     */
+    public TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
+        this.sizeOfDataBlock = sizeOfDataBlock;
+        this.maskInHeader = maskInHeader;
+        this.propName = propName;
+        this.dataValue = 0;
     }
 
-	@Override
+    /**
+     * Clones the property
+     */
+    public TextProp(TextProp other) {
+        this.sizeOfDataBlock = other.sizeOfDataBlock;
+        this.maskInHeader = other.maskInHeader;
+        this.propName = other.propName;
+        this.dataValue = other.dataValue;
+    }
+
+    /**
+     * Name of the text property
+     */
+    public String getName() { return propName; }
+
+    /**
+     * Size of the data section of the text property (2 or 4 bytes)
+     */
+    public int getSize() { return sizeOfDataBlock; }
+
+    /**
+     * Mask in the paragraph or character "contains" header field
+     *  that indicates that this text property is present.
+     */
+    public int getMask() { return maskInHeader; }
+    /**
+     * Get the mask that's used at write time. Only differs from
+     *  the result of getMask() for the mask based properties
+     */
+    public int getWriteMask() { return getMask(); }
+
+    /**
+     * Fetch the value of the text property (meaning is specific to
+     *  each different kind of text property)
+     */
+    public int getValue() { return dataValue; }
+
+    /**
+     * Set the value of the text property.
+     */
+    public void setValue(int val) { dataValue = val; }
+
+    /**
+     * Clone, eg when you want to actually make use of one of these.
+     */
+    @Override
+    public TextProp copy(){
+        // subclasses need to override copy()
+        assert(TextProp.class.equals(this.getClass()));
+        return new TextProp(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dataValue, maskInHeader, propName, sizeOfDataBlock);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -152,13 +152,13 @@ public class TextProp implements Duplicatable, GenericRecord {
         return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", getName(), getValue(), getMask(), getSize());
     }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"sizeOfDataBlock", this::getSize,
-			"propName", this::getName,
-			"dataValue", this::getValue,
-			"maskInHeader", this::getMask
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "sizeOfDataBlock", this::getSize,
+            "propName", this::getName,
+            "dataValue", this::getValue,
+            "maskInHeader", this::getMask
+        );
+    }
 }

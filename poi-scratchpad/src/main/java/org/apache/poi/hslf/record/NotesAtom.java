@@ -35,89 +35,89 @@ import org.apache.poi.util.LittleEndian;
 public final class NotesAtom extends RecordAtom
 {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	private byte[] _header;
-	private static long _type = 1009l;
+    private byte[] _header;
+    private static long _type = 1009l;
 
-	private int slideID;
-	private boolean followMasterObjects;
-	private boolean followMasterScheme;
-	private boolean followMasterBackground;
-	private byte[] reserved;
-
-
-	public int getSlideID() { return slideID; }
-	public void setSlideID(int id) { slideID = id; }
-
-	public boolean getFollowMasterObjects()    { return followMasterObjects; }
-	public boolean getFollowMasterScheme()     { return followMasterScheme; }
-	public boolean getFollowMasterBackground() { return followMasterBackground; }
-	public void setFollowMasterObjects(boolean flag)    { followMasterObjects = flag; }
-	public void setFollowMasterScheme(boolean flag)     { followMasterScheme = flag; }
-	public void setFollowMasterBackground(boolean flag) { followMasterBackground = flag; }
+    private int slideID;
+    private boolean followMasterObjects;
+    private boolean followMasterScheme;
+    private boolean followMasterBackground;
+    private byte[] reserved;
 
 
-	/* *************** record code follows ********************** */
+    public int getSlideID() { return slideID; }
+    public void setSlideID(int id) { slideID = id; }
 
-	/**
-	 * For the Notes Atom
-	 */
-	protected NotesAtom(byte[] source, int start, int len) {
-		// Sanity Checking
-		if(len < 8) { len = 8; }
+    public boolean getFollowMasterObjects()    { return followMasterObjects; }
+    public boolean getFollowMasterScheme()     { return followMasterScheme; }
+    public boolean getFollowMasterBackground() { return followMasterBackground; }
+    public void setFollowMasterObjects(boolean flag)    { followMasterObjects = flag; }
+    public void setFollowMasterScheme(boolean flag)     { followMasterScheme = flag; }
+    public void setFollowMasterBackground(boolean flag) { followMasterBackground = flag; }
 
-		// Get the header
-		_header = Arrays.copyOfRange(source, start, start+8);
 
-		// Get the slide ID
-		slideID = LittleEndian.getInt(source,start+8);
+    /* *************** record code follows ********************** */
 
-		// Grok the flags, stored as bits
-		int flags = LittleEndian.getUShort(source,start+12);
-		followMasterBackground = (flags & 4) == 4;
-		followMasterScheme = (flags & 2) == 2;
-		followMasterObjects = (flags & 1) == 1;
+    /**
+     * For the Notes Atom
+     */
+    protected NotesAtom(byte[] source, int start, int len) {
+        // Sanity Checking
+        if(len < 8) { len = 8; }
 
-		// There might be 2 more bytes, which are a reserved field
-		reserved = IOUtils.safelyClone(source, start+14, len-14, MAX_RECORD_LENGTH);
-	}
+        // Get the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-	/**
-	 * We are of type 1009
-	 */
-	public long getRecordType() { return _type; }
+        // Get the slide ID
+        slideID = LittleEndian.getInt(source,start+8);
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		// Header
-		out.write(_header);
+        // Grok the flags, stored as bits
+        int flags = LittleEndian.getUShort(source,start+12);
+        followMasterBackground = (flags & 4) == 4;
+        followMasterScheme = (flags & 2) == 2;
+        followMasterObjects = (flags & 1) == 1;
 
-		// Slide ID
-		writeLittleEndian(slideID,out);
+        // There might be 2 more bytes, which are a reserved field
+        reserved = IOUtils.safelyClone(source, start+14, len-14, MAX_RECORD_LENGTH);
+    }
 
-		// Flags
-		short flags = 0;
-		if(followMasterObjects)    { flags += 1; }
-		if(followMasterScheme)     { flags += 2; }
-		if(followMasterBackground) { flags += 4; }
-		writeLittleEndian(flags,out);
+    /**
+     * We are of type 1009
+     */
+    public long getRecordType() { return _type; }
 
-		// Reserved fields
-		out.write(reserved);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        // Header
+        out.write(_header);
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"slideId", this::getSlideID,
-			"followMasterObjects", this::getFollowMasterObjects,
-			"followMasterScheme", this::getFollowMasterScheme,
-			"followMasterBackground", this::getFollowMasterBackground
-		);
-	}
+        // Slide ID
+        writeLittleEndian(slideID,out);
+
+        // Flags
+        short flags = 0;
+        if(followMasterObjects)    { flags += 1; }
+        if(followMasterScheme)     { flags += 2; }
+        if(followMasterBackground) { flags += 4; }
+        writeLittleEndian(flags,out);
+
+        // Reserved fields
+        out.write(reserved);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "slideId", this::getSlideID,
+            "followMasterObjects", this::getFollowMasterObjects,
+            "followMasterScheme", this::getFollowMasterScheme,
+            "followMasterBackground", this::getFollowMasterBackground
+        );
+    }
 }

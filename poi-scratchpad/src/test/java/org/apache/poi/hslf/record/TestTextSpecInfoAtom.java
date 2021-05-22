@@ -56,7 +56,7 @@ public final class TestTextSpecInfoAtom  {
         UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         spec.writeOut(out);
         assertArrayEquals(data_1, out.toByteArray());
-	}
+    }
 
     @Test
     void testReset() throws Exception {

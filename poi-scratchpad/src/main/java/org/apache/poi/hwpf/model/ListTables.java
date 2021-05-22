@@ -150,7 +150,7 @@ public final class ListTables
         return lst.getLevels()[level];
     }
       LOGGER.atWarn().log("Requested level {} which was greater than the maximum defined ({})", box(level),box(lst.numLevels()));
-	return null;
+    return null;
   }
 
   public ListData getListData(int lsid)

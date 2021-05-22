@@ -36,62 +36,62 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class TestBug47563 {
 
 
-	public static Stream<Arguments> data() {
-		List<Arguments> data = new ArrayList<>();
+    public static Stream<Arguments> data() {
+        List<Arguments> data = new ArrayList<>();
 
-		data.add(Arguments.of( 1, 5 ));
-		data.add(Arguments.of( 1, 6 ));
-		data.add(Arguments.of( 5, 1 ));
-		data.add(Arguments.of( 6, 1 ));
-		data.add(Arguments.of( 2, 2 ));
-		data.add(Arguments.of( 3, 2 ));
-		data.add(Arguments.of( 2, 3 ));
-		data.add(Arguments.of( 3, 3 ));
+        data.add(Arguments.of( 1, 5 ));
+        data.add(Arguments.of( 1, 6 ));
+        data.add(Arguments.of( 5, 1 ));
+        data.add(Arguments.of( 6, 1 ));
+        data.add(Arguments.of( 2, 2 ));
+        data.add(Arguments.of( 3, 2 ));
+        data.add(Arguments.of( 2, 3 ));
+        data.add(Arguments.of( 3, 3 ));
 
-		return data.stream();
-	}
+        return data.stream();
+    }
 
-	@ParameterizedTest
-	@MethodSource("data")
-	void test(int rows, int columns) throws Exception {
-		// POI apparently can't create a document from scratch,
-		// so we need an existing empty dummy document
-		try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {
-			Range range = doc.getRange();
-			range.sanityCheck();
+    @ParameterizedTest
+    @MethodSource("data")
+    void test(int rows, int columns) throws Exception {
+        // POI apparently can't create a document from scratch,
+        // so we need an existing empty dummy document
+        try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {
+            Range range = doc.getRange();
+            range.sanityCheck();
 
-			Table table = range.insertTableBefore((short) columns, rows);
-			table.sanityCheck();
+            Table table = range.insertTableBefore((short) columns, rows);
+            table.sanityCheck();
 
-			for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
-				TableRow row = table.getRow(rowIdx);
-				row.sanityCheck();
+            for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
+                TableRow row = table.getRow(rowIdx);
+                row.sanityCheck();
 
-				for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
-					TableCell cell = row.getCell(colIdx);
-					cell.sanityCheck();
+                for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
+                    TableCell cell = row.getCell(colIdx);
+                    cell.sanityCheck();
 
-					Paragraph par = cell.getParagraph(0);
-					par.sanityCheck();
+                    Paragraph par = cell.getParagraph(0);
+                    par.sanityCheck();
 
-					par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
-					par.sanityCheck();
+                    par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
+                    par.sanityCheck();
 
-					row.sanityCheck();
-					table.sanityCheck();
-					range.sanityCheck();
-				}
-			}
+                    row.sanityCheck();
+                    table.sanityCheck();
+                    range.sanityCheck();
+                }
+            }
 
-			String text = range.text();
-			String textBytes = HexDump.toHex(text.getBytes(StandardCharsets.UTF_8));
-			int mustBeAfter = 0;
-			for (int i = 0; i < rows * columns; i++) {
-				int next = text.indexOf(Integer.toString(i), mustBeAfter);
-				assertTrue( next != -1, "Test with " + rows + "/" + columns + ": Should find " + i +
-					" but did not find it (" + next + ") with " + mustBeAfter + " in " + textBytes + "\n" + next);
-				mustBeAfter = next;
-			}
-		}
-	}
+            String text = range.text();
+            String textBytes = HexDump.toHex(text.getBytes(StandardCharsets.UTF_8));
+            int mustBeAfter = 0;
+            for (int i = 0; i < rows * columns; i++) {
+                int next = text.indexOf(Integer.toString(i), mustBeAfter);
+                assertTrue( next != -1, "Test with " + rows + "/" + columns + ": Should find " + i +
+                    " but did not find it (" + next + ") with " + mustBeAfter + " in " + textBytes + "\n" + next);
+                mustBeAfter = next;
+            }
+        }
+    }
 }

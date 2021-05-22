@@ -98,7 +98,7 @@ public final class Comment2000Atom extends RecordAtom
      * @return the comment date.
      */
     public Date getDate() {
-    	return SystemTimeUtils.getDate(_data,4);
+        return SystemTimeUtils.getDate(_data,4);
     }
 
     /**
@@ -106,7 +106,7 @@ public final class Comment2000Atom extends RecordAtom
      * @param date the comment date.
      */
     public void setDate(Date date) {
-    	SystemTimeUtils.storeDate(date, _data, 4);
+        SystemTimeUtils.storeDate(date, _data, 4);
     }
 
     /**

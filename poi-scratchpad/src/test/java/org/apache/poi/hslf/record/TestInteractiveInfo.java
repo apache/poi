@@ -31,51 +31,51 @@ import org.junit.jupiter.api.Test;
  * Tests that InteractiveInfoAtom works properly.
  */
 public class TestInteractiveInfo {
-	// From a real file
-	private final byte[] data_a = {
-		0x0F, 0, 0xF2-256, 0x0F, 0x18, 0, 0, 0,
-		0, 0, 0xF3-256, 0x0F, 0x10, 0, 0, 0,
-		0, 0, 0, 0, 1, 0, 0, 0,
-		4, 0, 0, 0, 8, 0, 0, 0
-	};
+    // From a real file
+    private final byte[] data_a = {
+        0x0F, 0, 0xF2-256, 0x0F, 0x18, 0, 0, 0,
+        0, 0, 0xF3-256, 0x0F, 0x10, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0,
+        4, 0, 0, 0, 8, 0, 0, 0
+    };
 
-	@Test
-	void testRecordType() {
-		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
-		assertEquals(4082, ii.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
+        assertEquals(4082, ii.getRecordType());
+    }
 
-	@Test
-	void testGetChildDetails() {
-		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
-		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
+    @Test
+    void testGetChildDetails() {
+        InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
+        InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
 
-		assertEquals(1, ia.getHyperlinkID());
-	}
+        assertEquals(1, ia.getHyperlinkID());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ii.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ii.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-	// Create A from scratch
-	@Test
-	void testCreate() throws Exception {
-		InteractiveInfo ii = new InteractiveInfo();
-		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
+    // Create A from scratch
+    @Test
+    void testCreate() throws Exception {
+        InteractiveInfo ii = new InteractiveInfo();
+        InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
 
-		// Set values
-		ia.setHyperlinkID(1);
-		ia.setSoundRef(0);
-		ia.setAction((byte)4);
-		ia.setHyperlinkType((byte)8);
+        // Set values
+        ia.setHyperlinkID(1);
+        ia.setSoundRef(0);
+        ia.setAction((byte)4);
+        ia.setHyperlinkType((byte)8);
 
-		// Check it's now the same as a
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ii.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
+        // Check it's now the same as a
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ii.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
    }
 }

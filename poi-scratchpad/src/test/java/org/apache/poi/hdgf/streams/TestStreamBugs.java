@@ -38,76 +38,76 @@ import org.junit.jupiter.api.Test;
  * Tests for bugs with streams
  */
 public final class TestStreamBugs extends StreamTest {
-	private byte[] contents;
-	private ChunkFactory chunkFactory;
-	private PointerFactory ptrFactory;
-	private POIFSFileSystem filesystem;
+    private byte[] contents;
+    private ChunkFactory chunkFactory;
+    private PointerFactory ptrFactory;
+    private POIFSFileSystem filesystem;
 
-	@BeforeEach
+    @BeforeEach
     void setUp() throws IOException {
-		ptrFactory = new PointerFactory(11);
-		chunkFactory = new ChunkFactory(11);
+        ptrFactory = new PointerFactory(11);
+        chunkFactory = new ChunkFactory(11);
 
         try (InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("44594.vsd")) {
-			filesystem = new POIFSFileSystem(is);
-		}
+            filesystem = new POIFSFileSystem(is);
+        }
 
-		// Grab the document stream
-		try (InputStream is2 = filesystem.createDocumentInputStream("VisioDocument")) {
-			contents = IOUtils.toByteArray(is2);
-		}
-	}
+        // Grab the document stream
+        try (InputStream is2 = filesystem.createDocumentInputStream("VisioDocument")) {
+            contents = IOUtils.toByteArray(is2);
+        }
+    }
 
-	@Test
+    @Test
     void testGetTrailer() {
-		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
-		Stream s = Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
-		assertNotNull(s);
-	}
+        Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
+        Stream s = Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
+        assertNotNull(s);
+    }
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     void TOIMPLEMENTtestGetCertainChunks() {
-		int offsetA = 3708;
-		int offsetB = 3744;
-	}
+        int offsetA = 3708;
+        int offsetB = 3744;
+    }
 
-	@Test
+    @Test
     void testGetChildren() {
-		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
-		TrailerStream trailer = (TrailerStream)
-			Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
+        Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
+        TrailerStream trailer = (TrailerStream)
+            Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
 
-		// Get without recursing
-		Pointer[] ptrs = trailer.getChildPointers();
-		for (Pointer ptr : ptrs) {
-			Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
-		}
+        // Get without recursing
+        Pointer[] ptrs = trailer.getChildPointers();
+        for (Pointer ptr : ptrs) {
+            Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
+        }
 
-		// Get with recursing into chunks
-		for (Pointer ptr : ptrs) {
-			Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
-			if(stream instanceof ChunkStream) {
-				ChunkStream cStream = (ChunkStream)stream;
-				assertDoesNotThrow(cStream::findChunks);
-			}
-		}
+        // Get with recursing into chunks
+        for (Pointer ptr : ptrs) {
+            Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
+            if(stream instanceof ChunkStream) {
+                ChunkStream cStream = (ChunkStream)stream;
+                assertDoesNotThrow(cStream::findChunks);
+            }
+        }
 
-		// Get with recursing into chunks and pointers
-		for (Pointer ptr : ptrs) {
-			Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
-			if(stream instanceof PointerContainingStream) {
-				PointerContainingStream pStream = (PointerContainingStream)stream;
-				assertDoesNotThrow(() -> pStream.findChildren(contents));
-			}
-		}
+        // Get with recursing into chunks and pointers
+        for (Pointer ptr : ptrs) {
+            Stream stream = Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
+            if(stream instanceof PointerContainingStream) {
+                PointerContainingStream pStream = (PointerContainingStream)stream;
+                assertDoesNotThrow(() -> pStream.findChildren(contents));
+            }
+        }
 
-		trailer.findChildren(contents);
-	}
+        trailer.findChildren(contents);
+    }
 
-	@Test
+    @Test
     void testOpen() throws IOException {
-		try (HDGFDiagram dia = new HDGFDiagram(filesystem)) {
-			assertEquals(20, dia.getTopLevelStreams().length);
-		}
-	}
+        try (HDGFDiagram dia = new HDGFDiagram(filesystem)) {
+            assertEquals(20, dia.getTopLevelStreams().length);
+        }
+    }
 }

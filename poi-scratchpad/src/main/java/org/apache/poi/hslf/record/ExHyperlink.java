@@ -28,28 +28,28 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * This class represents the data of a link in the document.
  */
 public class ExHyperlink extends RecordContainer {
-	private static final long _type = RecordTypes.ExHyperlink.typeID;
+    private static final long _type = RecordTypes.ExHyperlink.typeID;
 
-	private byte[] _header;
+    private byte[] _header;
 
-	// Links to our more interesting children
-	private ExHyperlinkAtom linkAtom;
-	private CString linkDetailsA;
-	private CString linkDetailsB;
+    // Links to our more interesting children
+    private ExHyperlinkAtom linkAtom;
+    private CString linkDetailsA;
+    private CString linkDetailsB;
 
-	/**
-	 * Returns the ExHyperlinkAtom of this link
-	 */
-	public ExHyperlinkAtom getExHyperlinkAtom() { return linkAtom; }
+    /**
+     * Returns the ExHyperlinkAtom of this link
+     */
+    public ExHyperlinkAtom getExHyperlinkAtom() { return linkAtom; }
 
-	/**
-	 * Returns the URL of the link.
+    /**
+     * Returns the URL of the link.
      *
      * @return the URL of the link
-	 */
-	public String getLinkURL() {
-		return linkDetailsB == null ? null : linkDetailsB.getText();
-	}
+     */
+    public String getLinkURL() {
+        return linkDetailsB == null ? null : linkDetailsB.getText();
+    }
 
     /**
      * Returns the hyperlink's user-readable name
@@ -60,15 +60,15 @@ public class ExHyperlink extends RecordContainer {
         return linkDetailsA == null ? null : linkDetailsA.getText();
     }
 
-	/**
-	 * Sets the URL of the link
-	 * TODO: Figure out if we should always set both
-	 */
-	public void setLinkURL(String url) {
-		if(linkDetailsB != null) {
-			linkDetailsB.setText(url);
-		}
-	}
+    /**
+     * Sets the URL of the link
+     * TODO: Figure out if we should always set both
+     */
+    public void setLinkURL(String url) {
+        if(linkDetailsB != null) {
+            linkDetailsB.setText(url);
+        }
+    }
 
     public void setLinkOptions(int options) {
         if(linkDetailsB != null) {
@@ -82,49 +82,49 @@ public class ExHyperlink extends RecordContainer {
         }
     }
 
-	/**
-	 * Get the link details (field A)
-	 */
-	public String _getDetailsA() {
-		return linkDetailsA == null ? null : linkDetailsA.getText();
-	}
-	/**
-	 * Get the link details (field B)
-	 */
-	public String _getDetailsB() {
-		return linkDetailsB == null ? null : linkDetailsB.getText();
-	}
+    /**
+     * Get the link details (field A)
+     */
+    public String _getDetailsA() {
+        return linkDetailsA == null ? null : linkDetailsA.getText();
+    }
+    /**
+     * Get the link details (field B)
+     */
+    public String _getDetailsB() {
+        return linkDetailsB == null ? null : linkDetailsB.getText();
+    }
 
-	/**
-	 * Set things up, and find our more interesting children
-	 */
-	protected ExHyperlink(byte[] source, int start, int len) {
-		// Grab the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+    /**
+     * Set things up, and find our more interesting children
+     */
+    protected ExHyperlink(byte[] source, int start, int len) {
+        // Grab the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);
-		findInterestingChildren();
-	}
+        // Find our children
+        _children = Record.findChildRecords(source,start+8,len-8);
+        findInterestingChildren();
+    }
 
-	/**
-	 * Go through our child records, picking out the ones that are
-	 *  interesting, and saving those for use by the easy helper
-	 *  methods.
-	 */
-	private void findInterestingChildren() {
+    /**
+     * Go through our child records, picking out the ones that are
+     *  interesting, and saving those for use by the easy helper
+     *  methods.
+     */
+    private void findInterestingChildren() {
 
-		// First child should be the ExHyperlinkAtom
-		Record child = _children[0];
-		if(child instanceof ExHyperlinkAtom) {
-			linkAtom = (ExHyperlinkAtom) child;
-		} else {
-			LOG.atError().log("First child record wasn't a ExHyperlinkAtom, was of type {}", box(child.getRecordType()));
-		}
+        // First child should be the ExHyperlinkAtom
+        Record child = _children[0];
+        if(child instanceof ExHyperlinkAtom) {
+            linkAtom = (ExHyperlinkAtom) child;
+        } else {
+            LOG.atError().log("First child record wasn't a ExHyperlinkAtom, was of type {}", box(child.getRecordType()));
+        }
 
         for (int i = 1; i < _children.length; i++) {
-			child = _children[i];
-			if (child instanceof CString){
+            child = _children[i];
+            if (child instanceof CString){
                 if ( linkDetailsA == null) linkDetailsA = (CString) child;
                 else linkDetailsB = (CString) child;
             } else {
@@ -132,40 +132,40 @@ public class ExHyperlink extends RecordContainer {
             }
 
         }
-	}
+    }
 
-	/**
-	 * Create a new ExHyperlink, with blank fields
-	 */
-	public ExHyperlink() {
-		_header = new byte[8];
-		_children = new org.apache.poi.hslf.record.Record[3];
+    /**
+     * Create a new ExHyperlink, with blank fields
+     */
+    public ExHyperlink() {
+        _header = new byte[8];
+        _children = new org.apache.poi.hslf.record.Record[3];
 
-		// Setup our header block
-		_header[0] = 0x0f; // We are a container record
-		LittleEndian.putShort(_header, 2, (short)_type);
+        // Setup our header block
+        _header[0] = 0x0f; // We are a container record
+        LittleEndian.putShort(_header, 2, (short)_type);
 
-		// Setup our child records
-		CString csa = new CString();
-		CString csb = new CString();
-		csa.setOptions(0x00);
-		csb.setOptions(0x10);
-		_children[0] = new ExHyperlinkAtom();
-		_children[1] = csa;
-		_children[2] = csb;
-		findInterestingChildren();
-	}
+        // Setup our child records
+        CString csa = new CString();
+        CString csb = new CString();
+        csa.setOptions(0x00);
+        csb.setOptions(0x10);
+        _children[0] = new ExHyperlinkAtom();
+        _children[1] = csa;
+        _children[2] = csb;
+        findInterestingChildren();
+    }
 
-	/**
-	 * We are of type 4055
-	 */
-	public long getRecordType() { return _type; }
+    /**
+     * We are of type 4055
+     */
+    public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		writeOut(_header[0],_header[1],_type,_children,out);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        writeOut(_header[0],_header[1],_type,_children,out);
+    }
 }

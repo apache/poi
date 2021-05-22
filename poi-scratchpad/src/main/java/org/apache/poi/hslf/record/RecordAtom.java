@@ -23,13 +23,13 @@ package org.apache.poi.hslf.record;
 
 public abstract class RecordAtom extends Record
 {
-	/**
-	 * We are an atom
-	 */
-	public boolean isAnAtom() { return true; }
+    /**
+     * We are an atom
+     */
+    public boolean isAnAtom() { return true; }
 
-	/**
-	 * We're an atom, returns null
-	 */
-	public org.apache.poi.hslf.record.Record[] getChildRecords() { return null; }
+    /**
+     * We're an atom, returns null
+     */
+    public org.apache.poi.hslf.record.Record[] getChildRecords() { return null; }
 }

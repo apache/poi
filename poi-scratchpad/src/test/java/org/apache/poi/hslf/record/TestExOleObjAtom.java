@@ -27,45 +27,45 @@ import org.junit.jupiter.api.Test;
  * Tests that {@link ExOleObjAtom} works properly
  */
 public final class TestExOleObjAtom {
-	// From a real file (embedded SWF control)
-	private final byte[] data = {
-			0x01, 0x00, (byte)0xC3, 0x0F, 0x18, 0x00, 0x00, 0x00,
-			0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00  };
+    // From a real file (embedded SWF control)
+    private final byte[] data = {
+            0x01, 0x00, (byte)0xC3, 0x0F, 0x18, 0x00, 0x00, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00  };
 
-	@Test
-	void testRead() {
-		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
-		assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
+    @Test
+    void testRead() {
+        ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
+        assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
 
-		assertEquals(record.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-		assertEquals(record.getType(), ExOleObjAtom.TYPE_CONTROL);
-		assertEquals(record.getObjID(), 1);
-		assertEquals(record.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
-		assertEquals(record.getObjStgDataRef(), 2);
-		assertEquals(record.getOptions(), 1283584); //ther meaning is unknown
-	}
+        assertEquals(record.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        assertEquals(record.getType(), ExOleObjAtom.TYPE_CONTROL);
+        assertEquals(record.getObjID(), 1);
+        assertEquals(record.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
+        assertEquals(record.getObjStgDataRef(), 2);
+        assertEquals(record.getOptions(), 1283584); //ther meaning is unknown
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 
-	@Test
-	void testNewRecord() throws Exception {
-		ExOleObjAtom record = new ExOleObjAtom();
-		record.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-		record.setType(ExOleObjAtom.TYPE_CONTROL);
-		record.setObjID(1);
-		record.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
-		record.setObjStgDataRef(2);
-		record.setOptions(1283584);
+    @Test
+    void testNewRecord() throws Exception {
+        ExOleObjAtom record = new ExOleObjAtom();
+        record.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        record.setType(ExOleObjAtom.TYPE_CONTROL);
+        record.setObjID(1);
+        record.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
+        record.setObjStgDataRef(2);
+        record.setOptions(1283584);
 
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 }

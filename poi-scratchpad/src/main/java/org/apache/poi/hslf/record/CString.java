@@ -36,88 +36,88 @@ import org.apache.poi.util.StringUtil;
 
 public final class CString extends RecordAtom {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	private byte[] _header;
+    private byte[] _header;
 
-	/** The bytes that make up the text */
-	private byte[] _text;
+    /** The bytes that make up the text */
+    private byte[] _text;
 
-	/** Grabs the text. Never <code>null</code> */
-	public String getText() {
-		return StringUtil.getFromUnicodeLE(_text);
-	}
+    /** Grabs the text. Never <code>null</code> */
+    public String getText() {
+        return StringUtil.getFromUnicodeLE(_text);
+    }
 
-	/** Updates the text in the Atom. */
-	public void setText(String text) {
-		// Convert to little endian unicode
-		_text = new byte[text.length()*2];
-		StringUtil.putUnicodeLE(text,_text,0);
+    /** Updates the text in the Atom. */
+    public void setText(String text) {
+        // Convert to little endian unicode
+        _text = new byte[text.length()*2];
+        StringUtil.putUnicodeLE(text,_text,0);
 
-		// Update the size (header bytes 5-8)
-		LittleEndian.putInt(_header,4,_text.length);
-	}
+        // Update the size (header bytes 5-8)
+        LittleEndian.putInt(_header,4,_text.length);
+    }
 
-	/**
-	 * Grabs the count, from the first two bytes of the header.
-	 * The meaning of the count is specific to the type of the parent record
-	 */
-	public int getOptions() {
-		return LittleEndian.getShort(_header);
-	}
+    /**
+     * Grabs the count, from the first two bytes of the header.
+     * The meaning of the count is specific to the type of the parent record
+     */
+    public int getOptions() {
+        return LittleEndian.getShort(_header);
+    }
 
-	/**
-	 * Sets the count
-	 * The meaning of the count is specific to the type of the parent record
-	 */
-	public void setOptions(int count) {
-		LittleEndian.putShort(_header, 0, (short)count);
-	}
+    /**
+     * Sets the count
+     * The meaning of the count is specific to the type of the parent record
+     */
+    public void setOptions(int count) {
+        LittleEndian.putShort(_header, 0, (short)count);
+    }
 
-	/* *************** record code follows ********************** */
+    /* *************** record code follows ********************** */
 
-	/**
-	 * For the CStrubg Atom
-	 */
-	protected CString(byte[] source, int start, int len) {
-		// Sanity Checking
-		if(len < 8) { len = 8; }
+    /**
+     * For the CStrubg Atom
+     */
+    protected CString(byte[] source, int start, int len) {
+        // Sanity Checking
+        if(len < 8) { len = 8; }
 
-		// Get the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+        // Get the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Grab the text
-		_text = IOUtils.safelyClone(source,start+8, len-8, MAX_RECORD_LENGTH);
-	}
-	/**
-	 * Create an empty CString
-	 */
-	public CString() {
-		// 0 length header
-		_header = new byte[] {  0, 0, 0xBA-256, 0x0f, 0, 0, 0, 0 };
-		// Empty text
-		_text = new byte[0];
-	}
+        // Grab the text
+        _text = IOUtils.safelyClone(source,start+8, len-8, MAX_RECORD_LENGTH);
+    }
+    /**
+     * Create an empty CString
+     */
+    public CString() {
+        // 0 length header
+        _header = new byte[] {  0, 0, 0xBA-256, 0x0f, 0, 0, 0, 0 };
+        // Empty text
+        _text = new byte[0];
+    }
 
-	/**
-	 * We are of type 4026
-	 */
-	public long getRecordType() {
-		return RecordTypes.CString.typeID;
-	}
+    /**
+     * We are of type 4026
+     */
+    public long getRecordType() {
+        return RecordTypes.CString.typeID;
+    }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		// Header - size or type unchanged
-		out.write(_header);
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        // Header - size or type unchanged
+        out.write(_header);
 
-		// Write out our text
-		out.write(_text);
-	}
+        // Write out our text
+        out.write(_text);
+    }
 
     /**
      * Gets a string representation of this object, primarily for debugging.
@@ -127,8 +127,8 @@ public final class CString extends RecordAtom {
         return getText();
     }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("text", this::getText);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("text", this::getText);
+    }
 }

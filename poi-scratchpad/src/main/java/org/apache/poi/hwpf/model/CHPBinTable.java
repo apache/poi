@@ -384,11 +384,11 @@ public class CHPBinTable
       CHPX chpx = _textRuns.get(listIndex);
       if (chpx.getStart() < cpStart)
       {
-    	// Copy the properties of the one before to afterwards
-    	// Will go:
-    	//  Original, until insert at point
-    	//  New one
-    	//  Clone of original, on to the old end
+        // Copy the properties of the one before to afterwards
+        // Will go:
+        //  Original, until insert at point
+        //  New one
+        //  Clone of original, on to the old end
         CHPX clone = new CHPX(0, 0, chpx.getSprmBuf());
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);

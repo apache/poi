@@ -28,64 +28,64 @@ import org.junit.jupiter.api.Test;
  * Tests that ExHyperlinkAtom works properly.
  */
 public class TestExHyperlinkAtom {
-	// From a real file
-	private final byte[] data_a = new byte[] {
-		0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
-		1, 0, 0, 0
-	};
-	private final byte[] data_b = new byte[] {
-		0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
-		4, 0, 0, 0
-	};
+    // From a real file
+    private final byte[] data_a = new byte[] {
+        0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
+        1, 0, 0, 0
+    };
+    private final byte[] data_b = new byte[] {
+        0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
+        4, 0, 0, 0
+    };
 
-	@Test
+    @Test
     void testRecordType() {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-		assertEquals(4051L, eha.getRecordType());
-	}
-
-	@Test
-    void testGetNumber() {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-    	ExHyperlinkAtom ehb = new ExHyperlinkAtom(data_b, 0, data_b.length);
-
-		assertEquals(1, eha.getNumber());
-		assertEquals(4, ehb.getNumber());
+        ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+        assertEquals(4051L, eha.getRecordType());
     }
 
-	@Test
-	void testWrite() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eha.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testGetNumber() {
+        ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+        ExHyperlinkAtom ehb = new ExHyperlinkAtom(data_b, 0, data_b.length);
 
-	// Create A from scratch
-	@Test
-	void testCreate() throws Exception {
-		ExHyperlinkAtom eha = new ExHyperlinkAtom();
+        assertEquals(1, eha.getNumber());
+        assertEquals(4, ehb.getNumber());
+    }
 
-		// Set value
-		eha.setNumber(1);
+    @Test
+    void testWrite() throws Exception {
+        ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eha.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-		// Check it's now the same as a
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eha.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    // Create A from scratch
+    @Test
+    void testCreate() throws Exception {
+        ExHyperlinkAtom eha = new ExHyperlinkAtom();
 
-	// Try to turn a into b
-	@Test
-	void testChange() throws Exception {
-		ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+        // Set value
+        eha.setNumber(1);
 
-		// Change the number
-		eha.setNumber(4);
+        // Check it's now the same as a
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eha.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-		// Check bytes are now the same
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eha.writeOut(baos);
-		assertArrayEquals(data_b, baos.toByteArray());
-	}
+    // Try to turn a into b
+    @Test
+    void testChange() throws Exception {
+        ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+
+        // Change the number
+        eha.setNumber(4);
+
+        // Check bytes are now the same
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eha.writeOut(baos);
+        assertArrayEquals(data_b, baos.toByteArray());
+    }
 }

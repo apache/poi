@@ -33,43 +33,43 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestSound {
     @Test
-	void testRealFile() throws IOException {
+    void testRealFile() throws IOException {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-		HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
 
-		// Get the document
-		Document doc = ppt.getDocumentRecord();
-		SoundCollection soundCollection = null;
-		Record[] doc_ch = doc.getChildRecords();
-		for ( org.apache.poi.hslf.record.Record rec : doc_ch) {
-			if (rec instanceof SoundCollection) {
-				soundCollection = (SoundCollection) rec;
-				break;
-			}
-		}
-		assertNotNull(soundCollection);
+        // Get the document
+        Document doc = ppt.getDocumentRecord();
+        SoundCollection soundCollection = null;
+        Record[] doc_ch = doc.getChildRecords();
+        for ( org.apache.poi.hslf.record.Record rec : doc_ch) {
+            if (rec instanceof SoundCollection) {
+                soundCollection = (SoundCollection) rec;
+                break;
+            }
+        }
+        assertNotNull(soundCollection);
 
-		Sound sound = null;
-		Record[] sound_ch = soundCollection.getChildRecords();
-		int k = 0;
-		for ( org.apache.poi.hslf.record.Record rec : sound_ch) {
-			if (rec instanceof Sound) {
-				sound = (Sound) rec;
-				k++;
-			}
-		}
+        Sound sound = null;
+        Record[] sound_ch = soundCollection.getChildRecords();
+        int k = 0;
+        for ( org.apache.poi.hslf.record.Record rec : sound_ch) {
+            if (rec instanceof Sound) {
+                sound = (Sound) rec;
+                k++;
+            }
+        }
 
-		assertNotNull(sound);
-		assertEquals(1, k);
+        assertNotNull(sound);
+        assertEquals(1, k);
 
-		assertEquals("ringin.wav", sound.getSoundName());
-		assertEquals(".WAV", sound.getSoundType());
-		assertNotNull(sound.getSoundData());
+        assertEquals("ringin.wav", sound.getSoundName());
+        assertEquals(".WAV", sound.getSoundType());
+        assertNotNull(sound.getSoundData());
 
-		byte[] ref_data = slTests.readFile("ringin.wav");
-		assertArrayEquals(ref_data, sound.getSoundData());
+        byte[] ref_data = slTests.readFile("ringin.wav");
+        assertArrayEquals(ref_data, sound.getSoundData());
 
-		ppt.close();
+        ppt.close();
     }
 }

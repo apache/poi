@@ -42,7 +42,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@Isolated	// this test changes global static BYTE_ARRAY_MAX_OVERRIDE
+@Isolated   // this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 public abstract class BaseTestPPTIterating {
     protected static final Set<String> OLD_FILES = new HashSet<>();
     static {

@@ -27,82 +27,82 @@ import org.apache.poi.util.GenericRecordUtil;
  * Definition for the text alignment property.
  */
 public class TextAlignmentProp extends TextProp {
-	/**
-	 * For horizontal text, left aligned.
-	 * For vertical text, top aligned.
-	 */
+    /**
+     * For horizontal text, left aligned.
+     * For vertical text, top aligned.
+     */
     public static final int LEFT = 0;
 
     /**
      * For horizontal text, centered.
      * For vertical text, middle aligned.
      */
-	public static final int CENTER = 1;
+    public static final int CENTER = 1;
 
-	/**
-	 * For horizontal text, right aligned.
-	 * For vertical text, bottom aligned.
-	 */
-	public static final int RIGHT = 2;
+    /**
+     * For horizontal text, right aligned.
+     * For vertical text, bottom aligned.
+     */
+    public static final int RIGHT = 2;
 
-	/**
-	 * For horizontal text, flush left and right.
-	 * For vertical text, flush top and bottom.
-	 */
-	public static final int JUSTIFY = 3;
+    /**
+     * For horizontal text, flush left and right.
+     * For vertical text, flush top and bottom.
+     */
+    public static final int JUSTIFY = 3;
 
-	/**
-	 * Distribute space between characters.
-	 */
-	public static final int DISTRIBUTED = 4;
+    /**
+     * Distribute space between characters.
+     */
+    public static final int DISTRIBUTED = 4;
 
-	/**
-	 * Thai distribution justification.
-	 */
-	public static final int THAIDISTRIBUTED = 5;
+    /**
+     * Thai distribution justification.
+     */
+    public static final int THAIDISTRIBUTED = 5;
 
-	/**
-	 * Kashida justify low.
-	 */
-	public static final int JUSTIFYLOW = 6;
+    /**
+     * Kashida justify low.
+     */
+    public static final int JUSTIFYLOW = 6;
 
-	public TextAlignmentProp() {
-		super(2, 0x800, "alignment");
-	}
+    public TextAlignmentProp() {
+        super(2, 0x800, "alignment");
+    }
 
 
-	public TextAlignmentProp(TextAlignmentProp other) {
-		super(other);
-	}
+    public TextAlignmentProp(TextAlignmentProp other) {
+        super(other);
+    }
 
-	public TextAlign getTextAlign() {
-		switch (getValue()) {
-			default:
-			case LEFT:
-				return TextAlign.LEFT;
-			case CENTER:
-				return TextAlign.CENTER;
-			case RIGHT:
-				return TextAlign.RIGHT;
-			case JUSTIFY:
-				return TextAlign.JUSTIFY;
-			case DISTRIBUTED:
-				return TextAlign.DIST;
-			case THAIDISTRIBUTED:
-				return TextAlign.THAI_DIST;
-		}
-	}
+    public TextAlign getTextAlign() {
+        switch (getValue()) {
+            default:
+            case LEFT:
+                return TextAlign.LEFT;
+            case CENTER:
+                return TextAlign.CENTER;
+            case RIGHT:
+                return TextAlign.RIGHT;
+            case JUSTIFY:
+                return TextAlign.JUSTIFY;
+            case DISTRIBUTED:
+                return TextAlign.DIST;
+            case THAIDISTRIBUTED:
+                return TextAlign.THAI_DIST;
+        }
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"base", super::getGenericProperties,
-			"textAlign", this::getTextAlign
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "textAlign", this::getTextAlign
+        );
+    }
 
-	@Override
-	public TextAlignmentProp copy() {
-		return new TextAlignmentProp(this);
-	}
+    @Override
+    public TextAlignmentProp copy() {
+        return new TextAlignmentProp(this);
+    }
 }

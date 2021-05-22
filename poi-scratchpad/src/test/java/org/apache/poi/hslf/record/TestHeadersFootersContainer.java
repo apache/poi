@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
  * Tests that {@link HeadersFootersContainer} works properly
  */
 public final class TestHeadersFootersContainer {
-	// SlideHeadersFootersContainer
-	private final byte[] slideData = new byte[] {
+    // SlideHeadersFootersContainer
+    private final byte[] slideData = new byte[] {
             0x3F, 0x00, (byte)0xD9, 0x0F, 0x2E, 0x00, 0x00, 0x00,
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x00,
             0x20, 0x00, (byte)0xBA, 0x0F, 0x1A, 0x00, 0x00, 0x00,
@@ -54,8 +54,8 @@ public final class TestHeadersFootersContainer {
 
     @Test
     void testReadSlideHeadersFootersContainer() {
-		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
-		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
+        HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
+        assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.SlideHeadersFootersContainer, record.getOptions());
         assertEquals(2, record.getChildRecords().length);
 
@@ -73,12 +73,12 @@ public final class TestHeadersFootersContainer {
     }
 
     @Test
-	void testWriteSlideHeadersFootersContainer() throws Exception {
-		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(slideData, baos.toByteArray());
-	}
+    void testWriteSlideHeadersFootersContainer() throws Exception {
+        HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(slideData, baos.toByteArray());
+    }
 
     @Test
     void testNewSlideHeadersFootersContainer() throws Exception {
@@ -106,8 +106,8 @@ public final class TestHeadersFootersContainer {
 
     @Test
     void testReadNotesHeadersFootersContainer() {
-		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
-		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
+        HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
+        assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.NotesHeadersFootersContainer, record.getOptions());
         assertEquals(3, record.getChildRecords().length);
 
@@ -126,12 +126,12 @@ public final class TestHeadersFootersContainer {
     }
 
     @Test
-	void testWriteNotesHeadersFootersContainer() throws Exception {
-		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
+    void testWriteNotesHeadersFootersContainer() throws Exception {
+        HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
         UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(notesData, baos.toByteArray());
-	}
+        record.writeOut(baos);
+        assertArrayEquals(notesData, baos.toByteArray());
+    }
 
     @Test
     void testNewNotesHeadersFootersContainer() throws Exception {

@@ -26,25 +26,25 @@ import java.util.Map;
 
 public abstract class PositionDependentRecordAtom extends RecordAtom implements PositionDependentRecord
 {
-	/** Our location on the disk, as of the last write out */
-	private int myLastOnDiskOffset;
+    /** Our location on the disk, as of the last write out */
+    private int myLastOnDiskOffset;
 
-	/** Fetch our location on the disk, as of the last write out */
-	public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
+    /** Fetch our location on the disk, as of the last write out */
+    public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
 
-	/**
-	 * Update the Record's idea of where on disk it lives, after a write out.
-	 * Use with care...
-	 */
-	public void setLastOnDiskOffset(int offset) {
-		myLastOnDiskOffset = offset;
-	}
+    /**
+     * Update the Record's idea of where on disk it lives, after a write out.
+     * Use with care...
+     */
+    public void setLastOnDiskOffset(int offset) {
+        myLastOnDiskOffset = offset;
+    }
 
-	/**
-	 * Offer the record the list of records that have changed their
-	 *  location as part of the writeout.
-	 * Allows records to update their internal pointers to other records
-	 *  locations
-	 */
-	public abstract void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
+    /**
+     * Offer the record the list of records that have changed their
+     *  location as part of the writeout.
+     * Allows records to update their internal pointers to other records
+     *  locations
+     */
+    public abstract void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
 }

@@ -35,57 +35,57 @@ import org.junit.jupiter.api.Test;
  * Test the different routes to extracting text
  */
 public final class TestDifferentRoutes {
-	private static final String[] p_text = new String[] {
-			"This is a simple word document\r",
-			"\r",
-			"It has a number of paragraphs in it\r",
-			"\r",
-			"Some of them even feature bold, italic and underlined text\r",
-			"\r",
-			"\r",
-			"This bit is in a different font and size\r",
-			"\r",
-			"\r",
-			"This bit features some red text.\r",
-			"\r",
-			"\r",
-			"It is otherwise very very boring.\r"
-	};
+    private static final String[] p_text = new String[] {
+            "This is a simple word document\r",
+            "\r",
+            "It has a number of paragraphs in it\r",
+            "\r",
+            "Some of them even feature bold, italic and underlined text\r",
+            "\r",
+            "\r",
+            "This bit is in a different font and size\r",
+            "\r",
+            "\r",
+            "This bit features some red text.\r",
+            "\r",
+            "\r",
+            "It is otherwise very very boring.\r"
+    };
 
-	private HWPFDocument doc;
+    private HWPFDocument doc;
 
-	@BeforeEach
-	void setUp() {
-		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
-	}
+    @BeforeEach
+    void setUp() {
+        doc = HWPFTestDataSamples.openSampleFile("test2.doc");
+    }
 
-	@AfterEach
-	void tearDown() throws IOException {
-		doc.close();
-	}
+    @AfterEach
+    void tearDown() throws IOException {
+        doc.close();
+    }
 
-	/**
-	 * Test model based extraction
-	 */
-	@Test
-	void testExtractFromModel() {
-		Range r = doc.getRange();
+    /**
+     * Test model based extraction
+     */
+    @Test
+    void testExtractFromModel() {
+        Range r = doc.getRange();
 
-		String[] text = new String[r.numParagraphs()];
-		for (int i = 0; i < r.numParagraphs(); i++) {
-			Paragraph p = r.getParagraph(i);
-			text[i] = p.text();
-		}
+        String[] text = new String[r.numParagraphs()];
+        for (int i = 0; i < r.numParagraphs(); i++) {
+            Paragraph p = r.getParagraph(i);
+            text[i] = p.text();
+        }
 
-		assertArrayEquals(p_text, text);
-	}
+        assertArrayEquals(p_text, text);
+    }
 
-	/**
-	 * Test textPieces based extraction
-	 */
-	@Test
-	void testExtractFromTextPieces() throws Exception {
-		String expected = StringUtil.join(p_text, "");
-		assertEquals(expected, doc.getDocumentText());
-	}
+    /**
+     * Test textPieces based extraction
+     */
+    @Test
+    void testExtractFromTextPieces() throws Exception {
+        String expected = StringUtil.join(p_text, "");
+        assertEquals(expected, doc.getDocumentText());
+    }
 }

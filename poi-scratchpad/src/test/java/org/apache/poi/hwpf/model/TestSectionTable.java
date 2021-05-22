@@ -55,8 +55,8 @@ public final class TestSectionTable {
     byte[] newMainStream = mainOut.toByteArray();
 
     SectionTable newSectionTable = new SectionTable(
-    		newMainStream, newTableStream, 0,
-    		newTableStream.length, 0, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
+            newMainStream, newTableStream, 0,
+            newTableStream.length, 0, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
 
     List<SEPX> oldSections = sectionTable.getSections();
     List<SEPX> newSections = newSectionTable.getSections();
@@ -79,8 +79,8 @@ public final class TestSectionTable {
     int size = oldSections.size();
     for (int x = 0; x < size; x++)
     {
-	  SEPX oldNode = oldSections.get(x);
-	  SEPX newNode = newSections.get(x);
+      SEPX oldNode = oldSections.get(x);
+      SEPX newNode = newSections.get(x);
       assertEquals(oldNode, newNode);
     }
   }

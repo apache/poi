@@ -261,7 +261,7 @@ public final class TestRangeProperties {
                 p1_parts[2].length() + 1,
                 p2.getEnd()
         );
-	}
+    }
 
     /**
      * Tests the paragraph text of a unicode document

@@ -36,97 +36,97 @@ import org.apache.poi.util.LittleEndian;
 
 public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord {
     public static final long _type = RecordTypes.TextHeaderAtom.typeID;
-	private byte[] _header;
-	private org.apache.poi.hslf.record.RecordContainer parentRecord;
+    private byte[] _header;
+    private org.apache.poi.hslf.record.RecordContainer parentRecord;
 
-	/** The kind of text it is */
-	private int textType;
-	/** position in the owning SlideListWithText */
-	private int index = -1;
+    /** The kind of text it is */
+    private int textType;
+    /** position in the owning SlideListWithText */
+    private int index = -1;
 
-	public int getTextType() { return textType; }
-	public void setTextType(int type) { textType = type; }
+    public int getTextType() { return textType; }
+    public void setTextType(int type) { textType = type; }
 
-	public TextPlaceholder getTextTypeEnum() {
-		return TextPlaceholder.fromNativeId(textType);
-	}
+    public TextPlaceholder getTextTypeEnum() {
+        return TextPlaceholder.fromNativeId(textType);
+    }
 
-	public void setTextTypeEnum(TextPlaceholder placeholder) {
-		textType = placeholder.nativeId;
-	}
+    public void setTextTypeEnum(TextPlaceholder placeholder) {
+        textType = placeholder.nativeId;
+    }
 
     /**
      * @return  0-based index of the text run in the SLWT container
      */
-	public int getIndex() { return index; }
+    public int getIndex() { return index; }
 
     /**
      *  @param index 0-based index of the text run in the SLWT container
      */
-	public void setIndex(int index) { this.index = index; }
+    public void setIndex(int index) { this.index = index; }
 
-	@Override
+    @Override
     public org.apache.poi.hslf.record.RecordContainer getParentRecord() { return parentRecord; }
-	@Override
+    @Override
     public void setParentRecord(RecordContainer record) { this.parentRecord = record; }
 
-	/* *************** record code follows ********************** */
+    /* *************** record code follows ********************** */
 
-	/**
-	 * For the TextHeader Atom
-	 */
-	protected TextHeaderAtom(byte[] source, int start, int len) {
-		// Sanity Checking - we're always 12 bytes long
-		if(len < 12) {
-			len = 12;
-			if(source.length - start < 12) {
-				throw new HSLFException("Not enough data to form a TextHeaderAtom (always 12 bytes long) - found " + (source.length - start));
-			}
-		}
+    /**
+     * For the TextHeader Atom
+     */
+    protected TextHeaderAtom(byte[] source, int start, int len) {
+        // Sanity Checking - we're always 12 bytes long
+        if(len < 12) {
+            len = 12;
+            if(source.length - start < 12) {
+                throw new HSLFException("Not enough data to form a TextHeaderAtom (always 12 bytes long) - found " + (source.length - start));
+            }
+        }
 
-		// Get the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+        // Get the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Grab the type
-		textType = LittleEndian.getInt(source,start+8);
-	}
+        // Grab the type
+        textType = LittleEndian.getInt(source,start+8);
+    }
 
-	/**
-	 * Create a new TextHeader Atom, for an unknown type of text
-	 */
-	public TextHeaderAtom() {
-		_header = new byte[8];
-		LittleEndian.putUShort(_header, 0, 0);
-		LittleEndian.putUShort(_header, 2, (int)_type);
-		LittleEndian.putInt(_header, 4, 4);
+    /**
+     * Create a new TextHeader Atom, for an unknown type of text
+     */
+    public TextHeaderAtom() {
+        _header = new byte[8];
+        LittleEndian.putUShort(_header, 0, 0);
+        LittleEndian.putUShort(_header, 2, (int)_type);
+        LittleEndian.putInt(_header, 4, 4);
 
-		textType = TextPlaceholder.OTHER.nativeId;
-	}
+        textType = TextPlaceholder.OTHER.nativeId;
+    }
 
-	/**
-	 * We are of type 3999
-	 */
-	@Override
+    /**
+     * We are of type 3999
+     */
+    @Override
     public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	@Override
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		// Header - size or type unchanged
-		out.write(_header);
+        // Header - size or type unchanged
+        out.write(_header);
 
-		// Write out our type
-		writeLittleEndian(textType,out);
-	}
+        // Write out our type
+        writeLittleEndian(textType,out);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"index", this::getIndex,
-			"textType", this::getTextTypeEnum
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "index", this::getIndex,
+            "textType", this::getTextTypeEnum
+        );
+    }
 }

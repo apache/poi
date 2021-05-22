@@ -68,42 +68,42 @@ public class TestTable {
 
     @Test
     void testTable() throws IOException {
-		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt")) {
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt")) {
             List<HSLFSlide> slides = ppt.getSlides();
             assertEquals(1, slides.size());
             checkSlide(slides.get(0));
         }
-	}
+    }
 
-	private void checkSlide(final HSLFSlide s) {
-		List<List<HSLFTextParagraph>> textRuns = s.getTextParagraphs();
-		assertEquals(2, textRuns.size());
+    private void checkSlide(final HSLFSlide s) {
+        List<List<HSLFTextParagraph>> textRuns = s.getTextParagraphs();
+        assertEquals(2, textRuns.size());
 
-		HSLFTextRun textRun = textRuns.get(0).get(0).getTextRuns().get(0);
-		assertEquals("Table sample", textRun.getRawText().trim());
-		assertEquals(1, textRuns.get(0).get(0).getTextRuns().size());
-		assertFalse(textRun.getTextParagraph().isBullet());
+        HSLFTextRun textRun = textRuns.get(0).get(0).getTextRuns().get(0);
+        assertEquals("Table sample", textRun.getRawText().trim());
+        assertEquals(1, textRuns.get(0).get(0).getTextRuns().size());
+        assertFalse(textRun.getTextParagraph().isBullet());
 
-		assertEquals("Dummy text", HSLFTextParagraph.getRawText(textRuns.get(1)));
+        assertEquals("Dummy text", HSLFTextParagraph.getRawText(textRuns.get(1)));
 
-		List<HSLFShape> shapes = s.getShapes();
-		assertNotNull(shapes);
-		assertEquals(3, shapes.size());
-		assertTrue(shapes.get(2) instanceof HSLFTable);
-		final HSLFTable table = (HSLFTable) shapes.get(2);
-		assertEquals(4, table.getNumberOfColumns());
-		assertEquals(6, table.getNumberOfRows());
-		for (int x = 0; x < 4; x ++) {
+        List<HSLFShape> shapes = s.getShapes();
+        assertNotNull(shapes);
+        assertEquals(3, shapes.size());
+        assertTrue(shapes.get(2) instanceof HSLFTable);
+        final HSLFTable table = (HSLFTable) shapes.get(2);
+        assertEquals(4, table.getNumberOfColumns());
+        assertEquals(6, table.getNumberOfRows());
+        for (int x = 0; x < 4; x ++) {
             HSLFTableCell c = table.getCell(0, x);
             assertNotNull(c);
-			assertEquals("TH Cell " + (x + 1), HSLFTextParagraph.getRawText(c.getTextParagraphs()));
-			for (int y = 1; y < 6; y++) {
-			    c = table.getCell(y, x);
-			    assertNotNull(c);
-				assertEquals("Row " + y + ", Cell " + (x + 1), c.getText());
-			}
-		}
-	}
+            assertEquals("TH Cell " + (x + 1), HSLFTextParagraph.getRawText(c.getTextParagraphs()));
+            for (int y = 1; y < 6; y++) {
+                c = table.getCell(y, x);
+                assertNotNull(c);
+                assertEquals("Row " + y + ", Cell " + (x + 1), c.getText());
+            }
+        }
+    }
 
     @Test
     void testAddText() throws IOException {

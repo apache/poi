@@ -27,58 +27,58 @@ import java.util.Arrays;
 
 public final class Environment extends PositionDependentRecordContainer
 {
-	private byte[] _header;
-	private static long _type = 1010;
+    private byte[] _header;
+    private static long _type = 1010;
 
-	// Links to our more interesting children
-	private FontCollection fontCollection;
+    // Links to our more interesting children
+    private FontCollection fontCollection;
     //master style for text with type=TextHeaderAtom.OTHER_TYPE
     private TxMasterStyleAtom txmaster;
 
-	/**
-	 * Returns the FontCollection of this Environment
-	 */
-	public FontCollection getFontCollection() { return fontCollection; }
+    /**
+     * Returns the FontCollection of this Environment
+     */
+    public FontCollection getFontCollection() { return fontCollection; }
 
 
-	/**
-	 * Set things up, and find our more interesting children
-	 */
-	protected Environment(byte[] source, int start, int len) {
-		// Grab the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+    /**
+     * Set things up, and find our more interesting children
+     */
+    protected Environment(byte[] source, int start, int len) {
+        // Grab the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);
+        // Find our children
+        _children = Record.findChildRecords(source,start+8,len-8);
 
-		// Find our FontCollection record
-		for(int i=0; i<_children.length; i++) {
-			if(_children[i] instanceof FontCollection) {
-				fontCollection = (FontCollection)_children[i];
-			} else if (_children[i] instanceof TxMasterStyleAtom){
+        // Find our FontCollection record
+        for(int i=0; i<_children.length; i++) {
+            if(_children[i] instanceof FontCollection) {
+                fontCollection = (FontCollection)_children[i];
+            } else if (_children[i] instanceof TxMasterStyleAtom){
                 txmaster = (TxMasterStyleAtom)_children[i];
             }
-		}
+        }
 
-		if(fontCollection == null) {
-			throw new IllegalStateException("Environment didn't contain a FontCollection record!");
-		}
-	}
+        if(fontCollection == null) {
+            throw new IllegalStateException("Environment didn't contain a FontCollection record!");
+        }
+    }
 
     public TxMasterStyleAtom getTxMasterStyleAtom(){
         return txmaster;
     }
 
-	/**
-	 * We are of type 1010
-	 */
-	public long getRecordType() { return _type; }
+    /**
+     * We are of type 1010
+     */
+    public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		writeOut(_header[0],_header[1],_type,_children,out);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        writeOut(_header[0],_header[1],_type,_children,out);
+    }
 }

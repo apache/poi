@@ -28,62 +28,62 @@ import org.junit.jupiter.api.Test;
  * Tests that TextCharsAtom works properly
  */
 public final class TestTextCharsAtom {
-	// From a real file
-	private final byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
-		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00 };
-	private final String data_text = "This";
-	private final byte[] alt_data = new byte[] { 0, 0, 0xA0-256, 0x0F, 0x0a, 0, 0, 0,
-		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00, 0xa3-256, 0x01 };
-	private final String alt_text = "This\u01A3";
+    // From a real file
+    private final byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
+        0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00 };
+    private final String data_text = "This";
+    private final byte[] alt_data = new byte[] { 0, 0, 0xA0-256, 0x0F, 0x0a, 0, 0, 0,
+        0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00, 0xa3-256, 0x01 };
+    private final String alt_text = "This\u01A3";
 
-	@Test
+    @Test
     void testRecordType() {
-		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		assertEquals(4000L, tca.getRecordType());
-	}
+        TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
+        assertEquals(4000L, tca.getRecordType());
+    }
 
-	@Test
-	void testTextA() {
-		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		assertEquals(data_text, tca.getText());
-	}
+    @Test
+    void testTextA() {
+        TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
+        assertEquals(data_text, tca.getText());
+    }
 
-	@Test
-	void testTextB() {
-		TextCharsAtom tca = new TextCharsAtom(alt_data,0,alt_data.length);
-		assertEquals(alt_text, tca.getText());
-	}
+    @Test
+    void testTextB() {
+        TextCharsAtom tca = new TextCharsAtom(alt_data,0,alt_data.length);
+        assertEquals(alt_text, tca.getText());
+    }
 
-	@Test
-	void testChangeText() throws Exception {
-		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		tca.setText(alt_text);
+    @Test
+    void testChangeText() throws Exception {
+        TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
+        tca.setText(alt_text);
 
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tca.writeOut(baos);
-		assertArrayEquals(alt_data, baos.toByteArray());
-	}
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tca.writeOut(baos);
+        assertArrayEquals(alt_data, baos.toByteArray());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tca.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tca.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 
-	@Test
-	void testCreateNew() throws Exception {
-		TextCharsAtom tca = new TextCharsAtom();
-		assertEquals(0, tca.getText().length());
+    @Test
+    void testCreateNew() throws Exception {
+        TextCharsAtom tca = new TextCharsAtom();
+        assertEquals(0, tca.getText().length());
 
-		tca.setText(data_text);
-		assertEquals(data_text, tca.getText());
+        tca.setText(data_text);
+        assertEquals(data_text, tca.getText());
 
-		// Check it's now like data
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tca.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+        // Check it's now like data
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tca.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 
 }

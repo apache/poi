@@ -31,85 +31,85 @@ import org.apache.poi.util.IOUtils;
  *  for all of them.
  */
 public abstract class HPBFPart {
-	private byte[] data;
-	private final String[] path;
+    private byte[] data;
+    private final String[] path;
 
-	/**
-	 * @param path  the path to the part, eg Contents or Quill, QuillSub, CONTENTS
-	 */
-	public HPBFPart(DirectoryNode baseDir, String[] path) throws IOException {
-		this.path = path;
+    /**
+     * @param path  the path to the part, eg Contents or Quill, QuillSub, CONTENTS
+     */
+    public HPBFPart(DirectoryNode baseDir, String[] path) throws IOException {
+        this.path = path;
 
-		DirectoryNode dir = getDir(baseDir, path);
-		String name = path[path.length-1];
+        DirectoryNode dir = getDir(baseDir, path);
+        String name = path[path.length-1];
 
-		if (!dir.hasEntry(name)) {
+        if (!dir.hasEntry(name)) {
             throw new IllegalArgumentException("File invalid - failed to find document entry '" + name + "'");
-		}
+        }
 
-		// Grab the data from the part stream
-		try (InputStream is = dir.createDocumentInputStream(name)) {
-			data = IOUtils.toByteArray(is);
-		}
-	}
+        // Grab the data from the part stream
+        try (InputStream is = dir.createDocumentInputStream(name)) {
+            data = IOUtils.toByteArray(is);
+        }
+    }
 
-	private static DirectoryNode getDir(DirectoryNode baseDir, String[] path) {
-		DirectoryNode dir = baseDir;
-		for(int i=0; i<path.length-1; i++) {
-			try {
-				dir = (DirectoryNode)dir.getEntry(path[i]);
-			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("File invalid - failed to find directory entry '"
-						+ path[i] + "': " + e);
-			}
-		}
-		return dir;
-	}
+    private static DirectoryNode getDir(DirectoryNode baseDir, String[] path) {
+        DirectoryNode dir = baseDir;
+        for(int i=0; i<path.length-1; i++) {
+            try {
+                dir = (DirectoryNode)dir.getEntry(path[i]);
+            } catch (FileNotFoundException e) {
+                throw new IllegalArgumentException("File invalid - failed to find directory entry '"
+                        + path[i] + "': " + e);
+            }
+        }
+        return dir;
+    }
 
-	public void writeOut(DirectoryNode baseDir) throws IOException {
-		String[] path = getPath();
+    public void writeOut(DirectoryNode baseDir) throws IOException {
+        String[] path = getPath();
 
-		// Ensure that all parent directories exist
-		DirectoryNode dir = baseDir;
-		for(int i=0; i<path.length-1; i++) {
-			try {
-				dir = (DirectoryNode)dir.getEntry(path[i]);
-			} catch(FileNotFoundException e) {
-				dir.createDirectory(path[i]);
-			}
-		}
+        // Ensure that all parent directories exist
+        DirectoryNode dir = baseDir;
+        for(int i=0; i<path.length-1; i++) {
+            try {
+                dir = (DirectoryNode)dir.getEntry(path[i]);
+            } catch(FileNotFoundException e) {
+                dir.createDirectory(path[i]);
+            }
+        }
 
-		// Update the byte array with the latest data
-		generateData();
+        // Update the byte array with the latest data
+        generateData();
 
-		// Write out
-		ByteArrayInputStream bais = new ByteArrayInputStream(data);
-		dir.createDocument(path[path.length-1], bais);
-	}
+        // Write out
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        dir.createDocument(path[path.length-1], bais);
+    }
 
-	/**
-	 * Called just before writing out, to trigger
-	 *  the data byte array to be updated with the
-	 *  latest contents.
-	 */
-	protected abstract void generateData();
+    /**
+     * Called just before writing out, to trigger
+     *  the data byte array to be updated with the
+     *  latest contents.
+     */
+    protected abstract void generateData();
 
-	/**
-	 * Returns the raw data that makes up
-	 *  this document part.
-	 */
-	public final byte[] getData() {
-		return data;
-	}
+    /**
+     * Returns the raw data that makes up
+     *  this document part.
+     */
+    public final byte[] getData() {
+        return data;
+    }
 
-	protected final void setData(byte[] data) {
-	    this.data = data.clone();
-	}
+    protected final void setData(byte[] data) {
+        this.data = data.clone();
+    }
 
-	/**
-	 * Returns
-	 */
-	public final String[] getPath() {
-		return path;
-	}
+    /**
+     * Returns
+     */
+    public final String[] getPath() {
+        return path;
+    }
 }

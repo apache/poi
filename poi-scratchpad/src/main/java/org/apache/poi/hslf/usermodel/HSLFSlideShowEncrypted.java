@@ -106,7 +106,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         Integer encOffset = ptr.getSlideLocationsLookup().get(userEditAtomWithEncryption.getEncryptSessionPersistIdRef());
         if (encOffset == null) {
             // encryption info doesn't exist anymore
-        	// SoftMaker Freeoffice produces such invalid files - check for "SMNativeObjData" ole stream
+            // SoftMaker Freeoffice produces such invalid files - check for "SMNativeObjData" ole stream
             dea = null;
             return;
         }

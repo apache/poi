@@ -30,36 +30,36 @@ import org.junit.jupiter.api.Test;
  * Note: most recent record stuff has its own test
  */
 public final class TestRecordSetup {
-	// SlideShow primed on the test data
-	@SuppressWarnings("unused")
+    // SlideShow primed on the test data
+    @SuppressWarnings("unused")
     private HSLFSlideShow ss;
-	private HSLFSlideShowImpl hss;
+    private HSLFSlideShowImpl hss;
 
-	@BeforeEach
-	void init() throws Exception {
+    @BeforeEach
+    void init() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(hss);
-	}
+        hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShow(hss);
+    }
 
-	@Test
-	void testHandleParentAwareRecords() {
-		 org.apache.poi.hslf.record.Record[] records = hss.getRecords();
-		for ( org.apache.poi.hslf.record.Record record : records) {
-			ensureParentAware(record,null);
-		}
-	}
-	private void ensureParentAware( org.apache.poi.hslf.record.Record r,RecordContainer parent) {
-		if(r instanceof ParentAwareRecord) {
-			ParentAwareRecord pr = (ParentAwareRecord)r;
-			assertEquals(parent, pr.getParentRecord());
-		}
-		if(r instanceof RecordContainer) {
-			RecordContainer rc = (RecordContainer)r;
-			 org.apache.poi.hslf.record.Record[] children = rc.getChildRecords();
-			for ( org.apache.poi.hslf.record.Record rec : children) {
-				ensureParentAware(rec, rc);
-			}
-		}
-	}
+    @Test
+    void testHandleParentAwareRecords() {
+         org.apache.poi.hslf.record.Record[] records = hss.getRecords();
+        for ( org.apache.poi.hslf.record.Record record : records) {
+            ensureParentAware(record,null);
+        }
+    }
+    private void ensureParentAware( org.apache.poi.hslf.record.Record r,RecordContainer parent) {
+        if(r instanceof ParentAwareRecord) {
+            ParentAwareRecord pr = (ParentAwareRecord)r;
+            assertEquals(parent, pr.getParentRecord());
+        }
+        if(r instanceof RecordContainer) {
+            RecordContainer rc = (RecordContainer)r;
+             org.apache.poi.hslf.record.Record[] children = rc.getChildRecords();
+            for ( org.apache.poi.hslf.record.Record rec : children) {
+                ensureParentAware(rec, rc);
+            }
+        }
+    }
 }

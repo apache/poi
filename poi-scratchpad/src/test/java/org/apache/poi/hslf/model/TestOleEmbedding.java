@@ -114,26 +114,26 @@ public final class TestOleEmbedding {
 
     @Test
     void testEmbedding() throws IOException {
-    	HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-    	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
-    	HSLFPictureData pictData = ppt.addPicture(pict, PictureType.JPEG);
+        File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
+        HSLFPictureData pictData = ppt.addPicture(pict, PictureType.JPEG);
 
-    	InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("Employee.xls");
-    	POIFSFileSystem poiData1 = new POIFSFileSystem(is);
-    	is.close();
+        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("Employee.xls");
+        POIFSFileSystem poiData1 = new POIFSFileSystem(is);
+        is.close();
 
-    	int oleObjectId1 = ppt.addEmbed(poiData1);
+        int oleObjectId1 = ppt.addEmbed(poiData1);
 
-    	HSLFSlide slide1 = ppt.createSlide();
-    	HSLFObjectShape oleShape1 = new HSLFObjectShape(pictData);
-    	oleShape1.setObjectID(oleObjectId1);
-    	slide1.addShape(oleShape1);
-    	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        HSLFSlide slide1 = ppt.createSlide();
+        HSLFObjectShape oleShape1 = new HSLFObjectShape(pictData);
+        oleShape1.setObjectID(oleObjectId1);
+        slide1.addShape(oleShape1);
+        oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
 
-    	// add second slide with different order in object creation
-    	HSLFSlide slide2 = ppt.createSlide();
-    	HSLFObjectShape oleShape2 = new HSLFObjectShape(pictData);
+        // add second slide with different order in object creation
+        HSLFSlide slide2 = ppt.createSlide();
+        HSLFObjectShape oleShape2 = new HSLFObjectShape(pictData);
 
         is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleWithImages.xls");
         POIFSFileSystem poiData2 = new POIFSFileSystem(is);
@@ -145,22 +145,22 @@ public final class TestOleEmbedding {
         slide2.addShape(oleShape2);
         oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
 
-    	UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-    	ppt.write(bos);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        ppt.write(bos);
 
-    	ppt = new HSLFSlideShow(bos.toInputStream());
-    	HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
+        ppt = new HSLFSlideShow(bos.toInputStream());
+        HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
         byte[] compData = IOUtils.toByteArray(comp.getObjectData().getInputStream());
 
-    	bos.reset();
-    	poiData1.writeFilesystem(bos);
+        bos.reset();
+        poiData1.writeFilesystem(bos);
         byte[] expData = bos.toByteArray();
 
-    	assertArrayEquals(expData, compData);
+        assertArrayEquals(expData, compData);
 
-    	poiData1.close();
-    	poiData2.close();
-    	ppt.close();
+        poiData1.close();
+        poiData2.close();
+        ppt.close();
     }
 
 

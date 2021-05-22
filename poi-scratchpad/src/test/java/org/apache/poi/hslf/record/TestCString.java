@@ -29,79 +29,79 @@ import org.junit.jupiter.api.Test;
  * Tests that CString works properly
  */
 public final class TestCString {
-	// From a real file
-	private final byte[] data_a = { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
-		0x48, 0, 0x6F, 0, 0x67, 0, 0x77, 0,
-		0x61, 0, 0x72, 0, 0x74, 0, 0x73, 0  };
-	private final byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
-		0x43, 0, 0x6F, 0, 0x6D, 0, 0x6D, 0,
-		0x65, 0, 0x6E, 0, 0x74, 0, 0x73, 0 };
+    // From a real file
+    private final byte[] data_a = { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
+        0x48, 0, 0x6F, 0, 0x67, 0, 0x77, 0,
+        0x61, 0, 0x72, 0, 0x74, 0, 0x73, 0  };
+    private final byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
+        0x43, 0, 0x6F, 0, 0x6D, 0, 0x6D, 0,
+        0x65, 0, 0x6E, 0, 0x74, 0, 0x73, 0 };
 
-	@Test
+    @Test
     void testRecordType() {
-		CString ca = new CString(data_a, 0, data_a.length);
-		assertEquals(4026L, ca.getRecordType());
-		CString cb = new CString(data_b, 0, data_a.length);
-		assertEquals(4026L, cb.getRecordType());
-	}
+        CString ca = new CString(data_a, 0, data_a.length);
+        assertEquals(4026L, ca.getRecordType());
+        CString cb = new CString(data_b, 0, data_a.length);
+        assertEquals(4026L, cb.getRecordType());
+    }
 
-	@Test
-	void testCount() {
-		CString ca = new CString(data_a, 0, data_a.length);
-		assertEquals(0, ca.getOptions());
-		CString cb = new CString(data_b, 0, data_a.length);
-		assertEquals(0x10, cb.getOptions());
+    @Test
+    void testCount() {
+        CString ca = new CString(data_a, 0, data_a.length);
+        assertEquals(0, ca.getOptions());
+        CString cb = new CString(data_b, 0, data_a.length);
+        assertEquals(0x10, cb.getOptions());
 
-		ca.setOptions(28);
-		assertEquals(28, ca.getOptions());
-	}
+        ca.setOptions(28);
+        assertEquals(28, ca.getOptions());
+    }
 
-	@Test
-	void testText() {
-		CString ca = new CString(data_a, 0, data_a.length);
-		assertEquals("Hogwarts", ca.getText());
-		CString cb = new CString(data_b, 0, data_a.length);
-		assertEquals("Comments", cb.getText());
+    @Test
+    void testText() {
+        CString ca = new CString(data_a, 0, data_a.length);
+        assertEquals("Hogwarts", ca.getText());
+        CString cb = new CString(data_b, 0, data_a.length);
+        assertEquals("Comments", cb.getText());
 
-		ca.setText("FooBar");
-		assertEquals("FooBar", ca.getText());
-	}
+        ca.setText("FooBar");
+        assertEquals("FooBar", ca.getText());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		CString ca = new CString(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ca.writeOut(baos);
-		byte[] b = baos.toByteArray();
-		assertArrayEquals(data_a, b);
+    @Test
+    void testWrite() throws Exception {
+        CString ca = new CString(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ca.writeOut(baos);
+        byte[] b = baos.toByteArray();
+        assertArrayEquals(data_a, b);
 
-		CString cb = new CString(data_b, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baosB = new UnsynchronizedByteArrayOutputStream();
-		cb.writeOut(baosB);
-		b = baosB.toByteArray();
-		assertArrayEquals(data_b, b);
-	}
+        CString cb = new CString(data_b, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baosB = new UnsynchronizedByteArrayOutputStream();
+        cb.writeOut(baosB);
+        b = baosB.toByteArray();
+        assertArrayEquals(data_b, b);
+    }
 
-	// Turn data_a into data_b
-	@Test
-	void testChange() throws Exception {
-		CString ca = new CString(data_a, 0, data_a.length);
-		ca.setText("Comments");
-		ca.setOptions(0x10);
+    // Turn data_a into data_b
+    @Test
+    void testChange() throws Exception {
+        CString ca = new CString(data_a, 0, data_a.length);
+        ca.setText("Comments");
+        ca.setOptions(0x10);
 
-		// Check bytes weren't the same
-		boolean equals = true;
-		for(int i=0; i<data_a.length; i++) {
-			if (data_a[i] != data_b[i]) {
-				equals = false;
-				break;
-			}
-		}
-		assertFalse(equals, "Arrays should not be equals");
+        // Check bytes weren't the same
+        boolean equals = true;
+        for(int i=0; i<data_a.length; i++) {
+            if (data_a[i] != data_b[i]) {
+                equals = false;
+                break;
+            }
+        }
+        assertFalse(equals, "Arrays should not be equals");
 
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ca.writeOut(baos);
-		byte[] b = baos.toByteArray();
-		assertArrayEquals(data_b, b);
-	}
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ca.writeOut(baos);
+        byte[] b = baos.toByteArray();
+        assertArrayEquals(data_b, b);
+    }
 }

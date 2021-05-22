@@ -357,7 +357,7 @@ public abstract class PropertiesChunk extends Chunk {
             }
             // generic header
             // page 23, point 2.4.2
-  	        // tag is the property id and its type
+            // tag is the property id and its type
             long tag = Long.parseLong(getFileName(property, value.getActualType()), 16);
             LittleEndian.putUInt(tag, out);
             LittleEndian.putUInt(value.getFlags(), out); // readable + writable

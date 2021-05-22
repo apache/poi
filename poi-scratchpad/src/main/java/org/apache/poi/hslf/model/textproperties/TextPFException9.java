@@ -38,96 +38,96 @@ import org.apache.poi.util.LittleEndian;
  */
 public class TextPFException9 implements GenericRecord {
 
-	private static final AutoNumberingScheme DEFAULT_AUTONUMBER_SCHEME = AutoNumberingScheme.arabicPeriod;
-	private static final Short DEFAULT_START_NUMBER = 1;
+    private static final AutoNumberingScheme DEFAULT_AUTONUMBER_SCHEME = AutoNumberingScheme.arabicPeriod;
+    private static final Short DEFAULT_START_NUMBER = 1;
 
-	//private final byte mask1;
-	//private final byte mask2;
-	private final byte mask3;
-	private final byte mask4;
-	private final Short bulletBlipRef;
-	private final Short fBulletHasAutoNumber;
-	private final AutoNumberingScheme autoNumberScheme;
-	private final Short autoNumberStartNumber;
-	private final int recordLength;
-	public TextPFException9(final byte[] source, final int startIndex) { // NOSONAR
-		//this.mask1 = source[startIndex];
-		//this.mask2 = source[startIndex + 1];
-		this.mask3 = source[startIndex + 2];
-		this.mask4 = source[startIndex + 3];
-		int length = 4;
-		int index = startIndex + 4;
-		if (0 == (mask3 & (byte)0x80 )) {
-			this.bulletBlipRef = null;
-		} else {
-			this.bulletBlipRef = LittleEndian.getShort(source, index);
-			index +=2;
-			length = 6;
-		}
-		if (0 == (mask4 & 2)) {
-			this.fBulletHasAutoNumber = null;
-		} else {
-			this.fBulletHasAutoNumber = LittleEndian.getShort(source, index);
-			index +=2;
-			length +=2;
-		}
-		if (0 == (mask4 & 1)) {
-			this.autoNumberScheme = null;
-			this.autoNumberStartNumber = null;
-		} else {
-			this.autoNumberScheme = AutoNumberingScheme.forNativeID(LittleEndian.getShort(source, index));
-			index +=2;
-			this.autoNumberStartNumber = LittleEndian.getShort(source, index);
-			index +=2;
-			length +=4;
-		}
-		this.recordLength = length;
-	}
-	public Short getBulletBlipRef() {
-		return bulletBlipRef;
-	}
-	public Short getfBulletHasAutoNumber() {
-		return fBulletHasAutoNumber;
-	}
-	public AutoNumberingScheme getAutoNumberScheme() {
-		if (autoNumberScheme != null) {
-			return autoNumberScheme;
-		}
-		return hasBulletAutoNumber() ? DEFAULT_AUTONUMBER_SCHEME : null;
-	}
+    //private final byte mask1;
+    //private final byte mask2;
+    private final byte mask3;
+    private final byte mask4;
+    private final Short bulletBlipRef;
+    private final Short fBulletHasAutoNumber;
+    private final AutoNumberingScheme autoNumberScheme;
+    private final Short autoNumberStartNumber;
+    private final int recordLength;
+    public TextPFException9(final byte[] source, final int startIndex) { // NOSONAR
+        //this.mask1 = source[startIndex];
+        //this.mask2 = source[startIndex + 1];
+        this.mask3 = source[startIndex + 2];
+        this.mask4 = source[startIndex + 3];
+        int length = 4;
+        int index = startIndex + 4;
+        if (0 == (mask3 & (byte)0x80 )) {
+            this.bulletBlipRef = null;
+        } else {
+            this.bulletBlipRef = LittleEndian.getShort(source, index);
+            index +=2;
+            length = 6;
+        }
+        if (0 == (mask4 & 2)) {
+            this.fBulletHasAutoNumber = null;
+        } else {
+            this.fBulletHasAutoNumber = LittleEndian.getShort(source, index);
+            index +=2;
+            length +=2;
+        }
+        if (0 == (mask4 & 1)) {
+            this.autoNumberScheme = null;
+            this.autoNumberStartNumber = null;
+        } else {
+            this.autoNumberScheme = AutoNumberingScheme.forNativeID(LittleEndian.getShort(source, index));
+            index +=2;
+            this.autoNumberStartNumber = LittleEndian.getShort(source, index);
+            index +=2;
+            length +=4;
+        }
+        this.recordLength = length;
+    }
+    public Short getBulletBlipRef() {
+        return bulletBlipRef;
+    }
+    public Short getfBulletHasAutoNumber() {
+        return fBulletHasAutoNumber;
+    }
+    public AutoNumberingScheme getAutoNumberScheme() {
+        if (autoNumberScheme != null) {
+            return autoNumberScheme;
+        }
+        return hasBulletAutoNumber() ? DEFAULT_AUTONUMBER_SCHEME : null;
+    }
 
-	public Short getAutoNumberStartNumber() {
-		if (autoNumberStartNumber != null) {
-			return autoNumberStartNumber;
-		}
-		return hasBulletAutoNumber() ? DEFAULT_START_NUMBER : null;
-	}
+    public Short getAutoNumberStartNumber() {
+        if (autoNumberStartNumber != null) {
+            return autoNumberStartNumber;
+        }
+        return hasBulletAutoNumber() ? DEFAULT_START_NUMBER : null;
+    }
 
-	private boolean hasBulletAutoNumber() {
-		final Short one = 1;
-		return one.equals(fBulletHasAutoNumber);
-	}
+    private boolean hasBulletAutoNumber() {
+        final Short one = 1;
+        return one.equals(fBulletHasAutoNumber);
+    }
 
-	public int getRecordLength() {
-		return recordLength;
-	}
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("Record length: ").append(this.recordLength).append(" bytes\n");
-		sb.append("bulletBlipRef: ").append(this.bulletBlipRef).append("\n");
-		sb.append("fBulletHasAutoNumber: ").append(this.fBulletHasAutoNumber).append("\n");
-		sb.append("autoNumberScheme: ").append(this.autoNumberScheme).append("\n");
-		sb.append("autoNumberStartNumber: ").append(this.autoNumberStartNumber).append("\n");
-		return sb.toString();
-	}
+    public int getRecordLength() {
+        return recordLength;
+    }
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Record length: ").append(this.recordLength).append(" bytes\n");
+        sb.append("bulletBlipRef: ").append(this.bulletBlipRef).append("\n");
+        sb.append("fBulletHasAutoNumber: ").append(this.fBulletHasAutoNumber).append("\n");
+        sb.append("autoNumberScheme: ").append(this.autoNumberScheme).append("\n");
+        sb.append("autoNumberStartNumber: ").append(this.autoNumberStartNumber).append("\n");
+        return sb.toString();
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"bulletBlipRef", this::getBulletBlipRef,
-			"bulletHasAutoNumber", this::hasBulletAutoNumber,
-			"autoNumberScheme", this::getAutoNumberScheme,
-			"autoNumberStartNumber", this::getAutoNumberStartNumber
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "bulletBlipRef", this::getBulletBlipRef,
+            "bulletHasAutoNumber", this::hasBulletAutoNumber,
+            "autoNumberScheme", this::getAutoNumberScheme,
+            "autoNumberStartNumber", this::getAutoNumberStartNumber
+        );
+    }
 }

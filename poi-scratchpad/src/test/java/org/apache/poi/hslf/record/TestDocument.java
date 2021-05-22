@@ -30,57 +30,57 @@ import org.junit.jupiter.api.Test;
  * Tests that Document works properly (Also tests Environment while we're at it)
  */
 public final class TestDocument {
-	private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-	// HSLFSlideShow primed on the test data
-	private HSLFSlideShowImpl ss;
-	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+    // HSLFSlideShow primed on the test data
+    private HSLFSlideShowImpl ss;
+    // POIFS primed on the test data
+    private POIFSFileSystem pfs;
 
-	@BeforeEach
-	void setup() throws Exception {
-		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShowImpl(pfs);
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShowImpl(pfs);
+    }
 
-	private Document getDocRecord() {
-		Record[] r = ss.getRecords();
-		for (int i = (r.length - 1); i >= 0; i--) {
-			if (r[i] instanceof Document) {
-				return (Document) r[i];
-			}
-		}
-		throw new IllegalStateException("No Document record found");
-	}
+    private Document getDocRecord() {
+        Record[] r = ss.getRecords();
+        for (int i = (r.length - 1); i >= 0; i--) {
+            if (r[i] instanceof Document) {
+                return (Document) r[i];
+            }
+        }
+        throw new IllegalStateException("No Document record found");
+    }
 
-	@Test
-	void testRecordType() {
-		Document dr = getDocRecord();
-		assertEquals(1000, dr.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        Document dr = getDocRecord();
+        assertEquals(1000, dr.getRecordType());
+    }
 
-	@Test
-	void testChildRecords() {
-		Document dr = getDocRecord();
-		assertNotNull(dr.getDocumentAtom());
+    @Test
+    void testChildRecords() {
+        Document dr = getDocRecord();
+        assertNotNull(dr.getDocumentAtom());
 
-		assertNotNull(dr.getEnvironment());
+        assertNotNull(dr.getEnvironment());
 
-		assertNotNull(dr.getSlideListWithTexts());
-		assertEquals(3, dr.getSlideListWithTexts().length);
-		assertNotNull(dr.getSlideListWithTexts()[0]);
-		assertNotNull(dr.getSlideListWithTexts()[1]);
-		assertNotNull(dr.getSlideListWithTexts()[2]);
-	}
+        assertNotNull(dr.getSlideListWithTexts());
+        assertEquals(3, dr.getSlideListWithTexts().length);
+        assertNotNull(dr.getSlideListWithTexts()[0]);
+        assertNotNull(dr.getSlideListWithTexts()[1]);
+        assertNotNull(dr.getSlideListWithTexts()[2]);
+    }
 
-	@Test
-	void testEnvironment() {
-		Document dr = getDocRecord();
-		Environment env = dr.getEnvironment();
+    @Test
+    void testEnvironment() {
+        Document dr = getDocRecord();
+        Environment env = dr.getEnvironment();
 
-		assertEquals(1010, env.getRecordType());
-		assertNotNull(env.getFontCollection());
-	}
+        assertEquals(1010, env.getRecordType());
+        assertNotNull(env.getFontCollection());
+    }
 
-	// No need to check re-writing - hslf.TestReWrite does all that for us
+    // No need to check re-writing - hslf.TestReWrite does all that for us
 }

@@ -136,7 +136,7 @@ public final class TestTNEFAttributes {
         assertEquals(TNEFStringAttribute.class, attr.getClass());
 
         // It is a null terminated string
-	   assertEquals("quick.doc\u0000", new String(attr.getData(), StandardCharsets.US_ASCII));
+       assertEquals("quick.doc\u0000", new String(attr.getData(), StandardCharsets.US_ASCII));
 
         // But when we ask for the string, that is sorted for us
         TNEFStringAttribute str = (TNEFStringAttribute) attr;

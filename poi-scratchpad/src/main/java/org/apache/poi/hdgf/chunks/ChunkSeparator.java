@@ -24,13 +24,13 @@ import java.util.Arrays;
  *  header of the next one
  */
 public final class ChunkSeparator {
-	final byte[] separatorData;
+    final byte[] separatorData;
 
-	public ChunkSeparator(byte[] data, int offset) {
-		separatorData = Arrays.copyOfRange(data, offset, offset+4);
-	}
+    public ChunkSeparator(byte[] data, int offset) {
+        separatorData = Arrays.copyOfRange(data, offset, offset+4);
+    }
 
-	public String toString() {
-		return "<ChunkSeparator of length " + separatorData.length + ">";
-	}
+    public String toString() {
+        return "<ChunkSeparator of length " + separatorData.length + ">";
+    }
 }

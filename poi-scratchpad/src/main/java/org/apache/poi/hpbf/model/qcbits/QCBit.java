@@ -21,66 +21,66 @@ package org.apache.poi.hpbf.model.qcbits;
  * Parent of all Quill CONTENTS bits
  */
 public abstract class QCBit {
-	private String thingType;
-	private String bitType;
-	private byte[] data;
+    private String thingType;
+    private String bitType;
+    private byte[] data;
 
-	private int optA;
-	private int optB;
-	private int optC;
+    private int optA;
+    private int optB;
+    private int optC;
 
-	private int dataOffset;
+    private int dataOffset;
 
-	public QCBit(String thingType, String bitType, byte[] data) {
-		this.thingType = thingType;
-		this.bitType = bitType;
-		this.data = data.clone();
-	}
+    public QCBit(String thingType, String bitType, byte[] data) {
+        this.thingType = thingType;
+        this.bitType = bitType;
+        this.data = data.clone();
+    }
 
-	/**
-	 * Returns the type of the thing, eg TEXT, FONT
-	 *  or TOKN
-	 */
-	public String getThingType() { return thingType; }
-	/**
-	 * Returns the type of the bit data, eg TEXT
-	 *  or PLC
-	 */
-	public String getBitType() { return bitType; }
-	public final byte[] getData() { return data; }
-	protected final void setData(byte[] data) {
-	    this.data = data.clone();
-	}
+    /**
+     * Returns the type of the thing, eg TEXT, FONT
+     *  or TOKN
+     */
+    public String getThingType() { return thingType; }
+    /**
+     * Returns the type of the bit data, eg TEXT
+     *  or PLC
+     */
+    public String getBitType() { return bitType; }
+    public final byte[] getData() { return data; }
+    protected final void setData(byte[] data) {
+        this.data = data.clone();
+    }
 
-	public int getOptA() {
-		return optA;
-	}
-	public void setOptA(int optA) {
-		this.optA = optA;
-	}
+    public int getOptA() {
+        return optA;
+    }
+    public void setOptA(int optA) {
+        this.optA = optA;
+    }
 
-	public int getOptB() {
-		return optB;
-	}
-	public void setOptB(int optB) {
-		this.optB = optB;
-	}
+    public int getOptB() {
+        return optB;
+    }
+    public void setOptB(int optB) {
+        this.optB = optB;
+    }
 
-	public int getOptC() {
-		return optC;
-	}
-	public void setOptC(int optC) {
-		this.optC = optC;
-	}
+    public int getOptC() {
+        return optC;
+    }
+    public void setOptC(int optC) {
+        this.optC = optC;
+    }
 
-	public int getDataOffset() {
-		return dataOffset;
-	}
-	public void setDataOffset(int offset) {
-		this.dataOffset = offset;
-	}
+    public int getDataOffset() {
+        return dataOffset;
+    }
+    public void setDataOffset(int offset) {
+        this.dataOffset = offset;
+    }
 
-	public int getLength() {
-		return data.length;
-	}
+    public int getLength() {
+        return data.length;
+    }
 }

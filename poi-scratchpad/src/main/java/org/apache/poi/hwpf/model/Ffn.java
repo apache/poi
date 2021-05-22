@@ -98,22 +98,22 @@ public final class Ffn
 
   public short getWeight()
   {
-	  return  _wWeight;
+      return  _wWeight;
   }
 
   public byte getChs()
   {
-	  return  _chs;
+      return  _chs;
   }
 
   public byte [] getPanose()
   {
-	  return  _panose;
+      return  _panose;
   }
 
   public byte [] getFontSig()
   {
-	  return  _fontSig;
+      return  _fontSig;
   }
 
   public int getSize()

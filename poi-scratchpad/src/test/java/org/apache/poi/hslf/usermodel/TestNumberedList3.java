@@ -49,61 +49,61 @@ public final class TestNumberedList3 {
 
     @Test
     void testNumberedList() throws IOException {
-		try (HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers3.ppt"))) {
-			final List<HSLFSlide> slides = ppt.getSlides();
-			assertEquals(1, slides.size());
-			final HSLFSlide slide = slides.get(0);
-			checkSlide(slide);
-		}
-	}
-	private void checkSlide(final HSLFSlide s) {
-		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
-		assertNotNull(numberedListArray);
-		assertEquals(1, numberedListArray.length);
-		final StyleTextProp9Atom numberedListInfoForTextBox = numberedListArray[0];
-		assertNotNull(numberedListInfoForTextBox);
-		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox.getAutoNumberTypes();
-		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
-		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used
+        try (HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers3.ppt"))) {
+            final List<HSLFSlide> slides = ppt.getSlides();
+            assertEquals(1, slides.size());
+            final HSLFSlide slide = slides.get(0);
+            checkSlide(slide);
+        }
+    }
+    private void checkSlide(final HSLFSlide s) {
+        final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
+        assertNotNull(numberedListArray);
+        assertEquals(1, numberedListArray.length);
+        final StyleTextProp9Atom numberedListInfoForTextBox = numberedListArray[0];
+        assertNotNull(numberedListInfoForTextBox);
+        final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox.getAutoNumberTypes();
+        assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
+        assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used
         assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 
-		final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
-		assertEquals(3, textParass.size());
-		assertEquals("Bulleted list\rMore bullets\rNo bullets here", HSLFTextParagraph.getRawText(textParass.get(0)));
-		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", HSLFTextParagraph.getRawText(textParass.get(1)));
-		assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", HSLFTextParagraph.getRawText(textParass.get(2)));
-		assertEquals(3, textParass.get(0).size());
-		assertEquals(2, textParass.get(1).size());
-		assertEquals(2, textParass.get(2).size());
-		assertNull(textParass.get(0).get(0).getStyleTextProp9Atom());
-		assertNotNull(textParass.get(1).get(0).getStyleTextProp9Atom());
-		assertNull(textParass.get(2).get(0).getStyleTextProp9Atom());
-		final TextPFException9[] autoNumbers = textParass.get(1).get(0).getStyleTextProp9Atom().getAutoNumberTypes();
-		assertEquals(1, autoNumbers.length);
-		assertEquals(Short.valueOf((short)1), autoNumbers[0].getfBulletHasAutoNumber());
-		assertEquals(Short.valueOf((short)1), autoNumbers[0].getAutoNumberStartNumber());//Default value = 1 will be used
+        final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+        assertEquals(3, textParass.size());
+        assertEquals("Bulleted list\rMore bullets\rNo bullets here", HSLFTextParagraph.getRawText(textParass.get(0)));
+        assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", HSLFTextParagraph.getRawText(textParass.get(1)));
+        assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", HSLFTextParagraph.getRawText(textParass.get(2)));
+        assertEquals(3, textParass.get(0).size());
+        assertEquals(2, textParass.get(1).size());
+        assertEquals(2, textParass.get(2).size());
+        assertNull(textParass.get(0).get(0).getStyleTextProp9Atom());
+        assertNotNull(textParass.get(1).get(0).getStyleTextProp9Atom());
+        assertNull(textParass.get(2).get(0).getStyleTextProp9Atom());
+        final TextPFException9[] autoNumbers = textParass.get(1).get(0).getStyleTextProp9Atom().getAutoNumberTypes();
+        assertEquals(1, autoNumbers.length);
+        assertEquals(Short.valueOf((short)1), autoNumbers[0].getfBulletHasAutoNumber());
+        assertEquals(Short.valueOf((short)1), autoNumbers[0].getAutoNumberStartNumber());//Default value = 1 will be used
         assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 
-		int chCovered = 0;
-		for (HSLFTextParagraph htp : textParass.get(1)) {
-    		for (HSLFTextRun htr : htp.getTextRuns()) {
-    		    TextPropCollection textProp = htr.getCharacterStyle();
-    		    chCovered += textProp.getCharactersCovered();
-    		}
-		}
-		assertEquals(67, chCovered);
+        int chCovered = 0;
+        for (HSLFTextParagraph htp : textParass.get(1)) {
+            for (HSLFTextRun htr : htp.getTextRuns()) {
+                TextPropCollection textProp = htr.getCharacterStyle();
+                chCovered += textProp.getCharactersCovered();
+            }
+        }
+        assertEquals(67, chCovered);
 
-		assertTrue(textParass.get(0).get(0).isBullet());
+        assertTrue(textParass.get(0).get(0).isBullet());
 
-		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textParass.size(), styleAtoms.length);
-		checkSingleRunWrapper(43, styleAtoms[0]);
-		checkSingleRunWrapper(67, styleAtoms[1]);
-	}
-	private void checkSingleRunWrapper(final int exceptedLength, final EscherTextboxWrapper wrapper) {
-		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
-		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
-		assertEquals(1, textProps.size());
-		assertEquals(exceptedLength, textProps.get(0).getCharactersCovered());
-	}
+        final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
+        assertEquals(textParass.size(), styleAtoms.length);
+        checkSingleRunWrapper(43, styleAtoms[0]);
+        checkSingleRunWrapper(67, styleAtoms[1]);
+    }
+    private void checkSingleRunWrapper(final int exceptedLength, final EscherTextboxWrapper wrapper) {
+        final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
+        final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
+        assertEquals(1, textProps.size());
+        assertEquals(exceptedLength, textProps.get(0).getCharactersCovered());
+    }
 }

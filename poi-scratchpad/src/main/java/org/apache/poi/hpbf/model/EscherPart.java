@@ -30,58 +30,58 @@ import org.apache.poi.util.IOUtils;
  */
 public abstract class EscherPart extends HPBFPart {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	private EscherRecord[] records;
+    private EscherRecord[] records;
 
-	/**
-	 * Creates the Escher Part, and finds our child
-	 *  escher records
-	 */
-	public EscherPart(DirectoryNode baseDir, String[] parts) throws IOException {
-		super(baseDir, parts);
+    /**
+     * Creates the Escher Part, and finds our child
+     *  escher records
+     */
+    public EscherPart(DirectoryNode baseDir, String[] parts) throws IOException {
+        super(baseDir, parts);
 
-		// Now create our Escher children
-		DefaultEscherRecordFactory erf =
-			new DefaultEscherRecordFactory();
+        // Now create our Escher children
+        DefaultEscherRecordFactory erf =
+            new DefaultEscherRecordFactory();
 
-		ArrayList<EscherRecord> ec = new ArrayList<>();
+        ArrayList<EscherRecord> ec = new ArrayList<>();
         byte[] data = getData();
-		int left = data.length;
-		while(left > 0) {
-			EscherRecord er = erf.createRecord(data, 0);
-			er.fillFields(data, 0, erf);
-			left -= er.getRecordSize();
+        int left = data.length;
+        while(left > 0) {
+            EscherRecord er = erf.createRecord(data, 0);
+            er.fillFields(data, 0, erf);
+            left -= er.getRecordSize();
 
-			ec.add(er);
-		}
+            ec.add(er);
+        }
 
-		records = ec.toArray(new EscherRecord[0]);
-	}
+        records = ec.toArray(new EscherRecord[0]);
+    }
 
-	public EscherRecord[] getEscherRecords() {
-		return records;
-	}
+    public EscherRecord[] getEscherRecords() {
+        return records;
+    }
 
-	/**
-	 * Serialises our Escher children back
-	 *  into bytes.
-	 */
-	protected void generateData() {
-		int size = 0;
-		for(int i=0; i<records.length; i++) {
-			size += records[i].getRecordSize();
-		}
+    /**
+     * Serialises our Escher children back
+     *  into bytes.
+     */
+    protected void generateData() {
+        int size = 0;
+        for(int i=0; i<records.length; i++) {
+            size += records[i].getRecordSize();
+        }
 
         byte[] data = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
-		size = 0;
-		for(int i=0; i<records.length; i++) {
-			int thisSize =
-				records[i].serialize(size, data);
-			size += thisSize;
-		}
-		
-		setData(data);
-	}
+        size = 0;
+        for(int i=0; i<records.length; i++) {
+            int thisSize =
+                records[i].serialize(size, data);
+            size += thisSize;
+        }
+        
+        setData(data);
+    }
 }

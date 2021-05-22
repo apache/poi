@@ -28,64 +28,64 @@ import org.junit.jupiter.api.Test;
  * Tests that ExObjListAtom works properly.
  */
 public class TestExObjListAtom {
-	// From a real file
-	private final byte[] data_a = new byte[] {
-		0, 0, 0x0A, 0x04, 4, 0, 0, 0,
-		1, 0, 0, 0
-	};
-	private final byte[] data_b = new byte[] {
-		0, 0, 0x0A, 0x04, 4, 0, 0, 0,
-		4, 0, 0, 0
-	};
+    // From a real file
+    private final byte[] data_a = new byte[] {
+        0, 0, 0x0A, 0x04, 4, 0, 0, 0,
+        1, 0, 0, 0
+    };
+    private final byte[] data_b = new byte[] {
+        0, 0, 0x0A, 0x04, 4, 0, 0, 0,
+        4, 0, 0, 0
+    };
 
-	@Test
-	void testRecordType() {
-		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-		BaseTestNumeric.assertDouble(1034L, eoa.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+        BaseTestNumeric.assertDouble(1034L, eoa.getRecordType());
+    }
 
-	@Test
-	void testGetSeed() {
-		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-		ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
+    @Test
+    void testGetSeed() {
+        ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+        ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
 
-		BaseTestNumeric.assertDouble(1, eoa.getObjectIDSeed());
-		BaseTestNumeric.assertDouble(4, eob.getObjectIDSeed());
-	}
+        BaseTestNumeric.assertDouble(1, eoa.getObjectIDSeed());
+        BaseTestNumeric.assertDouble(4, eob.getObjectIDSeed());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eoa.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eoa.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-	// Create A from scratch
-	@Test
-	void testCreate() throws Exception {
-		ExObjListAtom eoa = new ExObjListAtom();
+    // Create A from scratch
+    @Test
+    void testCreate() throws Exception {
+        ExObjListAtom eoa = new ExObjListAtom();
 
-		// Set seed
-		eoa.setObjectIDSeed(1);
+        // Set seed
+        eoa.setObjectIDSeed(1);
 
-		// Check it's now the same as a
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eoa.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+        // Check it's now the same as a
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eoa.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-	// Try to turn a into b
-	@Test
-	void testChange() throws Exception {
-		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+    // Try to turn a into b
+    @Test
+    void testChange() throws Exception {
+        ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 
-		// Change the number
-		eoa.setObjectIDSeed(4);
+        // Change the number
+        eoa.setObjectIDSeed(4);
 
-		// Check bytes are now the same
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		eoa.writeOut(baos);
-		assertArrayEquals(data_b, baos.toByteArray());
-	}
+        // Check bytes are now the same
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        eoa.writeOut(baos);
+        assertArrayEquals(data_b, baos.toByteArray());
+    }
 }

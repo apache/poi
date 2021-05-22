@@ -31,55 +31,55 @@ public final class TestEscherParts {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
     @Test
-	void testBasics() throws IOException {
+    void testBasics() throws IOException {
         InputStream is = _samples.openResourceAsStream("Sample.pub");
-		HPBFDocument doc = new HPBFDocument(is);
-		is.close();
+        HPBFDocument doc = new HPBFDocument(is);
+        is.close();
 
-		EscherStm es = doc.getEscherStm();
-		EscherDelayStm eds = doc.getEscherDelayStm();
+        EscherStm es = doc.getEscherStm();
+        EscherDelayStm eds = doc.getEscherDelayStm();
 
-		assertNotNull(es);
-		assertNotNull(eds);
+        assertNotNull(es);
+        assertNotNull(eds);
 
-		assertEquals(13, es.getEscherRecords().length);
-		assertEquals(0, eds.getEscherRecords().length);
+        assertEquals(13, es.getEscherRecords().length);
+        assertEquals(0, eds.getEscherRecords().length);
 
-		// TODO - check the contents
-		doc.close();
-	}
+        // TODO - check the contents
+        doc.close();
+    }
 
     @Test
     void testComplex() throws Exception {
         InputStream is = _samples.openResourceAsStream("SampleBrochure.pub");
-		HPBFDocument doc1 = new HPBFDocument(is);
-		is.close();
+        HPBFDocument doc1 = new HPBFDocument(is);
+        is.close();
 
-		EscherStm es = doc1.getEscherStm();
-		EscherDelayStm eds = doc1.getEscherDelayStm();
+        EscherStm es = doc1.getEscherStm();
+        EscherDelayStm eds = doc1.getEscherDelayStm();
 
-		assertNotNull(es);
-		assertNotNull(eds);
+        assertNotNull(es);
+        assertNotNull(eds);
 
-		assertEquals(30, es.getEscherRecords().length);
-		assertEquals(19, eds.getEscherRecords().length);
+        assertEquals(30, es.getEscherRecords().length);
+        assertEquals(19, eds.getEscherRecords().length);
 
-		// TODO - check contents
-		doc1.close();
+        // TODO - check contents
+        doc1.close();
 
-		// Now do another complex file
-		InputStream is2 = _samples.openResourceAsStream("SampleNewsletter.pub");
+        // Now do another complex file
+        InputStream is2 = _samples.openResourceAsStream("SampleNewsletter.pub");
         HPBFDocument doc2 = new HPBFDocument(is2);
-		is2.close();
+        is2.close();
 
-		es = doc2.getEscherStm();
-		eds = doc2.getEscherDelayStm();
+        es = doc2.getEscherStm();
+        eds = doc2.getEscherDelayStm();
 
-		assertNotNull(es);
-		assertNotNull(eds);
+        assertNotNull(es);
+        assertNotNull(eds);
 
-		assertEquals(51, es.getEscherRecords().length);
-		assertEquals(92, eds.getEscherRecords().length);
-		doc2.close();
-	}
+        assertEquals(51, es.getEscherRecords().length);
+        assertEquals(92, eds.getEscherRecords().length);
+        doc2.close();
+    }
 }

@@ -24,9 +24,9 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
  *
  */
 public final class EscherDelayStm extends EscherPart {
-	private static final String[] PATH = { "Escher", "EscherDelayStm", };
+    private static final String[] PATH = { "Escher", "EscherDelayStm", };
 
-	public EscherDelayStm(DirectoryNode baseDir) throws IOException {
-		super(baseDir, PATH);
-	}
+    public EscherDelayStm(DirectoryNode baseDir) throws IOException {
+        super(baseDir, PATH);
+    }
 }

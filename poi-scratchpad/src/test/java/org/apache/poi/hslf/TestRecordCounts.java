@@ -35,58 +35,58 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRecordCounts {
 
-	private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-	// HSLFSlideShow primed on the test data
-	private HSLFSlideShowImpl ss;
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    // HSLFSlideShow primed on the test data
+    private HSLFSlideShowImpl ss;
 
-	@BeforeEach
-	void setup() throws Exception {
-		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+    }
 
-	@Test
-	void testSheetsCount() {
-		// Top level
-		Record[] r = ss.getRecords();
+    @Test
+    void testSheetsCount() {
+        // Top level
+        Record[] r = ss.getRecords();
 
-		int count = 0;
-		for (final Record rec : r) {
-			if(rec instanceof Slide) {
-				count++;
-			}
-		}
-		// Currently still sees the Master Sheet, but might not in the future
-		assertEquals(3,count);
-	}
+        int count = 0;
+        for (final Record rec : r) {
+            if(rec instanceof Slide) {
+                count++;
+            }
+        }
+        // Currently still sees the Master Sheet, but might not in the future
+        assertEquals(3,count);
+    }
 
-	@Test
-	void testNotesCount() {
-		// Top level
-		Record[] r = ss.getRecords();
+    @Test
+    void testNotesCount() {
+        // Top level
+        Record[] r = ss.getRecords();
 
-		int count = 0;
-		for (final Record rec : r) {
-			if (rec instanceof Notes && rec.getRecordType() == 1008L) {
-				count++;
-			}
-		}
-		// Two real sheets, plus the master sheet
-		assertEquals(3,count);
-	}
+        int count = 0;
+        for (final Record rec : r) {
+            if (rec instanceof Notes && rec.getRecordType() == 1008L) {
+                count++;
+            }
+        }
+        // Two real sheets, plus the master sheet
+        assertEquals(3,count);
+    }
 
-	@Test
-	void testSlideListWithTextCount() {
-		// Second level
-		Record[] rt = ss.getRecords();
-		Record[] r = rt[0].getChildRecords();
+    @Test
+    void testSlideListWithTextCount() {
+        // Second level
+        Record[] rt = ss.getRecords();
+        Record[] r = rt[0].getChildRecords();
 
-		int count = 0;
-		for (final Record rec : r) {
-			if (rec instanceof SlideListWithText && rec.getRecordType() == 4080L) {
-				count++;
-			}
-		}
-		// Two real sheets, plus the master sheet
-		assertEquals(3,count);
-	}
+        int count = 0;
+        for (final Record rec : r) {
+            if (rec instanceof SlideListWithText && rec.getRecordType() == 4080L) {
+                count++;
+            }
+        }
+        // Two real sheets, plus the master sheet
+        assertEquals(3,count);
+    }
 }

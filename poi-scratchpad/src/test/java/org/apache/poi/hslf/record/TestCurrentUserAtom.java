@@ -36,63 +36,63 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestCurrentUserAtom {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-	/** Not encrypted */
-	private static final String normalFile = "basic_test_ppt_file.ppt";
-	/** Encrypted */
-	private static final String encFile = "Password_Protected-hello.ppt";
+    /** Not encrypted */
+    private static final String normalFile = "basic_test_ppt_file.ppt";
+    /** Encrypted */
+    private static final String encFile = "Password_Protected-hello.ppt";
 
-	@Test
-	void readNormal() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
+    @Test
+    void readNormal() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 
-		CurrentUserAtom cu = new CurrentUserAtom(fs.getRoot());
-		fs.close();
+        CurrentUserAtom cu = new CurrentUserAtom(fs.getRoot());
+        fs.close();
 
-		// Check the contents
-		assertEquals("Hogwarts", cu.getLastEditUsername());
-		assertEquals(0x2942, cu.getCurrentEditOffset());
+        // Check the contents
+        assertEquals("Hogwarts", cu.getLastEditUsername());
+        assertEquals(0x2942, cu.getCurrentEditOffset());
 
-		// Round trip
-		POIFSFileSystem poifs = new POIFSFileSystem();
-		cu.writeToFS(poifs);
+        // Round trip
+        POIFSFileSystem poifs = new POIFSFileSystem();
+        cu.writeToFS(poifs);
 
-		CurrentUserAtom cu2 = new CurrentUserAtom(poifs.getRoot());
-		assertEquals("Hogwarts", cu2.getLastEditUsername());
-		assertEquals(0x2942, cu2.getCurrentEditOffset());
+        CurrentUserAtom cu2 = new CurrentUserAtom(poifs.getRoot());
+        assertEquals("Hogwarts", cu2.getLastEditUsername());
+        assertEquals(0x2942, cu2.getCurrentEditOffset());
 
-		poifs.close();
-	}
+        poifs.close();
+    }
 
-	@Test
-	void readEnc() throws Exception {
+    @Test
+    void readEnc() throws Exception {
         try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile))) {
             new CurrentUserAtom(fs.getRoot());
-			assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(fs).close());
+            assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(fs).close());
         }
-	}
+    }
 
-	@Test
-	void writeNormal() throws Exception {
-		// Get raw contents from a known file
-		byte[] contents;
-		try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile))) {
-			DocumentEntry docProps = (DocumentEntry) fs.getRoot().getEntry("Current User");
-			contents = new byte[docProps.getSize()];
-			try (InputStream in = fs.getRoot().createDocumentInputStream("Current User")) {
-				in.read(contents);
-			}
-		}
+    @Test
+    void writeNormal() throws Exception {
+        // Get raw contents from a known file
+        byte[] contents;
+        try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile))) {
+            DocumentEntry docProps = (DocumentEntry) fs.getRoot().getEntry("Current User");
+            contents = new byte[docProps.getSize()];
+            try (InputStream in = fs.getRoot().createDocumentInputStream("Current User")) {
+                in.read(contents);
+            }
+        }
 
-		// Now build up a new one
-		CurrentUserAtom cu = new CurrentUserAtom();
-		cu.setLastEditUsername("Hogwarts");
-		cu.setCurrentEditOffset(0x2942);
+        // Now build up a new one
+        CurrentUserAtom cu = new CurrentUserAtom();
+        cu.setLastEditUsername("Hogwarts");
+        cu.setCurrentEditOffset(0x2942);
 
-		// Check it matches
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		cu.writeOut(baos);
-		byte[] out = baos.toByteArray();
+        // Check it matches
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        cu.writeOut(baos);
+        byte[] out = baos.toByteArray();
 
-		assertArrayEquals(contents, out);
-	}
+        assertArrayEquals(contents, out);
+    }
 }

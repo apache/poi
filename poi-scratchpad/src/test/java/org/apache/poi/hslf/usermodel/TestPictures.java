@@ -228,13 +228,13 @@ public final class TestPictures {
         }
     }
 
-	/**
-	 * Test that on a party corrupt powerpoint document, which has
-	 *  crazy pictures of type 0, we do our best.
-	 */
+    /**
+     * Test that on a party corrupt powerpoint document, which has
+     *  crazy pictures of type 0, we do our best.
+     */
     @Test
-	void testZeroPictureType() throws IOException {
-		try (HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("PictureTypeZero.ppt"))) {
+    void testZeroPictureType() throws IOException {
+        try (HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("PictureTypeZero.ppt"))) {
 
             // Should still have 2 real pictures
             assertEquals(2, hslf.getPictureData().size());
@@ -262,7 +262,7 @@ public final class TestPictures {
             assertTrue(pdata instanceof WMF);
             assertEquals(PictureType.WMF, pdata.getType());
         }
-	}
+    }
 
     /**
      * YK: The test is disabled because the owner asked to delete the test file from POI svn.
@@ -271,10 +271,10 @@ public final class TestPictures {
     @Test
     @Disabled("requires an internet connection to a 3rd party site")
     // As of 2017-06-20, the file still exists at the specified URL and the test passes.
-	void testZeroPictureLength() throws IOException {
+    void testZeroPictureLength() throws IOException {
         // take the data from www instead of test directory
         URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
-		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
         /* Assume that the file could retrieved...
         InputStream is;
         HSLFSlideShowImpl hslf;
@@ -288,14 +288,14 @@ public final class TestPictures {
         }
         */
 
-		// Should still have 2 real pictures
-		assertEquals(2, hslf.getPictureData().size());
-		// Both are real pictures, both WMF
-		assertEquals(PictureType.WMF, hslf.getPictureData().get(0).getType());
-		assertEquals(PictureType.WMF, hslf.getPictureData().get(1).getType());
+        // Should still have 2 real pictures
+        assertEquals(2, hslf.getPictureData().size());
+        // Both are real pictures, both WMF
+        assertEquals(PictureType.WMF, hslf.getPictureData().get(0).getType());
+        assertEquals(PictureType.WMF, hslf.getPictureData().get(1).getType());
 
-		// Now test what happens when we use the SlideShow interface
-		try (HSLFSlideShow ppt = new HSLFSlideShow(hslf)) {
+        // Now test what happens when we use the SlideShow interface
+        try (HSLFSlideShow ppt = new HSLFSlideShow(hslf)) {
             List<HSLFSlide> slides = ppt.getSlides();
             List<HSLFPictureData> pictures = ppt.getPictureData();
             assertEquals(27, slides.size());

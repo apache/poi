@@ -46,42 +46,42 @@ public final class FontCollection extends RecordContainer {
     private final Map<Integer,HSLFFontInfo> fonts = new LinkedHashMap<>();
     private byte[] _header;
 
-	/* package */ FontCollection(byte[] source, int start, int len) {
+    /* package */ FontCollection(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
 
-		_children = Record.findChildRecords(source,start+8,len-8);
+        _children = Record.findChildRecords(source,start+8,len-8);
 
-		for (org.apache.poi.hslf.record.Record r : _children){
-			if(r instanceof FontEntityAtom) {
+        for (org.apache.poi.hslf.record.Record r : _children){
+            if(r instanceof FontEntityAtom) {
                 HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom) r);
                 fonts.put(fi.getIndex(), fi);
             } else if (r instanceof FontEmbeddedData) {
                 FontEmbeddedData fed = (FontEmbeddedData)r;
-			    FontHeader fontHeader = fed.getFontHeader();
-			    HSLFFontInfo fi = addFont(fontHeader);
-			    fi.addFacet(fed);
-			} else {
-				LOG.atWarn().log("FontCollection child wasn't a FontEntityAtom, was {}", r.getClass().getSimpleName());
-			}
-		}
-	}
+                FontHeader fontHeader = fed.getFontHeader();
+                HSLFFontInfo fi = addFont(fontHeader);
+                fi.addFacet(fed);
+            } else {
+                LOG.atWarn().log("FontCollection child wasn't a FontEntityAtom, was {}", r.getClass().getSimpleName());
+            }
+        }
+    }
 
-	/**
-	 * Return the type, which is 2005
-	 */
-	@Override
+    /**
+     * Return the type, which is 2005
+     */
+    @Override
     public long getRecordType() {
         return RecordTypes.FontCollection.typeID;
     }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	@Override
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		writeOut(_header[0],_header[1],getRecordType(),_children,out);
-	}
+        writeOut(_header[0],_header[1],getRecordType(),_children,out);
+    }
 
     /**
      * Add font with the given FontInfo configuration to the font collection.

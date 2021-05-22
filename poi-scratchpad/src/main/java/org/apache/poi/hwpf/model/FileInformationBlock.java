@@ -688,13 +688,13 @@ public final class FileInformationBlock {
      * i.e. lcbPlcfHdd
      */
     public int getPlcfHddSize() {
-    	return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFHDD);
+        return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFHDD);
     }
     public void setPlcfHddOffset(int fcPlcfHdd) {
-    	_fieldHandler.setFieldOffset(FIBFieldHandler.PLCFHDD, fcPlcfHdd);
+        _fieldHandler.setFieldOffset(FIBFieldHandler.PLCFHDD, fcPlcfHdd);
     }
     public void setPlcfHddSize(int lcbPlcfHdd) {
-    	_fieldHandler.setFieldSize(FIBFieldHandler.PLCFHDD, lcbPlcfHdd);
+        _fieldHandler.setFieldSize(FIBFieldHandler.PLCFHDD, lcbPlcfHdd);
     }
 
     public int getFcSttbSavedBy()

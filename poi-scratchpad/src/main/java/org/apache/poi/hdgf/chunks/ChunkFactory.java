@@ -42,182 +42,182 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 public final class ChunkFactory {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 
-	/** The version of the currently open document */
-	private int version;
-	/**
-	 * Key is a Chunk's type, value is an array of its CommandDefinitions
-	 */
-	private final Map<Integer, CommandDefinition[]> chunkCommandDefinitions =
+    /** The version of the currently open document */
+    private int version;
+    /**
+     * Key is a Chunk's type, value is an array of its CommandDefinitions
+     */
+    private final Map<Integer, CommandDefinition[]> chunkCommandDefinitions =
             new HashMap<>();
-	/**
-	 * What the name is of the chunk table definitions file?
-	 * This file comes from the scratchpad resources directory.
-	 */
-	private static final String chunkTableName =
-		"/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
+    /**
+     * What the name is of the chunk table definitions file?
+     * This file comes from the scratchpad resources directory.
+     */
+    private static final String chunkTableName =
+        "/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
 
-	/** For logging problems we spot with the file */
-	private static final Logger LOG = LogManager.getLogger(ChunkFactory.class);
+    /** For logging problems we spot with the file */
+    private static final Logger LOG = LogManager.getLogger(ChunkFactory.class);
 
-	public ChunkFactory(int version) throws IOException {
-		this.version = version;
+    public ChunkFactory(int version) throws IOException {
+        this.version = version;
 
-		processChunkParseCommands();
-	}
+        processChunkParseCommands();
+    }
 
-	/**
-	 * Open chunks_parse_cmds.tbl and process it, to get the definitions
-	 *  of all the different possible chunk commands.
-	 */
-	private void processChunkParseCommands() throws IOException {
-		try (InputStream cpd = ChunkFactory.class.getResourceAsStream(chunkTableName)) {
-	        if(cpd == null) {
-	            throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
-	        }
+    /**
+     * Open chunks_parse_cmds.tbl and process it, to get the definitions
+     *  of all the different possible chunk commands.
+     */
+    private void processChunkParseCommands() throws IOException {
+        try (InputStream cpd = ChunkFactory.class.getResourceAsStream(chunkTableName)) {
+            if(cpd == null) {
+                throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
+            }
 
-	        try (BufferedReader inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252))) {
-				String line;
-				while ((line = inp.readLine()) != null) {
-					if (line.isEmpty() || "# \t".contains(line.substring(0, 1))) {
-						continue;
-					}
+            try (BufferedReader inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252))) {
+                String line;
+                while ((line = inp.readLine()) != null) {
+                    if (line.isEmpty() || "# \t".contains(line.substring(0, 1))) {
+                        continue;
+                    }
 
-					// Start xxx
-					if (!line.matches("^start [0-9]+$")) {
-						throw new IllegalStateException("Expecting start xxx, found " + line);
-					}
-					int chunkType = Integer.parseInt(line.substring(6));
-					ArrayList<CommandDefinition> defsL = new ArrayList<>();
+                    // Start xxx
+                    if (!line.matches("^start [0-9]+$")) {
+                        throw new IllegalStateException("Expecting start xxx, found " + line);
+                    }
+                    int chunkType = Integer.parseInt(line.substring(6));
+                    ArrayList<CommandDefinition> defsL = new ArrayList<>();
 
-					// Data entries
-					while ((line = inp.readLine()) != null) {
-						if (line.startsWith("end")) {
-							break;
-						}
-						StringTokenizer st = new StringTokenizer(line, " ");
-						int defType = Integer.parseInt(st.nextToken());
-						int offset = Integer.parseInt(st.nextToken());
-						String name = st.nextToken("\uffff").substring(1);
+                    // Data entries
+                    while ((line = inp.readLine()) != null) {
+                        if (line.startsWith("end")) {
+                            break;
+                        }
+                        StringTokenizer st = new StringTokenizer(line, " ");
+                        int defType = Integer.parseInt(st.nextToken());
+                        int offset = Integer.parseInt(st.nextToken());
+                        String name = st.nextToken("\uffff").substring(1);
 
-						CommandDefinition def = new CommandDefinition(defType, offset, name);
-						defsL.add(def);
-					}
+                        CommandDefinition def = new CommandDefinition(defType, offset, name);
+                        defsL.add(def);
+                    }
 
-					CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
+                    CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
 
-					// Add to the map
-					chunkCommandDefinitions.put(chunkType, defs);
-				}
-			}
-		}
-	}
+                    // Add to the map
+                    chunkCommandDefinitions.put(chunkType, defs);
+                }
+            }
+        }
+    }
 
-	public int getVersion() { return version; }
+    public int getVersion() { return version; }
 
-	/**
-	 * Creates the appropriate chunk at the given location.
-	 *
-	 * @param data the chunk bytes
-	 * @param offset the offset into the chunk bytes array to start reading from
-	 *
-	 * @return the new Chunk
-	 */
-	public Chunk createChunk(byte[] data, int offset) {
-		// Create the header
-		ChunkHeader header =
-			ChunkHeader.createChunkHeader(version, data, offset);
-		// Sanity check
-		if(header.getLength() < 0) {
-			throw new IllegalArgumentException("Found a chunk with a negative length, which isn't allowed");
-		}
+    /**
+     * Creates the appropriate chunk at the given location.
+     *
+     * @param data the chunk bytes
+     * @param offset the offset into the chunk bytes array to start reading from
+     *
+     * @return the new Chunk
+     */
+    public Chunk createChunk(byte[] data, int offset) {
+        // Create the header
+        ChunkHeader header =
+            ChunkHeader.createChunkHeader(version, data, offset);
+        // Sanity check
+        if(header.getLength() < 0) {
+            throw new IllegalArgumentException("Found a chunk with a negative length, which isn't allowed");
+        }
 
-		// How far up to look
-		int endOfDataPos = offset + header.getLength() + header.getSizeInBytes();
+        // How far up to look
+        int endOfDataPos = offset + header.getLength() + header.getSizeInBytes();
 
-		// Check we have enough data, and tweak the header size
-		//  as required
-		if(endOfDataPos > data.length) {
-			LOG.atWarn().log("Header called for {} bytes, but that would take us past the end of the data!", box(header.getLength()));
+        // Check we have enough data, and tweak the header size
+        //  as required
+        if(endOfDataPos > data.length) {
+            LOG.atWarn().log("Header called for {} bytes, but that would take us past the end of the data!", box(header.getLength()));
 
-			endOfDataPos = data.length;
-			header.setLength(data.length - offset - header.getSizeInBytes());
+            endOfDataPos = data.length;
+            header.setLength(data.length - offset - header.getSizeInBytes());
 
-			if(header.hasTrailer()) {
-				header.setLength(header.getLength() - 8);
-				endOfDataPos  -= 8;
-			}
-			if(header.hasSeparator()) {
+            if(header.hasTrailer()) {
+                header.setLength(header.getLength() - 8);
+                endOfDataPos  -= 8;
+            }
+            if(header.hasSeparator()) {
                 header.setLength(header.getLength() - 4);
-				endOfDataPos  -= 4;
-			}
-		}
+                endOfDataPos  -= 4;
+            }
+        }
 
 
-		// Create the trailer and separator, if required
-		ChunkTrailer trailer = null;
-		ChunkSeparator separator = null;
-		if(header.hasTrailer()) {
-			if(endOfDataPos <= data.length-8) {
-				trailer = new ChunkTrailer(
-					data, endOfDataPos);
-				endOfDataPos += 8;
-			} else {
-				LOG.atError().log("Header claims a length to {} there's then no space for the trailer in the data ({})", box(endOfDataPos),box(data.length));
-			}
-		}
-		if(header.hasSeparator()) {
-			if(endOfDataPos <= data.length-4) {
-				separator = new ChunkSeparator(
-						data, endOfDataPos);
-			} else {
-				LOG.atError().log("Header claims a length to {} there's then no space for the separator in the data ({})", box(endOfDataPos),box(data.length));
-			}
-		}
+        // Create the trailer and separator, if required
+        ChunkTrailer trailer = null;
+        ChunkSeparator separator = null;
+        if(header.hasTrailer()) {
+            if(endOfDataPos <= data.length-8) {
+                trailer = new ChunkTrailer(
+                    data, endOfDataPos);
+                endOfDataPos += 8;
+            } else {
+                LOG.atError().log("Header claims a length to {} there's then no space for the trailer in the data ({})", box(endOfDataPos),box(data.length));
+            }
+        }
+        if(header.hasSeparator()) {
+            if(endOfDataPos <= data.length-4) {
+                separator = new ChunkSeparator(
+                        data, endOfDataPos);
+            } else {
+                LOG.atError().log("Header claims a length to {} there's then no space for the separator in the data ({})", box(endOfDataPos),box(data.length));
+            }
+        }
 
-		// Now, create the chunk
-		byte[] contents = IOUtils.safelyClone(data, offset+header.getSizeInBytes(), header.getLength(), MAX_RECORD_LENGTH);
-		Chunk chunk = new Chunk(header, trailer, separator, contents);
+        // Now, create the chunk
+        byte[] contents = IOUtils.safelyClone(data, offset+header.getSizeInBytes(), header.getLength(), MAX_RECORD_LENGTH);
+        Chunk chunk = new Chunk(header, trailer, separator, contents);
 
-		// Feed in the stuff from  chunks_parse_cmds.tbl
-		CommandDefinition[] defs = chunkCommandDefinitions.get(header.getType());
-		if (defs == null) {
-		    defs = new CommandDefinition[0];
-		}
-		chunk.setCommandDefinitions(defs);
+        // Feed in the stuff from  chunks_parse_cmds.tbl
+        CommandDefinition[] defs = chunkCommandDefinitions.get(header.getType());
+        if (defs == null) {
+            defs = new CommandDefinition[0];
+        }
+        chunk.setCommandDefinitions(defs);
 
-		// Now get the chunk to process its commands
-		chunk.processCommands();
+        // Now get the chunk to process its commands
+        chunk.processCommands();
 
-		// All done
-		return chunk;
-	}
+        // All done
+        return chunk;
+    }
 
-	/**
-	 * The definition of a Command, which a chunk may hold.
-	 * The Command holds the value, this describes it.
-	 */
-	public static class CommandDefinition {
-		private int type;
-		private int offset;
-		private String name;
-		public CommandDefinition(int type, int offset, String name) {
-			this.type = type;
-			this.offset = offset;
-			this.name = name;
-		}
+    /**
+     * The definition of a Command, which a chunk may hold.
+     * The Command holds the value, this describes it.
+     */
+    public static class CommandDefinition {
+        private int type;
+        private int offset;
+        private String name;
+        public CommandDefinition(int type, int offset, String name) {
+            this.type = type;
+            this.offset = offset;
+            this.name = name;
+        }
 
-		public String getName() {
-			return name;
-		}
-		public int getOffset() {
-			return offset;
-		}
-		public int getType() {
-			return type;
-		}
-	}
+        public String getName() {
+            return name;
+        }
+        public int getOffset() {
+            return offset;
+        }
+        public int getType() {
+            return type;
+        }
+    }
 }

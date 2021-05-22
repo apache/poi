@@ -28,7 +28,7 @@ import org.apache.poi.hdgf.pointers.PointerFactory;
  *  a special series of byte near the start of the file.
  */
 public class TrailerStream extends PointerContainingStream { // TODO - instantiable superclass
-	protected TrailerStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
-		super(pointer, store, chunkFactory, pointerFactory);
-	}
+    protected TrailerStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
+        super(pointer, store, chunkFactory, pointerFactory);
+    }
 }

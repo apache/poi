@@ -35,63 +35,63 @@ import org.junit.jupiter.api.Test;
  * Tests that SlideAtom works properly
  */
 public final class TestSlideAtom {
-	// From a real file
-	private static final byte[] data_a = new byte[] { 1, 0, 0xEF-256, 3, 0x18, 0, 0, 0,
-		0, 0, 0, 0, 0x0F, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80-256,
-		0, 1, 0, 0, 7, 0, 0x0C, 0x30 };
-
-	@Test
-	void testRecordType() {
-		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		assertEquals(1007L, sa.getRecordType());
-	}
+    // From a real file
+    private static final byte[] data_a = new byte[] { 1, 0, 0xEF-256, 3, 0x18, 0, 0, 0,
+        0, 0, 0, 0, 0x0F, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80-256,
+        0, 1, 0, 0, 7, 0, 0x0C, 0x30 };
 
     @Test
-	void testFlags() {
-		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
+    void testRecordType() {
+        SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
+        assertEquals(1007L, sa.getRecordType());
+    }
 
-		// First 12 bytes are a SSlideLayoutAtom, checked elsewhere
+    @Test
+    void testFlags() {
+        SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 
-		// Check the IDs
-		assertEquals(SlideAtom.USES_MASTER_SLIDE_ID, sa.getMasterID());
-		assertEquals(256, sa.getNotesID());
+        // First 12 bytes are a SSlideLayoutAtom, checked elsewhere
 
-		// Check the flags
+        // Check the IDs
+        assertEquals(SlideAtom.USES_MASTER_SLIDE_ID, sa.getMasterID());
+        assertEquals(256, sa.getNotesID());
+
+        // Check the flags
         assertTrue(sa.getFollowMasterObjects());
         assertTrue(sa.getFollowMasterScheme());
         assertTrue(sa.getFollowMasterBackground());
-	}
+    }
 
     @Test
     void testSSlideLayoutAtom() {
-		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		SlideAtomLayout ssla = sa.getSSlideLayoutAtom();
+        SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
+        SlideAtomLayout ssla = sa.getSSlideLayoutAtom();
 
-		assertEquals(SlideLayoutType.TITLE_SLIDE, ssla.getGeometryType());
+        assertEquals(SlideLayoutType.TITLE_SLIDE, ssla.getGeometryType());
 
-		// Should also check the placeholder IDs at some point
-	}
-
-    @Test
-	void testWrite() throws IOException {
-		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		sa.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+        // Should also check the placeholder IDs at some point
+    }
 
     @Test
-	void testSSSlideInfoAtom() throws IOException {
-		try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
-			HSLFSlide slide1 = ppt1.createSlide(), slide2 = ppt1.createSlide();
-			slide2.setHidden(true);
+    void testWrite() throws IOException {
+        SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        sa.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-			try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
-				slide1 = ppt2.getSlides().get(0);
-				slide2 = ppt2.getSlides().get(1);
-				assertFalse(slide1.isHidden());
-				assertTrue(slide2.isHidden());
-			}
-		}
-	}
+    @Test
+    void testSSSlideInfoAtom() throws IOException {
+        try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
+            HSLFSlide slide1 = ppt1.createSlide(), slide2 = ppt1.createSlide();
+            slide2.setHidden(true);
+
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
+                slide1 = ppt2.getSlides().get(0);
+                slide2 = ppt2.getSlides().get(1);
+                assertFalse(slide1.isHidden());
+                assertTrue(slide2.isHidden());
+            }
+        }
+    }
 }

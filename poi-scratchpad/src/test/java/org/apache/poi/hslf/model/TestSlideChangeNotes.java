@@ -30,34 +30,34 @@ import org.junit.jupiter.api.Test;
  * Tests that changing a slide's idea of what notes sheet is its works right
  */
 public final class TestSlideChangeNotes {
-	// SlideShow primed on the test data
-	private HSLFSlideShow ss;
+    // SlideShow primed on the test data
+    private HSLFSlideShow ss;
 
-	@BeforeEach
-	void init() throws Exception {
+    @BeforeEach
+    void init() throws Exception {
         POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(hss);
-	}
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShow(hss);
+    }
 
-	@Test
-	void testSetToNone() {
-		HSLFSlide slideOne = ss.getSlides().get(0);
-		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
+    @Test
+    void testSetToNone() {
+        HSLFSlide slideOne = ss.getSlides().get(0);
+        SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
-		slideOne.setNotes(null);
+        slideOne.setNotes(null);
 
-		assertEquals(0, sa.getNotesID());
-	}
+        assertEquals(0, sa.getNotesID());
+    }
 
-	@Test
-	void testSetToSomething() {
-		HSLFSlide slideOne = ss.getSlides().get(0);
-		HSLFNotes notesOne = ss.getNotes().get(1);
-		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
+    @Test
+    void testSetToSomething() {
+        HSLFSlide slideOne = ss.getSlides().get(0);
+        HSLFNotes notesOne = ss.getNotes().get(1);
+        SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
-		slideOne.setNotes(notesOne);
+        slideOne.setNotes(notesOne);
 
-		assertEquals(notesOne._getSheetNumber(), sa.getNotesID());
-	}
+        assertEquals(notesOne._getSheetNumber(), sa.getNotesID());
+    }
 }

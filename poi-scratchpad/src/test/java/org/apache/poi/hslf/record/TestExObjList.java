@@ -32,38 +32,38 @@ public class TestExObjList {
     @Test
     void testRealFile() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow ss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
+        HSLFSlideShow ss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
 
-		// Get the document
-		Document doc = ss.getDocumentRecord();
-		// Get the ExObjList
-		ExObjList exObjList = doc.getExObjList(false);
-		assertNotNull(exObjList);
-		assertEquals(1033l, exObjList.getRecordType());
+        // Get the document
+        Document doc = ss.getDocumentRecord();
+        // Get the ExObjList
+        ExObjList exObjList = doc.getExObjList(false);
+        assertNotNull(exObjList);
+        assertEquals(1033l, exObjList.getRecordType());
 
-		// Check the atom
-		assertNotNull(exObjList.getExObjListAtom());
-		assertEquals(4, exObjList.getExObjListAtom().getObjectIDSeed());
+        // Check the atom
+        assertNotNull(exObjList.getExObjListAtom());
+        assertEquals(4, exObjList.getExObjListAtom().getObjectIDSeed());
 
-		// Check the Hyperlinks
-		assertEquals(4, exObjList.getExHyperlinks().length);
+        // Check the Hyperlinks
+        assertEquals(4, exObjList.getExHyperlinks().length);
 
-		// Check the contents
-		ExHyperlink[] links = exObjList.getExHyperlinks();
+        // Check the contents
+        ExHyperlink[] links = exObjList.getExHyperlinks();
 
-		// Check they have what we expect in them
-		assertEquals(1, links[0].getExHyperlinkAtom().getNumber());
-		assertEquals("http://jakarta.apache.org/poi/", links[0].getLinkURL());
+        // Check they have what we expect in them
+        assertEquals(1, links[0].getExHyperlinkAtom().getNumber());
+        assertEquals("http://jakarta.apache.org/poi/", links[0].getLinkURL());
 
-		assertEquals(2, links[1].getExHyperlinkAtom().getNumber());
-		assertEquals("http://slashdot.org/", links[1].getLinkURL());
+        assertEquals(2, links[1].getExHyperlinkAtom().getNumber());
+        assertEquals("http://slashdot.org/", links[1].getLinkURL());
 
-		assertEquals(3, links[2].getExHyperlinkAtom().getNumber());
-		assertEquals("http://jakarta.apache.org/poi/hssf/", links[2].getLinkURL());
+        assertEquals(3, links[2].getExHyperlinkAtom().getNumber());
+        assertEquals("http://jakarta.apache.org/poi/hssf/", links[2].getLinkURL());
 
-		assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
-		assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
+        assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
+        assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
 
-	    ss.close();
-	}
+        ss.close();
+    }
 }

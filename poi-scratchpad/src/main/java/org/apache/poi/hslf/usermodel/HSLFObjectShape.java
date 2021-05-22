@@ -97,14 +97,14 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
      * @param objectId the unique identifier for the OLE object
      */
     public void setObjectID(int objectId){
-    	setEscherProperty(EscherPropertyTypes.BLIP__PICTUREID, objectId);
+        setEscherProperty(EscherPropertyTypes.BLIP__PICTUREID, objectId);
 
-    	EscherContainerRecord ecr = getSpContainer();
-    	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
-    	if (spRecord != null) {
+        EscherContainerRecord ecr = getSpContainer();
+        EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
+        if (spRecord != null) {
             spRecord.setFlags(spRecord.getFlags() | EscherSpRecord.FLAG_OLESHAPE);
         } else {
-    	    LOG.atWarn().log("Ole shape record not found.");
+            LOG.atWarn().log("Ole shape record not found.");
         }
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
@@ -116,8 +116,8 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
             }
         }
         if (uer == null) {
-        	uer = new ExObjRefAtom();
-        	cldata.addChild(uer);
+            uer = new ExObjRefAtom();
+            cldata.addChild(uer);
         }
         uer.setExObjIdRef(objectId);
     }

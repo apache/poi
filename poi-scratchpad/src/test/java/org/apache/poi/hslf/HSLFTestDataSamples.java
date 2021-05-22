@@ -28,53 +28,53 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 public class HSLFTestDataSamples {
 
-	private static final POIDataSamples _inst = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _inst = POIDataSamples.getSlideShowInstance();
 
-	public static InputStream openSampleFileStream(String sampleFileName) {
-		return _inst.openResourceAsStream(sampleFileName);
-	}
+    public static InputStream openSampleFileStream(String sampleFileName) {
+        return _inst.openResourceAsStream(sampleFileName);
+    }
 
-	public static File getSampleFile(String sampleFileName) {
-	   return _inst.getFile(sampleFileName);
-	}
+    public static File getSampleFile(String sampleFileName) {
+       return _inst.getFile(sampleFileName);
+    }
 
-	public static byte[] getTestDataFileContent(String fileName) {
-		return _inst.readFile(fileName);
-	}
+    public static byte[] getTestDataFileContent(String fileName) {
+        return _inst.readFile(fileName);
+    }
 
-	public static HSLFSlideShow getSlideShow(String fileName) throws IOException {
+    public static HSLFSlideShow getSlideShow(String fileName) throws IOException {
         try (InputStream is = openSampleFileStream(fileName)) {
             return new HSLFSlideShow(is);
         }
-	}
+    }
 
-	/**
-	 * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
-	 * from a {@code ByteArrayInputStream}.<p>
-	 * Useful for verifying that the serialisation round trip
-	 */
-	public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
-		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
-			original.write(baos);
-			try (InputStream is = baos.toInputStream()) {
-				return new HSLFSlideShowImpl(is);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
+     * from a {@code ByteArrayInputStream}.<p>
+     * Useful for verifying that the serialisation round trip
+     */
+    public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            original.write(baos);
+            try (InputStream is = baos.toInputStream()) {
+                return new HSLFSlideShowImpl(is);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	/**
-	 * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
-	 * from a {@code ByteArrayInputStream}.<p>
-	 * Useful for verifying that the serialisation round trip
-	 */
-	public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
-		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
-			original.write(baos);
-			return new HSLFSlideShow(baos.toInputStream());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * Writes a slideshow to a {@code UnsynchronizedByteArrayOutputStream} and reads it back
+     * from a {@code ByteArrayInputStream}.<p>
+     * Useful for verifying that the serialisation round trip
+     */
+    public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
+            original.write(baos);
+            return new HSLFSlideShow(baos.toInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

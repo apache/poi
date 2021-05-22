@@ -286,11 +286,11 @@ public final class Chunk {
      *  process CommandDefinitions, and so doesn't actually exist
      *  in the chunk
      */
-//	public static class VirtualCommand extends Command {
-//		private VirtualCommand(CommandDefinition definition) {
-//			super(definition);
-//		}
-//	}
+//  public static class VirtualCommand extends Command {
+//      private VirtualCommand(CommandDefinition definition) {
+//          super(definition);
+//      }
+//  }
     /**
      * A special kind of command that holds the offset to
      *  a block

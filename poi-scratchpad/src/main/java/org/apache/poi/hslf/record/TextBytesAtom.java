@@ -38,88 +38,88 @@ import org.apache.poi.util.StringUtil;
 
 public final class TextBytesAtom extends RecordAtom {
     public static final long _type = RecordTypes.TextBytesAtom.typeID;
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	private byte[] _header;
+    private byte[] _header;
 
-	/** The bytes that make up the text */
-	private byte[] _text;
+    /** The bytes that make up the text */
+    private byte[] _text;
 
-	/** Grabs the text. Uses the default codepage */
-	public String getText() {
-		return StringUtil.getFromCompressedUnicode(_text,0,_text.length);
-	}
+    /** Grabs the text. Uses the default codepage */
+    public String getText() {
+        return StringUtil.getFromCompressedUnicode(_text,0,_text.length);
+    }
 
-	/** Updates the text in the Atom. Must be 8 bit ascii */
-	public void setText(byte[] b) {
-		// Set the text
-		_text = b.clone();
+    /** Updates the text in the Atom. Must be 8 bit ascii */
+    public void setText(byte[] b) {
+        // Set the text
+        _text = b.clone();
 
-		// Update the size (header bytes 5-8)
-		LittleEndian.putInt(_header,4,_text.length);
-	}
+        // Update the size (header bytes 5-8)
+        LittleEndian.putInt(_header,4,_text.length);
+    }
 
-	/* *************** record code follows ********************** */
+    /* *************** record code follows ********************** */
 
-	/**
-	 * For the TextBytes Atom
-	 */
-	protected TextBytesAtom(byte[] source, int start, int len) {
-		// Sanity Checking
-		if(len < 8) { len = 8; }
+    /**
+     * For the TextBytes Atom
+     */
+    protected TextBytesAtom(byte[] source, int start, int len) {
+        // Sanity Checking
+        if(len < 8) { len = 8; }
 
-		// Get the header
-		_header = Arrays.copyOfRange(source, start, start+8);
+        // Get the header
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-		// Grab the text
-		_text = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
-	}
+        // Grab the text
+        _text = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+    }
 
-	/**
-	 * Create an empty TextBytes Atom
-	 */
-	public TextBytesAtom() {
-		_header = new byte[8];
-		LittleEndian.putUShort(_header, 0, 0);
-		LittleEndian.putUShort(_header, 2, (int)_type);
-		LittleEndian.putInt(_header, 4, 0);
+    /**
+     * Create an empty TextBytes Atom
+     */
+    public TextBytesAtom() {
+        _header = new byte[8];
+        LittleEndian.putUShort(_header, 0, 0);
+        LittleEndian.putUShort(_header, 2, (int)_type);
+        LittleEndian.putInt(_header, 4, 0);
 
-		_text = new byte[]{};
-	}
+        _text = new byte[]{};
+    }
 
-	/**
-	 * We are of type 4008
-	 */
-	@Override
+    /**
+     * We are of type 4008
+     */
+    @Override
     public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	@Override
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		// Header - size or type unchanged
-		out.write(_header);
+        // Header - size or type unchanged
+        out.write(_header);
 
-		// Write out our text
-		out.write(_text);
-	}
+        // Write out our text
+        out.write(_text);
+    }
 
-	/**
-	 * dump debug info; use getText() to return a string
-	 * representation of the atom
-	 */
-	@Override
+    /**
+     * dump debug info; use getText() to return a string
+     * representation of the atom
+     */
+    @Override
     public String toString() {
-		return GenericRecordJsonWriter.marshal(this);
-	}
+        return GenericRecordJsonWriter.marshal(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"text", this::getText
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "text", this::getText
+        );
+    }
 }

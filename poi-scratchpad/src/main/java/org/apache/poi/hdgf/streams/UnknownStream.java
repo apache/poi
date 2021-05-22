@@ -24,7 +24,7 @@ import org.apache.poi.hdgf.pointers.Pointer;
  *  about how to process / handle it
  */
 public final class UnknownStream extends Stream {
-	protected UnknownStream(Pointer pointer, StreamStore store) {
-		super(pointer, store);
-	}
+    protected UnknownStream(Pointer pointer, StreamStore store) {
+        super(pointer, store);
+    }
 }

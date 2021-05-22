@@ -195,7 +195,7 @@ public class ExOleObjAtom extends RecordAtom {
 
         // Must be at least 24 bytes long
         if(_data.length < 24) {
-        	throw new IllegalArgumentException("The length of the data for a ExOleObjAtom must be at least 24 bytes, but was only " + _data.length);
+            throw new IllegalArgumentException("The length of the data for a ExOleObjAtom must be at least 24 bytes, but was only " + _data.length);
         }
     }
 

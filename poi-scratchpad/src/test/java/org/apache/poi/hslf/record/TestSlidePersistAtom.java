@@ -29,31 +29,31 @@ import org.junit.jupiter.api.Test;
  * Tests that SlidePersistAtom works properly
  */
 public final class TestSlidePersistAtom {
-	// From a real file
-	private final byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
-		4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
-		1, 0, 0, 0, 0, 0, 0 };
+    // From a real file
+    private final byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
+        4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 0, 0 };
 
-	@Test
-	void testRecordType() {
-		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
-		assertEquals(1011L, spa.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
+        assertEquals(1011L, spa.getRecordType());
+    }
 
-	@Test
-	void testFlags() {
-		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
-		assertEquals(4, spa.getRefID() );
+    @Test
+    void testFlags() {
+        SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
+        assertEquals(4, spa.getRefID() );
         assertTrue(spa.getHasShapesOtherThanPlaceholders());
-		assertEquals(2, spa.getNumPlaceholderTexts() );
-		assertEquals(256, spa.getSlideIdentifier());
-	}
+        assertEquals(2, spa.getNumPlaceholderTexts() );
+        assertEquals(256, spa.getSlideIdentifier());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		spa.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        spa.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 }

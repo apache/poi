@@ -23,15 +23,15 @@ import java.util.Arrays;
  * A trailer that follows a chunk
  */
 public final class ChunkTrailer {
-	private final byte[] trailerData;
+    private final byte[] trailerData;
 
-	public ChunkTrailer(byte[] data, int offset) {
-		trailerData = Arrays.copyOfRange(data, offset, offset+8);
-	}
+    public ChunkTrailer(byte[] data, int offset) {
+        trailerData = Arrays.copyOfRange(data, offset, offset+8);
+    }
 
-	public String toString() {
-		return "<ChunkTrailer of length " + trailerData.length + ">";
-	}
+    public String toString() {
+        return "<ChunkTrailer of length " + trailerData.length + ">";
+    }
 
     byte[] getTrailerData() {
         return trailerData;

@@ -34,16 +34,16 @@ import org.apache.poi.util.LocaleUtil;
  * stored as UTC either, but rather the local system time (yuck.)
  */
 public final class SystemTimeUtils {
-	/**
-	 * Get the date found in the byte array, as a java Data object
-	 */
-	public static Date getDate(byte[] data) {
-		return getDate(data,0);
-	}
-	/**
-	 * Get the date found in the byte array, as a java Data object
-	 */
-	public static Date getDate(byte[] data, int offset) {
+    /**
+     * Get the date found in the byte array, as a java Data object
+     */
+    public static Date getDate(byte[] data) {
+        return getDate(data,0);
+    }
+    /**
+     * Get the date found in the byte array, as a java Data object
+     */
+    public static Date getDate(byte[] data, int offset) {
         Calendar cal = LocaleUtil.getLocaleCalendar();
 
         cal.set(Calendar.YEAR,         LittleEndian.getShort(data,offset));
@@ -57,20 +57,20 @@ public final class SystemTimeUtils {
         cal.set(Calendar.MILLISECOND,  LittleEndian.getShort(data,offset+14));
 
         return cal.getTime();
-	}
+    }
 
-	/**
-	 * Convert the supplied java Date into a SystemTime struct, and write it
-	 *  into the supplied byte array.
-	 */
-	public static void storeDate(Date date, byte[] dest) {
-		storeDate(date, dest, 0);
-	}
-	/**
-	 * Convert the supplied java Date into a SystemTime struct, and write it
-	 *  into the supplied byte array.
-	 */
-	public static void storeDate(Date date, byte[] dest, int offset) {
+    /**
+     * Convert the supplied java Date into a SystemTime struct, and write it
+     *  into the supplied byte array.
+     */
+    public static void storeDate(Date date, byte[] dest) {
+        storeDate(date, dest, 0);
+    }
+    /**
+     * Convert the supplied java Date into a SystemTime struct, and write it
+     *  into the supplied byte array.
+     */
+    public static void storeDate(Date date, byte[] dest, int offset) {
         Calendar cal = LocaleUtil.getLocaleCalendar();
         cal.setTime(date);
 
@@ -82,5 +82,5 @@ public final class SystemTimeUtils {
         LittleEndian.putShort(dest, offset + 10,(short) cal.get(Calendar.MINUTE));
         LittleEndian.putShort(dest, offset + 12,(short) cal.get(Calendar.SECOND));
         LittleEndian.putShort(dest, offset + 14,(short) cal.get(Calendar.MILLISECOND));
-	}
+    }
 }

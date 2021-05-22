@@ -29,30 +29,30 @@ import org.junit.jupiter.api.Test;
  * Tests that NotesAtom works properly
  */
 public final class TestNotesAtom {
-	// From a real file
-	private final byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
-		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
+    // From a real file
+    private final byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
+        0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
-	@Test
-	void testRecordType() {
-		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-		assertEquals(1009L, na.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
+        assertEquals(1009L, na.getRecordType());
+    }
 
-	@Test
-	void testFlags() {
-		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-		assertEquals(0x80000000, na.getSlideID());
+    @Test
+    void testFlags() {
+        NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
+        assertEquals(0x80000000, na.getSlideID());
         assertFalse(na.getFollowMasterObjects());
         assertFalse(na.getFollowMasterScheme());
         assertFalse(na.getFollowMasterBackground());
-	}
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		na.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        na.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 }

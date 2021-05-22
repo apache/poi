@@ -35,32 +35,32 @@ import org.apache.poi.util.LittleEndian;
 
 public final class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer
 {
-	private byte[] _header;
-	private long _type;
+    private byte[] _header;
+    private long _type;
 
-	/**
-	 * Create a new holder for a boring record with children, but with
-	 *  position dependent characteristics
-	 */
-	protected DummyPositionSensitiveRecordWithChildren(byte[] source, int start, int len) {
-		// Just grab the header, not the whole contents
-		_header = Arrays.copyOfRange(source,start,start+8);
-		_type = LittleEndian.getUShort(_header,2);
+    /**
+     * Create a new holder for a boring record with children, but with
+     *  position dependent characteristics
+     */
+    protected DummyPositionSensitiveRecordWithChildren(byte[] source, int start, int len) {
+        // Just grab the header, not the whole contents
+        _header = Arrays.copyOfRange(source,start,start+8);
+        _type = LittleEndian.getUShort(_header,2);
 
-		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);
-	}
+        // Find our children
+        _children = Record.findChildRecords(source,start+8,len-8);
+    }
 
-	/**
-	 * Return the value we were given at creation
-	 */
-	public long getRecordType() { return _type; }
+    /**
+     * Return the value we were given at creation
+     */
+    public long getRecordType() { return _type; }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		writeOut(_header[0],_header[1],_type,_children,out);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        writeOut(_header[0],_header[1],_type,_children,out);
+    }
 }

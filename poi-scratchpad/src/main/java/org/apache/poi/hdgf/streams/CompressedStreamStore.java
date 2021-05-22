@@ -29,69 +29,69 @@ import org.apache.poi.util.IOUtils;
  */
 public final class CompressedStreamStore extends StreamStore {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 64_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 64_000_000;
 
-	/** The raw, compressed contents */
-	private byte[] compressedContents;
-	/**
-	 * We're not sure what this is, but it comes before the
-	 *  real contents in the de-compressed data
-	 */
-	private final byte[] blockHeader;
-	private boolean blockHeaderInContents;
+    /** The raw, compressed contents */
+    private byte[] compressedContents;
+    /**
+     * We're not sure what this is, but it comes before the
+     *  real contents in the de-compressed data
+     */
+    private final byte[] blockHeader;
+    private boolean blockHeaderInContents;
 
-	byte[] _getCompressedContents() { return compressedContents; }
-	byte[] _getBlockHeader() { return blockHeader; }
+    byte[] _getCompressedContents() { return compressedContents; }
+    byte[] _getBlockHeader() { return blockHeader; }
 
-	/**
-	 * Creates a new compressed StreamStore, which will handle
-	 *  the decompression.
-	 */
-	CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
-		this(decompress(data,offset,length));
-		compressedContents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH);
-	}
-	/**
-	 * Handles passing the de-compressed data onto our superclass.
-	 */
-	private CompressedStreamStore(byte[][] decompressedData) {
-		super(decompressedData[1], 0, decompressedData[1].length);
-		blockHeader = decompressedData[0];
-	}
+    /**
+     * Creates a new compressed StreamStore, which will handle
+     *  the decompression.
+     */
+    CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
+        this(decompress(data,offset,length));
+        compressedContents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH);
+    }
+    /**
+     * Handles passing the de-compressed data onto our superclass.
+     */
+    private CompressedStreamStore(byte[][] decompressedData) {
+        super(decompressedData[1], 0, decompressedData[1].length);
+        blockHeader = decompressedData[0];
+    }
 
-	/**
-	 * Some kinds of streams expect their 4 byte header to be
-	 *  on the front of the contents.
-	 * They can call this to have it sorted.
-	 */
-	protected void copyBlockHeaderToContents() {
-		if(blockHeaderInContents) return;
+    /**
+     * Some kinds of streams expect their 4 byte header to be
+     *  on the front of the contents.
+     * They can call this to have it sorted.
+     */
+    protected void copyBlockHeaderToContents() {
+        if(blockHeaderInContents) return;
 
-		prependContentsWith(blockHeader);
-		blockHeaderInContents = true;
-	}
+        prependContentsWith(blockHeader);
+        blockHeaderInContents = true;
+    }
 
 
-	/**
-	 * Decompresses the given data, returning it as header + contents
-	 */
-	public static byte[][] decompress(byte[] data, int offset, int length) throws IOException {
-		ByteArrayInputStream bais = new ByteArrayInputStream(data, offset, length);
+    /**
+     * Decompresses the given data, returning it as header + contents
+     */
+    public static byte[][] decompress(byte[] data, int offset, int length) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(data, offset, length);
 
-		// Decompress
-		HDGFLZW lzw = new HDGFLZW();
-		byte[] decompressed = lzw.decompress(bais);
+        // Decompress
+        HDGFLZW lzw = new HDGFLZW();
+        byte[] decompressed = lzw.decompress(bais);
 
-		// Split into header and contents
-		byte[][] ret = new byte[2][];
-		ret[0] = new byte[4];
-		ret[1] = new byte[decompressed.length - 4];
+        // Split into header and contents
+        byte[][] ret = new byte[2][];
+        ret[0] = new byte[4];
+        ret[1] = new byte[decompressed.length - 4];
 
-		System.arraycopy(decompressed, 0, ret[0], 0, 4);
-		System.arraycopy(decompressed, 4, ret[1], 0, ret[1].length);
+        System.arraycopy(decompressed, 0, ret[0], 0, 4);
+        System.arraycopy(decompressed, 4, ret[1], 0, ret[1].length);
 
-		// All done
-		return ret;
-	}
+        // All done
+        return ret;
+    }
 }

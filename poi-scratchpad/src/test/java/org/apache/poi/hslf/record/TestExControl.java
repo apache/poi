@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestExControl {
 
-	// From a real file (embedded SWF control)
+    // From a real file (embedded SWF control)
     /*
      <ExControl info="15" type="4078" size="218" offset="76" header="0F 00 EE 0F DA 00 00 00 ">
        <ExControlAtom info="0" type="4091" size="4" offset="84" header="00 00 FB 0F 04 00 00 00 ">
@@ -70,53 +70,53 @@ public final class TestExControl {
             0x65, 0x00, 0x63, 0x00, 0x74, 0x00
     };
 
-	@Test
-	void testRead() {
-		ExControl record = new ExControl(data, 0, data.length);
-		assertEquals(RecordTypes.ExControl.typeID, record.getRecordType());
+    @Test
+    void testRead() {
+        ExControl record = new ExControl(data, 0, data.length);
+        assertEquals(RecordTypes.ExControl.typeID, record.getRecordType());
 
-		assertNotNull(record.getExControlAtom());
-		assertEquals(256, record.getExControlAtom().getSlideId());
+        assertNotNull(record.getExControlAtom());
+        assertEquals(256, record.getExControlAtom().getSlideId());
 
-		ExOleObjAtom oleObj = record.getExOleObjAtom();
-		assertNotNull(oleObj);
-		assertEquals(oleObj.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-		assertEquals(oleObj.getType(), ExOleObjAtom.TYPE_CONTROL);
-		assertEquals(oleObj.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
+        ExOleObjAtom oleObj = record.getExOleObjAtom();
+        assertNotNull(oleObj);
+        assertEquals(oleObj.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        assertEquals(oleObj.getType(), ExOleObjAtom.TYPE_CONTROL);
+        assertEquals(oleObj.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
 
-		assertEquals("Shockwave Flash Object", record.getMenuName());
-		assertEquals("ShockwaveFlash.ShockwaveFlash.9", record.getProgId());
-		assertEquals("Shockwave Flash Object", record.getClipboardName());
-	}
+        assertEquals("Shockwave Flash Object", record.getMenuName());
+        assertEquals("ShockwaveFlash.ShockwaveFlash.9", record.getProgId());
+        assertEquals("Shockwave Flash Object", record.getClipboardName());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		ExControl record = new ExControl(data, 0, data.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        ExControl record = new ExControl(data, 0, data.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 
-	@Test
-	void testNewRecord() throws Exception {
-		ExControl record = new ExControl();
-		ExControlAtom ctrl = record.getExControlAtom();
-		ctrl.setSlideId(256);
+    @Test
+    void testNewRecord() throws Exception {
+        ExControl record = new ExControl();
+        ExControlAtom ctrl = record.getExControlAtom();
+        ctrl.setSlideId(256);
 
-		ExOleObjAtom oleObj = record.getExOleObjAtom();
-		oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-		oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
-		oleObj.setObjID(1);
-		oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
-		oleObj.setObjStgDataRef(2);
-		oleObj.setOptions(1283584);
+        ExOleObjAtom oleObj = record.getExOleObjAtom();
+        oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
+        oleObj.setObjID(1);
+        oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
+        oleObj.setObjStgDataRef(2);
+        oleObj.setOptions(1283584);
 
-		record.setMenuName("Shockwave Flash Object");
-		record.setProgId("ShockwaveFlash.ShockwaveFlash.9");
-		record.setClipboardName("Shockwave Flash Object");
+        record.setMenuName("Shockwave Flash Object");
+        record.setProgId("ShockwaveFlash.ShockwaveFlash.9");
+        record.setClipboardName("Shockwave Flash Object");
 
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		record.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        record.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 }

@@ -76,7 +76,7 @@ public final class ExHyperlinkAtom extends RecordAtom {
 
         // Must be at least 4 bytes long
         if(_data.length < 4) {
-        	throw new IllegalArgumentException("The length of the data for a ExHyperlinkAtom must be at least 4 bytes, but was only " + _data.length);
+            throw new IllegalArgumentException("The length of the data for a ExHyperlinkAtom must be at least 4 bytes, but was only " + _data.length);
         }
     }
 

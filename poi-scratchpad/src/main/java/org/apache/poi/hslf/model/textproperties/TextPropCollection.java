@@ -100,7 +100,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
     // indentLevel is only valid for paragraph collection
     // if it's set to -1, it must be omitted - see 2.9.36 TextMasterStyleLevel
     private short indentLevel;
-	private final Map<String,TextProp> textProps = new HashMap<>();
+    private final Map<String,TextProp> textProps = new HashMap<>();
     private int maskSpecial;
     private final TextPropType textPropType;
 
@@ -126,51 +126,51 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
         return maskSpecial;
     }
 
-	/** Fetch the number of characters this styling applies to */
-	public int getCharactersCovered() {
-	    return charactersCovered;
+    /** Fetch the number of characters this styling applies to */
+    public int getCharactersCovered() {
+        return charactersCovered;
     }
 
-	/** Fetch the TextProps that define this styling in the record order */
-	public List<TextProp> getTextPropList() {
-	    List<TextProp> orderedList = new ArrayList<>();
+    /** Fetch the TextProps that define this styling in the record order */
+    public List<TextProp> getTextPropList() {
+        List<TextProp> orderedList = new ArrayList<>();
         for (TextProp potProp : getPotentialProperties()) {
             TextProp textProp = textProps.get(potProp.getName());
             if (textProp != null) {
                 orderedList.add(textProp);
             }
         }
-	    return orderedList;
+        return orderedList;
     }
 
-	/** Fetch the TextProp with this name, or null if it isn't present */
-	@SuppressWarnings("unchecked")
+    /** Fetch the TextProp with this name, or null if it isn't present */
+    @SuppressWarnings("unchecked")
     public final <T extends TextProp> T findByName(String textPropName) {
-		return (T)textProps.get(textPropName);
-	}
+        return (T)textProps.get(textPropName);
+    }
 
     @SuppressWarnings("unchecked")
-	public final <T extends TextProp> T removeByName(String name) {
-	    return (T)textProps.remove(name);
-	}
+    public final <T extends TextProp> T removeByName(String name) {
+        return (T)textProps.remove(name);
+    }
 
-	public final TextPropType getTextPropType() {
-	    return textPropType;
-	}
+    public final TextPropType getTextPropType() {
+        return textPropType;
+    }
 
-	private TextProp[] getPotentialProperties() {
-	    return (textPropType == TextPropType.paragraph) ? paragraphTextPropTypes : characterTextPropTypes;
-	}
+    private TextProp[] getPotentialProperties() {
+        return (textPropType == TextPropType.paragraph) ? paragraphTextPropTypes : characterTextPropTypes;
+    }
 
-	/**
-	 * Checks the paragraph or character properties for the given property name.
-	 * Throws a HSLFException, if the name doesn't belong into this set of properties
-	 *
-	 * @param name the property name
-	 * @return if found, the property template to copy from
-	 */
+    /**
+     * Checks the paragraph or character properties for the given property name.
+     * Throws a HSLFException, if the name doesn't belong into this set of properties
+     *
+     * @param name the property name
+     * @return if found, the property template to copy from
+     */
     @SuppressWarnings("unchecked")
-	private <T extends TextProp> T validatePropName(final String name) {
+    private <T extends TextProp> T validatePropName(final String name) {
        for (TextProp tp : getPotentialProperties()) {
             if (tp.getName().equals(name)) {
                 return (T)tp;
@@ -180,7 +180,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
            "No TextProp with name " + name + " is defined to add from. " +
            "Character and paragraphs have their own properties/names.";
        throw new HSLFException(errStr);
-	}
+    }
 
     /** Add the TextProp with this name to the list */
     @SuppressWarnings("unchecked")
@@ -195,37 +195,37 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
         return textProp;
     }
 
-	/**
-	 * Add the property at the correct position. Replaces an existing property with the same name.
-	 *
-	 * @param textProp the property to be added
-	 */
-	public final void addProp(TextProp textProp) {
-	    if (textProp == null) {
-	        throw new HSLFException("TextProp must not be null");
-	    }
+    /**
+     * Add the property at the correct position. Replaces an existing property with the same name.
+     *
+     * @param textProp the property to be added
+     */
+    public final void addProp(TextProp textProp) {
+        if (textProp == null) {
+            throw new HSLFException("TextProp must not be null");
+        }
 
-	    String propName = textProp.getName();
-	    validatePropName(propName);
+        String propName = textProp.getName();
+        validatePropName(propName);
 
-	    textProps.put(propName, textProp);
-	}
+        textProps.put(propName, textProp);
+    }
 
-	/**
-	 * For an existing set of text properties, build the list of
-	 *  properties coded for in a given run of properties.
-	 * @return the number of bytes that were used encoding the properties list
-	 */
-	public int buildTextPropList(int containsField, byte[] data, int dataOffset) {
-		int bytesPassed = 0;
+    /**
+     * For an existing set of text properties, build the list of
+     *  properties coded for in a given run of properties.
+     * @return the number of bytes that were used encoding the properties list
+     */
+    public int buildTextPropList(int containsField, byte[] data, int dataOffset) {
+        int bytesPassed = 0;
 
-		// For each possible entry, see if we match the mask
-		// If we do, decode that, save it, and shuffle on
-		for(TextProp tp : getPotentialProperties()) {
-			// Check there's still data left to read
+        // For each possible entry, see if we match the mask
+        // If we do, decode that, save it, and shuffle on
+        for(TextProp tp : getPotentialProperties()) {
+            // Check there's still data left to read
 
-			// Check if this property is found in the mask
-			if((containsField & tp.getMask()) != 0) {
+            // Check if this property is found in the mask
+            if((containsField & tp.getMask()) != 0) {
                 if(dataOffset+bytesPassed >= data.length) {
                     // Out of data, can't be any more properties to go
                     // remember the mask and return
@@ -233,82 +233,82 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                     return bytesPassed;
                 }
 
-				// Bingo, data contains this property
-				TextProp prop = tp.copy();
-				int val = 0;
-				if (prop instanceof HSLFTabStopPropCollection) {
+                // Bingo, data contains this property
+                TextProp prop = tp.copy();
+                int val = 0;
+                if (prop instanceof HSLFTabStopPropCollection) {
                     ((HSLFTabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
                 } else if (prop.getSize() == 2) {
-					val = LittleEndian.getShort(data,dataOffset+bytesPassed);
-				} else if(prop.getSize() == 4) {
-					val = LittleEndian.getInt(data,dataOffset+bytesPassed);
-				} else if (prop.getSize() == 0) {
+                    val = LittleEndian.getShort(data,dataOffset+bytesPassed);
+                } else if(prop.getSize() == 4) {
+                    val = LittleEndian.getInt(data,dataOffset+bytesPassed);
+                } else if (prop.getSize() == 0) {
                     //remember "special" bits.
                     maskSpecial |= tp.getMask();
                     continue;
                 }
 
-				if (prop instanceof BitMaskTextProp) {
-				    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
-				} else if (!(prop instanceof HSLFTabStopPropCollection)) {
-				    prop.setValue(val);
-				}
-				bytesPassed += prop.getSize();
-				addProp(prop);
-			}
-		}
+                if (prop instanceof BitMaskTextProp) {
+                    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
+                } else if (!(prop instanceof HSLFTabStopPropCollection)) {
+                    prop.setValue(val);
+                }
+                bytesPassed += prop.getSize();
+                addProp(prop);
+            }
+        }
 
-		// Return how many bytes were used
-		return bytesPassed;
-	}
+        // Return how many bytes were used
+        return bytesPassed;
+    }
 
     /**
      * Clones the given text properties
      */
     @Override
-	public TextPropCollection copy() {
+    public TextPropCollection copy() {
         return new TextPropCollection(this);
-	}
+    }
 
-	/**
-	 * Update the size of the text that this set of properties
-	 *  applies to
-	 */
-	public void updateTextSize(int textSize) {
-		charactersCovered = textSize;
-	}
+    /**
+     * Update the size of the text that this set of properties
+     *  applies to
+     */
+    public void updateTextSize(int textSize) {
+        charactersCovered = textSize;
+    }
 
-	   /**
+       /**
      * Writes out to disk the header, and then all the properties
      */
     public void writeOut(OutputStream o) throws IOException {
         writeOut(o, false);
     }
 
-	/**
-	 * Writes out to disk the header, and then all the properties
-	 */
-	public void writeOut(OutputStream o, boolean isMasterStyle) throws IOException {
-	    if (!isMasterStyle) {
-	        // First goes the number of characters we affect
-	        // MasterStyles don't have this field
+    /**
+     * Writes out to disk the header, and then all the properties
+     */
+    public void writeOut(OutputStream o, boolean isMasterStyle) throws IOException {
+        if (!isMasterStyle) {
+            // First goes the number of characters we affect
+            // MasterStyles don't have this field
             Record.writeLittleEndian(charactersCovered,o);
-	    }
+        }
 
-		// Then we have the indentLevel field if it's a paragraph collection
-		if (textPropType == TextPropType.paragraph && indentLevel > -1) {
+        // Then we have the indentLevel field if it's a paragraph collection
+        if (textPropType == TextPropType.paragraph && indentLevel > -1) {
             Record.writeLittleEndian(indentLevel, o);
-		}
+        }
 
-		// Then the mask field
-		int mask = maskSpecial;
-		for (TextProp textProp : textProps.values()) {
+        // Then the mask field
+        int mask = maskSpecial;
+        for (TextProp textProp : textProps.values()) {
             mask |= textProp.getWriteMask();
         }
         Record.writeLittleEndian(mask,o);
 
-		// Then the contents of all the properties
-		for (TextProp textProp : getTextPropList()) {
+        // Then the contents of all the properties
+        for (TextProp textProp : getTextPropList()) {
             int val = textProp.getValue();
             if (textProp instanceof BitMaskTextProp && textProp.getWriteMask() == 0) {
                 // don't add empty properties, as they can't be recognized while reading
@@ -320,8 +320,8 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
             } else if (textProp instanceof HSLFTabStopPropCollection) {
                 ((HSLFTabStopPropCollection)textProp).writeProperty(o);
             }
-		}
-	}
+        }
+    }
 
     public short getIndentLevel(){
         return indentLevel;
@@ -335,7 +335,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
     }
 
     public int hashCode() {
-	    return Objects.hash(charactersCovered,maskSpecial,indentLevel,textProps);
+        return Objects.hash(charactersCovered,maskSpecial,indentLevel,textProps);
     }
     /**
      * compares most properties apart of the covered characters length

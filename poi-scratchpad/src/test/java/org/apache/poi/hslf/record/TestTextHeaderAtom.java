@@ -29,32 +29,32 @@ import org.junit.jupiter.api.Test;
  * Tests that TextHeaderAtom works properly
  */
 public final class TestTextHeaderAtom {
-	// From a real file
-	private final byte[] notes_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0 };
-	private final byte[] title_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
-	private final byte[] body_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
+    // From a real file
+    private final byte[] notes_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0 };
+    private final byte[] title_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
+    private final byte[] body_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
-	@Test
-	void testRecordType() {
-		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
-		assertEquals(3999L, tha.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
+        assertEquals(3999L, tha.getRecordType());
+    }
 
-	@Test
-	void testTypes() {
-		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
-		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
-		TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);
-		assertEquals(TextPlaceholder.NOTES.nativeId, n_tha.getTextType());
-		assertEquals(TextPlaceholder.TITLE.nativeId, t_tha.getTextType());
-		assertEquals(TextPlaceholder.BODY.nativeId, b_tha.getTextType());
-	}
+    @Test
+    void testTypes() {
+        TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
+        TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
+        TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);
+        assertEquals(TextPlaceholder.NOTES.nativeId, n_tha.getTextType());
+        assertEquals(TextPlaceholder.TITLE.nativeId, t_tha.getTextType());
+        assertEquals(TextPlaceholder.BODY.nativeId, b_tha.getTextType());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tha.writeOut(baos);
-		assertArrayEquals(notes_data, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tha.writeOut(baos);
+        assertArrayEquals(notes_data, baos.toByteArray());
+    }
 }

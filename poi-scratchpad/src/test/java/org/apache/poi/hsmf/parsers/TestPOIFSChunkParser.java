@@ -252,7 +252,7 @@ public final class TestPOIFSChunkParser {
 
    @Test
    void testFindsAttachments() throws IOException, ChunkNotFoundException {
-	  POIFSFileSystem with = new POIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
+      POIFSFileSystem with = new POIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
       POIFSFileSystem without = new POIFSFileSystem(samples.getFile("quick.msg"), true);
       AttachmentChunks attachment;
 
@@ -285,7 +285,7 @@ public final class TestPOIFSChunkParser {
       assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000000"));
       assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000001"));
 
-	   // One with, from the top
+       // One with, from the top
       MAPIMessage msgWith = new MAPIMessage(with);
       assertEquals(2, msgWith.getAttachmentFiles().length);
 
@@ -304,7 +304,7 @@ public final class TestPOIFSChunkParser {
       assertEquals("Nicolas1 23456", msgWith.getDisplayFrom());
       assertEquals("test pi\u00e8ce jointe 1", msgWith.getSubject());
 
-	   // One without, from the top
+       // One without, from the top
       MAPIMessage msgWithout = new MAPIMessage(without);
 
       // No attachments

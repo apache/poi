@@ -30,50 +30,50 @@ import org.junit.jupiter.api.Test;
  * Tests that TextBytesAtom works properly
  */
 public final class TestTextBytesAtom {
-	// From a real file
-	private final byte[] data = { 0, 0, 0xA8-256, 0x0f, 0x1c, 0, 0, 0,
-		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x68,
-		0x65, 0x20, 0x74, 0x69, 0x74, 0x6C,	0x65, 0x20, 0x6F, 0x6E,
-		0x20, 0x70, 0x61, 0x67, 0x65, 0x20, 0x32 };
-	private final byte[] alt_data = { 0, 0, 0xA8-256, 0x0F, 0x14, 0, 0, 0,
-		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20,
-		0x74, 0x65, 0x73, 0x74, 0x20, 0x74, 0x69, 0x74, 0x6C, 0x65 };
-	private final String alt_text = "This is a test title";
+    // From a real file
+    private final byte[] data = { 0, 0, 0xA8-256, 0x0f, 0x1c, 0, 0, 0,
+        0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x68,
+        0x65, 0x20, 0x74, 0x69, 0x74, 0x6C, 0x65, 0x20, 0x6F, 0x6E,
+        0x20, 0x70, 0x61, 0x67, 0x65, 0x20, 0x32 };
+    private final byte[] alt_data = { 0, 0, 0xA8-256, 0x0F, 0x14, 0, 0, 0,
+        0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20,
+        0x74, 0x65, 0x73, 0x74, 0x20, 0x74, 0x69, 0x74, 0x6C, 0x65 };
+    private final String alt_text = "This is a test title";
 
-	@Test
+    @Test
     void testRecordType() {
-		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		assertEquals(4008L, tba.getRecordType());
-	}
+        TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
+        assertEquals(4008L, tba.getRecordType());
+    }
 
-	@Test
-	void testTextA() {
-		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		String data_text = "This is the title on page 2";
-		assertEquals(data_text, tba.getText());
-	}
+    @Test
+    void testTextA() {
+        TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
+        String data_text = "This is the title on page 2";
+        assertEquals(data_text, tba.getText());
+    }
 
-	@Test
-	void testTextB() {
-		TextBytesAtom tba = new TextBytesAtom(alt_data,0,alt_data.length);
-		assertEquals(alt_text, tba.getText());
-	}
+    @Test
+    void testTextB() {
+        TextBytesAtom tba = new TextBytesAtom(alt_data,0,alt_data.length);
+        assertEquals(alt_text, tba.getText());
+    }
 
-	@Test
-	void testChangeText() throws Exception {
-		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
+    @Test
+    void testChangeText() throws Exception {
+        TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
+        tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
 
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tba.writeOut(baos);
-		assertArrayEquals(alt_data, baos.toByteArray());
-	}
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tba.writeOut(baos);
+        assertArrayEquals(alt_data, baos.toByteArray());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		tba.writeOut(baos);
-		assertArrayEquals(data, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        tba.writeOut(baos);
+        assertArrayEquals(data, baos.toByteArray());
+    }
 }

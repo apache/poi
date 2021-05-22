@@ -28,31 +28,31 @@ import org.junit.jupiter.api.Test;
  * Tests that SlideShow returns MetaSheets which have the right text in them
  */
 public final class TestNotesText {
-	// SlideShow primed on the test data
-	private HSLFSlideShow ss;
+    // SlideShow primed on the test data
+    private HSLFSlideShow ss;
 
-	@BeforeEach
-	void setup() throws Exception {
-		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(hss);
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShow(hss);
+    }
 
-	@Test
-	void testNotesOne() {
-		HSLFNotes notes = ss.getNotes().get(0);
-		String[] expectText = {"These are the notes for page 1"};
-		assertArrayEquals(expectText, toStrings(notes));
-	}
+    @Test
+    void testNotesOne() {
+        HSLFNotes notes = ss.getNotes().get(0);
+        String[] expectText = {"These are the notes for page 1"};
+        assertArrayEquals(expectText, toStrings(notes));
+    }
 
-	@Test
-	void testNotesTwo() {
-		HSLFNotes notes = ss.getNotes().get(1);
-		String[] expectText = {"These are the notes on page two, again lacking formatting"};
-		assertArrayEquals(expectText, toStrings(notes));
-	}
+    @Test
+    void testNotesTwo() {
+        HSLFNotes notes = ss.getNotes().get(1);
+        String[] expectText = {"These are the notes on page two, again lacking formatting"};
+        assertArrayEquals(expectText, toStrings(notes));
+    }
 
-	private static String[] toStrings(HSLFNotes notes) {
-		return notes.getTextParagraphs().stream().map(HSLFTextParagraph::getRawText).toArray(String[]::new);
-	}
+    private static String[] toStrings(HSLFNotes notes) {
+        return notes.getTextParagraphs().stream().map(HSLFTextParagraph::getRawText).toArray(String[]::new);
+    }
 }

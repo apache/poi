@@ -52,7 +52,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
      */
     public static final int PLACEHOLDER_QUARTSIZE = 2;
 
-	private byte[] _header;
+    private byte[] _header;
 
     private int placementId;
     private int placeholderId;
@@ -77,7 +77,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
     /**
      * Build an instance of {@code OEPlaceholderAtom} from on-disk data
      */
-	protected OEPlaceholderAtom(byte[] source, int start, int len) {
+    protected OEPlaceholderAtom(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
         int offset = start+8;
 
@@ -85,12 +85,12 @@ public final class OEPlaceholderAtom extends RecordAtom{
         placeholderId = LittleEndian.getUByte(source, offset); offset++;
         placeholderSize = LittleEndian.getUByte(source, offset); offset++;
         unusedShort = LittleEndian.getShort(source, offset);
-	}
+    }
 
     /**
      * @return type of this record {@link RecordTypes#OEPlaceholderAtom}.
      */
-	@Override
+    @Override
     public long getRecordType() { return RecordTypes.OEPlaceholderAtom.typeID; }
 
     /**
@@ -163,12 +163,12 @@ public final class OEPlaceholderAtom extends RecordAtom{
         placeholderSize = size;
     }
 
-	/**
-	 * Write the contents of the record back, so it can be written to disk
-	 */
-	@Override
+    /**
+     * Write the contents of the record back, so it can be written to disk
+     */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
-		out.write(_header);
+        out.write(_header);
 
         byte[] recdata = new byte[8];
         LittleEndian.putInt(recdata, 0, placementId);
@@ -177,7 +177,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
         LittleEndian.putShort(recdata, 6, unusedShort);
 
         out.write(recdata);
-	}
+    }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

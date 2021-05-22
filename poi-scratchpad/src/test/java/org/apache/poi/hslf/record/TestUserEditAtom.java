@@ -28,36 +28,36 @@ import org.junit.jupiter.api.Test;
  * Tests that UserEditAtom works properly
  */
 public final class TestUserEditAtom {
-	// From a real file
-	private final byte[] data_a = new byte[] { 0, 0, 0xF5-256, 0x0F, 0x1C, 0, 0, 0,
-		0, 1, 0, 0, 0xD9-256, 18, 0, 3,
-		0, 0, 0, 0, 0, 0x18, 0, 0, 1, 0, 0, 0,
-		5, 0, 0, 0, 1, 0, 0xF6-256, 77 };
+    // From a real file
+    private final byte[] data_a = new byte[] { 0, 0, 0xF5-256, 0x0F, 0x1C, 0, 0, 0,
+        0, 1, 0, 0, 0xD9-256, 18, 0, 3,
+        0, 0, 0, 0, 0, 0x18, 0, 0, 1, 0, 0, 0,
+        5, 0, 0, 0, 1, 0, 0xF6-256, 77 };
 
-	@Test
-	void testRecordType() {
-		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
-		assertEquals(4085L, uea.getRecordType());
-	}
+    @Test
+    void testRecordType() {
+        UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
+        assertEquals(4085L, uea.getRecordType());
+    }
 
-	@Test
-	void testFlags() {
-		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
+    @Test
+    void testFlags() {
+        UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 
-		assertEquals(256, uea.getLastViewedSlideID() );
-		//assertEquals(0x030018D9, uea.getPPTVersion() );
-		assertEquals(0, uea.getLastUserEditAtomOffset() );
-		assertEquals(0x1800, uea.getPersistPointersOffset() );
-		assertEquals(1, uea.getDocPersistRef() );
-		assertEquals(5, uea.getMaxPersistWritten() );
-		assertEquals((short)1, uea.getLastViewType() );
-	}
+        assertEquals(256, uea.getLastViewedSlideID() );
+        //assertEquals(0x030018D9, uea.getPPTVersion() );
+        assertEquals(0, uea.getLastUserEditAtomOffset() );
+        assertEquals(0x1800, uea.getPersistPointersOffset() );
+        assertEquals(1, uea.getDocPersistRef() );
+        assertEquals(5, uea.getMaxPersistWritten() );
+        assertEquals((short)1, uea.getLastViewType() );
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		uea.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        uea.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 }

@@ -28,67 +28,67 @@ import org.junit.jupiter.api.Test;
  * Tests that TxInteractiveInfoAtom works properly.
  */
 public final class TestTxInteractiveInfoAtom {
-	// From WithLinks.ppt
-	private final byte[] data_a = {
-		0, 0, (byte)0xDF, 0x0F, 0x08, 0, 0, 0,
-		0x19, 0, 0, 0, 0x38, 0, 0, 0
-	};
+    // From WithLinks.ppt
+    private final byte[] data_a = {
+        0, 0, (byte)0xDF, 0x0F, 0x08, 0, 0, 0,
+        0x19, 0, 0, 0, 0x38, 0, 0, 0
+    };
 
-	private final byte[] data_b = {
-		0, 0, (byte)0xDF, 0x0F, 0x08, 0, 0, 0,
-		0x39, 0, 0, 0, 0x4E, 0, 0, 0
-	};
+    private final byte[] data_b = {
+        0, 0, (byte)0xDF, 0x0F, 0x08, 0, 0, 0,
+        0x39, 0, 0, 0, 0x4E, 0, 0, 0
+    };
 
-	@Test
-	void testRead() {
-		TxInteractiveInfoAtom ia1 = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
+    @Test
+    void testRead() {
+        TxInteractiveInfoAtom ia1 = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 
-		assertEquals(4063, ia1.getRecordType());
-		assertEquals(25, ia1.getStartIndex());
-		assertEquals(56, ia1.getEndIndex());
+        assertEquals(4063, ia1.getRecordType());
+        assertEquals(25, ia1.getStartIndex());
+        assertEquals(56, ia1.getEndIndex());
 
-		TxInteractiveInfoAtom ia2 = new TxInteractiveInfoAtom(data_b, 0, data_b.length);
+        TxInteractiveInfoAtom ia2 = new TxInteractiveInfoAtom(data_b, 0, data_b.length);
 
-		assertEquals(4063, ia2.getRecordType());
-		assertEquals(57, ia2.getStartIndex());
-		assertEquals(78, ia2.getEndIndex());
-	}
+        assertEquals(4063, ia2.getRecordType());
+        assertEquals(57, ia2.getStartIndex());
+        assertEquals(78, ia2.getEndIndex());
+    }
 
-	@Test
-	void testWrite() throws Exception {
-		TxInteractiveInfoAtom atom = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		atom.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+    @Test
+    void testWrite() throws Exception {
+        TxInteractiveInfoAtom atom = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        atom.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-	// Create A from scratch
-	@Test
-	void testCreate() throws Exception {
-		TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom();
+    // Create A from scratch
+    @Test
+    void testCreate() throws Exception {
+        TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom();
 
-		// Set values
-		ia.setStartIndex(25);
-		ia.setEndIndex(56);
+        // Set values
+        ia.setStartIndex(25);
+        ia.setEndIndex(56);
 
-		// Check it's now the same as a
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ia.writeOut(baos);
-		assertArrayEquals(data_a, baos.toByteArray());
-	}
+        // Check it's now the same as a
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ia.writeOut(baos);
+        assertArrayEquals(data_a, baos.toByteArray());
+    }
 
-	// Try to turn a into b
-	@Test
-	void testChange() throws Exception {
-		TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
+    // Try to turn a into b
+    @Test
+    void testChange() throws Exception {
+        TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 
-		// Change the number
-		ia.setStartIndex(57);
-		ia.setEndIndex(78);
+        // Change the number
+        ia.setStartIndex(57);
+        ia.setEndIndex(78);
 
-		// Check bytes are now the same
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-		ia.writeOut(baos);
-		assertArrayEquals(data_b, baos.toByteArray());
-	}
+        // Check bytes are now the same
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        ia.writeOut(baos);
+        assertArrayEquals(data_b, baos.toByteArray());
+    }
 }

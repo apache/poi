@@ -149,10 +149,10 @@ public class TextPiece extends PropertyNode<TextPiece> {
         int myEnd = getEnd();
         int end = start + length;
 
-	   /* do we have to delete from this text piece? */
+       /* do we have to delete from this text piece? */
         if (start <= myEnd && end >= myStart) {
 
-		   /* find where the deleted area overlaps with this text piece */
+           /* find where the deleted area overlaps with this text piece */
             int overlapStart = Math.max(myStart, start);
             int overlapEnd = Math.min(myEnd, end);
 

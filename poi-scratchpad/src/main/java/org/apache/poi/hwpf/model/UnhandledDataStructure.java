@@ -44,7 +44,7 @@ public final class UnhandledDataStructure
     if (offset < 0 || length < 0)
     {
        throw new IndexOutOfBoundsException("Offset and Length must both be >= 0, negative " +
-       		"indicies are not permitted - code is tried to read " + length + " from offset " + offset);
+            "indicies are not permitted - code is tried to read " + length + " from offset " + offset);
     }
     
     // Save that requested portion of the data 

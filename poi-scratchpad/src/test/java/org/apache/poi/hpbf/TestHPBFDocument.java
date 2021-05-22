@@ -31,34 +31,34 @@ public final class TestHPBFDocument {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
     @Test
-	void testOpen() throws IOException {
-	    InputStream is = _samples.openResourceAsStream("Sample.pub");
-		HPBFDocument doc = new HPBFDocument(is);
-		is.close();
-		assertNotNull(doc);
-		doc.close();
-	}
+    void testOpen() throws IOException {
+        InputStream is = _samples.openResourceAsStream("Sample.pub");
+        HPBFDocument doc = new HPBFDocument(is);
+        is.close();
+        assertNotNull(doc);
+        doc.close();
+    }
 
     @Test
-	void testBits() throws IOException {
+    void testBits() throws IOException {
         InputStream is = _samples.openResourceAsStream("Sample.pub");
-		HPBFDocument doc = new HPBFDocument(is);
+        HPBFDocument doc = new HPBFDocument(is);
         is.close();
 
-		assertNotNull(doc.getMainContents());
-		assertNotNull(doc.getQuillContents());
-		assertNotNull(doc.getEscherStm());
-		assertNotNull(doc.getEscherDelayStm());
+        assertNotNull(doc.getMainContents());
+        assertNotNull(doc.getQuillContents());
+        assertNotNull(doc.getEscherStm());
+        assertNotNull(doc.getEscherDelayStm());
 
-		assertTrue(doc.getMainContents().getData().length > 0);
-		assertTrue(doc.getQuillContents().getData().length > 0);
-		assertTrue(doc.getEscherStm().getData().length > 0);
+        assertTrue(doc.getMainContents().getData().length > 0);
+        assertTrue(doc.getQuillContents().getData().length > 0);
+        assertTrue(doc.getEscherStm().getData().length > 0);
         assertEquals(0, doc.getEscherDelayStm().getData().length);
 
        doc.close();
-	}
+    }
 
-	// TODO
-//	void testWrite() throws Exception {
-//	}
+    // TODO
+//  void testWrite() throws Exception {
+//  }
 }

@@ -36,49 +36,49 @@ import org.apache.poi.util.LittleEndian;
 public final class UnknownRecordPlaceholder extends RecordAtom
 {
 
-	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 20_000_000;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 20_000_000;
 
-	private byte[] _contents;
-	private long _type;
+    private byte[] _contents;
+    private long _type;
 
-	/**
-	 * Create a new holder for a record we don't grok
-	 */
-	protected UnknownRecordPlaceholder(byte[] source, int start, int len) {
-		// Sanity Checking - including whole header, so treat
-		//  length as based of 0, not 8 (including header size based)
-		if(len < 0) { len = 0; }
+    /**
+     * Create a new holder for a record we don't grok
+     */
+    protected UnknownRecordPlaceholder(byte[] source, int start, int len) {
+        // Sanity Checking - including whole header, so treat
+        //  length as based of 0, not 8 (including header size based)
+        if(len < 0) { len = 0; }
 
-		// Treat as an atom, grab and hold everything
-		_contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
-		_type = LittleEndian.getUShort(_contents,2);
-	}
+        // Treat as an atom, grab and hold everything
+        _contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
+        _type = LittleEndian.getUShort(_contents,2);
+    }
 
-	/**
-	 * Return the value we were given at creation
-	 */
-	public long getRecordType() {
-		return _type;
-	}
+    /**
+     * Return the value we were given at creation
+     */
+    public long getRecordType() {
+        return _type;
+    }
 
-	/**
-	 * Return the value as enum we were given at creation
-	 */
-	public org.apache.poi.hslf.record.RecordTypes getRecordTypeEnum() {
-		return RecordTypes.forTypeID((int)_type);
-	}
+    /**
+     * Return the value as enum we were given at creation
+     */
+    public org.apache.poi.hslf.record.RecordTypes getRecordTypeEnum() {
+        return RecordTypes.forTypeID((int)_type);
+    }
 
-	/**
-	 * Write the contents of the record back, so it can be written
-	 *  to disk
-	 */
-	public void writeOut(OutputStream out) throws IOException {
-		out.write(_contents);
-	}
+    /**
+     * Write the contents of the record back, so it can be written
+     *  to disk
+     */
+    public void writeOut(OutputStream out) throws IOException {
+        out.write(_contents);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("contents", () -> _contents);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("contents", () -> _contents);
+    }
 }

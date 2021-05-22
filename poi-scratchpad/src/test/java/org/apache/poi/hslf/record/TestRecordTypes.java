@@ -28,23 +28,23 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestRecordTypes {
     @Test
-	void testPPTNameLookups() {
-		assertEquals("MainMaster", RecordTypes.MainMaster.name());
-		assertEquals("TextBytesAtom", RecordTypes.TextBytesAtom.name());
-		assertEquals("VBAInfo", RecordTypes.VBAInfo.name());
-	}
+    void testPPTNameLookups() {
+        assertEquals("MainMaster", RecordTypes.MainMaster.name());
+        assertEquals("TextBytesAtom", RecordTypes.TextBytesAtom.name());
+        assertEquals("VBAInfo", RecordTypes.VBAInfo.name());
+    }
 
     @Test
-	void testEscherNameLookups() {
-		assertEquals("DGG_CONTAINER", EscherRecordTypes.DGG_CONTAINER.name());
-		assertEquals("CLIENT_TEXTBOX", EscherRecordTypes.CLIENT_TEXTBOX.name());
-		assertEquals("SELECTION", EscherRecordTypes.SELECTION.name());
-	}
+    void testEscherNameLookups() {
+        assertEquals("DGG_CONTAINER", EscherRecordTypes.DGG_CONTAINER.name());
+        assertEquals("CLIENT_TEXTBOX", EscherRecordTypes.CLIENT_TEXTBOX.name());
+        assertEquals("SELECTION", EscherRecordTypes.SELECTION.name());
+    }
 
     @Test
-	void testPPTClassLookups() {
-		// If this record is ever implemented, change to one that isn't!
-		// This is checking the "unhandled default" stuff works
-		assertEquals(RecordTypes.UnknownRecordPlaceholder, RecordTypes.forTypeID(-10));
-	}
+    void testPPTClassLookups() {
+        // If this record is ever implemented, change to one that isn't!
+        // This is checking the "unhandled default" stuff works
+        assertEquals(RecordTypes.UnknownRecordPlaceholder, RecordTypes.forTypeID(-10));
+    }
 }

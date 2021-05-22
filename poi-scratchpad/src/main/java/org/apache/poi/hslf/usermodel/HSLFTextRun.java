@@ -46,104 +46,104 @@ import org.apache.poi.sl.usermodel.TextShape;
  */
 @SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public final class HSLFTextRun implements TextRun {
-	private static final Logger LOG = LogManager.getLogger(HSLFTextRun.class);
+    private static final Logger LOG = LogManager.getLogger(HSLFTextRun.class);
 
-	/** The TextRun we belong to */
-	private HSLFTextParagraph parentParagraph;
-	private String _runText = "";
-	/** Caches the font info objects until the text runs are attached to the container */
-	private HSLFFontInfo[] cachedFontInfo;
-	private HSLFHyperlink link;
+    /** The TextRun we belong to */
+    private HSLFTextParagraph parentParagraph;
+    private String _runText = "";
+    /** Caches the font info objects until the text runs are attached to the container */
+    private HSLFFontInfo[] cachedFontInfo;
+    private HSLFHyperlink link;
 
-	/**
-	 * Our paragraph and character style.
-	 * Note - we may share these styles with other RichTextRuns
-	 */
-	private TextPropCollection characterStyle = new TextPropCollection(1, TextPropType.character);
+    /**
+     * Our paragraph and character style.
+     * Note - we may share these styles with other RichTextRuns
+     */
+    private TextPropCollection characterStyle = new TextPropCollection(1, TextPropType.character);
 
-	/**
-	 * Create a new wrapper around a rich text string
-	 * @param parentParagraph the parent paragraph
-	 */
-	public HSLFTextRun(HSLFTextParagraph parentParagraph) {
-		this.parentParagraph = parentParagraph;
-	}
+    /**
+     * Create a new wrapper around a rich text string
+     * @param parentParagraph the parent paragraph
+     */
+    public HSLFTextRun(HSLFTextParagraph parentParagraph) {
+        this.parentParagraph = parentParagraph;
+    }
 
-	public TextPropCollection getCharacterStyle() {
-	    return characterStyle;
-	}
+    public TextPropCollection getCharacterStyle() {
+        return characterStyle;
+    }
 
-	public void setCharacterStyle(TextPropCollection characterStyle) {
-	    this.characterStyle = characterStyle.copy();
-	    this.characterStyle.updateTextSize(_runText.length());
-	}
+    public void setCharacterStyle(TextPropCollection characterStyle) {
+        this.characterStyle = characterStyle.copy();
+        this.characterStyle.updateTextSize(_runText.length());
+    }
 
-	/**
-	 * Supply the SlideShow we belong to
-	 */
-	public void updateSheet() {
-		if (cachedFontInfo != null) {
-		    for (FontGroup tt : FontGroup.values()) {
-		        setFontInfo(cachedFontInfo[tt.ordinal()], tt);
-		    }
-		    cachedFontInfo = null;
-		}
-	}
+    /**
+     * Supply the SlideShow we belong to
+     */
+    public void updateSheet() {
+        if (cachedFontInfo != null) {
+            for (FontGroup tt : FontGroup.values()) {
+                setFontInfo(cachedFontInfo[tt.ordinal()], tt);
+            }
+            cachedFontInfo = null;
+        }
+    }
 
-	/**
-	 * Get the length of the text
-	 */
-	public int getLength() {
-		return _runText.length();
-	}
+    /**
+     * Get the length of the text
+     */
+    public int getLength() {
+        return _runText.length();
+    }
 
-	/**
-	 * Fetch the text, in raw storage form
-	 */
-	@Override
+    /**
+     * Fetch the text, in raw storage form
+     */
+    @Override
     public String getRawText() {
-		return _runText;
-	}
+        return _runText;
+    }
 
-	/**
-	 * Change the text
-	 */
-	@Override
+    /**
+     * Change the text
+     */
+    @Override
     public void setText(String text) {
-	    if (text == null) {
-	        throw new HSLFException("text must not be null");
-	    }
-	    String newText = HSLFTextParagraph.toInternalString(text);
-	    if (!newText.equals(_runText)) {
-	        _runText = newText;
-	        if (HSLFSlideShow.getLoadSavePhase() == HSLFSlideShow.LoadSavePhase.LOADED) {
-	            parentParagraph.setDirty();
-	        }
-	    }
-	}
+        if (text == null) {
+            throw new HSLFException("text must not be null");
+        }
+        String newText = HSLFTextParagraph.toInternalString(text);
+        if (!newText.equals(_runText)) {
+            _runText = newText;
+            if (HSLFSlideShow.getLoadSavePhase() == HSLFSlideShow.LoadSavePhase.LOADED) {
+                parentParagraph.setDirty();
+            }
+        }
+    }
 
-	// --------------- Internal helpers on rich text properties -------
+    // --------------- Internal helpers on rich text properties -------
 
-	/**
-	 * Fetch the value of the given flag in the CharFlagsTextProp.
-	 * Returns false if the CharFlagsTextProp isn't present, since the
-	 *  text property won't be set if there's no CharFlagsTextProp.
-	 */
-	private boolean isCharFlagsTextPropVal(int index) {
-		return getFlag(index);
-	}
+    /**
+     * Fetch the value of the given flag in the CharFlagsTextProp.
+     * Returns false if the CharFlagsTextProp isn't present, since the
+     *  text property won't be set if there's no CharFlagsTextProp.
+     */
+    private boolean isCharFlagsTextPropVal(int index) {
+        return getFlag(index);
+    }
 
-	boolean getFlag(int index) {
-		BitMaskTextProp prop = (characterStyle == null) ? null : characterStyle.findByName(CharFlagsTextProp.NAME);
+    boolean getFlag(int index) {
+        BitMaskTextProp prop = (characterStyle == null) ? null : characterStyle.findByName(CharFlagsTextProp.NAME);
 
-		if (prop == null || !prop.getSubPropMatches()[index]) {
-		    prop = getMasterProp();
-		}
+        if (prop == null || !prop.getSubPropMatches()[index]) {
+            prop = getMasterProp();
+        }
 
-		return prop != null && prop.getSubValue(index);
-	}
+        return prop != null && prop.getSubValue(index);
+    }
 
-	private <T extends TextProp> T getMasterProp() {
+    private <T extends TextProp> T getMasterProp() {
         final int txtype = parentParagraph.getRunType();
         final HSLFSheet sheet = parentParagraph.getSheet();
         if (sheet == null) {
@@ -160,152 +160,152 @@ public final class HSLFTextRun implements TextRun {
         String name = CharFlagsTextProp.NAME;
         final TextPropCollection col = master.getPropCollection(txtype, parentParagraph.getIndentLevel(), name, true);
         return (col == null) ? null : col.findByName(name);
-	}
+    }
 
 
-	/**
-	 * Set the value of the given flag in the CharFlagsTextProp, adding
-	 *  it if required.
-	 */
-	private void setCharFlagsTextPropVal(int index, boolean value) {
-	    // TODO: check if paragraph/chars can be handled the same ...
-		if (getFlag(index) != value) {
-		    setFlag(index, value);
-		    parentParagraph.setDirty();
-		}
-	}
+    /**
+     * Set the value of the given flag in the CharFlagsTextProp, adding
+     *  it if required.
+     */
+    private void setCharFlagsTextPropVal(int index, boolean value) {
+        // TODO: check if paragraph/chars can be handled the same ...
+        if (getFlag(index) != value) {
+            setFlag(index, value);
+            parentParagraph.setDirty();
+        }
+    }
 
-	/**
-	 * Sets the value of the given Paragraph TextProp, add if required
-	 * @param propName The name of the Paragraph TextProp
-	 * @param val The value to set for the TextProp
-	 */
-	public void setCharTextPropVal(String propName, Integer val) {
-	    getTextParagraph().setPropVal(characterStyle, propName, val);
-	}
+    /**
+     * Sets the value of the given Paragraph TextProp, add if required
+     * @param propName The name of the Paragraph TextProp
+     * @param val The value to set for the TextProp
+     */
+    public void setCharTextPropVal(String propName, Integer val) {
+        getTextParagraph().setPropVal(characterStyle, propName, val);
+    }
 
 
-	// --------------- Friendly getters / setters on rich text properties -------
-
-	@Override
-	public boolean isBold() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
-	}
-
-	@Override
-	public void setBold(boolean bold) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
-	}
-
-	@Override
-	public boolean isItalic() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX);
-	}
-
-	@Override
-	public void setItalic(boolean italic) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
-	}
-
-	@Override
-	public boolean isUnderlined() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
-	}
-
-	@Override
-	public void setUnderlined(boolean underlined) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
-	}
-
-	/**
-	 * Does the text have a shadow?
-	 */
-	public boolean isShadowed() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX);
-	}
-
-	/**
-	 * Does the text have a shadow?
-	 */
-	public void setShadowed(boolean flag) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX, flag);
-	}
-
-	/**
-	 * Is this text embossed?
-	 */
-	 public boolean isEmbossed() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX);
-	}
-
-	/**
-	 * Is this text embossed?
-	 */
-	 public void setEmbossed(boolean flag) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX, flag);
-	}
-
-	@Override
-	public boolean isStrikethrough() {
-		return isCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX);
-	}
-
-	@Override
-	public void setStrikethrough(boolean flag) {
-		setCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX, flag);
-	}
-
-	/**
-	 * Gets the subscript/superscript option
-	 *
-	 * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
-	 */
-	public int getSuperscript() {
-		TextProp tp = getTextParagraph().getPropVal(characterStyle, "superscript");
-		return tp == null ? 0 : tp.getValue();
-	}
-
-	/**
-	 * Sets the subscript/superscript option
-	 *
-	 * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
-	 */
-	public void setSuperscript(int val) {
-	    setCharTextPropVal("superscript", val);
-	}
+    // --------------- Friendly getters / setters on rich text properties -------
 
     @Override
-	public Double getFontSize() {
+    public boolean isBold() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
+    }
+
+    @Override
+    public void setBold(boolean bold) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
+    }
+
+    @Override
+    public boolean isItalic() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX);
+    }
+
+    @Override
+    public void setItalic(boolean italic) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
+    }
+
+    @Override
+    public boolean isUnderlined() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
+    }
+
+    @Override
+    public void setUnderlined(boolean underlined) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
+    }
+
+    /**
+     * Does the text have a shadow?
+     */
+    public boolean isShadowed() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX);
+    }
+
+    /**
+     * Does the text have a shadow?
+     */
+    public void setShadowed(boolean flag) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX, flag);
+    }
+
+    /**
+     * Is this text embossed?
+     */
+     public boolean isEmbossed() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX);
+    }
+
+    /**
+     * Is this text embossed?
+     */
+     public void setEmbossed(boolean flag) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX, flag);
+    }
+
+    @Override
+    public boolean isStrikethrough() {
+        return isCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX);
+    }
+
+    @Override
+    public void setStrikethrough(boolean flag) {
+        setCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX, flag);
+    }
+
+    /**
+     * Gets the subscript/superscript option
+     *
+     * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
+     */
+    public int getSuperscript() {
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, "superscript");
+        return tp == null ? 0 : tp.getValue();
+    }
+
+    /**
+     * Sets the subscript/superscript option
+     *
+     * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
+     */
+    public void setSuperscript(int val) {
+        setCharTextPropVal("superscript", val);
+    }
+
+    @Override
+    public Double getFontSize() {
         TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.size");
         return tp == null ? null : (double)tp.getValue();
-	}
+    }
 
 
-	@Override
-	public void setFontSize(Double fontSize) {
-	    Integer iFontSize = (fontSize == null) ? null : fontSize.intValue();
-		setCharTextPropVal("font.size", iFontSize);
-	}
+    @Override
+    public void setFontSize(Double fontSize) {
+        Integer iFontSize = (fontSize == null) ? null : fontSize.intValue();
+        setCharTextPropVal("font.size", iFontSize);
+    }
 
-	/**
-	 * Gets the font index
-	 */
-	public int getFontIndex() {
+    /**
+     * Gets the font index
+     */
+    public int getFontIndex() {
         TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.index");
         return tp == null ? -1 : tp.getValue();
-	}
+    }
 
-	/**
-	 * Sets the font index
-	 */
-	public void setFontIndex(int idx) {
-		setCharTextPropVal("font.index", idx);
-	}
+    /**
+     * Sets the font index
+     */
+    public void setFontIndex(int idx) {
+        setCharTextPropVal("font.index", idx);
+    }
 
-	@Override
-	public void setFontFamily(String typeface) {
-		setFontFamily(typeface, FontGroup.LATIN);
-	}
+    @Override
+    public void setFontFamily(String typeface) {
+        setFontFamily(typeface, FontGroup.LATIN);
+    }
 
     @Override
     public void setFontFamily(String typeface, FontGroup fontGroup) {
@@ -313,7 +313,7 @@ public final class HSLFTextRun implements TextRun {
     }
 
     @Override
-	public void setFontInfo(FontInfo fontInfo, FontGroup fontGroup) {
+    public void setFontInfo(FontInfo fontInfo, FontGroup fontGroup) {
         FontGroup fg = safeFontGroup(fontGroup);
 
         HSLFSheet sheet = parentParagraph.getSheet();
@@ -352,14 +352,14 @@ public final class HSLFTextRun implements TextRun {
         }
 
 
-		setCharTextPropVal("font.index", fontIdx);
+        setCharTextPropVal("font.index", fontIdx);
         setCharTextPropVal(propName, fontIdx);
     }
 
     @Override
-	public String getFontFamily() {
+    public String getFontFamily() {
         return getFontFamily(null);
-	}
+    }
 
     @Override
     public String getFontFamily(FontGroup fontGroup) {
@@ -367,58 +367,58 @@ public final class HSLFTextRun implements TextRun {
         return (fi != null) ? fi.getTypeface() : null;
     }
 
-	@Override
-	public HSLFFontInfo getFontInfo(final FontGroup fontGroup) {
+    @Override
+    public HSLFFontInfo getFontInfo(final FontGroup fontGroup) {
         FontGroup fg = safeFontGroup(fontGroup);
 
-	    HSLFSheet sheet = parentParagraph.getSheet();
+        HSLFSheet sheet = parentParagraph.getSheet();
         @SuppressWarnings("resource")
         HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
-		if (sheet == null || slideShow == null) {
-			return (cachedFontInfo != null) ? cachedFontInfo[fg.ordinal()] : null;
-		}
+        if (sheet == null || slideShow == null) {
+            return (cachedFontInfo != null) ? cachedFontInfo[fg.ordinal()] : null;
+        }
 
-		String propName;
-	    switch (fg) {
-	    default:
-	    case LATIN:
-	        propName = "font.index,ansi.font.index";
-	        break;
+        String propName;
+        switch (fg) {
+        default:
+        case LATIN:
+            propName = "font.index,ansi.font.index";
+            break;
         case COMPLEX_SCRIPT:
-	    case EAST_ASIAN:
-	        propName = "asian.font.index";
-	        break;
+        case EAST_ASIAN:
+            propName = "asian.font.index";
+            break;
         case SYMBOL:
-	        propName = "symbol.font.index";
-	        break;
-		}
+            propName = "symbol.font.index";
+            break;
+        }
 
         TextProp tp = getTextParagraph().getPropVal(characterStyle, propName);
-		return (tp != null) ? slideShow.getFont(tp.getValue()) : null;
-	}
+        return (tp != null) ? slideShow.getFont(tp.getValue()) : null;
+    }
 
-	/**
-	 * @return font color as PaintStyle
-	 */
-	@Override
-	public SolidPaint getFontColor() {
-		TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.color");
-		if (tp == null) {
+    /**
+     * @return font color as PaintStyle
+     */
+    @Override
+    public SolidPaint getFontColor() {
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.color");
+        if (tp == null) {
             return null;
         }
-		Color color = HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
+        Color color = HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
         return DrawPaint.createSolidPaint(color);
-	}
+    }
 
-	/**
-	 * Sets color of the text, as a int bgr.
-	 * (PowerPoint stores as BlueGreenRed, not the more
-	 *  usual RedGreenBlue)
-	 * @see Color
-	 */
-	public void setFontColor(int bgr) {
-		setCharTextPropVal("font.color", bgr);
-	}
+    /**
+     * Sets color of the text, as a int bgr.
+     * (PowerPoint stores as BlueGreenRed, not the more
+     *  usual RedGreenBlue)
+     * @see Color
+     */
+    public void setFontColor(int bgr) {
+        setCharTextPropVal("font.color", bgr);
+    }
 
 
     @Override
@@ -426,17 +426,17 @@ public final class HSLFTextRun implements TextRun {
         setFontColor(DrawPaint.createSolidPaint(color));
     }
 
-	@Override
-	public void setFontColor(PaintStyle color) {
-	    if (!(color instanceof SolidPaint)) {
-	        throw new IllegalArgumentException("HSLF only supports solid paint");
-	    }
-		// In PowerPont RGB bytes are swapped, as BGR
-	    SolidPaint sp = (SolidPaint)color;
-	    Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
-		int rgb = new Color(c.getBlue(), c.getGreen(), c.getRed(), 254).getRGB();
-		setFontColor(rgb);
-	}
+    @Override
+    public void setFontColor(PaintStyle color) {
+        if (!(color instanceof SolidPaint)) {
+            throw new IllegalArgumentException("HSLF only supports solid paint");
+        }
+        // In PowerPont RGB bytes are swapped, as BGR
+        SolidPaint sp = (SolidPaint)color;
+        Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
+        int rgb = new Color(c.getBlue(), c.getGreen(), c.getRed(), 254).getRGB();
+        setFontColor(rgb);
+    }
 
     private void setFlag(int index, boolean value) {
         BitMaskTextProp prop = characterStyle.addWithName(CharFlagsTextProp.NAME);
@@ -525,8 +525,8 @@ public final class HSLFTextRun implements TextRun {
         return (fontGroup != null) ? fontGroup : FontGroup.getFontGroupFirst(getRawText());
     }
 
-	@Override
-	public HSLFTextParagraph getParagraph() {
-		return parentParagraph;
-	}
+    @Override
+    public HSLFTextParagraph getParagraph() {
+        return parentParagraph;
+    }
 }

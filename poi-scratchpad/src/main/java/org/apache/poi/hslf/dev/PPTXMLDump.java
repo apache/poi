@@ -131,7 +131,7 @@ public final class PPTXMLDump {
                 out.write("\"");
             }
             out.write(">" + CR);
-			padding++;
+            padding++;
             //this check works both for Escher and PowerPoint records
             boolean isContainer = (info & 0x000F) == 0x000F;
             if (isContainer) {
@@ -141,7 +141,7 @@ public final class PPTXMLDump {
                 //dump first 100 bytes of the atom data
                 dump(out, data, pos, Math.min(size, data.length-pos), padding, true);
             }
-			padding--;
+            padding--;
             write(out, "</"+recname + ">" + CR, padding);
 
             pos += size;

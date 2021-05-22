@@ -125,11 +125,11 @@ public final class TestHDGFLZW {
         assertEquals(632, dec.length);
 
 /*
-		// Encode it again using our engine
-		byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
+        // Encode it again using our engine
+        byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
 
-		// Check it's of the right size
-		assertEquals(339, comp.length);
+        // Check it's of the right size
+        assertEquals(339, comp.length);
 */
     }
 
@@ -164,12 +164,12 @@ public final class TestHDGFLZW {
         byte[] decomp = lzw.decompress(new ByteArrayInputStream(comp));
 
         // First up, check the round tripping
-		assertEquals(12, decomp.length);
-		assertArrayEquals(Arrays.copyOfRange(testTrailerDecomp, 0, decomp.length), decomp);
+        assertEquals(12, decomp.length);
+        assertArrayEquals(Arrays.copyOfRange(testTrailerDecomp, 0, decomp.length), decomp);
 
         // Now check the compressed intermediate version
         assertEquals(11, comp.length);
-		assertArrayEquals(Arrays.copyOfRange(testTrailerComp, 0, comp.length), comp);
+        assertArrayEquals(Arrays.copyOfRange(testTrailerComp, 0, comp.length), comp);
     }
 
     /**
@@ -192,7 +192,7 @@ public final class TestHDGFLZW {
 
         // We can only check the round-tripping, as for now
         //  visio cheats on re-using a block
-		assertArrayEquals(sourceDecomp, decomp);
+        assertArrayEquals(sourceDecomp, decomp);
     }
 
     @Test

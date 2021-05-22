@@ -38,103 +38,103 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  can return the text for you (example: for use with Lucene).
  */
 public final class VisioTextExtractor implements POIOLE2TextExtractor {
-	private HDGFDiagram hdgf;
-	private boolean doCloseFilesystem = true;
+    private HDGFDiagram hdgf;
+    private boolean doCloseFilesystem = true;
 
-	public VisioTextExtractor(HDGFDiagram hdgf) {
-		this.hdgf = hdgf;
-	}
-	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
-	}
+    public VisioTextExtractor(HDGFDiagram hdgf) {
+        this.hdgf = hdgf;
+    }
+    public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
+        this(fs.getRoot());
+    }
 
-	public VisioTextExtractor(DirectoryNode dir) throws IOException {
-		this(new HDGFDiagram(dir));
-	}
+    public VisioTextExtractor(DirectoryNode dir) throws IOException {
+        this(new HDGFDiagram(dir));
+    }
 
-	public VisioTextExtractor(InputStream inp) throws IOException {
-		this(new POIFSFileSystem(inp));
-	}
+    public VisioTextExtractor(InputStream inp) throws IOException {
+        this(new POIFSFileSystem(inp));
+    }
 
-	/**
-	 * Locates all the text entries in the file, and returns their
-	 *  contents.
-	 *
-	 * @return An array of each Text item in the document
-	 */
-	public String[] getAllText() {
-		List<String> text = new ArrayList<>();
-		for(Stream stream : hdgf.getTopLevelStreams()) {
-			findText(stream, text);
-		}
-		return text.toArray(new String[0]);
-	}
-	private void findText(Stream stream, List<String> text) {
-		if(stream instanceof PointerContainingStream) {
-			PointerContainingStream ps = (PointerContainingStream)stream;
-			for(final Stream substream : ps.getPointedToStreams()) {
-				findText(substream, text);
-			}
-		}
-		if(stream instanceof ChunkStream) {
-			ChunkStream cs = (ChunkStream)stream;
-			for(final Chunk chunk : cs.getChunks()) {
-				if(chunk != null &&
-						chunk.getName() != null &&
-						"Text".equals(chunk.getName()) &&
-						chunk.getCommands().length > 0) {
+    /**
+     * Locates all the text entries in the file, and returns their
+     *  contents.
+     *
+     * @return An array of each Text item in the document
+     */
+    public String[] getAllText() {
+        List<String> text = new ArrayList<>();
+        for(Stream stream : hdgf.getTopLevelStreams()) {
+            findText(stream, text);
+        }
+        return text.toArray(new String[0]);
+    }
+    private void findText(Stream stream, List<String> text) {
+        if(stream instanceof PointerContainingStream) {
+            PointerContainingStream ps = (PointerContainingStream)stream;
+            for(final Stream substream : ps.getPointedToStreams()) {
+                findText(substream, text);
+            }
+        }
+        if(stream instanceof ChunkStream) {
+            ChunkStream cs = (ChunkStream)stream;
+            for(final Chunk chunk : cs.getChunks()) {
+                if(chunk != null &&
+                        chunk.getName() != null &&
+                        "Text".equals(chunk.getName()) &&
+                        chunk.getCommands().length > 0) {
 
-					// First command
-					Command cmd = chunk.getCommands()[0];
-					if(cmd != null && cmd.getValue() != null) {
-						// Capture the text, as long as it isn't
-						//  simply an empty string
-						String str = cmd.getValue().toString();
-						if (!(str.isEmpty() || "\n".equals(str))) {
-							text.add( str );
-						}
-					}
-				}
-			}
-		}
-	}
+                    // First command
+                    Command cmd = chunk.getCommands()[0];
+                    if(cmd != null && cmd.getValue() != null) {
+                        // Capture the text, as long as it isn't
+                        //  simply an empty string
+                        String str = cmd.getValue().toString();
+                        if (!(str.isEmpty() || "\n".equals(str))) {
+                            text.add( str );
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Returns the textual contents of the file.
-	 * Each textual object's text will be separated
-	 *  by a newline
-	 *
-	 * @return All text contained in this document, separated by <code>\n</code>
-	 */
-	@Override
-	public String getText() {
-		StringBuilder text = new StringBuilder();
-		for(String t : getAllText()) {
-			text.append(t);
-			if(!t.endsWith("\r") && !t.endsWith("\n")) {
-				text.append('\n');
-			}
-		}
-		return text.toString();
-	}
+    /**
+     * Returns the textual contents of the file.
+     * Each textual object's text will be separated
+     *  by a newline
+     *
+     * @return All text contained in this document, separated by <code>\n</code>
+     */
+    @Override
+    public String getText() {
+        StringBuilder text = new StringBuilder();
+        for(String t : getAllText()) {
+            text.append(t);
+            if(!t.endsWith("\r") && !t.endsWith("\n")) {
+                text.append('\n');
+            }
+        }
+        return text.toString();
+    }
 
-	@Override
-	public HDGFDiagram getDocument() {
-		return hdgf;
-	}
+    @Override
+    public HDGFDiagram getDocument() {
+        return hdgf;
+    }
 
-	@Override
-	public void setCloseFilesystem(boolean doCloseFilesystem) {
-		this.doCloseFilesystem = doCloseFilesystem;
-	}
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
 
-	@Override
-	public boolean isCloseFilesystem() {
-		return doCloseFilesystem;
-	}
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
 
-	@Override
-	public HDGFDiagram getFilesystem() {
-		return hdgf;
-	}
+    @Override
+    public HDGFDiagram getFilesystem() {
+        return hdgf;
+    }
 }

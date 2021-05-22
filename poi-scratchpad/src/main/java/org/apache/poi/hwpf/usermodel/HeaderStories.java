@@ -34,14 +34,14 @@ import org.apache.poi.hwpf.model.SubdocumentType;
  *  as offsets are not yet updated!
  */
 public final class HeaderStories {
-	private final Range headerStories;
-	private PlexOfCps plcfHdd;
+    private final Range headerStories;
+    private PlexOfCps plcfHdd;
 
-	private boolean stripFields;
+    private boolean stripFields;
 
-	public HeaderStories(HWPFDocument doc) {
-		this.headerStories = doc.getHeaderStoryRange();
-		FileInformationBlock fib = doc.getFileInformationBlock();
+    public HeaderStories(HWPFDocument doc) {
+        this.headerStories = doc.getHeaderStoryRange();
+        FileInformationBlock fib = doc.getFileInformationBlock();
 
 //        // If there's no PlcfHdd, nothing to do
 //        if(fib.getCcpHdd() == 0) {
@@ -49,11 +49,11 @@ public final class HeaderStories {
 //        }
 
         if (fib.getSubdocumentTextStreamLength( SubdocumentType.HEADER ) == 0)
-		    return;
+            return;
 
-		if(fib.getPlcfHddSize() == 0) {
-			return;
-		}
+        if(fib.getPlcfHddSize() == 0) {
+            return;
+        }
 
         // Handle the PlcfHdd
         /*
@@ -169,24 +169,24 @@ public final class HeaderStories {
     /**
      * @deprecated 3.8 beta 4
      */
-	@Deprecated
-	public String getEvenHeader() {
-		return getAt(6+0);
-	}
-	/**
+    @Deprecated
+    public String getEvenHeader() {
+        return getAt(6+0);
+    }
+    /**
      * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getOddHeader() {
-		return getAt(6+1);
-	}
+        return getAt(6+1);
+    }
     /**
      * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFirstHeader() {
-		return getAt(6+4);
-	}
+        return getAt(6+4);
+    }
 
 
     public Range getEvenHeaderSubrange() {
@@ -199,33 +199,33 @@ public final class HeaderStories {
         return getSubrangeAt(6+4);
     }
 
-	/**
-	 * Returns the correct, defined header for the given
-	 *  one based page
-	 * @param pageNumber The one based page number
-	 */
-	public String getHeader(int pageNumber) {
-		// First page header is optional, only return
-		//  if it's set
-		if(pageNumber == 1) {
+    /**
+     * Returns the correct, defined header for the given
+     *  one based page
+     * @param pageNumber The one based page number
+     */
+    public String getHeader(int pageNumber) {
+        // First page header is optional, only return
+        //  if it's set
+        if(pageNumber == 1) {
             final String fh = getFirstHeader();
-			if(fh != null && !fh.isEmpty()) {
-				return fh;
-			}
-		}
-		// Even page header is optional, only return
-		//  if it's set
-		if(pageNumber % 2 == 0) {
+            if(fh != null && !fh.isEmpty()) {
+                return fh;
+            }
+        }
+        // Even page header is optional, only return
+        //  if it's set
+        if(pageNumber % 2 == 0) {
             final String eh = getEvenHeader();
-			if(eh != null && !eh.isEmpty()) {
-				return eh;
-			}
-		}
-		// Odd is the default
-		return getOddHeader();
-	}
+            if(eh != null && !eh.isEmpty()) {
+                return eh;
+            }
+        }
+        // Odd is the default
+        return getOddHeader();
+    }
 
-	/**
+    /**
      * @deprecated 3.8 beta 4
      */
     @Deprecated
@@ -234,7 +234,7 @@ public final class HeaderStories {
         return getAt( 6 + 2 );
     }
 
-	/**
+    /**
      * @deprecated 3.8 beta 4
      */
     @Deprecated
@@ -267,73 +267,73 @@ public final class HeaderStories {
         return getSubrangeAt( 6 + 5 );
     }
 
-	/**
-	 * Returns the correct, defined footer for the given
-	 *  one based page
-	 * @param pageNumber The one based page number
-	 */
-	public String getFooter(int pageNumber) {
-		// First page footer is optional, only return
-		//  if it's set
-		if(pageNumber == 1) {
-		    final String ff = getFirstFooter();
-			if(ff != null && !ff.isEmpty()) {
-				return ff;
-			}
-		}
-		// Even page footer is optional, only return
-		//  if it's set
-		if(pageNumber % 2 == 0) {
-		    final String ef = getEvenFooter();
-			if(ef != null && !ef.isEmpty()) {
-				return ef;
-			}
-		}
-		// Odd is the default
-		return getOddFooter();
-	}
+    /**
+     * Returns the correct, defined footer for the given
+     *  one based page
+     * @param pageNumber The one based page number
+     */
+    public String getFooter(int pageNumber) {
+        // First page footer is optional, only return
+        //  if it's set
+        if(pageNumber == 1) {
+            final String ff = getFirstFooter();
+            if(ff != null && !ff.isEmpty()) {
+                return ff;
+            }
+        }
+        // Even page footer is optional, only return
+        //  if it's set
+        if(pageNumber % 2 == 0) {
+            final String ef = getEvenFooter();
+            if(ef != null && !ef.isEmpty()) {
+                return ef;
+            }
+        }
+        // Odd is the default
+        return getOddFooter();
+    }
 
 
-	/**
-	 * Get the string that's pointed to by the
-	 *  given plcfHdd index
-	 * @deprecated 3.8 beta 4
-	 */
+    /**
+     * Get the string that's pointed to by the
+     *  given plcfHdd index
+     * @deprecated 3.8 beta 4
+     */
     @Deprecated
-	private String getAt(int plcfHddIndex) {
-		if(plcfHdd == null) return null;
+    private String getAt(int plcfHddIndex) {
+        if(plcfHdd == null) return null;
 
-		GenericPropertyNode prop = plcfHdd.getProperty(plcfHddIndex);
-		if(prop.getStart() == prop.getEnd()) {
-			// Empty story
-			return "";
-		}
-		if(prop.getEnd() < prop.getStart()) {
-		   // Broken properties?
-		   return "";
-		}
+        GenericPropertyNode prop = plcfHdd.getProperty(plcfHddIndex);
+        if(prop.getStart() == prop.getEnd()) {
+            // Empty story
+            return "";
+        }
+        if(prop.getEnd() < prop.getStart()) {
+           // Broken properties?
+           return "";
+        }
 
-		// Ensure we're getting a sensible length
-		String rawText = headerStories.text();
-		int start = Math.min(prop.getStart(), rawText.length());
-		int end = Math.min(prop.getEnd(), rawText.length());
+        // Ensure we're getting a sensible length
+        String rawText = headerStories.text();
+        int start = Math.min(prop.getStart(), rawText.length());
+        int end = Math.min(prop.getEnd(), rawText.length());
 
-		// Grab the contents
-		String text = rawText.substring(start, end);
+        // Grab the contents
+        String text = rawText.substring(start, end);
 
-		// Strip off fields and macros if requested
-		if(stripFields) {
-			return Range.stripFields(text);
-		}
-		// If you create a header/footer, then remove it again, word
-		//  will leave \r\r. Turn these back into an empty string,
-		//  which is more what you'd expect
-		if(text.equals("\r\r")) {
-			return "";
-		}
+        // Strip off fields and macros if requested
+        if(stripFields) {
+            return Range.stripFields(text);
+        }
+        // If you create a header/footer, then remove it again, word
+        //  will leave \r\r. Turn these back into an empty string,
+        //  which is more what you'd expect
+        if(text.equals("\r\r")) {
+            return "";
+        }
 
-		return text;
-	}
+        return text;
+    }
 
     private Range getSubrangeAt( int plcfHddIndex )
     {
@@ -361,27 +361,27 @@ public final class HeaderStories {
                 headerStories.getStartOffset() + end, headerStories );
     }
 
-	public Range getRange() {
-		return headerStories;
-	}
-	protected PlexOfCps getPlcfHdd() {
-		return plcfHdd;
-	}
+    public Range getRange() {
+        return headerStories;
+    }
+    protected PlexOfCps getPlcfHdd() {
+        return plcfHdd;
+    }
 
-	/**
-	 * Are fields currently being stripped from
-	 *  the text that this HeaderStories returns?
-	 *  Default is false, but can be changed
-	 */
-	public boolean areFieldsStripped() {
-		return stripFields;
-	}
-	/**
-	 * Should fields (eg macros) be stripped from
-	 *  the text that this class returns?
-	 * Default is not to strip.
-	 */
-	public void setAreFieldsStripped(boolean stripFields) {
-		this.stripFields = stripFields;
-	}
+    /**
+     * Are fields currently being stripped from
+     *  the text that this HeaderStories returns?
+     *  Default is false, but can be changed
+     */
+    public boolean areFieldsStripped() {
+        return stripFields;
+    }
+    /**
+     * Should fields (eg macros) be stripped from
+     *  the text that this class returns?
+     * Default is not to strip.
+     */
+    public void setAreFieldsStripped(boolean stripFields) {
+        this.stripFields = stripFields;
+    }
 }

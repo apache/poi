@@ -54,7 +54,7 @@ public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends Pr
      *             use char positions for all operations. Including save
      *             operations, because only char positions are preserved.
      */
-	@Deprecated
+    @Deprecated
     public int getStartBytes()
     {
         return startBytes;

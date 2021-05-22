@@ -32,18 +32,18 @@ import java.util.Map;
 
 public interface PositionDependentRecord
 {
-	/** Fetch our location on the disk, as of the last write out */
-	public int getLastOnDiskOffset();
+    /** Fetch our location on the disk, as of the last write out */
+    public int getLastOnDiskOffset();
 
-	/**
-	 * Update the Record's idea of where on disk it lives, after a write out.
-	 * Use with care...
-	 */
-	public void setLastOnDiskOffset(int offset);
+    /**
+     * Update the Record's idea of where on disk it lives, after a write out.
+     * Use with care...
+     */
+    public void setLastOnDiskOffset(int offset);
 
-	/**
-	 * Offer the record the list of records that have changed their
-	 *  location as part of the writeout.
-	 */
-	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
+    /**
+     * Offer the record the list of records that have changed their
+     *  location as part of the writeout.
+     */
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
 }

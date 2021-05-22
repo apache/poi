@@ -381,7 +381,7 @@ public final class TestBugs {
      */
     @Test
     void bug41711() throws IOException {
-    	// New file is fine
+        // New file is fine
         open("SampleShow.ppt").close();
 
         // PowerPoint 95 gives an old format exception

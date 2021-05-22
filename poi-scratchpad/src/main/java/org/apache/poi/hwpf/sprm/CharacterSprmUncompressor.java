@@ -217,7 +217,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         break;
       case 0xd:
 
-        //	undocumented
+        //  undocumented
         break;
       case 0xe:
         newCHP.setFcObj (sprm.getOperand());
@@ -689,17 +689,17 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x74:
           // sprmCRgLid1
           break;
-		case 0x75:
-			// sprmCFNoProof -- 0x875
-			/*
-			 * "A ToggleOperand value that specifies whether the text is excluded from the proofing analysis. By default, text is not excluded from the proofing analysis."
-			 *
-			 * Word (.doc) Binary File Format. Copyright (c) 2012 Microsoft
-			 * Corporation. Released: October 8, 2012
-			 */
-			newCHP.setFNoProof(getCHPFlag((byte) sprm.getOperand(),
-					oldCHP.isFNoProof()));
-			break;
+        case 0x75:
+            // sprmCFNoProof -- 0x875
+            /*
+             * "A ToggleOperand value that specifies whether the text is excluded from the proofing analysis. By default, text is not excluded from the proofing analysis."
+             *
+             * Word (.doc) Binary File Format. Copyright (c) 2012 Microsoft
+             * Corporation. Released: October 8, 2012
+             */
+            newCHP.setFNoProof(getCHPFlag((byte) sprm.getOperand(),
+                    oldCHP.isFNoProof()));
+            break;
       default:
           LOG.atDebug().log("Unknown CHP sprm ignored: {}", sprm);
           break;

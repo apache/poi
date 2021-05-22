@@ -44,63 +44,63 @@ public final class VSDDumper {
         this.hdgf = hdgf;
     }
 
-	public static void main(String[] args) throws Exception {
-		if(args.length == 0) {
-			System.err.println("Use:");
-			System.err.println("  VSDDumper <filename>");
-			System.exit(1);
-		}
+    public static void main(String[] args) throws Exception {
+        if(args.length == 0) {
+            System.err.println("Use:");
+            System.err.println("  VSDDumper <filename>");
+            System.exit(1);
+        }
 
-		try (POIFSFileSystem poifs = new POIFSFileSystem(new File(args[0]));
-			 HDGFDiagram hdgf = new HDGFDiagram(poifs)) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(new File(args[0]));
+             HDGFDiagram hdgf = new HDGFDiagram(poifs)) {
             PrintStream ps = System.out;
             ps.println("Opened " + args[0]);
             VSDDumper vd = new VSDDumper(ps, hdgf);
             vd.dumpFile();
         }
-	}
+    }
 
-	public void dumpFile() {
+    public void dumpFile() {
         dumpVal("Claimed document size", hdgf.getDocumentSize(), 0);
         ps.println();
         dumpStream(hdgf.getTrailerStream(), 0);
-	}
+    }
 
-	private void dumpStream(Stream stream, int indent) {
-		Pointer ptr = stream.getPointer();
-		dumpVal("Stream at", ptr.getOffset(), indent);
-		dumpVal("Type is", ptr.getType(), indent+1);
-		dumpVal("Format is", ptr.getFormat(), indent+1);
+    private void dumpStream(Stream stream, int indent) {
+        Pointer ptr = stream.getPointer();
+        dumpVal("Stream at", ptr.getOffset(), indent);
+        dumpVal("Type is", ptr.getType(), indent+1);
+        dumpVal("Format is", ptr.getFormat(), indent+1);
         dumpVal("Length is", ptr.getLength(), indent+1);
-		if(ptr.destinationCompressed()) {
-		    dumpVal("DC.Length is", stream._getContentsLength(), indent+1);
-		}
-		dumpVal("Compressed is", ptr.destinationCompressed(), indent+1);
-		dumpVal("Stream is", stream.getClass().getName(), indent+1);
+        if(ptr.destinationCompressed()) {
+            dumpVal("DC.Length is", stream._getContentsLength(), indent+1);
+        }
+        dumpVal("Compressed is", ptr.destinationCompressed(), indent+1);
+        dumpVal("Stream is", stream.getClass().getName(), indent+1);
 
-		byte[] db = stream._getStore()._getContents();
-		String ds = (db.length >= 8) ? Arrays.toString(db) : "[]";
-		dumpVal("First few bytes are", ds, indent+1);
+        byte[] db = stream._getStore()._getContents();
+        String ds = (db.length >= 8) ? Arrays.toString(db) : "[]";
+        dumpVal("First few bytes are", ds, indent+1);
 
-		if (stream instanceof PointerContainingStream) {
+        if (stream instanceof PointerContainingStream) {
             Stream[] streams = ((PointerContainingStream) stream).getPointedToStreams();
-			dumpVal("Nbr of children", streams.length, indent+1);
+            dumpVal("Nbr of children", streams.length, indent+1);
 
-			for(Stream s : streams) {
-				dumpStream(s, indent+1);
-			}
-		}
-		if(stream instanceof ChunkStream) {
+            for(Stream s : streams) {
+                dumpStream(s, indent+1);
+            }
+        }
+        if(stream instanceof ChunkStream) {
             Chunk[] chunks = ((ChunkStream) stream).getChunks();
-			dumpVal("Nbr of chunks", chunks.length, indent+1);
+            dumpVal("Nbr of chunks", chunks.length, indent+1);
 
-			for(Chunk chunk : chunks) {
-			    dumpChunk(chunk, indent+1);
-			}
-		}
-	}
+            for(Chunk chunk : chunks) {
+                dumpChunk(chunk, indent+1);
+            }
+        }
+    }
 
-	private void dumpChunk(Chunk chunk, int indent) {
+    private void dumpChunk(Chunk chunk, int indent) {
         dumpVal(chunk.getName(), "", indent);
         dumpVal("Length is", chunk._getContents().length, indent);
         dumpVal("OD Size is", chunk.getOnDiskSize(), indent);
@@ -110,9 +110,9 @@ public final class VSDDumper {
         for(Command command : commands) {
             dumpVal(command.getDefinition().getName(), ""+command.getValue(), indent+1);
         }
-	}
+    }
 
-	private void dumpVal(String label, long value, int indent) {
+    private void dumpVal(String label, long value, int indent) {
         ps.print(tabs.substring(0,indent));
         ps.print(label);
         ps.print('\t');

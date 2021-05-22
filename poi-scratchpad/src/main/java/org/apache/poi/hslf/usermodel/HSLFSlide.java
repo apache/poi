@@ -56,56 +56,56 @@ import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
  */
 
 public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTextParagraph> {
-	private int _slideNo;
-	private SlideAtomsSet _atomSet;
-	private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
-	private HSLFNotes _notes; // usermodel needs to set this
+    private int _slideNo;
+    private SlideAtomsSet _atomSet;
+    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
+    private HSLFNotes _notes; // usermodel needs to set this
 
-	/**
-	 * Constructs a Slide from the Slide record, and the SlideAtomsSet
-	 *  containing the text.
-	 * Initializes TextRuns, to provide easier access to the text
-	 *
-	 * @param slide the Slide record we're based on
-	 * @param notes the Notes sheet attached to us
-	 * @param atomSet the SlideAtomsSet to get the text from
-	 */
-	public HSLFSlide(org.apache.poi.hslf.record.Slide slide, HSLFNotes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
+    /**
+     * Constructs a Slide from the Slide record, and the SlideAtomsSet
+     *  containing the text.
+     * Initializes TextRuns, to provide easier access to the text
+     *
+     * @param slide the Slide record we're based on
+     * @param notes the Notes sheet attached to us
+     * @param atomSet the SlideAtomsSet to get the text from
+     */
+    public HSLFSlide(org.apache.poi.hslf.record.Slide slide, HSLFNotes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
         super(slide, slideIdentifier);
 
-		_notes = notes;
-		_atomSet = atomSet;
-		_slideNo = slideNumber;
+        _notes = notes;
+        _atomSet = atomSet;
+        _slideNo = slideNumber;
 
-		// For the text coming in from the SlideAtomsSet:
-		// Build up TextRuns from pairs of TextHeaderAtom and
-		//  one of TextBytesAtom or TextCharsAtom
-		if (_atomSet != null && _atomSet.getSlideRecords().length > 0) {
-		    // Grab text from SlideListWithTexts entries
-		    _paragraphs.addAll(HSLFTextParagraph.findTextParagraphs(_atomSet.getSlideRecords()));
-	        if (_paragraphs.isEmpty()) {
-	            throw new HSLFException("No text records found for slide");
-	        }
-		}
+        // For the text coming in from the SlideAtomsSet:
+        // Build up TextRuns from pairs of TextHeaderAtom and
+        //  one of TextBytesAtom or TextCharsAtom
+        if (_atomSet != null && _atomSet.getSlideRecords().length > 0) {
+            // Grab text from SlideListWithTexts entries
+            _paragraphs.addAll(HSLFTextParagraph.findTextParagraphs(_atomSet.getSlideRecords()));
+            if (_paragraphs.isEmpty()) {
+                throw new HSLFException("No text records found for slide");
+            }
+        }
 
-		// Grab text from slide's PPDrawing
-		for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
-		    if (!_paragraphs.contains(l)) {
+        // Grab text from slide's PPDrawing
+        for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
+            if (!_paragraphs.contains(l)) {
                 _paragraphs.add(l);
             }
-		}
-	}
+        }
+    }
 
-	/**
-	* Create a new Slide instance
-	* @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
-	* @param slideNumber The user facing number of the sheet
-	*/
-	public HSLFSlide(int sheetNumber, int sheetRefId, int slideNumber){
-		super(new org.apache.poi.hslf.record.Slide(), sheetNumber);
-		_slideNo = slideNumber;
+    /**
+    * Create a new Slide instance
+    * @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
+    * @param slideNumber The user facing number of the sheet
+    */
+    public HSLFSlide(int sheetNumber, int sheetRefId, int slideNumber){
+        super(new org.apache.poi.hslf.record.Slide(), sheetNumber);
+        _slideNo = slideNumber;
         getSheetContainer().setSheetId(sheetRefId);
-	}
+    }
 
     /**
      * Returns the Notes Sheet for this slide, or null if there isn't one
@@ -115,36 +115,36 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         return _notes;
     }
 
-	/**
-	 * Sets the Notes that are associated with this. Updates the
-	 *  references in the records to point to the new ID
-	 */
-	@Override
-	public void setNotes(Notes<HSLFShape,HSLFTextParagraph> notes) {
+    /**
+     * Sets the Notes that are associated with this. Updates the
+     *  references in the records to point to the new ID
+     */
+    @Override
+    public void setNotes(Notes<HSLFShape,HSLFTextParagraph> notes) {
         if (notes != null && !(notes instanceof HSLFNotes)) {
             throw new IllegalArgumentException("notes needs to be of type HSLFNotes");
         }
-		_notes = (HSLFNotes)notes;
+        _notes = (HSLFNotes)notes;
 
-		// Update the Slide Atom's ID of where to point to
-		SlideAtom sa = getSlideRecord().getSlideAtom();
+        // Update the Slide Atom's ID of where to point to
+        SlideAtom sa = getSlideRecord().getSlideAtom();
 
-		if(_notes == null) {
-			// Set to 0
-			sa.setNotesID(0);
-		} else {
-			// Set to the value from the notes' sheet id
-			sa.setNotesID(_notes._getSheetNumber());
-		}
-	}
+        if(_notes == null) {
+            // Set to 0
+            sa.setNotesID(0);
+        } else {
+            // Set to the value from the notes' sheet id
+            sa.setNotesID(_notes._getSheetNumber());
+        }
+    }
 
-	/**
-	* Changes the Slide's (external facing) page number.
-	* @see org.apache.poi.hslf.usermodel.HSLFSlideShow#reorderSlide(int, int)
-	*/
-	public void setSlideNumber(int newSlideNumber) {
-		_slideNo = newSlideNumber;
-	}
+    /**
+    * Changes the Slide's (external facing) page number.
+    * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#reorderSlide(int, int)
+    */
+    public void setSlideNumber(int newSlideNumber) {
+        _slideNo = newSlideNumber;
+    }
 
     /**
      * Called by SlideShow ater a new slide is created.
@@ -187,79 +187,79 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         dg.setNumShapes(1);
     }
 
-	/**
-	 * Create a {@code TextBox} object that represents the slide's title.
-	 *
-	 * @return {@code TextBox} object that represents the slide's title.
-	 */
-	public HSLFTextBox addTitle() {
-		HSLFPlaceholder pl = new HSLFPlaceholder();
-		pl.setShapeType(ShapeType.RECT);
-		pl.setPlaceholder(Placeholder.TITLE);
-		pl.setRunType(TextPlaceholder.TITLE.nativeId);
-		pl.setText("Click to edit title");
-		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
-		addShape(pl);
-		return pl;
-	}
+    /**
+     * Create a {@code TextBox} object that represents the slide's title.
+     *
+     * @return {@code TextBox} object that represents the slide's title.
+     */
+    public HSLFTextBox addTitle() {
+        HSLFPlaceholder pl = new HSLFPlaceholder();
+        pl.setShapeType(ShapeType.RECT);
+        pl.setPlaceholder(Placeholder.TITLE);
+        pl.setRunType(TextPlaceholder.TITLE.nativeId);
+        pl.setText("Click to edit title");
+        pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
+        addShape(pl);
+        return pl;
+    }
 
 
-	// Complex Accesser methods follow
+    // Complex Accesser methods follow
 
-	/**
-	 * <p>
-	 * The title is a run of text of type {@code TextHeaderAtom.CENTER_TITLE_TYPE} or
-	 * {@code TextHeaderAtom.TITLE_TYPE}
-	 * </p>
-	 *
-	 * @see TextHeaderAtom
-	 */
-	@Override
-	public String getTitle(){
-		for (List<HSLFTextParagraph> tp : getTextParagraphs()) {
-		    if (tp.isEmpty()) {
+    /**
+     * <p>
+     * The title is a run of text of type {@code TextHeaderAtom.CENTER_TITLE_TYPE} or
+     * {@code TextHeaderAtom.TITLE_TYPE}
+     * </p>
+     *
+     * @see TextHeaderAtom
+     */
+    @Override
+    public String getTitle(){
+        for (List<HSLFTextParagraph> tp : getTextParagraphs()) {
+            if (tp.isEmpty()) {
                 continue;
             }
-			int type = tp.get(0).getRunType();
-		    if (TextPlaceholder.isTitle(type)) {
+            int type = tp.get(0).getRunType();
+            if (TextPlaceholder.isTitle(type)) {
                 String str = HSLFTextParagraph.getRawText(tp);
                 return HSLFTextParagraph.toExternalString(str, type);
             }
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
     @Override
-	public String getSlideName() {
+    public String getSlideName() {
         final CString name = (CString)getSlideRecord().findFirstOfType(RecordTypes.CString.typeID);
         return name != null ? name.getText() : "Slide"+getSlideNumber();
     }
 
 
-	/**
-	 * Returns an array of all the TextRuns found
-	 */
-	@Override
+    /**
+     * Returns an array of all the TextRuns found
+     */
+    @Override
     public List<List<HSLFTextParagraph>> getTextParagraphs() { return _paragraphs; }
 
-	/**
-	 * Returns the (public facing) page number of this slide
-	 */
-	@Override
-	public int getSlideNumber() { return _slideNo; }
+    /**
+     * Returns the (public facing) page number of this slide
+     */
+    @Override
+    public int getSlideNumber() { return _slideNo; }
 
-	/**
-	 * Returns the underlying slide record
-	 */
-	public org.apache.poi.hslf.record.Slide getSlideRecord() {
+    /**
+     * Returns the underlying slide record
+     */
+    public org.apache.poi.hslf.record.Slide getSlideRecord() {
         return (org.apache.poi.hslf.record.Slide)getSheetContainer();
     }
 
-	/**
-	 * @return set of records inside {@code SlideListWithtext} container
-	 *  which hold text data for this slide (typically for placeholders).
-	 */
-	protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
+    /**
+     * @return set of records inside {@code SlideListWithtext} container
+     *  which hold text data for this slide (typically for placeholders).
+     */
+    protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
 
     /**
      * Returns master sheet associated with this slide.
@@ -403,8 +403,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     @Override
     public List<HSLFComment> getComments() {
         final List<HSLFComment> comments = new ArrayList<>();
-    	// If there are any, they're in
-    	//  ProgTags -> ProgBinaryTag -> BinaryTagData
+        // If there are any, they're in
+        //  ProgTags -> ProgBinaryTag -> BinaryTagData
         final RecordContainer binaryTags =
                 selectContainer(getSheetContainer(), 0,
                         RecordTypes.ProgTags, RecordTypes.ProgBinaryTag, RecordTypes.BinaryTagData);
@@ -417,7 +417,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
             }
         }
 
-    	return comments;
+        return comments;
     }
 
     /**
@@ -438,33 +438,33 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 
     /** This will return an atom per TextBox, so if the page has two text boxes the method should return two atoms. */
     public StyleTextProp9Atom[] getNumberedListInfo() {
-    	return this.getPPDrawing().getNumberedListInfo();
+        return this.getPPDrawing().getNumberedListInfo();
     }
 
-	public EscherTextboxWrapper[] getTextboxWrappers() {
-		return this.getPPDrawing().getTextboxWrappers();
-	}
-
-	@Override
-	public void setHidden(boolean hidden) {
-		org.apache.poi.hslf.record.Slide cont =	getSlideRecord();
-
-		SSSlideInfoAtom slideInfo =
-			(SSSlideInfoAtom)cont.findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
-		if (slideInfo == null) {
-			slideInfo = new SSSlideInfoAtom();
-			cont.addChildAfter(slideInfo, cont.findFirstOfType(RecordTypes.SlideAtom.typeID));
-		}
-
-		slideInfo.setEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT, hidden);
-	}
+    public EscherTextboxWrapper[] getTextboxWrappers() {
+        return this.getPPDrawing().getTextboxWrappers();
+    }
 
     @Override
-	public boolean isHidden() {
-		SSSlideInfoAtom slideInfo =
-			(SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
-		return (slideInfo != null) && slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
-	}
+    public void setHidden(boolean hidden) {
+        org.apache.poi.hslf.record.Slide cont = getSlideRecord();
+
+        SSSlideInfoAtom slideInfo =
+            (SSSlideInfoAtom)cont.findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
+        if (slideInfo == null) {
+            slideInfo = new SSSlideInfoAtom();
+            cont.addChildAfter(slideInfo, cont.findFirstOfType(RecordTypes.SlideAtom.typeID));
+        }
+
+        slideInfo.setEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT, hidden);
+    }
+
+    @Override
+    public boolean isHidden() {
+        SSSlideInfoAtom slideInfo =
+            (SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
+        return (slideInfo != null) && slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
+    }
 
     @Override
     public void draw(Graphics2D graphics) {
