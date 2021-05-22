@@ -33,49 +33,49 @@ import org.junit.jupiter.api.Test;
 final class TestTrim {
 
 
-	private static ValueEval invokeTrim(ValueEval text) {
-		ValueEval[] args = new ValueEval[] { text, };
-		return TextFunction.TRIM.evaluate(args, -1, (short)-1);
-	}
+    private static ValueEval invokeTrim(ValueEval text) {
+        ValueEval[] args = new ValueEval[] { text, };
+        return TextFunction.TRIM.evaluate(args, -1, (short)-1);
+    }
 
-	private void confirmTrim(ValueEval text, String expected) {
-		ValueEval result = invokeTrim(text);
-		assertEquals(StringEval.class, result.getClass());
-		assertEquals(expected, ((StringEval)result).getStringValue());
-	}
+    private void confirmTrim(ValueEval text, String expected) {
+        ValueEval result = invokeTrim(text);
+        assertEquals(StringEval.class, result.getClass());
+        assertEquals(expected, ((StringEval)result).getStringValue());
+    }
 
-	private void confirmTrim(ValueEval text, ErrorEval expectedError) {
-		ValueEval result = invokeTrim(text);
-		assertEquals(ErrorEval.class, result.getClass());
-		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
-	}
+    private void confirmTrim(ValueEval text, ErrorEval expectedError) {
+        ValueEval result = invokeTrim(text);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
+    }
 
-	@Test
-	void testBasic() {
+    @Test
+    void testBasic() {
 
-		confirmTrim(new StringEval(" hi "), "hi");
-		confirmTrim(new StringEval("hi "), "hi");
-		confirmTrim(new StringEval("  hi"), "hi");
-		confirmTrim(new StringEval(" hi there  "), "hi there");
-		confirmTrim(new StringEval(""), "");
-		confirmTrim(new StringEval("   "), "");
-	}
+        confirmTrim(new StringEval(" hi "), "hi");
+        confirmTrim(new StringEval("hi "), "hi");
+        confirmTrim(new StringEval("  hi"), "hi");
+        confirmTrim(new StringEval(" hi there  "), "hi there");
+        confirmTrim(new StringEval(""), "");
+        confirmTrim(new StringEval("   "), "");
+    }
 
-	/**
-	 * Valid cases where text arg is not exactly a string
-	 */
-	@Test
-	void testUnusualArgs() {
+    /**
+     * Valid cases where text arg is not exactly a string
+     */
+    @Test
+    void testUnusualArgs() {
 
-		// text (first) arg type is number, other args are strings with fractional digits
-		confirmTrim(new NumberEval(123456), "123456");
-		confirmTrim(BoolEval.FALSE, "FALSE");
-		confirmTrim(BoolEval.TRUE, "TRUE");
-		confirmTrim(BlankEval.instance, "");
-	}
+        // text (first) arg type is number, other args are strings with fractional digits
+        confirmTrim(new NumberEval(123456), "123456");
+        confirmTrim(BoolEval.FALSE, "FALSE");
+        confirmTrim(BoolEval.TRUE, "TRUE");
+        confirmTrim(BlankEval.instance, "");
+    }
 
-	@Test
-	void testErrors() {
-		confirmTrim(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
-	}
+    @Test
+    void testErrors() {
+        confirmTrim(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
+    }
 }

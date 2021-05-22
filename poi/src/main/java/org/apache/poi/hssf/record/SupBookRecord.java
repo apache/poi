@@ -200,39 +200,39 @@ public final class SupBookRecord extends StandardRecord {
     }
     private static String decodeFileName(String encodedUrl) {
         /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION" */
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for(int i=1; i<encodedUrl.length(); i++) {
-        	char c = encodedUrl.charAt(i);
-        	switch (c) {
-        	case CH_VOLUME:
-        		char driveLetter = encodedUrl.charAt(++i);
-        		if (driveLetter == '@') {
-        			sb.append("\\\\");
-        		} else {
-        			//Windows notation for drive letters
-        			sb.append(driveLetter).append(":");
-        		}
-        		break;
-        	case CH_SAME_VOLUME:
+            char c = encodedUrl.charAt(i);
+            switch (c) {
+            case CH_VOLUME:
+                char driveLetter = encodedUrl.charAt(++i);
+                if (driveLetter == '@') {
+                    sb.append("\\\\");
+                } else {
+                    //Windows notation for drive letters
+                    sb.append(driveLetter).append(":");
+                }
+                break;
+            case CH_SAME_VOLUME:
             case CH_DOWN_DIR:
-        		sb.append(PATH_SEPERATOR);
-        		break;
-        	case CH_UP_DIR:
-        		sb.append("..").append(PATH_SEPERATOR);
-        		break;
-        	case CH_LONG_VOLUME:
-        		//Don't known to handle...
-        		LOG.atWarn().log("Found unexpected key: ChLongVolume - IGNORING");
-        		break;
-        	case CH_STARTUP_DIR:
-        	case CH_ALT_STARTUP_DIR:
-        	case CH_LIB_DIR:
-        		LOG.atWarn().log("EXCEL.EXE path unknown - using this directory instead: .");
-        		sb.append(".").append(PATH_SEPERATOR);
-        		break;
-        	default:
-        		sb.append(c);
-        	}
+                sb.append(PATH_SEPERATOR);
+                break;
+            case CH_UP_DIR:
+                sb.append("..").append(PATH_SEPERATOR);
+                break;
+            case CH_LONG_VOLUME:
+                //Don't known to handle...
+                LOG.atWarn().log("Found unexpected key: ChLongVolume - IGNORING");
+                break;
+            case CH_STARTUP_DIR:
+            case CH_ALT_STARTUP_DIR:
+            case CH_LIB_DIR:
+                LOG.atWarn().log("EXCEL.EXE path unknown - using this directory instead: .");
+                sb.append(".").append(PATH_SEPERATOR);
+                break;
+            default:
+                sb.append(c);
+            }
         }
         return sb.toString();
     }
@@ -241,8 +241,8 @@ public final class SupBookRecord extends StandardRecord {
     }
 
     public void setURL(String pUrl) {
-    	//Keep the first marker character!
-    	field_2_encoded_url = field_2_encoded_url.substring(0, 1) + pUrl;
+        //Keep the first marker character!
+        field_2_encoded_url = field_2_encoded_url.substring(0, 1) + pUrl;
     }
 
     @Override

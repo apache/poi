@@ -23,29 +23,29 @@ import org.apache.poi.ss.formula.functions.Function;
  * Collects eval instances for easy access by tests in this package
  */
 final class EvalInstances {
-	private EvalInstances() {
-		// no instances of this class
-	}
+    private EvalInstances() {
+        // no instances of this class
+    }
 
-	public static final Function Add = TwoOperandNumericOperation.AddEval;
-	public static final Function Subtract = TwoOperandNumericOperation.SubtractEval;
-	public static final Function Multiply = TwoOperandNumericOperation.MultiplyEval;
-	public static final Function Divide = TwoOperandNumericOperation.DivideEval;
+    public static final Function Add = TwoOperandNumericOperation.AddEval;
+    public static final Function Subtract = TwoOperandNumericOperation.SubtractEval;
+    public static final Function Multiply = TwoOperandNumericOperation.MultiplyEval;
+    public static final Function Divide = TwoOperandNumericOperation.DivideEval;
 
-	public static final Function Power = TwoOperandNumericOperation.PowerEval;
+    public static final Function Power = TwoOperandNumericOperation.PowerEval;
 
-	public static final Function Percent = PercentEval.instance;
+    public static final Function Percent = PercentEval.instance;
 
-	public static final Function UnaryMinus = UnaryMinusEval.instance;
-	public static final Function UnaryPlus = UnaryPlusEval.instance;
+    public static final Function UnaryMinus = UnaryMinusEval.instance;
+    public static final Function UnaryPlus = UnaryPlusEval.instance;
 
-	public static final Function Equal = RelationalOperationEval.EqualEval;
-	public static final Function LessThan = RelationalOperationEval.LessThanEval;
-	public static final Function LessEqual = RelationalOperationEval.LessEqualEval;
-	public static final Function GreaterThan = RelationalOperationEval.GreaterThanEval;
-	public static final Function GreaterEqual = RelationalOperationEval.GreaterEqualEval;
-	public static final Function NotEqual = RelationalOperationEval.NotEqualEval;
+    public static final Function Equal = RelationalOperationEval.EqualEval;
+    public static final Function LessThan = RelationalOperationEval.LessThanEval;
+    public static final Function LessEqual = RelationalOperationEval.LessEqualEval;
+    public static final Function GreaterThan = RelationalOperationEval.GreaterThanEval;
+    public static final Function GreaterEqual = RelationalOperationEval.GreaterEqualEval;
+    public static final Function NotEqual = RelationalOperationEval.NotEqualEval;
 
-	public static final Function Range = RangeEval.instance;
-	public static final Function Concat = ConcatEval.instance;
+    public static final Function Range = RangeEval.instance;
+    public static final Function Concat = ConcatEval.instance;
 }

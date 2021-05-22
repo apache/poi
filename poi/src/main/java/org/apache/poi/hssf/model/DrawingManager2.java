@@ -40,7 +40,7 @@ public class DrawingManager2 {
      * Clears the cached list of drawing groups
      */
     public void clearDrawingGroups() {
-    	drawingGroups.clear(); 
+        drawingGroups.clear(); 
     }
 
     /**

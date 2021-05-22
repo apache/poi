@@ -30,80 +30,80 @@ import org.apache.poi.util.LittleEndianOutput;
  * CATLAB - Category Labels (0x0856)
  */
 public final class CatLabRecord extends StandardRecord {
-	public static final short sid = 0x0856;
+    public static final short sid = 0x0856;
 
-	private short rt;
-	private short grbitFrt;
-	private short wOffset;
-	private short at;
-	private short grbit;
-	private Short unused;
+    private short rt;
+    private short grbitFrt;
+    private short wOffset;
+    private short at;
+    private short grbit;
+    private Short unused;
 
-	public CatLabRecord(CatLabRecord other) {
-		super(other);
-		rt = other.rt;
-		grbitFrt = other.grbitFrt;
-		wOffset = other.wOffset;
-		at = other.at;
-		grbit = other.grbit;
-		unused = other.unused;
-	}
+    public CatLabRecord(CatLabRecord other) {
+        super(other);
+        rt = other.rt;
+        grbitFrt = other.grbitFrt;
+        wOffset = other.wOffset;
+        at = other.at;
+        grbit = other.grbit;
+        unused = other.unused;
+    }
 
-	public CatLabRecord(RecordInputStream in) {
-		rt = in.readShort();
-		grbitFrt = in.readShort();
-		wOffset = in.readShort();
-		at = in.readShort();
-		grbit = in.readShort();
+    public CatLabRecord(RecordInputStream in) {
+        rt = in.readShort();
+        grbitFrt = in.readShort();
+        wOffset = in.readShort();
+        at = in.readShort();
+        grbit = in.readShort();
 
-		// Often, but not always has an unused short at the end
-		if(in.available() == 0) {
-			unused = null;
-		} else {
-			unused = in.readShort();
-		}
-	}
+        // Often, but not always has an unused short at the end
+        if(in.available() == 0) {
+            unused = null;
+        } else {
+            unused = in.readShort();
+        }
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + 2 + 2 + 2 + 2 + (unused==null? 0:2);
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + 2 + 2 + 2 + 2 + (unused==null? 0:2);
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(rt);
-		out.writeShort(grbitFrt);
-		out.writeShort(wOffset);
-		out.writeShort(at);
-		out.writeShort(grbit);
-		if(unused != null)
-			out.writeShort(unused);
-	}
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(rt);
+        out.writeShort(grbitFrt);
+        out.writeShort(wOffset);
+        out.writeShort(at);
+        out.writeShort(grbit);
+        if(unused != null)
+            out.writeShort(unused);
+    }
 
-	@Override
-	public CatLabRecord copy() {
-		return new CatLabRecord(this);
-	}
+    @Override
+    public CatLabRecord copy() {
+        return new CatLabRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.CAT_LAB;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CAT_LAB;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"rt", () -> rt,
-			"grbitFrt", () -> grbitFrt,
-			"wOffset", () -> wOffset,
-			"at", () -> at,
-			"grbit", () -> grbit,
-			"unused", () -> unused
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rt", () -> rt,
+            "grbitFrt", () -> grbitFrt,
+            "wOffset", () -> wOffset,
+            "at", () -> at,
+            "grbit", () -> grbit,
+            "unused", () -> unused
+        );
+    }
 }

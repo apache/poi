@@ -25,11 +25,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class WorkbookEvaluatorTestHelper {
 
-	private WorkbookEvaluatorTestHelper() {
-		// no instances of this class
-	}
+    private WorkbookEvaluatorTestHelper() {
+        // no instances of this class
+    }
 
-	public static WorkbookEvaluator createEvaluator(HSSFWorkbook wb, EvaluationListener listener) {
-		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener, null, null);
-	}
+    public static WorkbookEvaluator createEvaluator(HSSFWorkbook wb, EvaluationListener listener) {
+        return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener, null, null);
+    }
 }

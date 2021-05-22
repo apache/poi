@@ -37,34 +37,34 @@ import org.junit.jupiter.api.Test;
 final class TestNper {
 
     @Test
-	void testSimpleEvaluate() {
-		ValueEval[] args = {
-			new NumberEval(0.05),
-			new NumberEval(250),
-			new NumberEval(-1000),
-		};
-		ValueEval result = FinanceFunction.NPER.evaluate(args, 0, (short)0);
+    void testSimpleEvaluate() {
+        ValueEval[] args = {
+            new NumberEval(0.05),
+            new NumberEval(250),
+            new NumberEval(-1000),
+        };
+        ValueEval result = FinanceFunction.NPER.evaluate(args, 0, (short)0);
 
-		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(4.57353557, ((NumberEval)result).getNumberValue(), 0.00000001);
-	}
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(4.57353557, ((NumberEval)result).getNumberValue(), 0.00000001);
+    }
 
     @Test
-	void testEvaluate_bug_45732() throws IOException {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell(0);
+    void testEvaluate_bug_45732() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("Sheet1");
+        HSSFCell cell = sheet.createRow(0).createCell(0);
 
-		cell.setCellFormula("NPER(12,4500,100000,100000)");
-		cell.setCellValue(15.0);
-		assertEquals("NPER(12,4500,100000,100000)", cell.getCellFormula());
-		assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
-		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
+        cell.setCellFormula("NPER(12,4500,100000,100000)");
+        cell.setCellValue(15.0);
+        assertEquals("NPER(12,4500,100000,100000)", cell.getCellFormula());
+        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
+        assertEquals(15.0, cell.getNumericCellValue(), 0.0);
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		fe.evaluateFormulaCell(cell);
-		assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
-		assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
-		wb.close();
-	}
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        fe.evaluateFormulaCell(cell);
+        assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
+        assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
+        wb.close();
+    }
 }

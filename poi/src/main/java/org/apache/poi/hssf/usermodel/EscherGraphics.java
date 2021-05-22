@@ -159,7 +159,7 @@ public class EscherGraphics extends Graphics {
     @Override
     @NotImplemented
     public void drawArc(int x, int y, int width, int height,
-				 int startAngle, int arcAngle)
+                 int startAngle, int arcAngle)
     {
         LOG.atWarn().log("drawArc not supported");
     }
@@ -167,10 +167,10 @@ public class EscherGraphics extends Graphics {
     @Override
     @NotImplemented
     public boolean drawImage(Image img,
-				      int dx1, int dy1, int dx2, int dy2,
-				      int sx1, int sy1, int sx2, int sy2,
-				      Color bgcolor,
-				      ImageObserver observer)
+                      int dx1, int dy1, int dx2, int dy2,
+                      int sx1, int sy1, int sx2, int sy2,
+                      Color bgcolor,
+                      ImageObserver observer)
     {
         LOG.atWarn().log("drawImage not supported");
 
@@ -180,9 +180,9 @@ public class EscherGraphics extends Graphics {
     @Override
     @NotImplemented
     public boolean drawImage(Image img,
-				      int dx1, int dy1, int dx2, int dy2,
-				      int sx1, int sy1, int sx2, int sy2,
-				      ImageObserver observer)
+                      int dx1, int dy1, int dx2, int dy2,
+                      int sx1, int sy1, int sx2, int sy2,
+                      ImageObserver observer)
     {
         LOG.atWarn().log("drawImage not supported");
         return true;
@@ -278,7 +278,7 @@ public class EscherGraphics extends Graphics {
     @Override
     @NotImplemented
     public void drawRoundRect(int x, int y, int width, int height,
-				       int arcWidth, int arcHeight)
+                       int arcWidth, int arcHeight)
     {
         LOG.atWarn().log("drawRoundRect not supported");
     }
@@ -353,7 +353,7 @@ public class EscherGraphics extends Graphics {
 
     @Override
     public void fillArc(int x, int y, int width, int height,
-				 int startAngle, int arcAngle)
+                 int startAngle, int arcAngle)
     {
         LOG.atWarn().log("fillArc not supported");
     }
@@ -435,7 +435,7 @@ public class EscherGraphics extends Graphics {
 
     @Override
     public void fillRoundRect(int x, int y, int width, int height,
-				       int arcWidth, int arcHeight)
+                       int arcWidth, int arcHeight)
     {
         LOG.atWarn().log("fillRoundRect not supported");
     }

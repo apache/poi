@@ -33,48 +33,48 @@ import org.junit.jupiter.api.Test;
 
 final class TestChartTitleFormatRecord {
 
-	@Test
+    @Test
     void testRecord() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-				HSSFTestDataSamples.getSampleFile("WithFormattedGraphTitle.xls"));
+        POIFSFileSystem fs = new POIFSFileSystem(
+                HSSFTestDataSamples.getSampleFile("WithFormattedGraphTitle.xls"));
 
-		// Check we can open the file via usermodel
-		HSSFWorkbook hssf = new HSSFWorkbook(fs);
+        // Check we can open the file via usermodel
+        HSSFWorkbook hssf = new HSSFWorkbook(fs);
 
-		// Now process it through eventusermodel, and
-		//  look out for the title records
-		ChartTitleFormatRecordGrabber grabber = new ChartTitleFormatRecordGrabber();
-		InputStream din = fs.createDocumentInputStream("Workbook");
-		HSSFRequest req = new HSSFRequest();
-		req.addListenerForAllRecords(grabber);
-		HSSFEventFactory factory = new HSSFEventFactory();
-		factory.processEvents(req, din);
-		din.close();
+        // Now process it through eventusermodel, and
+        //  look out for the title records
+        ChartTitleFormatRecordGrabber grabber = new ChartTitleFormatRecordGrabber();
+        InputStream din = fs.createDocumentInputStream("Workbook");
+        HSSFRequest req = new HSSFRequest();
+        req.addListenerForAllRecords(grabber);
+        HSSFEventFactory factory = new HSSFEventFactory();
+        factory.processEvents(req, din);
+        din.close();
 
-		// Should've found one
-		assertEquals(1, grabber.chartTitleFormatRecords.size());
-		// And it should be of something interesting
-		ChartTitleFormatRecord r = grabber.chartTitleFormatRecords.get(0);
-		assertEquals(3, r.getFormatCount());
+        // Should've found one
+        assertEquals(1, grabber.chartTitleFormatRecords.size());
+        // And it should be of something interesting
+        ChartTitleFormatRecord r = grabber.chartTitleFormatRecords.get(0);
+        assertEquals(3, r.getFormatCount());
 
-		hssf.close();
-		fs.close();
+        hssf.close();
+        fs.close();
 
-	}
+    }
 
-	private static final class ChartTitleFormatRecordGrabber implements HSSFListener {
-		private final List<ChartTitleFormatRecord> chartTitleFormatRecords;
+    private static final class ChartTitleFormatRecordGrabber implements HSSFListener {
+        private final List<ChartTitleFormatRecord> chartTitleFormatRecords;
 
-		ChartTitleFormatRecordGrabber() {
-			chartTitleFormatRecords = new ArrayList<>();
-		}
+        ChartTitleFormatRecordGrabber() {
+            chartTitleFormatRecords = new ArrayList<>();
+        }
 
-		@Override
+        @Override
         public void processRecord(org.apache.poi.hssf.record.Record record) {
-			if(record instanceof ChartTitleFormatRecord) {
-				chartTitleFormatRecords.add((ChartTitleFormatRecord)record);
-			}
-		}
+            if(record instanceof ChartTitleFormatRecord) {
+                chartTitleFormatRecords.add((ChartTitleFormatRecord)record);
+            }
+        }
 
-	}
+    }
 }

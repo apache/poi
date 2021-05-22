@@ -57,8 +57,8 @@ public abstract class Encryptor implements GenericRecord {
 
     public abstract void confirmPassword(String password);
 
-	public static Encryptor getInstance(EncryptionInfo info) {
-	    return info.getEncryptor();
+    public static Encryptor getInstance(EncryptionInfo info) {
+        return info.getEncryptor();
     }
 
     public OutputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {

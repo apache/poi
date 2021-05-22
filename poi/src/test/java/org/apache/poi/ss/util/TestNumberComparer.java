@@ -34,66 +34,66 @@ import org.junit.jupiter.params.provider.MethodSource;
 final class TestNumberComparer {
 
     @Test
-	void testAllComparisonExamples() {
-		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
-		boolean success = true;
+    void testAllComparisonExamples() {
+        ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
+        boolean success = true;
 
-		for(int i=0;i<examples.length; i++) {
-			ComparisonExample ce = examples[i];
-			success &= confirm(i, ce.getA(), ce.getB(), +ce.getExpectedResult());
-			success &= confirm(i, ce.getB(), ce.getA(), -ce.getExpectedResult());
-			success &= confirm(i, ce.getNegA(), ce.getNegB(), -ce.getExpectedResult());
-			success &= confirm(i, ce.getNegB(), ce.getNegA(), +ce.getExpectedResult());
-		}
+        for(int i=0;i<examples.length; i++) {
+            ComparisonExample ce = examples[i];
+            success &= confirm(i, ce.getA(), ce.getB(), +ce.getExpectedResult());
+            success &= confirm(i, ce.getB(), ce.getA(), -ce.getExpectedResult());
+            success &= confirm(i, ce.getNegA(), ce.getNegB(), -ce.getExpectedResult());
+            success &= confirm(i, ce.getNegB(), ce.getNegA(), +ce.getExpectedResult());
+        }
 
-		assertTrue(success, "One or more cases failed.  See stderr");
-	}
+        assertTrue(success, "One or more cases failed.  See stderr");
+    }
 
     @ParameterizedTest
-	@MethodSource("org.apache.poi.ss.util.NumberComparisonExamples#getComparisonExamples")
-	void testRoundTripOnComparisonExamples(ComparisonExample ce) {
-    	double[] vals = { ce.getA(), ce.getNegA(), ce.getB(), ce.getNegB() };
-    	for (double a : vals) {
-			assertDoesNotThrow(() -> new TestExpandedDouble().confirmRoundTrip(Double.doubleToLongBits(a)));
-		}
-	}
+    @MethodSource("org.apache.poi.ss.util.NumberComparisonExamples#getComparisonExamples")
+    void testRoundTripOnComparisonExamples(ComparisonExample ce) {
+        double[] vals = { ce.getA(), ce.getNegA(), ce.getB(), ce.getNegB() };
+        for (double a : vals) {
+            assertDoesNotThrow(() -> new TestExpandedDouble().confirmRoundTrip(Double.doubleToLongBits(a)));
+        }
+    }
 
-	/**
-	 * The actual example from bug 47598
-	 */
-	@Test
-	void testSpecificExampleA() {
-		double a = 0.06-0.01;
-		double b = 0.05;
+    /**
+     * The actual example from bug 47598
+     */
+    @Test
+    void testSpecificExampleA() {
+        double a = 0.06-0.01;
+        double b = 0.05;
         assertNotEquals(a, b, 0.0);
-		assertEquals(0, NumberComparer.compare(a, b));
-	}
+        assertEquals(0, NumberComparer.compare(a, b));
+    }
 
-	/**
-	 * The example from the nabble posting
-	 */
-	@Test
-	void testSpecificExampleB() {
-		double a = 1+1.0028-0.9973;
-		double b = 1.0055;
+    /**
+     * The example from the nabble posting
+     */
+    @Test
+    void testSpecificExampleB() {
+        double a = 1+1.0028-0.9973;
+        double b = 1.0055;
         assertNotEquals(a, b, 0.0);
-		assertEquals(0, NumberComparer.compare(a, b));
-	}
+        assertEquals(0, NumberComparer.compare(a, b));
+    }
 
-	private static boolean confirm(int i, double a, double b, int expRes) {
-		int actRes = NumberComparer.compare(a, b);
+    private static boolean confirm(int i, double a, double b, int expRes) {
+        int actRes = NumberComparer.compare(a, b);
 
-		int sgnActRes = Integer.compare(actRes, 0);
-		if (sgnActRes != expRes) {
-			System.err.println("Mismatch example[" + i + "] ("
-					+ formatDoubleAsHex(a) + ", " + formatDoubleAsHex(b) + ") expected "
-					+ expRes + " but got " + sgnActRes);
-			return false;
-		}
-		return true;
-	}
-	private static String formatDoubleAsHex(double d) {
-		long l = Double.doubleToLongBits(d);
-		return HexDump.longToHex(l)+'L';
-	}
+        int sgnActRes = Integer.compare(actRes, 0);
+        if (sgnActRes != expRes) {
+            System.err.println("Mismatch example[" + i + "] ("
+                    + formatDoubleAsHex(a) + ", " + formatDoubleAsHex(b) + ") expected "
+                    + expRes + " but got " + sgnActRes);
+            return false;
+        }
+        return true;
+    }
+    private static String formatDoubleAsHex(double d) {
+        long l = Double.doubleToLongBits(d);
+        return HexDump.longToHex(l)+'L';
+    }
 }

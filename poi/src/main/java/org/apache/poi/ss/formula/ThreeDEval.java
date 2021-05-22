@@ -26,11 +26,11 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *  which allows for looking up 3D (sheet+row+column) evaluations
  */
 public interface ThreeDEval extends TwoDEval, SheetRange {
-	/**
-	 * @param sheetIndex sheet index (zero based)
-	 * @param rowIndex relative row index (zero based)
-	 * @param columnIndex relative column index (zero based)
-	 * @return element at the specified row and column position
-	 */
-	ValueEval getValue(int sheetIndex, int rowIndex, int columnIndex);
+    /**
+     * @param sheetIndex sheet index (zero based)
+     * @param rowIndex relative row index (zero based)
+     * @param columnIndex relative column index (zero based)
+     * @return element at the specified row and column position
+     */
+    ValueEval getValue(int sheetIndex, int rowIndex, int columnIndex);
 }

@@ -47,44 +47,44 @@ public final class Count implements Function {
         _predicate = criteriaPredicate;
     }
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		int nArgs = args.length;
-		if (nArgs < 1) {
-			// too few arguments
-			return ErrorEval.VALUE_INVALID;
-		}
+    public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+        int nArgs = args.length;
+        if (nArgs < 1) {
+            // too few arguments
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		if (nArgs > 30) {
-			// too many arguments
-			return ErrorEval.VALUE_INVALID;
-		}
+        if (nArgs > 30) {
+            // too many arguments
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		int temp = 0;
+        int temp = 0;
 
-		for(int i=0; i<nArgs; i++) {
-			temp += CountUtils.countArg(args[i], _predicate);
+        for(int i=0; i<nArgs; i++) {
+            temp += CountUtils.countArg(args[i], _predicate);
 
-		}
-		return new NumberEval(temp);
-	}
+        }
+        return new NumberEval(temp);
+    }
 
-	private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
+    private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
 
-		public boolean matches(ValueEval valueEval) {
+        public boolean matches(ValueEval valueEval) {
 
-			if(valueEval instanceof NumberEval) {
-				// only numbers are counted
-				return true;
-			}
-			if(valueEval == MissingArgEval.instance) {
-				// oh yeah, and missing arguments
-				return true;
-			}
+            if(valueEval instanceof NumberEval) {
+                // only numbers are counted
+                return true;
+            }
+            if(valueEval == MissingArgEval.instance) {
+                // oh yeah, and missing arguments
+                return true;
+            }
 
-			// error values and string values not counted
-			return false;
-		}
-	};
+            // error values and string values not counted
+            return false;
+        }
+    };
 
     /**
      * matches hidden rows but not subtotals

@@ -24,8 +24,8 @@ import org.apache.poi.ss.formula.EvaluationCell;
  */
 public final class HSSFEvaluationTestHelper {
 
-	public static EvaluationCell wrapCell(HSSFCell cell) {
-		return new HSSFEvaluationCell(cell);
-	}
+    public static EvaluationCell wrapCell(HSSFCell cell) {
+        return new HSSFEvaluationCell(cell);
+    }
 
 }

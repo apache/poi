@@ -29,30 +29,30 @@ import org.junit.jupiter.api.Test;
  */
 final class TestUnaryPlusEval {
 
-	/**
-	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>
-	 * The code for handling column operands had been copy-pasted from the row handling code.
-	 */
-	@Test
-	void testColumnOperand() {
+    /**
+     * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>
+     * The code for handling column operands had been copy-pasted from the row handling code.
+     */
+    @Test
+    void testColumnOperand() {
 
-		short firstRow = (short)8;
-		short lastRow = (short)12;
-		short colNum = (short)5;
-		AreaPtg areaPtg = new AreaPtg(firstRow, lastRow, colNum, colNum, false, false, false, false);
-		ValueEval[] values = {
-				new NumberEval(27),
-				new NumberEval(29),
-				new NumberEval(35),	// value in row 10
-				new NumberEval(37),
-				new NumberEval(38),
-		};
-		ValueEval[] args = {
-			EvalFactory.createAreaEval(areaPtg, values),
-		};
+        short firstRow = (short)8;
+        short lastRow = (short)12;
+        short colNum = (short)5;
+        AreaPtg areaPtg = new AreaPtg(firstRow, lastRow, colNum, colNum, false, false, false, false);
+        ValueEval[] values = {
+                new NumberEval(27),
+                new NumberEval(29),
+                new NumberEval(35), // value in row 10
+                new NumberEval(37),
+                new NumberEval(38),
+        };
+        ValueEval[] args = {
+            EvalFactory.createAreaEval(areaPtg, values),
+        };
 
-		double result = NumericFunctionInvoker.invoke(EvalInstances.UnaryPlus, args, 10, (short)20);
+        double result = NumericFunctionInvoker.invoke(EvalInstances.UnaryPlus, args, 10, (short)20);
 
-		assertEquals(35, result, 0);
-	}
+        assertEquals(35, result, 0);
+    }
 }

@@ -56,131 +56,131 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class EventWorkbookBuilder {
 
 
-	/**
-	 * Creates a stub Workbook from the supplied records,
-	 *  suitable for use with the {@link HSSFFormulaParser}
-	 * @param externs The ExternSheetRecords in your file
-	 * @param bounds The BoundSheetRecords in your file
-	 * @param sst The SSTRecord in your file.
-	 * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
-	 */
-	public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
-			BoundSheetRecord[] bounds, SSTRecord sst) {
-		List<org.apache.poi.hssf.record.Record> wbRecords = new ArrayList<>();
+    /**
+     * Creates a stub Workbook from the supplied records,
+     *  suitable for use with the {@link HSSFFormulaParser}
+     * @param externs The ExternSheetRecords in your file
+     * @param bounds The BoundSheetRecords in your file
+     * @param sst The SSTRecord in your file.
+     * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
+     */
+    public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
+            BoundSheetRecord[] bounds, SSTRecord sst) {
+        List<org.apache.poi.hssf.record.Record> wbRecords = new ArrayList<>();
 
-		// Core Workbook records go first
-		if(bounds != null) {
-			Collections.addAll(wbRecords, bounds);
-		}
-		if(sst != null) {
-			wbRecords.add(sst);
-		}
+        // Core Workbook records go first
+        if(bounds != null) {
+            Collections.addAll(wbRecords, bounds);
+        }
+        if(sst != null) {
+            wbRecords.add(sst);
+        }
 
-		// Now we can have the ExternSheetRecords,
-		//  preceded by a SupBookRecord
-		if(externs != null) {
-			wbRecords.add(SupBookRecord.createInternalReferences(
-					(short)externs.length));
-			Collections.addAll(wbRecords, externs);
-		}
+        // Now we can have the ExternSheetRecords,
+        //  preceded by a SupBookRecord
+        if(externs != null) {
+            wbRecords.add(SupBookRecord.createInternalReferences(
+                    (short)externs.length));
+            Collections.addAll(wbRecords, externs);
+        }
 
-		// Finally we need an EoF record
-		wbRecords.add(EOFRecord.instance);
+        // Finally we need an EoF record
+        wbRecords.add(EOFRecord.instance);
 
-		return InternalWorkbook.createWorkbook(wbRecords);
-	}
+        return InternalWorkbook.createWorkbook(wbRecords);
+    }
 
-	/**
-	 * Creates a stub workbook from the supplied records,
-	 *  suitable for use with the {@link HSSFFormulaParser}
-	 * @param externs The ExternSheetRecords in your file
-	 * @param bounds The BoundSheetRecords in your file
-	 * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
-	 */
-	public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
-			BoundSheetRecord[] bounds) {
-		return createStubWorkbook(externs, bounds, null);
-	}
-
-
-	/**
-	 * A wrapping HSSFListener which will collect
-	 *  {@link BoundSheetRecord}s and {@link ExternSheetRecord}s as
-	 *  they go past, so you can create a Stub {@link InternalWorkbook} from
-	 *  them once required.
-	 */
-	public static class SheetRecordCollectingListener implements HSSFListener {
-		private final HSSFListener childListener;
-		private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
-		private final List<ExternSheetRecord> externSheetRecords = new ArrayList<>();
-		private SSTRecord sstRecord;
-
-		public SheetRecordCollectingListener(HSSFListener childListener) {
-			this.childListener = childListener;
-		}
+    /**
+     * Creates a stub workbook from the supplied records,
+     *  suitable for use with the {@link HSSFFormulaParser}
+     * @param externs The ExternSheetRecords in your file
+     * @param bounds The BoundSheetRecords in your file
+     * @return A stub Workbook suitable for use with {@link HSSFFormulaParser}
+     */
+    public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
+            BoundSheetRecord[] bounds) {
+        return createStubWorkbook(externs, bounds, null);
+    }
 
 
-		public BoundSheetRecord[] getBoundSheetRecords() {
-			return boundSheetRecords.toArray(
-					new BoundSheetRecord[0]
-			);
-		}
-		public ExternSheetRecord[] getExternSheetRecords() {
-			return externSheetRecords.toArray(
-					new ExternSheetRecord[0]
-			);
-		}
-		public SSTRecord getSSTRecord() {
-			return sstRecord;
-		}
+    /**
+     * A wrapping HSSFListener which will collect
+     *  {@link BoundSheetRecord}s and {@link ExternSheetRecord}s as
+     *  they go past, so you can create a Stub {@link InternalWorkbook} from
+     *  them once required.
+     */
+    public static class SheetRecordCollectingListener implements HSSFListener {
+        private final HSSFListener childListener;
+        private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
+        private final List<ExternSheetRecord> externSheetRecords = new ArrayList<>();
+        private SSTRecord sstRecord;
 
-		public HSSFWorkbook getStubHSSFWorkbook() {
-		    // Create a base workbook
-		    HSSFWorkbook wb = HSSFWorkbook.create(getStubWorkbook());
-		    // Stub the sheets, so sheet name lookups work
-		    for (BoundSheetRecord bsr : boundSheetRecords) {
-		        wb.createSheet(bsr.getSheetname());
-		    }
-		    // Ready for Formula use!
-		    return wb;
-		}
-		public InternalWorkbook getStubWorkbook() {
-			return createStubWorkbook(
-					getExternSheetRecords(), getBoundSheetRecords(),
-					getSSTRecord()
-			);
-		}
+        public SheetRecordCollectingListener(HSSFListener childListener) {
+            this.childListener = childListener;
+        }
 
 
-		/**
-		 * Process this record ourselves, and then
-		 *  pass it on to our child listener
-		 */
-		@Override
+        public BoundSheetRecord[] getBoundSheetRecords() {
+            return boundSheetRecords.toArray(
+                    new BoundSheetRecord[0]
+            );
+        }
+        public ExternSheetRecord[] getExternSheetRecords() {
+            return externSheetRecords.toArray(
+                    new ExternSheetRecord[0]
+            );
+        }
+        public SSTRecord getSSTRecord() {
+            return sstRecord;
+        }
+
+        public HSSFWorkbook getStubHSSFWorkbook() {
+            // Create a base workbook
+            HSSFWorkbook wb = HSSFWorkbook.create(getStubWorkbook());
+            // Stub the sheets, so sheet name lookups work
+            for (BoundSheetRecord bsr : boundSheetRecords) {
+                wb.createSheet(bsr.getSheetname());
+            }
+            // Ready for Formula use!
+            return wb;
+        }
+        public InternalWorkbook getStubWorkbook() {
+            return createStubWorkbook(
+                    getExternSheetRecords(), getBoundSheetRecords(),
+                    getSSTRecord()
+            );
+        }
+
+
+        /**
+         * Process this record ourselves, and then
+         *  pass it on to our child listener
+         */
+        @Override
         public void processRecord(org.apache.poi.hssf.record.Record record) {
-			// Handle it ourselves
-			processRecordInternally(record);
+            // Handle it ourselves
+            processRecordInternally(record);
 
-			// Now pass on to our child
-			childListener.processRecord(record);
-		}
+            // Now pass on to our child
+            childListener.processRecord(record);
+        }
 
-		/**
-		 * Process the record ourselves, but do not
-		 *  pass it on to the child Listener.
-		 *  
-		 * @param record the record to be processed
-		 */
-		public void processRecordInternally(org.apache.poi.hssf.record.Record record) {
-			if(record instanceof BoundSheetRecord) {
-				boundSheetRecords.add((BoundSheetRecord)record);
-			}
-			else if(record instanceof ExternSheetRecord) {
-				externSheetRecords.add((ExternSheetRecord)record);
-			}
-			else if(record instanceof SSTRecord) {
-				sstRecord = (SSTRecord)record;
-			}
-		}
-	}
+        /**
+         * Process the record ourselves, but do not
+         *  pass it on to the child Listener.
+         *  
+         * @param record the record to be processed
+         */
+        public void processRecordInternally(org.apache.poi.hssf.record.Record record) {
+            if(record instanceof BoundSheetRecord) {
+                boundSheetRecords.add((BoundSheetRecord)record);
+            }
+            else if(record instanceof ExternSheetRecord) {
+                externSheetRecords.add((ExternSheetRecord)record);
+            }
+            else if(record instanceof SSTRecord) {
+                sstRecord = (SSTRecord)record;
+            }
+        }
+    }
 }

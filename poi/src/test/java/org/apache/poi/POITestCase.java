@@ -204,20 +204,20 @@ public final class POITestCase {
         assertTrue(value <= max, message + ": " + value + " is greater than the maximum value of " + max);
     }
 
-	/**
-	 * Ensures that the temporary directory is defined and exists and
-	 * ensures ImageIO uses this directory for cache-files
-	 */
-	public static void setImageIOCacheDir() {
-		final String tmpDirProperty = System.getProperty("java.io.tmpdir");
-		if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
-			return;
-		}
-		// ensure that temp-dir exists because ImageIO requires it
-		File tmpDir = new File(tmpDirProperty);
-		if(!tmpDir.exists() && !tmpDir.mkdirs()) {
-			throw new IllegalStateException("Could not create temporary directory " + tmpDirProperty + ", full path " + tmpDir.getAbsolutePath());
-		}
-		ImageIO.setCacheDirectory(tmpDir);
-	}
+    /**
+     * Ensures that the temporary directory is defined and exists and
+     * ensures ImageIO uses this directory for cache-files
+     */
+    public static void setImageIOCacheDir() {
+        final String tmpDirProperty = System.getProperty("java.io.tmpdir");
+        if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
+            return;
+        }
+        // ensure that temp-dir exists because ImageIO requires it
+        File tmpDir = new File(tmpDirProperty);
+        if(!tmpDir.exists() && !tmpDir.mkdirs()) {
+            throw new IllegalStateException("Could not create temporary directory " + tmpDirProperty + ", full path " + tmpDir.getAbsolutePath());
+        }
+        ImageIO.setCacheDirectory(tmpDir);
+    }
 }

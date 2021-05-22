@@ -60,7 +60,7 @@ public final class EndSubRecord extends SubRecord {
         out.writeShort(ENCODED_SIZE);
     }
 
-	protected int getDataSize() {
+    protected int getDataSize() {
         return ENCODED_SIZE;
     }
 

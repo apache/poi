@@ -90,14 +90,14 @@ public abstract class BaseTestIteratingXLS {
 
     @ParameterizedTest
     @MethodSource("files")
-	void testMain(File file, Class<? extends Throwable> t) throws Exception {
+    void testMain(File file, Class<? extends Throwable> t) throws Exception {
         Executable ex = () -> runOneFile(file);
         if (t == null) {
             assertDoesNotThrow(ex);
         } else {
             assertThrows(t, ex);
         }
-	}
+    }
 
-	abstract void runOneFile(File pFile) throws Exception;
+    abstract void runOneFile(File pFile) throws Exception;
 }

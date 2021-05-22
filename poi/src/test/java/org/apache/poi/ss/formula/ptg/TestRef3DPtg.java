@@ -29,20 +29,20 @@ import org.junit.jupiter.api.Test;
  * Tests for Ref3DPtg
  */
 final class TestRef3DPtg extends BaseTestPtg {
-	@Test
-	void testToFormulaString() throws IOException {
+    @Test
+    void testToFormulaString() throws IOException {
 
-		Ref3DPtg target = new Ref3DPtg("A1", (short)0);
+        Ref3DPtg target = new Ref3DPtg("A1", (short)0);
 
-		try (HSSFWorkbook wb = createWorkbookWithSheet("my sheet")) {
-			HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
-			assertEquals("'my sheet'!A1", target.toFormulaString(book));
+        try (HSSFWorkbook wb = createWorkbookWithSheet("my sheet")) {
+            HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
+            assertEquals("'my sheet'!A1", target.toFormulaString(book));
 
-			wb.setSheetName(0, "ProfitAndLoss");
-			assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
+            wb.setSheetName(0, "ProfitAndLoss");
+            assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
 
-			wb.setSheetName(0, "profit+loss");
-			assertEquals("'profit+loss'!A1", target.toFormulaString(book));
-		}
-	}
+            wb.setSheetName(0, "profit+loss");
+            assertEquals("'profit+loss'!A1", target.toFormulaString(book));
+        }
+    }
 }

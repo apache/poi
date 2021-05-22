@@ -39,61 +39,61 @@ import org.junit.jupiter.api.Test;
  */
 final class TestFormulaParserEval {
 
-	@Test
-	void testWithNamedRange() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
+    @Test
+    void testWithNamedRange() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
 
-		HSSFSheet s = workbook.createSheet("Foo");
-		s.createRow(0).createCell(0).setCellValue(1.1);
-		s.createRow(1).createCell(0).setCellValue(2.3);
-		s.createRow(2).createCell(2).setCellValue(3.1);
+        HSSFSheet s = workbook.createSheet("Foo");
+        s.createRow(0).createCell(0).setCellValue(1.1);
+        s.createRow(1).createCell(0).setCellValue(2.3);
+        s.createRow(2).createCell(2).setCellValue(3.1);
 
-		HSSFName name = workbook.createName();
-		name.setNameName("testName");
-		name.setRefersToFormula("A1:A2");
+        HSSFName name = workbook.createName();
+        name.setNameName("testName");
+        name.setRefersToFormula("A1:A2");
 
-		confirmParseFormula(workbook);
+        confirmParseFormula(workbook);
 
-		// Now make it a single cell
-		name.setRefersToFormula("C3");
-		confirmParseFormula(workbook);
+        // Now make it a single cell
+        name.setRefersToFormula("C3");
+        confirmParseFormula(workbook);
 
-		// And make it non-contiguous
-		// using area unions
-		name.setRefersToFormula("A1:A2,C3");
+        // And make it non-contiguous
+        // using area unions
+        name.setRefersToFormula("A1:A2,C3");
 
-		confirmParseFormula(workbook);
-	}
+        confirmParseFormula(workbook);
+    }
 
-	/**
-	 * Makes sure that a formula referring to the named range parses properly
-	 */
-	private static void confirmParseFormula(HSSFWorkbook workbook) {
-		Ptg[] ptgs = HSSFFormulaParser.parse("SUM(testName)", workbook);
+    /**
+     * Makes sure that a formula referring to the named range parses properly
+     */
+    private static void confirmParseFormula(HSSFWorkbook workbook) {
+        Ptg[] ptgs = HSSFFormulaParser.parse("SUM(testName)", workbook);
         assertEquals(2, ptgs.length, "two tokens expected, got " + ptgs.length);
-		assertEquals(NamePtg.class, ptgs[0].getClass());
-		assertEquals(AttrPtg.class, ptgs[1].getClass());
-	}
+        assertEquals(NamePtg.class, ptgs[0].getClass());
+        assertEquals(AttrPtg.class, ptgs[1].getClass());
+    }
 
-	@Test
-	void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
+    @Test
+    void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
 
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet();
-		wb.setSheetName(0, "Sheet1");
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        wb.setSheetName(0, "Sheet1");
 
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0);
-		cell.setCellFormula("SUM(A32769:A32770)");
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+        cell.setCellFormula("SUM(A32769:A32770)");
 
-		// put some values in the cells to make the evaluation more interesting
-		sheet.createRow(32768).createCell(0).setCellValue(31);
-		sheet.createRow(32769).createCell(0).setCellValue(11);
+        // put some values in the cells to make the evaluation more interesting
+        sheet.createRow(32768).createCell(0).setCellValue(31);
+        sheet.createRow(32769).createCell(0).setCellValue(11);
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		// Check for: Found reference to named range "A", but that named range wasn't defined!
-		CellValue result= fe.evaluate(cell);
-		assertEquals(CellType.NUMERIC, result.getCellType());
-		assertEquals(42.0, result.getNumberValue(), 0.0);
-	}
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        // Check for: Found reference to named range "A", but that named range wasn't defined!
+        CellValue result= fe.evaluate(cell);
+        assertEquals(CellType.NUMERIC, result.getCellType());
+        assertEquals(42.0, result.getNumberValue(), 0.0);
+    }
 }

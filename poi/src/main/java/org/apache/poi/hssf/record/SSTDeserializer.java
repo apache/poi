@@ -31,7 +31,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 class SSTDeserializer
 {
-	private static final Logger LOG = LogManager.getLogger(SSTDeserializer.class);
+    private static final Logger LOG = LogManager.getLogger(SSTDeserializer.class);
     private IntMapper<UnicodeString> strings;
 
     public SSTDeserializer( IntMapper<UnicodeString> strings )

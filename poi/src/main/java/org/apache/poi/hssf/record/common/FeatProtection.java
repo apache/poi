@@ -36,87 +36,87 @@ import org.apache.poi.util.StringUtil;
  *  as {@link FeatRecord}
  */
 public final class FeatProtection implements SharedFeature {
-	@SuppressWarnings("RedundantFieldInitialization")
-	public static final long NO_SELF_RELATIVE_SECURITY_FEATURE = 0;
-	public static final long HAS_SELF_RELATIVE_SECURITY_FEATURE = 1;
+    @SuppressWarnings("RedundantFieldInitialization")
+    public static final long NO_SELF_RELATIVE_SECURITY_FEATURE = 0;
+    public static final long HAS_SELF_RELATIVE_SECURITY_FEATURE = 1;
 
-	private int fSD;
+    private int fSD;
 
-	/**
-	 * 0 means no password. Otherwise indicates the
-	 *  password verifier algorithm (same kind as
-	 *   {@link PasswordRecord} and
-	 *   {@link PasswordRev4Record})
-	 */
-	private int passwordVerifier;
+    /**
+     * 0 means no password. Otherwise indicates the
+     *  password verifier algorithm (same kind as
+     *   {@link PasswordRecord} and
+     *   {@link PasswordRev4Record})
+     */
+    private int passwordVerifier;
 
-	private String title;
-	private byte[] securityDescriptor;
+    private String title;
+    private byte[] securityDescriptor;
 
-	public FeatProtection() {
-		securityDescriptor = new byte[0];
-	}
+    public FeatProtection() {
+        securityDescriptor = new byte[0];
+    }
 
-	public FeatProtection(FeatProtection other) {
-		fSD = other.fSD;
-		passwordVerifier = other.passwordVerifier;
-		title = other.title;
-		securityDescriptor = (other.securityDescriptor == null) ? null : other.securityDescriptor.clone();
-	}
+    public FeatProtection(FeatProtection other) {
+        fSD = other.fSD;
+        passwordVerifier = other.passwordVerifier;
+        title = other.title;
+        securityDescriptor = (other.securityDescriptor == null) ? null : other.securityDescriptor.clone();
+    }
 
-	public FeatProtection(RecordInputStream in) {
-		fSD = in.readInt();
-		passwordVerifier = in.readInt();
+    public FeatProtection(RecordInputStream in) {
+        fSD = in.readInt();
+        passwordVerifier = in.readInt();
 
-		title = StringUtil.readUnicodeString(in);
+        title = StringUtil.readUnicodeString(in);
 
-		securityDescriptor = in.readRemainder();
-	}
+        securityDescriptor = in.readRemainder();
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeInt(fSD);
-		out.writeInt(passwordVerifier);
-		StringUtil.writeUnicodeString(out, title);
-		out.write(securityDescriptor);
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(fSD);
+        out.writeInt(passwordVerifier);
+        StringUtil.writeUnicodeString(out, title);
+        out.write(securityDescriptor);
+    }
 
-	public int getDataSize() {
-		return 4 + 4 + StringUtil.getEncodedSize(title) + securityDescriptor.length;
-	}
+    public int getDataSize() {
+        return 4 + 4 + StringUtil.getEncodedSize(title) + securityDescriptor.length;
+    }
 
-	public int getPasswordVerifier() {
-		return passwordVerifier;
-	}
-	public void setPasswordVerifier(int passwordVerifier) {
-		this.passwordVerifier = passwordVerifier;
-	}
+    public int getPasswordVerifier() {
+        return passwordVerifier;
+    }
+    public void setPasswordVerifier(int passwordVerifier) {
+        this.passwordVerifier = passwordVerifier;
+    }
 
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	/**
-	 * @return Self Relative
-	 */
-	public int getFSD() {
-		return fSD;
-	}
+    /**
+     * @return Self Relative
+     */
+    public int getFSD() {
+        return fSD;
+    }
 
-	@Override
-	public FeatProtection copy() {
-		return new FeatProtection(this);
-	}
+    @Override
+    public FeatProtection copy() {
+        return new FeatProtection(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"FSD", this::getFSD,
-			"passwordVerifier", this::getPasswordVerifier,
-			"title", this::getTitle,
-			"securityDescriptor", () -> securityDescriptor
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "FSD", this::getFSD,
+            "passwordVerifier", this::getPasswordVerifier,
+            "title", this::getTitle,
+            "securityDescriptor", () -> securityDescriptor
+        );
+    }
 }

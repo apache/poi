@@ -19,43 +19,43 @@ package org.apache.poi.ss.formula.eval;
 
 public final class BoolEval implements NumericValueEval, StringValueEval {
 
-	private final boolean _value;
+    private final boolean _value;
 
-	public static final BoolEval FALSE = new BoolEval(false);
+    public static final BoolEval FALSE = new BoolEval(false);
 
-	public static final BoolEval TRUE = new BoolEval(true);
+    public static final BoolEval TRUE = new BoolEval(true);
 
-	/**
-	 * Convenience method for the following:<br>
-	 * {@code (b ? BoolEval.TRUE : BoolEval.FALSE)}
-	 *
-	 * @return the {@code BoolEval} instance representing {@code b}.
-	 */
-	public static BoolEval valueOf(boolean b) {
-		return b ? TRUE : FALSE;
-	}
+    /**
+     * Convenience method for the following:<br>
+     * {@code (b ? BoolEval.TRUE : BoolEval.FALSE)}
+     *
+     * @return the {@code BoolEval} instance representing {@code b}.
+     */
+    public static BoolEval valueOf(boolean b) {
+        return b ? TRUE : FALSE;
+    }
 
-	private BoolEval(boolean value) {
-		_value = value;
-	}
+    private BoolEval(boolean value) {
+        _value = value;
+    }
 
-	public boolean getBooleanValue() {
-		return _value;
-	}
+    public boolean getBooleanValue() {
+        return _value;
+    }
 
-	@Override
-	public double getNumberValue() {
-		return _value ? 1 : 0;
-	}
+    @Override
+    public double getNumberValue() {
+        return _value ? 1 : 0;
+    }
 
-	@Override
-	public String getStringValue() {
-		return _value ? "TRUE" : "FALSE";
-	}
+    @Override
+    public String getStringValue() {
+        return _value ? "TRUE" : "FALSE";
+    }
 
-	public String toString() {
-		return getClass().getName() + " [" +
-				getStringValue() +
-				"]";
-	}
+    public String toString() {
+        return getClass().getName() + " [" +
+                getStringValue() +
+                "]";
+    }
 }

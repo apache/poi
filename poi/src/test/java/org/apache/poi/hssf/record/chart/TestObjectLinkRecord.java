@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 final class TestObjectLinkRecord {
     byte[] data = new byte[] {
-	(byte)0x03,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00
+    (byte)0x03,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00
     };
 
     @Test

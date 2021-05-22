@@ -52,15 +52,15 @@ final class TestEmptyProperties {
     /**
      * This test file's summary information stream contains some empty properties.
      */
-	private static final String POI_FS = "TestCorel.shw";
+    private static final String POI_FS = "TestCorel.shw";
 
-	private static final String[] POI_FILES = {
+    private static final String[] POI_FILES = {
         "PerfectOffice_MAIN",
         SummaryInformation.DEFAULT_STREAM_NAME,
         "Main"
     };
 
-	private List<POIFile> poiFiles;
+    private List<POIFile> poiFiles;
 
     /**
      * <p>Read a the test file from the "data" directory.</p>

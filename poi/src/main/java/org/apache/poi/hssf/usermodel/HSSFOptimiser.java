@@ -39,131 +39,131 @@ import org.apache.poi.ss.usermodel.Row;
  *  is where the use of this class comes in.
  */
 public class HSSFOptimiser {
-	/**
-	 * Goes through the Workbook, optimising the fonts by
-	 *  removing duplicate ones.
-	 * For now, only works on fonts used in {@link HSSFCellStyle}
-	 *  and {@link HSSFRichTextString}. Any other font uses
-	 *  (eg charts, pictures) may well end up broken!
-	 * This can be a slow operation, especially if you have
-	 *  lots of cells, cell styles or rich text strings
-	 * @param workbook The workbook in which to optimise the fonts
-	 */
-	public static void optimiseFonts(HSSFWorkbook workbook) {
-		// Where each font has ended up, and if we need to
-		//  delete the record for it. Start off with no change
-		short[] newPos =
-			new short[workbook.getWorkbook().getNumberOfFontRecords()+1];
-		boolean[] zapRecords = new boolean[newPos.length];
-		for(int i=0; i<newPos.length; i++) {
-			newPos[i] = (short)i;
-			zapRecords[i] = false;
-		}
+    /**
+     * Goes through the Workbook, optimising the fonts by
+     *  removing duplicate ones.
+     * For now, only works on fonts used in {@link HSSFCellStyle}
+     *  and {@link HSSFRichTextString}. Any other font uses
+     *  (eg charts, pictures) may well end up broken!
+     * This can be a slow operation, especially if you have
+     *  lots of cells, cell styles or rich text strings
+     * @param workbook The workbook in which to optimise the fonts
+     */
+    public static void optimiseFonts(HSSFWorkbook workbook) {
+        // Where each font has ended up, and if we need to
+        //  delete the record for it. Start off with no change
+        short[] newPos =
+            new short[workbook.getWorkbook().getNumberOfFontRecords()+1];
+        boolean[] zapRecords = new boolean[newPos.length];
+        for(int i=0; i<newPos.length; i++) {
+            newPos[i] = (short)i;
+            zapRecords[i] = false;
+        }
 
-		// Get each font record, so we can do deletes
-		//  without getting confused
-		FontRecord[] frecs = new FontRecord[newPos.length];
-		for(int i=0; i<newPos.length; i++) {
-			// There is no 4!
-			if(i == 4) continue;
+        // Get each font record, so we can do deletes
+        //  without getting confused
+        FontRecord[] frecs = new FontRecord[newPos.length];
+        for(int i=0; i<newPos.length; i++) {
+            // There is no 4!
+            if(i == 4) continue;
 
-			frecs[i] = workbook.getWorkbook().getFontRecordAt(i);
-		}
+            frecs[i] = workbook.getWorkbook().getFontRecordAt(i);
+        }
 
-		// Loop over each font, seeing if it is the same
-		//  as an earlier one. If it is, point users of the
-		//  later duplicate copy to the earlier one, and
-		//  mark the later one as needing deleting
-		// Note - don't change built in fonts (those before 5)
-		for(int i=5; i<newPos.length; i++) {
-			// Check this one for being a duplicate
-			//  of an earlier one
-			int earlierDuplicate = -1;
-			for(int j=0; j<i && earlierDuplicate == -1; j++) {
-				if(j == 4) continue;
+        // Loop over each font, seeing if it is the same
+        //  as an earlier one. If it is, point users of the
+        //  later duplicate copy to the earlier one, and
+        //  mark the later one as needing deleting
+        // Note - don't change built in fonts (those before 5)
+        for(int i=5; i<newPos.length; i++) {
+            // Check this one for being a duplicate
+            //  of an earlier one
+            int earlierDuplicate = -1;
+            for(int j=0; j<i && earlierDuplicate == -1; j++) {
+                if(j == 4) continue;
 
-				FontRecord frCheck = workbook.getWorkbook().getFontRecordAt(j);
-				if(frCheck.sameProperties(frecs[i])) {
-					earlierDuplicate = j;
-				}
-			}
+                FontRecord frCheck = workbook.getWorkbook().getFontRecordAt(j);
+                if(frCheck.sameProperties(frecs[i])) {
+                    earlierDuplicate = j;
+                }
+            }
 
-			// If we got a duplicate, mark it as such
-			if(earlierDuplicate != -1) {
-				newPos[i] = (short)earlierDuplicate;
-				zapRecords[i] = true;
-			}
-		}
+            // If we got a duplicate, mark it as such
+            if(earlierDuplicate != -1) {
+                newPos[i] = (short)earlierDuplicate;
+                zapRecords[i] = true;
+            }
+        }
 
-		// Update the new positions based on
-		//  deletes that have occurred between
-		//  the start and them
-		// Only need to worry about user fonts
-		for(int i=5; i<newPos.length; i++) {
-			// Find the number deleted to that
-			//  point, and adjust
-			short preDeletePos = newPos[i];
-			short newPosition = preDeletePos;
-			for(int j=0; j<preDeletePos; j++) {
-				if(zapRecords[j]) newPosition--;
-			}
+        // Update the new positions based on
+        //  deletes that have occurred between
+        //  the start and them
+        // Only need to worry about user fonts
+        for(int i=5; i<newPos.length; i++) {
+            // Find the number deleted to that
+            //  point, and adjust
+            short preDeletePos = newPos[i];
+            short newPosition = preDeletePos;
+            for(int j=0; j<preDeletePos; j++) {
+                if(zapRecords[j]) newPosition--;
+            }
 
-			// Update the new position
-			newPos[i] = newPosition;
-		}
+            // Update the new position
+            newPos[i] = newPosition;
+        }
 
-		// Zap the un-needed user font records
-		for(int i=5; i<newPos.length; i++) {
-			if(zapRecords[i]) {
-				workbook.getWorkbook().removeFontRecord(
-						frecs[i]
-				);
-			}
-		}
+        // Zap the un-needed user font records
+        for(int i=5; i<newPos.length; i++) {
+            if(zapRecords[i]) {
+                workbook.getWorkbook().removeFontRecord(
+                        frecs[i]
+                );
+            }
+        }
 
-		// Tell HSSFWorkbook that it needs to
-		//  re-start its HSSFFontCache
-		workbook.resetFontCache();
+        // Tell HSSFWorkbook that it needs to
+        //  re-start its HSSFFontCache
+        workbook.resetFontCache();
 
-		// Update the cell styles to point at the
-		//  new locations of the fonts
-		for(int i=0; i<workbook.getWorkbook().getNumExFormats(); i++) {
-			ExtendedFormatRecord xfr = workbook.getWorkbook().getExFormatAt(i);
-			xfr.setFontIndex(
-					newPos[ xfr.getFontIndex() ]
-			);
-		}
+        // Update the cell styles to point at the
+        //  new locations of the fonts
+        for(int i=0; i<workbook.getWorkbook().getNumExFormats(); i++) {
+            ExtendedFormatRecord xfr = workbook.getWorkbook().getExFormatAt(i);
+            xfr.setFontIndex(
+                    newPos[ xfr.getFontIndex() ]
+            );
+        }
 
-		// Update the rich text strings to point at
-		//  the new locations of the fonts
-		// Remember that one underlying unicode string
-		//  may be shared by multiple RichTextStrings!
-		HashSet<UnicodeString> doneUnicodeStrings = new HashSet<>();
-		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
-			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			for (Row row : s) {
-			   for (Cell cell : row) {
-					if(cell.getCellType() == CellType.STRING) {
-						HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
-						UnicodeString u = rtr.getRawUnicodeString();
+        // Update the rich text strings to point at
+        //  the new locations of the fonts
+        // Remember that one underlying unicode string
+        //  may be shared by multiple RichTextStrings!
+        HashSet<UnicodeString> doneUnicodeStrings = new HashSet<>();
+        for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
+            HSSFSheet s = workbook.getSheetAt(sheetNum);
+            for (Row row : s) {
+               for (Cell cell : row) {
+                    if(cell.getCellType() == CellType.STRING) {
+                        HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
+                        UnicodeString u = rtr.getRawUnicodeString();
 
-						// Have we done this string already?
-						if(! doneUnicodeStrings.contains(u)) {
-							// Update for each new position
-							for(short i=5; i<newPos.length; i++) {
-								if(i != newPos[i]) {
-									u.swapFontUse(i, newPos[i]);
-								}
-							}
+                        // Have we done this string already?
+                        if(! doneUnicodeStrings.contains(u)) {
+                            // Update for each new position
+                            for(short i=5; i<newPos.length; i++) {
+                                if(i != newPos[i]) {
+                                    u.swapFontUse(i, newPos[i]);
+                                }
+                            }
 
-							// Mark as done
-							doneUnicodeStrings.add(u);
-						}
-					}
-				}
-			}
-		}
-	}
+                            // Mark as done
+                            doneUnicodeStrings.add(u);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
    /**
     * Goes through the Wokrbook, optimising the cell styles
@@ -179,43 +179,43 @@ public class HSSFOptimiser {
        boolean[] isUsed = new boolean[newPos.length];
        boolean[] zapRecords = new boolean[newPos.length];
 
-	   // to speed up the optimisation for workbooks with a large number of
-	   // styles we perform the isUserDefined() check only once as it is
-	   // costly according to some profiling
-	   boolean[] userDefined = new boolean[newPos.length];
+       // to speed up the optimisation for workbooks with a large number of
+       // styles we perform the isUserDefined() check only once as it is
+       // costly according to some profiling
+       boolean[] userDefined = new boolean[newPos.length];
 
-	   // Get each style record, so we can do deletes
-	   //  without getting confused
-	   ExtendedFormatRecord[] xfrs = new ExtendedFormatRecord[newPos.length];
+       // Get each style record, so we can do deletes
+       //  without getting confused
+       ExtendedFormatRecord[] xfrs = new ExtendedFormatRecord[newPos.length];
 
        for(int i=0; i<newPos.length; i++) {
            isUsed[i] = false;
            newPos[i] = (short)i;
            zapRecords[i] = false;
 
-		   userDefined[i] = isUserDefined(workbook, i);
+           userDefined[i] = isUserDefined(workbook, i);
 
-		   xfrs[i] = workbook.getWorkbook().getExFormatAt(i);
+           xfrs[i] = workbook.getWorkbook().getExFormatAt(i);
        }
 
-	   // Loop over each style, seeing if it is the same
-	   //  as an earlier one. If it is, point users of the
-	   //  later duplicate copy to the earlier one, and
-	   //  mark the later one as needing deleting
-	   // Only work on user added ones, which come after 20
-	   for (int i = 21; i < newPos.length; i++) {
-		   // Check this one for being a duplicate
-		   //  of an earlier one
-		   int earlierDuplicate = -1;
-		   for (int j = 0; j < i; j++) {
-			   ExtendedFormatRecord xfCheck = workbook.getWorkbook().getExFormatAt(j);
-			   if (xfCheck.equals(xfrs[i]) &&
-					   // never duplicate user defined styles
-					   !userDefined[j]) {
-				   earlierDuplicate = j;
-				   break;
-			   }
-		   }
+       // Loop over each style, seeing if it is the same
+       //  as an earlier one. If it is, point users of the
+       //  later duplicate copy to the earlier one, and
+       //  mark the later one as needing deleting
+       // Only work on user added ones, which come after 20
+       for (int i = 21; i < newPos.length; i++) {
+           // Check this one for being a duplicate
+           //  of an earlier one
+           int earlierDuplicate = -1;
+           for (int j = 0; j < i; j++) {
+               ExtendedFormatRecord xfCheck = workbook.getWorkbook().getExFormatAt(j);
+               if (xfCheck.equals(xfrs[i]) &&
+                       // never duplicate user defined styles
+                       !userDefined[j]) {
+                   earlierDuplicate = j;
+                   break;
+               }
+           }
 
            // If we got a duplicate, mark it as such
            if(earlierDuplicate != -1) {
@@ -224,50 +224,50 @@ public class HSSFOptimiser {
            }
        }
 
-	   // Loop over all the cells in the file, and identify any user defined
-	   //  styles aren't actually being used (don't touch built-in ones)
-	   for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
-		   HSSFSheet s = workbook.getSheetAt(sheetNum);
-		   for (Row row : s) {
-			   for (Cell cellI : row) {
-				   HSSFCell cell = (HSSFCell) cellI;
-				   short oldXf = cell.getCellValueRecord().getXFIndex();
-				   // some documents contain invalid values here
-				   if(oldXf < newPos.length) {
-					   isUsed[oldXf] = true;
-				   }
-			   }
+       // Loop over all the cells in the file, and identify any user defined
+       //  styles aren't actually being used (don't touch built-in ones)
+       for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
+           HSSFSheet s = workbook.getSheetAt(sheetNum);
+           for (Row row : s) {
+               for (Cell cellI : row) {
+                   HSSFCell cell = (HSSFCell) cellI;
+                   short oldXf = cell.getCellValueRecord().getXFIndex();
+                   // some documents contain invalid values here
+                   if(oldXf < newPos.length) {
+                       isUsed[oldXf] = true;
+                   }
+               }
 
-			   // also mark row style as being used
-			   short oldXf = ((HSSFRow) row).getRowRecord().getXFIndex();
-			   // some documents contain invalid values here
-			   if(oldXf < newPos.length) {
-				   isUsed[oldXf] = true;
-			   }
-		   }
+               // also mark row style as being used
+               short oldXf = ((HSSFRow) row).getRowRecord().getXFIndex();
+               // some documents contain invalid values here
+               if(oldXf < newPos.length) {
+                   isUsed[oldXf] = true;
+               }
+           }
 
-		   // also mark column styles as being used
-		   for (int col = s.getSheet().getMinColumnIndex(); col <= s.getSheet().getMaxColumnIndex(); col++) {
-			   short oldXf = s.getSheet().getXFIndexForColAt((short) col);
-			   // some documents contain invalid values here
-			   if(oldXf < newPos.length) {
-				   isUsed[oldXf] = true;
-			   }
-		   }
-	   }
+           // also mark column styles as being used
+           for (int col = s.getSheet().getMinColumnIndex(); col <= s.getSheet().getMaxColumnIndex(); col++) {
+               short oldXf = s.getSheet().getXFIndexForColAt((short) col);
+               // some documents contain invalid values here
+               if(oldXf < newPos.length) {
+                   isUsed[oldXf] = true;
+               }
+           }
+       }
 
-	   // Propagate isUsed for duplicates and always set user styles to being used to never optimize them away
-	   for (int i = 21; i < isUsed.length; i++) {
-		   // user defined styles are always "used"
-		   if (isUserDefined(workbook, i)) {
-			   isUsed[i] = true;
-		   }
+       // Propagate isUsed for duplicates and always set user styles to being used to never optimize them away
+       for (int i = 21; i < isUsed.length; i++) {
+           // user defined styles are always "used"
+           if (isUserDefined(workbook, i)) {
+               isUsed[i] = true;
+           }
 
-		   // If we got a duplicate which is used, mark the one we're keeping as used
-		   if(newPos[i] != i && isUsed[i]) {
-		   		isUsed[newPos[i]] = true;
-		   }
-	   }
+           // If we got a duplicate which is used, mark the one we're keeping as used
+           if(newPos[i] != i && isUsed[i]) {
+                isUsed[newPos[i]] = true;
+           }
+       }
 
        // Mark any that aren't used as needing zapping
        for (int i=21; i<isUsed.length; i++) {
@@ -291,21 +291,21 @@ public class HSSFOptimiser {
                if(zapRecords[j]) newPosition--;
            }
 
-		   // Update the new position
-		   newPos[i] = newPosition;
-		   // also update StyleRecord and Parent-link
-		   if (i != newPosition && newPosition != 0) {
-			   workbook.getWorkbook().updateStyleRecord(i, newPosition);
+           // Update the new position
+           newPos[i] = newPosition;
+           // also update StyleRecord and Parent-link
+           if (i != newPosition && newPosition != 0) {
+               workbook.getWorkbook().updateStyleRecord(i, newPosition);
 
-			   ExtendedFormatRecord exFormat = workbook.getWorkbook().getExFormatAt(i);
-			   short oldParent = exFormat.getParentIndex();
-			   // some documents contain invalid values here
-			   if(oldParent < newPos.length) {
-				   short newParent = newPos[oldParent];
-				   exFormat.setParentIndex(newParent);
-			   }
-		   }
-	   }
+               ExtendedFormatRecord exFormat = workbook.getWorkbook().getExFormatAt(i);
+               short oldParent = exFormat.getParentIndex();
+               // some documents contain invalid values here
+               if(oldParent < newPos.length) {
+                   short newParent = newPos[oldParent];
+                   exFormat.setParentIndex(newParent);
+               }
+           }
+       }
 
        // Zap the un-needed user style records
        // removing by index, because removing by object may delete
@@ -321,47 +321,47 @@ public class HSSFOptimiser {
            }
        }
 
-	   // Finally, update the cells to point at their new extended format records
-	   for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
-		   HSSFSheet s = workbook.getSheetAt(sheetNum);
-		   for (Row row : s) {
-			   for (Cell cell : row) {
-				   short oldXf = ((HSSFCell) cell).getCellValueRecord().getXFIndex();
-				   // some documents contain invalid values here
-				   if(oldXf >= newPos.length) {
-				   		continue;
-				   }
-				   HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
-				   cell.setCellStyle(newStyle);
-			   }
+       // Finally, update the cells to point at their new extended format records
+       for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
+           HSSFSheet s = workbook.getSheetAt(sheetNum);
+           for (Row row : s) {
+               for (Cell cell : row) {
+                   short oldXf = ((HSSFCell) cell).getCellValueRecord().getXFIndex();
+                   // some documents contain invalid values here
+                   if(oldXf >= newPos.length) {
+                        continue;
+                   }
+                   HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
+                   cell.setCellStyle(newStyle);
+               }
 
-			   // adjust row column style
-			   short oldXf = ((HSSFRow) row).getRowRecord().getXFIndex();
-			   // some documents contain invalid values here
-			   if(oldXf >= newPos.length) {
-				   continue;
-			   }
-			   HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
-			   row.setRowStyle(newStyle);
-		   }
+               // adjust row column style
+               short oldXf = ((HSSFRow) row).getRowRecord().getXFIndex();
+               // some documents contain invalid values here
+               if(oldXf >= newPos.length) {
+                   continue;
+               }
+               HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
+               row.setRowStyle(newStyle);
+           }
 
-		   // adjust cell column style
-		   for (int col = s.getSheet().getMinColumnIndex(); col <= s.getSheet().getMaxColumnIndex(); col++) {
-			   short oldXf = s.getSheet().getXFIndexForColAt((short) col);
-			   // some documents contain invalid values here
-			   if(oldXf >= newPos.length) {
-				   continue;
-			   }
-			   HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
-			   s.setDefaultColumnStyle(col, newStyle);
-		   }
-	   }
+           // adjust cell column style
+           for (int col = s.getSheet().getMinColumnIndex(); col <= s.getSheet().getMaxColumnIndex(); col++) {
+               short oldXf = s.getSheet().getXFIndexForColAt((short) col);
+               // some documents contain invalid values here
+               if(oldXf >= newPos.length) {
+                   continue;
+               }
+               HSSFCellStyle newStyle = workbook.getCellStyleAt(newPos[oldXf]);
+               s.setDefaultColumnStyle(col, newStyle);
+           }
+       }
    }
 
-	private static boolean isUserDefined(HSSFWorkbook workbook, int index) {
-		StyleRecord styleRecord = workbook.getWorkbook().getStyleRecord(index);
-		return styleRecord != null &&
-				!styleRecord.isBuiltin() &&
-				styleRecord.getName() != null;
-	}
+    private static boolean isUserDefined(HSSFWorkbook workbook, int index) {
+        StyleRecord styleRecord = workbook.getWorkbook().getStyleRecord(index);
+        return styleRecord != null &&
+                !styleRecord.isBuiltin() &&
+                styleRecord.getName() != null;
+    }
 }

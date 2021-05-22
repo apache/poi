@@ -66,7 +66,7 @@ public class DrawTexturePaint extends java.awt.TexturePaint {
         if (fill.isRotatedWithShape() || shape == null) {
             usedBounds = userBounds;
         } else {
-            AffineTransform	transform = new AffineTransform(xform);
+            AffineTransform transform = new AffineTransform(xform);
 
             // Eliminate any post-translation
             transform.preConcatenate(AffineTransform.getTranslateInstance(

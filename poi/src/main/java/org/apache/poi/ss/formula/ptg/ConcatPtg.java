@@ -25,7 +25,7 @@ public final class ConcatPtg extends ValueOperatorPtg {
     public static final ConcatPtg instance = new ConcatPtg();
 
     private ConcatPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

@@ -238,7 +238,7 @@ final class TestHSSFPicture extends BaseTestPicture {
     @SuppressWarnings("resource")
     @Test
     void bug49658() throws IOException {
-    	// test if inserted EscherMetafileBlip will be read again
+        // test if inserted EscherMetafileBlip will be read again
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             byte[] pictureDataEmf = POIDataSamples.getDocumentInstance().readFile("vector_image.emf");

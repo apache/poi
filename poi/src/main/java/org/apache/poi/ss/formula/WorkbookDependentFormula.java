@@ -24,5 +24,5 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public interface WorkbookDependentFormula {
-	String toFormulaString(FormulaRenderingWorkbook book);
+    String toFormulaString(FormulaRenderingWorkbook book);
 }

@@ -24,7 +24,7 @@ public interface Shape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > {
-	ShapeContainer<S,P> getParent();
+    ShapeContainer<S,P> getParent();
 
    /**
     * @return the sheet this shape belongs to

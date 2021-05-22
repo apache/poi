@@ -105,7 +105,7 @@ public class ArcToCommand implements PathCommand {
         double y0 = pt.getY() - ry * Math.sin(invStart) - ry;
 
         Arc2D arc = new Arc2D.Double(x0, y0, 2 * rx, 2 * ry, awtStart, awtSweep, Arc2D.OPEN);
-		path.append(arc, true);
+        path.append(arc, true);
     }
 
     /**

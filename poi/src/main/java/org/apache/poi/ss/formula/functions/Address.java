@@ -44,7 +44,7 @@ public class Address implements Function {
             if (args.length > 2  &&  args[2] != MissingArgEval.instance) {
                 refType = (int)NumericFunction.singleOperandEvaluate(args[2], srcRowIndex, srcColumnIndex);
             } else {
-                refType = REF_ABSOLUTE;		// this is also the default if parameter is not given
+                refType = REF_ABSOLUTE;     // this is also the default if parameter is not given
             }
             switch (refType){
                 case REF_ABSOLUTE:

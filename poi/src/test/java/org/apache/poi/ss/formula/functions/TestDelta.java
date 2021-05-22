@@ -30,16 +30,16 @@ import org.junit.jupiter.api.Test;
  */
 final class TestDelta {
 
-	private static ValueEval invokeValue(String number1, String number2) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
-		return new Delta().evaluate(args, -1, -1);
-	}
+    private static ValueEval invokeValue(String number1, String number2) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
+        return new Delta().evaluate(args, -1, -1);
+    }
 
-	private static void confirmValue(String number1, String number2, double expected) {
-		ValueEval result = invokeValue(number1, number2);
-		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0);
-	}
+    private static void confirmValue(String number1, String number2, double expected) {
+        ValueEval result = invokeValue(number1, number2);
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0);
+    }
 
     private static void confirmValueError(String number1, String number2) {
         ValueEval result = invokeValue(number1, number2);
@@ -47,17 +47,17 @@ final class TestDelta {
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
-	@Test
-	void testBasic() {
-		confirmValue("5","4", 0); // Checks whether 5 equals 4 (0)
-		confirmValue("5","5", 1); // Checks whether 5 equals 5 (1)
+    @Test
+    void testBasic() {
+        confirmValue("5","4", 0); // Checks whether 5 equals 4 (0)
+        confirmValue("5","5", 1); // Checks whether 5 equals 5 (1)
 
         confirmValue("0.5","0", 0); // Checks whether 0.5 equals 0 (0)
         confirmValue("0.50","0.5", 1);
         confirmValue("0.5000000000","0.5", 1);
-	}
+    }
 
-	@Test
+    @Test
     void testErrors() {
         confirmValueError("A1","B2");
         confirmValueError("AAAA","BBBB");

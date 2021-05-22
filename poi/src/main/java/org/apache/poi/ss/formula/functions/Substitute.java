@@ -28,82 +28,82 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public final class Substitute extends Var3or4ArgFunction {
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2) {
-		String result;
-		try {
-			String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
-			String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
-			String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2) {
+        String result;
+        try {
+            String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+            String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+            String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
 
-			result = replaceAllOccurrences(oldStr, searchStr, newStr);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new StringEval(result);
-	}
+            result = replaceAllOccurrences(oldStr, searchStr, newStr);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        return new StringEval(result);
+    }
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
-		String result;
-		try {
-			String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
-			String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
-			String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2, ValueEval arg3) {
+        String result;
+        try {
+            String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+            String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+            String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
 
-			int instanceNumber = TextFunction.evaluateIntArg(arg3, srcRowIndex, srcColumnIndex);
-			if (instanceNumber < 1) {
-				return ErrorEval.VALUE_INVALID;
-			}
-			result = replaceOneOccurrence(oldStr, searchStr, newStr, instanceNumber);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new StringEval(result);
-	}
+            int instanceNumber = TextFunction.evaluateIntArg(arg3, srcRowIndex, srcColumnIndex);
+            if (instanceNumber < 1) {
+                return ErrorEval.VALUE_INVALID;
+            }
+            result = replaceOneOccurrence(oldStr, searchStr, newStr, instanceNumber);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        return new StringEval(result);
+    }
 
-	private static String replaceAllOccurrences(String oldStr, String searchStr, String newStr) {
-		// avoid endless loop when searching for nothing
-		if (searchStr.length() < 1) {
-			return oldStr;
-		}
+    private static String replaceAllOccurrences(String oldStr, String searchStr, String newStr) {
+        // avoid endless loop when searching for nothing
+        if (searchStr.length() < 1) {
+            return oldStr;
+        }
 
-		StringBuilder sb = new StringBuilder();
-		int startIndex = 0;
-		while (true) {
-			int nextMatch = oldStr.indexOf(searchStr, startIndex);
-			if (nextMatch < 0) {
-				// store everything from end of last match to end of string
-				sb.append(oldStr.substring(startIndex));
-				return sb.toString();
-			}
-			// store everything from end of last match to start of this match
-			sb.append(oldStr, startIndex, nextMatch);
-			sb.append(newStr);
-			startIndex = nextMatch + searchStr.length();
-		}
-	}
+        StringBuilder sb = new StringBuilder();
+        int startIndex = 0;
+        while (true) {
+            int nextMatch = oldStr.indexOf(searchStr, startIndex);
+            if (nextMatch < 0) {
+                // store everything from end of last match to end of string
+                sb.append(oldStr.substring(startIndex));
+                return sb.toString();
+            }
+            // store everything from end of last match to start of this match
+            sb.append(oldStr, startIndex, nextMatch);
+            sb.append(newStr);
+            startIndex = nextMatch + searchStr.length();
+        }
+    }
 
-	private static String replaceOneOccurrence(String oldStr, String searchStr, String newStr, int instanceNumber) {
-		// avoid endless loop when searching for nothing
-		if (searchStr.length() < 1) {
-			return oldStr;
-		}
-		int startIndex = 0;
-		int count=0;
-		while (true) {
-			int nextMatch = oldStr.indexOf(searchStr, startIndex);
-			if (nextMatch < 0) {
-				// not enough occurrences found - leave unchanged
-				return oldStr;
-			}
-			count++;
-			if (count == instanceNumber) {
-				return oldStr.substring(0, nextMatch) +
-						newStr +
-						oldStr.substring(nextMatch + searchStr.length());
-			}
-			startIndex = nextMatch + searchStr.length();
-		}
-	}
+    private static String replaceOneOccurrence(String oldStr, String searchStr, String newStr, int instanceNumber) {
+        // avoid endless loop when searching for nothing
+        if (searchStr.length() < 1) {
+            return oldStr;
+        }
+        int startIndex = 0;
+        int count=0;
+        while (true) {
+            int nextMatch = oldStr.indexOf(searchStr, startIndex);
+            if (nextMatch < 0) {
+                // not enough occurrences found - leave unchanged
+                return oldStr;
+            }
+            count++;
+            if (count == instanceNumber) {
+                return oldStr.substring(0, nextMatch) +
+                        newStr +
+                        oldStr.substring(nextMatch + searchStr.length());
+            }
+            startIndex = nextMatch + searchStr.length();
+        }
+    }
 }

@@ -28,18 +28,18 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * yet implemented.
  */
 public final class NotImplementedFunction implements Function {
-	private final String _functionName;
-	protected NotImplementedFunction() {
-		_functionName = getClass().getName();
-	}
-	public NotImplementedFunction(String name) {
-		_functionName = name;
-	}
+    private final String _functionName;
+    protected NotImplementedFunction() {
+        _functionName = getClass().getName();
+    }
+    public NotImplementedFunction(String name) {
+        _functionName = name;
+    }
 
-	public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
-		throw new NotImplementedFunctionException(_functionName);
-	}
-	public String getFunctionName() {
-		return _functionName;
-	}
+    public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
+        throw new NotImplementedFunctionException(_functionName);
+    }
+    public String getFunctionName() {
+        return _functionName;
+    }
 }

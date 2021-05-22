@@ -30,46 +30,46 @@ import org.apache.poi.util.LittleEndianOutput;
  * SXIDSTM - Stream ID (0x00D5)
  */
 public final class StreamIDRecord extends StandardRecord {
-	public static final short sid = 0x00D5;
+    public static final short sid = 0x00D5;
 
-	private int idstm;
+    private int idstm;
 
-	public StreamIDRecord(StreamIDRecord other) {
-		super(other);
-		idstm = other.idstm;
-	}
+    public StreamIDRecord(StreamIDRecord other) {
+        super(other);
+        idstm = other.idstm;
+    }
 
-	public StreamIDRecord(RecordInputStream in) {
-		idstm = in.readShort();
-	}
+    public StreamIDRecord(RecordInputStream in) {
+        idstm = in.readShort();
+    }
 
-	@Override
-	protected void serialize(LittleEndianOutput out) {
-		out.writeShort(idstm);
-	}
+    @Override
+    protected void serialize(LittleEndianOutput out) {
+        out.writeShort(idstm);
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public StreamIDRecord copy() {
-		return new StreamIDRecord(this);
-	}
+    @Override
+    public StreamIDRecord copy() {
+        return new StreamIDRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.STREAM_ID;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.STREAM_ID;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("idstm", () -> idstm);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("idstm", () -> idstm);
+    }
 }

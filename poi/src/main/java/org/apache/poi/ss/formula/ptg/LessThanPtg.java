@@ -32,7 +32,7 @@ public final class LessThanPtg extends ValueOperatorPtg {
     public static final LessThanPtg instance = new LessThanPtg();
 
     private LessThanPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

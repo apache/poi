@@ -48,7 +48,7 @@ public final class IndexRecord extends StandardRecord {
     public IndexRecord(RecordInputStream in) {
         int field_1_zero          = in.readInt();
         if (field_1_zero != 0) {
-        	throw new RecordFormatException("Expected zero for field 1 but got " + field_1_zero);
+            throw new RecordFormatException("Expected zero for field 1 but got " + field_1_zero);
         }
         field_2_first_row     = in.readInt();
         field_3_last_row_add1 = in.readInt();
@@ -117,14 +117,14 @@ public final class IndexRecord extends StandardRecord {
         out.writeInt(getLastRowAdd1());
         out.writeInt(field_4_zero);
         for (int k = 0; k < getNumDbcells(); k++) {
-        	out.writeInt(getDbcellAt(k));
+            out.writeInt(getDbcellAt(k));
         }
     }
 
     @Override
     protected int getDataSize() {
         return 16 // 4 ints
-        	+ getNumDbcells() * 4;
+            + getNumDbcells() * 4;
     }
 
     /**

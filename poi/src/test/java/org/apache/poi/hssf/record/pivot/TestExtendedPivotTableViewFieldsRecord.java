@@ -31,33 +31,33 @@ import org.junit.jupiter.api.Test;
  */
 final class TestExtendedPivotTableViewFieldsRecord {
 
-	@Test
-	void testSubNameNotPresent_bug46693() {
-		// This data came from attachment 23347 of bug 46693 at offset 0xAA43
-		byte[] data = HexRead.readFromString(
-				"00 01 14 00" + // BIFF header
-				"1E 14 00 0A FF FF FF FF 00 00 FF FF 00 00 00 00 00 00 00 00");
-		RecordInputStream in = TestcaseRecordInputStream.create(data);
-		// bug 46693a - Expected to find a ContinueRecord in order to read remaining 65535 of 65535 chars
-		ExtendedPivotTableViewFieldsRecord rec = new ExtendedPivotTableViewFieldsRecord(in);
+    @Test
+    void testSubNameNotPresent_bug46693() {
+        // This data came from attachment 23347 of bug 46693 at offset 0xAA43
+        byte[] data = HexRead.readFromString(
+                "00 01 14 00" + // BIFF header
+                "1E 14 00 0A FF FF FF FF 00 00 FF FF 00 00 00 00 00 00 00 00");
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+        // bug 46693a - Expected to find a ContinueRecord in order to read remaining 65535 of 65535 chars
+        ExtendedPivotTableViewFieldsRecord rec = new ExtendedPivotTableViewFieldsRecord(in);
 
-		assertEquals(data.length, rec.getRecordSize());
-	}
+        assertEquals(data.length, rec.getRecordSize());
+    }
 
-	@SuppressWarnings("squid:S2699")
-	@Test
-	void testOlderFormat_bug46918() {
-		// There are 10 SXVDEX records in the file (not uploaded) that originated bugzilla 46918
-		// They all had the following hex encoding:
+    @SuppressWarnings("squid:S2699")
+    @Test
+    void testOlderFormat_bug46918() {
+        // There are 10 SXVDEX records in the file (not uploaded) that originated bugzilla 46918
+        // They all had the following hex encoding:
         byte[] data = HexRead.readFromString("00 01 0A 00 1E 14 00 0A FF FF FF FF 00 00");
 
-		RecordInputStream in = TestcaseRecordInputStream.create(data);
-		// bug 46918 - Not enough data (0) to read requested (2) bytes
-		ExtendedPivotTableViewFieldsRecord rec = new ExtendedPivotTableViewFieldsRecord(in);
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+        // bug 46918 - Not enough data (0) to read requested (2) bytes
+        ExtendedPivotTableViewFieldsRecord rec = new ExtendedPivotTableViewFieldsRecord(in);
 
         byte[] expReserData = HexRead.readFromString("1E 14 00 0A FF FF FF FF 00 00" +
                 "FF FF 00 00 00 00 00 00 00 00");
 
-		confirmRecordEncoding(ExtendedPivotTableViewFieldsRecord.sid, expReserData, rec.serialize());
-	}
+        confirmRecordEncoding(ExtendedPivotTableViewFieldsRecord.sid, expReserData, rec.serialize());
+    }
 }

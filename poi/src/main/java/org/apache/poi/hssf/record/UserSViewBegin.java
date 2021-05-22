@@ -45,25 +45,25 @@ public final class UserSViewBegin extends StandardRecord {
         _rawData = data;
     }
 
-	/**
-	 * construct an UserSViewBegin record.  No fields are interpreted and the record will
-	 * be serialized in its original form more or less
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public UserSViewBegin(RecordInputStream in) {
-		_rawData = in.readRemainder();
-	}
+    /**
+     * construct an UserSViewBegin record.  No fields are interpreted and the record will
+     * be serialized in its original form more or less
+     * @param in the RecordInputstream to read the record from
+     */
+    public UserSViewBegin(RecordInputStream in) {
+        _rawData = in.readRemainder();
+    }
 
-	/**
-	 * spit the record out AS IS. no interpretation or identification
-	 */
-	public void serialize(LittleEndianOutput out) {
-		out.write(_rawData);
-	}
+    /**
+     * spit the record out AS IS. no interpretation or identification
+     */
+    public void serialize(LittleEndianOutput out) {
+        out.write(_rawData);
+    }
 
-	protected int getDataSize() {
-		return _rawData.length;
-	}
+    protected int getDataSize() {
+        return _rawData.length;
+    }
 
     public short getSid()
     {

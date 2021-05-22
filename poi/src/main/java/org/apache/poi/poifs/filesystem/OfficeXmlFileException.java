@@ -25,7 +25,7 @@ import org.apache.poi.UnsupportedFileFormatException;
  *  POIFS works with)
  */
 public class OfficeXmlFileException extends UnsupportedFileFormatException {
-	public OfficeXmlFileException(String s) {
-		super(s);
-	}
+    public OfficeXmlFileException(String s) {
+        super(s);
+    }
 }

@@ -29,54 +29,54 @@ import org.junit.jupiter.api.Test;
  */
 final class TestColumnInfoRecord {
 
-	@Test
-	void testBasic() {
-		byte[] data = HexRead.readFromString("7D 00 0C 00 14 00 9B 00 C7 19 0F 00 01 13 00 00");
+    @Test
+    void testBasic() {
+        byte[] data = HexRead.readFromString("7D 00 0C 00 14 00 9B 00 C7 19 0F 00 01 13 00 00");
 
-		RecordInputStream in = TestcaseRecordInputStream.create(data);
-		ColumnInfoRecord cir = new ColumnInfoRecord(in);
-		assertEquals(0, in.remaining());
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+        ColumnInfoRecord cir = new ColumnInfoRecord(in);
+        assertEquals(0, in.remaining());
 
-		assertEquals(20, cir.getFirstColumn());
-		assertEquals(155, cir.getLastColumn());
-		assertEquals(6599, cir.getColumnWidth());
-		assertEquals(15, cir.getXFIndex());
+        assertEquals(20, cir.getFirstColumn());
+        assertEquals(155, cir.getLastColumn());
+        assertEquals(6599, cir.getColumnWidth());
+        assertEquals(15, cir.getXFIndex());
         assertTrue(cir.getHidden());
-		assertEquals(3, cir.getOutlineLevel());
+        assertEquals(3, cir.getOutlineLevel());
         assertTrue(cir.getCollapsed());
-		assertArrayEquals(data, cir.serialize());
-	}
+        assertArrayEquals(data, cir.serialize());
+    }
 
-	/**
-	 * Some applications skip the last reserved field when writing {@link ColumnInfoRecord}s
-	 * The attached file was apparently created by "SoftArtisans OfficeWriter for Excel".
-	 * Excel reads that file OK and assumes zero for the value of the reserved field.
-	 */
-	@Test
-	void testZeroResevedBytes_bug48332() {
-		// Taken from bugzilla attachment 24661 (offset 0x1E73)
-		byte[] inpData = HexRead.readFromString("7D 00 0A 00 00 00 00 00 D5 19 0F 00 02 00");
-		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 D5 19 0F 00 02 00 00 00");
+    /**
+     * Some applications skip the last reserved field when writing {@link ColumnInfoRecord}s
+     * The attached file was apparently created by "SoftArtisans OfficeWriter for Excel".
+     * Excel reads that file OK and assumes zero for the value of the reserved field.
+     */
+    @Test
+    void testZeroResevedBytes_bug48332() {
+        // Taken from bugzilla attachment 24661 (offset 0x1E73)
+        byte[] inpData = HexRead.readFromString("7D 00 0A 00 00 00 00 00 D5 19 0F 00 02 00");
+        byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 D5 19 0F 00 02 00 00 00");
 
-		RecordInputStream in = TestcaseRecordInputStream.create(inpData);
-		// bug 48332 - Unusual record size remaining=(0)
-		ColumnInfoRecord cir = new ColumnInfoRecord(in);
-		assertEquals(0, in.remaining());
-		assertArrayEquals(outData, cir.serialize());
-	}
+        RecordInputStream in = TestcaseRecordInputStream.create(inpData);
+        // bug 48332 - Unusual record size remaining=(0)
+        ColumnInfoRecord cir = new ColumnInfoRecord(in);
+        assertEquals(0, in.remaining());
+        assertArrayEquals(outData, cir.serialize());
+    }
 
-	/**
-	 * Some sample files have just one reserved byte (field 6):
-	 * OddStyleRecord.xls, NoGutsRecords.xls, WORKBOOK_in_capitals.xls
-	 * but this seems to cause no problem to Excel
-	 */
-	@Test
-	void testOneReservedByte() {
-		byte[] inpData = HexRead.readFromString("7D 00 0B 00 00 00 00 00 24 02 0F 00 00 00 01");
-		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 24 02 0F 00 00 00 01 00");
-		RecordInputStream in = TestcaseRecordInputStream.create(inpData);
-		ColumnInfoRecord cir = new ColumnInfoRecord(in);
-		assertEquals(0, in.remaining());
-		assertArrayEquals(outData, cir.serialize());
-	}
+    /**
+     * Some sample files have just one reserved byte (field 6):
+     * OddStyleRecord.xls, NoGutsRecords.xls, WORKBOOK_in_capitals.xls
+     * but this seems to cause no problem to Excel
+     */
+    @Test
+    void testOneReservedByte() {
+        byte[] inpData = HexRead.readFromString("7D 00 0B 00 00 00 00 00 24 02 0F 00 00 00 01");
+        byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 24 02 0F 00 00 00 01 00");
+        RecordInputStream in = TestcaseRecordInputStream.create(inpData);
+        ColumnInfoRecord cir = new ColumnInfoRecord(in);
+        assertEquals(0, in.remaining());
+        assertArrayEquals(outData, cir.serialize());
+    }
 }

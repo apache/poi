@@ -27,33 +27,33 @@ public interface Sheet<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > extends ShapeContainer<S,P> {
-	SlideShow<S,P> getSlideShow();
+    SlideShow<S,P> getSlideShow();
 
     /**
      * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
      * Sheets that support the notion of master (slide, slideLayout) should override it and
      * check this setting in the sheet XML
      */
-	boolean getFollowMasterGraphics();
+    boolean getFollowMasterGraphics();
 
-	MasterSheet<S,P> getMasterSheet();
+    MasterSheet<S,P> getMasterSheet();
 
-	Background<S,P> getBackground();
+    Background<S,P> getBackground();
 
-	/**
-	 * Convenience method to draw a sheet to a graphics context
-	 */
-	void draw(Graphics2D graphics);
+    /**
+     * Convenience method to draw a sheet to a graphics context
+     */
+    void draw(Graphics2D graphics);
 
-	/**
-	 * Get the placeholder details for the given placeholder type. Not all placeholders are also shapes -
-	 * this is especially true for old HSLF slideshows, which notes have header/footers elements which
-	 * aren't shapes.
-	 *
-	 * @param placeholder the placeholder type
-	 * @return the placeholder details or {@code null}, if the placeholder isn't contained in the sheet
-	 *
-	 * @since POI 4.0.0
-	 */
-	PlaceholderDetails getPlaceholderDetails(Placeholder placeholder);
+    /**
+     * Get the placeholder details for the given placeholder type. Not all placeholders are also shapes -
+     * this is especially true for old HSLF slideshows, which notes have header/footers elements which
+     * aren't shapes.
+     *
+     * @param placeholder the placeholder type
+     * @return the placeholder details or {@code null}, if the placeholder isn't contained in the sheet
+     *
+     * @since POI 4.0.0
+     */
+    PlaceholderDetails getPlaceholderDetails(Placeholder placeholder);
 }

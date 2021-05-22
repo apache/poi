@@ -65,7 +65,7 @@ public final class GroupMarkerSubRecord extends SubRecord {
         out.write(reserved);
     }
 
-	protected int getDataSize() {
+    protected int getDataSize() {
         return reserved.length;
     }
 

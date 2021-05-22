@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * Exercise the SSTDeserializer class.
  */
 final class TestSSTDeserializer {
-	private static final int FAKE_SID = -5555;
+    private static final int FAKE_SID = -5555;
 
     private static byte[] concat(byte[] a, byte[] b) {
         byte[] result = new byte[a.length + b.length];

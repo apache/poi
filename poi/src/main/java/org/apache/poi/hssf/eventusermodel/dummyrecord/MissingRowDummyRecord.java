@@ -29,29 +29,29 @@ import org.apache.poi.util.GenericRecordUtil;
  *  want to trigger something
  */
 public final class MissingRowDummyRecord extends DummyRecordBase {
-	private final int rowNumber;
+    private final int rowNumber;
 
-	public MissingRowDummyRecord(int rowNumber) {
-		this.rowNumber = rowNumber;
-	}
-	public int getRowNumber() {
-		return rowNumber;
-	}
+    public MissingRowDummyRecord(int rowNumber) {
+        this.rowNumber = rowNumber;
+    }
+    public int getRowNumber() {
+        return rowNumber;
+    }
 
-	@Override
-	public MissingRowDummyRecord copy() {
-		return this;
-	}
+    @Override
+    public MissingRowDummyRecord copy() {
+        return this;
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return null;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return null;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"rowNumber", this::getRowNumber
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rowNumber", this::getRowNumber
+        );
+    }
 }

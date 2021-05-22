@@ -381,23 +381,23 @@ final class TestOldExcelExtractor {
         }
     }
 
-	@Test
-	void testMetaData() throws IOException {
-		try (OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls")) {
-			POITextExtractor metaData = extractor.getMetadataTextExtractor();
-			assertNotNull(metaData);
+    @Test
+    void testMetaData() throws IOException {
+        try (OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls")) {
+            POITextExtractor metaData = extractor.getMetadataTextExtractor();
+            assertNotNull(metaData);
 
-			assertThrows(IllegalStateException.class, metaData::getMetadataTextExtractor);
-			assertEquals("", metaData.getText());
-			assertNotNull(metaData.getDocument());
-			assertTrue(metaData.isCloseFilesystem());
-			assertNotNull(metaData.getFilesystem());
+            assertThrows(IllegalStateException.class, metaData::getMetadataTextExtractor);
+            assertEquals("", metaData.getText());
+            assertNotNull(metaData.getDocument());
+            assertTrue(metaData.isCloseFilesystem());
+            assertNotNull(metaData.getFilesystem());
 
-			// the setter is a NOP
-			metaData.setCloseFilesystem(false);
-			assertTrue(metaData.isCloseFilesystem());
+            // the setter is a NOP
+            metaData.setCloseFilesystem(false);
+            assertTrue(metaData.isCloseFilesystem());
 
-			metaData.close();
-		}
-	}
+            metaData.close();
+        }
+    }
 }

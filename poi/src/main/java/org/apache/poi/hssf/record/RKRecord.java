@@ -75,17 +75,17 @@ public final class RKRecord extends CellRecord {
 
     @Override
     protected String getRecordName() {
-    	return "RK";
+        return "RK";
     }
 
     @Override
     protected void serializeValue(LittleEndianOutput out) {
-    	out.writeInt(field_4_rk_number);
+        out.writeInt(field_4_rk_number);
     }
 
     @Override
     protected int getValueDataSize() {
-    	return 4;
+        return 4;
     }
 
     @Override

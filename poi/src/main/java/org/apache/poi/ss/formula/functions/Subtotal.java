@@ -73,72 +73,72 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public class Subtotal implements Function {
 
-	private static Function findFunction(int functionCode) throws EvaluationException {
+    private static Function findFunction(int functionCode) throws EvaluationException {
         switch (functionCode) {
-			case 1: return subtotalInstance(AggregateFunction.AVERAGE, true);
-			case 2: return Count.subtotalInstance(true);
-			case 3: return Counta.subtotalInstance(true);
-			case 4: return subtotalInstance(AggregateFunction.MAX, true);
-			case 5: return subtotalInstance(AggregateFunction.MIN, true);
-			case 6: return subtotalInstance(AggregateFunction.PRODUCT, true);
-			case 7: return subtotalInstance(AggregateFunction.STDEV, true);
-			case 8: throw new NotImplementedFunctionException("STDEVP");
-			case 9: return subtotalInstance(AggregateFunction.SUM, true);
-			case 10: throw new NotImplementedFunctionException("VAR");
-			case 11: throw new NotImplementedFunctionException("VARP");
-			case 101: return subtotalInstance(AggregateFunction.AVERAGE, false);
-			case 102: return Count.subtotalInstance(false);
-			case 103: return Counta.subtotalInstance(false);
-			case 104: return subtotalInstance(AggregateFunction.MAX, false);
-			case 105: return subtotalInstance(AggregateFunction.MIN, false);
-			case 106: return subtotalInstance(AggregateFunction.PRODUCT, false);
-			case 107: return subtotalInstance(AggregateFunction.STDEV, false);
-			case 108: throw new NotImplementedFunctionException("STDEVP SUBTOTAL with 'exclude hidden values' option");
-			case 109: return subtotalInstance(AggregateFunction.SUM, false);
-			case 110: throw new NotImplementedFunctionException("VAR SUBTOTAL with 'exclude hidden values' option");
-			case 111: throw new NotImplementedFunctionException("VARP SUBTOTAL with 'exclude hidden values' option");
-		}
-		throw EvaluationException.invalidValue();
-	}
+            case 1: return subtotalInstance(AggregateFunction.AVERAGE, true);
+            case 2: return Count.subtotalInstance(true);
+            case 3: return Counta.subtotalInstance(true);
+            case 4: return subtotalInstance(AggregateFunction.MAX, true);
+            case 5: return subtotalInstance(AggregateFunction.MIN, true);
+            case 6: return subtotalInstance(AggregateFunction.PRODUCT, true);
+            case 7: return subtotalInstance(AggregateFunction.STDEV, true);
+            case 8: throw new NotImplementedFunctionException("STDEVP");
+            case 9: return subtotalInstance(AggregateFunction.SUM, true);
+            case 10: throw new NotImplementedFunctionException("VAR");
+            case 11: throw new NotImplementedFunctionException("VARP");
+            case 101: return subtotalInstance(AggregateFunction.AVERAGE, false);
+            case 102: return Count.subtotalInstance(false);
+            case 103: return Counta.subtotalInstance(false);
+            case 104: return subtotalInstance(AggregateFunction.MAX, false);
+            case 105: return subtotalInstance(AggregateFunction.MIN, false);
+            case 106: return subtotalInstance(AggregateFunction.PRODUCT, false);
+            case 107: return subtotalInstance(AggregateFunction.STDEV, false);
+            case 108: throw new NotImplementedFunctionException("STDEVP SUBTOTAL with 'exclude hidden values' option");
+            case 109: return subtotalInstance(AggregateFunction.SUM, false);
+            case 110: throw new NotImplementedFunctionException("VAR SUBTOTAL with 'exclude hidden values' option");
+            case 111: throw new NotImplementedFunctionException("VARP SUBTOTAL with 'exclude hidden values' option");
+        }
+        throw EvaluationException.invalidValue();
+    }
 
-	@Override
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		int nInnerArgs = args.length-1; // -1: first arg is used to select from a basic aggregate function
-		if (nInnerArgs < 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
+    @Override
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        int nInnerArgs = args.length-1; // -1: first arg is used to select from a basic aggregate function
+        if (nInnerArgs < 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		final Function innerFunc;
-		int functionCode;
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
+        final Function innerFunc;
+        int functionCode;
+        try {
+            ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
             functionCode = OperandResolver.coerceValueToInt(ve);
-			innerFunc = findFunction(functionCode);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
+            innerFunc = findFunction(functionCode);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
 
-		// ignore the first arg, this is the function-type, we check for the length above
-		final List<ValueEval> list = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+        // ignore the first arg, this is the function-type, we check for the length above
+        final List<ValueEval> list = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
 
-		Iterator<ValueEval> it = list.iterator();
+        Iterator<ValueEval> it = list.iterator();
 
-		// See https://support.office.com/en-us/article/SUBTOTAL-function-7b027003-f060-4ade-9040-e478765b9939
-		// "If there are other subtotals within ref1, ref2,... (or nested subtotals), these nested subtotals are ignored to avoid double counting."
-		// For array references it is handled in other evaluation steps, but we need to handle this here for references to subtotal-functions
-		while(it.hasNext()) {
-			ValueEval eval = it.next();
-			if(eval instanceof LazyRefEval) {
-				LazyRefEval lazyRefEval = (LazyRefEval) eval;
-				if(lazyRefEval.isSubTotal()) {
-					it.remove();
-				}
-				if (functionCode > 100 && lazyRefEval.isRowHidden()) {
-				    it.remove();
-				}
-			}
-		}
+        // See https://support.office.com/en-us/article/SUBTOTAL-function-7b027003-f060-4ade-9040-e478765b9939
+        // "If there are other subtotals within ref1, ref2,... (or nested subtotals), these nested subtotals are ignored to avoid double counting."
+        // For array references it is handled in other evaluation steps, but we need to handle this here for references to subtotal-functions
+        while(it.hasNext()) {
+            ValueEval eval = it.next();
+            if(eval instanceof LazyRefEval) {
+                LazyRefEval lazyRefEval = (LazyRefEval) eval;
+                if(lazyRefEval.isSubTotal()) {
+                    it.remove();
+                }
+                if (functionCode > 100 && lazyRefEval.isRowHidden()) {
+                    it.remove();
+                }
+            }
+        }
 
-		return innerFunc.evaluate(list.toArray(new ValueEval[0]), srcRowIndex, srcColumnIndex);
-	}
+        return innerFunc.evaluate(list.toArray(new ValueEval[0]), srcRowIndex, srcColumnIndex);
+    }
 }

@@ -27,39 +27,39 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class MissingArgPtg extends ScalarConstantPtg {
 
-	private static final int SIZE = 1;
-	public static final byte sid = 0x16;
+    private static final int SIZE = 1;
+    public static final byte sid = 0x16;
 
-	public static final Ptg instance = new MissingArgPtg();
+    public static final Ptg instance = new MissingArgPtg();
 
-	private MissingArgPtg() {
-		// enforce singleton
-	}
+    private MissingArgPtg() {
+        // enforce singleton
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return SIZE;
-	}
+    public int getSize() {
+        return SIZE;
+    }
 
-	public String toFormulaString() {
-		return " ";
-	}
+    public String toFormulaString() {
+        return " ";
+    }
 
-	@Override
-	public MissingArgPtg copy() {
-		return this;
-	}
+    @Override
+    public MissingArgPtg copy() {
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return null;
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
+    }
 }

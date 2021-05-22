@@ -81,9 +81,9 @@ public final class RowRecord extends StandardRecord {
 
 
     public RowRecord(int rowNumber) {
-    	if(rowNumber < 0) {
-    		throw new IllegalArgumentException("Invalid row number (" + rowNumber + ")");
-    	}
+        if(rowNumber < 0) {
+            throw new IllegalArgumentException("Invalid row number (" + rowNumber + ")");
+        }
         field_1_row_number = rowNumber;
         field_4_height = (short)0xFF;
         field_5_optimize = ( short ) 0;
@@ -96,9 +96,9 @@ public final class RowRecord extends StandardRecord {
 
     public RowRecord(RecordInputStream in) {
         field_1_row_number   = in.readUShort();
-    	if(field_1_row_number < 0) {
-    		throw new IllegalArgumentException("Invalid row number " + field_1_row_number + " found in InputStream");
-    	}
+        if(field_1_row_number < 0) {
+            throw new IllegalArgumentException("Invalid row number " + field_1_row_number + " found in InputStream");
+        }
         field_2_first_col    = in.readShort();
         field_3_last_col     = in.readShort();
         field_4_height       = in.readShort();
@@ -209,7 +209,7 @@ public final class RowRecord extends StandardRecord {
      * @param index to the XF record
      */
     public void setXFIndex(short index) {
-    	field_8_option_flags = xfIndex.setValue(field_8_option_flags, index);
+        field_8_option_flags = xfIndex.setValue(field_8_option_flags, index);
     }
 
     /**
@@ -218,7 +218,7 @@ public final class RowRecord extends StandardRecord {
      * @param f has thick top border
      */
     public void setTopBorder(boolean f) {
-    	field_8_option_flags = topBorder.setBoolean(field_8_option_flags, f);
+        field_8_option_flags = topBorder.setBoolean(field_8_option_flags, f);
     }
 
     /**
@@ -228,7 +228,7 @@ public final class RowRecord extends StandardRecord {
      * @param f has thick bottom border
      */
     public void setBottomBorder(boolean f) {
-    	field_8_option_flags = bottomBorder.setBoolean(field_8_option_flags, f);
+        field_8_option_flags = bottomBorder.setBoolean(field_8_option_flags, f);
     }
 
     /**
@@ -237,7 +237,7 @@ public final class RowRecord extends StandardRecord {
      * @param f use phoenetic guide
      */
     public void setPhoeneticGuide(boolean f) {
-    	field_8_option_flags = phoneticGuide.setBoolean(field_8_option_flags, f);
+        field_8_option_flags = phoneticGuide.setBoolean(field_8_option_flags, f);
     }
 
     /**
@@ -353,7 +353,7 @@ public final class RowRecord extends StandardRecord {
      * @return index to the XF record or bogus value (undefined) if isn't formatted
      */
     public short getXFIndex() {
-    	return xfIndex.getShortValue((short)field_8_option_flags);
+        return xfIndex.getShortValue((short)field_8_option_flags);
     }
 
     /**
@@ -362,7 +362,7 @@ public final class RowRecord extends StandardRecord {
      * @return has cells with a thick top border
      */
     public boolean getTopBorder() {
-    	return topBorder.isSet(field_8_option_flags);
+        return topBorder.isSet(field_8_option_flags);
     }
 
     /**
@@ -371,7 +371,7 @@ public final class RowRecord extends StandardRecord {
      * @return has cells with a thick bottom border
      */
     public boolean getBottomBorder() {
-    	return bottomBorder.isSet(field_8_option_flags);
+        return bottomBorder.isSet(field_8_option_flags);
     }
 
     /**
@@ -380,7 +380,7 @@ public final class RowRecord extends StandardRecord {
      * @return has phoentic guide
      */
     public boolean getPhoeneticGuide() {
-    	return phoneticGuide.isSet(field_8_option_flags);
+        return phoneticGuide.isSet(field_8_option_flags);
     }
 
     public void serialize(LittleEndianOutput out) {

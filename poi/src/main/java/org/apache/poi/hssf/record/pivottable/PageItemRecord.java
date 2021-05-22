@@ -33,96 +33,96 @@ import org.apache.poi.util.RecordFormatException;
  * SXPI - Page Item (0x00B6)
  */
 public final class PageItemRecord extends StandardRecord {
-	public static final short sid = 0x00B6;
+    public static final short sid = 0x00B6;
 
-	private static final class FieldInfo implements GenericRecord {
-		public static final int ENCODED_SIZE = 6;
-		/** Index to the View Item SXVI(0x00B2) record */
-		private int _isxvi;
-		/** Index to the {@link ViewFieldsRecord} SXVD(0x00B1) record */
-		private int _isxvd;
-		/** Object ID for the drop-down arrow */
-		private int _idObj;
+    private static final class FieldInfo implements GenericRecord {
+        public static final int ENCODED_SIZE = 6;
+        /** Index to the View Item SXVI(0x00B2) record */
+        private int _isxvi;
+        /** Index to the {@link ViewFieldsRecord} SXVD(0x00B1) record */
+        private int _isxvd;
+        /** Object ID for the drop-down arrow */
+        private int _idObj;
 
-		public FieldInfo(FieldInfo other) {
-			_isxvi = other._isxvi;
-			_isxvd = other._isxvd;
-			_idObj = other._idObj;
-		}
+        public FieldInfo(FieldInfo other) {
+            _isxvi = other._isxvi;
+            _isxvd = other._isxvd;
+            _idObj = other._idObj;
+        }
 
-		public FieldInfo(RecordInputStream in) {
-			_isxvi = in.readShort();
-			_isxvd = in.readShort();
-			_idObj = in.readShort();
-		}
+        public FieldInfo(RecordInputStream in) {
+            _isxvi = in.readShort();
+            _isxvd = in.readShort();
+            _idObj = in.readShort();
+        }
 
-		private void serialize(LittleEndianOutput out) {
-			out.writeShort(_isxvi);
-			out.writeShort(_isxvd);
-			out.writeShort(_idObj);
-		}
+        private void serialize(LittleEndianOutput out) {
+            out.writeShort(_isxvi);
+            out.writeShort(_isxvd);
+            out.writeShort(_idObj);
+        }
 
-		@Override
-		public Map<String, Supplier<?>> getGenericProperties() {
-			return GenericRecordUtil.getGenericProperties(
-				"isxvi", () -> _isxvi,
-				"isxvd", () -> _isxvd,
-				"idObj", () -> _idObj
-			);
-		}
-	}
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "isxvi", () -> _isxvi,
+                "isxvd", () -> _isxvd,
+                "idObj", () -> _idObj
+            );
+        }
+    }
 
-	private final FieldInfo[] _fieldInfos;
+    private final FieldInfo[] _fieldInfos;
 
-	public PageItemRecord(PageItemRecord other) {
-		super(other);
-		_fieldInfos = Stream.of(other._fieldInfos).map(FieldInfo::new).toArray(FieldInfo[]::new);
-	}
+    public PageItemRecord(PageItemRecord other) {
+        super(other);
+        _fieldInfos = Stream.of(other._fieldInfos).map(FieldInfo::new).toArray(FieldInfo[]::new);
+    }
 
-	public PageItemRecord(RecordInputStream in) {
-		int dataSize = in.remaining();
-		if (dataSize % FieldInfo.ENCODED_SIZE != 0) {
-			throw new RecordFormatException("Bad data size " + dataSize);
-		}
+    public PageItemRecord(RecordInputStream in) {
+        int dataSize = in.remaining();
+        if (dataSize % FieldInfo.ENCODED_SIZE != 0) {
+            throw new RecordFormatException("Bad data size " + dataSize);
+        }
 
-		int nItems = dataSize / FieldInfo.ENCODED_SIZE;
+        int nItems = dataSize / FieldInfo.ENCODED_SIZE;
 
-		FieldInfo[] fis = new FieldInfo[nItems];
-		for (int i = 0; i < fis.length; i++) {
-			fis[i] = new FieldInfo(in);
-		}
-		_fieldInfos = fis;
-	}
+        FieldInfo[] fis = new FieldInfo[nItems];
+        for (int i = 0; i < fis.length; i++) {
+            fis[i] = new FieldInfo(in);
+        }
+        _fieldInfos = fis;
+    }
 
-	@Override
-	protected void serialize(LittleEndianOutput out) {
-		for (FieldInfo fieldInfo : _fieldInfos) {
-			fieldInfo.serialize(out);
-		}
-	}
+    @Override
+    protected void serialize(LittleEndianOutput out) {
+        for (FieldInfo fieldInfo : _fieldInfos) {
+            fieldInfo.serialize(out);
+        }
+    }
 
-	@Override
-	protected int getDataSize() {
-		return _fieldInfos.length * FieldInfo.ENCODED_SIZE;
-	}
+    @Override
+    protected int getDataSize() {
+        return _fieldInfos.length * FieldInfo.ENCODED_SIZE;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public PageItemRecord copy() {
-		return new PageItemRecord(this);
-	}
+    @Override
+    public PageItemRecord copy() {
+        return new PageItemRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.PAGE_ITEM;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PAGE_ITEM;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("fieldInfos", () -> _fieldInfos);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("fieldInfos", () -> _fieldInfos);
+    }
 }

@@ -48,7 +48,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
    private POIFSFileSystem _filesystem;
    private POIFSStream _stream;
    private int _block_size;
-	
+    
    /**
     * Constructor for an existing Document 
     */
@@ -232,7 +232,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     * Get an Iterator of objects, some of which may implement POIFSViewable
     *
     * @return an Iterator; may not be null, but may have an empty back end
-    *		 store
+    *        store
     */
    public Iterator<Object> getViewableIterator() {
       return emptyIterator();
@@ -243,7 +243,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     * getViewableIterator
     *
     * @return <code>true</code> if a viewer should call getViewableArray,
-    *		 <code>false</code> if a viewer should call getViewableIterator
+    *        <code>false</code> if a viewer should call getViewableIterator
     */
    public boolean preferArray() {
       return true;

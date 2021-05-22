@@ -31,10 +31,10 @@ import org.apache.poi.util.StringUtil;
  * Stores the cached result of a text formula
  */
 public final class StringRecord extends ContinuableRecord {
-	public static final short sid = 0x0207;
+    public static final short sid = 0x0207;
 
-	private boolean _is16bitUnicode;
-	private String _text;
+    private boolean _is16bitUnicode;
+    private String _text;
 
     public StringRecord() {}
 

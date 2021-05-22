@@ -26,7 +26,7 @@ public final class NotEqualPtg extends ValueOperatorPtg {
     public static final NotEqualPtg instance = new NotEqualPtg();
 
     private NotEqualPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

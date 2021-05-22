@@ -37,46 +37,46 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
  */
 final class RandBetween implements FreeRefFunction{
 
-	public static final FreeRefFunction instance = new RandBetween();
+    public static final FreeRefFunction instance = new RandBetween();
 
-	private RandBetween() {
-		//enforces singleton
-	}
+    private RandBetween() {
+        //enforces singleton
+    }
 
-	/**
-	 * Evaluate for RANDBETWEEN(). Must be given two arguments. Bottom must be greater than top.
-	 * Bottom is rounded up and top value is rounded down. After rounding top has to be set greater
-	 * than top.
-	 *
-	 * @see org.apache.poi.ss.formula.functions.FreeRefFunction#evaluate(org.apache.poi.ss.formula.eval.ValueEval[], org.apache.poi.ss.formula.OperationEvaluationContext)
-	 */
-	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+    /**
+     * Evaluate for RANDBETWEEN(). Must be given two arguments. Bottom must be greater than top.
+     * Bottom is rounded up and top value is rounded down. After rounding top has to be set greater
+     * than top.
+     *
+     * @see org.apache.poi.ss.formula.functions.FreeRefFunction#evaluate(org.apache.poi.ss.formula.eval.ValueEval[], org.apache.poi.ss.formula.OperationEvaluationContext)
+     */
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 
-		double bottom, top;
+        double bottom, top;
 
-		if (args.length != 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		try {
-			bottom = OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(args[0], ec.getRowIndex(), ec.getColumnIndex()));
-			top = OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(args[1], ec.getRowIndex(), ec.getColumnIndex()));
-			if(bottom > top) {
-				return ErrorEval.NUM_ERROR;
-			}
-		} catch (EvaluationException e) {
-			return ErrorEval.VALUE_INVALID;
-		}
+        try {
+            bottom = OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(args[0], ec.getRowIndex(), ec.getColumnIndex()));
+            top = OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(args[1], ec.getRowIndex(), ec.getColumnIndex()));
+            if(bottom > top) {
+                return ErrorEval.NUM_ERROR;
+            }
+        } catch (EvaluationException e) {
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		bottom = Math.ceil(bottom);
-		top = Math.floor(top);
+        bottom = Math.ceil(bottom);
+        top = Math.floor(top);
 
-		if(bottom > top) {
-			top = bottom;
-		}
+        if(bottom > top) {
+            top = bottom;
+        }
 
-		return new NumberEval((bottom + (long)(Math.random() * ((top - bottom) + 1))));
+        return new NumberEval((bottom + (long)(Math.random() * ((top - bottom) + 1))));
 
-	}
+    }
 
 }

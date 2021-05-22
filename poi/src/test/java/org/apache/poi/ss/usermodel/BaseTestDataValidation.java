@@ -475,8 +475,8 @@ public abstract class BaseTestDataValidation {
             // Custom Validation type
             addCustomValidations(wf1);
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
-				Sheet sh = wb2.getSheet("Numbers");
-				assertEquals(16, sh.getDataValidations().size());
+                Sheet sh = wb2.getSheet("Numbers");
+                assertEquals(16, sh.getDataValidations().size());
             }
 
         }

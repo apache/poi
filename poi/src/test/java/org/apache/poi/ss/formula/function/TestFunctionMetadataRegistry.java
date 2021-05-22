@@ -23,21 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 final class TestFunctionMetadataRegistry {
-	@Test
-	void testWellKnownFunctions() {
-		confirmFunction(0, "COUNT");
-		confirmFunction(1, "IF");
+    @Test
+    void testWellKnownFunctions() {
+        confirmFunction(0, "COUNT");
+        confirmFunction(1, "IF");
 
-	}
+    }
 
-	private static void confirmFunction(int index, String funcName) {
-		FunctionMetadata fm;
-		fm = FunctionMetadataRegistry.getFunctionByIndex(index);
-		assertNotNull(fm);
-		assertEquals(funcName, fm.getName());
+    private static void confirmFunction(int index, String funcName) {
+        FunctionMetadata fm;
+        fm = FunctionMetadataRegistry.getFunctionByIndex(index);
+        assertNotNull(fm);
+        assertEquals(funcName, fm.getName());
 
-		fm = FunctionMetadataRegistry.getFunctionByName(funcName);
-		assertNotNull(fm);
-		assertEquals(index, fm.getIndex());
-	}
+        fm = FunctionMetadataRegistry.getFunctionByName(funcName);
+        assertNotNull(fm);
+        assertEquals(index, fm.getIndex());
+    }
 }

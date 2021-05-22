@@ -217,7 +217,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *  other RichTextStrings too!
      */
     UnicodeString getRawUnicodeString() {
-    	return _string;
+        return _string;
     }
 
     /** Used internally by the HSSFCell to set the internal string value*/

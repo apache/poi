@@ -29,16 +29,16 @@ public final class NotImplementedFunctionException extends NotImplementedExcepti
     
     private String functionName;
     
-	public NotImplementedFunctionException(String functionName) {
-		super(functionName);
-		this.functionName = functionName;
-	}
-	public NotImplementedFunctionException(String functionName, NotImplementedException cause) {
-		super(functionName, cause);
+    public NotImplementedFunctionException(String functionName) {
+        super(functionName);
         this.functionName = functionName;
-	}
-	
-	public String getFunctionName() {
-	    return functionName;
-	}
+    }
+    public NotImplementedFunctionException(String functionName, NotImplementedException cause) {
+        super(functionName, cause);
+        this.functionName = functionName;
+    }
+    
+    public String getFunctionName() {
+        return functionName;
+    }
 }

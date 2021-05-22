@@ -22,18 +22,18 @@ package org.apache.poi.hssf.record;
  * This allows much of the code to be generic when it comes to handling margins.
  */
 public interface Margin {
-	// TODO - introduce MarginBaseRecord
-	/**
-	 * Get the margin field for the Margin.
-	 *
-	 * @return the margin
-	 */
-	double getMargin();
+    // TODO - introduce MarginBaseRecord
+    /**
+     * Get the margin field for the Margin.
+     *
+     * @return the margin
+     */
+    double getMargin();
 
-	/**
-	 * Set the margin field for the Margin.
-	 *
-	 * @param field_1_margin the margin
-	 */
-	void setMargin(double field_1_margin);
+    /**
+     * Set the margin field for the Margin.
+     *
+     * @param field_1_margin the margin
+     */
+    void setMargin(double field_1_margin);
 }

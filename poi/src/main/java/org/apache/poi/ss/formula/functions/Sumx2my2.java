@@ -29,15 +29,15 @@ package org.apache.poi.ss.formula.functions;
  */
 public final class Sumx2my2 extends XYNumericFunction {
 
-	private static final Accumulator XSquaredMinusYSquaredAccumulator = new Accumulator() {
-		@Override
+    private static final Accumulator XSquaredMinusYSquaredAccumulator = new Accumulator() {
+        @Override
         public double accumulate(double x, double y) {
-			return x * x - y * y;
-		}
-	};
+            return x * x - y * y;
+        }
+    };
 
-	@Override
-	protected Accumulator createAccumulator() {
-		return XSquaredMinusYSquaredAccumulator;
-	}
+    @Override
+    protected Accumulator createAccumulator() {
+        return XSquaredMinusYSquaredAccumulator;
+    }
 }

@@ -23,9 +23,9 @@ package org.apache.poi.ss.formula;
  * For POI internal use only
  */
 public interface ExternSheetReferenceToken {
-	int getExternSheetIndex();
-	/**
-	 * @return formula text for this reference token without the qualifying sheet name
-	 */
-	String format2DRefAsString();
+    int getExternSheetIndex();
+    /**
+     * @return formula text for this reference token without the qualifying sheet name
+     */
+    String format2DRefAsString();
 }

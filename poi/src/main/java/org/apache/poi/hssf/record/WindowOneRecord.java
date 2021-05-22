@@ -196,8 +196,8 @@ public final class WindowOneRecord extends StandardRecord {
     // end bitfields
 
     public void setActiveSheetIndex(int index) {
-    	field_6_active_sheet = index;
-	}
+        field_6_active_sheet = index;
+    }
 
     /**
      * Sets the first visible sheet in the worksheet tab-bar.  This method does <b>not</b>
@@ -338,7 +338,7 @@ public final class WindowOneRecord extends StandardRecord {
      * @return the index of the currently displayed sheet
      */
     public int getActiveSheetIndex() {
-    	return field_6_active_sheet;
+        return field_6_active_sheet;
     }
 
     /**

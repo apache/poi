@@ -31,174 +31,174 @@ import org.apache.poi.util.StringUtil;
  * Describes a builtin to the gui or user defined style
  */
 public final class StyleRecord extends StandardRecord {
-	public static final short sid = 0x0293;
+    public static final short sid = 0x0293;
 
-	private static final BitField styleIndexMask = BitFieldFactory.getInstance(0x0FFF);
-	private static final BitField isBuiltinFlag  = BitFieldFactory.getInstance(0x8000);
+    private static final BitField styleIndexMask = BitFieldFactory.getInstance(0x0FFF);
+    private static final BitField isBuiltinFlag  = BitFieldFactory.getInstance(0x8000);
 
-	/** shared by both user defined and built-in styles */
-	private int field_1_xf_index;
+    /** shared by both user defined and built-in styles */
+    private int field_1_xf_index;
 
-	// only for built in styles
-	private int field_2_builtin_style;
-	private int field_3_outline_style_level;
+    // only for built in styles
+    private int field_2_builtin_style;
+    private int field_3_outline_style_level;
 
-	// only for user defined styles
-	private boolean field_3_stringHasMultibyte;
-	private String field_4_name;
+    // only for user defined styles
+    private boolean field_3_stringHasMultibyte;
+    private String field_4_name;
 
-	/**
-	 * creates a new style record, initially set to 'built-in'
-	 */
-	public StyleRecord() {
-		field_1_xf_index = isBuiltinFlag.set(0);
-	}
+    /**
+     * creates a new style record, initially set to 'built-in'
+     */
+    public StyleRecord() {
+        field_1_xf_index = isBuiltinFlag.set(0);
+    }
 
-	public StyleRecord(StyleRecord other) {
-		super(other);
-		field_1_xf_index = other.field_1_xf_index;
-		field_2_builtin_style = other.field_2_builtin_style;
-		field_3_outline_style_level = other.field_3_outline_style_level;
-		field_3_stringHasMultibyte = other.field_3_stringHasMultibyte;
-		field_4_name = other.field_4_name;
-	}
+    public StyleRecord(StyleRecord other) {
+        super(other);
+        field_1_xf_index = other.field_1_xf_index;
+        field_2_builtin_style = other.field_2_builtin_style;
+        field_3_outline_style_level = other.field_3_outline_style_level;
+        field_3_stringHasMultibyte = other.field_3_stringHasMultibyte;
+        field_4_name = other.field_4_name;
+    }
 
-	public StyleRecord(RecordInputStream in) {
-		field_1_xf_index = in.readShort();
-		if (isBuiltin()) {
-			field_2_builtin_style	   = in.readByte();
-			field_3_outline_style_level = in.readByte();
-		} else {
-			int field_2_name_length = in.readShort();
+    public StyleRecord(RecordInputStream in) {
+        field_1_xf_index = in.readShort();
+        if (isBuiltin()) {
+            field_2_builtin_style      = in.readByte();
+            field_3_outline_style_level = in.readByte();
+        } else {
+            int field_2_name_length = in.readShort();
 
-			if(in.remaining() < 1) {
-				// Some files from Crystal Reports lack the is16BitUnicode byte
-				//  the remaining fields, which is naughty
-				if (field_2_name_length != 0) {
-					throw new RecordFormatException("Ran out of data reading style record");
-				}
-				// guess this is OK if the string length is zero
-				field_4_name = "";
-			} else {
+            if(in.remaining() < 1) {
+                // Some files from Crystal Reports lack the is16BitUnicode byte
+                //  the remaining fields, which is naughty
+                if (field_2_name_length != 0) {
+                    throw new RecordFormatException("Ran out of data reading style record");
+                }
+                // guess this is OK if the string length is zero
+                field_4_name = "";
+            } else {
 
-				field_3_stringHasMultibyte = in.readByte() != 0x00;
-				if (field_3_stringHasMultibyte) {
-					field_4_name = StringUtil.readUnicodeLE(in, field_2_name_length);
-				} else {
-					field_4_name = StringUtil.readCompressedUnicode(in, field_2_name_length);
-				}
-			}
-		}
-	}
+                field_3_stringHasMultibyte = in.readByte() != 0x00;
+                if (field_3_stringHasMultibyte) {
+                    field_4_name = StringUtil.readUnicodeLE(in, field_2_name_length);
+                } else {
+                    field_4_name = StringUtil.readCompressedUnicode(in, field_2_name_length);
+                }
+            }
+        }
+    }
 
-	/**
-	 * set the actual index of the style extended format record
-	 * @param xfIndex of the xf record
-	 */
-	public void setXFIndex(int xfIndex) {
-		field_1_xf_index = styleIndexMask.setValue(field_1_xf_index, xfIndex);
-	}
+    /**
+     * set the actual index of the style extended format record
+     * @param xfIndex of the xf record
+     */
+    public void setXFIndex(int xfIndex) {
+        field_1_xf_index = styleIndexMask.setValue(field_1_xf_index, xfIndex);
+    }
 
-	/**
-	 * get the actual index of the style extended format record
-	 * @see #getXFIndex()
-	 * @return index of the xf record
-	 */
-	public int getXFIndex() {
-		return styleIndexMask.getValue(field_1_xf_index);
-	}
+    /**
+     * get the actual index of the style extended format record
+     * @see #getXFIndex()
+     * @return index of the xf record
+     */
+    public int getXFIndex() {
+        return styleIndexMask.getValue(field_1_xf_index);
+    }
 
-	/**
-	 * set the style's name
-	 * @param name of the style
-	 */
-	public void setName(String name) {
-		field_4_name = name;
-		field_3_stringHasMultibyte = StringUtil.hasMultibyte(name);
-		field_1_xf_index = isBuiltinFlag.clear(field_1_xf_index);
-	}
+    /**
+     * set the style's name
+     * @param name of the style
+     */
+    public void setName(String name) {
+        field_4_name = name;
+        field_3_stringHasMultibyte = StringUtil.hasMultibyte(name);
+        field_1_xf_index = isBuiltinFlag.clear(field_1_xf_index);
+    }
 
-	/**
-	 * if this is a builtin style set the number of the built in style
-	 * @param  builtinStyleId style number (0-7)
-	 *
-	 */
-	public void setBuiltinStyle(int builtinStyleId) {
-		field_1_xf_index = isBuiltinFlag.set(field_1_xf_index);
-		field_2_builtin_style = builtinStyleId;
-	}
+    /**
+     * if this is a builtin style set the number of the built in style
+     * @param  builtinStyleId style number (0-7)
+     *
+     */
+    public void setBuiltinStyle(int builtinStyleId) {
+        field_1_xf_index = isBuiltinFlag.set(field_1_xf_index);
+        field_2_builtin_style = builtinStyleId;
+    }
 
-	/**
-	 * set the row or column level of the style (if builtin 1||2)
-	 *
-	 * @param level The outline-level
-	 */
-	public void setOutlineStyleLevel(int level) {
-		field_3_outline_style_level = level & 0x00FF;
-	}
+    /**
+     * set the row or column level of the style (if builtin 1||2)
+     *
+     * @param level The outline-level
+     */
+    public void setOutlineStyleLevel(int level) {
+        field_3_outline_style_level = level & 0x00FF;
+    }
 
-	public boolean isBuiltin(){
-		return isBuiltinFlag.isSet(field_1_xf_index);
-	}
+    public boolean isBuiltin(){
+        return isBuiltinFlag.isSet(field_1_xf_index);
+    }
 
-	/**
-	 * get the style's name
-	 * @return name of the style
-	 */
-	public String getName() {
-		return field_4_name;
-	}
+    /**
+     * get the style's name
+     * @return name of the style
+     */
+    public String getName() {
+        return field_4_name;
+    }
 
-	@Override
-	protected int getDataSize() {
-		if (isBuiltin()) {
-			return 4; // short, byte, byte
-		}
-		return 2 // short xf index
-			+ 3 // str len + flag
-			+ field_4_name.length() * (field_3_stringHasMultibyte ? 2 : 1);
-	}
+    @Override
+    protected int getDataSize() {
+        if (isBuiltin()) {
+            return 4; // short, byte, byte
+        }
+        return 2 // short xf index
+            + 3 // str len + flag
+            + field_4_name.length() * (field_3_stringHasMultibyte ? 2 : 1);
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(field_1_xf_index);
-		if (isBuiltin()) {
-			out.writeByte(field_2_builtin_style);
-			out.writeByte(field_3_outline_style_level);
-		} else {
-			out.writeShort(field_4_name.length());
-			out.writeByte(field_3_stringHasMultibyte ? 0x01 : 0x00);
-			if (field_3_stringHasMultibyte) {
-				StringUtil.putUnicodeLE(getName(), out);
-			} else {
-				StringUtil.putCompressedUnicode(getName(), out);
-			}
-		}
-	}
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_xf_index);
+        if (isBuiltin()) {
+            out.writeByte(field_2_builtin_style);
+            out.writeByte(field_3_outline_style_level);
+        } else {
+            out.writeShort(field_4_name.length());
+            out.writeByte(field_3_stringHasMultibyte ? 0x01 : 0x00);
+            if (field_3_stringHasMultibyte) {
+                StringUtil.putUnicodeLE(getName(), out);
+            } else {
+                StringUtil.putCompressedUnicode(getName(), out);
+            }
+        }
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public StyleRecord copy() {
-		return new StyleRecord(this);
-	}
+    @Override
+    public StyleRecord copy() {
+        return new StyleRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.STYLE;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.STYLE;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"xfIndex", this::getXFIndex,
-			"type", () -> isBuiltin() ? "built-in" : "user-defined",
-			"builtin_style", () -> field_2_builtin_style,
-			"outline_level", () -> field_3_outline_style_level,
-			"name", this::getName
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "xfIndex", this::getXFIndex,
+            "type", () -> isBuiltin() ? "built-in" : "user-defined",
+            "builtin_style", () -> field_2_builtin_style,
+            "outline_level", () -> field_3_outline_style_level,
+            "name", this::getName
+        );
+    }
 }

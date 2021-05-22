@@ -41,7 +41,7 @@ public final class EntryUtils {
     public static void copyNodeRecursively( Entry entry, DirectoryEntry target )
     throws IOException {
         if ( entry.isDirectoryEntry() ) {
-        	DirectoryEntry dirEntry = (DirectoryEntry)entry;
+            DirectoryEntry dirEntry = (DirectoryEntry)entry;
             DirectoryEntry newTarget = target.createDirectory( entry.getName() );
             newTarget.setStorageClsid( dirEntry.getStorageClsid() );
             Iterator<Entry> entries = dirEntry.getEntries();

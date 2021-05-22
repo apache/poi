@@ -30,57 +30,57 @@ import org.junit.jupiter.api.Test;
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
  */
 final class TestRoundFuncs {
-	// github-43
-	// https://github.com/apache/poi/pull/43
+    // github-43
+    // https://github.com/apache/poi/pull/43
     @Disabled("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
-	@Test
-	void testRoundUp() {
-		assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);
-	}
+    @Test
+    void testRoundUp() {
+        assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);
+    }
 
-	@Test
-	void testRoundDown() {
-		assertRoundDownEquals(797.40, 3987*0.2, 2, 1e-10);
-	}
+    @Test
+    void testRoundDown() {
+        assertRoundDownEquals(797.40, 3987*0.2, 2, 1e-10);
+    }
 
-	@Test
-	void testRound() {
-		assertRoundEquals(797.40, 3987*0.2, 2, 1e-10);
-	}
+    @Test
+    void testRound() {
+        assertRoundEquals(797.40, 3987*0.2, 2, 1e-10);
+    }
 
-	@Test
-	void testRoundDownWithStringArg() {
-		ValueEval strArg = new StringEval("abc");
-		ValueEval[] args = { strArg, new NumberEval(2), };
-		ValueEval result = NumericFunction.ROUNDDOWN.evaluate(args, -1, (short)-1);
-		assertEquals(ErrorEval.VALUE_INVALID, result);
-	}
+    @Test
+    void testRoundDownWithStringArg() {
+        ValueEval strArg = new StringEval("abc");
+        ValueEval[] args = { strArg, new NumberEval(2), };
+        ValueEval result = NumericFunction.ROUNDDOWN.evaluate(args, -1, (short)-1);
+        assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
 
-	@Test
-	void testRoundUpWithStringArg() {
-		ValueEval strArg = new StringEval("abc");
-		ValueEval[] args = { strArg, new NumberEval(2), };
-		ValueEval result = NumericFunction.ROUNDUP.evaluate(args, -1, (short)-1);
-		assertEquals(ErrorEval.VALUE_INVALID, result);
-	}
+    @Test
+    void testRoundUpWithStringArg() {
+        ValueEval strArg = new StringEval("abc");
+        ValueEval[] args = { strArg, new NumberEval(2), };
+        ValueEval result = NumericFunction.ROUNDUP.evaluate(args, -1, (short)-1);
+        assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
 
 
 
     private static void assertRoundFuncEquals(Function func, double expected, double number, double places, double tolerance) {
-		ValueEval[] args = { new NumberEval( number ), new NumberEval(places), };
-		NumberEval result = (NumberEval) func.evaluate(args, -1, (short)-1);
-		assertEquals(expected, result.getNumberValue(), tolerance);
+        ValueEval[] args = { new NumberEval( number ), new NumberEval(places), };
+        NumberEval result = (NumberEval) func.evaluate(args, -1, (short)-1);
+        assertEquals(expected, result.getNumberValue(), tolerance);
     }
 
     private static void assertRoundEquals(double expected, double number, double places, double tolerance) {
-		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUND, expected, number, places, tolerance);
+        TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUND, expected, number, places, tolerance);
     }
 
     private static void assertRoundUpEquals(double expected, double number, double places, double tolerance) {
-		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDUP, expected, number, places, tolerance);
+        TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDUP, expected, number, places, tolerance);
     }
 
     private static void assertRoundDownEquals(double expected, double number, double places, double tolerance) {
-		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDDOWN, expected, number, places, tolerance);
+        TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDDOWN, expected, number, places, tolerance);
     }
 }

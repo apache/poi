@@ -177,9 +177,9 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
      * @return number of characters
      */
     public int getCharCount() {
-    	if(field_1_charCount < 0) {
-    		return field_1_charCount + 65536;
-    	}
+        if(field_1_charCount < 0) {
+            return field_1_charCount + 65536;
+        }
         return field_1_charCount;
     }
 
@@ -272,11 +272,11 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
 
     public FormatRun getFormatRun(int index) {
       if (field_4_format_runs == null) {
-		return null;
-	  }
+        return null;
+      }
       if (index < 0 || index >= field_4_format_runs.size()) {
-		return null;
-	  }
+        return null;
+      }
       return field_4_format_runs.get(index);
     }
 
@@ -300,8 +300,8 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
      */
     public void addFormatRun(FormatRun r) {
       if (field_4_format_runs == null) {
-		field_4_format_runs = new ArrayList<>();
-	  }
+        field_4_format_runs = new ArrayList<>();
+      }
 
       int index = findFormatRunAt(r._character);
       if (index != -1) {

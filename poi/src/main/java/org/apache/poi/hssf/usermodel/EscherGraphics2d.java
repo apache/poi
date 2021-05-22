@@ -127,7 +127,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     @Override
     public void copyArea(int x, int y, int width, int height,
-				  int dx, int dy)
+                  int dx, int dy)
     {
         getG2D().copyArea(x,y,width,height,dx,dy);
     }
@@ -168,7 +168,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     @Override
     public void drawArc(int x, int y, int width, int height,
-				 int startAngle, int arcAngle)
+                 int startAngle, int arcAngle)
     {
         draw(new Arc2D.Float(x, y, width, height, startAngle, arcAngle, 0));
     }
@@ -203,8 +203,8 @@ public final class EscherGraphics2d extends Graphics2D {
 
     @Override
     public boolean drawImage(Image img, int x, int y,
-				      int width, int height,
-				      ImageObserver observer)
+                      int width, int height,
+                      ImageObserver observer)
     {
         return drawImage(img, x,y,width,height, null, observer);
     }
@@ -387,7 +387,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     @Override
     public void fillRoundRect(int x, int y, int width, int height,
-				       int arcWidth, int arcHeight)
+                       int arcWidth, int arcHeight)
     {
         fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
     }

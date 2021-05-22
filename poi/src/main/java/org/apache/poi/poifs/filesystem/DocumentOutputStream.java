@@ -30,48 +30,48 @@ import org.apache.poi.poifs.property.DocumentProperty;
  * {@link POIFSFileSystem} instance.
  */
 public final class DocumentOutputStream extends OutputStream {
-	/** the Document's size, i.e. the size of the big block data - mini block data is cached and not counted */
-	private int _document_size = 0;
+    /** the Document's size, i.e. the size of the big block data - mini block data is cached and not counted */
+    private int _document_size = 0;
 
     /** have we been closed? */
-	private boolean _closed = false;
+    private boolean _closed = false;
 
-	/** the actual Document */
-	private final POIFSDocument _document;
-	/** and its Property */
-	private final DocumentProperty _property;
+    /** the actual Document */
+    private final POIFSDocument _document;
+    /** and its Property */
+    private final DocumentProperty _property;
 
-	/** our buffer, when null we're into normal blocks */
-	private UnsynchronizedByteArrayOutputStream _buffer =
-	        new UnsynchronizedByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
+    /** our buffer, when null we're into normal blocks */
+    private UnsynchronizedByteArrayOutputStream _buffer =
+            new UnsynchronizedByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
 
-	/** our main block stream, when we're into normal blocks */
-	private POIFSStream _stream;
-	private OutputStream _stream_output;
+    /** our main block stream, when we're into normal blocks */
+    private POIFSStream _stream;
+    private OutputStream _stream_output;
 
     /** a write limit or -1 if unlimited */
     private final long _limit;
 
 
-	/**
-	 * Create an OutputStream from the specified DocumentEntry.
-	 * The specified entry will be emptied.
-	 *
-	 * @param document the DocumentEntry to be written
-	 */
-	public DocumentOutputStream(DocumentEntry document) throws IOException {
-	    this(document, -1);
-	}
+    /**
+     * Create an OutputStream from the specified DocumentEntry.
+     * The specified entry will be emptied.
+     *
+     * @param document the DocumentEntry to be written
+     */
+    public DocumentOutputStream(DocumentEntry document) throws IOException {
+        this(document, -1);
+    }
 
     /**
-	 * Create an OutputStream to create the specified new Entry
-	 *
-	 * @param parent Where to create the Entry
-	 * @param name Name of the new entry
-	 */
-	public DocumentOutputStream(DirectoryEntry parent, String name) throws IOException {
-	    this(createDocument(parent, name), -1);
-	}
+     * Create an OutputStream to create the specified new Entry
+     *
+     * @param parent Where to create the Entry
+     * @param name Name of the new entry
+     */
+    public DocumentOutputStream(DirectoryEntry parent, String name) throws IOException {
+        this(createDocument(parent, name), -1);
+    }
 
     /**
      * Create a DocumentOutputStream
@@ -169,6 +169,6 @@ public final class DocumentOutputStream extends OutputStream {
      * @return the amount of written bytes
      */
     public long size() {
-	    return _document_size + (_buffer == null ? 0L : _buffer.size());
+        return _document_size + (_buffer == null ? 0L : _buffer.size());
     }
 }

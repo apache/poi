@@ -28,74 +28,74 @@ import org.apache.poi.ss.util.CellReference;
  * Provides Lazy Evaluation to 3D Ranges
  */
 final class LazyAreaEval extends AreaEvalBase {
-	private final SheetRangeEvaluator _evaluator;
+    private final SheetRangeEvaluator _evaluator;
 
-	LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {
-		super(ptg, evaluator);
-		_evaluator = evaluator;
-	}
+    LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {
+        super(ptg, evaluator);
+        _evaluator = evaluator;
+    }
 
-	public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
-			int lastColumnIndex, SheetRangeEvaluator evaluator) {
-		super(evaluator, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
-		_evaluator = evaluator;
-	}
+    public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
+            int lastColumnIndex, SheetRangeEvaluator evaluator) {
+        super(evaluator, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+        _evaluator = evaluator;
+    }
 
     @Override
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+    public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
         return getRelativeValue(getFirstSheetIndex(), relativeRowIndex, relativeColumnIndex);
     }
     @Override
-	public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
-		int rowIx = (relativeRowIndex + getFirstRow() ) ;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
+    public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
+        int rowIx = (relativeRowIndex + getFirstRow() ) ;
+        int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
-		return _evaluator.getEvalForCell(sheetIndex, rowIx, colIx);
-	}
+        return _evaluator.getEvalForCell(sheetIndex, rowIx, colIx);
+    }
 
-	@Override
-	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
-		AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
-				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
+    @Override
+    public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+        AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
+                relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
-		return new LazyAreaEval(area, _evaluator);
-	}
-	@Override
+        return new LazyAreaEval(area, _evaluator);
+    }
+    @Override
     public LazyAreaEval getRow(int rowIndex) {
-		if (rowIndex >= getHeight()) {
-			throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
-					+ ".  Allowable range is (0.." + getHeight() + ").");
-		}
-		int absRowIx = getFirstRow() + rowIndex;
-		return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
-	}
-	@Override
-	public LazyAreaEval getColumn(int columnIndex) {
-		if (columnIndex >= getWidth()) {
-			throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
-					+ ".  Allowable range is (0.." + getWidth() + ").");
-		}
-		int absColIx = getFirstColumn() + columnIndex;
-		return new LazyAreaEval(getFirstRow(), absColIx, getLastRow(), absColIx, _evaluator);
-	}
+        if (rowIndex >= getHeight()) {
+            throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
+                    + ".  Allowable range is (0.." + getHeight() + ").");
+        }
+        int absRowIx = getFirstRow() + rowIndex;
+        return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
+    }
+    @Override
+    public LazyAreaEval getColumn(int columnIndex) {
+        if (columnIndex >= getWidth()) {
+            throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
+                    + ".  Allowable range is (0.." + getWidth() + ").");
+        }
+        int absColIx = getFirstColumn() + columnIndex;
+        return new LazyAreaEval(getFirstRow(), absColIx, getLastRow(), absColIx, _evaluator);
+    }
 
-	public String toString() {
-		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
-		CellReference crB = new CellReference(getLastRow(), getLastColumn());
-		return getClass().getName() + "[" +
-				_evaluator.getSheetNameRange() +
-				'!' +
-				crA.formatAsString() +
-				':' +
-				crB.formatAsString() +
-				"]";
-	}
+    public String toString() {
+        CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
+        CellReference crB = new CellReference(getLastRow(), getLastColumn());
+        return getClass().getName() + "[" +
+                _evaluator.getSheetNameRange() +
+                '!' +
+                crA.formatAsString() +
+                ':' +
+                crB.formatAsString() +
+                "]";
+    }
 
     /**
      * @return  whether cell at rowIndex and columnIndex is a subtotal
     */
     @Override
-	public boolean isSubTotal(int rowIndex, int columnIndex){
+    public boolean isSubTotal(int rowIndex, int columnIndex){
         // delegate the query to the sheet evaluator which has access to internal ptgs
         SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
         return _sre.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
@@ -105,7 +105,7 @@ final class LazyAreaEval extends AreaEvalBase {
      * @return whether the row at rowIndex is hidden
      */
     @Override
-	public boolean isRowHidden(int rowIndex) {
+    public boolean isRowHidden(int rowIndex) {
         // delegate the query to the sheet evaluator which has access to internal ptgs
         SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
         return _sre.isRowHidden(getFirstRow() + rowIndex);

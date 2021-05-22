@@ -29,7 +29,7 @@ final class TestFuncPtg {
 
     @Test
     void testRead() {
-    	// This function index represents the LEN() function
+        // This function index represents the LEN() function
         byte[] fakeData = { 0x20, 0x00,};
 
         FuncPtg ptg = FuncPtg.create(TestcaseRecordInputStream.createLittleEndian(fakeData) );

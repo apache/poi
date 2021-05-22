@@ -352,7 +352,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
      *
      * @return list of tokens (casts stack to a list and returns it!)
      * this method can return null is we are unable to create Ptgs from
-     *	 existing excel file
+     *   existing excel file
      * callers should check for null!
      */
     public Ptg[] getParsedExpressionScale() {

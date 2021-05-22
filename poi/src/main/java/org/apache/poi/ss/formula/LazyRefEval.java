@@ -28,32 +28,32 @@ import org.apache.poi.ss.util.CellReference;
  * Provides Lazy Evaluation to a 3D Reference
  */
 public final class LazyRefEval extends RefEvalBase {
-	private final SheetRangeEvaluator _evaluator;
+    private final SheetRangeEvaluator _evaluator;
 
-	public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
-		super(sre, rowIndex, columnIndex);
-		_evaluator = sre;
-	}
+    public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
+        super(sre, rowIndex, columnIndex);
+        _evaluator = sre;
+    }
 
-	public ValueEval getInnerValueEval(int sheetIndex) {
-		return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
-	}
+    public ValueEval getInnerValueEval(int sheetIndex) {
+        return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
+    }
 
-	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+    public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 
-		AreaI area = new OffsetArea(getRow(), getColumn(),
-				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
+        AreaI area = new OffsetArea(getRow(), getColumn(),
+                relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
-		return new LazyAreaEval(area, _evaluator);
-	}
+        return new LazyAreaEval(area, _evaluator);
+    }
 
-	/**
-	 * @return true if the cell is a subtotal
-	 */
-	public boolean isSubTotal() {
-		SheetRefEvaluator sheetEvaluator = _evaluator.getSheetEvaluator(getFirstSheetIndex());
-		return sheetEvaluator.isSubTotal(getRow(), getColumn());
-	}
+    /**
+     * @return true if the cell is a subtotal
+     */
+    public boolean isSubTotal() {
+        SheetRefEvaluator sheetEvaluator = _evaluator.getSheetEvaluator(getFirstSheetIndex());
+        return sheetEvaluator.isSubTotal(getRow(), getColumn());
+    }
     
     /**
      * @return whether the row at rowIndex is hidden
@@ -64,12 +64,12 @@ public final class LazyRefEval extends RefEvalBase {
         return _sre.isRowHidden(getRow());
     }
 
-	public String toString() {
-		CellReference cr = new CellReference(getRow(), getColumn());
-		return getClass().getName() + "[" +
-				_evaluator.getSheetNameRange() +
-				'!' +
-				cr.formatAsString() +
-				"]";
-	}
+    public String toString() {
+        CellReference cr = new CellReference(getRow(), getColumn());
+        return getClass().getName() + "[" +
+                _evaluator.getSheetNameRange() +
+                '!' +
+                cr.formatAsString() +
+                "]";
+    }
 }

@@ -35,88 +35,88 @@ import org.junit.jupiter.api.Test;
  * Class to test RootProperty functionality
  */
 final class TestRootProperty {
-	private RootProperty _property;
-	private byte[] _testblock;
+    private RootProperty _property;
+    private byte[] _testblock;
 
-	@Test
-	void testConstructor() throws IOException {
-		createBasicRootProperty();
+    @Test
+    void testConstructor() throws IOException {
+        createBasicRootProperty();
 
-		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
-		_property.writeData(stream);
-		assertArrayEquals(_testblock, stream.toByteArray());
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
+        _property.writeData(stream);
+        assertArrayEquals(_testblock, stream.toByteArray());
 
-	}
+    }
 
-	private void createBasicRootProperty() {
-		_property = new RootProperty();
-		_testblock = new byte[128];
-		int index = 0;
+    private void createBasicRootProperty() {
+        _property = new RootProperty();
+        _testblock = new byte[128];
+        int index = 0;
 
-		for (; index < 0x40; index++) {
-			_testblock[index] = (byte) 0;
-		}
-		String name = "Root Entry";
-		int limit = name.length();
+        for (; index < 0x40; index++) {
+            _testblock[index] = (byte) 0;
+        }
+        String name = "Root Entry";
+        int limit = name.length();
 
-		_testblock[index++] = (byte) (2 * (limit + 1));
-		_testblock[index++] = (byte) 0;
-		_testblock[index++] = (byte) 5;
-		_testblock[index++] = (byte) 1;
-		for (; index < 0x50; index++) {
-			_testblock[index] = (byte) 0xff;
-		}
-		for (; index < 0x74; index++) {
-			_testblock[index] = (byte) 0;
-		}
-		_testblock[index++] = (byte) POIFSConstants.END_OF_CHAIN;
-		for (; index < 0x78; index++) {
-			_testblock[index] = (byte) 0xff;
-		}
-		for (; index < 0x80; index++) {
-			_testblock[index] = (byte) 0;
-		}
-		byte[] name_bytes = name.getBytes(LocaleUtil.CHARSET_1252);
+        _testblock[index++] = (byte) (2 * (limit + 1));
+        _testblock[index++] = (byte) 0;
+        _testblock[index++] = (byte) 5;
+        _testblock[index++] = (byte) 1;
+        for (; index < 0x50; index++) {
+            _testblock[index] = (byte) 0xff;
+        }
+        for (; index < 0x74; index++) {
+            _testblock[index] = (byte) 0;
+        }
+        _testblock[index++] = (byte) POIFSConstants.END_OF_CHAIN;
+        for (; index < 0x78; index++) {
+            _testblock[index] = (byte) 0xff;
+        }
+        for (; index < 0x80; index++) {
+            _testblock[index] = (byte) 0;
+        }
+        byte[] name_bytes = name.getBytes(LocaleUtil.CHARSET_1252);
 
-		for (index = 0; index < limit; index++) {
-			_testblock[index * 2] = name_bytes[index];
-		}
-	}
+        for (index = 0; index < limit; index++) {
+            _testblock[index * 2] = name_bytes[index];
+        }
+    }
 
-	@Test
-	void testSetSize() {
-		for (int j = 0; j < 10; j++) {
-			createBasicRootProperty();
-			_property.setSize(j);
-			assertEquals(j * 64, _property.getSize(), "trying block count of " + j);
-		}
-	}
+    @Test
+    void testSetSize() {
+        for (int j = 0; j < 10; j++) {
+            createBasicRootProperty();
+            _property.setSize(j);
+            assertEquals(j * 64, _property.getSize(), "trying block count of " + j);
+        }
+    }
 
-	@Test
-	void testReadingConstructor() throws IOException {
-		String[] inputBytes = {
-			"52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"16 00 05 01 FF FF FF FF FF FF FF FF 02 00 00 00 20 08 02 00 00 00 00 00 C0 00 00 00 00 00 00 46",
-			"00 00 00 00 00 00 00 00 00 00 00 00 C0 5C E8 23 9E 6B C1 01 FE FF FF FF 00 00 00 00 00 00 00 00",
-		};
-		int index = 0;
-		byte[] input = RawDataUtil.decode(inputBytes);
-		int offset = 0;
+    @Test
+    void testReadingConstructor() throws IOException {
+        String[] inputBytes = {
+            "52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
+            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+            "16 00 05 01 FF FF FF FF FF FF FF FF 02 00 00 00 20 08 02 00 00 00 00 00 C0 00 00 00 00 00 00 46",
+            "00 00 00 00 00 00 00 00 00 00 00 00 C0 5C E8 23 9E 6B C1 01 FE FF FF FF 00 00 00 00 00 00 00 00",
+        };
+        int index = 0;
+        byte[] input = RawDataUtil.decode(inputBytes);
+        int offset = 0;
 
-		RootProperty property = new RootProperty(index, input, offset);
-		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
-		byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
-		property.writeData(stream);
-		byte[] output = stream.toByteArray();
+        RootProperty property = new RootProperty(index, input, offset);
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
+        byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
+        property.writeData(stream);
+        byte[] output = stream.toByteArray();
 
-		assertEquals(128, output.length);
-		for (int j = 0; j < 128; j++) {
-			assertEquals(expected[j], output[j], "mismatch at offset " + j);
-		}
-		assertEquals(index, property.getIndex());
-		assertEquals("Root Entry", property.getName());
-		assertFalse(property.getChildren().hasNext());
-		assertEquals(ClassIDPredefined.EXCEL_V8.getClassID(), property.getStorageClsid());
-	}
+        assertEquals(128, output.length);
+        for (int j = 0; j < 128; j++) {
+            assertEquals(expected[j], output[j], "mismatch at offset " + j);
+        }
+        assertEquals(index, property.getIndex());
+        assertEquals("Root Entry", property.getName());
+        assertFalse(property.getChildren().hasNext());
+        assertEquals(ClassIDPredefined.EXCEL_V8.getClassID(), property.getStorageClsid());
+    }
 }

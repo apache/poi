@@ -68,7 +68,7 @@ final class TestEventRecordFactory {
             assertEquals(rec.getSid(), BOFRecord.sid, "must be BOFRecord got SID=" + rec.getSid());
             return true;
         };
-    	EventRecordFactory factory = new EventRecordFactory(listener, new short[] {BOFRecord.sid});
+        EventRecordFactory factory = new EventRecordFactory(listener, new short[] {BOFRecord.sid});
 
         BOFRecord bof = new BOFRecord();
         bof.setBuild((short)0);
@@ -79,7 +79,7 @@ final class TestEventRecordFactory {
         bof.setHistoryBitMask(BOFRecord.HISTORY_MASK);
 
         EOFRecord eof = EOFRecord.instance;
-    	byte[] bytes = new byte[bof.getRecordSize() + eof.getRecordSize()];
+        byte[] bytes = new byte[bof.getRecordSize() + eof.getRecordSize()];
         int offset = 0;
         offset = bof.serialize(offset,bytes);
         eof.serialize(offset,bytes);

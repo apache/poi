@@ -183,7 +183,7 @@ final class TestHyperlinkRecord {
         0x00, 0x41, 0x00, 0x31, 0x00, 0x00, 0x00
     };
 
-	private static final byte[] dataLinkToWorkbook = HexRead.readFromString(
+    private static final byte[] dataLinkToWorkbook = HexRead.readFromString(
         "01 00 01 00 01 00 01 00 " +
         "D0 C9 EA 79 F9 BA CE 11 8C 82 00 AA 00 4B A9 0B " +
         "02 00 00 00 " +
@@ -214,7 +214,7 @@ final class TestHyperlinkRecord {
         "36 00 00 00"
     );
 
-	private static final byte[] dataTargetFrame = HexRead.readFromString(
+    private static final byte[] dataTargetFrame = HexRead.readFromString(
         "0E 00 0E 00 00 00 00 00 " +
         "D0 C9 EA 79 F9 BA CE 11  8C 82 00 AA 00 4B A9 0B " +
         "02 00 00 00 " +
@@ -239,25 +239,25 @@ final class TestHyperlinkRecord {
     );
 
 
-	private static final byte[] dataUNC = HexRead.readFromString(
+    private static final byte[] dataUNC = HexRead.readFromString(
         "01 00 01 00 01 00 01 00 " +
-    	"D0 C9 EA 79 F9 BA CE 11 8C 82 00 AA 00 4B A9 0B " +
-    	"02 00 00 00 " +
-    	"1F 01 00 00 " + // options: UNC_PATH | LABEL | TEXT_MARK | ABS | FILE_OR_URL
-    	"09 00 00 00 " + // label: "My Label"
-    	"4D 00 79 00 20 00 6C 00 61 00 62 00 65 00 6C 00 00 00 " +
-    	// note - no moniker GUID
-    	"27 00 00 00 " +  // "\\\\MyServer\\my-share\\myDir\\PRODNAME.xls"
-    	"5C 00 5C 00 4D 00 79 00 53 00 65 00 72 00 76 00 " +
-    	"65 00 72 00 5C 00 6D 00 79 00 2D 00 73 00 68 00 " +
-    	"61 00 72 00 65 00 5C 00 6D 00 79 00 44 00 69 00 " +
-    	"72 00 5C 00 50 00 52 00 4F 00 44 00 4E 00 41 00 " +
-    	"4D 00 45 00 2E 00 78 00 6C 00 73 00 00 00 " +
+        "D0 C9 EA 79 F9 BA CE 11 8C 82 00 AA 00 4B A9 0B " +
+        "02 00 00 00 " +
+        "1F 01 00 00 " + // options: UNC_PATH | LABEL | TEXT_MARK | ABS | FILE_OR_URL
+        "09 00 00 00 " + // label: "My Label"
+        "4D 00 79 00 20 00 6C 00 61 00 62 00 65 00 6C 00 00 00 " +
+        // note - no moniker GUID
+        "27 00 00 00 " +  // "\\\\MyServer\\my-share\\myDir\\PRODNAME.xls"
+        "5C 00 5C 00 4D 00 79 00 53 00 65 00 72 00 76 00 " +
+        "65 00 72 00 5C 00 6D 00 79 00 2D 00 73 00 68 00 " +
+        "61 00 72 00 65 00 5C 00 6D 00 79 00 44 00 69 00 " +
+        "72 00 5C 00 50 00 52 00 4F 00 44 00 4E 00 41 00 " +
+        "4D 00 45 00 2E 00 78 00 6C 00 73 00 00 00 " +
 
-    	"0C 00 00 00 " + // textMark: PRODNAME!C2
-    	"50 00 52 00 4F 00 44 00 4E 00 41 00 4D 00 45 00 21 00 " +
-    	"43 00 32 00 00 00"
-	);
+        "0C 00 00 00 " + // textMark: PRODNAME!C2
+        "50 00 52 00 4F 00 44 00 4E 00 41 00 4D 00 45 00 21 00 " +
+        "43 00 32 00 00 00"
+    );
 
 
     /**
@@ -279,8 +279,8 @@ final class TestHyperlinkRecord {
 
 
     private void confirmGUID(ClassID expectedGuid, ClassID actualGuid) {
-		assertEquals(expectedGuid, actualGuid);
-	}
+        assertEquals(expectedGuid, actualGuid);
+    }
 
     @Test
     void testReadURLLink(){
@@ -454,74 +454,74 @@ final class TestHyperlinkRecord {
     @SuppressWarnings("squid:S2699")
     @Test
     void testReserializeTargetFrame() {
-		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataTargetFrame);
-		HyperlinkRecord hr = new HyperlinkRecord(in);
-		byte[] ser = hr.serialize();
-		confirmRecordEncoding(HyperlinkRecord.sid, dataTargetFrame, ser);
-	}
+        RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataTargetFrame);
+        HyperlinkRecord hr = new HyperlinkRecord(in);
+        byte[] ser = hr.serialize();
+        confirmRecordEncoding(HyperlinkRecord.sid, dataTargetFrame, ser);
+    }
 
     @Test
-	void testReserializeLinkToWorkbook() {
+    void testReserializeLinkToWorkbook() {
 
-		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataLinkToWorkbook);
-		HyperlinkRecord hr = new HyperlinkRecord(in);
-		byte[] ser = hr.serialize();
-		confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
-		assertNotEquals("Identified bug in reading workbook link", "YEARFR~1.XLS", hr.getAddress());
-		assertEquals("yearfracExamples.xls", hr.getAddress());
-	}
+        RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataLinkToWorkbook);
+        HyperlinkRecord hr = new HyperlinkRecord(in);
+        byte[] ser = hr.serialize();
+        confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
+        assertNotEquals("Identified bug in reading workbook link", "YEARFR~1.XLS", hr.getAddress());
+        assertEquals("yearfracExamples.xls", hr.getAddress());
+    }
 
     @Test
     void testReserializeUNC() {
 
-		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataUNC);
-		HyperlinkRecord hr = new HyperlinkRecord(in);
-		byte[] ser = hr.serialize();
-		confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
+        RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataUNC);
+        HyperlinkRecord hr = new HyperlinkRecord(in);
+        byte[] ser = hr.serialize();
+        confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
         assertNotNull(hr.toString());
-	}
+    }
 
     @Test
-	void testGUID() throws IOException {
-		ClassID g;
-		g = new ClassID("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
-		confirmGUID(g, 0x3F2504E0, 0x4F89, 0x11D3, 0x9A0C0305E82C3301L);
-		assertEquals("{3F2504E0-4F89-11D3-9A0C-0305E82C3301}", g.toString());
+    void testGUID() throws IOException {
+        ClassID g;
+        g = new ClassID("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
+        confirmGUID(g, 0x3F2504E0, 0x4F89, 0x11D3, 0x9A0C0305E82C3301L);
+        assertEquals("{3F2504E0-4F89-11D3-9A0C-0305E82C3301}", g.toString());
 
-		g = new ClassID("13579BDF-0246-8ACE-0123-456789ABCDEF");
-		confirmGUID(g, 0x13579BDF, 0x0246, 0x8ACE, 0x0123456789ABCDEFL);
-		assertEquals("{13579BDF-0246-8ACE-0123-456789ABCDEF}", g.toString());
+        g = new ClassID("13579BDF-0246-8ACE-0123-456789ABCDEF");
+        confirmGUID(g, 0x13579BDF, 0x0246, 0x8ACE, 0x0123456789ABCDEFL);
+        assertEquals("{13579BDF-0246-8ACE-0123-456789ABCDEF}", g.toString());
 
-		byte[] buf = new byte[16];
-		g.write(new LittleEndianByteArrayOutputStream(buf, 0));
-		String expectedDump = "[DF, 9B, 57, 13, 46, 02, CE, 8A, 01, 23, 45, 67, 89, AB, CD, EF]";
-		assertEquals(expectedDump, HexDump.toHex(buf));
+        byte[] buf = new byte[16];
+        g.write(new LittleEndianByteArrayOutputStream(buf, 0));
+        String expectedDump = "[DF, 9B, 57, 13, 46, 02, CE, 8A, 01, 23, 45, 67, 89, AB, CD, EF]";
+        assertEquals(expectedDump, HexDump.toHex(buf));
 
-		// STD Moniker
-		g = createFromStreamDump("[D0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
-		assertEquals("{79EAC9D0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
-		// URL Moniker
-		g = createFromStreamDump("[E0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
-		assertEquals("{79EAC9E0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
-		// File Moniker
-		g = createFromStreamDump("[03, 03, 00, 00, 00, 00, 00, 00, C0, 00, 00, 00, 00, 00, 00, 46]");
-		assertEquals("{00000303-0000-0000-C000-000000000046}", g.toString());
-	}
+        // STD Moniker
+        g = createFromStreamDump("[D0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
+        assertEquals("{79EAC9D0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
+        // URL Moniker
+        g = createFromStreamDump("[E0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
+        assertEquals("{79EAC9E0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
+        // File Moniker
+        g = createFromStreamDump("[03, 03, 00, 00, 00, 00, 00, 00, C0, 00, 00, 00, 00, 00, 00, 46]");
+        assertEquals("{00000303-0000-0000-C000-000000000046}", g.toString());
+    }
 
-	private static ClassID createFromStreamDump(String s) {
-		return new ClassID(new LittleEndianByteArrayInputStream(HexRead.readFromString(s)));
-	}
+    private static ClassID createFromStreamDump(String s) {
+        return new ClassID(new LittleEndianByteArrayInputStream(HexRead.readFromString(s)));
+    }
 
-	private void confirmGUID(ClassID g, int d1, int d2, int d3, long d4) throws IOException {
+    private void confirmGUID(ClassID g, int d1, int d2, int d3, long d4) throws IOException {
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(g.getBytes()))) {
             assertEquals(d1, dis.readInt());
             assertEquals(d2, dis.readShort() & 0xFFFF);
             assertEquals(d3, dis.readShort() & 0xFFFF);
             assertEquals(d4, dis.readLong());
         }
-	}
+    }
 
-	@Test
+    @Test
     void test47498(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data_47498);
         HyperlinkRecord link = new HyperlinkRecord(is);

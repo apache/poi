@@ -27,14 +27,14 @@ import org.apache.poi.util.Internal;
 @Internal
 public interface EvaluationName {
 
-	String getNameText();
+    String getNameText();
 
-	boolean isFunctionName();
+    boolean isFunctionName();
 
-	boolean hasFormula();
+    boolean hasFormula();
 
-	Ptg[] getNameDefinition();
+    Ptg[] getNameDefinition();
 
-	boolean isRange();
-	NamePtg createPtg();
+    boolean isRange();
+    NamePtg createPtg();
 }

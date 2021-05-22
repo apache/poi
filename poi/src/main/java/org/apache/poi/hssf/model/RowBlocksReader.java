@@ -36,84 +36,84 @@ import org.apache.poi.ss.util.CellReference;
  */
 public final class RowBlocksReader {
 
-	private final List<org.apache.poi.hssf.record.Record> _plainRecords;
-	private final SharedValueManager _sfm;
-	private final MergeCellsRecord[] _mergedCellsRecords;
+    private final List<org.apache.poi.hssf.record.Record> _plainRecords;
+    private final SharedValueManager _sfm;
+    private final MergeCellsRecord[] _mergedCellsRecords;
 
-	/**
-	 * Also collects any loose MergeCellRecords and puts them in the supplied
-	 * mergedCellsTable
-	 *
-	 * @param  rs the record stream
-	 */
-	public RowBlocksReader(RecordStream rs) {
-		List<org.apache.poi.hssf.record.Record> plainRecords = new ArrayList<>();
-		List<org.apache.poi.hssf.record.Record> shFrmRecords = new ArrayList<>();
-		List<CellReference> firstCellRefs = new ArrayList<>();
-		List<org.apache.poi.hssf.record.Record> arrayRecords = new ArrayList<>();
-		List<org.apache.poi.hssf.record.Record> tableRecords = new ArrayList<>();
-		List<org.apache.poi.hssf.record.Record> mergeCellRecords = new ArrayList<>();
+    /**
+     * Also collects any loose MergeCellRecords and puts them in the supplied
+     * mergedCellsTable
+     *
+     * @param  rs the record stream
+     */
+    public RowBlocksReader(RecordStream rs) {
+        List<org.apache.poi.hssf.record.Record> plainRecords = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> shFrmRecords = new ArrayList<>();
+        List<CellReference> firstCellRefs = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> arrayRecords = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> tableRecords = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> mergeCellRecords = new ArrayList<>();
 
-		Record prevRec = null;
-		while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {
-			// End of row/cell records for the current sheet
-			// Note - It is important that this code does not inadvertently add any sheet
-			// records from a subsequent sheet.  For example, if SharedFormulaRecords
-			// are taken from the wrong sheet, this could cause bug 44449.
-			if (!rs.hasNext()) {
-				throw new RuntimeException("Failed to find end of row/cell records");
+        Record prevRec = null;
+        while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {
+            // End of row/cell records for the current sheet
+            // Note - It is important that this code does not inadvertently add any sheet
+            // records from a subsequent sheet.  For example, if SharedFormulaRecords
+            // are taken from the wrong sheet, this could cause bug 44449.
+            if (!rs.hasNext()) {
+                throw new RuntimeException("Failed to find end of row/cell records");
 
-			}
-			Record rec = rs.getNext();
-			List<org.apache.poi.hssf.record.Record> dest;
-			switch (rec.getSid()) {
-				case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
-				case SharedFormulaRecord.sid: dest = shFrmRecords;
-					if (!(prevRec instanceof FormulaRecord)) {
-						throw new RuntimeException("Shared formula record should follow a FormulaRecord");
-					}
-					FormulaRecord fr = (FormulaRecord)prevRec;
-					firstCellRefs.add(new CellReference(fr.getRow(), fr.getColumn()));
-					break;
-				case ArrayRecord.sid:         dest = arrayRecords;     break;
-				case TableRecord.sid:         dest = tableRecords;     break;
-				default:                      dest = plainRecords;
-			}
-			dest.add(rec);
-			prevRec = rec;
-		}
-		SharedFormulaRecord[] sharedFormulaRecs = new SharedFormulaRecord[shFrmRecords.size()];
-		CellReference[] firstCells = new CellReference[firstCellRefs.size()];
-		ArrayRecord[] arrayRecs = new ArrayRecord[arrayRecords.size()];
-		TableRecord[] tableRecs = new TableRecord[tableRecords.size()];
-		shFrmRecords.toArray(sharedFormulaRecs);
-		firstCellRefs.toArray(firstCells);
-		arrayRecords.toArray(arrayRecs);
-		tableRecords.toArray(tableRecs);
+            }
+            Record rec = rs.getNext();
+            List<org.apache.poi.hssf.record.Record> dest;
+            switch (rec.getSid()) {
+                case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
+                case SharedFormulaRecord.sid: dest = shFrmRecords;
+                    if (!(prevRec instanceof FormulaRecord)) {
+                        throw new RuntimeException("Shared formula record should follow a FormulaRecord");
+                    }
+                    FormulaRecord fr = (FormulaRecord)prevRec;
+                    firstCellRefs.add(new CellReference(fr.getRow(), fr.getColumn()));
+                    break;
+                case ArrayRecord.sid:         dest = arrayRecords;     break;
+                case TableRecord.sid:         dest = tableRecords;     break;
+                default:                      dest = plainRecords;
+            }
+            dest.add(rec);
+            prevRec = rec;
+        }
+        SharedFormulaRecord[] sharedFormulaRecs = new SharedFormulaRecord[shFrmRecords.size()];
+        CellReference[] firstCells = new CellReference[firstCellRefs.size()];
+        ArrayRecord[] arrayRecs = new ArrayRecord[arrayRecords.size()];
+        TableRecord[] tableRecs = new TableRecord[tableRecords.size()];
+        shFrmRecords.toArray(sharedFormulaRecs);
+        firstCellRefs.toArray(firstCells);
+        arrayRecords.toArray(arrayRecs);
+        tableRecords.toArray(tableRecs);
 
-		_plainRecords = plainRecords;
-		_sfm = SharedValueManager.create(sharedFormulaRecs, firstCells, arrayRecs, tableRecs);
-		_mergedCellsRecords = new MergeCellsRecord[mergeCellRecords.size()];
-		mergeCellRecords.toArray(_mergedCellsRecords);
-	}
+        _plainRecords = plainRecords;
+        _sfm = SharedValueManager.create(sharedFormulaRecs, firstCells, arrayRecs, tableRecs);
+        _mergedCellsRecords = new MergeCellsRecord[mergeCellRecords.size()];
+        mergeCellRecords.toArray(_mergedCellsRecords);
+    }
 
-	/**
-	 * Some unconventional apps place {@link MergeCellsRecord}s within the row block.  They
-	 * actually should be in the {@link MergedCellsTable} which is much later (see bug 45699).
-	 * @return any loose  {@code MergeCellsRecord}s found
-	 */
-	public MergeCellsRecord[] getLooseMergedCells() {
-		return _mergedCellsRecords;
-	}
+    /**
+     * Some unconventional apps place {@link MergeCellsRecord}s within the row block.  They
+     * actually should be in the {@link MergedCellsTable} which is much later (see bug 45699).
+     * @return any loose  {@code MergeCellsRecord}s found
+     */
+    public MergeCellsRecord[] getLooseMergedCells() {
+        return _mergedCellsRecords;
+    }
 
-	public SharedValueManager getSharedFormulaManager() {
-		return _sfm;
-	}
-	/**
-	 * @return a {@link RecordStream} containing all the non-{@link SharedFormulaRecord}
-	 * non-{@link ArrayRecord} and non-{@link TableRecord} Records.
-	 */
-	public RecordStream getPlainRecordStream() {
-		return new RecordStream(_plainRecords, 0);
-	}
+    public SharedValueManager getSharedFormulaManager() {
+        return _sfm;
+    }
+    /**
+     * @return a {@link RecordStream} containing all the non-{@link SharedFormulaRecord}
+     * non-{@link ArrayRecord} and non-{@link TableRecord} Records.
+     */
+    public RecordStream getPlainRecordStream() {
+        return new RecordStream(_plainRecords, 0);
+    }
 }

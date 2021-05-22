@@ -28,7 +28,7 @@ public final class UnaryPlusPtg extends ValueOperatorPtg {
     public static final UnaryPlusPtg instance = new UnaryPlusPtg();
 
     private UnaryPlusPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

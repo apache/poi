@@ -34,15 +34,15 @@ import org.junit.jupiter.api.Test;
  *  checks
  */
 class TestNotOLE2Exception {
-	private static InputStream openXLSSampleStream(String sampleFileName) {
-		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
-	}
+    private static InputStream openXLSSampleStream(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+    }
     private static InputStream openDOCSampleStream(String sampleFileName) {
         return POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
     }
 
     @Test
-	void testRawXMLException() throws IOException {
+    void testRawXMLException() throws IOException {
         try (InputStream in = openXLSSampleStream("SampleSS.xml")) {
             NotOLE2FileException e = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be a raw XML file");
@@ -60,13 +60,13 @@ class TestNotOLE2Exception {
     }
 
     @Test
-	void testBiff3Exception() throws IOException {
+    void testBiff3Exception() throws IOException {
         try (InputStream in = openXLSSampleStream("testEXCEL_3.xls")) {
             OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be in BIFF3 format");
             assertContains(e.getMessage(), "try OldExcelExtractor");
         }
-	}
+    }
 
     @Test
     void testBiff4Exception() throws IOException {

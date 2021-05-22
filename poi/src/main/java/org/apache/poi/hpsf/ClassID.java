@@ -83,7 +83,7 @@ public class ClassID implements Duplicatable, GenericRecord {
     public ClassID(String externalForm) {
         String clsStr = externalForm.replaceAll("[{}-]", "");
         for (int i=0; i<clsStr.length(); i+=2) {
-        	bytes[i/2] = (byte)Integer.parseInt(clsStr.substring(i, i+2), 16);
+            bytes[i/2] = (byte)Integer.parseInt(clsStr.substring(i, i+2), 16);
         }
     }
 

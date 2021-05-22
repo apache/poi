@@ -31,57 +31,57 @@ import java.io.IOException;
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
 public interface POITextExtractor extends Closeable {
-	/**
-	 * Retrieves all the text from the document.
-	 * How cells, paragraphs etc are separated in the text
-	 *  is implementation specific - see the javadocs for
-	 *  a specific project for details.
-	 * @return All the text from the document
-	 */
-	String getText();
+    /**
+     * Retrieves all the text from the document.
+     * How cells, paragraphs etc are separated in the text
+     *  is implementation specific - see the javadocs for
+     *  a specific project for details.
+     * @return All the text from the document
+     */
+    String getText();
 
-	/**
-	 * Returns another text extractor, which is able to
-	 *  output the textual content of the document
-	 *  metadata / properties, such as author and title.
-	 *
-	 * @return the metadata and text extractor
-	 */
-	POITextExtractor getMetadataTextExtractor();
+    /**
+     * Returns another text extractor, which is able to
+     *  output the textual content of the document
+     *  metadata / properties, such as author and title.
+     *
+     * @return the metadata and text extractor
+     */
+    POITextExtractor getMetadataTextExtractor();
 
-	/**
-	 * @param doCloseFilesystem {@code true} (default), if underlying resources/filesystem should be
-	 *        closed on {@link #close()}
-	 */
-	void setCloseFilesystem(boolean doCloseFilesystem);
+    /**
+     * @param doCloseFilesystem {@code true} (default), if underlying resources/filesystem should be
+     *        closed on {@link #close()}
+     */
+    void setCloseFilesystem(boolean doCloseFilesystem);
 
-	/**
-	 * @return {@code true}, if resources/filesystem should be closed on {@link #close()}
-	 */
-	boolean isCloseFilesystem();
+    /**
+     * @return {@code true}, if resources/filesystem should be closed on {@link #close()}
+     */
+    boolean isCloseFilesystem();
 
-	/**
-	 * @return The underlying resources/filesystem
-	 */
-	Closeable getFilesystem();
+    /**
+     * @return The underlying resources/filesystem
+     */
+    Closeable getFilesystem();
 
-	/**
-	 * Allows to free resources of the Extractor as soon as
-	 * it is not needed any more. This may include closing
-	 * open file handles and freeing memory.
-	 *
-	 * The Extractor cannot be used after close has been called.
-	 */
-	@Override
+    /**
+     * Allows to free resources of the Extractor as soon as
+     * it is not needed any more. This may include closing
+     * open file handles and freeing memory.
+     *
+     * The Extractor cannot be used after close has been called.
+     */
+    @Override
     default void close() throws IOException {
-		Closeable fs = getFilesystem();
-		if (isCloseFilesystem() && fs != null) {
-			fs.close();
-		}
-	}
+        Closeable fs = getFilesystem();
+        if (isCloseFilesystem() && fs != null) {
+            fs.close();
+        }
+    }
 
-	/**
-	 * @return the processed document
-	 */
-	Object getDocument();
+    /**
+     * @return the processed document
+     */
+    Object getDocument();
 }

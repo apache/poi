@@ -32,13 +32,13 @@ import org.apache.poi.ss.formula.functions.NumericFunction;
  */
 final class MRound implements FreeRefFunction {
 
-	public static final FreeRefFunction instance = new MRound();
+    public static final FreeRefFunction instance = new MRound();
 
-	private MRound() {
-		// enforce singleton
-	}
+    private MRound() {
+        // enforce singleton
+    }
 
-	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         double number, multiple, result;
 
         if (args.length != 2) {
@@ -63,5 +63,5 @@ final class MRound implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-	}
+    }
 }

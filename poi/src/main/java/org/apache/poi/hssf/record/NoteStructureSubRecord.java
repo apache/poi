@@ -85,7 +85,7 @@ public final class NoteStructureSubRecord extends SubRecord {
         out.write(reserved);
     }
 
-	@Override
+    @Override
     protected int getDataSize() {
         return reserved.length;
     }

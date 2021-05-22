@@ -32,7 +32,7 @@ public final class HeaderFooterRecord extends StandardRecord {
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     private static final byte[] BLANK_GUID = new byte[16];
 
-	private byte[] _rawData;
+    private byte[] _rawData;
 
     public HeaderFooterRecord(byte[] data) {
         _rawData = data;
@@ -43,25 +43,25 @@ public final class HeaderFooterRecord extends StandardRecord {
         _rawData = (other._rawData == null) ? null : other._rawData.clone();
     }
 
-	/**
-	 * construct a HeaderFooterRecord record.  No fields are interpreted and the record will
-	 * be serialized in its original form more or less
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public HeaderFooterRecord(RecordInputStream in) {
-		_rawData = in.readRemainder();
-	}
+    /**
+     * construct a HeaderFooterRecord record.  No fields are interpreted and the record will
+     * be serialized in its original form more or less
+     * @param in the RecordInputstream to read the record from
+     */
+    public HeaderFooterRecord(RecordInputStream in) {
+        _rawData = in.readRemainder();
+    }
 
-	/**
-	 * spit the record out AS IS. no interpretation or identification
-	 */
-	public void serialize(LittleEndianOutput out) {
-		out.write(_rawData);
-	}
+    /**
+     * spit the record out AS IS. no interpretation or identification
+     */
+    public void serialize(LittleEndianOutput out) {
+        out.write(_rawData);
+    }
 
-	protected int getDataSize() {
-		return _rawData.length;
-	}
+    protected int getDataSize() {
+        return _rawData.length;
+    }
 
     public short getSid()
     {

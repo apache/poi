@@ -23,7 +23,7 @@ public final class EqualPtg extends ValueOperatorPtg {
     public static final EqualPtg instance = new EqualPtg();
 
     private EqualPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

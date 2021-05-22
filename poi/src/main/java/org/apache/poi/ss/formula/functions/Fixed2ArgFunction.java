@@ -24,10 +24,10 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Convenience base class for functions that must take exactly two arguments.
  */
 public abstract class Fixed2ArgFunction implements Function2Arg {
-	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		if (args.length != 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
-	}
+    public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+    }
 }

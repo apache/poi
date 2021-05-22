@@ -31,17 +31,17 @@ import org.junit.jupiter.api.Test;
  */
 final class TestLabelRecord  {
 
-	@Test
-	void testEmptyString() throws IOException {
-		try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls");
-			 HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
-			HSSFSheet s1 = wb1.getSheetAt(0);
-			HSSFSheet s2 = wb2.getSheetAt(0);
-			for (int c=0; c<2; c++) {
-				for (int r=0; r<146; r++) {
-					assertEquals(s1.getRow(r).getCell(c).getNumericCellValue(), s2.getRow(r).getCell(c).getNumericCellValue(), 0);
-				}
-			}
-		}
-	}
+    @Test
+    void testEmptyString() throws IOException {
+        try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls");
+             HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+            HSSFSheet s1 = wb1.getSheetAt(0);
+            HSSFSheet s2 = wb2.getSheetAt(0);
+            for (int c=0; c<2; c++) {
+                for (int r=0; r<146; r++) {
+                    assertEquals(s1.getRow(r).getCell(c).getNumericCellValue(), s2.getRow(r).getCell(c).getNumericCellValue(), 0);
+                }
+            }
+        }
+    }
 }

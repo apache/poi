@@ -44,16 +44,16 @@ public final class SeriesListRecord extends StandardRecord {
     }
 
     public SeriesListRecord(short[] seriesNumbers) {
-    	field_1_seriesNumbers = (seriesNumbers == null) ? null : seriesNumbers.clone();
+        field_1_seriesNumbers = (seriesNumbers == null) ? null : seriesNumbers.clone();
     }
 
     public SeriesListRecord(RecordInputStream in) {
-    	int nItems = in.readUShort();
-    	short[] ss = new short[nItems];
-    	for (int i = 0; i < nItems; i++) {
-			ss[i] = in.readShort();
+        int nItems = in.readUShort();
+        short[] ss = new short[nItems];
+        for (int i = 0; i < nItems; i++) {
+            ss[i] = in.readShort();
 
-		}
+        }
         field_1_seriesNumbers = ss;
     }
 

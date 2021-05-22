@@ -30,38 +30,38 @@ import org.apache.poi.hssf.record.DVRecord;
  */
 public final class DataValidityTable extends RecordAggregate {
 
-	private final DVALRecord _headerRec;
-	/**
-	 * The list of data validations for the current sheet.
-	 * Note - this may be empty (contrary to OOO documentation)
-	 */
-	private final List<DVRecord> _validationList;
+    private final DVALRecord _headerRec;
+    /**
+     * The list of data validations for the current sheet.
+     * Note - this may be empty (contrary to OOO documentation)
+     */
+    private final List<DVRecord> _validationList;
 
-	public DataValidityTable(RecordStream rs) {
-		_headerRec = (DVALRecord) rs.getNext();
-		List<DVRecord> temp = new ArrayList<>();
-		while (rs.peekNextClass() == DVRecord.class) {
-			temp.add((DVRecord) rs.getNext());
-		}
-		_validationList = temp;
-	}
+    public DataValidityTable(RecordStream rs) {
+        _headerRec = (DVALRecord) rs.getNext();
+        List<DVRecord> temp = new ArrayList<>();
+        while (rs.peekNextClass() == DVRecord.class) {
+            temp.add((DVRecord) rs.getNext());
+        }
+        _validationList = temp;
+    }
 
-	public DataValidityTable() {
-		_headerRec = new DVALRecord();
-		_validationList = new ArrayList<>();
-	}
+    public DataValidityTable() {
+        _headerRec = new DVALRecord();
+        _validationList = new ArrayList<>();
+    }
 
-	@Override
+    @Override
     public void visitContainedRecords(RecordVisitor rv) {
-		if (_validationList.isEmpty()) {
-			return;
-		}
-		rv.visitRecord(_headerRec);
-		_validationList.forEach(rv::visitRecord);
-	}
+        if (_validationList.isEmpty()) {
+            return;
+        }
+        rv.visitRecord(_headerRec);
+        _validationList.forEach(rv::visitRecord);
+    }
 
-	public void addDataValidation(DVRecord dvRecord) {
-		_validationList.add(dvRecord);
-		_headerRec.setDVRecNo(_validationList.size());
-	}
+    public void addDataValidation(DVRecord dvRecord) {
+        _validationList.add(dvRecord);
+        _headerRec.setDVRecNo(_validationList.size());
+    }
 }

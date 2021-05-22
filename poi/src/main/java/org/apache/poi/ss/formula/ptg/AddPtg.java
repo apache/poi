@@ -28,7 +28,7 @@ public final class AddPtg extends ValueOperatorPtg {
     public static final AddPtg instance = new AddPtg();
 
     private AddPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

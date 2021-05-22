@@ -30,7 +30,7 @@ public final class LessEqualPtg extends ValueOperatorPtg {
     public static final LessEqualPtg instance = new LessEqualPtg();
 
     private LessEqualPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

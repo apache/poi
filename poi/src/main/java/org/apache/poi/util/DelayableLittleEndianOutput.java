@@ -25,8 +25,8 @@ package org.apache.poi.util;
  * be written at any stage.
  */
 public interface DelayableLittleEndianOutput extends LittleEndianOutput {
-	/**
-	 * Creates an output stream intended for outputting a sequence of {@code size} bytes.
-	 */
-	LittleEndianOutput createDelayedOutput(int size);
+    /**
+     * Creates an output stream intended for outputting a sequence of {@code size} bytes.
+     */
+    LittleEndianOutput createDelayedOutput(int size);
 }

@@ -25,69 +25,69 @@ import org.apache.poi.hssf.record.Record;
  */
 public final class RecordStream {
 
-	private final List<org.apache.poi.hssf.record.Record> _list;
-	private int _nextIndex;
-	private int _countRead;
-	private final int _endIx;
+    private final List<org.apache.poi.hssf.record.Record> _list;
+    private int _nextIndex;
+    private int _countRead;
+    private final int _endIx;
 
-	/**
-	 * Creates a RecordStream bounded by startIndex and endIndex
-	 *
-	 * @param inputList the list to iterate over
-	 * @param startIndex the start index within the list
-	 * @param endIx the end index within the list, which is the index of the end element + 1
-	 */
-	public RecordStream(List<org.apache.poi.hssf.record.Record> inputList, int startIndex, int endIx) {
-		_list = inputList;
-		_nextIndex = startIndex;
-		_endIx = endIx;
-		_countRead = 0;
-	}
+    /**
+     * Creates a RecordStream bounded by startIndex and endIndex
+     *
+     * @param inputList the list to iterate over
+     * @param startIndex the start index within the list
+     * @param endIx the end index within the list, which is the index of the end element + 1
+     */
+    public RecordStream(List<org.apache.poi.hssf.record.Record> inputList, int startIndex, int endIx) {
+        _list = inputList;
+        _nextIndex = startIndex;
+        _endIx = endIx;
+        _countRead = 0;
+    }
 
-	public RecordStream(List<org.apache.poi.hssf.record.Record> records, int startIx) {
-		this(records, startIx, records.size());
-	}
+    public RecordStream(List<org.apache.poi.hssf.record.Record> records, int startIx) {
+        this(records, startIx, records.size());
+    }
 
-	public boolean hasNext() {
-		return _nextIndex < _endIx;
-	}
+    public boolean hasNext() {
+        return _nextIndex < _endIx;
+    }
 
-	public Record getNext() {
-		if(!hasNext()) {
-			throw new RuntimeException("Attempt to read past end of record stream");
-		}
-		_countRead ++;
-		return _list.get(_nextIndex++);
-	}
+    public Record getNext() {
+        if(!hasNext()) {
+            throw new RuntimeException("Attempt to read past end of record stream");
+        }
+        _countRead ++;
+        return _list.get(_nextIndex++);
+    }
 
-	/**
-	 * @return the {@link Class} of the next Record. {@code null} if this stream is exhausted.
-	 */
-	public Class<? extends Record> peekNextClass() {
-		if(!hasNext()) {
-			return null;
-		}
-		return _list.get(_nextIndex).getClass();
-	}
+    /**
+     * @return the {@link Class} of the next Record. {@code null} if this stream is exhausted.
+     */
+    public Class<? extends Record> peekNextClass() {
+        if(!hasNext()) {
+            return null;
+        }
+        return _list.get(_nextIndex).getClass();
+    }
 
-	/**
-	 * @return the next Record. {@code null} if this stream is exhausted.
-	 */
-	public Record peekNextRecord() {
-		return (hasNext()) ? _list.get(_nextIndex) : null;
-	}
+    /**
+     * @return the next Record. {@code null} if this stream is exhausted.
+     */
+    public Record peekNextRecord() {
+        return (hasNext()) ? _list.get(_nextIndex) : null;
+    }
 
-	/**
-	 * @return -1 if at end of records
-	 */
-	public int peekNextSid() {
-		if(!hasNext()) {
-			return -1;
-		}
-		return _list.get(_nextIndex).getSid();
-	}
+    /**
+     * @return -1 if at end of records
+     */
+    public int peekNextSid() {
+        if(!hasNext()) {
+            return -1;
+        }
+        return _list.get(_nextIndex).getSid();
+    }
 
-	public int getCountRead() {
-		return _countRead;
-	}
+    public int getCountRead() {
+        return _countRead;
+    }
 }

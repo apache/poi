@@ -41,17 +41,17 @@ public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord
 
     public DrawingRecordForBiffViewer(DrawingRecord r)
     {
-    	super(convertToInputStream(r));
-    	decode();
+        super(convertToInputStream(r));
+        decode();
     }
     private static RecordInputStream convertToInputStream(DrawingRecord r)
     {
-    	byte[] data = r.serialize();
-    	RecordInputStream rinp = new RecordInputStream(
-    			new ByteArrayInputStream(data)
-    	);
-    	rinp.nextRecord();
-    	return rinp;
+        byte[] data = r.serialize();
+        RecordInputStream rinp = new RecordInputStream(
+                new ByteArrayInputStream(data)
+        );
+        rinp.nextRecord();
+        return rinp;
     }
 
     protected String getRecordName()

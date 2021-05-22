@@ -22,28 +22,28 @@ package org.apache.poi.ss.util;
  */
 public class WorkbookUtil {
 
-	/**
-	 * Creates a valid sheet name, which is conform to the rules.
-	 * In any case, the result safely can be used for
-	 * {@link org.apache.poi.ss.usermodel.Workbook#setSheetName(int, String)}.
-	 * <br>
-	 * Rules:
-	 * <ul>
-	 * <li>never null</li>
-	 * <li>minimum length is 1</li>
-	 * <li>maximum length is 31</li>
-	 * <li>doesn't contain special chars: : 0x0000, 0x0003, / \ ? * ] [ </li>
-	 * <li>Sheet names must not begin or end with ' (apostrophe)</li>
-	 * </ul>
-	 * Invalid characters are replaced by one space character ' '.
-	 *
-	 * @param nameProposal can be any string, will be truncated if necessary,
-	 *        allowed to be null
-	 * @return a valid string, "empty" if to short, "null" if null
-	 */
-	public static String createSafeSheetName(final String nameProposal) {
-		return createSafeSheetName(nameProposal, ' ');
-	}
+    /**
+     * Creates a valid sheet name, which is conform to the rules.
+     * In any case, the result safely can be used for
+     * {@link org.apache.poi.ss.usermodel.Workbook#setSheetName(int, String)}.
+     * <br>
+     * Rules:
+     * <ul>
+     * <li>never null</li>
+     * <li>minimum length is 1</li>
+     * <li>maximum length is 31</li>
+     * <li>doesn't contain special chars: : 0x0000, 0x0003, / \ ? * ] [ </li>
+     * <li>Sheet names must not begin or end with ' (apostrophe)</li>
+     * </ul>
+     * Invalid characters are replaced by one space character ' '.
+     *
+     * @param nameProposal can be any string, will be truncated if necessary,
+     *        allowed to be null
+     * @return a valid string, "empty" if to short, "null" if null
+     */
+    public static String createSafeSheetName(final String nameProposal) {
+        return createSafeSheetName(nameProposal, ' ');
+    }
 
     /**
      * Creates a valid sheet name, which is conform to the rules.

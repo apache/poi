@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Test;
  * Tests the NameCommentRecord serializes/deserializes correctly
  */
 final class TestNameCommentRecord {
-	@Test
-	void testReserialize() {
-		final byte[] data = HexRead
-				.readFromString(""
-						+ "94 08 00 00 00 00 00 00 00 00 00 00 04 00 07 00 00 6E 61 6D 65 00 63 6F 6D 6D 65 6E 74]");
-		final RecordInputStream in = TestcaseRecordInputStream.create(NameCommentRecord.sid, data);
-		final NameCommentRecord ncr = new NameCommentRecord(in);
-		assertEquals(0x0894, ncr.getRecordType());
-		assertEquals("name", ncr.getNameText());
-		assertEquals("comment", ncr.getCommentText());
-		final byte[] data2 = ncr.serialize();
-		confirmRecordEncoding(NameCommentRecord.sid, data, data2);
-	}
+    @Test
+    void testReserialize() {
+        final byte[] data = HexRead
+                .readFromString(""
+                        + "94 08 00 00 00 00 00 00 00 00 00 00 04 00 07 00 00 6E 61 6D 65 00 63 6F 6D 6D 65 6E 74]");
+        final RecordInputStream in = TestcaseRecordInputStream.create(NameCommentRecord.sid, data);
+        final NameCommentRecord ncr = new NameCommentRecord(in);
+        assertEquals(0x0894, ncr.getRecordType());
+        assertEquals("name", ncr.getNameText());
+        assertEquals("comment", ncr.getCommentText());
+        final byte[] data2 = ncr.serialize();
+        confirmRecordEncoding(NameCommentRecord.sid, data, data2);
+    }
 }

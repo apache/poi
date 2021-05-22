@@ -30,28 +30,28 @@ import org.junit.jupiter.api.Test;
  * correctly. Test data taken directly from a real Excel file.
  */
 final class TestLegendRecord {
-	byte[] data = new byte[] { (byte) 0x76, (byte) 0x0E, (byte) 0x00, (byte) 0x00, (byte) 0x86,
-			(byte) 0x07, (byte) 0x00, (byte) 0x00, (byte) 0x19, (byte) 0x01, (byte) 0x00,
-			(byte) 0x00, (byte) 0x8B, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03,
-			(byte) 0x01, (byte) 0x1F, (byte) 0x00 };
+    byte[] data = new byte[] { (byte) 0x76, (byte) 0x0E, (byte) 0x00, (byte) 0x00, (byte) 0x86,
+            (byte) 0x07, (byte) 0x00, (byte) 0x00, (byte) 0x19, (byte) 0x01, (byte) 0x00,
+            (byte) 0x00, (byte) 0x8B, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03,
+            (byte) 0x01, (byte) 0x1F, (byte) 0x00 };
 
-	@Test
-	void testLoad() {
-		LegendRecord record = new LegendRecord(TestcaseRecordInputStream.create(0x1015, data));
+    @Test
+    void testLoad() {
+        LegendRecord record = new LegendRecord(TestcaseRecordInputStream.create(0x1015, data));
 
-		assertEquals(0xe76, record.getXAxisUpperLeft());
+        assertEquals(0xe76, record.getXAxisUpperLeft());
 
-		assertEquals(0x786, record.getYAxisUpperLeft());
+        assertEquals(0x786, record.getYAxisUpperLeft());
 
-		assertEquals(0x119, record.getXSize());
+        assertEquals(0x119, record.getXSize());
 
-		assertEquals(0x8b, record.getYSize());
+        assertEquals(0x8b, record.getYSize());
 
-		assertEquals((byte) 0x3, record.getType());
+        assertEquals((byte) 0x3, record.getType());
 
-		assertEquals((byte) 0x1, record.getSpacing());
+        assertEquals((byte) 0x1, record.getSpacing());
 
-		assertEquals((short) 0x1f, record.getOptions());
+        assertEquals((short) 0x1f, record.getOptions());
         assertTrue(record.isAutoPosition());
         assertTrue(record.isAutoSeries());
         assertTrue(record.isAutoXPositioning());
@@ -59,29 +59,29 @@ final class TestLegendRecord {
         assertTrue(record.isVertical());
         assertFalse(record.isDataTable());
 
-		assertEquals(24, record.getRecordSize());
-	}
+        assertEquals(24, record.getRecordSize());
+    }
 
-	@SuppressWarnings("squid:S2699")
-	@Test
-	void testStore() {
-		LegendRecord record = new LegendRecord();
+    @SuppressWarnings("squid:S2699")
+    @Test
+    void testStore() {
+        LegendRecord record = new LegendRecord();
 
-		record.setXAxisUpperLeft(0xe76);
-		record.setYAxisUpperLeft(0x786);
-		record.setXSize(0x119);
-		record.setYSize(0x8b);
-		record.setType((byte) 0x3);
-		record.setSpacing((byte) 0x1);
-		record.setOptions((short) 0x1f);
-		record.setAutoPosition(true);
-		record.setAutoSeries(true);
-		record.setAutoXPositioning(true);
-		record.setAutoYPositioning(true);
-		record.setVertical(true);
-		record.setDataTable(false);
+        record.setXAxisUpperLeft(0xe76);
+        record.setYAxisUpperLeft(0x786);
+        record.setXSize(0x119);
+        record.setYSize(0x8b);
+        record.setType((byte) 0x3);
+        record.setSpacing((byte) 0x1);
+        record.setOptions((short) 0x1f);
+        record.setAutoPosition(true);
+        record.setAutoSeries(true);
+        record.setAutoXPositioning(true);
+        record.setAutoYPositioning(true);
+        record.setVertical(true);
+        record.setDataTable(false);
 
-		byte[] recordBytes = record.serialize();
-		confirmRecordEncoding(LegendRecord.sid, data, recordBytes);
-	}
+        byte[] recordBytes = record.serialize();
+        confirmRecordEncoding(LegendRecord.sid, data, recordBytes);
+    }
 }

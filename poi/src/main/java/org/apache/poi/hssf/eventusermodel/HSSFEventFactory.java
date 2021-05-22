@@ -36,22 +36,22 @@ import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAME
  * to your associated HSSFListener.
  */
 public class HSSFEventFactory {
-	/** Creates a new instance of HSSFEventFactory */
-	public HSSFEventFactory() {
-		// no instance fields
-	}
+    /** Creates a new instance of HSSFEventFactory */
+    public HSSFEventFactory() {
+        // no instance fields
+    }
 
-	/**
-	 * Processes a file into essentially record events.
-	 *
-	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param fs  a POIFS filesystem containing your workbook
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param fs  a POIFS filesystem containing your workbook
      * 
      * @throws IOException if the workbook contained errors 
-	 */
-	public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs) throws IOException {
-	   processWorkbookEvents(req, fs.getRoot());
-	}
+     */
+    public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs) throws IOException {
+       processWorkbookEvents(req, fs.getRoot());
+    }
 
    /**
     * Processes a file into essentially record events.
@@ -96,86 +96,86 @@ public class HSSFEventFactory {
       return abortableProcessWorkbookEvents(req, fs.getRoot());
    }
 
-	/**
-	 * Processes a file into essentially record events.
-	 *
-	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param dir  a DirectoryNode containing your workbook
-	 * @return    numeric user-specified result code.
-	 * 
-	 * @throws HSSFUserException if the processing should be aborted
-	 * @throws IOException if the workbook contained errors 
-	 */
-	public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir)
-		throws IOException, HSSFUserException {
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param dir  a DirectoryNode containing your workbook
+     * @return    numeric user-specified result code.
+     * 
+     * @throws HSSFUserException if the processing should be aborted
+     * @throws IOException if the workbook contained errors 
+     */
+    public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir)
+        throws IOException, HSSFUserException {
         try (InputStream in = dir.createDocumentInputStream("Workbook")) {
             return abortableProcessEvents(req, in);
         }
-	}
+    }
 
-	/**
-	 * Processes a DocumentInputStream into essentially Record events.
-	 *
-	 * If an <code>AbortableHSSFListener</code> causes a halt to processing during this call
-	 * the method will return just as with <code>abortableProcessEvents</code>, but no
-	 * user code or <code>HSSFUserException</code> will be passed back.
-	 *
-	 * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
-	 */
-	public void processEvents(HSSFRequest req, InputStream in) {
-		try {
-			genericProcessEvents(req, in);
-		} catch (HSSFUserException hue) {
-			/*If an HSSFUserException user exception is thrown, ignore it.*/
-		}
-	}
+    /**
+     * Processes a DocumentInputStream into essentially Record events.
+     *
+     * If an <code>AbortableHSSFListener</code> causes a halt to processing during this call
+     * the method will return just as with <code>abortableProcessEvents</code>, but no
+     * user code or <code>HSSFUserException</code> will be passed back.
+     *
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
+     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     */
+    public void processEvents(HSSFRequest req, InputStream in) {
+        try {
+            genericProcessEvents(req, in);
+        } catch (HSSFUserException hue) {
+            /*If an HSSFUserException user exception is thrown, ignore it.*/
+        }
+    }
 
 
-	/**
-	 * Processes a DocumentInputStream into essentially Record events.
-	 *
-	 * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
-	 * @return    numeric user-specified result code.
-	 * 
-	 * @throws HSSFUserException if the processing should be aborted 
-	 */
-	public short abortableProcessEvents(HSSFRequest req, InputStream in)
-		throws HSSFUserException {
-		return genericProcessEvents(req, in);
-	}
+    /**
+     * Processes a DocumentInputStream into essentially Record events.
+     *
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
+     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     * @return    numeric user-specified result code.
+     * 
+     * @throws HSSFUserException if the processing should be aborted 
+     */
+    public short abortableProcessEvents(HSSFRequest req, InputStream in)
+        throws HSSFUserException {
+        return genericProcessEvents(req, in);
+    }
 
-	/**
-	 * Processes a DocumentInputStream into essentially Record events.
-	 *
-	 * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
-	 * @return    numeric user-specified result code.
-	 */
-	private short genericProcessEvents(HSSFRequest req, InputStream in)
-		throws HSSFUserException {
-		short userCode = 0;
+    /**
+     * Processes a DocumentInputStream into essentially Record events.
+     *
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
+     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     * @return    numeric user-specified result code.
+     */
+    private short genericProcessEvents(HSSFRequest req, InputStream in)
+        throws HSSFUserException {
+        short userCode = 0;
 
-		// Create a new RecordStream and use that
-		RecordFactoryInputStream recordStream = new RecordFactoryInputStream(in, false);
+        // Create a new RecordStream and use that
+        RecordFactoryInputStream recordStream = new RecordFactoryInputStream(in, false);
 
-		// Process each record as they come in
-		while(true) {
-			org.apache.poi.hssf.record.Record r = recordStream.nextRecord();
-			if(r == null) {
-				break;
-			}
-			userCode = req.processRecord(r);
-			if (userCode != 0) {
-				break;
-			}
-		}
+        // Process each record as they come in
+        while(true) {
+            org.apache.poi.hssf.record.Record r = recordStream.nextRecord();
+            if(r == null) {
+                break;
+            }
+            userCode = req.processRecord(r);
+            if (userCode != 0) {
+                break;
+            }
+        }
 
-		// All done, return our last code
-		return userCode;
-	}
+        // All done, return our last code
+        return userCode;
+    }
 }

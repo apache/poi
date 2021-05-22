@@ -477,15 +477,15 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             //
         }
         @Override
-		public short getSid() {
+        public short getSid() {
             return 0x777;
         }
         @Override
-		public int serialize(int offset, byte[] data) {
+        public int serialize(int offset, byte[] data) {
             return 4;
         }
         @Override
-		public int getRecordSize() {
+        public int getRecordSize() {
             return 8;
         }
         @Override
@@ -876,142 +876,142 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-	void bug50298() throws Exception {
-		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
+    void bug50298() throws Exception {
+        HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
-		HSSFSheet sheet = wb.cloneSheet(0);
+        HSSFSheet sheet = wb.cloneSheet(0);
 
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
 
-		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
+        wb.setSheetName(wb.getSheetIndex(sheet), "copy");
 
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
 
-		wb.setSheetOrder("copy", 0);
+        wb.setSheetOrder("copy", 0);
 
-		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+        assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
-		wb.removeSheetAt(0);
+        wb.removeSheetAt(0);
 
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
-		// check that the overall workbook serializes with its correct size
-		int expected = wb.getWorkbook().getSize();
-		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
+        // check that the overall workbook serializes with its correct size
+        int expected = wb.getWorkbook().getSize();
+        int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
 
-		assertEquals(expected, written, "Did not have the expected size when writing the workbook");
+        assertEquals(expected, written, "Did not have the expected size when writing the workbook");
 
-		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
-		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
-		read.close();
-		wb.close();
-	}
-
-    @Test
-	void bug50298a() throws Exception {
-		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
-
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
-
-		HSSFSheet sheet = wb.cloneSheet(0);
-
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
-
-		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
-
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
-
-		wb.setSheetOrder("copy", 0);
-
-		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
-
-		wb.removeSheetAt(0);
-
-		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
-
-		wb.removeSheetAt(1);
-
-		assertSheetOrder(wb, "Invoice", "Digest", "Deferred", "Received");
-
-		wb.setSheetOrder("Digest", 3);
-
-		assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
-
-		// check that the overall workbook serializes with its correct size
-		int expected = wb.getWorkbook().getSize();
-		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
-
-		assertEquals(expected, written, "Did not have the expected size when writing the workbook");
-
-		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
-		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
-		read.close();
-		wb.close();
-	}
+        HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+        read.close();
+        wb.close();
+    }
 
     @Test
-	void bug54500() throws Exception {
-		String nameName = "AName";
-		String sheetName = "ASheet";
-		HSSFWorkbook wb = openSampleWorkbook("54500.xls");
+    void bug50298a() throws Exception {
+        HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
-		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
-		wb.createSheet(sheetName);
+        HSSFSheet sheet = wb.cloneSheet(0);
 
-		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
 
-		Name n = wb.createName();
-		n.setNameName(nameName);
-		n.setSheetIndex(3);
-		n.setRefersToFormula(sheetName + "!A1");
+        wb.setSheetName(wb.getSheetIndex(sheet), "copy");
 
-		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
+
+        wb.setSheetOrder("copy", 0);
+
+        assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+        wb.removeSheetAt(0);
+
+        assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+        wb.removeSheetAt(1);
+
+        assertSheetOrder(wb, "Invoice", "Digest", "Deferred", "Received");
+
+        wb.setSheetOrder("Digest", 3);
+
+        assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
+
+        // check that the overall workbook serializes with its correct size
+        int expected = wb.getWorkbook().getSize();
+        int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
+
+        assertEquals(expected, written, "Did not have the expected size when writing the workbook");
+
+        HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
+        read.close();
+        wb.close();
+    }
+
+    @Test
+    void bug54500() throws Exception {
+        String nameName = "AName";
+        String sheetName = "ASheet";
+        HSSFWorkbook wb = openSampleWorkbook("54500.xls");
+
+        assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
+
+        wb.createSheet(sheetName);
+
+        assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+
+        Name n = wb.createName();
+        n.setNameName(nameName);
+        n.setSheetIndex(3);
+        n.setRefersToFormula(sheetName + "!A1");
+
+        assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
         final HSSFName name = wb.getName(nameName);
         assertNotNull(name);
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
-		wb.write(stream);
+        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        wb.write(stream);
 
-		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", name.getRefersToFormula());
+        assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+        assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		wb.removeSheetAt(1);
+        wb.removeSheetAt(1);
 
-		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", name.getRefersToFormula());
+        assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
+        assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		UnsynchronizedByteArrayOutputStream stream2 = new UnsynchronizedByteArrayOutputStream();
-		wb.write(stream2);
+        UnsynchronizedByteArrayOutputStream stream2 = new UnsynchronizedByteArrayOutputStream();
+        wb.write(stream2);
 
-		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", name.getRefersToFormula());
+        assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
+        assertEquals("ASheet!A1", name.getRefersToFormula());
 
-		HSSFWorkbook wb2 = new HSSFWorkbook(stream.toInputStream());
-		expectName(wb2, nameName, "ASheet!A1");
-		HSSFWorkbook wb3 = new HSSFWorkbook(stream2.toInputStream());
-		expectName(wb3, nameName, "ASheet!A1");
-		wb3.close();
-		wb2.close();
-		wb.close();
-	}
+        HSSFWorkbook wb2 = new HSSFWorkbook(stream.toInputStream());
+        expectName(wb2, nameName, "ASheet!A1");
+        HSSFWorkbook wb3 = new HSSFWorkbook(stream2.toInputStream());
+        expectName(wb3, nameName, "ASheet!A1");
+        wb3.close();
+        wb2.close();
+        wb.close();
+    }
 
-	@SuppressWarnings("SameParameterValue")
+    @SuppressWarnings("SameParameterValue")
     private void expectName(HSSFWorkbook wb, String name, String expect) {
         final HSSFName hssfName = wb.getName(name);
         assertNotNull(hssfName);
         assertEquals(expect, hssfName.getRefersToFormula());
-	}
+    }
 
-	@Test
-	void test49423() throws Exception
+    @Test
+    void test49423() throws Exception
     {
-		HSSFWorkbook workbook = openSampleWorkbook("49423.xls");
+        HSSFWorkbook workbook = openSampleWorkbook("49423.xls");
 
-		boolean found = false;
+        boolean found = false;
         int numSheets = workbook.getNumberOfSheets();
         for (int i = 0; i < numSheets; i++) {
             HSSFSheet sheet = workbook.getSheetAt(i);

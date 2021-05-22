@@ -26,78 +26,78 @@ import org.apache.poi.ss.formula.eval.*;
 public abstract class LogicalFunction extends Fixed1ArgFunction implements ArrayFunction{
 
     @Override
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-		ValueEval ve;
-		try {
-			ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-		} catch (EvaluationException e) {
-			// Note - it is more usual to propagate error codes straight to the result like this:
+        ValueEval ve;
+        try {
+            ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+        } catch (EvaluationException e) {
+            // Note - it is more usual to propagate error codes straight to the result like this:
             // but logical functions behave a little differently
-			// return e.getErrorEval();
+            // return e.getErrorEval();
 
-		    // this will usually cause a 'FALSE' result except for ISNONTEXT()
-			ve = e.getErrorEval();
-		}
-		return BoolEval.valueOf(evaluate(ve));
+            // this will usually cause a 'FALSE' result except for ISNONTEXT()
+            ve = e.getErrorEval();
+        }
+        return BoolEval.valueOf(evaluate(ve));
 
-	}
+    }
 
-	@Override
-	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
-				BoolEval.valueOf(evaluate(valA))
-		);
-	}
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+        if (args.length != 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+                BoolEval.valueOf(evaluate(valA))
+        );
+    }
 
-	/**
-	 * @param arg any {@link ValueEval}, potentially {@link BlankEval} or {@link ErrorEval}.
-	 */
-	protected abstract boolean evaluate(ValueEval arg);
+    /**
+     * @param arg any {@link ValueEval}, potentially {@link BlankEval} or {@link ErrorEval}.
+     */
+    protected abstract boolean evaluate(ValueEval arg);
 
-	public static final Function ISLOGICAL = new LogicalFunction() {
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg instanceof BoolEval;
-		}
-	};
-	public static final Function ISNONTEXT = new LogicalFunction() {
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return !(arg instanceof StringEval);
-		}
-	};
-	public static final Function ISNUMBER = new LogicalFunction() {
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg instanceof NumberEval;
-		}
-	};
-	public static final Function ISTEXT = new LogicalFunction() {
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg instanceof StringEval;
-		}
-	};
+    public static final Function ISLOGICAL = new LogicalFunction() {
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg instanceof BoolEval;
+        }
+    };
+    public static final Function ISNONTEXT = new LogicalFunction() {
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return !(arg instanceof StringEval);
+        }
+    };
+    public static final Function ISNUMBER = new LogicalFunction() {
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg instanceof NumberEval;
+        }
+    };
+    public static final Function ISTEXT = new LogicalFunction() {
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg instanceof StringEval;
+        }
+    };
 
-	public static final Function ISBLANK = new LogicalFunction() {
+    public static final Function ISBLANK = new LogicalFunction() {
 
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg instanceof BlankEval;
-		}
-	};
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg instanceof BlankEval;
+        }
+    };
 
-	public static final Function ISERROR = new LogicalFunction() {
+    public static final Function ISERROR = new LogicalFunction() {
 
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg instanceof ErrorEval;
-		}
-	};
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg instanceof ErrorEval;
+        }
+    };
 
     /**
      * Implementation of Excel {@code ISERR()} function.<p>
@@ -120,32 +120,32 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
         }
     };
 
-	/**
-	 * Implementation for Excel ISNA() function.<p>
-	 *
-	 * <b>Syntax</b>:<br>
-	 * <b>ISNA</b>(<b>value</b>)<p>
-	 *
-	 * <b>value</b>  The value to be tested<br>
-	 * <br>
-	 * Returns {@code TRUE} if the specified value is '#N/A', {@code FALSE} otherwise.
-	 */
-	public static final Function ISNA = new LogicalFunction() {
+    /**
+     * Implementation for Excel ISNA() function.<p>
+     *
+     * <b>Syntax</b>:<br>
+     * <b>ISNA</b>(<b>value</b>)<p>
+     *
+     * <b>value</b>  The value to be tested<br>
+     * <br>
+     * Returns {@code TRUE} if the specified value is '#N/A', {@code FALSE} otherwise.
+     */
+    public static final Function ISNA = new LogicalFunction() {
 
-		@Override
-		protected boolean evaluate(ValueEval arg) {
-			return arg == ErrorEval.NA;
-		}
-	};
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            return arg == ErrorEval.NA;
+        }
+    };
 
-	public static final Function ISREF = new Fixed1ArgFunction() {
+    public static final Function ISREF = new Fixed1ArgFunction() {
 
-		@Override
-		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-			if (arg0 instanceof RefEval || arg0 instanceof AreaEval || arg0 instanceof RefListEval) {
-				return BoolEval.TRUE;
-			}
-			return BoolEval.FALSE;
-		}
-	};
+        @Override
+        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+            if (arg0 instanceof RefEval || arg0 instanceof AreaEval || arg0 instanceof RefListEval) {
+                return BoolEval.TRUE;
+            }
+            return BoolEval.FALSE;
+        }
+    };
 }

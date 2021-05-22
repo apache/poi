@@ -25,28 +25,28 @@ package org.apache.poi.ss.formula.eval;
  * Here is an example coded without {@code EvaluationException}, to show how it can help:
  * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
- *	// ...
- *	Eval arg0 = args[0];
- *	if(arg0 instanceof ErrorEval) {
- *		return arg0;
- *	}
- *	if(!(arg0 instanceof AreaEval)) {
- *		return ErrorEval.VALUE_INVALID;
- *	}
- *	double temp = 0;
- *	AreaEval area = (AreaEval)arg0;
- *	ValueEval[] values = area.getValues();
- *	for (int i = 0; i < values.length; i++) {
- *		ValueEval ve = values[i];
- *		if(ve instanceof ErrorEval) {
- *			return ve;
- *		}
- *		if(!(ve instanceof NumericValueEval)) {
- *			return ErrorEval.VALUE_INVALID;
- *		}
- *		temp += ((NumericValueEval)ve).getNumberValue();
- *	}
- *	// ...
+ *  // ...
+ *  Eval arg0 = args[0];
+ *  if(arg0 instanceof ErrorEval) {
+ *      return arg0;
+ *  }
+ *  if(!(arg0 instanceof AreaEval)) {
+ *      return ErrorEval.VALUE_INVALID;
+ *  }
+ *  double temp = 0;
+ *  AreaEval area = (AreaEval)arg0;
+ *  ValueEval[] values = area.getValues();
+ *  for (int i = 0; i < values.length; i++) {
+ *      ValueEval ve = values[i];
+ *      if(ve instanceof ErrorEval) {
+ *          return ve;
+ *      }
+ *      if(!(ve instanceof NumericValueEval)) {
+ *          return ErrorEval.VALUE_INVALID;
+ *      }
+ *      temp += ((NumericValueEval)ve).getNumberValue();
+ *  }
+ *  // ...
  * }
  * }</pre>
  * In this example, if any error is encountered while processing the arguments, an error is
@@ -57,39 +57,39 @@ package org.apache.poi.ss.formula.eval;
  *
  * <pre>{@code
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
- *	try {
- *		// ...
- *		AreaEval area = getAreaArg(args[0]);
- *		double temp = sumValues(area.getValues());
- *		// ...
- *	} catch (EvaluationException e) {
- *		return e.getErrorEval();
- *	}
+ *  try {
+ *      // ...
+ *      AreaEval area = getAreaArg(args[0]);
+ *      double temp = sumValues(area.getValues());
+ *      // ...
+ *  } catch (EvaluationException e) {
+ *      return e.getErrorEval();
+ *  }
  *}
  *
  *private static AreaEval getAreaArg(Eval arg0) throws EvaluationException {
- *	if (arg0 instanceof ErrorEval) {
- *		throw new EvaluationException((ErrorEval) arg0);
- *	}
- *	if (arg0 instanceof AreaEval) {
- *		return (AreaEval) arg0;
- *	}
- *	throw EvaluationException.invalidValue();
+ *  if (arg0 instanceof ErrorEval) {
+ *      throw new EvaluationException((ErrorEval) arg0);
+ *  }
+ *  if (arg0 instanceof AreaEval) {
+ *      return (AreaEval) arg0;
+ *  }
+ *  throw EvaluationException.invalidValue();
  *}
  *
  *private double sumValues(ValueEval[] values) throws EvaluationException {
- *	double temp = 0;
- *	for (int i = 0; i < values.length; i++) {
- *		ValueEval ve = values[i];
- *		if (ve instanceof ErrorEval) {
- *			throw new EvaluationException((ErrorEval) ve);
- *		}
- *		if (!(ve instanceof NumericValueEval)) {
- *			throw EvaluationException.invalidValue();
- *		}
- *		temp += ((NumericValueEval) ve).getNumberValue();
- *	}
- *	return temp;
+ *  double temp = 0;
+ *  for (int i = 0; i < values.length; i++) {
+ *      ValueEval ve = values[i];
+ *      if (ve instanceof ErrorEval) {
+ *          throw new EvaluationException((ErrorEval) ve);
+ *      }
+ *      if (!(ve instanceof NumericValueEval)) {
+ *          throw EvaluationException.invalidValue();
+ *      }
+ *      temp += ((NumericValueEval) ve).getNumberValue();
+ *  }
+ *  return temp;
  *}
  * }</pre>
  * It is not mandatory to use EvaluationException, doing so might give the following advantages:<br>
@@ -107,27 +107,27 @@ package org.apache.poi.ss.formula.eval;
  * be taken to not translate any POI internal error into an Excel evaluation error code.
  */
 public final class EvaluationException extends Exception {
-	private final ErrorEval _errorEval;
+    private final ErrorEval _errorEval;
 
-	public EvaluationException(ErrorEval errorEval) {
-		_errorEval = errorEval;
-	}
-	// some convenience factory methods
+    public EvaluationException(ErrorEval errorEval) {
+        _errorEval = errorEval;
+    }
+    // some convenience factory methods
 
     /** <b>#VALUE!</b> - Wrong type of operand */
-	public static EvaluationException invalidValue() {
-		return new EvaluationException(ErrorEval.VALUE_INVALID);
-	}
+    public static EvaluationException invalidValue() {
+        return new EvaluationException(ErrorEval.VALUE_INVALID);
+    }
     /** <b>#REF!</b> - Illegal or deleted cell reference */
-	public static EvaluationException invalidRef() {
-		return new EvaluationException(ErrorEval.REF_INVALID);
-	}
+    public static EvaluationException invalidRef() {
+        return new EvaluationException(ErrorEval.REF_INVALID);
+    }
     /** <b>#NUM!</b> - Value range overflow */
-	public static EvaluationException numberError() {
-		return new EvaluationException(ErrorEval.NUM_ERROR);
-	}
+    public static EvaluationException numberError() {
+        return new EvaluationException(ErrorEval.NUM_ERROR);
+    }
 
-	public ErrorEval getErrorEval() {
-		return _errorEval;
-	}
+    public ErrorEval getErrorEval() {
+        return _errorEval;
+    }
 }

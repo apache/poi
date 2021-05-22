@@ -19,20 +19,20 @@ package org.apache.poi.ss.formula.ptg;
 
 public abstract class OperandPtg extends Ptg {
 
-	protected OperandPtg() {}
+    protected OperandPtg() {}
 
-	protected OperandPtg(OperandPtg other) {
-		super(other);
-	}
+    protected OperandPtg(OperandPtg other) {
+        super(other);
+    }
 
-	/**
-	 * All Operand {@link Ptg}s are classified ('relative', 'value', 'array')
-	 */
-	@Override
+    /**
+     * All Operand {@link Ptg}s are classified ('relative', 'value', 'array')
+     */
+    @Override
     public final boolean isBaseToken() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public abstract OperandPtg copy();
+    @Override
+    public abstract OperandPtg copy();
 }

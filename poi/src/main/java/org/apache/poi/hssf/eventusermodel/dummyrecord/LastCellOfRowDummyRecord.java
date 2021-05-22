@@ -29,52 +29,52 @@ import org.apache.poi.util.GenericRecordUtil;
  *  cell record for this row.
  */
 public final class LastCellOfRowDummyRecord extends DummyRecordBase {
-	private final int row;
-	private final int lastColumnNumber;
+    private final int row;
+    private final int lastColumnNumber;
 
-	public LastCellOfRowDummyRecord(int row, int lastColumnNumber) {
-		this.row = row;
-		this.lastColumnNumber = lastColumnNumber;
-	}
-
-	/**
-	 * Returns the (0 based) number of the row we are
-	 *  currently working on.
-	 *
-	 * @return the (0 based) number of the row
-	 */
-	public int getRow() {
-	    return row;
+    public LastCellOfRowDummyRecord(int row, int lastColumnNumber) {
+        this.row = row;
+        this.lastColumnNumber = lastColumnNumber;
     }
 
-	/**
-	 * Returns the (0 based) number of the last column
-	 *  seen for this row. You should have already been
-	 *  called with that record.
-	 * This is -1 in the case of there being no columns
-	 *  for the row.
-	 *
-	 * @return the (0 based) number of the last column
-	 */
-	public int getLastColumnNumber() {
-	    return lastColumnNumber;
+    /**
+     * Returns the (0 based) number of the row we are
+     *  currently working on.
+     *
+     * @return the (0 based) number of the row
+     */
+    public int getRow() {
+        return row;
     }
 
-	@Override
-	public LastCellOfRowDummyRecord copy() {
-		return this;
-	}
+    /**
+     * Returns the (0 based) number of the last column
+     *  seen for this row. You should have already been
+     *  called with that record.
+     * This is -1 in the case of there being no columns
+     *  for the row.
+     *
+     * @return the (0 based) number of the last column
+     */
+    public int getLastColumnNumber() {
+        return lastColumnNumber;
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return null;
-	}
+    @Override
+    public LastCellOfRowDummyRecord copy() {
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"row", this::getRow,
-			"lastColumnNumber", this::getLastColumnNumber
-		);
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "lastColumnNumber", this::getLastColumnNumber
+        );
+    }
 }

@@ -49,118 +49,118 @@ import org.apache.poi.util.LocaleID;
  */
 @SuppressWarnings("unused")
 public final class DateFormatConverter  {
-	private static final Logger LOG = LogManager.getLogger(DateFormatConverter.class);
+    private static final Logger LOG = LogManager.getLogger(DateFormatConverter.class);
 
-	private DateFormatConverter() {
-	}
+    private DateFormatConverter() {
+    }
 
-	public static class DateFormatTokenizer {
-		String format;
-		int pos;
+    public static class DateFormatTokenizer {
+        String format;
+        int pos;
 
-		public DateFormatTokenizer(String format) {
-			this.format = format;
-		}
+        public DateFormatTokenizer(String format) {
+            this.format = format;
+        }
 
-		public String getNextToken() {
-			if( pos >= format.length() ) {
-				return null;
-			}
-			int subStart = pos;
-			final char curChar = format.charAt(pos);
-			++pos;
-			if( curChar == '\'' ) {
-				while( ( pos < format.length() ) && ( format.charAt(pos) != '\'' ) ) {
-					++pos;
-				}
-				if( pos < format.length() ) {
-					++pos;
-				}
-			} else {
-				while( ( pos < format.length() ) && ( format.charAt(pos) == curChar ) ) {
-					++pos;
-				}
-			}
-			return format.substring(subStart,pos);
-		}
+        public String getNextToken() {
+            if( pos >= format.length() ) {
+                return null;
+            }
+            int subStart = pos;
+            final char curChar = format.charAt(pos);
+            ++pos;
+            if( curChar == '\'' ) {
+                while( ( pos < format.length() ) && ( format.charAt(pos) != '\'' ) ) {
+                    ++pos;
+                }
+                if( pos < format.length() ) {
+                    ++pos;
+                }
+            } else {
+                while( ( pos < format.length() ) && ( format.charAt(pos) == curChar ) ) {
+                    ++pos;
+                }
+            }
+            return format.substring(subStart,pos);
+        }
 
-		public static String[] tokenize( String format ) {
-			List<String> result = new ArrayList<>();
+        public static String[] tokenize( String format ) {
+            List<String> result = new ArrayList<>();
 
-			DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
-			String token;
-			while( ( token = tokenizer.getNextToken() ) != null ) {
-				result.add(token);
-			}
+            DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
+            String token;
+            while( ( token = tokenizer.getNextToken() ) != null ) {
+                result.add(token);
+            }
 
-			return result.toArray(new String[0]);
-		}
+            return result.toArray(new String[0]);
+        }
 
-		@Override
-		public String toString() {
-			StringBuilder result = new StringBuilder();
+        @Override
+        public String toString() {
+            StringBuilder result = new StringBuilder();
 
-			DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
-			String token;
-			while( ( token = tokenizer.getNextToken() ) != null ) {
-				if( result.length() > 0 ) {
-					result.append( ", " );
-				}
-				result.append("[").append(token).append("]");
-			}
+            DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
+            String token;
+            while( ( token = tokenizer.getNextToken() ) != null ) {
+                if( result.length() > 0 ) {
+                    result.append( ", " );
+                }
+                result.append("[").append(token).append("]");
+            }
 
-			return result.toString();
-		}
-	}
+            return result.toString();
+        }
+    }
 
-	private static Map<String,String> tokenConversions = prepareTokenConversions();
+    private static Map<String,String> tokenConversions = prepareTokenConversions();
 
-	private static Map<String,String> prepareTokenConversions() {
-		Map<String,String> result = new HashMap<>();
+    private static Map<String,String> prepareTokenConversions() {
+        Map<String,String> result = new HashMap<>();
 
-		result.put( "EEEE", "dddd" );
-		result.put( "EEE", "ddd" );
-		result.put( "EE", "ddd" );
-		result.put( "E", "d" );
-		result.put( "Z", "" );
-		result.put( "z", "" );
-		result.put( "a", "am/pm" );
-		result.put( "A", "AM/PM" );
-		result.put( "K", "H" );
-		result.put( "KK", "HH" );
-		result.put( "k", "h" );
-		result.put( "kk", "hh" );
-		result.put( "S", "0" );
-		result.put( "SS", "00" );
-		result.put( "SSS", "000" );
-		result.put( "y", "yyyy" );
+        result.put( "EEEE", "dddd" );
+        result.put( "EEE", "ddd" );
+        result.put( "EE", "ddd" );
+        result.put( "E", "d" );
+        result.put( "Z", "" );
+        result.put( "z", "" );
+        result.put( "a", "am/pm" );
+        result.put( "A", "AM/PM" );
+        result.put( "K", "H" );
+        result.put( "KK", "HH" );
+        result.put( "k", "h" );
+        result.put( "kk", "hh" );
+        result.put( "S", "0" );
+        result.put( "SS", "00" );
+        result.put( "SSS", "000" );
+        result.put( "y", "yyyy" );
 
-		return result;
-	}
+        return result;
+    }
 
-	public static String getPrefixForLocale( Locale locale ) {
-		final String languageTag = locale.toLanguageTag();
-		if (Locale.ROOT.equals(locale) || "".equals(languageTag)) {
-			// JDK 8 adds an empty locale-string, see also https://issues.apache.org/jira/browse/LANG-941
-			return "";
-		}
+    public static String getPrefixForLocale( Locale locale ) {
+        final String languageTag = locale.toLanguageTag();
+        if (Locale.ROOT.equals(locale) || "".equals(languageTag)) {
+            // JDK 8 adds an empty locale-string, see also https://issues.apache.org/jira/browse/LANG-941
+            return "";
+        }
 
-		LocaleID loc = LocaleID.lookupByLanguageTag(languageTag);
-		if (loc == null) {
-			String cmpTag = (languageTag.indexOf('_') > -1) ? languageTag.replace('_', '-') : languageTag;
-			int idx = languageTag.length();
-			while (loc == null && (idx = cmpTag.lastIndexOf('-', idx - 1)) > 0) {
-				loc = LocaleID.lookupByLanguageTag(languageTag.substring(0, idx));
-			}
-		}
+        LocaleID loc = LocaleID.lookupByLanguageTag(languageTag);
+        if (loc == null) {
+            String cmpTag = (languageTag.indexOf('_') > -1) ? languageTag.replace('_', '-') : languageTag;
+            int idx = languageTag.length();
+            while (loc == null && (idx = cmpTag.lastIndexOf('-', idx - 1)) > 0) {
+                loc = LocaleID.lookupByLanguageTag(languageTag.substring(0, idx));
+            }
+        }
 
-		if (loc == null) {
-			LOG.atError().log("Unable to find prefix for Locale '{}' or its parent locales.", languageTag);
-			return "";
-		}
+        if (loc == null) {
+            LOG.atError().log("Unable to find prefix for Locale '{}' or its parent locales.", languageTag);
+            return "";
+        }
 
-		return String.format(Locale.ROOT, "[$-%04X]", loc.getLcid());
-	}
+        return String.format(Locale.ROOT, "[$-%04X]", loc.getLcid());
+    }
 
     public static String convert( Locale locale, DateFormat df ) {
         String ptrn = ((SimpleDateFormat)df).toPattern();
@@ -168,79 +168,79 @@ public final class DateFormatConverter  {
     }
 
     public static String convert( Locale locale, String format ) {
-		StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder();
 
-		result.append(getPrefixForLocale(locale));
-		DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
-		String token;
-		while( ( token = tokenizer.getNextToken() ) != null ) {
-			if( token.startsWith("'") ) {
-				result.append( token.replace('\'', '"') );
-			} else if( ! Character.isLetter( token.charAt( 0 ) ) ) {
-				result.append( token );
-			} else {
-				// It's a code, translate it if necessary
-				String mappedToken = tokenConversions.get(token);
-				result.append( mappedToken == null ? token : mappedToken );
-			}
-		}
+        result.append(getPrefixForLocale(locale));
+        DateFormatTokenizer tokenizer = new DateFormatTokenizer(format);
+        String token;
+        while( ( token = tokenizer.getNextToken() ) != null ) {
+            if( token.startsWith("'") ) {
+                result.append( token.replace('\'', '"') );
+            } else if( ! Character.isLetter( token.charAt( 0 ) ) ) {
+                result.append( token );
+            } else {
+                // It's a code, translate it if necessary
+                String mappedToken = tokenConversions.get(token);
+                result.append( mappedToken == null ? token : mappedToken );
+            }
+        }
         result.append(";@");
-		return result.toString().trim();
-	}
+        return result.toString().trim();
+    }
 
-	public static String getJavaDatePattern(int style, Locale locale) {
-    	DateFormat df = DateFormat.getDateInstance(style, locale);
-    	if( df instanceof SimpleDateFormat ) {
-    		return ((SimpleDateFormat)df).toPattern();
-    	} else {
-    		switch( style ) {
-    		case DateFormat.SHORT:
-    			return "d/MM/yy";
-    		case DateFormat.LONG:
-    			return "MMMM d, yyyy";
-    		case DateFormat.FULL:
-    			return "dddd, MMMM d, yyyy";
-    		default:
-			case DateFormat.MEDIUM:
-    			return "MMM d, yyyy";
-    		}
-    	}
-	}
+    public static String getJavaDatePattern(int style, Locale locale) {
+        DateFormat df = DateFormat.getDateInstance(style, locale);
+        if( df instanceof SimpleDateFormat ) {
+            return ((SimpleDateFormat)df).toPattern();
+        } else {
+            switch( style ) {
+            case DateFormat.SHORT:
+                return "d/MM/yy";
+            case DateFormat.LONG:
+                return "MMMM d, yyyy";
+            case DateFormat.FULL:
+                return "dddd, MMMM d, yyyy";
+            default:
+            case DateFormat.MEDIUM:
+                return "MMM d, yyyy";
+            }
+        }
+    }
 
-	public static String getJavaTimePattern(int style, Locale locale) {
-    	DateFormat df = DateFormat.getTimeInstance(style, locale);
-    	if( df instanceof SimpleDateFormat ) {
-    		return ((SimpleDateFormat)df).toPattern();
-    	} else {
-    		switch( style ) {
-    		case DateFormat.SHORT:
-    			return "h:mm a";
-			default:
-    		case DateFormat.MEDIUM:
-    		case DateFormat.LONG:
-    		case DateFormat.FULL:
-    			return "h:mm:ss a";
-    		}
-    	}
-	}
+    public static String getJavaTimePattern(int style, Locale locale) {
+        DateFormat df = DateFormat.getTimeInstance(style, locale);
+        if( df instanceof SimpleDateFormat ) {
+            return ((SimpleDateFormat)df).toPattern();
+        } else {
+            switch( style ) {
+            case DateFormat.SHORT:
+                return "h:mm a";
+            default:
+            case DateFormat.MEDIUM:
+            case DateFormat.LONG:
+            case DateFormat.FULL:
+                return "h:mm:ss a";
+            }
+        }
+    }
 
-	public static String getJavaDateTimePattern(int style, Locale locale) {
-    	DateFormat df = DateFormat.getDateTimeInstance(style, style, locale);
-    	if( df instanceof SimpleDateFormat ) {
-    		return ((SimpleDateFormat)df).toPattern();
-    	} else {
-    		switch( style ) {
-    		case DateFormat.SHORT:
-    			return "M/d/yy h:mm a";
-    		case DateFormat.LONG:
-    			return "MMMM d, yyyy h:mm:ss a";
-    		case DateFormat.FULL:
-    			return "dddd, MMMM d, yyyy h:mm:ss a";
-    		default:
-			case DateFormat.MEDIUM:
-    			return "MMM d, yyyy h:mm:ss a";
-    		}
-    	}
-	}
+    public static String getJavaDateTimePattern(int style, Locale locale) {
+        DateFormat df = DateFormat.getDateTimeInstance(style, style, locale);
+        if( df instanceof SimpleDateFormat ) {
+            return ((SimpleDateFormat)df).toPattern();
+        } else {
+            switch( style ) {
+            case DateFormat.SHORT:
+                return "M/d/yy h:mm a";
+            case DateFormat.LONG:
+                return "MMMM d, yyyy h:mm:ss a";
+            case DateFormat.FULL:
+                return "dddd, MMMM d, yyyy h:mm:ss a";
+            default:
+            case DateFormat.MEDIUM:
+                return "MMM d, yyyy h:mm:ss a";
+            }
+        }
+    }
 
 }

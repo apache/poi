@@ -27,67 +27,67 @@ import org.apache.poi.util.LittleEndianOutput;
  * This record is the list header of all data validation records (0x01BE) in the current sheet.
  */
 public final class DVALRecord extends StandardRecord {
-	public static final short sid = 0x01B2;
+    public static final short sid = 0x01B2;
 
-	/** Options of the DVAL */
-	private short field_1_options;
-	/** Horizontal position of the dialog */
-	private int field_2_horiz_pos;
-	/** Vertical position of the dialog */
-	private int field_3_vert_pos;
+    /** Options of the DVAL */
+    private short field_1_options;
+    /** Horizontal position of the dialog */
+    private int field_2_horiz_pos;
+    /** Vertical position of the dialog */
+    private int field_3_vert_pos;
 
-	/** Object ID of the drop down arrow object for list boxes ;
-	 * in our case this will be always FFFF , until
-	 * MSODrawingGroup and MSODrawing records are implemented */
-	private int  field_cbo_id;
+    /** Object ID of the drop down arrow object for list boxes ;
+     * in our case this will be always FFFF , until
+     * MSODrawingGroup and MSODrawing records are implemented */
+    private int  field_cbo_id;
 
-	/** Number of following DV Records */
-	private int  field_5_dv_no;
+    /** Number of following DV Records */
+    private int  field_5_dv_no;
 
     public DVALRecord() {
         field_cbo_id = 0xFFFFFFFF;
         field_5_dv_no = 0x00000000;
     }
 
-	public DVALRecord(DVALRecord other) {
-		super(other);
-		field_1_options = other.field_1_options;
-		field_2_horiz_pos = other.field_2_horiz_pos;
-		field_3_vert_pos = other.field_3_vert_pos;
-		field_cbo_id = other.field_cbo_id;
-		field_5_dv_no = other.field_5_dv_no;
-	}
+    public DVALRecord(DVALRecord other) {
+        super(other);
+        field_1_options = other.field_1_options;
+        field_2_horiz_pos = other.field_2_horiz_pos;
+        field_3_vert_pos = other.field_3_vert_pos;
+        field_cbo_id = other.field_cbo_id;
+        field_5_dv_no = other.field_5_dv_no;
+    }
 
-	public DVALRecord(RecordInputStream in) {
-		field_1_options = in.readShort();
-		field_2_horiz_pos = in.readInt();
-		field_3_vert_pos = in.readInt();
+    public DVALRecord(RecordInputStream in) {
+        field_1_options = in.readShort();
+        field_2_horiz_pos = in.readInt();
+        field_3_vert_pos = in.readInt();
         field_cbo_id = in.readInt();
         field_5_dv_no = in.readInt();
-	}
+    }
 
     /**
-	 * @param options the options of the dialog
-	 */
-	public void setOptions(short options) {
-		field_1_options = options;
-	}
+     * @param options the options of the dialog
+     */
+    public void setOptions(short options) {
+        field_1_options = options;
+    }
 
-	/**
-	 * @param horiz_pos the Horizontal position of the dialog
-	 */
-	public void setHorizontalPos(int horiz_pos) {
-		field_2_horiz_pos = horiz_pos;
-	}
+    /**
+     * @param horiz_pos the Horizontal position of the dialog
+     */
+    public void setHorizontalPos(int horiz_pos) {
+        field_2_horiz_pos = horiz_pos;
+    }
 
-	/**
-	 * @param vert_pos the Vertical position of the dialog
-	 */
-	public void setVerticalPos(int vert_pos) {
-		field_3_vert_pos = vert_pos;
-	}
+    /**
+     * @param vert_pos the Vertical position of the dialog
+     */
+    public void setVerticalPos(int vert_pos) {
+        field_3_vert_pos = vert_pos;
+    }
 
-	/**
+    /**
      * set the object ID of the drop down arrow object for list boxes
      * @param cboID - Object ID
      */
@@ -104,27 +104,27 @@ public final class DVALRecord extends StandardRecord {
     }
 
     /**
-	 * @return the field_1_options
-	 */
-	public short getOptions() {
-		return field_1_options;
-	}
+     * @return the field_1_options
+     */
+    public short getOptions() {
+        return field_1_options;
+    }
 
-	/**
-	 * @return the Horizontal position of the dialog
-	 */
-	public int getHorizontalPos() {
-		return field_2_horiz_pos;
-	}
+    /**
+     * @return the Horizontal position of the dialog
+     */
+    public int getHorizontalPos() {
+        return field_2_horiz_pos;
+    }
 
-	/**
-	 * @return the the Vertical position of the dialog
-	 */
-	public int getVerticalPos() {
-		return field_3_vert_pos;
-	}
+    /**
+     * @return the the Vertical position of the dialog
+     */
+    public int getVerticalPos() {
+        return field_3_vert_pos;
+    }
 
-	/**
+    /**
      * @return the Object ID of the drop down arrow object for list boxes
      */
     public int getObjectID() {
@@ -139,11 +139,11 @@ public final class DVALRecord extends StandardRecord {
     }
 
     public void serialize(LittleEndianOutput out) {
-		out.writeShort(getOptions());
-		out.writeInt(getHorizontalPos());
-		out.writeInt(getVerticalPos());
-		out.writeInt(getObjectID());
-		out.writeInt(getDVRecNo());
+        out.writeShort(getOptions());
+        out.writeInt(getHorizontalPos());
+        out.writeInt(getVerticalPos());
+        out.writeInt(getObjectID());
+        out.writeInt(getDVRecNo());
     }
 
     protected int getDataSize() {
@@ -154,24 +154,24 @@ public final class DVALRecord extends StandardRecord {
         return sid;
     }
 
-	@Override
+    @Override
     public DVALRecord copy() {
       return new DVALRecord(this);
     }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.DVAL;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DVAL;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"options", this::getOptions,
-			"horizPos", this::getHorizontalPos,
-			"vertPos", this::getVerticalPos,
-			"comboObjectID", this::getObjectID,
-			"dvRecordsNumber", this::getDVRecNo
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "options", this::getOptions,
+            "horizPos", this::getHorizontalPos,
+            "vertPos", this::getVerticalPos,
+            "comboObjectID", this::getObjectID,
+            "dvRecordsNumber", this::getDVRecNo
+        );
+    }
 }

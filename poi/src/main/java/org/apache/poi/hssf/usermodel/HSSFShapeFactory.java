@@ -105,7 +105,7 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
                     if(optRecord == null) {
-                    	shape = new HSSFSimpleShape(container, objRecord, txtRecord);
+                        shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     } else {
                         EscherProperty property = optRecord.lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
                         if (null != property) {

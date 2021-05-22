@@ -52,14 +52,14 @@ public final class UnknownEscherRecord extends EscherRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-		/*
-		 * Have a check between available bytes and bytesRemaining,
-		 * take the available length if the bytesRemaining out of range.
-		 */
-		int available = data.length - (offset + 8);
-		if (bytesRemaining > available) {
-			bytesRemaining = available;
-		}
+        /*
+         * Have a check between available bytes and bytesRemaining,
+         * take the available length if the bytesRemaining out of range.
+         */
+        int available = data.length - (offset + 8);
+        if (bytesRemaining > available) {
+            bytesRemaining = available;
+        }
 
         if (isContainerRecord()) {
             int bytesWritten = 0;

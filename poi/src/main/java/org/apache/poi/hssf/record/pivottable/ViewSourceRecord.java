@@ -30,46 +30,46 @@ import org.apache.poi.util.LittleEndianOutput;
  * SXVS - View Source (0x00E3)<br>
  */
 public final class ViewSourceRecord extends StandardRecord {
-	public static final short sid = 0x00E3;
+    public static final short sid = 0x00E3;
 
-	private int vs;
+    private int vs;
 
-	public ViewSourceRecord(ViewSourceRecord other) {
-		super(other);
-		vs = other.vs;
-	}
+    public ViewSourceRecord(ViewSourceRecord other) {
+        super(other);
+        vs = other.vs;
+    }
 
-	public ViewSourceRecord(RecordInputStream in) {
-		vs = in.readShort();
-	}
+    public ViewSourceRecord(RecordInputStream in) {
+        vs = in.readShort();
+    }
 
-	@Override
-	protected void serialize(LittleEndianOutput out) {
-		out.writeShort(vs);
-	}
+    @Override
+    protected void serialize(LittleEndianOutput out) {
+        out.writeShort(vs);
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public ViewSourceRecord copy() {
-		return new ViewSourceRecord(this);
-	}
+    @Override
+    public ViewSourceRecord copy() {
+        return new ViewSourceRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.VIEW_SOURCE;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.VIEW_SOURCE;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("vs", () -> vs);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("vs", () -> vs);
+    }
 }

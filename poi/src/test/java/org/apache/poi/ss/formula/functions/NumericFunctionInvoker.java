@@ -29,74 +29,74 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public final class NumericFunctionInvoker {
 
-	private NumericFunctionInvoker() {
-		// no instances of this class
-	}
+    private NumericFunctionInvoker() {
+        // no instances of this class
+    }
 
-	private static final class NumericEvalEx extends Exception {
-		public NumericEvalEx(String msg) {
-			super(msg);
-		}
-	}
+    private static final class NumericEvalEx extends Exception {
+        public NumericEvalEx(String msg) {
+            super(msg);
+        }
+    }
 
-	/**
-	 * Invokes the specified function with the arguments.
-	 * <p>
-	 * Assumes that the cell coordinate parameters of
-	 *  <code>Function.evaluate(args, srcCellRow, srcCellCol)</code>
-	 * are not required.
-	 * <p>
-	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
-	 * result causes the current junit test to fail.
-	 */
-	public static double invoke(Function f, ValueEval[] args) {
-		return invoke(f, args, -1, -1);
-	}
-	/**
-	 * Invokes the specified operator with the arguments.
-	 * <p>
-	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
-	 * result causes the current junit test to fail.
-	 */
-	public static double invoke(Function f, ValueEval[] args, int srcCellRow, int srcCellCol) {
-		try {
-			return invokeInternal(f, args, srcCellRow, srcCellCol);
-		} catch (NumericEvalEx e) {
-			fail("Evaluation of function (" + f.getClass().getName() + ") failed: " + e.getMessage());
-			return -1;
-		}
-	}
-	/**
-	 * Formats nicer error messages for the junit output
-	 */
-	private static double invokeInternal(Function target, ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws NumericEvalEx {
-		ValueEval evalResult;
-		try {
-			evalResult = target.evaluate(args, srcCellRow, (short)srcCellCol);
-		} catch (NotImplementedException e) {
-			throw new NumericEvalEx("Not implemented:" + e.getMessage());
-		}
+    /**
+     * Invokes the specified function with the arguments.
+     * <p>
+     * Assumes that the cell coordinate parameters of
+     *  <code>Function.evaluate(args, srcCellRow, srcCellCol)</code>
+     * are not required.
+     * <p>
+     * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
+     * result causes the current junit test to fail.
+     */
+    public static double invoke(Function f, ValueEval[] args) {
+        return invoke(f, args, -1, -1);
+    }
+    /**
+     * Invokes the specified operator with the arguments.
+     * <p>
+     * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
+     * result causes the current junit test to fail.
+     */
+    public static double invoke(Function f, ValueEval[] args, int srcCellRow, int srcCellCol) {
+        try {
+            return invokeInternal(f, args, srcCellRow, srcCellCol);
+        } catch (NumericEvalEx e) {
+            fail("Evaluation of function (" + f.getClass().getName() + ") failed: " + e.getMessage());
+            return -1;
+        }
+    }
+    /**
+     * Formats nicer error messages for the junit output
+     */
+    private static double invokeInternal(Function target, ValueEval[] args, int srcCellRow, int srcCellCol)
+                throws NumericEvalEx {
+        ValueEval evalResult;
+        try {
+            evalResult = target.evaluate(args, srcCellRow, (short)srcCellCol);
+        } catch (NotImplementedException e) {
+            throw new NumericEvalEx("Not implemented:" + e.getMessage());
+        }
 
-		if(evalResult == null) {
-			throw new NumericEvalEx("Result object was null");
-		}
-		if(evalResult instanceof ErrorEval) {
-			ErrorEval ee = (ErrorEval) evalResult;
-			throw new NumericEvalEx(formatErrorMessage(ee));
-		}
-		if(!(evalResult instanceof NumericValueEval)) {
-			throw new NumericEvalEx("Result object type (" + evalResult.getClass().getName()
-					+ ") is invalid.  Expected implementor of ("
-					+ NumericValueEval.class.getName() + ")");
-		}
+        if(evalResult == null) {
+            throw new NumericEvalEx("Result object was null");
+        }
+        if(evalResult instanceof ErrorEval) {
+            ErrorEval ee = (ErrorEval) evalResult;
+            throw new NumericEvalEx(formatErrorMessage(ee));
+        }
+        if(!(evalResult instanceof NumericValueEval)) {
+            throw new NumericEvalEx("Result object type (" + evalResult.getClass().getName()
+                    + ") is invalid.  Expected implementor of ("
+                    + NumericValueEval.class.getName() + ")");
+        }
 
-		NumericValueEval result = (NumericValueEval) evalResult;
-		return result.getNumberValue();
-	}
+        NumericValueEval result = (NumericValueEval) evalResult;
+        return result.getNumberValue();
+    }
 
-	private static String formatErrorMessage(ErrorEval ee) {
-		boolean b = (ee == ErrorEval.VALUE_INVALID || ee.getErrorCode() == ErrorEval.VALUE_INVALID.getErrorCode());
-		return b ? "Error code: #VALUE! (invalid value)" : "Error code=" + ee.getErrorCode();
-	}
+    private static String formatErrorMessage(ErrorEval ee) {
+        boolean b = (ee == ErrorEval.VALUE_INVALID || ee.getErrorCode() == ErrorEval.VALUE_INVALID.getErrorCode());
+        return b ? "Error code: #VALUE! (invalid value)" : "Error code=" + ee.getErrorCode();
+    }
 }

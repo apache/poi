@@ -33,23 +33,23 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public final class Npv implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		int nArgs = args.length;
-		if (nArgs < 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        int nArgs = args.length;
+        if (nArgs < 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
 
         try {
-			double rate = NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
+            double rate = NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             // convert tail arguments into an array of doubles
             ValueEval[] vargs = Arrays.copyOfRange(args, 1, args.length, ValueEval[].class);
             double[] values = AggregateFunction.ValueCollector.collectValues(vargs);
 
             double result = FinanceLib.npv(rate, values);
-			NumericFunction.checkValue(result);
+            NumericFunction.checkValue(result);
             return new NumberEval(result);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 }

@@ -22,41 +22,41 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 abstract class Ref2DPtgBase extends RefPtgBase {
-	private static final int SIZE = 5;
+    private static final int SIZE = 5;
 
-	protected Ref2DPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
-		setRow(row);
-		setColumn(column);
-		setRowRelative(isRowRelative);
-		setColRelative(isColumnRelative);
-	}
+    protected Ref2DPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
+        setRow(row);
+        setColumn(column);
+        setRowRelative(isRowRelative);
+        setColRelative(isColumnRelative);
+    }
 
-	protected Ref2DPtgBase(Ref2DPtgBase other)  {
-		super(other);
-	}
+    protected Ref2DPtgBase(Ref2DPtgBase other)  {
+        super(other);
+    }
 
 
-	protected Ref2DPtgBase(LittleEndianInput in)  {
-		readCoordinates(in);
-	}
+    protected Ref2DPtgBase(LittleEndianInput in)  {
+        readCoordinates(in);
+    }
 
-	protected Ref2DPtgBase(CellReference cr) {
-		super(cr);
-	}
+    protected Ref2DPtgBase(CellReference cr) {
+        super(cr);
+    }
 
-	@Override
+    @Override
     public void write(LittleEndianOutput out) {
-		out.writeByte(getSid() + getPtgClass());
-		writeCoordinates(out);
-	}
+        out.writeByte(getSid() + getPtgClass());
+        writeCoordinates(out);
+    }
 
-	@Override
+    @Override
     public final String toFormulaString() {
-		return formatReferenceAsString();
-	}
+        return formatReferenceAsString();
+    }
 
-	@Override
+    @Override
     public final int getSize() {
-		return SIZE;
-	}
+        return SIZE;
+    }
 }

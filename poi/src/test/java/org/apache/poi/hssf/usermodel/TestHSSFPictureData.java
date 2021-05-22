@@ -39,13 +39,13 @@ import org.junit.jupiter.api.Test;
  * The code to retrieve images from a workbook provided by Trejkaz (trejkaz at trypticon dot org) in Bug 41223.
  */
 final class TestHSSFPictureData {
-	@BeforeAll
+    @BeforeAll
     public static void setUpClass() {
-		POITestCase.setImageIOCacheDir();
-	}
+        POITestCase.setImageIOCacheDir();
+    }
 
-	@Test
-	void testPictures() throws IOException {
+    @Test
+    void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
         // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
@@ -82,7 +82,7 @@ final class TestHSSFPictureData {
     }
 
     @Test
-	void testMacPicture() throws IOException {
+    void testMacPicture() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
 
         try{

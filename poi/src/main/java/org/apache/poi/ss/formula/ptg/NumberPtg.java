@@ -30,61 +30,61 @@ import org.apache.poi.util.LittleEndianOutput;
  * field using IEEE notation
  */
 public final class NumberPtg extends ScalarConstantPtg {
-	public static final int SIZE = 9;
-	public static final byte sid = 0x1f;
-	private final double field_1_value;
+    public static final int SIZE = 9;
+    public static final byte sid = 0x1f;
+    private final double field_1_value;
 
-	public NumberPtg(LittleEndianInput in)  {
-		this(in.readDouble());
-	}
+    public NumberPtg(LittleEndianInput in)  {
+        this(in.readDouble());
+    }
 
-	/**
-	 * Create a NumberPtg from a string representation of the number Number
-	 * format is not checked, it is expected to be validated in the parser that
-	 * calls this method.
-	 *
-	 * @param value String representation of a floating point number
-	 */
-	public NumberPtg(String value) {
-		this(Double.parseDouble(value));
-	}
+    /**
+     * Create a NumberPtg from a string representation of the number Number
+     * format is not checked, it is expected to be validated in the parser that
+     * calls this method.
+     *
+     * @param value String representation of a floating point number
+     */
+    public NumberPtg(String value) {
+        this(Double.parseDouble(value));
+    }
 
-	public NumberPtg(double value) {
-		field_1_value = value;
-	}
+    public NumberPtg(double value) {
+        field_1_value = value;
+    }
 
-	public double getValue() {
-		return field_1_value;
-	}
+    public double getValue() {
+        return field_1_value;
+    }
 
-	@Override
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeDouble(getValue());
-	}
+    @Override
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeDouble(getValue());
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	@Override
-	public int getSize() {
-		return SIZE;
-	}
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
 
-	@Override
-	public String toFormulaString() {
-		return NumberToTextConverter.toText(field_1_value);
-	}
+    @Override
+    public String toFormulaString() {
+        return NumberToTextConverter.toText(field_1_value);
+    }
 
-	@Override
-	public NumberPtg copy() {
-		return this;
-	}
+    @Override
+    public NumberPtg copy() {
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("value", this::getValue);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("value", this::getValue);
+    }
 }

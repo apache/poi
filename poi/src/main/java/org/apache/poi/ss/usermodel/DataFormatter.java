@@ -145,8 +145,8 @@ public class DataFormatter {
      */
     private static final Pattern colorPattern =
        Pattern.compile("(\\[BLACK])|(\\[BLUE])|(\\[CYAN])|(\\[GREEN])|" +
-       		"(\\[MAGENTA])|(\\[RED])|(\\[WHITE])|(\\[YELLOW])|" +
-       		"(\\[COLOR\\s*\\d])|(\\[COLOR\\s*[0-5]\\d])", Pattern.CASE_INSENSITIVE);
+            "(\\[MAGENTA])|(\\[RED])|(\\[WHITE])|(\\[YELLOW])|" +
+            "(\\[COLOR\\s*\\d])|(\\[COLOR\\s*[0-5]\\d])", Pattern.CASE_INSENSITIVE);
 
     /**
      * A regex to identify a fraction pattern.
@@ -472,7 +472,7 @@ public class DataFormatter {
         formatStr = formatStr.replace("\\/","/"); // weird: m\\/d\\/yyyy
         formatStr = formatStr.replace(";@", "");
         formatStr = formatStr.replace("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
-        formatStr = formatStr.replace("\"\"", "'");	// replace Excel quoting with Java style quoting
+        formatStr = formatStr.replace("\"\"", "'"); // replace Excel quoting with Java style quoting
         formatStr = formatStr.replace("\\T","'T'"); // Quote the T is iso8601 style dates
 
 

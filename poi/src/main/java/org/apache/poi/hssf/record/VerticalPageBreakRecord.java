@@ -24,35 +24,35 @@ package org.apache.poi.hssf.record;
  */
 public final class VerticalPageBreakRecord extends PageBreakRecord {
 
-	public static final short sid = 0x001A;
+    public static final short sid = 0x001A;
 
-	/**
-	 * Creates an empty vertical page break record
-	 */
-	public VerticalPageBreakRecord() {}
+    /**
+     * Creates an empty vertical page break record
+     */
+    public VerticalPageBreakRecord() {}
 
-	public VerticalPageBreakRecord(VerticalPageBreakRecord other) {
-		super(other);
-	}
+    public VerticalPageBreakRecord(VerticalPageBreakRecord other) {
+        super(other);
+    }
 
-	/**
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public VerticalPageBreakRecord(RecordInputStream in) {
-		super(in);
-	}
+    /**
+     * @param in the RecordInputstream to read the record from
+     */
+    public VerticalPageBreakRecord(RecordInputStream in) {
+        super(in);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public VerticalPageBreakRecord copy() {
-		return new VerticalPageBreakRecord(this);
-	}
+    @Override
+    public VerticalPageBreakRecord copy() {
+        return new VerticalPageBreakRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.VERTICAL_PAGE_BREAK;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.VERTICAL_PAGE_BREAK;
+    }
 }

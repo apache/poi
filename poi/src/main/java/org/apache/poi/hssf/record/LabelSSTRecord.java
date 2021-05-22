@@ -65,7 +65,7 @@ public final class LabelSSTRecord extends CellRecord {
 
     @Override
     protected String getRecordName() {
-    	return "LABELSST";
+        return "LABELSST";
     }
 
     @Override

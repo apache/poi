@@ -67,28 +67,28 @@ class TestWorkdayCalculator {
         assertEquals(4, WorkdayCalculator.instance.calculateWorkdays(A_FRIDAY, A_WEDNESDAY, new double[]{ A_SATURDAY, A_SUNDAY }));
     }
 
-	@Test
-	void testCalculateWorkdaysOnSameDayShouldReturn1ForWeekdays() {
-		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
-		assertEquals(1, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[0]));
-	}
+    @Test
+    void testCalculateWorkdaysOnSameDayShouldReturn1ForWeekdays() {
+        final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
+        assertEquals(1, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[0]));
+    }
 
-	@Test
-	void testCalculateWorkdaysOnSameDayShouldReturn0ForHolidays() {
-		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
-		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[]{ A_MONDAY }));
-	}
+    @Test
+    void testCalculateWorkdaysOnSameDayShouldReturn0ForHolidays() {
+        final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
+        assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[]{ A_MONDAY }));
+    }
 
-	@Test
-	void testCalculateWorkdaysOnSameDayShouldReturn0ForWeekends() {
-		final double A_SUNDAY = DateUtil.getExcelDate(d(2017, 1, 1));
-		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_SUNDAY, A_SUNDAY, new double[0]));
-	}
+    @Test
+    void testCalculateWorkdaysOnSameDayShouldReturn0ForWeekends() {
+        final double A_SUNDAY = DateUtil.getExcelDate(d(2017, 1, 1));
+        assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_SUNDAY, A_SUNDAY, new double[0]));
+    }
 
     @Test
     void testCalculateWorkdaysNumberOfDays() {
-    	double start = 41553.0;
-    	int days = 1;
+        double start = 41553.0;
+        int days = 1;
         assertEquals(d(2013, 10, 7), WorkdayCalculator.instance.calculateWorkdays(start, days, new double[0]));
     }
 

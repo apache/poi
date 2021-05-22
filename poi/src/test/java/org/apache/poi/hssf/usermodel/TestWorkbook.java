@@ -437,8 +437,8 @@ final class TestWorkbook {
     @Test
     void testBackupRecord() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-		wb.createSheet();
-		InternalWorkbook workbook = wb.getWorkbook();
+        wb.createSheet();
+        InternalWorkbook workbook = wb.getWorkbook();
         BackupRecord record   = workbook.getBackupRecord();
 
         assertEquals(0, record.getBackup());

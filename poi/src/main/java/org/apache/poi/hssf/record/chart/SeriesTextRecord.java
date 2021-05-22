@@ -32,112 +32,112 @@ import org.apache.poi.util.StringUtil;
  * Defines a series name
  */
 public final class SeriesTextRecord extends StandardRecord {
-	public static final short sid = 0x100D;
+    public static final short sid = 0x100D;
 
-	/**
-	 * the actual text cannot be longer than 255 characters
-	 */
-	private static final int MAX_LEN = 0xFF;
+    /**
+     * the actual text cannot be longer than 255 characters
+     */
+    private static final int MAX_LEN = 0xFF;
 
-	private int field_1_id;
-	private boolean is16bit;
-	private String field_4_text;
+    private int field_1_id;
+    private boolean is16bit;
+    private String field_4_text;
 
-	public SeriesTextRecord() {
-		field_4_text = "";
-		is16bit = false;
-	}
+    public SeriesTextRecord() {
+        field_4_text = "";
+        is16bit = false;
+    }
 
-	public SeriesTextRecord(SeriesTextRecord other) {
-		super(other);
-		field_1_id = other.field_1_id;
-		is16bit = other.is16bit;
-		field_4_text = other.field_4_text;
-	}
+    public SeriesTextRecord(SeriesTextRecord other) {
+        super(other);
+        field_1_id = other.field_1_id;
+        is16bit = other.is16bit;
+        field_4_text = other.field_4_text;
+    }
 
-	public SeriesTextRecord(RecordInputStream in) {
-		field_1_id = in.readUShort();
-		int field_2_textLength = in.readUByte();
-		is16bit = (in.readUByte() & 0x01) != 0;
-		if (is16bit) {
-			field_4_text = in.readUnicodeLEString(field_2_textLength);
-		} else {
-			field_4_text = in.readCompressedUnicode(field_2_textLength);
-		}
-	}
+    public SeriesTextRecord(RecordInputStream in) {
+        field_1_id = in.readUShort();
+        int field_2_textLength = in.readUByte();
+        is16bit = (in.readUByte() & 0x01) != 0;
+        if (is16bit) {
+            field_4_text = in.readUnicodeLEString(field_2_textLength);
+        } else {
+            field_4_text = in.readCompressedUnicode(field_2_textLength);
+        }
+    }
 
-	public void serialize(LittleEndianOutput out) {
+    public void serialize(LittleEndianOutput out) {
 
-		out.writeShort(field_1_id);
-		out.writeByte(field_4_text.length());
-		if (is16bit) {
-			// Excel (2007) seems to choose 16bit regardless of whether it is needed
-			out.writeByte(0x01);
-			StringUtil.putUnicodeLE(field_4_text, out);
-		} else {
-			// Excel can read this OK
-			out.writeByte(0x00);
-			StringUtil.putCompressedUnicode(field_4_text, out);
-		}
-	}
+        out.writeShort(field_1_id);
+        out.writeByte(field_4_text.length());
+        if (is16bit) {
+            // Excel (2007) seems to choose 16bit regardless of whether it is needed
+            out.writeByte(0x01);
+            StringUtil.putUnicodeLE(field_4_text, out);
+        } else {
+            // Excel can read this OK
+            out.writeByte(0x00);
+            StringUtil.putCompressedUnicode(field_4_text, out);
+        }
+    }
 
-	protected int getDataSize() {
-		return 2 + 1 + 1 + field_4_text.length() * (is16bit ? 2 : 1);
-	}
+    protected int getDataSize() {
+        return 2 + 1 + 1 + field_4_text.length() * (is16bit ? 2 : 1);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public SeriesTextRecord copy() {
-		return new SeriesTextRecord(this);
-	}
+    @Override
+    public SeriesTextRecord copy() {
+        return new SeriesTextRecord(this);
+    }
 
-	/**
-	 * Get the id field for the SeriesText record.
-	 */
-	public int getId() {
-		return field_1_id;
-	}
+    /**
+     * Get the id field for the SeriesText record.
+     */
+    public int getId() {
+        return field_1_id;
+    }
 
-	/**
-	 * Set the id field for the SeriesText record.
-	 */
-	public void setId(int id) {
-		field_1_id = id;
-	}
+    /**
+     * Set the id field for the SeriesText record.
+     */
+    public void setId(int id) {
+        field_1_id = id;
+    }
 
-	/**
-	 * Get the text field for the SeriesText record.
-	 */
-	public String getText() {
-		return field_4_text;
-	}
+    /**
+     * Get the text field for the SeriesText record.
+     */
+    public String getText() {
+        return field_4_text;
+    }
 
-	/**
-	 * Set the text field for the SeriesText record.
-	 */
-	public void setText(String text) {
-		if (text.length() > MAX_LEN) {
-			throw new IllegalArgumentException("Text is too long ("
-					+ text.length() + ">" + MAX_LEN + ")");
-		}
-		field_4_text = text;
-		is16bit = StringUtil.hasMultibyte(text);
-	}
+    /**
+     * Set the text field for the SeriesText record.
+     */
+    public void setText(String text) {
+        if (text.length() > MAX_LEN) {
+            throw new IllegalArgumentException("Text is too long ("
+                    + text.length() + ">" + MAX_LEN + ")");
+        }
+        field_4_text = text;
+        is16bit = StringUtil.hasMultibyte(text);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.SERIES_TEXT;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SERIES_TEXT;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"id", this::getId,
-			"bit16", () -> is16bit,
-			"text", this::getText
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "id", this::getId,
+            "bit16", () -> is16bit,
+            "text", this::getText
+        );
+    }
 }

@@ -25,98 +25,98 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
  * or Number or boolean type.
  */
 public final class CellValue {
-	public static final CellValue TRUE = new CellValue(CellType.BOOLEAN, 0.0, true,  null, 0);
-	public static final CellValue FALSE = new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
+    public static final CellValue TRUE = new CellValue(CellType.BOOLEAN, 0.0, true,  null, 0);
+    public static final CellValue FALSE = new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
 
-	private final CellType _cellType;
-	private final double _numberValue;
-	private final boolean _booleanValue;
-	private final String _textValue;
-	private final int _errorCode;
+    private final CellType _cellType;
+    private final double _numberValue;
+    private final boolean _booleanValue;
+    private final String _textValue;
+    private final int _errorCode;
 
-	private CellValue(CellType cellType, double numberValue, boolean booleanValue,
-			String textValue, int errorCode) {
-		_cellType = cellType;
-		_numberValue = numberValue;
-		_booleanValue = booleanValue;
-		_textValue = textValue;
-		_errorCode = errorCode;
-	}
-
-
-	public CellValue(double numberValue) {
-		this(CellType.NUMERIC, numberValue, false, null, 0);
-	}
-
-	public static CellValue valueOf(boolean booleanValue) {
-		return booleanValue ? TRUE : FALSE;
-	}
-
-	public CellValue(String stringValue) {
-		this(CellType.STRING, 0.0, false, stringValue, 0);
-	}
-
-	public static CellValue getError(int errorCode) {
-		return new CellValue(CellType.ERROR, 0.0, false, null, errorCode);
-	}
+    private CellValue(CellType cellType, double numberValue, boolean booleanValue,
+            String textValue, int errorCode) {
+        _cellType = cellType;
+        _numberValue = numberValue;
+        _booleanValue = booleanValue;
+        _textValue = textValue;
+        _errorCode = errorCode;
+    }
 
 
-	/**
-	 * @return Returns the booleanValue.
-	 */
-	public boolean getBooleanValue() {
-		return _booleanValue;
-	}
+    public CellValue(double numberValue) {
+        this(CellType.NUMERIC, numberValue, false, null, 0);
+    }
 
-	/**
-	 * @return Returns the numberValue.
-	 */
-	public double getNumberValue() {
-		return _numberValue;
-	}
+    public static CellValue valueOf(boolean booleanValue) {
+        return booleanValue ? TRUE : FALSE;
+    }
 
-	/**
-	 * @return Returns the stringValue.
-	 */
-	public String getStringValue() {
-		return _textValue;
-	}
+    public CellValue(String stringValue) {
+        this(CellType.STRING, 0.0, false, stringValue, 0);
+    }
 
-	/**
-	 * Return the cell type.
-	 *
-	 * @return the cell type
-	 */
-	public CellType getCellType() {
-		return _cellType;
-	}
+    public static CellValue getError(int errorCode) {
+        return new CellValue(CellType.ERROR, 0.0, false, null, errorCode);
+    }
 
-	/**
-	 * @return Returns the errorValue.
-	 */
-	public byte getErrorValue() {
-		return (byte) _errorCode;
-	}
 
-	public String toString() {
-		return getClass().getName() + " [" +
-				formatAsString() +
-				"]";
-	}
+    /**
+     * @return Returns the booleanValue.
+     */
+    public boolean getBooleanValue() {
+        return _booleanValue;
+    }
 
-	public String formatAsString() {
-		switch (_cellType) {
-			case NUMERIC:
-				return String.valueOf(_numberValue);
-			case STRING:
-				return '"' + _textValue + '"';
-			case BOOLEAN:
-				return _booleanValue ? "TRUE" : "FALSE";
-			case ERROR:
-				return ErrorEval.getText(_errorCode);
-			default:
-			return "<error unexpected cell type " + _cellType + ">";
-		}
-		
-	}
+    /**
+     * @return Returns the numberValue.
+     */
+    public double getNumberValue() {
+        return _numberValue;
+    }
+
+    /**
+     * @return Returns the stringValue.
+     */
+    public String getStringValue() {
+        return _textValue;
+    }
+
+    /**
+     * Return the cell type.
+     *
+     * @return the cell type
+     */
+    public CellType getCellType() {
+        return _cellType;
+    }
+
+    /**
+     * @return Returns the errorValue.
+     */
+    public byte getErrorValue() {
+        return (byte) _errorCode;
+    }
+
+    public String toString() {
+        return getClass().getName() + " [" +
+                formatAsString() +
+                "]";
+    }
+
+    public String formatAsString() {
+        switch (_cellType) {
+            case NUMERIC:
+                return String.valueOf(_numberValue);
+            case STRING:
+                return '"' + _textValue + '"';
+            case BOOLEAN:
+                return _booleanValue ? "TRUE" : "FALSE";
+            case ERROR:
+                return ErrorEval.getText(_errorCode);
+            default:
+            return "<error unexpected cell type " + _cellType + ">";
+        }
+        
+    }
 }

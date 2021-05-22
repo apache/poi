@@ -23,54 +23,54 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Evaluator for returning cells or sheets for a range of sheets
  */
 final class SheetRangeEvaluator implements SheetRange {
-	private final int _firstSheetIndex;
+    private final int _firstSheetIndex;
     private final int _lastSheetIndex;
-	private SheetRefEvaluator[] _sheetEvaluators;
+    private SheetRefEvaluator[] _sheetEvaluators;
 
-	public SheetRangeEvaluator(int firstSheetIndex, int lastSheetIndex, SheetRefEvaluator[] sheetEvaluators) {
-		if (firstSheetIndex < 0) {
-			throw new IllegalArgumentException("Invalid firstSheetIndex: " + firstSheetIndex + ".");
-		}
+    public SheetRangeEvaluator(int firstSheetIndex, int lastSheetIndex, SheetRefEvaluator[] sheetEvaluators) {
+        if (firstSheetIndex < 0) {
+            throw new IllegalArgumentException("Invalid firstSheetIndex: " + firstSheetIndex + ".");
+        }
         if (lastSheetIndex < firstSheetIndex) {
             throw new IllegalArgumentException("Invalid lastSheetIndex: " + lastSheetIndex + " for firstSheetIndex: " + firstSheetIndex + ".");
         }
         _firstSheetIndex = firstSheetIndex;
         _lastSheetIndex = lastSheetIndex;
         _sheetEvaluators = sheetEvaluators.clone();
-	}
+    }
     public SheetRangeEvaluator(int onlySheetIndex, SheetRefEvaluator sheetEvaluator) {
         this(onlySheetIndex, onlySheetIndex, new SheetRefEvaluator[] {sheetEvaluator});
     }
-	
-	public SheetRefEvaluator getSheetEvaluator(int sheetIndex) {
-	    if (sheetIndex < _firstSheetIndex || sheetIndex > _lastSheetIndex) {
+    
+    public SheetRefEvaluator getSheetEvaluator(int sheetIndex) {
+        if (sheetIndex < _firstSheetIndex || sheetIndex > _lastSheetIndex) {
             throw new IllegalArgumentException("Invalid SheetIndex: " + sheetIndex +
                     " - Outside range " + _firstSheetIndex + " : " + _lastSheetIndex);
-	    }
-	    return _sheetEvaluators[sheetIndex-_firstSheetIndex];
-	}
-	
-	public int getFirstSheetIndex() {
-	    return _firstSheetIndex;
-	}
+        }
+        return _sheetEvaluators[sheetIndex-_firstSheetIndex];
+    }
+    
+    public int getFirstSheetIndex() {
+        return _firstSheetIndex;
+    }
     public int getLastSheetIndex() {
         return _lastSheetIndex;
     }
 
-	public String getSheetName(int sheetIndex) {
-	    return getSheetEvaluator(sheetIndex).getSheetName();
-	}
-	public String getSheetNameRange() {
-	    StringBuilder sb = new StringBuilder();
-	    sb.append(getSheetName(_firstSheetIndex));
-	    if (_firstSheetIndex != _lastSheetIndex) {
-	        sb.append(':');
-	        sb.append(getSheetName(_lastSheetIndex));
-	    }
-	    return sb.toString();
-	}
+    public String getSheetName(int sheetIndex) {
+        return getSheetEvaluator(sheetIndex).getSheetName();
+    }
+    public String getSheetNameRange() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getSheetName(_firstSheetIndex));
+        if (_firstSheetIndex != _lastSheetIndex) {
+            sb.append(':');
+            sb.append(getSheetName(_lastSheetIndex));
+        }
+        return sb.toString();
+    }
 
-	public ValueEval getEvalForCell(int sheetIndex, int rowIndex, int columnIndex) {
+    public ValueEval getEvalForCell(int sheetIndex, int rowIndex, int columnIndex) {
         return getSheetEvaluator(sheetIndex).getEvalForCell(rowIndex, columnIndex);
-	}
+    }
 }

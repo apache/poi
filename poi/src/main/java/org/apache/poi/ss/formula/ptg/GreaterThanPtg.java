@@ -28,7 +28,7 @@ public final class GreaterThanPtg extends ValueOperatorPtg {
     public static final GreaterThanPtg instance = new GreaterThanPtg();
 
     private GreaterThanPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

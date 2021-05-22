@@ -30,73 +30,73 @@ import org.apache.poi.util.LittleEndianOutput;
  * STARTOBJECT - Chart Future Record Type Start Object (0x0854)
  */
 public final class ChartStartObjectRecord extends StandardRecord {
-	public static final short sid = 0x0854;
+    public static final short sid = 0x0854;
 
-	private short rt;
-	private short grbitFrt;
-	private short iObjectKind;
-	private short iObjectContext;
-	private short iObjectInstance1;
-	private short iObjectInstance2;
+    private short rt;
+    private short grbitFrt;
+    private short iObjectKind;
+    private short iObjectContext;
+    private short iObjectInstance1;
+    private short iObjectInstance2;
 
-	public ChartStartObjectRecord(ChartStartObjectRecord other) {
-		super(other);
-		rt = other.rt;
-		grbitFrt = other.grbitFrt;
-		iObjectKind = other.iObjectKind;
-		iObjectContext = other.iObjectContext;
-		iObjectInstance1 = other.iObjectInstance1;
-		iObjectInstance2 = other.iObjectInstance2;
-	}
+    public ChartStartObjectRecord(ChartStartObjectRecord other) {
+        super(other);
+        rt = other.rt;
+        grbitFrt = other.grbitFrt;
+        iObjectKind = other.iObjectKind;
+        iObjectContext = other.iObjectContext;
+        iObjectInstance1 = other.iObjectInstance1;
+        iObjectInstance2 = other.iObjectInstance2;
+    }
 
-	public ChartStartObjectRecord(RecordInputStream in) {
-		rt = in.readShort();
-		grbitFrt = in.readShort();
-		iObjectKind = in.readShort();
-		iObjectContext = in.readShort();
-		iObjectInstance1 = in.readShort();
-		iObjectInstance2 = in.readShort();
-	}
+    public ChartStartObjectRecord(RecordInputStream in) {
+        rt = in.readShort();
+        grbitFrt = in.readShort();
+        iObjectKind = in.readShort();
+        iObjectContext = in.readShort();
+        iObjectInstance1 = in.readShort();
+        iObjectInstance2 = in.readShort();
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + 2 + 2 + 2 + 2 + 2;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + 2 + 2 + 2 + 2 + 2;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(rt);
-		out.writeShort(grbitFrt);
-		out.writeShort(iObjectKind);
-		out.writeShort(iObjectContext);
-		out.writeShort(iObjectInstance1);
-		out.writeShort(iObjectInstance2);
-	}
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(rt);
+        out.writeShort(grbitFrt);
+        out.writeShort(iObjectKind);
+        out.writeShort(iObjectContext);
+        out.writeShort(iObjectInstance1);
+        out.writeShort(iObjectInstance2);
+    }
 
-	@Override
-	public ChartStartObjectRecord copy() {
-		return new ChartStartObjectRecord(this);
-	}
+    @Override
+    public ChartStartObjectRecord copy() {
+        return new ChartStartObjectRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.CHART_START_OBJECT;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CHART_START_OBJECT;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"rt", () -> rt,
-			"grbitFrt", () -> grbitFrt,
-			"iObjectKind", () -> iObjectKind,
-			"iObjectContext", () -> iObjectContext,
-			"iObjectInstance1", () -> iObjectInstance1,
-			"iObjectInstance2", () -> iObjectInstance2
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rt", () -> rt,
+            "grbitFrt", () -> grbitFrt,
+            "iObjectKind", () -> iObjectKind,
+            "iObjectContext", () -> iObjectContext,
+            "iObjectInstance1", () -> iObjectInstance1,
+            "iObjectInstance2", () -> iObjectInstance2
+        );
+    }
 }

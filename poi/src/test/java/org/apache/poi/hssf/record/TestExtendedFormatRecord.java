@@ -24,42 +24,42 @@ import org.junit.jupiter.api.Test;
 
 final class TestExtendedFormatRecord {
 
-	private static final byte[] data = {
-			0, 0, // Font 0
-			0, 0, // Format 0
-			0xF5 - 256, 0xFF - 256, // Cell opts ...
-			0x20, 0, // Alignment 20
-			0, 0, // Ident 0
-			0, 0, // Border 0
-			0, 0, // Palette 0
-			0, 0, 0, 0, // ADTL Palette 0
-			0xC0 - 256, 0x20 // Fill Palette 20c0
-	};
+    private static final byte[] data = {
+            0, 0, // Font 0
+            0, 0, // Format 0
+            0xF5 - 256, 0xFF - 256, // Cell opts ...
+            0x20, 0, // Alignment 20
+            0, 0, // Ident 0
+            0, 0, // Border 0
+            0, 0, // Palette 0
+            0, 0, 0, 0, // ADTL Palette 0
+            0xC0 - 256, 0x20 // Fill Palette 20c0
+    };
 
-	private static ExtendedFormatRecord createEFR() {
-		return new ExtendedFormatRecord(TestcaseRecordInputStream.create(0x00E0, data));
-	}
+    private static ExtendedFormatRecord createEFR() {
+        return new ExtendedFormatRecord(TestcaseRecordInputStream.create(0x00E0, data));
+    }
 
-	@Test
-	void testLoad() {
-		ExtendedFormatRecord record = createEFR();
-		assertEquals(0, record.getFontIndex());
-		assertEquals(0, record.getFormatIndex());
-		assertEquals(0xF5 - 256, record.getCellOptions());
-		assertEquals(0x20, record.getAlignmentOptions());
-		assertEquals(0, record.getIndentionOptions());
-		assertEquals(0, record.getBorderOptions());
-		assertEquals(0, record.getPaletteOptions());
-		assertEquals(0, record.getAdtlPaletteOptions());
-		assertEquals(0x20c0, record.getFillPaletteOptions());
+    @Test
+    void testLoad() {
+        ExtendedFormatRecord record = createEFR();
+        assertEquals(0, record.getFontIndex());
+        assertEquals(0, record.getFormatIndex());
+        assertEquals(0xF5 - 256, record.getCellOptions());
+        assertEquals(0x20, record.getAlignmentOptions());
+        assertEquals(0, record.getIndentionOptions());
+        assertEquals(0, record.getBorderOptions());
+        assertEquals(0, record.getPaletteOptions());
+        assertEquals(0, record.getAdtlPaletteOptions());
+        assertEquals(0x20c0, record.getFillPaletteOptions());
 
-		assertEquals(20 + 4, record.getRecordSize());
-	}
+        assertEquals(20 + 4, record.getRecordSize());
+    }
 
 
-	@SuppressWarnings("squid:S2699")
-	@Test
-	void testStore() {
+    @SuppressWarnings("squid:S2699")
+    @Test
+    void testStore() {
 //    .fontindex       = 0
 //    .formatindex     = 0
 //    .celloptions     = fffffff5
@@ -103,40 +103,40 @@ final class TestExtendedFormatRecord {
 //          .foreground= 40
 //          .background= 41
 
-		ExtendedFormatRecord record = new ExtendedFormatRecord();
-		record.setFontIndex((short) 0);
-		record.setFormatIndex((short) 0);
+        ExtendedFormatRecord record = new ExtendedFormatRecord();
+        record.setFontIndex((short) 0);
+        record.setFormatIndex((short) 0);
 
-		record.setLocked(true);
-		record.setHidden(false);
-		record.setXFType((short) 1);
-		record.setParentIndex((short) 0xfff);
+        record.setLocked(true);
+        record.setHidden(false);
+        record.setXFType((short) 1);
+        record.setParentIndex((short) 0xfff);
 
-		record.setVerticalAlignment((short) 2);
+        record.setVerticalAlignment((short) 2);
 
-		record.setFillForeground((short) 0x40);
-		record.setFillBackground((short) 0x41);
+        record.setFillForeground((short) 0x40);
+        record.setFillBackground((short) 0x41);
 
-		byte[] recordBytes = record.serialize();
-		confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
-	}
+        byte[] recordBytes = record.serialize();
+        confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
+    }
 
 
 
-	@SuppressWarnings("squid:S2699")
-	@Test
-	void testCloneOnto() {
-		ExtendedFormatRecord base = createEFR();
+    @SuppressWarnings("squid:S2699")
+    @Test
+    void testCloneOnto() {
+        ExtendedFormatRecord base = createEFR();
 
-		ExtendedFormatRecord other = new ExtendedFormatRecord();
-		other.cloneStyleFrom(base);
+        ExtendedFormatRecord other = new ExtendedFormatRecord();
+        other.cloneStyleFrom(base);
 
-		byte[] recordBytes = other.serialize();
-		confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
-	}
+        byte[] recordBytes = other.serialize();
+        confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
+    }
 
-	@Test
-	void testRotation() {
+    @Test
+    void testRotation() {
         ExtendedFormatRecord record = createEFR();
         assertEquals(0, record.getRotation());
 
@@ -158,5 +158,5 @@ final class TestExtendedFormatRecord {
 
         record.setRotation((short)-90);
         assertEquals(-76, 90-record.getRotation());
-	}
+    }
 }

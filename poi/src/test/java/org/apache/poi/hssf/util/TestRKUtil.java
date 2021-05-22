@@ -26,25 +26,25 @@ import org.junit.jupiter.api.Test;
  */
 final class TestRKUtil {
 
-	/**
-	 * Check we can decode correctly.
-	 */
-	@Test
-	void testDecode() {
+    /**
+     * Check we can decode correctly.
+     */
+    @Test
+    void testDecode() {
 
-		int[] values = { 1074266112, 1081384961, 1081397249,
-				0x3FF00000, 0x405EC001, 0x02F1853A, 0x02F1853B, 0xFCDD699A,
-		};
-		double[] rvalues = { 3.0, 3.3, 3.33,
-				1, 1.23, 12345678, 123456.78, -13149594,
-		};
+        int[] values = { 1074266112, 1081384961, 1081397249,
+                0x3FF00000, 0x405EC001, 0x02F1853A, 0x02F1853B, 0xFCDD699A,
+        };
+        double[] rvalues = { 3.0, 3.3, 3.33,
+                1, 1.23, 12345678, 123456.78, -13149594,
+        };
 
-		for (int j = 0; j < values.length; j++) {
+        for (int j = 0; j < values.length; j++) {
 
-			int intBits = values[j];
-			double expectedValue = rvalues[j];
-			double actualValue = RKUtil.decodeNumber(intBits);
-			assertEquals(expectedValue, actualValue, 0);
-		}
-	}
+            int intBits = values[j];
+            double expectedValue = rvalues[j];
+            double actualValue = RKUtil.decodeNumber(intBits);
+            assertEquals(expectedValue, actualValue, 0);
+        }
+    }
 }

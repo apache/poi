@@ -371,33 +371,33 @@ public final class BiffViewer {
         }
     }
 
-	/**
-	 * Method main with 1 argument just run straight biffview against given
-	 * file<p>
-	 *
-	 * <b>Usage</b>:<p>
-	 *
-	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt;<p>
-	 * BiffViewer --rawhex  [--out] &lt;fileName&gt;
-	 *
-	 * <table>
+    /**
+     * Method main with 1 argument just run straight biffview against given
+     * file<p>
+     *
+     * <b>Usage</b>:<p>
+     *
+     * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt;<p>
+     * BiffViewer --rawhex  [--out] &lt;fileName&gt;
+     *
+     * <table>
      * <caption>BiffViewer options</caption>
-	 * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
-	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
-	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
-	 * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
-	 * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
-	 * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
-	 * </table>
-	 *
-	 * @param args the command line arguments
-	 *
-	 * @throws IOException if the file doesn't exist or contained errors
-	 * @throws CommandParseException if the command line contained errors
-	 */
-	public static void main(String[] args) throws IOException, CommandParseException {
-		// args = new String[] { "--out", "", };
-		CommandArgs cmdArgs = CommandArgs.parse(args);
+     * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
+     * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
+     * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
+     * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
+     * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
+     * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
+     * </table>
+     *
+     * @param args the command line arguments
+     *
+     * @throws IOException if the file doesn't exist or contained errors
+     * @throws CommandParseException if the command line contained errors
+     */
+    public static void main(String[] args) throws IOException, CommandParseException {
+        // args = new String[] { "--out", "", };
+        CommandArgs cmdArgs = CommandArgs.parse(args);
 
         try (POIFSFileSystem fs = new POIFSFileSystem(cmdArgs.getFile(), true);
              InputStream is = getPOIFSInputStream(fs);
@@ -413,9 +413,9 @@ public final class BiffViewer {
                         cmdArgs.suppressHeader());
             }
         }
-	}
+    }
 
-	static PrintWriter getOutputStream(String outputPath) throws FileNotFoundException {
+    static PrintWriter getOutputStream(String outputPath) throws FileNotFoundException {
         // Use the system default encoding when sending to System Out
         OutputStream os = System.out;
         Charset cs = Charset.defaultCharset();
@@ -427,287 +427,287 @@ public final class BiffViewer {
     }
 
 
-	static InputStream getPOIFSInputStream(POIFSFileSystem fs) throws IOException {
-		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
-		return fs.createDocumentInputStream(workbookName);
-	}
+    static InputStream getPOIFSInputStream(POIFSFileSystem fs) throws IOException {
+        String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
+        return fs.createDocumentInputStream(workbookName);
+    }
 
-	static void runBiffViewer(PrintWriter pw, InputStream is,
-			boolean dumpInterpretedRecords, boolean dumpHex, boolean zeroAlignHexDump,
-			boolean suppressHeader) {
-		BiffRecordListener recListener = new BiffRecordListener(dumpHex ? pw : null, zeroAlignHexDump, suppressHeader);
-		is = new BiffDumpingStream(is, recListener);
-		createRecords(is, pw, recListener, dumpInterpretedRecords);
-	}
+    static void runBiffViewer(PrintWriter pw, InputStream is,
+            boolean dumpInterpretedRecords, boolean dumpHex, boolean zeroAlignHexDump,
+            boolean suppressHeader) {
+        BiffRecordListener recListener = new BiffRecordListener(dumpHex ? pw : null, zeroAlignHexDump, suppressHeader);
+        is = new BiffDumpingStream(is, recListener);
+        createRecords(is, pw, recListener, dumpInterpretedRecords);
+    }
 
-	private static final class BiffRecordListener implements IBiffRecordListener {
-		private final Writer _hexDumpWriter;
-		private List<String> _headers;
-		private final boolean _zeroAlignEachRecord;
-		private final boolean _noHeader;
-		private BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
-			_hexDumpWriter = hexDumpWriter;
-			_zeroAlignEachRecord = zeroAlignEachRecord;
-			_noHeader = noHeader;
-			_headers = new ArrayList<>();
-		}
+    private static final class BiffRecordListener implements IBiffRecordListener {
+        private final Writer _hexDumpWriter;
+        private List<String> _headers;
+        private final boolean _zeroAlignEachRecord;
+        private final boolean _noHeader;
+        private BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
+            _hexDumpWriter = hexDumpWriter;
+            _zeroAlignEachRecord = zeroAlignEachRecord;
+            _noHeader = noHeader;
+            _headers = new ArrayList<>();
+        }
 
-		@Override
+        @Override
         public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
-				byte[] data) {
-			String header = formatRecordDetails(globalOffset, sid, dataSize, recordCounter);
-			if(!_noHeader) {
-				_headers.add(header);
-			}
-			Writer w = _hexDumpWriter;
-			if (w != null) {
-				try {
-					w.write(header);
-					w.write(NEW_LINE_CHARS);
-					hexDumpAligned(w, data, dataSize+4, globalOffset, _zeroAlignEachRecord);
-					w.flush();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		private List<String> getRecentHeaders() {
-		    List<String> result = _headers;
-		    _headers = new ArrayList<>();
-		    return result;
-		}
-		private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {
+                byte[] data) {
+            String header = formatRecordDetails(globalOffset, sid, dataSize, recordCounter);
+            if(!_noHeader) {
+                _headers.add(header);
+            }
+            Writer w = _hexDumpWriter;
+            if (w != null) {
+                try {
+                    w.write(header);
+                    w.write(NEW_LINE_CHARS);
+                    hexDumpAligned(w, data, dataSize+4, globalOffset, _zeroAlignEachRecord);
+                    w.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        private List<String> getRecentHeaders() {
+            List<String> result = _headers;
+            _headers = new ArrayList<>();
+            return result;
+        }
+        private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {
             return "Offset=" + HexDump.intToHex(globalOffset) + "(" + globalOffset + ")" +
                     " recno=" + recordCounter +
                     " sid=" + HexDump.shortToHex(sid) +
                     " size=" + HexDump.shortToHex(size) + "(" + size + ")";
-		}
-	}
+        }
+    }
 
-	private interface IBiffRecordListener {
+    private interface IBiffRecordListener {
 
-		void processRecord(int globalOffset, int recordCounter, int sid, int dataSize, byte[] data);
+        void processRecord(int globalOffset, int recordCounter, int sid, int dataSize, byte[] data);
 
-	}
+    }
 
-	/**
-	 * Wraps a plain {@link InputStream} and allows BIFF record information to be tapped off
-	 *
-	 */
-	private static final class BiffDumpingStream extends InputStream {
-		private final DataInputStream _is;
-		private final IBiffRecordListener _listener;
-		private final byte[] _data;
-		private int _recordCounter;
-		private int _overallStreamPos;
-		private int _currentPos;
-		private int _currentSize;
-		private boolean _innerHasReachedEOF;
+    /**
+     * Wraps a plain {@link InputStream} and allows BIFF record information to be tapped off
+     *
+     */
+    private static final class BiffDumpingStream extends InputStream {
+        private final DataInputStream _is;
+        private final IBiffRecordListener _listener;
+        private final byte[] _data;
+        private int _recordCounter;
+        private int _overallStreamPos;
+        private int _currentPos;
+        private int _currentSize;
+        private boolean _innerHasReachedEOF;
 
-		private BiffDumpingStream(InputStream is, IBiffRecordListener listener) {
-			_is = new DataInputStream(is);
-			_listener = listener;
-			_data = new byte[RecordInputStream.MAX_RECORD_DATA_SIZE + 4];
-			_recordCounter = 0;
-			_overallStreamPos = 0;
-			_currentSize = 0;
-			_currentPos = 0;
-		}
+        private BiffDumpingStream(InputStream is, IBiffRecordListener listener) {
+            _is = new DataInputStream(is);
+            _listener = listener;
+            _data = new byte[RecordInputStream.MAX_RECORD_DATA_SIZE + 4];
+            _recordCounter = 0;
+            _overallStreamPos = 0;
+            _currentSize = 0;
+            _currentPos = 0;
+        }
 
-		@Override
-		public int read() throws IOException {
-			if (_currentPos >= _currentSize) {
-				fillNextBuffer();
-			}
-			if (_currentPos >= _currentSize) {
-				return -1;
-			}
-			int result = _data[_currentPos] & 0x00FF;
-			_currentPos ++;
-			_overallStreamPos ++;
-			formatBufferIfAtEndOfRec();
-			return result;
-		}
-		@Override
-		public int read(byte[] b, int off, int len) throws IOException {
+        @Override
+        public int read() throws IOException {
+            if (_currentPos >= _currentSize) {
+                fillNextBuffer();
+            }
+            if (_currentPos >= _currentSize) {
+                return -1;
+            }
+            int result = _data[_currentPos] & 0x00FF;
+            _currentPos ++;
+            _overallStreamPos ++;
+            formatBufferIfAtEndOfRec();
+            return result;
+        }
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
             if (b == null || off < 0 || len < 0  || b.length < off+len) {
                 throw new IllegalArgumentException();
             }
-			if (_currentPos >= _currentSize) {
-				fillNextBuffer();
-			}
-			if (_currentPos >= _currentSize) {
-				return -1;
-			}
-			final int result = Math.min(len, _currentSize - _currentPos);
-			System.arraycopy(_data, _currentPos, b, off, result);
-			_currentPos += result;
-			_overallStreamPos += result;
-			formatBufferIfAtEndOfRec();
-			return result;
-		}
+            if (_currentPos >= _currentSize) {
+                fillNextBuffer();
+            }
+            if (_currentPos >= _currentSize) {
+                return -1;
+            }
+            final int result = Math.min(len, _currentSize - _currentPos);
+            System.arraycopy(_data, _currentPos, b, off, result);
+            _currentPos += result;
+            _overallStreamPos += result;
+            formatBufferIfAtEndOfRec();
+            return result;
+        }
 
-		@Override
-		@SuppressForbidden("just delegating the call")
-		public int available() throws IOException {
-			return _currentSize - _currentPos + _is.available();
-		}
-		private void fillNextBuffer() throws IOException {
-			if (_innerHasReachedEOF) {
-				return;
-			}
-			int b0 = _is.read();
-			if (b0 == -1) {
-				_innerHasReachedEOF = true;
-				return;
-			}
-			_data[0] = (byte) b0;
-			_is.readFully(_data, 1, 3);
-			int len = LittleEndian.getShort(_data, 2);
-			_is.readFully(_data, 4, len);
-			_currentPos = 0;
-			_currentSize = len + 4;
-			_recordCounter++;
-		}
-		private void formatBufferIfAtEndOfRec() {
-			if (_currentPos != _currentSize) {
-				return;
-			}
-			int dataSize = _currentSize-4;
-			int sid = LittleEndian.getShort(_data, 0);
-			int globalOffset = _overallStreamPos-_currentSize;
-			_listener.processRecord(globalOffset, _recordCounter, sid, dataSize, _data);
-		}
-		@Override
-		public void close() throws IOException {
-			_is.close();
-		}
-	}
+        @Override
+        @SuppressForbidden("just delegating the call")
+        public int available() throws IOException {
+            return _currentSize - _currentPos + _is.available();
+        }
+        private void fillNextBuffer() throws IOException {
+            if (_innerHasReachedEOF) {
+                return;
+            }
+            int b0 = _is.read();
+            if (b0 == -1) {
+                _innerHasReachedEOF = true;
+                return;
+            }
+            _data[0] = (byte) b0;
+            _is.readFully(_data, 1, 3);
+            int len = LittleEndian.getShort(_data, 2);
+            _is.readFully(_data, 4, len);
+            _currentPos = 0;
+            _currentSize = len + 4;
+            _recordCounter++;
+        }
+        private void formatBufferIfAtEndOfRec() {
+            if (_currentPos != _currentSize) {
+                return;
+            }
+            int dataSize = _currentSize-4;
+            int sid = LittleEndian.getShort(_data, 0);
+            int globalOffset = _overallStreamPos-_currentSize;
+            _listener.processRecord(globalOffset, _recordCounter, sid, dataSize, _data);
+        }
+        @Override
+        public void close() throws IOException {
+            _is.close();
+        }
+    }
 
-	private static final int DUMP_LINE_LEN = 16;
-	private static final char[] COLUMN_SEPARATOR = " | ".toCharArray();
-	/**
-	 * Hex-dumps a portion of a byte array in typical format, also preserving dump-line alignment
-	 * @param globalOffset (somewhat arbitrary) used to calculate the addresses printed at the
-	 * start of each line
-	 */
-	private static void hexDumpAligned(Writer w, byte[] data, int dumpLen, int globalOffset,
-			boolean zeroAlignEachRecord) {
-		int baseDataOffset = 0;
+    private static final int DUMP_LINE_LEN = 16;
+    private static final char[] COLUMN_SEPARATOR = " | ".toCharArray();
+    /**
+     * Hex-dumps a portion of a byte array in typical format, also preserving dump-line alignment
+     * @param globalOffset (somewhat arbitrary) used to calculate the addresses printed at the
+     * start of each line
+     */
+    private static void hexDumpAligned(Writer w, byte[] data, int dumpLen, int globalOffset,
+            boolean zeroAlignEachRecord) {
+        int baseDataOffset = 0;
 
-		// perhaps this code should be moved to HexDump
-		int globalStart = globalOffset + baseDataOffset;
-		int globalEnd = globalOffset + baseDataOffset + dumpLen;
-		int startDelta = globalStart % DUMP_LINE_LEN;
-		int endDelta = globalEnd % DUMP_LINE_LEN;
-		if (zeroAlignEachRecord) {
-			endDelta -= startDelta;
-			if (endDelta < 0) {
-				endDelta += DUMP_LINE_LEN;
-			}
-			startDelta = 0;
-		}
-		int startLineAddr;
-		int endLineAddr;
-		if (zeroAlignEachRecord) {
-			endLineAddr = globalEnd - endDelta - (globalStart - startDelta);
-			startLineAddr = 0;
-		} else {
-			startLineAddr = globalStart - startDelta;
-			endLineAddr = globalEnd - endDelta;
-		}
+        // perhaps this code should be moved to HexDump
+        int globalStart = globalOffset + baseDataOffset;
+        int globalEnd = globalOffset + baseDataOffset + dumpLen;
+        int startDelta = globalStart % DUMP_LINE_LEN;
+        int endDelta = globalEnd % DUMP_LINE_LEN;
+        if (zeroAlignEachRecord) {
+            endDelta -= startDelta;
+            if (endDelta < 0) {
+                endDelta += DUMP_LINE_LEN;
+            }
+            startDelta = 0;
+        }
+        int startLineAddr;
+        int endLineAddr;
+        if (zeroAlignEachRecord) {
+            endLineAddr = globalEnd - endDelta - (globalStart - startDelta);
+            startLineAddr = 0;
+        } else {
+            startLineAddr = globalStart - startDelta;
+            endLineAddr = globalEnd - endDelta;
+        }
 
-		int lineDataOffset = baseDataOffset - startDelta;
-		int lineAddr = startLineAddr;
+        int lineDataOffset = baseDataOffset - startDelta;
+        int lineAddr = startLineAddr;
 
-		// output (possibly incomplete) first line
-		if (startLineAddr == endLineAddr) {
-			hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, endDelta);
-			return;
-		}
-		hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, DUMP_LINE_LEN);
+        // output (possibly incomplete) first line
+        if (startLineAddr == endLineAddr) {
+            hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, endDelta);
+            return;
+        }
+        hexDumpLine(w, data, lineAddr, lineDataOffset, startDelta, DUMP_LINE_LEN);
 
-		// output all full lines in the middle
-		while (true) {
-			lineAddr += DUMP_LINE_LEN;
-			lineDataOffset += DUMP_LINE_LEN;
-			if (lineAddr >= endLineAddr) {
-				break;
-			}
-			hexDumpLine(w, data, lineAddr, lineDataOffset, 0, DUMP_LINE_LEN);
-		}
+        // output all full lines in the middle
+        while (true) {
+            lineAddr += DUMP_LINE_LEN;
+            lineDataOffset += DUMP_LINE_LEN;
+            if (lineAddr >= endLineAddr) {
+                break;
+            }
+            hexDumpLine(w, data, lineAddr, lineDataOffset, 0, DUMP_LINE_LEN);
+        }
 
 
-		// output (possibly incomplete) last line
-		if (endDelta != 0) {
-			hexDumpLine(w, data, lineAddr, lineDataOffset, 0, endDelta);
-		}
-	}
+        // output (possibly incomplete) last line
+        if (endDelta != 0) {
+            hexDumpLine(w, data, lineAddr, lineDataOffset, 0, endDelta);
+        }
+    }
 
-	private static void hexDumpLine(Writer w, byte[] data, int lineStartAddress, int lineDataOffset, int startDelta, int endDelta) {
-	    final char[] buf = new char[8+2*COLUMN_SEPARATOR.length+DUMP_LINE_LEN*3-1+DUMP_LINE_LEN+NEW_LINE_CHARS.length];
+    private static void hexDumpLine(Writer w, byte[] data, int lineStartAddress, int lineDataOffset, int startDelta, int endDelta) {
+        final char[] buf = new char[8+2*COLUMN_SEPARATOR.length+DUMP_LINE_LEN*3-1+DUMP_LINE_LEN+NEW_LINE_CHARS.length];
 
-	    if (startDelta >= endDelta) {
-			throw new IllegalArgumentException("Bad start/end delta");
-		}
-	    int idx=0;
-		try {
-			writeHex(buf, idx, lineStartAddress, 8);
-			idx = arraycopy(COLUMN_SEPARATOR, buf, idx+8);
-			// raw hex data
-			for (int i=0; i< DUMP_LINE_LEN; i++) {
-				if (i>0) {
-				    buf[idx++] = ' ';
-				}
-				if (i >= startDelta && i < endDelta) {
-					writeHex(buf, idx, data[lineDataOffset+i], 2);
-				} else {
-				    buf[idx] = ' ';
-				    buf[idx+1] = ' ';
-				}
-				idx += 2;
-			}
-			idx = arraycopy(COLUMN_SEPARATOR, buf, idx);
+        if (startDelta >= endDelta) {
+            throw new IllegalArgumentException("Bad start/end delta");
+        }
+        int idx=0;
+        try {
+            writeHex(buf, idx, lineStartAddress, 8);
+            idx = arraycopy(COLUMN_SEPARATOR, buf, idx+8);
+            // raw hex data
+            for (int i=0; i< DUMP_LINE_LEN; i++) {
+                if (i>0) {
+                    buf[idx++] = ' ';
+                }
+                if (i >= startDelta && i < endDelta) {
+                    writeHex(buf, idx, data[lineDataOffset+i], 2);
+                } else {
+                    buf[idx] = ' ';
+                    buf[idx+1] = ' ';
+                }
+                idx += 2;
+            }
+            idx = arraycopy(COLUMN_SEPARATOR, buf, idx);
 
-			// interpreted ascii
-			for (int i=0; i< DUMP_LINE_LEN; i++) {
-			    char ch = ' ';
-				if (i >= startDelta && i < endDelta) {
-				    ch = getPrintableChar(data[lineDataOffset+i]);
-				}
-				buf[idx++] = ch;
-			}
+            // interpreted ascii
+            for (int i=0; i< DUMP_LINE_LEN; i++) {
+                char ch = ' ';
+                if (i >= startDelta && i < endDelta) {
+                    ch = getPrintableChar(data[lineDataOffset+i]);
+                }
+                buf[idx++] = ch;
+            }
 
-			idx = arraycopy(NEW_LINE_CHARS, buf, idx);
+            idx = arraycopy(NEW_LINE_CHARS, buf, idx);
 
-			w.write(buf, 0, idx);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            w.write(buf, 0, idx);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private static int arraycopy(char[] in, char[] out, int pos) {
-	    int idx = pos;
-	    for (char c : in) {
-	        out[idx++] = c;
-	    }
-	    return idx;
-	}
+    private static int arraycopy(char[] in, char[] out, int pos) {
+        int idx = pos;
+        for (char c : in) {
+            out[idx++] = c;
+        }
+        return idx;
+    }
 
-	private static char getPrintableChar(byte b) {
-		char ib = (char) (b & 0x00FF);
-		if (ib < 32 || ib > 126) {
-			return '.';
-		}
-		return ib;
-	}
+    private static char getPrintableChar(byte b) {
+        char ib = (char) (b & 0x00FF);
+        if (ib < 32 || ib > 126) {
+            return '.';
+        }
+        return ib;
+    }
 
-	private static void writeHex(char[] buf, int startInBuf, int value, int nDigits) {
-		int acc = value;
-		for(int i=nDigits-1; i>=0; i--) {
-			int digit = acc & 0x0F;
-			buf[startInBuf+i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
-			acc >>>= 4;
-		}
-	}
+    private static void writeHex(char[] buf, int startInBuf, int value, int nDigits) {
+        int acc = value;
+        for(int i=nDigits-1; i>=0; i--) {
+            int digit = acc & 0x0F;
+            buf[startInBuf+i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
+            acc >>>= 4;
+        }
+    }
 }

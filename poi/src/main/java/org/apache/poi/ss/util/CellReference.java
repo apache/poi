@@ -293,7 +293,7 @@ public class CellReference implements GenericRecord {
      * <table>
      *   <caption>Notable cases.</caption>
      *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
-     *   	<th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
+     *      <th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
      *   <tr><td>97-2003</td><td>BIFF8</td><td>"IV" (2^8)</td><td>65536 (2^14)</td></tr>
      *   <tr><td>2007</td><td>BIFF12</td><td>"XFD" (2^14)</td><td>1048576 (2^20)</td></tr>
      * </table>
@@ -483,13 +483,13 @@ public class CellReference implements GenericRecord {
      * Returns a text representation of this cell reference.
      * <p>
      *  Example return values:
-     *	<table>
-     *	  <caption>Example return values</caption>
-     *	  <tr><th>Result</th><th>Comment</th></tr>
-     *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
-     *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
-     *	  <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
-     *	</table>
+     *  <table>
+     *    <caption>Example return values</caption>
+     *    <tr><th>Result</th><th>Comment</th></tr>
+     *    <tr><td>A1</td><td>Cell reference without sheet</td></tr>
+     *    <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
+     *    <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *  </table>
      * @return the text representation of this cell reference as it would appear in a formula.
      */
     public String formatAsString() {
@@ -502,13 +502,13 @@ public class CellReference implements GenericRecord {
      *
      * <p>
      *  Example return values:
-     *	<table>
-     *	  <caption>Example return values</caption>
-     *	  <tr><th>Result</th><th>Comment</th></tr>
-     *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
-     *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
-     *	  <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
-     *	</table>
+     *  <table>
+     *    <caption>Example return values</caption>
+     *    <tr><th>Result</th><th>Comment</th></tr>
+     *    <tr><td>A1</td><td>Cell reference without sheet</td></tr>
+     *    <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
+     *    <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *  </table>
      * @param   includeSheetName If true and there is a sheet name set for this cell reference,
      *                           the reference is prefixed with the sheet name and '!'
      * @return the text representation of this cell reference as it would appear in a formula.

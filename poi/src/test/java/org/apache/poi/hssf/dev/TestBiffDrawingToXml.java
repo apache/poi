@@ -42,10 +42,10 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         return excludes;
     }
 
-	@Override
-	void runOneFile(File pFile) throws Exception {
+    @Override
+    void runOneFile(File pFile) throws Exception {
         try (InputStream wb = new FileInputStream(pFile)) {
             BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[0]);
         }
-	}
+    }
 }

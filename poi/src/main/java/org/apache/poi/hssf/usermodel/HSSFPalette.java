@@ -60,7 +60,7 @@ public final class HSSFPalette {
      * @return the color, or null if the index is not populated
      */
     public HSSFColor getColor(int index) {
-    	return getColor((short)index);
+        return getColor((short)index);
     }
 
     /**
@@ -97,7 +97,7 @@ public final class HSSFPalette {
      *          colors currently defined.
      */
     public HSSFColor findSimilarColor(byte red, byte green, byte blue) {
-    	return findSimilarColor(unsignedInt(red), unsignedInt(green), unsignedInt(blue));
+        return findSimilarColor(unsignedInt(red), unsignedInt(green), unsignedInt(blue));
     }
     /**
      * Finds the closest matching color in the custom palette.  The
@@ -118,8 +118,8 @@ public final class HSSFPalette {
             b = _palette.getColor(++i))
         {
             int colorDistance = Math.abs(red - unsignedInt(b[0])) +
-            	Math.abs(green - unsignedInt(b[1])) +
-            	Math.abs(blue - unsignedInt(b[2]));
+                Math.abs(green - unsignedInt(b[1])) +
+                Math.abs(blue - unsignedInt(b[2]));
             if (colorDistance < minColorDistance)
             {
                 minColorDistance = colorDistance;
@@ -134,7 +134,7 @@ public final class HSSFPalette {
      *  0 and 255, so distance calculations work as expected.
      */
     private int unsignedInt(byte b) {
-    	return 0xFF & b;
+        return 0xFF & b;
     }
 
     /**

@@ -46,7 +46,7 @@ public final class SummaryInformation extends PropertySet {
 
     @Override
     public PropertyIDMap getPropertySetIDMap() {
-    	return PropertyIDMap.getSummaryInformationProperties();
+        return PropertyIDMap.getSummaryInformationProperties();
     }
 
     /**

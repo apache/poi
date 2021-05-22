@@ -27,7 +27,7 @@ public final class RangePtg  extends OperationPtg {
     public static final RangePtg instance = new RangePtg();
 
     private RangePtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

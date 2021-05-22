@@ -28,32 +28,32 @@ import org.junit.jupiter.api.Test;
 final class TestHSSFColor {
     @Test
     void testBasics() {
-		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
-		assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
-	}
+        assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
+        assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
+    }
 
     @Test
-	void testContents() {
-	    short[] triplet = HSSFColorPredefined.YELLOW.getTriplet();
-		assertEquals(3, triplet.length);
-		assertEquals(255, triplet[0]);
-		assertEquals(255, triplet[1]);
-		assertEquals(0, triplet[2]);
+    void testContents() {
+        short[] triplet = HSSFColorPredefined.YELLOW.getTriplet();
+        assertEquals(3, triplet.length);
+        assertEquals(255, triplet[0]);
+        assertEquals(255, triplet[1]);
+        assertEquals(0, triplet[2]);
 
-		assertEquals("FFFF:FFFF:0", HSSFColorPredefined.YELLOW.getHexString());
-	}
+        assertEquals("FFFF:FFFF:0", HSSFColorPredefined.YELLOW.getHexString());
+    }
 
     @Test
-	void testTripletHash() {
-		Map<String, HSSFColor> triplets = HSSFColor.getTripletHash();
+    void testTripletHash() {
+        Map<String, HSSFColor> triplets = HSSFColor.getTripletHash();
 
-		assertEquals(
-				HSSFColorPredefined.MAROON.getColor(),
-				triplets.get(HSSFColorPredefined.MAROON.getHexString())
-		);
-		assertEquals(
-				HSSFColorPredefined.YELLOW.getColor(),
-				triplets.get(HSSFColorPredefined.YELLOW.getHexString())
-		);
-	}
+        assertEquals(
+                HSSFColorPredefined.MAROON.getColor(),
+                triplets.get(HSSFColorPredefined.MAROON.getHexString())
+        );
+        assertEquals(
+                HSSFColorPredefined.YELLOW.getColor(),
+                triplets.get(HSSFColorPredefined.YELLOW.getHexString())
+        );
+    }
 }

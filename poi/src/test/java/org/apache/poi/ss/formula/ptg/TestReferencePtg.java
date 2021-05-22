@@ -77,12 +77,12 @@ final class TestReferencePtg {
     }
 
     private static final byte[] tRefN_data = {
-    	0x2C, 33, 44, 55, 66,
+        0x2C, 33, 44, 55, 66,
     };
 
     @Test
     void testReadWrite_tRefN_bug45091() {
-    	LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(tRefN_data);
+        LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(tRefN_data);
         Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
         Ptg.serializePtgs(ptgs, outData, 0);

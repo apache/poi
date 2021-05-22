@@ -32,35 +32,35 @@ import org.junit.jupiter.api.Test;
 final class TestYearFracCalculator {
 
     @Test
-	void testBasis1() {
-		confirm(md(1999, 1, 1), md(1999, 4, 5), 1, 0.257534247);
-		confirm(md(1999, 4, 1), md(1999, 4, 5), 1, 0.010958904);
-		confirm(md(1999, 4, 1), md(1999, 4, 4), 1, 0.008219178);
-		confirm(md(1999, 4, 2), md(1999, 4, 5), 1, 0.008219178);
-		confirm(md(1999, 3, 31), md(1999, 4, 3), 1, 0.008219178);
-		confirm(md(1999, 4, 5), md(1999, 4, 8), 1, 0.008219178);
-		confirm(md(1999, 4, 4), md(1999, 4, 7), 1, 0.008219178);
-		confirm(md(2000, 2, 5), md(2000, 6, 1), 0, 0.322222222);
-	}
+    void testBasis1() {
+        confirm(md(1999, 1, 1), md(1999, 4, 5), 1, 0.257534247);
+        confirm(md(1999, 4, 1), md(1999, 4, 5), 1, 0.010958904);
+        confirm(md(1999, 4, 1), md(1999, 4, 4), 1, 0.008219178);
+        confirm(md(1999, 4, 2), md(1999, 4, 5), 1, 0.008219178);
+        confirm(md(1999, 3, 31), md(1999, 4, 3), 1, 0.008219178);
+        confirm(md(1999, 4, 5), md(1999, 4, 8), 1, 0.008219178);
+        confirm(md(1999, 4, 4), md(1999, 4, 7), 1, 0.008219178);
+        confirm(md(2000, 2, 5), md(2000, 6, 1), 0, 0.322222222);
+    }
 
-	private void confirm(double startDate, double endDate, int basis, double expectedValue) {
-		double actualValue;
-		try {
-			actualValue = YearFracCalculator.calculate(startDate, endDate, basis);
-		} catch (EvaluationException e) {
-			throw new RuntimeException(e);
-		}
-		double diff = actualValue - expectedValue;
-		if (Math.abs(diff) >  0.000000001) {
-			double hours = diff * 365 * 24;
-			System.out.println(startDate + " " + endDate + " off by " + hours + " hours");
-			assertEquals(expectedValue, actualValue, 0.000000001);
-		}
+    private void confirm(double startDate, double endDate, int basis, double expectedValue) {
+        double actualValue;
+        try {
+            actualValue = YearFracCalculator.calculate(startDate, endDate, basis);
+        } catch (EvaluationException e) {
+            throw new RuntimeException(e);
+        }
+        double diff = actualValue - expectedValue;
+        if (Math.abs(diff) >  0.000000001) {
+            double hours = diff * 365 * 24;
+            System.out.println(startDate + " " + endDate + " off by " + hours + " hours");
+            assertEquals(expectedValue, actualValue, 0.000000001);
+        }
 
-	}
+    }
 
-	private static double md(int year, int month, int day) {
-		Calendar c = LocaleUtil.getLocaleCalendar(year, month-1, day);
-		return DateUtil.getExcelDate(c.getTime());
-	}
+    private static double md(int year, int month, int day) {
+        Calendar c = LocaleUtil.getLocaleCalendar(year, month-1, day);
+        return DateUtil.getExcelDate(c.getTime());
+    }
 }

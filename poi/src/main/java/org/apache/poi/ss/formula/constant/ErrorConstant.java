@@ -30,8 +30,8 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * {@code ErrorEval}.
  */
 public final class ErrorConstant {
-	private static final Logger LOG = LogManager.getLogger(ErrorConstant.class);
-	private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
+    private static final Logger LOG = LogManager.getLogger(ErrorConstant.class);
+    private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
     private static final ErrorConstant DIV_0 = new ErrorConstant(FormulaError.DIV0.getCode());
     private static final ErrorConstant VALUE = new ErrorConstant(FormulaError.VALUE.getCode());
     private static final ErrorConstant REF = new ErrorConstant(FormulaError.REF.getCode());
@@ -39,41 +39,41 @@ public final class ErrorConstant {
     private static final ErrorConstant NUM = new ErrorConstant(FormulaError.NUM.getCode());
     private static final ErrorConstant NA = new ErrorConstant(FormulaError.NA.getCode());
 
-	private final int _errorCode;
+    private final int _errorCode;
 
-	private ErrorConstant(int errorCode) {
-		_errorCode = errorCode;
-	}
+    private ErrorConstant(int errorCode) {
+        _errorCode = errorCode;
+    }
 
-	public int getErrorCode() {
-		return _errorCode;
-	}
+    public int getErrorCode() {
+        return _errorCode;
+    }
 
-	public String getText() {
-		if(FormulaError.isValidCode(_errorCode)) {
-			return FormulaError.forInt(_errorCode).getString();
-		}
-		return "unknown error code (" + _errorCode + ")";
-	}
+    public String getText() {
+        if(FormulaError.isValidCode(_errorCode)) {
+            return FormulaError.forInt(_errorCode).getString();
+        }
+        return "unknown error code (" + _errorCode + ")";
+    }
 
-	public static ErrorConstant valueOf(int errorCode) {
-	    if (FormulaError.isValidCode(errorCode)) {
-    		switch (FormulaError.forInt(errorCode)) {
-    			case NULL:  return NULL;
-    			case DIV0:  return DIV_0;
-    			case VALUE: return VALUE;
-    			case REF:   return REF;
-    			case NAME:  return NAME;
-    			case NUM:   return NUM;
-    			case NA:	return NA;
-    			default:    break;
-    		}
-	    }
-		LOG.atWarn().log("Warning - unexpected error code ({})", box(errorCode));
-		return new ErrorConstant(errorCode);
-	}
+    public static ErrorConstant valueOf(int errorCode) {
+        if (FormulaError.isValidCode(errorCode)) {
+            switch (FormulaError.forInt(errorCode)) {
+                case NULL:  return NULL;
+                case DIV0:  return DIV_0;
+                case VALUE: return VALUE;
+                case REF:   return REF;
+                case NAME:  return NAME;
+                case NUM:   return NUM;
+                case NA:    return NA;
+                default:    break;
+            }
+        }
+        LOG.atWarn().log("Warning - unexpected error code ({})", box(errorCode));
+        return new ErrorConstant(errorCode);
+    }
 
-	public String toString() {
-		return getClass().getName() + " [" + getText() + "]";
-	}
+    public String toString() {
+        return getClass().getName() + " [" + getText() + "]";
+    }
 }

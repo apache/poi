@@ -36,62 +36,62 @@ import org.junit.jupiter.api.Test;
 
 final class TestFormulaRecordAggregate {
 
-	@Test
-	void testBasic() {
-		FormulaRecord f = new FormulaRecord();
-		f.setCachedResultTypeString();
-		StringRecord s = new StringRecord();
-		s.setString("abc");
-		FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.createEmpty());
-		assertEquals("abc", fagg.getStringValue());
-		assertFalse(fagg.isPartOfArrayFormula());
-	}
+    @Test
+    void testBasic() {
+        FormulaRecord f = new FormulaRecord();
+        f.setCachedResultTypeString();
+        StringRecord s = new StringRecord();
+        s.setString("abc");
+        FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.createEmpty());
+        assertEquals("abc", fagg.getStringValue());
+        assertFalse(fagg.isPartOfArrayFormula());
+    }
 
-	/**
-	 * Sometimes a {@link StringRecord} appears after a {@link FormulaRecord} even though the
-	 * formula has evaluated to a text value.  This might be more likely to occur when the formula
-	 * <i>can</i> evaluate to a text value.<br>
-	 * Bug 46213 attachment 22874 has such an extra {@link StringRecord} at stream offset 0x5765.
-	 * This file seems to open in Excel (2007) with no trouble.  When it is re-saved, Excel omits
-	 * the extra record.  POI should do the same.
-	 */
-	@Test
-	void testExtraStringRecord_bug46213() {
-		FormulaRecord fr = new FormulaRecord();
-		fr.setValue(2.0);
-		StringRecord sr = new StringRecord();
-		sr.setString("NA");
-		SharedValueManager svm = SharedValueManager.createEmpty();
-		// bug 46213 -> String record was  supplied but formula record flag is not  set
-		FormulaRecordAggregate fra = new FormulaRecordAggregate(fr, sr, svm);
-		List<org.apache.poi.hssf.record.Record> vraRecs = new ArrayList<>();
-		fra.visitContainedRecords(vraRecs::add);
-		assertEquals(1, vraRecs.size());
-		assertEquals(fr, vraRecs.get(0));
-	}
+    /**
+     * Sometimes a {@link StringRecord} appears after a {@link FormulaRecord} even though the
+     * formula has evaluated to a text value.  This might be more likely to occur when the formula
+     * <i>can</i> evaluate to a text value.<br>
+     * Bug 46213 attachment 22874 has such an extra {@link StringRecord} at stream offset 0x5765.
+     * This file seems to open in Excel (2007) with no trouble.  When it is re-saved, Excel omits
+     * the extra record.  POI should do the same.
+     */
+    @Test
+    void testExtraStringRecord_bug46213() {
+        FormulaRecord fr = new FormulaRecord();
+        fr.setValue(2.0);
+        StringRecord sr = new StringRecord();
+        sr.setString("NA");
+        SharedValueManager svm = SharedValueManager.createEmpty();
+        // bug 46213 -> String record was  supplied but formula record flag is not  set
+        FormulaRecordAggregate fra = new FormulaRecordAggregate(fr, sr, svm);
+        List<org.apache.poi.hssf.record.Record> vraRecs = new ArrayList<>();
+        fra.visitContainedRecords(vraRecs::add);
+        assertEquals(1, vraRecs.size());
+        assertEquals(fr, vraRecs.get(0));
+    }
 
-	@Test
-	void testArrayFormulas() {
-		int rownum = 4;
-		int colnum = 4;
+    @Test
+    void testArrayFormulas() {
+        int rownum = 4;
+        int colnum = 4;
 
-		FormulaRecord fr = new FormulaRecord();
-		fr.setRow(rownum);
-		fr.setColumn((short)colnum);
+        FormulaRecord fr = new FormulaRecord();
+        fr.setRow(rownum);
+        fr.setColumn((short)colnum);
 
-		FormulaRecordAggregate agg = new FormulaRecordAggregate(fr, null, SharedValueManager.createEmpty());
-		Ptg[] ptgsForCell = {new ExpPtg(rownum, colnum)};
-		agg.setParsedExpression(ptgsForCell);
+        FormulaRecordAggregate agg = new FormulaRecordAggregate(fr, null, SharedValueManager.createEmpty());
+        Ptg[] ptgsForCell = {new ExpPtg(rownum, colnum)};
+        agg.setParsedExpression(ptgsForCell);
 
-		String formula = "SUM(A1:A3*B1:B3)";
-		Ptg[] ptgs = HSSFFormulaParser.parse(formula, null, FormulaType.ARRAY, 0);
-		agg.setArrayFormula(new CellRangeAddress(rownum, rownum, colnum, colnum), ptgs);
+        String formula = "SUM(A1:A3*B1:B3)";
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, null, FormulaType.ARRAY, 0);
+        agg.setArrayFormula(new CellRangeAddress(rownum, rownum, colnum, colnum), ptgs);
 
-		assertTrue(agg.isPartOfArrayFormula());
-		assertEquals("E5", agg.getArrayFormulaRange().formatAsString());
-		Ptg[] ptg = agg.getFormulaTokens();
-		String fmlaSer = FormulaRenderer.toFormulaString(null, ptg);
-		assertEquals(formula, fmlaSer);
+        assertTrue(agg.isPartOfArrayFormula());
+        assertEquals("E5", agg.getArrayFormulaRange().formatAsString());
+        Ptg[] ptg = agg.getFormulaTokens();
+        String fmlaSer = FormulaRenderer.toFormulaString(null, ptg);
+        assertEquals(formula, fmlaSer);
 
         agg.removeArrayFormula(rownum, colnum);
         assertFalse(agg.isPartOfArrayFormula());

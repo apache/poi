@@ -388,7 +388,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     @Override
     public void setPictureData(byte[] pictureData) {
-    	super.setPictureData(pictureData);
+        super.setPictureData(pictureData);
         setUncompressedSize(pictureData.length);
 
         // info of chicago project:
@@ -396,12 +396,12 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         // not sure what to do, when lookup tables exceed 32k ...
 
         try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
-	        try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+            try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
                 dos.write(pictureData);
             }
-	        raw_pictureData = bos.toByteArray();
+            raw_pictureData = bos.toByteArray();
         } catch (IOException e) {
-        	throw new RuntimeException("Can't compress metafile picture data", e);
+            throw new RuntimeException("Can't compress metafile picture data", e);
         }
 
         setCompressedSize(raw_pictureData.length);

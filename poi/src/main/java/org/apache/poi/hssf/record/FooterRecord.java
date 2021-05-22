@@ -21,31 +21,31 @@ package org.apache.poi.hssf.record;
  * Specifies the footer for a sheet
  */
 public final class FooterRecord extends HeaderFooterBase {
-	public static final short sid = 0x0015;
+    public static final short sid = 0x0015;
 
-	public FooterRecord(String text) {
-		super(text);
-	}
+    public FooterRecord(String text) {
+        super(text);
+    }
 
-	public FooterRecord(FooterRecord other) {
-		super(other);
-	}
+    public FooterRecord(FooterRecord other) {
+        super(other);
+    }
 
-	public FooterRecord(RecordInputStream in) {
-		super(in);
-	}
+    public FooterRecord(RecordInputStream in) {
+        super(in);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public FooterRecord copy() {
-		return new FooterRecord(this);
-	}
+    @Override
+    public FooterRecord copy() {
+        return new FooterRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.FOOTER;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FOOTER;
+    }
 }

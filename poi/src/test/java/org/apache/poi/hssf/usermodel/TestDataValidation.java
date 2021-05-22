@@ -58,67 +58,67 @@ final class TestDataValidation extends BaseTestDataValidation {
     }
 
 
-	void assertDataValidation(Workbook wb) {
+    void assertDataValidation(Workbook wb) {
 
         byte[] generatedContent;
-		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(22000)) {
-			wb.write(baos);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(22000)) {
+            wb.write(baos);
             generatedContent = baos.toByteArray();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		boolean isSame;
-//		if (false) {
-//			// TODO - add proof spreadsheet and compare
-//			InputStream proofStream = HSSFTestDataSamples.openSampleFileStream("TestDataValidation.xls");
-//			isSame = compareStreams(proofStream, generatedContent);
-//		}
-		isSame = true;
+        boolean isSame;
+//      if (false) {
+//          // TODO - add proof spreadsheet and compare
+//          InputStream proofStream = HSSFTestDataSamples.openSampleFileStream("TestDataValidation.xls");
+//          isSame = compareStreams(proofStream, generatedContent);
+//      }
+        isSame = true;
 
-		if (isSame) {
-			return;
-		}
-		File tempDir = new File(System.getProperty("java.io.tmpdir"));
-		File generatedFile = new File(tempDir, "GeneratedTestDataValidation.xls");
-		try (FileOutputStream fileOut = new FileOutputStream(generatedFile)) {
-			fileOut.write(generatedContent);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        if (isSame) {
+            return;
+        }
+        File tempDir = new File(System.getProperty("java.io.tmpdir"));
+        File generatedFile = new File(tempDir, "GeneratedTestDataValidation.xls");
+        try (FileOutputStream fileOut = new FileOutputStream(generatedFile)) {
+            fileOut.write(generatedContent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		PrintStream ps = System.out;
+        PrintStream ps = System.out;
 
-		ps.println("This test case has failed because the generated file differs from proof copy '"
-				); // TODO+ proofFile.getAbsolutePath() + "'.");
-		ps.println("The cause is usually a change to this test, or some common spreadsheet generation code.  "
-				+ "The developer has to decide whether the changes were wanted or unwanted.");
-		ps.println("If the changes to the generated version were unwanted, "
-				+ "make the fix elsewhere (do not modify this test or the proof spreadsheet to get the test working).");
-		ps.println("If the changes were wanted, make sure to open the newly generated file in Excel "
-				+ "and verify it manually.  The new proof file should be submitted after it is verified to be correct.");
-		ps.println();
-		ps.println("One other possible (but less likely) cause of a failed test is a problem in the "
-				+ "comparison logic used here. Perhaps some extra file regions need to be ignored.");
-		ps.println("The generated file has been saved to '" + generatedFile.getAbsolutePath() + "' for manual inspection.");
+        ps.println("This test case has failed because the generated file differs from proof copy '"
+                ); // TODO+ proofFile.getAbsolutePath() + "'.");
+        ps.println("The cause is usually a change to this test, or some common spreadsheet generation code.  "
+                + "The developer has to decide whether the changes were wanted or unwanted.");
+        ps.println("If the changes to the generated version were unwanted, "
+                + "make the fix elsewhere (do not modify this test or the proof spreadsheet to get the test working).");
+        ps.println("If the changes were wanted, make sure to open the newly generated file in Excel "
+                + "and verify it manually.  The new proof file should be submitted after it is verified to be correct.");
+        ps.println();
+        ps.println("One other possible (but less likely) cause of a failed test is a problem in the "
+                + "comparison logic used here. Perhaps some extra file regions need to be ignored.");
+        ps.println("The generated file has been saved to '" + generatedFile.getAbsolutePath() + "' for manual inspection.");
 
-		fail("Generated file differs from proof copy.  See sysout comments for details on how to fix.");
-
-	}
-
-    /* package */ static void setCellValue(HSSFCell cell, String text) {
-	  cell.setCellValue(new HSSFRichTextString(text));
+        fail("Generated file differs from proof copy.  See sysout comments for details on how to fix.");
 
     }
 
-	@Test
+    /* package */ static void setCellValue(HSSFCell cell, String text) {
+      cell.setCellValue(new HSSFRichTextString(text));
+
+    }
+
+    @Test
     void testAddToExistingSheet() throws Exception {
 
-		// dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no
-		// DataValidations.  It's important that the example has one SHEETPROTECTION record.
-		// Such a workbook can be created in Excel (2007) by adding datavalidation for one cell
-		// and then deleting the row that contains the cell.
-		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("dvEmpty.xls")) {
+        // dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no
+        // DataValidations.  It's important that the example has one SHEETPROTECTION record.
+        // Such a workbook can be created in Excel (2007) by adding datavalidation for one cell
+        // and then deleting the row that contains the cell.
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("dvEmpty.xls")) {
             int dvRow = 0;
             Sheet sheet = wb.getSheetAt(0);
             DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
@@ -138,19 +138,19 @@ final class TestDataValidation extends BaseTestDataValidation {
 
             byte[] wbData = baos.toByteArray();
 
-//		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
+//      if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
 //
-//			ERFListener erfListener = null; // new MyERFListener();
-//			EventRecordFactory erf = new EventRecordFactory(erfListener, null);
-//			try {
-//				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-//				erf.processRecords(fs.createDocumentInputStream("Workbook"));
-//			} catch (RecordFormatException e) {
-//				throw new RuntimeException(e);
-//			} catch (IOException e) {
-//				throw new RuntimeException(e);
-//			}
-//		}
+//          ERFListener erfListener = null; // new MyERFListener();
+//          EventRecordFactory erf = new EventRecordFactory(erfListener, null);
+//          try {
+//              POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+//              erf.processRecords(fs.createDocumentInputStream("Workbook"));
+//          } catch (RecordFormatException e) {
+//              throw new RuntimeException(e);
+//          } catch (IOException e) {
+//              throw new RuntimeException(e);
+//          }
+//      }
             // else verify record ordering by navigating the raw bytes
 
             byte[] dvHeaderRecStart = {(byte) 0xB2, 0x01, 0x12, 0x00,};
@@ -166,29 +166,29 @@ final class TestDataValidation extends BaseTestDataValidation {
             assertNotEquals(0x0867, nextSid, "Identified bug 45519");
             assertEquals(DVRecord.sid, nextSid);
         }
-	}
+    }
 
-	private int findIndex(byte[] largeData, byte[] searchPattern) {
-		byte firstByte = searchPattern[0];
-		for (int i = 0; i < largeData.length; i++) {
-			if(largeData[i] != firstByte) {
-				continue;
-			}
-			boolean match = true;
-			for (int j = 1; j < searchPattern.length; j++) {
-				if(searchPattern[j] != largeData[i+j]) {
-					match = false;
-					break;
-				}
-			}
-			if (match) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    private int findIndex(byte[] largeData, byte[] searchPattern) {
+        byte firstByte = searchPattern[0];
+        for (int i = 0; i < largeData.length; i++) {
+            if(largeData[i] != firstByte) {
+                continue;
+            }
+            boolean match = true;
+            for (int j = 1; j < searchPattern.length; j++) {
+                if(searchPattern[j] != largeData[i+j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-	@Test
+    @Test
     void testGetDataValidationsAny() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -233,7 +233,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsIntegerFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -260,7 +260,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsIntegerValue() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -287,7 +287,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsDecimal() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -314,7 +314,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsDate() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -341,7 +341,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsListExplicit() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -375,7 +375,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsListFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
@@ -404,7 +404,7 @@ final class TestDataValidation extends BaseTestDataValidation {
         }
     }
 
-	@Test
+    @Test
     void testGetDataValidationsFormula() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();

@@ -115,7 +115,7 @@ public final class FileSharingRecord extends StandardRecord {
         out.writeShort(getPassword());
         out.writeShort(field_3_username_value.length());
         if(field_3_username_value.length() > 0) {
-        	out.writeByte(field_3_username_unicode_options);
+            out.writeByte(field_3_username_unicode_options);
             StringUtil.putCompressedUnicode(getUsername(), out);
         }
     }

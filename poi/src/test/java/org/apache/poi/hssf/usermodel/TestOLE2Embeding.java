@@ -59,7 +59,7 @@ final class TestOLE2Embeding {
 
     @Test
     void testReallyEmbedSomething() throws Exception {
-    	try (HSSFWorkbook wb1 = new HSSFWorkbook();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook();
              POIFSFileSystem pptPoifs = getSamplePPT();
              POIFSFileSystem xlsPoifs = getSampleXLS()) {
             HSSFSheet sheet = wb1.createSheet();
@@ -126,10 +126,10 @@ final class TestOLE2Embeding {
     }
 
     static POIFSFileSystem getSamplePPT() throws IOException {
-    	// scratchpad classes are not available, so we use something pre-cooked
-    	InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("with_textbox.ppt");
-    	POIFSFileSystem poifs = new POIFSFileSystem(is);
-    	is.close();
+        // scratchpad classes are not available, so we use something pre-cooked
+        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("with_textbox.ppt");
+        POIFSFileSystem poifs = new POIFSFileSystem(is);
+        is.close();
 
         return poifs;
     }

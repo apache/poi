@@ -26,25 +26,25 @@ import org.junit.jupiter.api.parallel.Resources;
 
 @ResourceLock(Resources.SYSTEM_OUT)
 class TestRecordLister extends BaseTestIteratingXLS {
-	@Override
-	void runOneFile(File fileIn) throws IOException {
-		PrintStream save = System.out;
-		try {
-			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new NullPrintStream());
+    @Override
+    void runOneFile(File fileIn) throws IOException {
+        PrintStream save = System.out;
+        try {
+            // redirect standard out during the test to avoid spamming the console with output
+            System.setOut(new NullPrintStream());
 
-			RecordLister viewer = new RecordLister();
+            RecordLister viewer = new RecordLister();
             viewer.setFile(fileIn.getAbsolutePath());
             viewer.run();
-		} finally {
-			System.setOut(save);
-		}
-	}
+        } finally {
+            System.setOut(save);
+        }
+    }
 
-	//@Test
-	void testFile() throws IOException {
-	    RecordLister viewer = new RecordLister();
+    //@Test
+    void testFile() throws IOException {
+        RecordLister viewer = new RecordLister();
         viewer.setFile(new File("test-data/spreadsheet/testEXCEL_95.xls").getAbsolutePath());
         viewer.run();
-	}
+    }
 }

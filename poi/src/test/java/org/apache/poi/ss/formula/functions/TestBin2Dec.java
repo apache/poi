@@ -35,15 +35,15 @@ import org.junit.jupiter.api.Test;
 final class TestBin2Dec {
 
     private static ValueEval invokeValue(String number1) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
-		return new Bin2Dec().evaluate(args, -1, -1);
-	}
+        ValueEval[] args = new ValueEval[] { new StringEval(number1) };
+        return new Bin2Dec().evaluate(args, -1, -1);
+    }
 
     private static void confirmValue(String msg, String number1, String expected) {
-		ValueEval result = invokeValue(number1);
-		assertEquals(NumberEval.class, result.getClass(), "Had: " + result);
-		assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
-	}
+        ValueEval result = invokeValue(number1);
+        assertEquals(NumberEval.class, result.getClass(), "Had: " + result);
+        assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
+    }
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
@@ -52,12 +52,12 @@ final class TestBin2Dec {
     }
 
     @Test
-	void testBasic() {
-		confirmValue("Converts binary '00101' to decimal (5)", "00101", "5");
-		confirmValue("Converts binary '1111111111' to decimal (-1)", "1111111111", "-1");
-		confirmValue("Converts binary '1111111110' to decimal (-2)", "1111111110", "-2");
+    void testBasic() {
+        confirmValue("Converts binary '00101' to decimal (5)", "00101", "5");
+        confirmValue("Converts binary '1111111111' to decimal (-1)", "1111111111", "-1");
+        confirmValue("Converts binary '1111111110' to decimal (-2)", "1111111110", "-2");
         confirmValue("Converts binary '0111111111' to decimal (511)", "0111111111", "511");
-	}
+    }
 
     @Test
     void testErrors() {

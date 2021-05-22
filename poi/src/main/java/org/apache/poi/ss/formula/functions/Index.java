@@ -44,129 +44,129 @@ import org.apache.poi.ss.formula.TwoDEval;
  */
 public final class Index implements Function2Arg, Function3Arg, Function4Arg, ArrayMode {
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-		TwoDEval reference = convertFirstArg(arg0);
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+        TwoDEval reference = convertFirstArg(arg0);
 
-		int columnIx = 0;
-		try {
-			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+        int columnIx = 0;
+        try {
+            int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
 
-			if (!reference.isColumn()) {
-				if (!reference.isRow()) {
-					// always an error with 2-D area refs
-					// Note - the type of error changes if the pRowArg is negative
-					return ErrorEval.REF_INVALID;
-				}
-				// When the two-arg version of INDEX() has been invoked and the reference
-				// is a single column ref, the row arg seems to get used as the column index
-				columnIx = rowIx;
-				rowIx = 0;
-			}
+            if (!reference.isColumn()) {
+                if (!reference.isRow()) {
+                    // always an error with 2-D area refs
+                    // Note - the type of error changes if the pRowArg is negative
+                    return ErrorEval.REF_INVALID;
+                }
+                // When the two-arg version of INDEX() has been invoked and the reference
+                // is a single column ref, the row arg seems to get used as the column index
+                columnIx = rowIx;
+                rowIx = 0;
+            }
 
-			return getValueFromArea(reference, rowIx, columnIx);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2) {
-		TwoDEval reference = convertFirstArg(arg0);
+            return getValueFromArea(reference, rowIx, columnIx);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2) {
+        TwoDEval reference = convertFirstArg(arg0);
 
-		try {
-			int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
-			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
-			return getValueFromArea(reference, rowIx, columnIx);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
-		throw new RuntimeException("Incomplete code"
-				+ " - don't know how to support the 'area_num' parameter yet)");
-		// Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
-		// In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
-		// Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
-		// The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
-	}
+        try {
+            int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
+            int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+            return getValueFromArea(reference, rowIx, columnIx);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2, ValueEval arg3) {
+        throw new RuntimeException("Incomplete code"
+                + " - don't know how to support the 'area_num' parameter yet)");
+        // Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
+        // In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
+        // Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
+        // The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
+    }
 
-	private static TwoDEval convertFirstArg(ValueEval arg0) {
+    private static TwoDEval convertFirstArg(ValueEval arg0) {
         if (arg0 instanceof RefEval) {
-			// convert to area ref for simpler code in getValueFromArea()
-			return ((RefEval) arg0).offset(0, 0, 0, 0);
-		}
-		if((arg0 instanceof TwoDEval)) {
-			return (TwoDEval) arg0;
-		}
-		// else the other variation of this function takes an array as the first argument
-		// it seems like interface 'ArrayEval' does not even exist yet
-		throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
-				+ arg0.getClass().getName() + ")");
+            // convert to area ref for simpler code in getValueFromArea()
+            return ((RefEval) arg0).offset(0, 0, 0, 0);
+        }
+        if((arg0 instanceof TwoDEval)) {
+            return (TwoDEval) arg0;
+        }
+        // else the other variation of this function takes an array as the first argument
+        // it seems like interface 'ArrayEval' does not even exist yet
+        throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
+                + arg0.getClass().getName() + ")");
 
-	}
+    }
 
-	@Override
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		switch (args.length) {
-			case 2:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
-			case 3:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
-			case 4:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
-		}
-		return ErrorEval.VALUE_INVALID;
-	}
+    @Override
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        switch (args.length) {
+            case 2:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+            case 3:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+            case 4:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
+        }
+        return ErrorEval.VALUE_INVALID;
+    }
 
-	private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)
-			throws EvaluationException {
-		assert pRowIx >= 0;
-		assert pColumnIx >= 0;
+    private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)
+            throws EvaluationException {
+        assert pRowIx >= 0;
+        assert pColumnIx >= 0;
 
-		TwoDEval result = ae;
+        TwoDEval result = ae;
 
-		if (pRowIx != 0) {
-			// Slightly irregular logic for bounds checking errors
-			if (pRowIx > ae.getHeight()) {
-				// high bounds check fail gives #REF! if arg was explicitly passed
-				throw new EvaluationException(ErrorEval.REF_INVALID);
-			}
-			result = result.getRow(pRowIx-1);
-		}
+        if (pRowIx != 0) {
+            // Slightly irregular logic for bounds checking errors
+            if (pRowIx > ae.getHeight()) {
+                // high bounds check fail gives #REF! if arg was explicitly passed
+                throw new EvaluationException(ErrorEval.REF_INVALID);
+            }
+            result = result.getRow(pRowIx-1);
+        }
 
-		if (pColumnIx != 0) {
-			// Slightly irregular logic for bounds checking errors
-			if (pColumnIx > ae.getWidth()) {
-				// high bounds check fail gives #REF! if arg was explicitly passed
-				throw new EvaluationException(ErrorEval.REF_INVALID);
-			}
-			result = result.getColumn(pColumnIx-1);
-		}
-		return result;
-	}
+        if (pColumnIx != 0) {
+            // Slightly irregular logic for bounds checking errors
+            if (pColumnIx > ae.getWidth()) {
+                // high bounds check fail gives #REF! if arg was explicitly passed
+                throw new EvaluationException(ErrorEval.REF_INVALID);
+            }
+            result = result.getColumn(pColumnIx-1);
+        }
+        return result;
+    }
 
 
-	/**
-	 * @param arg a 1-based index.
-	 * @return the resolved 1-based index. Zero if the arg was missing or blank
-	 * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
-	 */
-	private static int resolveIndexArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+    /**
+     * @param arg a 1-based index.
+     * @return the resolved 1-based index. Zero if the arg was missing or blank
+     * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
+     */
+    private static int resolveIndexArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 
-		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		if (ev == MissingArgEval.instance) {
-			return 0;
-		}
-		if (ev == BlankEval.instance) {
-			return 0;
-		}
-		int result = OperandResolver.coerceValueToInt(ev);
-		if (result < 0) {
-			throw new EvaluationException(ErrorEval.VALUE_INVALID);
-		}
-		return result;
-	}
+        ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+        if (ev == MissingArgEval.instance) {
+            return 0;
+        }
+        if (ev == BlankEval.instance) {
+            return 0;
+        }
+        int result = OperandResolver.coerceValueToInt(ev);
+        if (result < 0) {
+            throw new EvaluationException(ErrorEval.VALUE_INVALID);
+        }
+        return result;
+    }
 }

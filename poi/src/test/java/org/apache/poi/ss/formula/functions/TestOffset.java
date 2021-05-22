@@ -39,67 +39,67 @@ import org.junit.jupiter.params.provider.CsvSource;
  */
 final class TestOffset {
 
-	/**
-	 * Excel's double to int conversion (for function 'OFFSET()') behaves more like Math.floor().
-	 * Note - negative values are not symmetrical
-	 * Fractional values are silently truncated.
-	 * Truncation is toward negative infinity.
-	 */
-	@ParameterizedTest
-	@CsvSource({
-		"100.09, 100", "100.01, 100", "100.00, 100", "99.99, 99", "+2.01, +2",
-		"+2.00, +2", "+1.99, +1", "+1.01, +1", "+1.00, +1", "+0.99,  0",
-		"+0.01,  0", "0.00,  0","-0.01, -1", "-0.99, -1", "-1.00, -1",
-		"-1.01, -2", "-1.99, -2", "-2.00, -2", "-2.01, -3"
-	})
-	void testDoubleConversion(double doubleVal, int expected) throws EvaluationException {
-		assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
-	}
+    /**
+     * Excel's double to int conversion (for function 'OFFSET()') behaves more like Math.floor().
+     * Note - negative values are not symmetrical
+     * Fractional values are silently truncated.
+     * Truncation is toward negative infinity.
+     */
+    @ParameterizedTest
+    @CsvSource({
+        "100.09, 100", "100.01, 100", "100.00, 100", "99.99, 99", "+2.01, +2",
+        "+2.00, +2", "+1.99, +1", "+1.01, +1", "+1.00, +1", "+0.99,  0",
+        "+0.01,  0", "0.00,  0","-0.01, -1", "-0.99, -1", "-1.00, -1",
+        "-1.01, -2", "-1.99, -2", "-2.00, -2", "-2.01, -3"
+    })
+    void testDoubleConversion(double doubleVal, int expected) throws EvaluationException {
+        assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
+    }
 
-	@Test
-	void testLinearOffsetRange() {
-		LinearOffsetRange lor;
+    @Test
+    void testLinearOffsetRange() {
+        LinearOffsetRange lor;
 
-		lor = new LinearOffsetRange(3, 2);
-		assertEquals(3, lor.getFirstIndex());
-		assertEquals(4, lor.getLastIndex());
-		lor = lor.normaliseAndTranslate(0); // expected no change
-		assertEquals(3, lor.getFirstIndex());
-		assertEquals(4, lor.getLastIndex());
+        lor = new LinearOffsetRange(3, 2);
+        assertEquals(3, lor.getFirstIndex());
+        assertEquals(4, lor.getLastIndex());
+        lor = lor.normaliseAndTranslate(0); // expected no change
+        assertEquals(3, lor.getFirstIndex());
+        assertEquals(4, lor.getLastIndex());
 
-		lor = lor.normaliseAndTranslate(5);
-		assertEquals(8, lor.getFirstIndex());
-		assertEquals(9, lor.getLastIndex());
+        lor = lor.normaliseAndTranslate(5);
+        assertEquals(8, lor.getFirstIndex());
+        assertEquals(9, lor.getLastIndex());
 
-		// negative length
+        // negative length
 
-		lor = new LinearOffsetRange(6, -4).normaliseAndTranslate(0);
-		assertEquals(3, lor.getFirstIndex());
-		assertEquals(6, lor.getLastIndex());
+        lor = new LinearOffsetRange(6, -4).normaliseAndTranslate(0);
+        assertEquals(3, lor.getFirstIndex());
+        assertEquals(6, lor.getLastIndex());
 
 
-		// bounds checking
-		lor = new LinearOffsetRange(0, 100);
-		assertFalse(lor.isOutOfBounds(0, 16383));
-		lor = lor.normaliseAndTranslate(16300);
-		assertTrue(lor.isOutOfBounds(0, 16383));
-		assertFalse(lor.isOutOfBounds(0, 65535));
-	}
+        // bounds checking
+        lor = new LinearOffsetRange(0, 100);
+        assertFalse(lor.isOutOfBounds(0, 16383));
+        lor = lor.normaliseAndTranslate(16300);
+        assertTrue(lor.isOutOfBounds(0, 16383));
+        assertFalse(lor.isOutOfBounds(0, 65535));
+    }
 
-	@Test
-	void testOffsetWithEmpty23Arguments() throws IOException {
-		try (Workbook workbook = new HSSFWorkbook()) {
-			Cell cell = workbook.createSheet().createRow(0).createCell(0);
-			cell.setCellFormula("OFFSET(B1,,)");
+    @Test
+    void testOffsetWithEmpty23Arguments() throws IOException {
+        try (Workbook workbook = new HSSFWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("OFFSET(B1,,)");
 
-			String value = "EXPECTED_VALUE";
-			Cell valueCell = cell.getRow().createCell(1);
-			valueCell.setCellValue(value);
+            String value = "EXPECTED_VALUE";
+            Cell valueCell = cell.getRow().createCell(1);
+            valueCell.setCellValue(value);
 
-			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-			assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
-			assertEquals(value, cell.getStringCellValue());
-		}
-	}
+            assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+            assertEquals(value, cell.getStringCellValue());
+        }
+    }
 }

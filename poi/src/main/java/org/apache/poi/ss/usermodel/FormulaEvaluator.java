@@ -36,17 +36,17 @@ public interface FormulaEvaluator {
      * of the evaluate~ methods of this class
      */
     void clearAllCachedResultValues();
-	/**
-	 * Should be called to tell the cell value cache that the specified (value or formula) cell
-	 * has changed.
-	 * Failure to call this method after changing cell values will cause incorrect behaviour
-	 * of the evaluate~ methods of this class
-	 */
+    /**
+     * Should be called to tell the cell value cache that the specified (value or formula) cell
+     * has changed.
+     * Failure to call this method after changing cell values will cause incorrect behaviour
+     * of the evaluate~ methods of this class
+     */
     void notifySetFormula(Cell cell);
-	/**
-	 * Should be called to tell the cell value cache that the specified cell has just become a
-	 * formula cell, or the formula text has changed
-	 */
+    /**
+     * Should be called to tell the cell value cache that the specified cell has just become a
+     * formula cell, or the formula text has changed
+     */
     void notifyDeleteCell(Cell cell);
 
     /**

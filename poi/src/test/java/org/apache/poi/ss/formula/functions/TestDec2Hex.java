@@ -37,10 +37,10 @@ import org.junit.jupiter.api.Test;
  */
 final class TestDec2Hex {
 
-	private static ValueEval invokeValue(String number1, String number2) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
-		return new Dec2Hex().evaluate(args, -1, -1);
-	}
+    private static ValueEval invokeValue(String number1, String number2) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
+        return new Dec2Hex().evaluate(args, -1, -1);
+    }
 
     private static ValueEval invokeBack(String number1) {
         ValueEval[] args = new ValueEval[] { new StringEval(number1) };
@@ -48,21 +48,21 @@ final class TestDec2Hex {
     }
 
     private static ValueEval invokeValue(String number1) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1), };
-		return new Dec2Hex().evaluate(args, -1, -1);
-	}
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), };
+        return new Dec2Hex().evaluate(args, -1, -1);
+    }
 
-	private static void confirmValue(String msg, String number1, String number2, String expected) {
-		ValueEval result = invokeValue(number1, number2);
-		assertEquals(StringEval.class, result.getClass());
-		assertEquals(expected, ((StringEval) result).getStringValue(), msg);
-	}
+    private static void confirmValue(String msg, String number1, String number2, String expected) {
+        ValueEval result = invokeValue(number1, number2);
+        assertEquals(StringEval.class, result.getClass());
+        assertEquals(expected, ((StringEval) result).getStringValue(), msg);
+    }
 
     private static void confirmValue(String msg, String number1, String expected) {
-		ValueEval result = invokeValue(number1);
-		assertEquals(StringEval.class, result.getClass());
-		assertEquals(expected, ((StringEval) result).getStringValue(), msg);
-	}
+        ValueEval result = invokeValue(number1);
+        assertEquals(StringEval.class, result.getClass());
+        assertEquals(expected, ((StringEval) result).getStringValue(), msg);
+    }
 
     private static void confirmValueError(String msg, String number1, String number2, ErrorEval numError) {
         ValueEval result = invokeValue(number1, number2);
@@ -71,19 +71,19 @@ final class TestDec2Hex {
     }
 
     @Test
-	void testBasic() {
-		confirmValue("Converts decimal 100 to hexadecimal with 0 characters (64)", "100","0", "64");
-		confirmValue("Converts decimal 100 to hexadecimal with 4 characters (0064)", "100","4", "0064");
-		confirmValue("Converts decimal 100 to hexadecimal with 5 characters (0064)", "100","5", "00064");
-		confirmValue("Converts decimal 100 to hexadecimal with 10 (default) characters", "100","10", "0000000064");
-		confirmValue("If argument places contains a decimal value, dec2hex ignores the numbers to the right side of the decimal point.", "100","10.0", "0000000064");
+    void testBasic() {
+        confirmValue("Converts decimal 100 to hexadecimal with 0 characters (64)", "100","0", "64");
+        confirmValue("Converts decimal 100 to hexadecimal with 4 characters (0064)", "100","4", "0064");
+        confirmValue("Converts decimal 100 to hexadecimal with 5 characters (0064)", "100","5", "00064");
+        confirmValue("Converts decimal 100 to hexadecimal with 10 (default) characters", "100","10", "0000000064");
+        confirmValue("If argument places contains a decimal value, dec2hex ignores the numbers to the right side of the decimal point.", "100","10.0", "0000000064");
 
-		confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
-		confirmValue("places is optionnal","-54", "FFFFFFFFCA");
+        confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
+        confirmValue("places is optionnal","-54", "FFFFFFFFCA");
 
-		confirmValue("Converts normal decimal number to hexadecimal", "100", "64");
+        confirmValue("Converts normal decimal number to hexadecimal", "100", "64");
 
-		String maxInt = Integer.toString(Integer.MAX_VALUE);
+        String maxInt = Integer.toString(Integer.MAX_VALUE);
         assertEquals("2147483647", maxInt);
         confirmValue("Converts INT_MAX to hexadecimal", maxInt, "7FFFFFFF");
 
@@ -102,7 +102,7 @@ final class TestDec2Hex {
         String minLong = Long.toString(-549755813888L);
         assertEquals("-549755813888", minLong);
         confirmValue("Converts the min supported value to hexadecimal", minLong, "FF80000000");
-	}
+    }
 
     @Test
     void testErrors() {

@@ -42,28 +42,28 @@ import org.apache.poi.util.LittleEndianOutputStream;
  * Indicates that the record after this record are encrypted.
  */
 public final class FilePassRecord extends StandardRecord {
-	public static final short sid = 0x002F;
+    public static final short sid = 0x002F;
     private static final int ENCRYPTION_XOR = 0;
     private static final int ENCRYPTION_OTHER = 1;
 
-	private final int encryptionType;
+    private final int encryptionType;
     private final EncryptionInfo encryptionInfo;
 
-	private FilePassRecord(FilePassRecord other) {
+    private FilePassRecord(FilePassRecord other) {
         super(other);
-	    encryptionType = other.encryptionType;
+        encryptionType = other.encryptionType;
         encryptionInfo = other.encryptionInfo.copy();
-	}
+    }
 
-	public FilePassRecord(EncryptionMode encryptionMode) {
-	    encryptionType = (encryptionMode == EncryptionMode.xor) ? ENCRYPTION_XOR : ENCRYPTION_OTHER;
-	    encryptionInfo = new EncryptionInfo(encryptionMode);
-	}
+    public FilePassRecord(EncryptionMode encryptionMode) {
+        encryptionType = (encryptionMode == EncryptionMode.xor) ? ENCRYPTION_XOR : ENCRYPTION_OTHER;
+        encryptionInfo = new EncryptionInfo(encryptionMode);
+    }
 
-	public FilePassRecord(RecordInputStream in) {
-		encryptionType = in.readUShort();
+    public FilePassRecord(RecordInputStream in) {
+        encryptionType = in.readUShort();
 
-		EncryptionMode preferredMode;
+        EncryptionMode preferredMode;
         switch (encryptionType) {
             case ENCRYPTION_XOR:
                 preferredMode = EncryptionMode.xor;
@@ -75,14 +75,14 @@ public final class FilePassRecord extends StandardRecord {
                 throw new EncryptedDocumentException("invalid encryption type");
         }
 
-		try {
+        try {
             encryptionInfo = new EncryptionInfo(in, preferredMode);
         } catch (IOException e) {
             throw new EncryptedDocumentException(e);
         }
-	}
+    }
 
-	@SuppressWarnings("resource")
+    @SuppressWarnings("resource")
     @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(encryptionType);
@@ -118,29 +118,29 @@ public final class FilePassRecord extends StandardRecord {
             // should never happen in practice
             throw new IllegalStateException(ioe);
         }
-	}
+    }
 
-	@Override
+    @Override
     protected int getDataSize() {
-	    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-	    LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
         serialize(leos);
         return bos.size();
-	}
+    }
 
-	public EncryptionInfo getEncryptionInfo() {
+    public EncryptionInfo getEncryptionInfo() {
         return encryptionInfo;
     }
 
     @Override
     public short getSid() {
-		return sid;
-	}
+        return sid;
+    }
 
     @Override
-	public FilePassRecord copy() {
-		return new FilePassRecord(this);
-	}
+    public FilePassRecord copy() {
+        return new FilePassRecord(this);
+    }
 
     @Override
     public HSSFRecordTypes getGenericRecordType() {

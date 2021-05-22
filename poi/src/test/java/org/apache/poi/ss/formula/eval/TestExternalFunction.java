@@ -36,48 +36,48 @@ import org.junit.jupiter.api.Test;
 
 final class TestExternalFunction {
 
-	private static ValueEval myFunc1(ValueEval[] args, OperationEvaluationContext ec) {
-		if (args.length != 1 || !(args[0] instanceof StringEval)) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		StringEval input = (StringEval) args[0];
-		return new StringEval(input.getStringValue() + "abc");
-	}
+    private static ValueEval myFunc1(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length != 1 || !(args[0] instanceof StringEval)) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        StringEval input = (StringEval) args[0];
+        return new StringEval(input.getStringValue() + "abc");
+    }
 
-	private static ValueEval myFunc2(ValueEval[] args, OperationEvaluationContext ec) {
-		if (args.length != 1 || !(args[0] instanceof StringEval)) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		StringEval input = (StringEval) args[0];
-		return new StringEval(input.getStringValue() + "abc2");
-	}
+    private static ValueEval myFunc2(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length != 1 || !(args[0] instanceof StringEval)) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        StringEval input = (StringEval) args[0];
+        return new StringEval(input.getStringValue() + "abc2");
+    }
 
-	/**
-	 * Checks that an external function can get invoked from the formula evaluator.
-	 */
-	@Test
-	void testInvoke() throws IOException {
-		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls")) {
-			HSSFSheet sheet = wb.getSheetAt(0);
+    /**
+     * Checks that an external function can get invoked from the formula evaluator.
+     */
+    @Test
+    void testInvoke() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls")) {
+            HSSFSheet sheet = wb.getSheetAt(0);
 
-			/*
-			 * register the two test UDFs in a UDF finder, to be passed to the evaluator
-			 */
-			UDFFinder udff1 = new DefaultUDFFinder(new String[]{"myFunc",},
-												   new FreeRefFunction[]{TestExternalFunction::myFunc1});
-			UDFFinder udff2 = new DefaultUDFFinder(new String[]{"myFunc2",},
-												   new FreeRefFunction[]{TestExternalFunction::myFunc2,});
-			UDFFinder udff = new AggregatingUDFFinder(udff1, udff2);
+            /*
+             * register the two test UDFs in a UDF finder, to be passed to the evaluator
+             */
+            UDFFinder udff1 = new DefaultUDFFinder(new String[]{"myFunc",},
+                                                   new FreeRefFunction[]{TestExternalFunction::myFunc1});
+            UDFFinder udff2 = new DefaultUDFFinder(new String[]{"myFunc2",},
+                                                   new FreeRefFunction[]{TestExternalFunction::myFunc2,});
+            UDFFinder udff = new AggregatingUDFFinder(udff1, udff2);
 
 
-			HSSFRow row = sheet.getRow(0);
-			HSSFCell myFuncCell = row.getCell(1); // =myFunc("_")
+            HSSFRow row = sheet.getRow(0);
+            HSSFCell myFuncCell = row.getCell(1); // =myFunc("_")
 
-			HSSFCell myFunc2Cell = row.getCell(2); // =myFunc2("_")
+            HSSFCell myFunc2Cell = row.getCell(2); // =myFunc2("_")
 
-			HSSFFormulaEvaluator fe = HSSFFormulaEvaluator.create(wb, null, udff);
-			assertEquals("_abc", fe.evaluate(myFuncCell).getStringValue());
-			assertEquals("_abc2", fe.evaluate(myFunc2Cell).getStringValue());
-		}
-	}
+            HSSFFormulaEvaluator fe = HSSFFormulaEvaluator.create(wb, null, udff);
+            assertEquals("_abc", fe.evaluate(myFuncCell).getStringValue());
+            assertEquals("_abc2", fe.evaluate(myFunc2Cell).getStringValue());
+        }
+    }
 }

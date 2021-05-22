@@ -39,10 +39,10 @@ public enum HashAlgorithm {
     ;
 
     /** the id used for initializing the JCE message digest **/
-	public final String jceId;
-	/** the id used for the BIFF encryption info header **/
-	public final int ecmaId;
-	/** the id used for OOXML encryption info header **/ 
+    public final String jceId;
+    /** the id used for the BIFF encryption info header **/
+    public final int ecmaId;
+    /** the id used for OOXML encryption info header **/ 
     public final String ecmaString;
     /** the length of the digest byte array **/
     public final int hashSize;

@@ -58,42 +58,42 @@ public final class TestFormulasFromSpreadsheet {
     private static Locale userLocale;
 
     /**
-	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
-	 */
-	private interface SS {
+     * This class defines constants for navigating around the test data spreadsheet used for these tests.
+     */
+    private interface SS {
 
-		/**
-		 * Name of the test spreadsheet (found in the standard test data folder)
-		 */
-		String FILENAME = "FormulaEvalTestData.xls";
-		/**
-		 * Row (zero-based) in the test spreadsheet where the operator examples start.
-		 */
-		int START_OPERATORS_ROW_INDEX = 22; // Row '23'
-		/**
-		 * Row (zero-based) in the test spreadsheet where the function examples start.
-		 */
-		int START_FUNCTIONS_ROW_INDEX = 95; // Row '96'
-		/**
-		 * Index of the column that contains the function names
-		 */
-		int COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
+        /**
+         * Name of the test spreadsheet (found in the standard test data folder)
+         */
+        String FILENAME = "FormulaEvalTestData.xls";
+        /**
+         * Row (zero-based) in the test spreadsheet where the operator examples start.
+         */
+        int START_OPERATORS_ROW_INDEX = 22; // Row '23'
+        /**
+         * Row (zero-based) in the test spreadsheet where the function examples start.
+         */
+        int START_FUNCTIONS_ROW_INDEX = 95; // Row '96'
+        /**
+         * Index of the column that contains the function names
+         */
+        int COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
 
-		/**
-		 * Used to indicate when there are no more functions left
-		 */
-		String FUNCTION_NAMES_END_SENTINEL = "<END-OF-FUNCTIONS>";
+        /**
+         * Used to indicate when there are no more functions left
+         */
+        String FUNCTION_NAMES_END_SENTINEL = "<END-OF-FUNCTIONS>";
 
-		/**
-		 * Index of the column where the test values start (for each function)
-		 */
-		short COLUMN_INDEX_FIRST_TEST_VALUE = 3; // Column 'D'
+        /**
+         * Index of the column where the test values start (for each function)
+         */
+        short COLUMN_INDEX_FIRST_TEST_VALUE = 3; // Column 'D'
 
-		/**
-		 * Each function takes 4 rows in the test spreadsheet
-		 */
-		int NUMBER_OF_ROWS_PER_FUNCTION = 4;
-	}
+        /**
+         * Each function takes 4 rows in the test spreadsheet
+         */
+        int NUMBER_OF_ROWS_PER_FUNCTION = 4;
+    }
 
     @AfterAll
     public static void closeResource() throws Exception {
@@ -201,24 +201,24 @@ public final class TestFormulasFromSpreadsheet {
            }
        }
    }
-	/**
-	 * @return {@code null} if cell is missing, empty or blank
-	 */
-	private static String getTargetFunctionName(Row r) {
-		if(r == null) {
-			System.err.println("Warning - given null row, can't figure out function name");
-			return null;
-		}
-		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
-		if(cell == null) {
-			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
-			return null;
-		}
+    /**
+     * @return {@code null} if cell is missing, empty or blank
+     */
+    private static String getTargetFunctionName(Row r) {
+        if(r == null) {
+            System.err.println("Warning - given null row, can't figure out function name");
+            return null;
+        }
+        Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
+        if(cell == null) {
+            System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
+            return null;
+        }
 
         CellType ct = cell.getCellType();
         assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
             "Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 
         return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
-	}
+    }
 }

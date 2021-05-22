@@ -358,24 +358,24 @@ public final class HSSFFont implements Font {
                 "}";
     }
 
-	public int hashCode() {
+    public int hashCode() {
         return Objects.hash(font,index);
-	}
+    }
 
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (obj instanceof HSSFFont) {
-			final HSSFFont other = (HSSFFont) obj;
-			if (font == null) {
-				if (other.font != null) {
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (obj instanceof HSSFFont) {
+            final HSSFFont other = (HSSFFont) obj;
+            if (font == null) {
+                if (other.font != null) {
                     return false;
                 }
-			} else if (!font.equals(other.font)) {
+            } else if (!font.equals(other.font)) {
                 return false;
             }
             return index == other.index;
         }
-		return false;
-	}
+        return false;
+    }
 }

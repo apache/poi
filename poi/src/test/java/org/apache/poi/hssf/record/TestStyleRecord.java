@@ -27,15 +27,15 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link StyleRecord}
  */
 final class TestStyleRecord {
-	@Test
-	void testUnicodeReadName() {
-		byte[] data = HexRead.readFromString(
-				"11 00 09 00 01 38 5E C4 89 5F 00 53 00 68 00 65 00 65 00 74 00 31 00");
-		RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
-		StyleRecord sr = new StyleRecord(in);
-		assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
-		// bug 46385 - Incorrect number of bytes written - expected 27 but got 18
-		byte[] ser = sr.serialize();
-		confirmRecordEncoding(StyleRecord.sid, data, ser);
-	}
+    @Test
+    void testUnicodeReadName() {
+        byte[] data = HexRead.readFromString(
+                "11 00 09 00 01 38 5E C4 89 5F 00 53 00 68 00 65 00 65 00 74 00 31 00");
+        RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
+        StyleRecord sr = new StyleRecord(in);
+        assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
+        // bug 46385 - Incorrect number of bytes written - expected 27 but got 18
+        byte[] ser = sr.serialize();
+        confirmRecordEncoding(StyleRecord.sid, data, ser);
+    }
 }

@@ -31,7 +31,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Repeats text a given number of times. Use REPT to fill a cell with a number of instances of a text string.
  *
  * text : text The text that you want to repeat.
- * number_times:	A positive number specifying the number of times to repeat text.
+ * number_times:    A positive number specifying the number of times to repeat text.
  *
  * If number_times is 0 (zero), REPT returns "" (empty text).
  * If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.

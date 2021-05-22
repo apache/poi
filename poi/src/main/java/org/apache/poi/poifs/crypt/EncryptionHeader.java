@@ -119,7 +119,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
     }
 
     public int getBlockSize() {
-    	return blockSize;
+        return blockSize;
     }
 
     public void setBlockSize(int blockSize) {

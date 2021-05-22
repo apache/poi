@@ -20,46 +20,46 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class IntersectionPtg extends OperationPtg {
-	public static final byte sid = 0x0f;
+    public static final byte sid = 0x0f;
 
-	public static final IntersectionPtg instance = new IntersectionPtg();
+    public static final IntersectionPtg instance = new IntersectionPtg();
 
-	private IntersectionPtg() {
-		// enforce singleton
-	}
+    private IntersectionPtg() {
+        // enforce singleton
+    }
 
-	@Override
+    @Override
     public final boolean isBaseToken() {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return 1;
-	}
+    public int getSize() {
+        return 1;
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+    }
 
-	public String toFormulaString() {
-		return " ";
-	}
+    public String toFormulaString() {
+        return " ";
+    }
 
-	public String toFormulaString(String[] operands) {
-		return operands[0] + " " + operands[1];
-	}
+    public String toFormulaString(String[] operands) {
+        return operands[0] + " " + operands[1];
+    }
 
-	public int getNumberOfOperands() {
-		return 2;
-	}
+    public int getNumberOfOperands() {
+        return 2;
+    }
 
-	@Override
-	public IntersectionPtg copy() {
-		return instance;
-	}
+    @Override
+    public IntersectionPtg copy() {
+        return instance;
+    }
 }

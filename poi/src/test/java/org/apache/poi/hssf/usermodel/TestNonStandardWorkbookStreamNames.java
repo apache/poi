@@ -34,29 +34,29 @@ import org.junit.jupiter.api.Test;
  *  the more usual, Workbook)
  */
 final class TestNonStandardWorkbookStreamNames {
-	private final String xlsA = "WORKBOOK_in_capitals.xls";
+    private final String xlsA = "WORKBOOK_in_capitals.xls";
     private final String xlsB = "BOOK_in_capitals.xls";
 
-	/**
-	 * Test that we can open a file with WORKBOOK
-	 */
+    /**
+     * Test that we can open a file with WORKBOOK
+     */
     @Test
-	void testOpenWORKBOOK() throws IOException {
+    void testOpenWORKBOOK() throws IOException {
         // Try to open the workbook
-		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
-		HSSFWorkbook wb = new HSSFWorkbook(is);
-		is.close();
-		DirectoryNode root = wb.getDirectory();
+        InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
+        HSSFWorkbook wb = new HSSFWorkbook(is);
+        is.close();
+        DirectoryNode root = wb.getDirectory();
 
-		// Ensure that we have a WORKBOOK entry and a summary
-		assertTrue(root.hasEntry("WORKBOOK"));
-		assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
+        // Ensure that we have a WORKBOOK entry and a summary
+        assertTrue(root.hasEntry("WORKBOOK"));
+        assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
 
-		// But not a Workbook one
-		assertFalse(root.hasEntry("Workbook"));
+        // But not a Workbook one
+        assertFalse(root.hasEntry("Workbook"));
 
-		wb.close();
-	}
+        wb.close();
+    }
 
    /**
     * Test that we can open a file with BOOK
@@ -79,15 +79,15 @@ final class TestNonStandardWorkbookStreamNames {
       wb.close();
    }
 
-	/**
-	 * Test that when we write out, we go back to the correct case
-	 */
+    /**
+     * Test that when we write out, we go back to the correct case
+     */
     @Test
-	void testWrite() throws IOException {
-	   for (String file : new String[] {xlsA, xlsB}) {
+    void testWrite() throws IOException {
+       for (String file : new String[] {xlsA, xlsB}) {
            // Open the workbook, not preserving nodes
-	       InputStream is = HSSFTestDataSamples.openSampleFileStream(file);
-	       HSSFWorkbook wb = new HSSFWorkbook(is, false);
+           InputStream is = HSSFTestDataSamples.openSampleFileStream(file);
+           HSSFWorkbook wb = new HSSFWorkbook(is, false);
            is.close();
 
            // Check now it can be opened
@@ -103,16 +103,16 @@ final class TestNonStandardWorkbookStreamNames {
 
            wb2.close();
        }
-	}
+    }
 
-	/**
-	 * Test that when we write out preserving nodes, we go back to the
-	 *  correct case
-	 */
+    /**
+     * Test that when we write out preserving nodes, we go back to the
+     *  correct case
+     */
     @Test
-	void testWritePreserve() throws IOException {
+    void testWritePreserve() throws IOException {
         // Open the workbook, not preserving nodes
-		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
+        InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
         HSSFWorkbook wb = new HSSFWorkbook(is,true);
         is.close();
 
@@ -130,5 +130,5 @@ final class TestNonStandardWorkbookStreamNames {
         // As we preserved, should also have a few other streams
         assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
         wb2.close();
-	}
+    }
 }

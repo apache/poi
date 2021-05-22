@@ -23,34 +23,34 @@ import org.apache.poi.ss.formula.functions.Function;
 
 public final class UnaryMinusEval extends Fixed1ArgFunction  implements ArrayFunction {
 
-	public static final Function instance = new UnaryMinusEval();
+    public static final Function instance = new UnaryMinusEval();
 
-	private UnaryMinusEval() {
-		// enforce singleton
-	}
+    private UnaryMinusEval() {
+        // enforce singleton
+    }
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-		double d;
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			d = OperandResolver.coerceValueToDouble(ve);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		if (d == 0.0) { // this '==' matches +0.0 and -0.0
-			return NumberEval.ZERO;
-		}
-		return new NumberEval(-d);
-	}
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+        double d;
+        try {
+            ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+            d = OperandResolver.coerceValueToDouble(ve);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        if (d == 0.0) { // this '==' matches +0.0 and -0.0
+            return NumberEval.ZERO;
+        }
+        return new NumberEval(-d);
+    }
 
-	@Override
-	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
-				evaluate(srcRowIndex, srcColumnIndex, valA)
-		);
-	}
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+        if (args.length != 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+                evaluate(srcRowIndex, srcColumnIndex, valA)
+        );
+    }
 
 }

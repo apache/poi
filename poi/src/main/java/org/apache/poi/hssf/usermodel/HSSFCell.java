@@ -1037,7 +1037,7 @@ public class HSSFCell extends CellBase {
                     sdf.setTimeZone(LocaleUtil.getUserTimeZone());
                     return sdf.format(getDateCellValue());
                 }
-				return  String.valueOf(getNumericCellValue());
+                return  String.valueOf(getNumericCellValue());
             case STRING:
                 return getStringCellValue();
             default:

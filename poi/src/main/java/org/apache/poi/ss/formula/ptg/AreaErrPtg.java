@@ -29,56 +29,56 @@ import org.apache.poi.util.LittleEndianOutput;
  * AreaErr - handles deleted cell area references.
  */
 public final class AreaErrPtg extends OperandPtg {
-	public static final byte sid = 0x2B;
-	private final int unused1;
-	private final int unused2;
+    public static final byte sid = 0x2B;
+    private final int unused1;
+    private final int unused2;
 
-	public AreaErrPtg() {
-		unused1 = 0;
-		unused2 = 0;
-	}
+    public AreaErrPtg() {
+        unused1 = 0;
+        unused2 = 0;
+    }
 
-	public AreaErrPtg(LittleEndianInput in)  {
-		// 8 bytes unused:
-		unused1 = in.readInt();
-		unused2 = in.readInt();
-	}
+    public AreaErrPtg(LittleEndianInput in)  {
+        // 8 bytes unused:
+        unused1 = in.readInt();
+        unused2 = in.readInt();
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeInt(unused1);
-		out.writeInt(unused2);
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeInt(unused1);
+        out.writeInt(unused2);
+    }
 
-	public String toFormulaString() {
-		return FormulaError.REF.getString();
-	}
+    public String toFormulaString() {
+        return FormulaError.REF.getString();
+    }
 
-	@Override
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
+        return Ptg.CLASS_REF;
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return 9;
-	}
+    public int getSize() {
+        return 9;
+    }
 
-	@Override
-	public AreaErrPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public AreaErrPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"unused1", () -> unused1,
-			"unused2", () -> unused2
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "unused1", () -> unused1,
+            "unused2", () -> unused2
+        );
+    }
 }

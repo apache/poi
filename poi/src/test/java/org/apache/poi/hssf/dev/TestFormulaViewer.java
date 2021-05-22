@@ -43,26 +43,26 @@ class TestFormulaViewer extends BaseTestIteratingXLS {
     }
 
     @Override
-	void runOneFile(File fileIn) throws Exception {
-		PrintStream save = System.out;
-		try {
-			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new NullPrintStream());
+    void runOneFile(File fileIn) throws Exception {
+        PrintStream save = System.out;
+        try {
+            // redirect standard out during the test to avoid spamming the console with output
+            System.setOut(new NullPrintStream());
 
             FormulaViewer viewer = new FormulaViewer();
             viewer.setFile(fileIn.getAbsolutePath());
             viewer.setList(true);
             viewer.run();
-		} catch (RuntimeException re) {
-		    String m = re.getMessage();
-		    if (m.startsWith("toFormulaString") || m.startsWith("3D references")) {
-		        // TODO: fix those cases, but ignore them for now ...
-		        assumeTrue(true);
-		    } else {
-		        throw re;
-		    }
-		} finally {
-			System.setOut(save);
-		}
-	}
+        } catch (RuntimeException re) {
+            String m = re.getMessage();
+            if (m.startsWith("toFormulaString") || m.startsWith("3D references")) {
+                // TODO: fix those cases, but ignore them for now ...
+                assumeTrue(true);
+            } else {
+                throw re;
+            }
+        } finally {
+            System.setOut(save);
+        }
+    }
 }

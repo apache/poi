@@ -185,7 +185,7 @@ recordid = 0x1051, size =8
         record.setCustomNumberFormat( false );
         record.setIndexNumberFmtRecord( (short)0 );
         Area3DPtg ptg = new Area3DPtg(0, 7936, 0, 0,
-        		false, false, false, false, 0);
+                false, false, false, false, 0);
         record.setFormulaOfLink(new Ptg[] { ptg, } );
 
         byte [] recordBytes = record.serialize();

@@ -29,69 +29,69 @@ import org.junit.jupiter.api.Test;
  * Excel file.
  */
 final class TestTableRecord {
-	byte[] header = new byte[] {
-			0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
-	};
-	byte[] data = new byte[] {
-			03, 00,  // from row 3
-			8, 00,   // to row 8
-			04,      // from col 4
-			06,      // to col 6
-			00, 00,  // no flags set
-			04, 00,  // row inp row 4
-			01, 00,  // col inp row 1
-			0x76, 0x40, // row inp col 0x4076 (!)
-			00, 00   // col inp col 0
-	};
+    byte[] header = new byte[] {
+            0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
+    };
+    byte[] data = new byte[] {
+            03, 00,  // from row 3
+            8, 00,   // to row 8
+            04,      // from col 4
+            06,      // to col 6
+            00, 00,  // no flags set
+            04, 00,  // row inp row 4
+            01, 00,  // col inp row 1
+            0x76, 0x40, // row inp col 0x4076 (!)
+            00, 00   // col inp col 0
+    };
 
-	@Test
-	void testLoad() {
+    @Test
+    void testLoad() {
 
-		TableRecord record = new TableRecord(TestcaseRecordInputStream.create(0x236, data));
+        TableRecord record = new TableRecord(TestcaseRecordInputStream.create(0x236, data));
 
-		CellRangeAddress8Bit range = record.getRange();
-		assertEquals(3, range.getFirstRow());
-		assertEquals(8, range.getLastRow());
-		assertEquals(4, range.getFirstColumn());
-		assertEquals(6, range.getLastColumn());
-		assertEquals(0, record.getFlags());
-		assertEquals(4, record.getRowInputRow());
-		assertEquals(1, record.getColInputRow());
-		assertEquals(0x4076, record.getRowInputCol());
-		assertEquals(0, record.getColInputCol());
+        CellRangeAddress8Bit range = record.getRange();
+        assertEquals(3, range.getFirstRow());
+        assertEquals(8, range.getLastRow());
+        assertEquals(4, range.getFirstColumn());
+        assertEquals(6, range.getLastColumn());
+        assertEquals(0, record.getFlags());
+        assertEquals(4, record.getRowInputRow());
+        assertEquals(1, record.getColInputRow());
+        assertEquals(0x4076, record.getRowInputCol());
+        assertEquals(0, record.getColInputCol());
 
-		assertEquals( 16 + 4, record.getRecordSize() );
-	}
+        assertEquals( 16 + 4, record.getRecordSize() );
+    }
 
-	@SuppressWarnings("squid:S2699")
-	@Test
+    @SuppressWarnings("squid:S2699")
+    @Test
     void testStore()
     {
-//    	Offset 0x3bd9 (15321)
-//    	recordid = 0x236, size = 16
-//    	[TABLE]
-//    	    .row from      = 3
-//    	    .row to        = 8
-//    	    .column from   = 4
-//    	    .column to     = 6
-//    	    .flags         = 0
-//    	        .always calc     =false
-//    	    .reserved      = 0
-//    	    .row input row = 4
-//    	    .col input row = 1
-//    	    .row input col = 4076
-//    	    .col input col = 0
-//    	[/TABLE]
+//      Offset 0x3bd9 (15321)
+//      recordid = 0x236, size = 16
+//      [TABLE]
+//          .row from      = 3
+//          .row to        = 8
+//          .column from   = 4
+//          .column to     = 6
+//          .flags         = 0
+//              .always calc     =false
+//          .reserved      = 0
+//          .row input row = 4
+//          .col input row = 1
+//          .row input col = 4076
+//          .col input col = 0
+//      [/TABLE]
 
-		CellRangeAddress8Bit crab = new CellRangeAddress8Bit(3, 8, 4, 6);
-		TableRecord record = new TableRecord(crab);
-		record.setFlags((byte)0);
-		record.setRowInputRow(4);
-		record.setColInputRow(1);
-		record.setRowInputCol(0x4076);
-		record.setColInputCol(0);
+        CellRangeAddress8Bit crab = new CellRangeAddress8Bit(3, 8, 4, 6);
+        TableRecord record = new TableRecord(crab);
+        record.setFlags((byte)0);
+        record.setRowInputRow(4);
+        record.setColInputRow(1);
+        record.setRowInputCol(0x4076);
+        record.setColInputCol(0);
 
-		byte [] recordBytes = record.serialize();
-		confirmRecordEncoding(TableRecord.sid, data, recordBytes);
-	}
+        byte [] recordBytes = record.serialize();
+        confirmRecordEncoding(TableRecord.sid, data, recordBytes);
+    }
 }

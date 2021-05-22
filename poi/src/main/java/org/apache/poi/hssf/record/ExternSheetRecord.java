@@ -34,146 +34,146 @@ import org.apache.poi.util.LittleEndianOutput;
 public class ExternSheetRecord extends StandardRecord {
 
     public static final short sid = 0x0017;
-	private final List<RefSubRecord> _list = new ArrayList<>();
+    private final List<RefSubRecord> _list = new ArrayList<>();
 
-	private static final class RefSubRecord implements GenericRecord {
-		public static final int ENCODED_SIZE = 6;
+    private static final class RefSubRecord implements GenericRecord {
+        public static final int ENCODED_SIZE = 6;
 
-		/** index to External Book Block (which starts with a EXTERNALBOOK record) */
-		private final int _extBookIndex;
-		private int _firstSheetIndex; // may be -1 (0xFFFF)
-		private int _lastSheetIndex;  // may be -1 (0xFFFF)
+        /** index to External Book Block (which starts with a EXTERNALBOOK record) */
+        private final int _extBookIndex;
+        private int _firstSheetIndex; // may be -1 (0xFFFF)
+        private int _lastSheetIndex;  // may be -1 (0xFFFF)
 
-		public RefSubRecord(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
-			_extBookIndex = extBookIndex;
-			_firstSheetIndex = firstSheetIndex;
-			_lastSheetIndex = lastSheetIndex;
-		}
+        public RefSubRecord(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
+            _extBookIndex = extBookIndex;
+            _firstSheetIndex = firstSheetIndex;
+            _lastSheetIndex = lastSheetIndex;
+        }
 
-		public RefSubRecord(RefSubRecord other) {
-			_extBookIndex = other._extBookIndex;
-			_firstSheetIndex = other._firstSheetIndex;
-			_lastSheetIndex = other._lastSheetIndex;
-		}
+        public RefSubRecord(RefSubRecord other) {
+            _extBookIndex = other._extBookIndex;
+            _firstSheetIndex = other._firstSheetIndex;
+            _lastSheetIndex = other._lastSheetIndex;
+        }
 
-		/**
-		 * @param in the RecordInputstream to read the record from
-		 */
-		public RefSubRecord(RecordInputStream in) {
-			this(in.readShort(), in.readShort(), in.readShort());
-		}
+        /**
+         * @param in the RecordInputstream to read the record from
+         */
+        public RefSubRecord(RecordInputStream in) {
+            this(in.readShort(), in.readShort(), in.readShort());
+        }
 
-		public int getExtBookIndex(){
-			return _extBookIndex;
-		}
-		public int getFirstSheetIndex(){
-			return _firstSheetIndex;
-		}
-		public int getLastSheetIndex(){
-			return _lastSheetIndex;
-		}
+        public int getExtBookIndex(){
+            return _extBookIndex;
+        }
+        public int getFirstSheetIndex(){
+            return _firstSheetIndex;
+        }
+        public int getLastSheetIndex(){
+            return _lastSheetIndex;
+        }
 
-		@Override
-		public String toString() {
-			return GenericRecordJsonWriter.marshal(this);
-		}
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
 
-		public void serialize(LittleEndianOutput out) {
-			out.writeShort(_extBookIndex);
-			out.writeShort(_firstSheetIndex);
-			out.writeShort(_lastSheetIndex);
-		}
+        public void serialize(LittleEndianOutput out) {
+            out.writeShort(_extBookIndex);
+            out.writeShort(_firstSheetIndex);
+            out.writeShort(_lastSheetIndex);
+        }
 
-		@Override
-		public Map<String, Supplier<?>> getGenericProperties() {
-			return GenericRecordUtil.getGenericProperties(
-				"extBookIndex", this::getExtBookIndex,
-				"firstSheetIndex", this::getFirstSheetIndex,
-				"lastSheetIndex", this::getLastSheetIndex
-			);
-		}
-	}
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "extBookIndex", this::getExtBookIndex,
+                "firstSheetIndex", this::getFirstSheetIndex,
+                "lastSheetIndex", this::getLastSheetIndex
+            );
+        }
+    }
 
-	public ExternSheetRecord() {}
+    public ExternSheetRecord() {}
 
-	public ExternSheetRecord(ExternSheetRecord other) {
-		other._list.stream().map(RefSubRecord::new).forEach(_list::add);
-	}
+    public ExternSheetRecord(ExternSheetRecord other) {
+        other._list.stream().map(RefSubRecord::new).forEach(_list::add);
+    }
 
-	public ExternSheetRecord(RecordInputStream in) {
-		int nItems  = in.readShort();
+    public ExternSheetRecord(RecordInputStream in) {
+        int nItems  = in.readShort();
 
-		for (int i = 0 ; i < nItems ; ++i) {
-			RefSubRecord rec = new RefSubRecord(in);
-			_list.add(rec);
-		}
-	}
+        for (int i = 0 ; i < nItems ; ++i) {
+            RefSubRecord rec = new RefSubRecord(in);
+            _list.add(rec);
+        }
+    }
 
 
-	/**
-	 * @return number of REF structures
-	 */
-	public int getNumOfRefs() {
-		return _list.size();
-	}
+    /**
+     * @return number of REF structures
+     */
+    public int getNumOfRefs() {
+        return _list.size();
+    }
 
-	/**
-	 * adds REF struct (ExternSheetSubRecord)
-	 * @param rec REF struct
-	 */
-	public void addREFRecord(RefSubRecord rec) {
-		_list.add(rec);
-	}
+    /**
+     * adds REF struct (ExternSheetSubRecord)
+     * @param rec REF struct
+     */
+    public void addREFRecord(RefSubRecord rec) {
+        _list.add(rec);
+    }
 
-	/** returns the number of REF Records, which is in model
-	 * @return number of REF records
-	 */
-	public int getNumOfREFRecords() {
-		return _list.size();
-	}
+    /** returns the number of REF Records, which is in model
+     * @return number of REF records
+     */
+    public int getNumOfREFRecords() {
+        return _list.size();
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		int nItems = _list.size();
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        int nItems = _list.size();
 
-		out.writeShort(nItems);
+        out.writeShort(nItems);
 
-		for (int i = 0; i < nItems; i++) {
-			getRef(i).serialize(out);
-		}
-	}
+        for (int i = 0; i < nItems; i++) {
+            getRef(i).serialize(out);
+        }
+    }
 
-	private RefSubRecord getRef(int i) {
-		return _list.get(i);
-	}
+    private RefSubRecord getRef(int i) {
+        return _list.get(i);
+    }
 
-	public void removeSheet(int sheetIdx) {
+    public void removeSheet(int sheetIdx) {
         int nItems = _list.size();
         for (int i = 0; i < nItems; i++) {
             RefSubRecord refSubRecord = _list.get(i);
             if(refSubRecord.getFirstSheetIndex() == sheetIdx &&
                     refSubRecord.getLastSheetIndex() == sheetIdx) {
-            	// removing the entry would mess up the sheet index in Formula of NameRecord
-            	_list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), -1, -1));
+                // removing the entry would mess up the sheet index in Formula of NameRecord
+                _list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), -1, -1));
             } else if (refSubRecord.getFirstSheetIndex() > sheetIdx &&
                     refSubRecord.getLastSheetIndex() > sheetIdx) {
                 _list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), refSubRecord.getFirstSheetIndex()-1, refSubRecord.getLastSheetIndex()-1));
             }
         }
-	}
+    }
 
-	/**
-	 * return the non static version of the id for this record.
-	 */
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    /**
+     * return the non static version of the id for this record.
+     */
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
     /**
      * @param refIndex specifies the n-th refIndex
@@ -185,20 +185,20 @@ public class ExternSheetRecord extends StandardRecord {
         return refRec.getExtBookIndex();
     }
 
-	/**
-	 * @param extBookIndex external sheet reference index
-	 *
-	 * @return -1 if not found
-	 */
-	public int findRefIndexFromExtBookIndex(int extBookIndex) {
-		int nItems = _list.size();
-		for (int i = 0; i < nItems; i++) {
-			if (getRef(i).getExtBookIndex() == extBookIndex) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    /**
+     * @param extBookIndex external sheet reference index
+     *
+     * @return -1 if not found
+     */
+    public int findRefIndexFromExtBookIndex(int extBookIndex) {
+        int nItems = _list.size();
+        for (int i = 0; i < nItems; i++) {
+            if (getRef(i).getExtBookIndex() == extBookIndex) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     /**
      * Returns the first sheet that the reference applies to, or
@@ -211,9 +211,9 @@ public class ExternSheetRecord extends StandardRecord {
      *  -1 if the referenced sheet can't be found, or -2 if the
      *  reference is workbook scoped
      */
-	public int getFirstSheetIndexFromRefIndex(int extRefIndex) {
-		return getRef(extRefIndex).getFirstSheetIndex();
-	}
+    public int getFirstSheetIndexFromRefIndex(int extRefIndex) {
+        return getRef(extRefIndex).getFirstSheetIndex();
+    }
 
     /**
      * Returns the last sheet that the reference applies to, or
@@ -232,7 +232,7 @@ public class ExternSheetRecord extends StandardRecord {
         return getRef(extRefIndex).getLastSheetIndex();
     }
 
-	/**
+    /**
      * Add a zero-based reference to a {@link org.apache.poi.hssf.record.SupBookRecord}.
      * <p>
      *  If the type of the SupBook record is same-sheet referencing, Add-In referencing,
@@ -259,51 +259,51 @@ public class ExternSheetRecord extends StandardRecord {
      * @param extBookIndex  the external book block index
      * @param firstSheetIndex  the scope, must be -2 for add-in references
      * @param lastSheetIndex   the scope, must be -2 for add-in references
-	 * @return index of newly added ref
-	 */
-	public int addRef(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
-		_list.add(new RefSubRecord(extBookIndex, firstSheetIndex, lastSheetIndex));
-		return _list.size() - 1;
-	}
+     * @return index of newly added ref
+     */
+    public int addRef(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
+        _list.add(new RefSubRecord(extBookIndex, firstSheetIndex, lastSheetIndex));
+        return _list.size() - 1;
+    }
 
-	public int getRefIxForSheet(int externalBookIndex, int firstSheetIndex, int lastSheetIndex) {
-		int nItems = _list.size();
-		for (int i = 0; i < nItems; i++) {
-			RefSubRecord ref = getRef(i);
-			if (ref.getExtBookIndex() != externalBookIndex) {
-				continue;
-			}
-			if (ref.getFirstSheetIndex() == firstSheetIndex &&
-			        ref.getLastSheetIndex() == lastSheetIndex) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    public int getRefIxForSheet(int externalBookIndex, int firstSheetIndex, int lastSheetIndex) {
+        int nItems = _list.size();
+        for (int i = 0; i < nItems; i++) {
+            RefSubRecord ref = getRef(i);
+            if (ref.getExtBookIndex() != externalBookIndex) {
+                continue;
+            }
+            if (ref.getFirstSheetIndex() == firstSheetIndex &&
+                    ref.getLastSheetIndex() == lastSheetIndex) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-	public static ExternSheetRecord combine(ExternSheetRecord[] esrs) {
-		ExternSheetRecord result = new ExternSheetRecord();
-		for (ExternSheetRecord esr : esrs) {
-			int nRefs = esr.getNumOfREFRecords();
-			for (int j=0; j<nRefs; j++) {
-				result.addREFRecord(esr.getRef(j));
-			}
-		}
-		return result;
-	}
+    public static ExternSheetRecord combine(ExternSheetRecord[] esrs) {
+        ExternSheetRecord result = new ExternSheetRecord();
+        for (ExternSheetRecord esr : esrs) {
+            int nRefs = esr.getNumOfREFRecords();
+            for (int j=0; j<nRefs; j++) {
+                result.addREFRecord(esr.getRef(j));
+            }
+        }
+        return result;
+    }
 
-	@Override
-	public ExternSheetRecord copy() {
-		return new ExternSheetRecord(this);
-	}
+    @Override
+    public ExternSheetRecord copy() {
+        return new ExternSheetRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.EXTERN_SHEET;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.EXTERN_SHEET;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("refrec", () -> _list);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("refrec", () -> _list);
+    }
 }

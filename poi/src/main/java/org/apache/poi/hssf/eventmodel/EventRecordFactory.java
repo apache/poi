@@ -34,89 +34,89 @@ import org.apache.poi.util.RecordFormatException;
  */
 public final class EventRecordFactory {
 
-	private final ERFListener _listener;
-	private final short[] _sids;
+    private final ERFListener _listener;
+    private final short[] _sids;
 
-	/**
-	 * Create an EventRecordFactory
-	 *
-	 * @param listener the listener to be informed about events
-	 * @param sids an array of Record.sid values identifying the records
-	 * the listener will work with.  Alternatively if this is "null" then
-	 * all records are passed. For all 'known' record types use {@link RecordFactory#getAllKnownRecordSIDs()}
-	 */
-	public EventRecordFactory(ERFListener listener, short[] sids) {
-		_listener = listener;
-		if (sids == null) {
-			_sids = null;
-		} else {
-			_sids = sids.clone();
-			Arrays.sort(_sids); // for faster binary search
-		}
-	}
-	private boolean isSidIncluded(short sid) {
-		if (_sids == null) {
-			return true;
-		}
-		return Arrays.binarySearch(_sids, sid) >= 0;
-	}
+    /**
+     * Create an EventRecordFactory
+     *
+     * @param listener the listener to be informed about events
+     * @param sids an array of Record.sid values identifying the records
+     * the listener will work with.  Alternatively if this is "null" then
+     * all records are passed. For all 'known' record types use {@link RecordFactory#getAllKnownRecordSIDs()}
+     */
+    public EventRecordFactory(ERFListener listener, short[] sids) {
+        _listener = listener;
+        if (sids == null) {
+            _sids = null;
+        } else {
+            _sids = sids.clone();
+            Arrays.sort(_sids); // for faster binary search
+        }
+    }
+    private boolean isSidIncluded(short sid) {
+        if (_sids == null) {
+            return true;
+        }
+        return Arrays.binarySearch(_sids, sid) >= 0;
+    }
 
 
-	/**
-	 * sends the record event to all registered listeners.
-	 * @param record the record to be thrown.
-	 * @return <code>false</code> to abort.  This aborts
-	 * out of the event loop should the listener return false
-	 */
-	private boolean processRecord(org.apache.poi.hssf.record.Record record) {
-		if (!isSidIncluded(record.getSid())) {
-			return true;
-		}
-		return _listener.processRecord(record);
-	}
+    /**
+     * sends the record event to all registered listeners.
+     * @param record the record to be thrown.
+     * @return <code>false</code> to abort.  This aborts
+     * out of the event loop should the listener return false
+     */
+    private boolean processRecord(org.apache.poi.hssf.record.Record record) {
+        if (!isSidIncluded(record.getSid())) {
+            return true;
+        }
+        return _listener.processRecord(record);
+    }
 
-	/**
-	 * Create an array of records from an input stream
-	 *
-	 * @param in the InputStream from which the records will be
-	 *		   obtained
-	 *
-	 * @exception RecordFormatException on error processing the
-	 *			InputStream
-	 */
-	public void processRecords(InputStream in) throws RecordFormatException {
-		Record last_record = null;
+    /**
+     * Create an array of records from an input stream
+     *
+     * @param in the InputStream from which the records will be
+     *         obtained
+     *
+     * @exception RecordFormatException on error processing the
+     *          InputStream
+     */
+    public void processRecords(InputStream in) throws RecordFormatException {
+        Record last_record = null;
 
-		RecordInputStream recStream = new RecordInputStream(in);
+        RecordInputStream recStream = new RecordInputStream(in);
 
-		while (recStream.hasNextRecord()) {
-			recStream.nextRecord();
-			Record[] recs = RecordFactory.createRecord(recStream);   // handle MulRK records
-			if (recs.length > 1) {
-				for (org.apache.poi.hssf.record.Record rec : recs) {
-					if ( last_record != null ) {
-						if (!processRecord(last_record)) {
-							return;
-						}
-					}
-					last_record = rec; // do to keep the algorithm homogeneous...you can't
-				}							// actually continue a number record anyhow.
-			} else {
-				Record record = recs[ 0 ];
+        while (recStream.hasNextRecord()) {
+            recStream.nextRecord();
+            Record[] recs = RecordFactory.createRecord(recStream);   // handle MulRK records
+            if (recs.length > 1) {
+                for (org.apache.poi.hssf.record.Record rec : recs) {
+                    if ( last_record != null ) {
+                        if (!processRecord(last_record)) {
+                            return;
+                        }
+                    }
+                    last_record = rec; // do to keep the algorithm homogeneous...you can't
+                }                           // actually continue a number record anyhow.
+            } else {
+                Record record = recs[ 0 ];
 
-				if (record != null) {
-					if (last_record != null) {
-						if (!processRecord(last_record)) {
-							return;
-						}
-					}
-					 last_record = record;
-				}
-			}
-		}
+                if (record != null) {
+                    if (last_record != null) {
+                        if (!processRecord(last_record)) {
+                            return;
+                        }
+                    }
+                     last_record = record;
+                }
+            }
+        }
 
-		if (last_record != null) {
-			processRecord(last_record);
-		}
-	}
+        if (last_record != null) {
+            processRecord(last_record);
+        }
+    }
 }

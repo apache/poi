@@ -201,72 +201,72 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         // Start again, then wind on to the required block
         _data = _document.getBlockIterator();
         _current_offset = 0;
-		for(int i=0; i<_marked_offset_count; i++) {
-		   _buffer = _data.next();
-		   _current_offset += _buffer.remaining();
-		}
+        for(int i=0; i<_marked_offset_count; i++) {
+           _buffer = _data.next();
+           _current_offset += _buffer.remaining();
+        }
 
       _current_block_count = _marked_offset_count;
 
       // Do we need to position within it?
       if(_current_offset != _marked_offset) {
-   		// Grab the right block
+        // Grab the right block
          _buffer = _data.next();
          _current_block_count++;
 
-   		// Skip to the right place in it
+        // Skip to the right place in it
          // (It should be positioned already at the start of the block,
          //  we need to move further inside the block)
          int skipBy = _marked_offset - _current_offset;
-   		_buffer.position(_buffer.position() + skipBy);
+        _buffer.position(_buffer.position() + skipBy);
       }
 
       // All done
       _current_offset = _marked_offset;
-	}
+    }
 
    @Override
-	public long skip(long n) throws IOException {
-		dieIfClosed();
-		if (n < 0) {
-			return 0;
-		}
-		long new_offset = _current_offset + n;
+    public long skip(long n) throws IOException {
+        dieIfClosed();
+        if (n < 0) {
+            return 0;
+        }
+        long new_offset = _current_offset + n;
 
-		if (new_offset < _current_offset) {
-			// wrap around in converting a VERY large long to an int
-			new_offset = _document_size;
-		} else if (new_offset > _document_size) {
-			new_offset = _document_size;
-		}
+        if (new_offset < _current_offset) {
+            // wrap around in converting a VERY large long to an int
+            new_offset = _document_size;
+        } else if (new_offset > _document_size) {
+            new_offset = _document_size;
+        }
 
-		long rval = new_offset - _current_offset;
+        long rval = new_offset - _current_offset;
 
-		// TODO Do this better
-		byte[] skip = IOUtils.safelyAllocate(rval, Integer.MAX_VALUE);
-		readFully(skip);
-		return rval;
-	}
+        // TODO Do this better
+        byte[] skip = IOUtils.safelyAllocate(rval, Integer.MAX_VALUE);
+        readFully(skip);
+        return rval;
+    }
 
-	private void dieIfClosed() throws IOException {
-		if (_closed) {
-			throw new IOException("cannot perform requested operation on a closed stream");
-		}
-	}
+    private void dieIfClosed() throws IOException {
+        if (_closed) {
+            throw new IOException("cannot perform requested operation on a closed stream");
+        }
+    }
 
-	private boolean atEOD() {
-		return _current_offset == _document_size;
-	}
+    private boolean atEOD() {
+        return _current_offset == _document_size;
+    }
 
-	private void checkAvaliable(int requestedSize) {
-		if (_closed) {
-			throw new IllegalStateException("cannot perform requested operation on a closed stream");
-		}
-		if (requestedSize > _document_size - _current_offset) {
-			throw new RuntimeException("Buffer underrun - requested " + requestedSize
-					+ " bytes but " + (_document_size - _current_offset) + " was available");
-		}
-	}
+    private void checkAvaliable(int requestedSize) {
+        if (_closed) {
+            throw new IllegalStateException("cannot perform requested operation on a closed stream");
+        }
+        if (requestedSize > _document_size - _current_offset) {
+            throw new RuntimeException("Buffer underrun - requested " + requestedSize
+                    + " bytes but " + (_document_size - _current_offset) + " was available");
+        }
+    }
 
     @Override
     public void readFully(byte[] buf) {
@@ -274,26 +274,26 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     }
 
     @Override
-	public void readFully(byte[] buf, int off, int len) {
+    public void readFully(byte[] buf, int off, int len) {
         if (len < 0) {
            throw new RuntimeException("Can't read negative number of bytes");
         }
 
-		checkAvaliable(len);
+        checkAvaliable(len);
 
-		int read = 0;
-		while(read < len) {
-		   if(_buffer == null || _buffer.remaining() == 0) {
-		      _current_block_count++;
-		      _buffer = _data.next();
-		   }
+        int read = 0;
+        while(read < len) {
+           if(_buffer == null || _buffer.remaining() == 0) {
+              _current_block_count++;
+              _buffer = _data.next();
+           }
 
-		   int limit = Math.min(len-read, _buffer.remaining());
-		   _buffer.get(buf, off+read, limit);
+           int limit = Math.min(len-read, _buffer.remaining());
+           _buffer.get(buf, off+read, limit);
          _current_offset += limit;
-		   read += limit;
-		}
-	}
+           read += limit;
+        }
+    }
 
     @Override
     public void readPlain(byte[] buf, int off, int len) {
@@ -312,12 +312,12 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
    }
 
    @Override
-	public long readLong() {
-		checkAvaliable(LONG_SIZE);
-		byte[] data = new byte[LONG_SIZE];
-		readFully(data, 0, LONG_SIZE);
-		return LittleEndian.getLong(data, 0);
-	}
+    public long readLong() {
+        checkAvaliable(LONG_SIZE);
+        byte[] data = new byte[LONG_SIZE];
+        readFully(data, 0, LONG_SIZE);
+        return LittleEndian.getLong(data, 0);
+    }
 
    @Override
    public short readShort() {
@@ -328,12 +328,12 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
    }
 
    @Override
-	public int readInt() {
-		checkAvaliable(INT_SIZE);
+    public int readInt() {
+        checkAvaliable(INT_SIZE);
       byte[] data = new byte[INT_SIZE];
       readFully(data, 0, INT_SIZE);
       return LittleEndian.getInt(data);
-	}
+    }
 
     public long readUInt() {
         int i = readInt();
@@ -341,12 +341,12 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     }
 
     @Override
-	public int readUShort() {
-		checkAvaliable(SHORT_SIZE);
+    public int readUShort() {
+        checkAvaliable(SHORT_SIZE);
       byte[] data = new byte[SHORT_SIZE];
       readFully(data, 0, SHORT_SIZE);
       return LittleEndian.getUShort(data);
-	}
+    }
 
     @Override
     public int readUByte() {

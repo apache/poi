@@ -164,12 +164,12 @@ public abstract class AbstractEscherHolderRecord extends Record {
      * @return the EscherContainerRecord or {@code null} if no child is a container record
      */
     public EscherContainerRecord getEscherContainer() {
-    	for (EscherRecord er : escherRecords) {
-    		if(er instanceof EscherContainerRecord) {
-    			return (EscherContainerRecord)er;
-    		}
-    	}
-    	return null;
+        for (EscherRecord er : escherRecords) {
+            if(er instanceof EscherContainerRecord) {
+                return (EscherContainerRecord)er;
+            }
+        }
+        return null;
     }
 
     /**
@@ -182,29 +182,29 @@ public abstract class AbstractEscherHolderRecord extends Record {
      * @return the record or {@code null} if it can't be found
      */
     public EscherRecord findFirstWithId(short id) {
-    	return findFirstWithId(id, getEscherRecords());
+        return findFirstWithId(id, getEscherRecords());
     }
 
     private EscherRecord findFirstWithId(short id, List<EscherRecord> records) {
-    	// Check at our level
-    	for (EscherRecord r : records) {
-    		if(r.getRecordId() == id) {
-    			return r;
-    		}
-    	}
+        // Check at our level
+        for (EscherRecord r : records) {
+            if(r.getRecordId() == id) {
+                return r;
+            }
+        }
 
-    	// Then check our children in turn
-    	for (EscherRecord r : records) {
-    		if(r.isContainerRecord()) {
-    			EscherRecord found = findFirstWithId(id, r.getChildRecords());
-    			if(found != null) {
-    				return found;
-    			}
-    		}
-    	}
+        // Then check our children in turn
+        for (EscherRecord r : records) {
+            if(r.isContainerRecord()) {
+                EscherRecord found = findFirstWithId(id, r.getChildRecords());
+                if(found != null) {
+                    return found;
+                }
+            }
+        }
 
-    	// Not found in this lot
-    	return null;
+        // Not found in this lot
+        return null;
     }
 
 

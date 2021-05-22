@@ -37,16 +37,16 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class BaseTestFormulaEvaluator {
 
-	protected final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
-	/**
-	 * @param testDataProvider an object that provides test data in  /  specific way
-	 */
-	protected BaseTestFormulaEvaluator(ITestDataProvider testDataProvider) {
-		_testDataProvider = testDataProvider;
-	}
+    /**
+     * @param testDataProvider an object that provides test data in  /  specific way
+     */
+    protected BaseTestFormulaEvaluator(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
-	@Test
+    @Test
     void testSimpleArithmetic() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
@@ -71,8 +71,8 @@ public abstract class BaseTestFormulaEvaluator {
         wb.close();
     }
 
-	@Test
-	void testSumCount() throws IOException {
+    @Test
+    void testSumCount() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -117,7 +117,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-	void testSharedFormulas() throws IOException {
+    void testSharedFormulas() throws IOException {
         String fileName = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
 
@@ -147,7 +147,7 @@ public abstract class BaseTestFormulaEvaluator {
     /**
      * Test creation / evaluation of formulas with sheet-level names
      */
-	@Test
+    @Test
     void testSheetLevelFormulas() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
@@ -183,7 +183,7 @@ public abstract class BaseTestFormulaEvaluator {
         wb.close();
     }
 
-	@Test
+    @Test
     void testFullColumnRefs() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
@@ -217,7 +217,7 @@ public abstract class BaseTestFormulaEvaluator {
         wb.close();
     }
 
-	@Test
+    @Test
     void testRepeatedEvaluation() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();

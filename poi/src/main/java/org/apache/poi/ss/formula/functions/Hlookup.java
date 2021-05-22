@@ -38,43 +38,43 @@ import org.apache.poi.ss.formula.TwoDEval;
  * the lookup_value.  If FALSE, only exact matches will be considered<br>
  */
 public final class Hlookup extends Var3or4ArgFunction  {
-	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
+    private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2) {
-		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
-	}
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2) {
+        return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
+    }
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
-		try {
-			// Evaluation order:
-			// arg0 lookup_value, arg1 table_array, arg3 range_lookup, find lookup value, arg2 row_index, fetch result
-			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			TwoDEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
-			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
-			int colIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
-			int rowIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
-			ValueVector resultCol = createResultColumnVector(tableArray, rowIndex);
-			return resultCol.getItem(colIndex);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+            ValueEval arg2, ValueEval arg3) {
+        try {
+            // Evaluation order:
+            // arg0 lookup_value, arg1 table_array, arg3 range_lookup, find lookup value, arg2 row_index, fetch result
+            ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+            TwoDEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
+            boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
+            int colIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
+            int rowIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
+            ValueVector resultCol = createResultColumnVector(tableArray, rowIndex);
+            return resultCol.getItem(colIndex);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-	/**
-	 * Returns one column from an {@code AreaEval}
-	 *
-	 * @param rowIndex assumed to be non-negative
-	 *
-	 * @throws EvaluationException (#REF!) if colIndex is too high
-	 */
-	private ValueVector createResultColumnVector(TwoDEval tableArray, int rowIndex) throws EvaluationException {
-		if(rowIndex >= tableArray.getHeight()) {
-			throw EvaluationException.invalidRef();
-		}
-		return LookupUtils.createRowVector(tableArray, rowIndex);
-	}
+    /**
+     * Returns one column from an {@code AreaEval}
+     *
+     * @param rowIndex assumed to be non-negative
+     *
+     * @throws EvaluationException (#REF!) if colIndex is too high
+     */
+    private ValueVector createResultColumnVector(TwoDEval tableArray, int rowIndex) throws EvaluationException {
+        if(rowIndex >= tableArray.getHeight()) {
+            throw EvaluationException.invalidRef();
+        }
+        return LookupUtils.createRowVector(tableArray, rowIndex);
+    }
 }

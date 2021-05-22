@@ -28,67 +28,67 @@ import org.apache.poi.util.LittleEndianOutput;
  * Integer (unsigned short integer) Stores an unsigned short value (java int) in a formula
  */
 public final class IntPtg extends ScalarConstantPtg {
-	// 16 bit unsigned integer
-	private static final int MIN_VALUE = 0x0000;
-	private static final int MAX_VALUE = 0xFFFF;
+    // 16 bit unsigned integer
+    private static final int MIN_VALUE = 0x0000;
+    private static final int MAX_VALUE = 0xFFFF;
 
-	/**
-	 * Excel represents integers 0..65535 with the tInt token.
-	 *
-	 * @return {@code true} if the specified value is within the range of values
-	 * {@code IntPtg} can represent.
-	 */
-	public static boolean isInRange(int i) {
-		return i >= MIN_VALUE && i <= MAX_VALUE;
-	}
+    /**
+     * Excel represents integers 0..65535 with the tInt token.
+     *
+     * @return {@code true} if the specified value is within the range of values
+     * {@code IntPtg} can represent.
+     */
+    public static boolean isInRange(int i) {
+        return i >= MIN_VALUE && i <= MAX_VALUE;
+    }
 
-	public static final int SIZE = 3;
-	public static final byte sid = 0x1e;
-	private final int field_1_value;
+    public static final int SIZE = 3;
+    public static final byte sid = 0x1e;
+    private final int field_1_value;
 
-	public IntPtg(LittleEndianInput in)  {
-		this(in.readUShort());
-	}
+    public IntPtg(LittleEndianInput in)  {
+        this(in.readUShort());
+    }
 
-	public IntPtg(int value) {
-		if (!isInRange(value)) {
-			throw new IllegalArgumentException("value is out of range: " + value);
-		}
-		field_1_value = value;
-	}
+    public IntPtg(int value) {
+        if (!isInRange(value)) {
+            throw new IllegalArgumentException("value is out of range: " + value);
+        }
+        field_1_value = value;
+    }
 
-	public int getValue() {
-		return field_1_value;
-	}
+    public int getValue() {
+        return field_1_value;
+    }
 
-	@Override
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(getValue());
-	}
+    @Override
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(getValue());
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	@Override
-	public int getSize() {
-		return SIZE;
-	}
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
 
-	@Override
-	public String toFormulaString() {
-		return String.valueOf(getValue());
-	}
+    @Override
+    public String toFormulaString() {
+        return String.valueOf(getValue());
+    }
 
-	@Override
-	public IntPtg copy() {
-		return this;
-	}
+    @Override
+    public IntPtg copy() {
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("value", this::getValue);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("value", this::getValue);
+    }
 }

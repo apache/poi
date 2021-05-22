@@ -176,11 +176,11 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      */
     public void setPoints(int[] xPoints, int[] yPoints) {
         if (xPoints.length != yPoints.length){
-        	LOG.atError().log("xPoint.length must be equal to yPoints.length");
+            LOG.atError().log("xPoint.length must be equal to yPoints.length");
             return;
         }
         if (xPoints.length == 0){
-        	LOG.atError().log("HSSFPolygon must have at least one point");
+            LOG.atError().log("HSSFPolygon must have at least one point");
         }
         EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, false, 0);
         verticesProp.setNumberOfElementsInArray(xPoints.length+1);

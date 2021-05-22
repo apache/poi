@@ -43,43 +43,43 @@ public final class Counta implements Function {
         _predicate = criteriaPredicate;
     }
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		int nArgs = args.length;
-		if (nArgs < 1) {
-			// too few arguments
-			return ErrorEval.VALUE_INVALID;
-		}
+    public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+        int nArgs = args.length;
+        if (nArgs < 1) {
+            // too few arguments
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		if (nArgs > 30) {
-			// too many arguments
-			return ErrorEval.VALUE_INVALID;
-		}
+        if (nArgs > 30) {
+            // too many arguments
+            return ErrorEval.VALUE_INVALID;
+        }
 
-		int temp = 0;
+        int temp = 0;
 
-		for(int i=0; i<nArgs; i++) {
-			temp += CountUtils.countArg(args[i], _predicate);
+        for(int i=0; i<nArgs; i++) {
+            temp += CountUtils.countArg(args[i], _predicate);
 
-		}
-		return new NumberEval(temp);
-	}
+        }
+        return new NumberEval(temp);
+    }
 
-	private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
+    private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
 
-		public boolean matches(ValueEval valueEval) {
-			// Note - observed behavior of Excel:
-			// Error values like #VALUE!, #REF!, #DIV/0!, #NAME? etc don't cause this COUNTA to return an error
-			// in fact, they seem to get counted
+        public boolean matches(ValueEval valueEval) {
+            // Note - observed behavior of Excel:
+            // Error values like #VALUE!, #REF!, #DIV/0!, #NAME? etc don't cause this COUNTA to return an error
+            // in fact, they seem to get counted
 
-			if(valueEval == BlankEval.instance) {
-				return false;
-			}
-			// Note - everything but BlankEval counts
-			return true;
-		}
-	};
+            if(valueEval == BlankEval.instance) {
+                return false;
+            }
+            // Note - everything but BlankEval counts
+            return true;
+        }
+    };
 
-	private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
+    private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
         public boolean matches(ValueEval valueEval) {
             return defaultPredicate.matches(valueEval);
         }

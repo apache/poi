@@ -30,49 +30,49 @@ import org.apache.poi.util.LittleEndianInput;
 import org.junit.jupiter.api.Test;
 
 final class TestConstantValueParser {
-	private static final Object[] SAMPLE_VALUES = {
-			Boolean.TRUE,
-			null,
-			1.1,
-			"Sample text",
-			ErrorConstant.valueOf(FormulaError.DIV0.getCode()),
-		};
-	private static final byte[] SAMPLE_ENCODING = HexRead.readFromString(
-		"04 01 00 00 00 00 00 00 00 " +
-		"00 00 00 00 00 00 00 00 00 " +
-		"01 9A 99 99 99 99 99 F1 3F " +
-		"02 0B 00 00 53 61 6D 70 6C 65 20 74 65 78 74 " +
-		"10 07 00 00 00 00 00 00 00");
+    private static final Object[] SAMPLE_VALUES = {
+            Boolean.TRUE,
+            null,
+            1.1,
+            "Sample text",
+            ErrorConstant.valueOf(FormulaError.DIV0.getCode()),
+        };
+    private static final byte[] SAMPLE_ENCODING = HexRead.readFromString(
+        "04 01 00 00 00 00 00 00 00 " +
+        "00 00 00 00 00 00 00 00 00 " +
+        "01 9A 99 99 99 99 99 F1 3F " +
+        "02 0B 00 00 53 61 6D 70 6C 65 20 74 65 78 74 " +
+        "10 07 00 00 00 00 00 00 00");
 
-	@Test
-	void testGetEncodedSize() {
-		int actual = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
-		assertEquals(51, actual);
-	}
+    @Test
+    void testGetEncodedSize() {
+        int actual = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
+        assertEquals(51, actual);
+    }
 
-	@Test
-	void testEncode() {
-		int size = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
-		byte[] data = new byte[size];
+    @Test
+    void testEncode() {
+        int size = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
+        byte[] data = new byte[size];
 
-		ConstantValueParser.encode(new LittleEndianByteArrayOutputStream(data, 0), SAMPLE_VALUES);
+        ConstantValueParser.encode(new LittleEndianByteArrayOutputStream(data, 0), SAMPLE_VALUES);
 
-		assertArrayEquals(SAMPLE_ENCODING, data, "Encoding differs");
-	}
+        assertArrayEquals(SAMPLE_ENCODING, data, "Encoding differs");
+    }
 
-	@Test
-	void testDecode() {
-		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SAMPLE_ENCODING);
+    @Test
+    void testDecode() {
+        LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SAMPLE_ENCODING);
 
-		Object[] values = ConstantValueParser.parse(in, 4);
-		for (int i = 0; i < values.length; i++) {
-			assertTrue(isEqual(SAMPLE_VALUES[i], values[i]), "Decoded result differs");
-		}
-	}
-	private static boolean isEqual(Object a, Object b) {
-		if (a == null) {
-			return b == null;
-		}
-		return a.equals(b);
-	}
+        Object[] values = ConstantValueParser.parse(in, 4);
+        for (int i = 0; i < values.length; i++) {
+            assertTrue(isEqual(SAMPLE_VALUES[i], values[i]), "Decoded result differs");
+        }
+    }
+    private static boolean isEqual(Object a, Object b) {
+        if (a == null) {
+            return b == null;
+        }
+        return a.equals(b);
+    }
 }

@@ -30,78 +30,78 @@ import org.apache.poi.util.LittleEndianOutput;
  * See the spec at 2.5.198.76 PtgName
  */
 public final class NamePtg extends OperandPtg implements WorkbookDependentFormula {
-	public static final short sid = 0x23;
-	private static final int SIZE = 5;
+    public static final short sid = 0x23;
+    private static final int SIZE = 5;
 
-	/** one-based index to defined name record */
-	private int field_1_label_index;
-	private short field_2_zero; // reserved must be 0
+    /** one-based index to defined name record */
+    private int field_1_label_index;
+    private short field_2_zero; // reserved must be 0
 
-	/**
-	 * @param nameIndex zero-based index to name within workbook
-	 */
-	public NamePtg(int nameIndex) {
-		field_1_label_index = 1 + nameIndex; // convert to 1-based
-	}
+    /**
+     * @param nameIndex zero-based index to name within workbook
+     */
+    public NamePtg(int nameIndex) {
+        field_1_label_index = 1 + nameIndex; // convert to 1-based
+    }
 
-	public NamePtg(NamePtg other) {
-		super(other);
-		field_1_label_index = other.field_1_label_index;
-		field_2_zero = other.field_2_zero;
-	}
+    public NamePtg(NamePtg other) {
+        super(other);
+        field_1_label_index = other.field_1_label_index;
+        field_2_zero = other.field_2_zero;
+    }
 
-	/** Creates new NamePtg */
-	public NamePtg(LittleEndianInput in)  {
-		field_1_label_index = in.readUShort();
-		field_2_zero = in.readShort();
-	}
+    /** Creates new NamePtg */
+    public NamePtg(LittleEndianInput in)  {
+        field_1_label_index = in.readUShort();
+        field_2_zero = in.readShort();
+    }
 
-	/**
-	 * @return zero based index to a defined name record in the LinkTable
-	 */
-	public int getIndex() {
-		return field_1_label_index - 1; // convert to zero based
-	}
+    /**
+     * @return zero based index to a defined name record in the LinkTable
+     */
+    public int getIndex() {
+        return field_1_label_index - 1; // convert to zero based
+    }
 
-	@Override
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(field_1_label_index);
-		out.writeShort(field_2_zero);
-	}
+    @Override
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_label_index);
+        out.writeShort(field_2_zero);
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	@Override
-	public int getSize() {
-		return SIZE;
-	}
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
 
-	@Override
-	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return book.getNameText(this);
-	}
+    @Override
+    public String toFormulaString(FormulaRenderingWorkbook book) {
+        return book.getNameText(this);
+    }
 
-	@Override
-	public String toFormulaString() {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
-	}
+    @Override
+    public String toFormulaString() {
+        throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
 
-	@Override
-	public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
+    @Override
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_REF;
+    }
 
-	@Override
-	public NamePtg copy() {
-		return new NamePtg(this);
-	}
+    @Override
+    public NamePtg copy() {
+        return new NamePtg(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("index", this::getIndex);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("index", this::getIndex);
+    }
 }

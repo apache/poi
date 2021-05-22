@@ -218,8 +218,8 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
         InternalWorkbook iwb = patriarch.getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(picIdx);
-    	EscherBlipRecord blipRecord = bse.getBlipRecord();
-    	return new HSSFPictureData(blipRecord);
+        EscherBlipRecord blipRecord = bse.getBlipRecord();
+        return new HSSFPictureData(blipRecord);
     }
 
     @Override

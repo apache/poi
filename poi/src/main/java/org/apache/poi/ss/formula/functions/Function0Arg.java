@@ -28,8 +28,8 @@ import org.apache.poi.util.Removal;
 @Deprecated
 @Removal(version = "6.0.0")
 public interface Function0Arg extends Function {
-	/**
-	 * see {@link Function#evaluate(ValueEval[], int, int)}
-	 */
-	ValueEval evaluate(int srcRowIndex, int srcColumnIndex);
+    /**
+     * see {@link Function#evaluate(ValueEval[], int, int)}
+     */
+    ValueEval evaluate(int srcRowIndex, int srcColumnIndex);
 }

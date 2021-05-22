@@ -26,63 +26,63 @@ import org.apache.poi.util.LittleEndianOutput;
  * XCT - CRN Count
  */
 public final class CRNCountRecord extends StandardRecord {
-	public static final short sid = 0x59;
+    public static final short sid = 0x59;
 
-	private static final short DATA_SIZE = 4;
+    private static final short DATA_SIZE = 4;
 
-	private int field_1_number_crn_records;
-	private int field_2_sheet_table_index;
+    private int field_1_number_crn_records;
+    private int field_2_sheet_table_index;
 
-	public CRNCountRecord(CRNCountRecord other) {
-		super(other);
-		field_1_number_crn_records = other.field_1_number_crn_records;
-		field_2_sheet_table_index = other.field_2_sheet_table_index;
-	}
+    public CRNCountRecord(CRNCountRecord other) {
+        super(other);
+        field_1_number_crn_records = other.field_1_number_crn_records;
+        field_2_sheet_table_index = other.field_2_sheet_table_index;
+    }
 
-	public CRNCountRecord(RecordInputStream in) {
-		field_1_number_crn_records = in.readShort();
-		if(field_1_number_crn_records < 0) {
-			// TODO - seems like the sign bit of this field might be used for some other purpose
-			// see example file for test case "TestBugs.test19599()"
-			field_1_number_crn_records = (short)-field_1_number_crn_records;
-		}
-		field_2_sheet_table_index = in.readShort();
-	 }
+    public CRNCountRecord(RecordInputStream in) {
+        field_1_number_crn_records = in.readShort();
+        if(field_1_number_crn_records < 0) {
+            // TODO - seems like the sign bit of this field might be used for some other purpose
+            // see example file for test case "TestBugs.test19599()"
+            field_1_number_crn_records = (short)-field_1_number_crn_records;
+        }
+        field_2_sheet_table_index = in.readShort();
+     }
 
-	public int getNumberOfCRNs() {
-		return field_1_number_crn_records;
-	}
+    public int getNumberOfCRNs() {
+        return field_1_number_crn_records;
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort((short)field_1_number_crn_records);
-		out.writeShort((short)field_2_sheet_table_index);
-	}
-	protected int getDataSize() {
-		return DATA_SIZE;
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort((short)field_1_number_crn_records);
+        out.writeShort((short)field_2_sheet_table_index);
+    }
+    protected int getDataSize() {
+        return DATA_SIZE;
+    }
 
-	/**
-	 * return the non static version of the id for this record.
-	 */
-	public short getSid() {
-		return sid;
-	}
+    /**
+     * return the non static version of the id for this record.
+     */
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public CRNCountRecord copy() {
-		return new CRNCountRecord(this);
-	}
+    @Override
+    public CRNCountRecord copy() {
+        return new CRNCountRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.CRN_COUNT;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CRN_COUNT;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"numberOfCRNs", this::getNumberOfCRNs,
-			"sheetTableIndex", () -> field_2_sheet_table_index
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "numberOfCRNs", this::getNumberOfCRNs,
+            "sheetTableIndex", () -> field_2_sheet_table_index
+        );
+    }
 }

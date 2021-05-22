@@ -24,7 +24,7 @@ import org.apache.poi.ss.formula.BaseTestExternalFunctions;
  * Tests setting and evaluating user-defined functions in HSSF
  */
 final class TestHSSFExternalFunctions extends BaseTestExternalFunctions {
-	public TestHSSFExternalFunctions() {
-		super(HSSFITestDataProvider.instance, "atp.xls");
-	}
+    public TestHSSFExternalFunctions() {
+        super(HSSFITestDataProvider.instance, "atp.xls");
+    }
 }

@@ -56,9 +56,9 @@ public final class RecalcIdRecord extends StandardRecord {
     }
 
     public RecalcIdRecord(RecordInputStream in) {
-    	in.readUShort(); // field 'rt' should have value 0x01C1, but Excel doesn't care during reading
-    	_reserved0 = in.readUShort();
-    	_engineId = in.readInt();
+        in.readUShort(); // field 'rt' should have value 0x01C1, but Excel doesn't care during reading
+        _reserved0 = in.readUShort();
+        _engineId = in.readInt();
     }
 
     public boolean isNeeded() {

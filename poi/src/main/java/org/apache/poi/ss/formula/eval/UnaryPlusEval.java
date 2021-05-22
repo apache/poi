@@ -24,37 +24,37 @@ import org.apache.poi.ss.formula.functions.Function;
 
 public final class UnaryPlusEval extends Fixed1ArgFunction  implements ArrayFunction {
 
-	public static final Function instance = new UnaryPlusEval();
+    public static final Function instance = new UnaryPlusEval();
 
-	private UnaryPlusEval() {
-		// enforce singleton
-	}
+    private UnaryPlusEval() {
+        // enforce singleton
+    }
 
-	public ValueEval evaluate(int srcCellRow, int srcCellCol, ValueEval arg0) {
-		double d;
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(arg0, srcCellRow, srcCellCol);
-			if(ve instanceof StringEval) {
-				// Note - asymmetric with UnaryMinus
-				// -"hello" evaluates to #VALUE!
-				// but +"hello" evaluates to "hello"
-				return ve;
-			}
-			d = OperandResolver.coerceValueToDouble(ve);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new NumberEval(+d);
-	}
+    public ValueEval evaluate(int srcCellRow, int srcCellCol, ValueEval arg0) {
+        double d;
+        try {
+            ValueEval ve = OperandResolver.getSingleValue(arg0, srcCellRow, srcCellCol);
+            if(ve instanceof StringEval) {
+                // Note - asymmetric with UnaryMinus
+                // -"hello" evaluates to #VALUE!
+                // but +"hello" evaluates to "hello"
+                return ve;
+            }
+            d = OperandResolver.coerceValueToDouble(ve);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        return new NumberEval(+d);
+    }
 
-	@Override
-	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
-				evaluate(srcRowIndex, srcColumnIndex, valA)
-		);
-	}
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+        if (args.length != 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+                evaluate(srcRowIndex, srcColumnIndex, valA)
+        );
+    }
 
 }

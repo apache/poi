@@ -19,31 +19,31 @@ package org.apache.poi.hssf.record.crypto;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public final class Biff8EncryptionKey {
-	/**
-	 * Stores the BIFF8 encryption/decryption password for the current thread.  This has been done
-	 * using a {@link ThreadLocal} in order to avoid further overloading the various public APIs
-	 * (e.g. {@link HSSFWorkbook}) that need this functionality.
-	 */
-	private static final ThreadLocal<String> _userPasswordTLS = new ThreadLocal<>();
+    /**
+     * Stores the BIFF8 encryption/decryption password for the current thread.  This has been done
+     * using a {@link ThreadLocal} in order to avoid further overloading the various public APIs
+     * (e.g. {@link HSSFWorkbook}) that need this functionality.
+     */
+    private static final ThreadLocal<String> _userPasswordTLS = new ThreadLocal<>();
 
-	/**
-	 * Sets the BIFF8 encryption/decryption password for the current thread.
-	 *
-	 * @param password pass <code>null</code> to clear user password (and use default)
-	 */
-	public static void setCurrentUserPassword(String password) {
-	    if (password == null) {
-	        _userPasswordTLS.remove();
-	    } else {
-	        _userPasswordTLS.set(password);
-	    }
-	}
+    /**
+     * Sets the BIFF8 encryption/decryption password for the current thread.
+     *
+     * @param password pass <code>null</code> to clear user password (and use default)
+     */
+    public static void setCurrentUserPassword(String password) {
+        if (password == null) {
+            _userPasswordTLS.remove();
+        } else {
+            _userPasswordTLS.set(password);
+        }
+    }
 
-	/**
-	 * @return the BIFF8 encryption/decryption password for the current thread.
-	 * <code>null</code> if it is currently unset.
-	 */
-	public static String getCurrentUserPassword() {
-		return _userPasswordTLS.get();
-	}
+    /**
+     * @return the BIFF8 encryption/decryption password for the current thread.
+     * <code>null</code> if it is currently unset.
+     */
+    public static String getCurrentUserPassword() {
+        return _userPasswordTLS.get();
+    }
 }

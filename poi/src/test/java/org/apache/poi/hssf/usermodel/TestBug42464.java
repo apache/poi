@@ -37,56 +37,56 @@ import org.junit.jupiter.api.Test;
 final class TestBug42464 {
 
     @Test
-	void testOKFile() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
-		process(wb);
-		wb.close();
-	}
+    void testOKFile() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
+        process(wb);
+        wb.close();
+    }
 
     @Test
-	void testExpSharedBadFile() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
-		process(wb);
-		wb.close();
-	}
+    void testExpSharedBadFile() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
+        process(wb);
+        wb.close();
+    }
 
-	private static void process(HSSFWorkbook wb) {
-		HSSFFormulaEvaluator eval =	new HSSFFormulaEvaluator(wb);
-		for(int i=0; i<wb.getNumberOfSheets(); i++) {
-			HSSFSheet s = wb.getSheetAt(i);
+    private static void process(HSSFWorkbook wb) {
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+        for(int i=0; i<wb.getNumberOfSheets(); i++) {
+            HSSFSheet s = wb.getSheetAt(i);
 
-			Iterator<Row> it = s.rowIterator();
-			while(it.hasNext()) {
-				HSSFRow r = (HSSFRow)it.next();
-				process(r, eval);
-			}
-		}
-	}
+            Iterator<Row> it = s.rowIterator();
+            while(it.hasNext()) {
+                HSSFRow r = (HSSFRow)it.next();
+                process(r, eval);
+            }
+        }
+    }
 
-	private static void process(HSSFRow row, HSSFFormulaEvaluator eval) {
-		Iterator<Cell> it = row.cellIterator();
-		while(it.hasNext()) {
-			HSSFCell cell = (HSSFCell)it.next();
-			if(cell.getCellType() != CellType.FORMULA) {
-			    continue;
-			}
-			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
-			FormulaRecord r = record.getFormulaRecord();
-			/*Ptg[] ptgs =*/ r.getParsedExpression();
+    private static void process(HSSFRow row, HSSFFormulaEvaluator eval) {
+        Iterator<Cell> it = row.cellIterator();
+        while(it.hasNext()) {
+            HSSFCell cell = (HSSFCell)it.next();
+            if(cell.getCellType() != CellType.FORMULA) {
+                continue;
+            }
+            FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
+            FormulaRecord r = record.getFormulaRecord();
+            /*Ptg[] ptgs =*/ r.getParsedExpression();
 
-			/*String cellRef =*/ new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
-//			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
-//				System.out.print(cellRef);
-//				System.out.println(" - has " + ptgs.length + " ptgs:");
-//				for(int i=0; i<ptgs.length; i++) {
-//					String c = ptgs[i].getClass().toString();
-//					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
-//				}
-//				System.out.println("-> " + cell.getCellFormula());
-//			}
+            /*String cellRef =*/ new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
+//          if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
+//              System.out.print(cellRef);
+//              System.out.println(" - has " + ptgs.length + " ptgs:");
+//              for(int i=0; i<ptgs.length; i++) {
+//                  String c = ptgs[i].getClass().toString();
+//                  System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
+//              }
+//              System.out.println("-> " + cell.getCellFormula());
+//          }
 
-			CellValue evalResult = eval.evaluate(cell);
-			assertNotNull(evalResult);
-		}
-	}
+            CellValue evalResult = eval.evaluate(cell);
+            assertNotNull(evalResult);
+        }
+    }
 }

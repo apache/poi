@@ -48,23 +48,23 @@ public final class MergeCellsRecord extends StandardRecord {
 
 
     public MergeCellsRecord(CellRangeAddress[] regions, int startIndex, int numberOfRegions) {
-		_regions = regions;
-		_startIndex = startIndex;
-		_numberOfRegions = numberOfRegions;
+        _regions = regions;
+        _startIndex = startIndex;
+        _numberOfRegions = numberOfRegions;
     }
     /**
      * Constructs a MergedCellsRecord and sets its fields appropriately
      * @param in the RecordInputstream to read the record from
      */
     public MergeCellsRecord(RecordInputStream in) {
-     	int nRegions = in.readUShort();
-    	CellRangeAddress[] cras = new CellRangeAddress[nRegions];
-    	for (int i = 0; i < nRegions; i++) {
-			cras[i] = new CellRangeAddress(in);
-		}
-    	_numberOfRegions = nRegions;
-    	_startIndex = 0;
-    	_regions = cras;
+        int nRegions = in.readUShort();
+        CellRangeAddress[] cras = new CellRangeAddress[nRegions];
+        for (int i = 0; i < nRegions; i++) {
+            cras[i] = new CellRangeAddress(in);
+        }
+        _numberOfRegions = nRegions;
+        _startIndex = 0;
+        _regions = cras;
     }
     /**
      * get the number of merged areas.  If this drops down to 0 you should just go
@@ -86,8 +86,8 @@ public final class MergeCellsRecord extends StandardRecord {
 
     @Override
     protected int getDataSize() {
-		return CellRangeAddressList.getEncodedSize(_numberOfRegions);
-	}
+        return CellRangeAddressList.getEncodedSize(_numberOfRegions);
+    }
 
     @Override
     public short getSid() {
@@ -98,8 +98,8 @@ public final class MergeCellsRecord extends StandardRecord {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_numberOfRegions);
         for (int i = 0; i < _numberOfRegions; i++) {
-			_regions[_startIndex + i].serialize(out);
-		}
+            _regions[_startIndex + i].serialize(out);
+        }
     }
 
     @Override

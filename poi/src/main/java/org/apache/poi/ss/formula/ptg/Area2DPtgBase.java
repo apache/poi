@@ -25,34 +25,34 @@ import org.apache.poi.util.LittleEndianOutput;
  * Common superclass of 2-D area refs
  */
 public abstract class Area2DPtgBase extends AreaPtgBase {
-	private static final int SIZE = 9;
+    private static final int SIZE = 9;
 
-	protected Area2DPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
-		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
-	}
+    protected Area2DPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
+        super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
+    }
 
-	protected Area2DPtgBase(Area2DPtgBase other) {
-		super(other);
-	}
+    protected Area2DPtgBase(Area2DPtgBase other) {
+        super(other);
+    }
 
-	protected Area2DPtgBase(AreaReference ar) {
-		super(ar);
-	}
+    protected Area2DPtgBase(AreaReference ar) {
+        super(ar);
+    }
 
-	protected Area2DPtgBase(LittleEndianInput in)  {
-		readCoordinates(in);
-	}
+    protected Area2DPtgBase(LittleEndianInput in)  {
+        readCoordinates(in);
+    }
 
-	public final void write(LittleEndianOutput out) {
-		out.writeByte(getSid() + getPtgClass());
-		writeCoordinates(out);
-	}
+    public final void write(LittleEndianOutput out) {
+        out.writeByte(getSid() + getPtgClass());
+        writeCoordinates(out);
+    }
 
-	public final int getSize() {
-		return SIZE;
-	}
+    public final int getSize() {
+        return SIZE;
+    }
 
-	public final String toFormulaString() {
-		return formatReferenceAsString();
-	}
+    public final String toFormulaString() {
+        return formatReferenceAsString();
+    }
 }

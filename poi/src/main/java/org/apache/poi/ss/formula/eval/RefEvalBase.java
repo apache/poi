@@ -25,8 +25,8 @@ import org.apache.poi.ss.formula.SheetRange;
 public abstract class RefEvalBase implements RefEval {
     private final int _firstSheetIndex;
     private final int _lastSheetIndex;
-	private final int _rowIndex;
-	private final int _columnIndex;
+    private final int _rowIndex;
+    private final int _columnIndex;
 
     protected RefEvalBase(SheetRange sheetRange, int rowIndex, int columnIndex) {
         if (sheetRange == null) {
@@ -37,18 +37,18 @@ public abstract class RefEvalBase implements RefEval {
         _rowIndex = rowIndex;
         _columnIndex = columnIndex;
     }
-	protected RefEvalBase(int firstSheetIndex, int lastSheetIndex, int rowIndex, int columnIndex) {
-	    _firstSheetIndex = firstSheetIndex;
-	    _lastSheetIndex = lastSheetIndex;
-		_rowIndex = rowIndex;
-		_columnIndex = columnIndex;
-	}
+    protected RefEvalBase(int firstSheetIndex, int lastSheetIndex, int rowIndex, int columnIndex) {
+        _firstSheetIndex = firstSheetIndex;
+        _lastSheetIndex = lastSheetIndex;
+        _rowIndex = rowIndex;
+        _columnIndex = columnIndex;
+    }
     protected RefEvalBase(int onlySheetIndex, int rowIndex, int columnIndex) {
         this(onlySheetIndex, onlySheetIndex, rowIndex, columnIndex);
     }
     
-	public int getNumberOfSheets() {
-	    return _lastSheetIndex-_firstSheetIndex+1;
+    public int getNumberOfSheets() {
+        return _lastSheetIndex-_firstSheetIndex+1;
     }
     public int getFirstSheetIndex() {
         return _firstSheetIndex;
@@ -57,9 +57,9 @@ public abstract class RefEvalBase implements RefEval {
         return _lastSheetIndex;
     }
     public final int getRow() {
-		return _rowIndex;
-	}
-	public final int getColumn() {
-		return _columnIndex;
-	}
+        return _rowIndex;
+    }
+    public final int getColumn() {
+        return _columnIndex;
+    }
 }

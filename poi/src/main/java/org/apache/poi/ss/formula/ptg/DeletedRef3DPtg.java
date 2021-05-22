@@ -35,57 +35,57 @@ import org.apache.poi.util.LittleEndianOutput;
  * @since 1.0-pre
  */
 public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDependentFormula {
-	public static final byte sid  = 0x3c;
-	private final int field_1_index_extern_sheet;
-	private final int unused1;
+    public static final byte sid  = 0x3c;
+    private final int field_1_index_extern_sheet;
+    private final int unused1;
 
-	/** Creates new DeletedRef3DPtg */
-	public DeletedRef3DPtg(LittleEndianInput in)  {
-		field_1_index_extern_sheet = in.readUShort();
-		unused1 = in.readInt();
-	}
+    /** Creates new DeletedRef3DPtg */
+    public DeletedRef3DPtg(LittleEndianInput in)  {
+        field_1_index_extern_sheet = in.readUShort();
+        unused1 = in.readInt();
+    }
 
-	public DeletedRef3DPtg(int externSheetIndex) {
-		field_1_index_extern_sheet = externSheetIndex;
-		unused1 = 0;
-	}
+    public DeletedRef3DPtg(int externSheetIndex) {
+        field_1_index_extern_sheet = externSheetIndex;
+        unused1 = 0;
+    }
 
-	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
-	}
-	public String toFormulaString() {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
-	}
-	@Override
+    public String toFormulaString(FormulaRenderingWorkbook book) {
+        return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
+    }
+    public String toFormulaString() {
+        throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
+        return Ptg.CLASS_REF;
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return 7;
-	}
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(field_1_index_extern_sheet);
-		out.writeInt(unused1);
-	}
+    public int getSize() {
+        return 7;
+    }
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_index_extern_sheet);
+        out.writeInt(unused1);
+    }
 
-	@Override
-	public DeletedRef3DPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public DeletedRef3DPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"externSheetIndex", () -> field_1_index_extern_sheet,
-			"unused1", () -> unused1
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "externSheetIndex", () -> field_1_index_extern_sheet,
+            "unused1", () -> unused1
+        );
+    }
 }

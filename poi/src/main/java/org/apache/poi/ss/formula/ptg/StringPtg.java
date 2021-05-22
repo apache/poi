@@ -43,13 +43,13 @@ public final class StringPtg extends ScalarConstantPtg {
 
     /** Create a StringPtg from a stream */
     public StringPtg(LittleEndianInput in)  {
-    	int nChars = in.readUByte(); // Note - nChars is 8-bit
-    	_is16bitUnicode = (in.readByte() & 0x01) != 0;
-    	if (_is16bitUnicode) {
-    		field_3_string = StringUtil.readUnicodeLE(in, nChars);
-    	} else {
-    		field_3_string = StringUtil.readCompressedUnicode(in, nChars);
-    	}
+        int nChars = in.readUByte(); // Note - nChars is 8-bit
+        _is16bitUnicode = (in.readByte() & 0x01) != 0;
+        if (_is16bitUnicode) {
+            field_3_string = StringUtil.readUnicodeLE(in, nChars);
+        } else {
+            field_3_string = StringUtil.readCompressedUnicode(in, nChars);
+        }
     }
 
     /**
@@ -78,9 +78,9 @@ public final class StringPtg extends ScalarConstantPtg {
         out.writeByte(field_3_string.length()); // Note - nChars is 8-bit
         out.writeByte(_is16bitUnicode ? 0x01 : 0x00);
         if (_is16bitUnicode) {
-        	StringUtil.putUnicodeLE(field_3_string, out);
+            StringUtil.putUnicodeLE(field_3_string, out);
         } else {
-        	StringUtil.putCompressedUnicode(field_3_string, out);
+            StringUtil.putCompressedUnicode(field_3_string, out);
         }
     }
 
@@ -90,7 +90,7 @@ public final class StringPtg extends ScalarConstantPtg {
     }
 
     public int getSize() {
-    	return 3 +  field_3_string.length() * (_is16bitUnicode ? 2 : 1);
+        return 3 +  field_3_string.length() * (_is16bitUnicode ? 2 : 1);
     }
 
     public String toFormulaString() {

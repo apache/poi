@@ -90,18 +90,18 @@ public interface PictureData {
      *
      * @return content type of this picture.
      */
-	String getContentType();
-	
-	/**
-	 * @return the picture type
-	 */
-	PictureType getType();
+    String getContentType();
+    
+    /**
+     * @return the picture type
+     */
+    PictureType getType();
 
     /**
      * Returns the binary data of this Picture
      * @return picture data
      */
-	byte[] getData();
+    byte[] getData();
 
     /**
      * Sets the binary picture data
@@ -111,26 +111,26 @@ public interface PictureData {
      *
      * @param data picture data
      */
-	void setData(byte[] data) throws IOException;
-	
-	/**
-	 * Gets the checksum - the checksum can be of various length -
-	 * mostly it's 8 (XSLF) or 16 (HSLF) bytes long.  
-	 * @return the checksum
-	 */
-	byte[] getChecksum();
-	
+    void setData(byte[] data) throws IOException;
+    
+    /**
+     * Gets the checksum - the checksum can be of various length -
+     * mostly it's 8 (XSLF) or 16 (HSLF) bytes long.  
+     * @return the checksum
+     */
+    byte[] getChecksum();
+    
     /**
      * Return the original image dimensions in points
      * (for formats supported by BufferedImage).
      *
      * Will return a Dimension with a default width of 200x200 if the format unsupported.
      */
-	Dimension getImageDimension();
-	
+    Dimension getImageDimension();
+    
     /**
      * Return the original image dimensions in pixels
      * @see PictureData#getImageDimension()
      */
-	Dimension getImageDimensionInPixels();
+    Dimension getImageDimensionInPixels();
 }

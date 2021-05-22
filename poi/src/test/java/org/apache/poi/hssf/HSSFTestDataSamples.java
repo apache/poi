@@ -30,38 +30,38 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public final class HSSFTestDataSamples {
 
-	private static final POIDataSamples _inst = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples _inst = POIDataSamples.getSpreadSheetInstance();
 
-	public static InputStream openSampleFileStream(String sampleFileName) {
-		return _inst.openResourceAsStream(sampleFileName);
-	}
-	public static File getSampleFile(String sampleFileName) {
-		return _inst.getFile(sampleFileName);
-	}
-	public static byte[] getTestDataFileContent(String fileName) {
-		return _inst.readFile(fileName);
-	}
+    public static InputStream openSampleFileStream(String sampleFileName) {
+        return _inst.openResourceAsStream(sampleFileName);
+    }
+    public static File getSampleFile(String sampleFileName) {
+        return _inst.getFile(sampleFileName);
+    }
+    public static byte[] getTestDataFileContent(String fileName) {
+        return _inst.readFile(fileName);
+    }
 
-	public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
-		try {
-			return new HSSFWorkbook(_inst.openResourceAsStream(sampleFileName));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	/**
-	 * Writes a spreadsheet to a {@code ByteArrayOutputStream} and reads it back
-	 * from a {@code ByteArrayInputStream}.<p>
-	 * Useful for verifying that the serialisation round trip
-	 */
-	public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-		try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
-			original.write(baos);
-			try (InputStream is = baos.toInputStream()) {
-				return new HSSFWorkbook(is);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
+        try {
+            return new HSSFWorkbook(_inst.openResourceAsStream(sampleFileName));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * Writes a spreadsheet to a {@code ByteArrayOutputStream} and reads it back
+     * from a {@code ByteArrayInputStream}.<p>
+     * Useful for verifying that the serialisation round trip
+     */
+    public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            original.write(baos);
+            try (InputStream is = baos.toInputStream()) {
+                return new HSSFWorkbook(is);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

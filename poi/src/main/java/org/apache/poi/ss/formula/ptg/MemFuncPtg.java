@@ -26,60 +26,60 @@ import org.apache.poi.util.LittleEndianOutput;
 
 public final class MemFuncPtg extends OperandPtg {
 
-	public static final byte sid = 0x29;
-	private final int field_1_len_ref_subexpression;
+    public static final byte sid = 0x29;
+    private final int field_1_len_ref_subexpression;
 
-	/**
-	 * Creates new function pointer from a byte array usually called while
-	 * reading an excel file.
-	 */
-	public MemFuncPtg(LittleEndianInput in)  {
-		this(in.readUShort());
-	}
+    /**
+     * Creates new function pointer from a byte array usually called while
+     * reading an excel file.
+     */
+    public MemFuncPtg(LittleEndianInput in)  {
+        this(in.readUShort());
+    }
 
-	public MemFuncPtg(int subExprLen) {
-		field_1_len_ref_subexpression = subExprLen;
-	}
+    public MemFuncPtg(int subExprLen) {
+        field_1_len_ref_subexpression = subExprLen;
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return 3;
-	}
+    public int getSize() {
+        return 3;
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(field_1_len_ref_subexpression);
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_len_ref_subexpression);
+    }
 
-	public String toFormulaString() {
-		return "";
-	}
+    public String toFormulaString() {
+        return "";
+    }
 
-	@Override
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
+        return Ptg.CLASS_REF;
+    }
 
-	public int getNumberOfOperands() {
-		return field_1_len_ref_subexpression;
-	}
+    public int getNumberOfOperands() {
+        return field_1_len_ref_subexpression;
+    }
 
-	public int getLenRefSubexpression() {
-		return field_1_len_ref_subexpression;
-	}
+    public int getLenRefSubexpression() {
+        return field_1_len_ref_subexpression;
+    }
 
-	@Override
-	public MemFuncPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public MemFuncPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
+    }
 }

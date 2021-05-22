@@ -32,36 +32,36 @@ class TestEFBiffViewer extends BaseTestIteratingXLS {
     @Override
     protected Map<String, Class<? extends Throwable>> getExcludes() {
         Map<String, Class<? extends Throwable>> excludes = super.getExcludes();
-		// unsupported crypto api header
+        // unsupported crypto api header
         excludes.put("35897-type4.xls", EncryptedDocumentException.class);
         excludes.put("51832.xls", EncryptedDocumentException.class);
         excludes.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
         excludes.put("password.xls", EncryptedDocumentException.class);
-		// HSSFWorkbook cannot open it as well
+        // HSSFWorkbook cannot open it as well
         excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);
         excludes.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
-		// "Buffer overrun"
+        // "Buffer overrun"
         excludes.put("XRefCalc.xls", RuntimeException.class);
         return excludes;
     }
 
-	@Override
-	void runOneFile(File fileIn) throws IOException {
-		PrintStream save = System.out;
-		try {
-			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new NullPrintStream());
+    @Override
+    void runOneFile(File fileIn) throws IOException {
+        PrintStream save = System.out;
+        try {
+            // redirect standard out during the test to avoid spamming the console with output
+            System.setOut(new NullPrintStream());
 
-			EFBiffViewer.main(new String[] { fileIn.getAbsolutePath() });
-		} finally {
-			System.setOut(save);
-		}
-	}
+            EFBiffViewer.main(new String[] { fileIn.getAbsolutePath() });
+        } finally {
+            System.setOut(save);
+        }
+    }
 
-	//@Test
-	void testFile() throws IOException {
-		EFBiffViewer viewer = new EFBiffViewer();
-		viewer.setFile(new File("test-data/spreadsheet/59074.xls").getAbsolutePath());
-		viewer.run();
-	}
+    //@Test
+    void testFile() throws IOException {
+        EFBiffViewer viewer = new EFBiffViewer();
+        viewer.setFile(new File("test-data/spreadsheet/59074.xls").getAbsolutePath());
+        viewer.run();
+    }
 }

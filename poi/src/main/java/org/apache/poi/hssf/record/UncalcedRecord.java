@@ -28,51 +28,51 @@ import org.apache.poi.util.LittleEndianOutput;
  * been recalculated before the document was saved.
  */
 public final class UncalcedRecord extends StandardRecord {
-	public static final short sid = 0x005E;
+    public static final short sid = 0x005E;
 
     private short _reserved;
 
-	public UncalcedRecord() {
+    public UncalcedRecord() {
         _reserved = 0;
-	}
+    }
 
-	public UncalcedRecord(UncalcedRecord other) {
-		super(other);
-		_reserved = other._reserved;
-	}
+    public UncalcedRecord(UncalcedRecord other) {
+        super(other);
+        _reserved = other._reserved;
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	public UncalcedRecord(RecordInputStream in) {
-		_reserved = in.readShort(); // unused
-	}
+    public UncalcedRecord(RecordInputStream in) {
+        _reserved = in.readShort(); // unused
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(_reserved);
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(_reserved);
+    }
 
-	protected int getDataSize() {
-		return 2;
-	}
+    protected int getDataSize() {
+        return 2;
+    }
 
-	public static int getStaticRecordSize() {
-		return 6;
-	}
+    public static int getStaticRecordSize() {
+        return 6;
+    }
 
-	@Override
-	public UncalcedRecord copy() {
-		return new UncalcedRecord(this);
-	}
+    @Override
+    public UncalcedRecord copy() {
+        return new UncalcedRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.UNCALCED;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.UNCALCED;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("reserved", () -> _reserved);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("reserved", () -> _reserved);
+    }
 }

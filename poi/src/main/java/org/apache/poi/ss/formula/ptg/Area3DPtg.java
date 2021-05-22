@@ -37,89 +37,89 @@ import org.apache.poi.util.LittleEndianOutput;
  * The XSSF equivalent is {@link Area3DPxg}
  */
 public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
-	public static final byte sid = 0x3b;
-	private static final int SIZE = 11; // 10 + 1 for Ptg
+    public static final byte sid = 0x3b;
+    private static final int SIZE = 11; // 10 + 1 for Ptg
 
-	private int field_1_index_extern_sheet;
+    private int field_1_index_extern_sheet;
 
 
-	public Area3DPtg(String arearef, int externIdx) {
-		super(new AreaReference(arearef, SpreadsheetVersion.EXCEL97));
-		setExternSheetIndex(externIdx);
-	}
+    public Area3DPtg(String arearef, int externIdx) {
+        super(new AreaReference(arearef, SpreadsheetVersion.EXCEL97));
+        setExternSheetIndex(externIdx);
+    }
 
-	public Area3DPtg(Area3DPtg other)  {
-		super(other);
-		field_1_index_extern_sheet = other.field_1_index_extern_sheet;
-	}
+    public Area3DPtg(Area3DPtg other)  {
+        super(other);
+        field_1_index_extern_sheet = other.field_1_index_extern_sheet;
+    }
 
-	public Area3DPtg(LittleEndianInput in)  {
-		field_1_index_extern_sheet = in.readShort();
-		readCoordinates(in);
-	}
+    public Area3DPtg(LittleEndianInput in)  {
+        field_1_index_extern_sheet = in.readShort();
+        readCoordinates(in);
+    }
 
-	public Area3DPtg(int firstRow, int lastRow, int firstColumn, int lastColumn,
-			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative,
-			int externalSheetIndex) {
-		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
-		setExternSheetIndex(externalSheetIndex);
-	}
+    public Area3DPtg(int firstRow, int lastRow, int firstColumn, int lastColumn,
+            boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative,
+            int externalSheetIndex) {
+        super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
+        setExternSheetIndex(externalSheetIndex);
+    }
 
-	public Area3DPtg(AreaReference arearef, int externIdx) {
-		super(arearef);
-		setExternSheetIndex(externIdx);
-	}
+    public Area3DPtg(AreaReference arearef, int externIdx) {
+        super(arearef);
+        setExternSheetIndex(externIdx);
+    }
 
-	@Override
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(field_1_index_extern_sheet);
-		writeCoordinates(out);
-	}
+    @Override
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_index_extern_sheet);
+        writeCoordinates(out);
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	@Override
-	public int getSize() {
-		return SIZE;
-	}
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
 
-	public int getExternSheetIndex() {
-		return field_1_index_extern_sheet;
-	}
+    public int getExternSheetIndex() {
+        return field_1_index_extern_sheet;
+    }
 
-	public void setExternSheetIndex(int index) {
-		field_1_index_extern_sheet = index;
-	}
-	public String format2DRefAsString() {
-		return formatReferenceAsString();
-	}
-	/**
-	 * @return text representation of this area reference that can be used in text
-	 *  formulas. The sheet name will get properly delimited if required.
-	 */
-	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
-	}
+    public void setExternSheetIndex(int index) {
+        field_1_index_extern_sheet = index;
+    }
+    public String format2DRefAsString() {
+        return formatReferenceAsString();
+    }
+    /**
+     * @return text representation of this area reference that can be used in text
+     *  formulas. The sheet name will get properly delimited if required.
+     */
+    public String toFormulaString(FormulaRenderingWorkbook book) {
+        return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
+    }
 
-	@Override
-	public String toFormulaString() {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
-	}
+    @Override
+    public String toFormulaString() {
+        throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
 
-	@Override
-	public Area3DPtg copy() {
-		return new Area3DPtg(this);
-	}
+    @Override
+    public Area3DPtg copy() {
+        return new Area3DPtg(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"base", super::getGenericProperties,
-			"externSheetIndex", this::getExternSheetIndex
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "externSheetIndex", this::getExternSheetIndex
+        );
+    }
 }

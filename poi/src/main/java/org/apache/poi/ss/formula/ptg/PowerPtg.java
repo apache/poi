@@ -23,7 +23,7 @@ public final class PowerPtg extends ValueOperatorPtg {
     public static final PowerPtg instance = new PowerPtg();
 
     private PowerPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

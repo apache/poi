@@ -26,34 +26,34 @@ import org.apache.poi.ss.usermodel.CellType;
  * Evaluator for cells within a specific Sheet
  */
 final class SheetRefEvaluator {
-	private final WorkbookEvaluator _bookEvaluator;
-	private final EvaluationTracker _tracker;
-	private final int _sheetIndex;
-	private EvaluationSheet _sheet;
+    private final WorkbookEvaluator _bookEvaluator;
+    private final EvaluationTracker _tracker;
+    private final int _sheetIndex;
+    private EvaluationSheet _sheet;
 
-	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker, int sheetIndex) {
-		if (sheetIndex < 0) {
-			throw new IllegalArgumentException("Invalid sheetIndex: " + sheetIndex + ".");
-		}
-		_bookEvaluator = bookEvaluator;
-		_tracker = tracker;
-		_sheetIndex = sheetIndex;
-	}
+    public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker, int sheetIndex) {
+        if (sheetIndex < 0) {
+            throw new IllegalArgumentException("Invalid sheetIndex: " + sheetIndex + ".");
+        }
+        _bookEvaluator = bookEvaluator;
+        _tracker = tracker;
+        _sheetIndex = sheetIndex;
+    }
 
-	public String getSheetName() {
-		return _bookEvaluator.getSheetName(_sheetIndex);
-	}
+    public String getSheetName() {
+        return _bookEvaluator.getSheetName(_sheetIndex);
+    }
 
-	public ValueEval getEvalForCell(int rowIndex, int columnIndex) {
-		return _bookEvaluator.evaluateReference(getSheet(), _sheetIndex, rowIndex, columnIndex, _tracker);
-	}
+    public ValueEval getEvalForCell(int rowIndex, int columnIndex) {
+        return _bookEvaluator.evaluateReference(getSheet(), _sheetIndex, rowIndex, columnIndex, _tracker);
+    }
 
-	private EvaluationSheet getSheet() {
-		if (_sheet == null) {
-			_sheet = _bookEvaluator.getSheet(_sheetIndex);
-		}
-		return _sheet;
-	}
+    private EvaluationSheet getSheet() {
+        if (_sheet == null) {
+            _sheet = _bookEvaluator.getSheet(_sheetIndex);
+        }
+        return _sheet;
+    }
 
     /**
      * @param rowIndex 

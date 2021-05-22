@@ -51,35 +51,35 @@ class TestReSave extends BaseTestIteratingXLS {
         return excludes;
     }
 
-	@Override
-	void runOneFile(File fileIn) throws Exception {
-		// avoid running on files leftover from previous failed runs
-		if(fileIn.getName().endsWith("-saved.xls")) {
-			return;
-		}
+    @Override
+    void runOneFile(File fileIn) throws Exception {
+        // avoid running on files leftover from previous failed runs
+        if(fileIn.getName().endsWith("-saved.xls")) {
+            return;
+        }
 
-		PrintStream save = System.out;
-		try {
-			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new NullPrintStream());
+        PrintStream save = System.out;
+        try {
+            // redirect standard out during the test to avoid spamming the console with output
+            System.setOut(new NullPrintStream());
 
-			File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
-			try {
-				ReSave.main(new String[] { fileIn.getAbsolutePath() });
+            File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
+            try {
+                ReSave.main(new String[] { fileIn.getAbsolutePath() });
 
-				// also try BiffViewer on the saved file
+                // also try BiffViewer on the saved file
                 new TestBiffViewer().runOneFile(reSavedFile);
 
-    			// had one case where the re-saved could not be re-saved!
-    			ReSave.main(new String[] { "-bos", reSavedFile.getAbsolutePath() });
-			} finally {
-				// clean up the re-saved file
-				assertTrue(!reSavedFile.exists() || reSavedFile.delete());
-			}
-		} finally {
-			System.setOut(save);
-		}
-	}
+                // had one case where the re-saved could not be re-saved!
+                ReSave.main(new String[] { "-bos", reSavedFile.getAbsolutePath() });
+            } finally {
+                // clean up the re-saved file
+                assertTrue(!reSavedFile.exists() || reSavedFile.delete());
+            }
+        } finally {
+            System.setOut(save);
+        }
+    }
 
     @Disabled("Only used for local testing")
     @Test

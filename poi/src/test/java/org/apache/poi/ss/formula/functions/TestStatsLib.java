@@ -220,22 +220,22 @@ class TestStatsLib extends BaseTestNumeric {
     }
 
     private static void confirmMode(double[] v, double expectedResult) {
-    	confirmMode(v, (Double)expectedResult);
+        confirmMode(v, (Double)expectedResult);
     }
 
     private static void confirmMode(double[] v, Double expectedResult) {
-    	double actual;
-		try {
-			actual = Mode.evaluate(v);
-			assertNotNull(expectedResult, "Expected N/A exception was not thrown");
-		} catch (EvaluationException e) {
-			if (expectedResult == null) {
-				assertEquals(ErrorEval.NA, e.getErrorEval());
-				return;
-			}
-			throw new RuntimeException(e);
-		}
-    	assertDouble("mode", expectedResult, actual);
+        double actual;
+        try {
+            actual = Mode.evaluate(v);
+            assertNotNull(expectedResult, "Expected N/A exception was not thrown");
+        } catch (EvaluationException e) {
+            if (expectedResult == null) {
+                assertEquals(ErrorEval.NA, e.getErrorEval());
+                return;
+            }
+            throw new RuntimeException(e);
+        }
+        assertDouble("mode", expectedResult, actual);
     }
 
     @Test

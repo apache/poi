@@ -39,8 +39,8 @@ import org.apache.poi.util.LocaleUtil;
  * or as results of other formulas or functions. For example, use DATE(2008,5,23)
  * for the 23rd day of May, 2008. Problems can occur if dates are entered as text.
  * Return_type     is a number that determines on which day the week begins. The default is 1.
- * 1	Week begins on Sunday. Weekdays are numbered 1 through 7.
- * 2	Week begins on Monday. Weekdays are numbered 1 through 7.
+ * 1    Week begins on Sunday. Weekdays are numbered 1 through 7.
+ * 2    Week begins on Monday. Weekdays are numbered 1 through 7.
  */
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new WeekNum();

@@ -35,15 +35,15 @@ import org.junit.jupiter.api.Test;
 final class TestHex2Dec {
 
     private static ValueEval invokeValue(String number1) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
-		return new Hex2Dec().evaluate(args, -1, -1);
-	}
+        ValueEval[] args = new ValueEval[] { new StringEval(number1) };
+        return new Hex2Dec().evaluate(args, -1, -1);
+    }
 
     private static void confirmValue(String msg, String number1, String expected) {
-		ValueEval result = invokeValue(number1);
-		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
-	}
+        ValueEval result = invokeValue(number1);
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
+    }
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
@@ -52,11 +52,11 @@ final class TestHex2Dec {
     }
 
     @Test
-	void testBasic() {
-		confirmValue("Converts hex 'A5' to decimal (165)", "A5", "165");
-		confirmValue("Converts hex FFFFFFFF5B to decimal (-165)", "FFFFFFFF5B", "-165");
-		confirmValue("Converts hex 3DA408B9 to decimal (-165)", "3DA408B9", "1034160313");
-	}
+    void testBasic() {
+        confirmValue("Converts hex 'A5' to decimal (165)", "A5", "165");
+        confirmValue("Converts hex FFFFFFFF5B to decimal (-165)", "FFFFFFFF5B", "-165");
+        confirmValue("Converts hex 3DA408B9 to decimal (-165)", "3DA408B9", "1034160313");
+    }
 
     @Test
     void testErrors() {

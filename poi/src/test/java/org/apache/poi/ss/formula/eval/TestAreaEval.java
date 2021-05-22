@@ -32,32 +32,32 @@ import org.junit.jupiter.api.Test;
  */
 final class TestAreaEval {
 
-	@Test
-	void testGetValue_bug44950() {
-		// TODO - this test probably isn't testing much anymore
-		AreaPtg ptg = new AreaPtg(new AreaReference("B2:D3", SpreadsheetVersion.EXCEL97));
-		NumberEval one = new NumberEval(1);
-		ValueEval[] values = {
-				one,
-				new NumberEval(2),
-				new NumberEval(3),
-				new NumberEval(4),
-				new NumberEval(5),
-				new NumberEval(6),
-		};
-		AreaEval ae = EvalFactory.createAreaEval(ptg, values);
-		assertNotEquals(one, ae.getAbsoluteValue(1, 2), "Identified bug 44950 a");
-		confirm(1, ae, 1, 1);
-		confirm(2, ae, 1, 2);
-		confirm(3, ae, 1, 3);
-		confirm(4, ae, 2, 1);
-		confirm(5, ae, 2, 2);
-		confirm(6, ae, 2, 3);
+    @Test
+    void testGetValue_bug44950() {
+        // TODO - this test probably isn't testing much anymore
+        AreaPtg ptg = new AreaPtg(new AreaReference("B2:D3", SpreadsheetVersion.EXCEL97));
+        NumberEval one = new NumberEval(1);
+        ValueEval[] values = {
+                one,
+                new NumberEval(2),
+                new NumberEval(3),
+                new NumberEval(4),
+                new NumberEval(5),
+                new NumberEval(6),
+        };
+        AreaEval ae = EvalFactory.createAreaEval(ptg, values);
+        assertNotEquals(one, ae.getAbsoluteValue(1, 2), "Identified bug 44950 a");
+        confirm(1, ae, 1, 1);
+        confirm(2, ae, 1, 2);
+        confirm(3, ae, 1, 3);
+        confirm(4, ae, 2, 1);
+        confirm(5, ae, 2, 2);
+        confirm(6, ae, 2, 3);
 
-	}
+    }
 
-	private static void confirm(int expectedValue, AreaEval ae, int row, int col) {
-		NumberEval v = (NumberEval) ae.getAbsoluteValue(row, col);
-		assertEquals(expectedValue, v.getNumberValue(), 0.0);
-	}
+    private static void confirm(int expectedValue, AreaEval ae, int row, int col) {
+        NumberEval v = (NumberEval) ae.getAbsoluteValue(row, col);
+        assertEquals(expectedValue, v.getNumberValue(), 0.0);
+    }
 }

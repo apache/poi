@@ -21,12 +21,12 @@ public interface MasterSheet<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > extends Sheet<S,P> {
-	/**
-	 * Return the placeholder shape for the specified type
-	 * 
-	 * @return the shape or {@code null} if it is not defined in this mastersheet
-	 * 
-	 * @since POI 4.0.0
-	 */
+    /**
+     * Return the placeholder shape for the specified type
+     * 
+     * @return the shape or {@code null} if it is not defined in this mastersheet
+     * 
+     * @since POI 4.0.0
+     */
     SimpleShape<S,P> getPlaceholder(Placeholder type);
 }

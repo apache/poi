@@ -36,103 +36,103 @@ import org.junit.jupiter.api.Test;
  */
 final class TestTFunc {
 
-	/**
-	 * @return the result of calling function T() with the specified argument
-	 */
-	private static ValueEval invokeT(ValueEval arg) {
-		ValueEval[] args = { arg, };
-		ValueEval result = new T().evaluate(args, -1, (short)-1);
-		assertNotNull(result, "result may never be null");
-		return result;
-	}
+    /**
+     * @return the result of calling function T() with the specified argument
+     */
+    private static ValueEval invokeT(ValueEval arg) {
+        ValueEval[] args = { arg, };
+        ValueEval result = new T().evaluate(args, -1, (short)-1);
+        assertNotNull(result, "result may never be null");
+        return result;
+    }
 
-	/**
-	 * Simulates call: T(A1)
-	 * where cell A1 has the specified innerValue
-	 */
-	private ValueEval invokeTWithReference(ValueEval innerValue) {
-		ValueEval arg = EvalFactory.createRefEval("$B$2", innerValue);
-		return invokeT(arg);
-	}
+    /**
+     * Simulates call: T(A1)
+     * where cell A1 has the specified innerValue
+     */
+    private ValueEval invokeTWithReference(ValueEval innerValue) {
+        ValueEval arg = EvalFactory.createRefEval("$B$2", innerValue);
+        return invokeT(arg);
+    }
 
-	private static void confirmText(String text) {
-		ValueEval arg = new StringEval(text);
-		ValueEval eval = invokeT(arg);
-		StringEval se = (StringEval) eval;
-		assertEquals(text, se.getStringValue());
-	}
+    private static void confirmText(String text) {
+        ValueEval arg = new StringEval(text);
+        ValueEval eval = invokeT(arg);
+        StringEval se = (StringEval) eval;
+        assertEquals(text, se.getStringValue());
+    }
 
-	@Test
-	void testTextValues() {
-		confirmText("abc");
-		confirmText("");
-		confirmText(" ");
-		confirmText("~");
-		confirmText("123");
-		confirmText("TRUE");
-	}
+    @Test
+    void testTextValues() {
+        confirmText("abc");
+        confirmText("");
+        confirmText(" ");
+        confirmText("~");
+        confirmText("123");
+        confirmText("TRUE");
+    }
 
-	private static void confirmError(ValueEval arg) {
-		ValueEval eval = invokeT(arg);
+    private static void confirmError(ValueEval arg) {
+        ValueEval eval = invokeT(arg);
         assertSame(arg, eval);
-	}
+    }
 
-	@Test
-	void testErrorValues() {
+    @Test
+    void testErrorValues() {
 
-		confirmError(ErrorEval.VALUE_INVALID);
-		confirmError(ErrorEval.NA);
-		confirmError(ErrorEval.REF_INVALID);
-	}
+        confirmError(ErrorEval.VALUE_INVALID);
+        confirmError(ErrorEval.NA);
+        confirmError(ErrorEval.REF_INVALID);
+    }
 
-	private static void confirmString(ValueEval eval, String expected) {
-		assertTrue(eval instanceof StringEval);
-		assertEquals(expected, ((StringEval)eval).getStringValue());
-	}
+    private static void confirmString(ValueEval eval, String expected) {
+        assertTrue(eval instanceof StringEval);
+        assertEquals(expected, ((StringEval)eval).getStringValue());
+    }
 
-	private static void confirmOther(ValueEval arg) {
-		ValueEval eval = invokeT(arg);
-		confirmString(eval, "");
-	}
+    private static void confirmOther(ValueEval arg) {
+        ValueEval eval = invokeT(arg);
+        confirmString(eval, "");
+    }
 
-	@Test
-	void testOtherValues() {
-		confirmOther(new NumberEval(2));
-		confirmOther(BoolEval.FALSE);
-		confirmOther(BlankEval.instance);  // can this particular case be verified?
-	}
+    @Test
+    void testOtherValues() {
+        confirmOther(new NumberEval(2));
+        confirmOther(BoolEval.FALSE);
+        confirmOther(BlankEval.instance);  // can this particular case be verified?
+    }
 
-	@Test
-	void testRefValues() {
-		ValueEval eval;
+    @Test
+    void testRefValues() {
+        ValueEval eval;
 
-		eval = invokeTWithReference(new StringEval("def"));
-		confirmString(eval, "def");
-		eval = invokeTWithReference(new StringEval(" "));
-		confirmString(eval, " ");
+        eval = invokeTWithReference(new StringEval("def"));
+        confirmString(eval, "def");
+        eval = invokeTWithReference(new StringEval(" "));
+        confirmString(eval, " ");
 
-		eval = invokeTWithReference(new NumberEval(2));
-		confirmString(eval, "");
-		eval = invokeTWithReference(BoolEval.TRUE);
-		confirmString(eval, "");
+        eval = invokeTWithReference(new NumberEval(2));
+        confirmString(eval, "");
+        eval = invokeTWithReference(BoolEval.TRUE);
+        confirmString(eval, "");
 
-		eval = invokeTWithReference(ErrorEval.NAME_INVALID);
+        eval = invokeTWithReference(ErrorEval.NAME_INVALID);
         assertSame(eval, ErrorEval.NAME_INVALID);
-	}
+    }
 
-	@Test
-	void testAreaArg() {
-		ValueEval[] areaValues = new ValueEval[] {
-			new StringEval("abc"), new StringEval("def"),
-			new StringEval("ghi"), new StringEval("jkl"),
-		};
-		AreaEval ae = EvalFactory.createAreaEval("C10:D11", areaValues);
+    @Test
+    void testAreaArg() {
+        ValueEval[] areaValues = new ValueEval[] {
+            new StringEval("abc"), new StringEval("def"),
+            new StringEval("ghi"), new StringEval("jkl"),
+        };
+        AreaEval ae = EvalFactory.createAreaEval("C10:D11", areaValues);
 
-		ValueEval ve = invokeT(ae);
-		confirmString(ve, "abc");
+        ValueEval ve = invokeT(ae);
+        confirmString(ve, "abc");
 
-		areaValues[0] = new NumberEval(5.0);
-		ve = invokeT(ae);
-		confirmString(ve, "");
-	}
+        areaValues[0] = new NumberEval(5.0);
+        ve = invokeT(ae);
+        confirmString(ve, "");
+    }
 }

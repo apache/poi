@@ -29,9 +29,9 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class EOFRecord extends StandardRecord {
     public static final short sid = 0x0A;
-	public static final int ENCODED_SIZE = 4;
+    public static final int ENCODED_SIZE = 4;
 
-	public static final EOFRecord instance = new EOFRecord();
+    public static final EOFRecord instance = new EOFRecord();
 
     private EOFRecord() {}
 

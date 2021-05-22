@@ -28,70 +28,70 @@ import org.apache.poi.util.LittleEndianOutput;
  * This record stores the contents of an external cell or cell range
  */
 public final class CRNRecord extends StandardRecord {
-	public static final short sid = 0x005A;
+    public static final short sid = 0x005A;
 
-	private int	field_1_last_column_index;
-	private int	field_2_first_column_index;
-	private int	field_3_row_index;
-	private Object[] field_4_constant_values;
+    private int field_1_last_column_index;
+    private int field_2_first_column_index;
+    private int field_3_row_index;
+    private Object[] field_4_constant_values;
 
-	public CRNRecord(CRNRecord other) {
-		super(other);
-		field_1_last_column_index = other.field_1_last_column_index;
-		field_2_first_column_index = other.field_2_first_column_index;
-		field_3_row_index = other.field_3_row_index;
-		// field_4_constant_values are instances of Double, Boolean, String, ErrorCode,
-		// i.e. they are immutable and can their references can be simply cloned
-		field_4_constant_values = (other.field_4_constant_values == null) ? null : other.field_4_constant_values.clone();
-	}
+    public CRNRecord(CRNRecord other) {
+        super(other);
+        field_1_last_column_index = other.field_1_last_column_index;
+        field_2_first_column_index = other.field_2_first_column_index;
+        field_3_row_index = other.field_3_row_index;
+        // field_4_constant_values are instances of Double, Boolean, String, ErrorCode,
+        // i.e. they are immutable and can their references can be simply cloned
+        field_4_constant_values = (other.field_4_constant_values == null) ? null : other.field_4_constant_values.clone();
+    }
 
-	public CRNRecord(RecordInputStream in) {
-		field_1_last_column_index = in.readUByte();
-		field_2_first_column_index = in.readUByte();
-		field_3_row_index = in.readShort();
-		int nValues = field_1_last_column_index - field_2_first_column_index + 1;
-		field_4_constant_values = ConstantValueParser.parse(in, nValues);
-	}
+    public CRNRecord(RecordInputStream in) {
+        field_1_last_column_index = in.readUByte();
+        field_2_first_column_index = in.readUByte();
+        field_3_row_index = in.readShort();
+        int nValues = field_1_last_column_index - field_2_first_column_index + 1;
+        field_4_constant_values = ConstantValueParser.parse(in, nValues);
+    }
 
-	public int getNumberOfCRNs() {
-		return field_1_last_column_index;
-	}
+    public int getNumberOfCRNs() {
+        return field_1_last_column_index;
+    }
 
-	protected int getDataSize() {
-		return 4 + ConstantValueParser.getEncodedSize(field_4_constant_values);
-	}
+    protected int getDataSize() {
+        return 4 + ConstantValueParser.getEncodedSize(field_4_constant_values);
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeByte(field_1_last_column_index);
-		out.writeByte(field_2_first_column_index);
-		out.writeShort(field_3_row_index);
-		ConstantValueParser.encode(out, field_4_constant_values);
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(field_1_last_column_index);
+        out.writeByte(field_2_first_column_index);
+        out.writeShort(field_3_row_index);
+        ConstantValueParser.encode(out, field_4_constant_values);
+    }
 
-	/**
-	 * return the non static version of the id for this record.
-	 */
-	public short getSid() {
-		return sid;
-	}
+    /**
+     * return the non static version of the id for this record.
+     */
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public CRNRecord copy() {
-		return new CRNRecord(this);
-	}
+    @Override
+    public CRNRecord copy() {
+        return new CRNRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.CRN;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CRN;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"row", () -> field_3_row_index,
-			"firstColumn", () -> field_2_first_column_index,
-			"lastColumn", () -> field_1_last_column_index,
-			"constantValues", () -> field_4_constant_values
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", () -> field_3_row_index,
+            "firstColumn", () -> field_2_first_column_index,
+            "lastColumn", () -> field_1_last_column_index,
+            "constantValues", () -> field_4_constant_values
+        );
+    }
 }

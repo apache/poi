@@ -136,11 +136,11 @@ public final class InternalWorkbook {
     private final List<HyperlinkRecord> hyperlinks;
 
     /** the number of extended format records */
-	private int numxfs;
+    private int numxfs;
     /** the number of font records */
-	private int numfonts;
+    private int numfonts;
     /** holds the max format id */
-	private int maxformatid;
+    private int maxformatid;
     /** whether 1904 date windowing is being used */
     private boolean uses1904datewindowing;
     private DrawingManager2 drawingManager;
@@ -156,17 +156,17 @@ public final class InternalWorkbook {
     private final Map<String, NameCommentRecord> commentRecords;
 
     private InternalWorkbook() {
-    	records     = new WorkbookRecordList();
+        records     = new WorkbookRecordList();
 
-		boundsheets = new ArrayList<>();
-		formats = new ArrayList<>();
-		hyperlinks = new ArrayList<>();
-		numxfs = 0;
-		numfonts = 0;
-		maxformatid = -1;
-		uses1904datewindowing = false;
-		escherBSERecords = new ArrayList<>();
-		commentRecords = new LinkedHashMap<>();
+        boundsheets = new ArrayList<>();
+        formats = new ArrayList<>();
+        hyperlinks = new ArrayList<>();
+        numxfs = 0;
+        numfonts = 0;
+        maxformatid = -1;
+        uses1904datewindowing = false;
+        escherBSERecords = new ArrayList<>();
+        commentRecords = new LinkedHashMap<>();
     }
 
     /**
@@ -609,7 +609,7 @@ public final class InternalWorkbook {
         int pos0 = initialBspos - (boundsheets.size() - 1);
         Record removed = records.get(pos0 + sheetNumber);
         records.remove(pos0 + sheetNumber);
-		records.add(pos0 + pos, removed);
+        records.add(pos0 + pos, removed);
         records.setBspos(initialBspos);
     }
 
@@ -2224,17 +2224,17 @@ public final class InternalWorkbook {
     }
 
 
-	/**
-	 * Changes an external referenced file to another file.
-	 * A formular in Excel which refers a cell in another file is saved in two parts:
-	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
-	 * This method invokation will only change the reference in the lookup-table itself.
-	 * @param oldUrl The old URL to search for and which is to be replaced
-	 * @param newUrl The URL replacement
-	 * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
-	 */
+    /**
+     * Changes an external referenced file to another file.
+     * A formular in Excel which refers a cell in another file is saved in two parts:
+     * The referenced file is stored in an reference table. the row/cell information is saved separate.
+     * This method invokation will only change the reference in the lookup-table itself.
+     * @param oldUrl The old URL to search for and which is to be replaced
+     * @param newUrl The URL replacement
+     * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
+     */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
-    	return linkTable.changeExternalReference(oldUrl, newUrl);
+        return linkTable.changeExternalReference(oldUrl, newUrl);
     }
 
     /**

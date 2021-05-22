@@ -31,80 +31,80 @@ import org.apache.poi.util.StringUtil;
  * SXDI - Data Item (0x00C5)
  */
 public final class DataItemRecord extends StandardRecord {
-	public static final short sid = 0x00C5;
+    public static final short sid = 0x00C5;
 
-	private int isxvdData;
-	private int iiftab;
-	private int df;
-	private int isxvd;
-	private int isxvi;
-	private int ifmt;
-	private String name;
+    private int isxvdData;
+    private int iiftab;
+    private int df;
+    private int isxvd;
+    private int isxvi;
+    private int ifmt;
+    private String name;
 
-	public DataItemRecord(DataItemRecord other) {
-		super(other);
-		isxvdData = other.isxvdData;
-		iiftab = other.iiftab;
-		df = other.df;
-		isxvd = other.isxvd;
-		isxvi = other.isxvi;
-		ifmt = other.ifmt;
-		name = other.name;
-	}
+    public DataItemRecord(DataItemRecord other) {
+        super(other);
+        isxvdData = other.isxvdData;
+        iiftab = other.iiftab;
+        df = other.df;
+        isxvd = other.isxvd;
+        isxvi = other.isxvi;
+        ifmt = other.ifmt;
+        name = other.name;
+    }
 
-	public DataItemRecord(RecordInputStream in) {
-		isxvdData = in.readUShort();
-		iiftab = in.readUShort();
-		df = in.readUShort();
-		isxvd = in.readUShort();
-		isxvi = in.readUShort();
-		ifmt = in.readUShort();
+    public DataItemRecord(RecordInputStream in) {
+        isxvdData = in.readUShort();
+        iiftab = in.readUShort();
+        df = in.readUShort();
+        isxvd = in.readUShort();
+        isxvi = in.readUShort();
+        ifmt = in.readUShort();
 
-		name = in.readString();
-	}
+        name = in.readString();
+    }
 
-	@Override
-	protected void serialize(LittleEndianOutput out) {
+    @Override
+    protected void serialize(LittleEndianOutput out) {
 
-		out.writeShort(isxvdData);
-		out.writeShort(iiftab);
-		out.writeShort(df);
-		out.writeShort(isxvd);
-		out.writeShort(isxvi);
-		out.writeShort(ifmt);
+        out.writeShort(isxvdData);
+        out.writeShort(iiftab);
+        out.writeShort(df);
+        out.writeShort(isxvd);
+        out.writeShort(isxvi);
+        out.writeShort(ifmt);
 
-		StringUtil.writeUnicodeString(out, name);
-	}
+        StringUtil.writeUnicodeString(out, name);
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + 2 + 2 + 2 + 2 + 2 + StringUtil.getEncodedSize(name);
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + 2 + 2 + 2 + 2 + 2 + StringUtil.getEncodedSize(name);
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public DataItemRecord copy() {
-		return new DataItemRecord(this);
-	}
+    @Override
+    public DataItemRecord copy() {
+        return new DataItemRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.DATA_ITEM;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DATA_ITEM;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"isxvdData", () -> isxvdData,
-			"iiftab", () -> iiftab,
-			"df", () -> df,
-			"isxvd", () -> isxvd,
-			"isxvi", () -> isxvi,
-			"ifmt", () -> ifmt
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "isxvdData", () -> isxvdData,
+            "iiftab", () -> iiftab,
+            "df", () -> df,
+            "isxvd", () -> isxvd,
+            "isxvi", () -> isxvi,
+            "ifmt", () -> ifmt
+        );
+    }
 }

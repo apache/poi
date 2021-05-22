@@ -73,12 +73,12 @@ public class AgileEncryptor extends Encryptor {
     private byte[] integritySalt;
     private byte[] pwHash;
 
-	protected AgileEncryptor() {}
+    protected AgileEncryptor() {}
 
     protected AgileEncryptor(AgileEncryptor other) {
-	    super(other);
-	    integritySalt = (other.integritySalt == null) ? null : other.integritySalt.clone();
-	    pwHash = (other.pwHash == null) ? null : other.pwHash.clone();
+        super(other);
+        integritySalt = (other.integritySalt == null) ? null : other.integritySalt.clone();
+        pwHash = (other.pwHash == null) ? null : other.pwHash.clone();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class AgileEncryptor extends Encryptor {
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }
 
-	@Override
+    @Override
     public void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt) {
         AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
         AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
@@ -204,7 +204,7 @@ public class AgileEncryptor extends Encryptor {
         } catch (GeneralSecurityException e) {
             throw new EncryptedDocumentException(e);
         }
-	}
+    }
 
     @Override
     public OutputStream getDataStream(DirectoryNode dir)

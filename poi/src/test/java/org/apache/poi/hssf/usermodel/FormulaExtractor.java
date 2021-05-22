@@ -26,16 +26,16 @@ import org.apache.poi.ss.formula.ptg.Ptg;
  */
 public final class FormulaExtractor {
 
-	private FormulaExtractor() {
-		// no instances of this class
-	}
+    private FormulaExtractor() {
+        // no instances of this class
+    }
 
-	public static Ptg[] getPtgs(HSSFCell cell) {
-		CellValueRecordInterface vr = cell.getCellValueRecord();
-		if (!(vr instanceof FormulaRecordAggregate)) {
-			throw new IllegalArgumentException("Not a formula cell");
-		}
-		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
-		return fra.getFormulaRecord().getParsedExpression();
-	}
+    public static Ptg[] getPtgs(HSSFCell cell) {
+        CellValueRecordInterface vr = cell.getCellValueRecord();
+        if (!(vr instanceof FormulaRecordAggregate)) {
+            throw new IllegalArgumentException("Not a formula cell");
+        }
+        FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
+        return fra.getFormulaRecord().getParsedExpression();
+    }
 }

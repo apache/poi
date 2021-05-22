@@ -38,9 +38,9 @@ import org.junit.jupiter.api.Test;
 final class TestDec2Bin {
 
     private static ValueEval invokeValue(String number1) {
-		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
-		return new Dec2Bin().evaluate(args, -1, -1);
-	}
+        ValueEval[] args = new ValueEval[] { new StringEval(number1) };
+        return new Dec2Bin().evaluate(args, -1, -1);
+    }
 
     private static ValueEval invokeBack(String number1) {
         ValueEval[] args = new ValueEval[] { new StringEval(number1) };
@@ -48,10 +48,10 @@ final class TestDec2Bin {
     }
 
     private static void confirmValue(String msg, String number1, String expected) {
-		ValueEval result = invokeValue(number1);
-		assertEquals(StringEval.class, result.getClass(), "Had: " + result);
-		assertEquals(expected, ((StringEval) result).getStringValue(), msg);
-	}
+        ValueEval result = invokeValue(number1);
+        assertEquals(StringEval.class, result.getClass(), "Had: " + result);
+        assertEquals(expected, ((StringEval) result).getStringValue(), msg);
+    }
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
@@ -60,13 +60,13 @@ final class TestDec2Bin {
     }
 
     @Test
-	void testBasic() {
-		confirmValue("Converts binary '00101' from binary (5)", "5", "101");
-		confirmValue("Converts binary '1111111111' from binary (-1)", "-1",    "1111111111");
-		confirmValue("Converts binary '1111111110' from binary (-2)", "-2",    "1111111110");
+    void testBasic() {
+        confirmValue("Converts binary '00101' from binary (5)", "5", "101");
+        confirmValue("Converts binary '1111111111' from binary (-1)", "-1",    "1111111111");
+        confirmValue("Converts binary '1111111110' from binary (-2)", "-2",    "1111111110");
         confirmValue("Converts binary '0111111111' from binary (511)", "511",   "111111111");
         confirmValue("Converts binary '1000000000' from binary (511)", "-512", "1000000000");
-	}
+    }
 
     @Test
     void testErrors() {

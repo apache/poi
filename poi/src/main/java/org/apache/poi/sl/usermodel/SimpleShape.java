@@ -83,7 +83,7 @@ public interface SimpleShape<
     boolean isPlaceholder();
     
     
-	Shadow<S,P> getShadow();
+    Shadow<S,P> getShadow();
 
     /**
      * Returns the solid color fill.
@@ -91,7 +91,7 @@ public interface SimpleShape<
      * @return solid fill color of null if not set or fill color
      * is not solid (pattern or gradient)
      */
-	Color getFillColor();
+    Color getFillColor();
 
     /**
      * Specifies a solid color fill. The shape is filled entirely with the
@@ -100,7 +100,7 @@ public interface SimpleShape<
      * @param color the solid color fill. The value of <code>null</code> unsets
      *              the solid fill attribute from the underlying implementation
      */
-	void setFillColor(Color color);
+    void setFillColor(Color color);
 
     /**
      * Returns the hyperlink assigned to this shape
@@ -110,9 +110,9 @@ public interface SimpleShape<
      * 
      * @since POI 3.14-Beta1
      */
-	Hyperlink<S,P> getHyperlink();
-	
-	/**
+    Hyperlink<S,P> getHyperlink();
+    
+    /**
      * Creates a hyperlink and asigns it to this shape.
      * If the shape has already a hyperlink assigned, return it instead
      *

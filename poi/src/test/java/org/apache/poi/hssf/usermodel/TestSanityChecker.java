@@ -37,90 +37,90 @@ import org.junit.jupiter.api.Test;
  * Okay, this may seem strange but I need to test my test logic.
  */
 final class TestSanityChecker {
-	private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);
-	private static BoundSheetRecord createBoundSheetRec() {
-		return new BoundSheetRecord("Sheet1");
-	}
+    private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);
+    private static BoundSheetRecord createBoundSheetRec() {
+        return new BoundSheetRecord("Sheet1");
+    }
 
-	@Test
-	void testCheckRecordOrder() {
-		final SanityChecker c = new SanityChecker();
-		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
-		records.add(new BOFRecord());
-		records.add(INTERFACEHDR);
-		records.add(createBoundSheetRec());
-		records.add(EOFRecord.instance);
-		CheckRecord[] check = {
-				new CheckRecord(BOFRecord.class, '1'),
-				new CheckRecord(InterfaceHdrRecord.class, '0'),
-				new CheckRecord(BoundSheetRecord.class, 'M'),
-				new CheckRecord(NameRecord.class, '*'),
-				new CheckRecord(EOFRecord.class, '1'),
-		};
-		// check pass
-		c.checkRecordOrder(records, check);
-		records.add(2, createBoundSheetRec());
-		c.checkRecordOrder(records, check);
-		records.remove(1);	  // optional record missing
-		c.checkRecordOrder(records, check);
-		records.add(3, new NameRecord());
-		records.add(3, new NameRecord()); // optional multiple record occurs more than one time
-		c.checkRecordOrder(records, check);
+    @Test
+    void testCheckRecordOrder() {
+        final SanityChecker c = new SanityChecker();
+        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
+        records.add(new BOFRecord());
+        records.add(INTERFACEHDR);
+        records.add(createBoundSheetRec());
+        records.add(EOFRecord.instance);
+        CheckRecord[] check = {
+                new CheckRecord(BOFRecord.class, '1'),
+                new CheckRecord(InterfaceHdrRecord.class, '0'),
+                new CheckRecord(BoundSheetRecord.class, 'M'),
+                new CheckRecord(NameRecord.class, '*'),
+                new CheckRecord(EOFRecord.class, '1'),
+        };
+        // check pass
+        c.checkRecordOrder(records, check);
+        records.add(2, createBoundSheetRec());
+        c.checkRecordOrder(records, check);
+        records.remove(1);    // optional record missing
+        c.checkRecordOrder(records, check);
+        records.add(3, new NameRecord());
+        records.add(3, new NameRecord()); // optional multiple record occurs more than one time
+        c.checkRecordOrder(records, check);
 
-		// check fail
-		confirmBadRecordOrder(check, new Record[] {
-				new BOFRecord(),
-				createBoundSheetRec(),
-				INTERFACEHDR,
-				EOFRecord.instance,
-		});
+        // check fail
+        confirmBadRecordOrder(check, new Record[] {
+                new BOFRecord(),
+                createBoundSheetRec(),
+                INTERFACEHDR,
+                EOFRecord.instance,
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				new BOFRecord(),
-				INTERFACEHDR,
-				createBoundSheetRec(),
-				INTERFACEHDR,
-				EOFRecord.instance,
-		});
+        confirmBadRecordOrder(check, new Record[] {
+                new BOFRecord(),
+                INTERFACEHDR,
+                createBoundSheetRec(),
+                INTERFACEHDR,
+                EOFRecord.instance,
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				new BOFRecord(),
-				createBoundSheetRec(),
-				new NameRecord(),
-				EOFRecord.instance,
-				new NameRecord(),
-		});
+        confirmBadRecordOrder(check, new Record[] {
+                new BOFRecord(),
+                createBoundSheetRec(),
+                new NameRecord(),
+                EOFRecord.instance,
+                new NameRecord(),
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				INTERFACEHDR,
-				createBoundSheetRec(),
-				EOFRecord.instance,
-		});
+        confirmBadRecordOrder(check, new Record[] {
+                INTERFACEHDR,
+                createBoundSheetRec(),
+                EOFRecord.instance,
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				new BOFRecord(),
-				INTERFACEHDR,
-				EOFRecord.instance,
-		});
+        confirmBadRecordOrder(check, new Record[] {
+                new BOFRecord(),
+                INTERFACEHDR,
+                EOFRecord.instance,
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				INTERFACEHDR,
-				createBoundSheetRec(),
-				new BOFRecord(),
-				EOFRecord.instance,
-		});
+        confirmBadRecordOrder(check, new Record[] {
+                INTERFACEHDR,
+                createBoundSheetRec(),
+                new BOFRecord(),
+                EOFRecord.instance,
+        });
 
-		confirmBadRecordOrder(check, new Record[] {
-				new BOFRecord(),
-				createBoundSheetRec(),
-				INTERFACEHDR,
-				EOFRecord.instance,
-		});
-	}
+        confirmBadRecordOrder(check, new Record[] {
+                new BOFRecord(),
+                createBoundSheetRec(),
+                INTERFACEHDR,
+                EOFRecord.instance,
+        });
+    }
 
-	private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
-		final SanityChecker c = new SanityChecker();
-		final List<org.apache.poi.hssf.record.Record> records = Arrays.asList(recs);
-		assertThrows(AssertionError.class, () -> c.checkRecordOrder(records, check));
-	}
+    private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
+        final SanityChecker c = new SanityChecker();
+        final List<org.apache.poi.hssf.record.Record> records = Arrays.asList(recs);
+        assertThrows(AssertionError.class, () -> c.checkRecordOrder(records, check));
+    }
 }

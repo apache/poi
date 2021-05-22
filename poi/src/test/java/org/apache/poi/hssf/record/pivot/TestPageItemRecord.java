@@ -31,31 +31,31 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link PageItemRecord}
  */
 final class TestPageItemRecord {
-	@Test
-	void testMoreThanOneInfoItem_bug46917() {
-		byte[] data = HexRead.readFromString("01 02 03 04 05 06 07 08 09 0A 0B 0C");
-		RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
-		PageItemRecord rec = new PageItemRecord(in);
-		assertNotEquals(6, in.remaining(), "Identified bug 46917");
-		assertEquals(0, in.remaining());
+    @Test
+    void testMoreThanOneInfoItem_bug46917() {
+        byte[] data = HexRead.readFromString("01 02 03 04 05 06 07 08 09 0A 0B 0C");
+        RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
+        PageItemRecord rec = new PageItemRecord(in);
+        assertNotEquals(6, in.remaining(), "Identified bug 46917");
+        assertEquals(0, in.remaining());
 
-		assertEquals(4+data.length, rec.getRecordSize());
-	}
+        assertEquals(4+data.length, rec.getRecordSize());
+    }
 
-	@Test
-	void testSerialize() {
-		confirmSerialize("01 02 03 04 05 06");
-		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C");
-		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12");
-	}
+    @Test
+    void testSerialize() {
+        confirmSerialize("01 02 03 04 05 06");
+        confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C");
+        confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12");
+    }
 
-	private static void confirmSerialize(String hexDump) {
-		byte[] data = HexRead.readFromString(hexDump);
-		RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
-		PageItemRecord rec = new PageItemRecord(in);
-		assertEquals(0, in.remaining());
-		assertEquals(4+data.length, rec.getRecordSize());
-		byte[] data2 = rec.serialize();
-		confirmRecordEncoding(PageItemRecord.sid, data, data2);
-	}
+    private static void confirmSerialize(String hexDump) {
+        byte[] data = HexRead.readFromString(hexDump);
+        RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
+        PageItemRecord rec = new PageItemRecord(in);
+        assertEquals(0, in.remaining());
+        assertEquals(4+data.length, rec.getRecordSize());
+        byte[] data2 = rec.serialize();
+        confirmRecordEncoding(PageItemRecord.sid, data, data2);
+    }
 }

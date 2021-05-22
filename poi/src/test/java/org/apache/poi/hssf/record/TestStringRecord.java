@@ -34,69 +34,69 @@ import org.junit.jupiter.api.Test;
  * Excel file.
  */
 final class TestStringRecord {
-	private static final byte[] data = HexRead.readFromString(
-			"0B 00 " + // length
-			"00 " +    // option
-			// string
-			"46 61 68 72 7A 65 75 67 74 79 70"
-	);
+    private static final byte[] data = HexRead.readFromString(
+            "0B 00 " + // length
+            "00 " +    // option
+            // string
+            "46 61 68 72 7A 65 75 67 74 79 70"
+    );
 
-	@Test
-	void testLoad() {
+    @Test
+    void testLoad() {
 
-		StringRecord record = new StringRecord(TestcaseRecordInputStream.create(0x207, data));
-		assertEquals( "Fahrzeugtyp", record.getString());
+        StringRecord record = new StringRecord(TestcaseRecordInputStream.create(0x207, data));
+        assertEquals( "Fahrzeugtyp", record.getString());
 
-		assertEquals( 18, record.getRecordSize() );
-	}
+        assertEquals( 18, record.getRecordSize() );
+    }
 
-	@Test
+    @Test
     void testStore() {
-		StringRecord record = new StringRecord();
-		record.setString("Fahrzeugtyp");
+        StringRecord record = new StringRecord();
+        record.setString("Fahrzeugtyp");
 
-		byte [] recordBytes = record.serialize();
-		assertEquals(recordBytes.length - 4, data.length);
-		for (int i = 0; i < data.length; i++) {
+        byte [] recordBytes = record.serialize();
+        assertEquals(recordBytes.length - 4, data.length);
+        for (int i = 0; i < data.length; i++) {
             assertEquals(data[i], recordBytes[i+4], "At offset " + i);
         }
-	}
+    }
 
-	@Test
+    @Test
     void testContinue() throws IOException {
-		int MAX_BIFF_DATA = RecordInputStream.MAX_RECORD_DATA_SIZE;
-		int TEXT_LEN = MAX_BIFF_DATA + 1000; // deliberately over-size
-		String textChunk = "ABCDEGGHIJKLMNOP"; // 16 chars
-		StringBuilder sb = new StringBuilder(16384);
-		while (sb.length() < TEXT_LEN) {
-			sb.append(textChunk);
-		}
-		sb.setLength(TEXT_LEN);
+        int MAX_BIFF_DATA = RecordInputStream.MAX_RECORD_DATA_SIZE;
+        int TEXT_LEN = MAX_BIFF_DATA + 1000; // deliberately over-size
+        String textChunk = "ABCDEGGHIJKLMNOP"; // 16 chars
+        StringBuilder sb = new StringBuilder(16384);
+        while (sb.length() < TEXT_LEN) {
+            sb.append(textChunk);
+        }
+        sb.setLength(TEXT_LEN);
 
-		StringRecord sr = new StringRecord();
-		sr.setString(sb.toString());
-		byte[] ser = sr.serialize();
-		assertEquals(StringRecord.sid, LittleEndian.getUShort(ser, 0));
-		assertTrue(LittleEndian.getUShort(ser, 2) <= MAX_BIFF_DATA,
-			"StringRecord should have been split with a continue record");
-		// Confirm expected size of first record, and ushort strLen.
-		assertEquals(MAX_BIFF_DATA, LittleEndian.getUShort(ser, 2));
-		assertEquals(TEXT_LEN, LittleEndian.getUShort(ser, 4));
+        StringRecord sr = new StringRecord();
+        sr.setString(sb.toString());
+        byte[] ser = sr.serialize();
+        assertEquals(StringRecord.sid, LittleEndian.getUShort(ser, 0));
+        assertTrue(LittleEndian.getUShort(ser, 2) <= MAX_BIFF_DATA,
+            "StringRecord should have been split with a continue record");
+        // Confirm expected size of first record, and ushort strLen.
+        assertEquals(MAX_BIFF_DATA, LittleEndian.getUShort(ser, 2));
+        assertEquals(TEXT_LEN, LittleEndian.getUShort(ser, 4));
 
-		// Confirm first few bytes of ContinueRecord
-		LittleEndianByteArrayInputStream crIn = new LittleEndianByteArrayInputStream(ser, (MAX_BIFF_DATA + 4));
-		int nCharsInFirstRec = MAX_BIFF_DATA - (2 + 1); // strLen, optionFlags
-		int nCharsInSecondRec = TEXT_LEN - nCharsInFirstRec;
-		assertEquals(ContinueRecord.sid, crIn.readUShort());
-		assertEquals(1 + nCharsInSecondRec, crIn.readUShort());
-		assertEquals(0, crIn.readUByte());
-		assertEquals('N', crIn.readUByte());
-		assertEquals('O', crIn.readUByte());
+        // Confirm first few bytes of ContinueRecord
+        LittleEndianByteArrayInputStream crIn = new LittleEndianByteArrayInputStream(ser, (MAX_BIFF_DATA + 4));
+        int nCharsInFirstRec = MAX_BIFF_DATA - (2 + 1); // strLen, optionFlags
+        int nCharsInSecondRec = TEXT_LEN - nCharsInFirstRec;
+        assertEquals(ContinueRecord.sid, crIn.readUShort());
+        assertEquals(1 + nCharsInSecondRec, crIn.readUShort());
+        assertEquals(0, crIn.readUByte());
+        assertEquals('N', crIn.readUByte());
+        assertEquals('O', crIn.readUByte());
 
-		// re-read and make sure string value is the same
-		RecordInputStream in = TestcaseRecordInputStream.create(ser);
-		StringRecord sr2 = new StringRecord(in);
-		assertEquals(sb.toString(), sr2.getString());
-		crIn.close();
-	}
+        // re-read and make sure string value is the same
+        RecordInputStream in = TestcaseRecordInputStream.create(ser);
+        StringRecord sr2 = new StringRecord(in);
+        assertEquals(sb.toString(), sr2.getString());
+        crIn.close();
+    }
 }

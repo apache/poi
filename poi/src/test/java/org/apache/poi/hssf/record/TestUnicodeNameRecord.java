@@ -29,12 +29,12 @@ import org.junit.jupiter.api.Test;
 
 final class TestUnicodeNameRecord {
 
-	@Test
-	void testReadBook() throws IOException {
-		// This bit used to crash
-		try (HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls")) {
-			HSSFSheet sheet = book.getSheetAt(0);
-			assertNotNull(sheet);
-		}
-	}
+    @Test
+    void testReadBook() throws IOException {
+        // This bit used to crash
+        try (HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls")) {
+            HSSFSheet sheet = book.getSheetAt(0);
+            assertNotNull(sheet);
+        }
+    }
 }

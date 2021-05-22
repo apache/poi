@@ -27,26 +27,26 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public interface EvaluationCell {
-	/**
-	 * @return an Object that identifies the underlying cell,
-	 * suitable for use as a key in a {@link java.util.HashMap}
-	 */
-	Object getIdentityKey();
+    /**
+     * @return an Object that identifies the underlying cell,
+     * suitable for use as a key in a {@link java.util.HashMap}
+     */
+    Object getIdentityKey();
 
-	EvaluationSheet getSheet();
-	int getRowIndex();
-	int getColumnIndex();
-	CellType getCellType();
+    EvaluationSheet getSheet();
+    int getRowIndex();
+    int getColumnIndex();
+    CellType getCellType();
 
-	double getNumericCellValue();
-	String getStringCellValue();
-	boolean getBooleanCellValue();
-	int getErrorCellValue();
-	CellRangeAddress getArrayFormulaRange();
-	boolean isPartOfArrayFormulaGroup();
+    double getNumericCellValue();
+    String getStringCellValue();
+    boolean getBooleanCellValue();
+    int getErrorCellValue();
+    CellRangeAddress getArrayFormulaRange();
+    boolean isPartOfArrayFormulaGroup();
 
-	/**
-	 * @return cell type of cached formula result
-	 */
-	CellType getCachedFormulaResultType();
+    /**
+     * @return cell type of cached formula result
+     */
+    CellType getCachedFormulaResultType();
 }

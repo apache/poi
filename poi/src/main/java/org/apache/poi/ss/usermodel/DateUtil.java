@@ -499,7 +499,7 @@ public class DateUtil {
      * @return Java representation of the date in UTC, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendarUTC(double date, boolean use1904windowing) {
-    	return getJavaCalendar(date, use1904windowing, LocaleUtil.TIMEZONE_UTC, false);
+        return getJavaCalendar(date, use1904windowing, LocaleUtil.TIMEZONE_UTC, false);
     }
 
 
@@ -750,7 +750,7 @@ public class DateUtil {
      *  we infer it is a date if it is formatted as such.
      *  Format is determined from applicable conditional formatting, if
      *  any, or cell style.
-	 * @param cell The cell to look at
+     * @param cell The cell to look at
      * @param cfEvaluator if available, or null
      * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
@@ -850,7 +850,7 @@ public class DateUtil {
      *
      * @return    days  number of days in years prior to yr.
      * @param     yr    a year (1900 < yr < 4000)
-	 * @param use1904windowing Should 1900 or 1904 date windowing be used?
+     * @param use1904windowing Should 1900 or 1904 date windowing be used?
      * @exception IllegalArgumentException if year is outside of range.
      */
 

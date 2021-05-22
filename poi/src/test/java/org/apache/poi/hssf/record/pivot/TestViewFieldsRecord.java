@@ -32,32 +32,32 @@ import org.junit.jupiter.api.Test;
  */
 final class TestViewFieldsRecord {
 
-	@Test
-	void testUnicodeFlag_bug46693() {
-		byte[] data = HexRead.readFromString("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
-		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
-		ViewFieldsRecord rec = new ViewFieldsRecord(in);
-		assertNotEquals(1, in.remaining(), "Identified bug 46693b");
-		assertEquals(0, in.remaining());
-		assertEquals(4+data.length, rec.getRecordSize());
-	}
+    @Test
+    void testUnicodeFlag_bug46693() {
+        byte[] data = HexRead.readFromString("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
+        RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
+        ViewFieldsRecord rec = new ViewFieldsRecord(in);
+        assertNotEquals(1, in.remaining(), "Identified bug 46693b");
+        assertEquals(0, in.remaining());
+        assertEquals(4+data.length, rec.getRecordSize());
+    }
 
-	@Test
-	void testSerialize() {
-		// This hex data was produced by changing the 'Custom Name' property,
-		// available under 'Field Settings' from the 'PivotTable Field List' (Excel 2007)
-		confirmSerialize("00 00 01 00 01 00 00 00 FF FF");
-		confirmSerialize("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
-		confirmSerialize("01 00 01 00 01 00 04 00 0A 00 01 48 00 69 00 73 00 74 00 6F 00 72 00 79 00 2D 00 82 69 81 89");
-	}
+    @Test
+    void testSerialize() {
+        // This hex data was produced by changing the 'Custom Name' property,
+        // available under 'Field Settings' from the 'PivotTable Field List' (Excel 2007)
+        confirmSerialize("00 00 01 00 01 00 00 00 FF FF");
+        confirmSerialize("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
+        confirmSerialize("01 00 01 00 01 00 04 00 0A 00 01 48 00 69 00 73 00 74 00 6F 00 72 00 79 00 2D 00 82 69 81 89");
+    }
 
-	private static void confirmSerialize(String hexDump) {
-		byte[] data = HexRead.readFromString(hexDump);
-		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
-		ViewFieldsRecord rec = new ViewFieldsRecord(in);
-		assertEquals(0, in.remaining());
-		assertEquals(4+data.length, rec.getRecordSize());
-		byte[] data2 = rec.serialize();
-		confirmRecordEncoding(ViewFieldsRecord.sid, data, data2);
-	}
+    private static void confirmSerialize(String hexDump) {
+        byte[] data = HexRead.readFromString(hexDump);
+        RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
+        ViewFieldsRecord rec = new ViewFieldsRecord(in);
+        assertEquals(0, in.remaining());
+        assertEquals(4+data.length, rec.getRecordSize());
+        byte[] data2 = rec.serialize();
+        confirmRecordEncoding(ViewFieldsRecord.sid, data, data2);
+    }
 }

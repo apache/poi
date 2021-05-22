@@ -27,94 +27,94 @@ import org.apache.poi.hssf.record.RecordBase;
  */
 public abstract class RecordAggregate extends RecordBase {
 
-	/**
-	 * Visit each of the atomic BIFF records contained in this RecordAggregate in the order
-	 * that they should be written to file.  Implementors may or may not return the actual
-	 * {@link Record}s being used to manage POI's internal implementation.  Callers should not
-	 * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
-	 *
-	 * @param rv The visitor to use for callbacks while walking this object
-	 */
-	public abstract void visitContainedRecords(RecordVisitor rv);
+    /**
+     * Visit each of the atomic BIFF records contained in this RecordAggregate in the order
+     * that they should be written to file.  Implementors may or may not return the actual
+     * {@link Record}s being used to manage POI's internal implementation.  Callers should not
+     * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
+     *
+     * @param rv The visitor to use for callbacks while walking this object
+     */
+    public abstract void visitContainedRecords(RecordVisitor rv);
 
-	@Override
-	public final int serialize(int offset, byte[] data) {
-		SerializingRecordVisitor srv = new SerializingRecordVisitor(data, offset);
-		visitContainedRecords(srv);
-		return srv.countBytesWritten();
-	}
-	@Override
-	public int getRecordSize() {
-		RecordSizingVisitor rsv = new RecordSizingVisitor();
-		visitContainedRecords(rsv);
-		return rsv.getTotalSize();
-	}
+    @Override
+    public final int serialize(int offset, byte[] data) {
+        SerializingRecordVisitor srv = new SerializingRecordVisitor(data, offset);
+        visitContainedRecords(srv);
+        return srv.countBytesWritten();
+    }
+    @Override
+    public int getRecordSize() {
+        RecordSizingVisitor rsv = new RecordSizingVisitor();
+        visitContainedRecords(rsv);
+        return rsv.getTotalSize();
+    }
 
-	public interface RecordVisitor {
-		/**
-		 * Implementors may call non-mutating methods on Record r.
-		 * @param r must not be {@code null}
-		 */
-		void visitRecord(org.apache.poi.hssf.record.Record r);
-	}
+    public interface RecordVisitor {
+        /**
+         * Implementors may call non-mutating methods on Record r.
+         * @param r must not be {@code null}
+         */
+        void visitRecord(org.apache.poi.hssf.record.Record r);
+    }
 
-	private static final class SerializingRecordVisitor implements RecordVisitor {
+    private static final class SerializingRecordVisitor implements RecordVisitor {
 
-		private final byte[] _data;
-		private final int _startOffset;
-		private int _countBytesWritten;
+        private final byte[] _data;
+        private final int _startOffset;
+        private int _countBytesWritten;
 
-		public SerializingRecordVisitor(byte[] data, int startOffset) {
-			_data = data;
-			_startOffset = startOffset;
-			_countBytesWritten = 0;
-		}
-		public int countBytesWritten() {
-			return _countBytesWritten;
-		}
-		@Override
-		public void visitRecord(org.apache.poi.hssf.record.Record r) {
-			int currentOffset = _startOffset + _countBytesWritten;
-			_countBytesWritten += r.serialize(currentOffset, _data);
-		}
-	}
-	private static final class RecordSizingVisitor implements RecordVisitor {
+        public SerializingRecordVisitor(byte[] data, int startOffset) {
+            _data = data;
+            _startOffset = startOffset;
+            _countBytesWritten = 0;
+        }
+        public int countBytesWritten() {
+            return _countBytesWritten;
+        }
+        @Override
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
+            int currentOffset = _startOffset + _countBytesWritten;
+            _countBytesWritten += r.serialize(currentOffset, _data);
+        }
+    }
+    private static final class RecordSizingVisitor implements RecordVisitor {
 
-		private int _totalSize;
+        private int _totalSize;
 
-		public RecordSizingVisitor() {
-			_totalSize = 0;
-		}
-		public int getTotalSize() {
-			return _totalSize;
-		}
-		@Override
-		public void visitRecord(org.apache.poi.hssf.record.Record r) {
-			_totalSize += r.getRecordSize();
-		}
-	}
-	/**
-	 * A wrapper for {@link RecordVisitor} which accumulates the sizes of all
-	 * records visited.
-	 */
-	public static final class PositionTrackingVisitor implements RecordVisitor {
-		private final RecordVisitor _rv;
-		private int _position;
+        public RecordSizingVisitor() {
+            _totalSize = 0;
+        }
+        public int getTotalSize() {
+            return _totalSize;
+        }
+        @Override
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
+            _totalSize += r.getRecordSize();
+        }
+    }
+    /**
+     * A wrapper for {@link RecordVisitor} which accumulates the sizes of all
+     * records visited.
+     */
+    public static final class PositionTrackingVisitor implements RecordVisitor {
+        private final RecordVisitor _rv;
+        private int _position;
 
-		public PositionTrackingVisitor(RecordVisitor rv, int initialPosition) {
-			_rv = rv;
-			_position = initialPosition;
-		}
-		@Override
-		public void visitRecord(org.apache.poi.hssf.record.Record r) {
-			_position += r.getRecordSize();
-			_rv.visitRecord(r);
-		}
-		public void setPosition(int position) {
-			_position = position;
-		}
-		public int getPosition() {
-			return _position;
-		}
-	}
+        public PositionTrackingVisitor(RecordVisitor rv, int initialPosition) {
+            _rv = rv;
+            _position = initialPosition;
+        }
+        @Override
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
+            _position += r.getRecordSize();
+            _rv.visitRecord(r);
+        }
+        public void setPosition(int position) {
+            _position = position;
+        }
+        public int getPosition() {
+            return _position;
+        }
+    }
 }

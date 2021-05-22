@@ -32,15 +32,15 @@ import org.apache.poi.ss.formula.functions.LinearRegressionFunction.FUNCTION;
  */
 public final class Slope extends Fixed2ArgFunction {
 
-	private final LinearRegressionFunction func;
-	public Slope() {
-		func = new LinearRegressionFunction(FUNCTION.SLOPE);
-	}
+    private final LinearRegressionFunction func;
+    public Slope() {
+        func = new LinearRegressionFunction(FUNCTION.SLOPE);
+    }
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
-			ValueEval arg0, ValueEval arg1) {
-		return func.evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
-	}
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
+            ValueEval arg0, ValueEval arg1) {
+        return func.evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
+    }
 }
 

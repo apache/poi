@@ -37,46 +37,46 @@ import org.junit.jupiter.api.Test;
  */
 final class TestPercentEval {
 
-	private static void confirm(ValueEval arg, double expectedResult) {
-		ValueEval[] args = {
-			arg,
-		};
+    private static void confirm(ValueEval arg, double expectedResult) {
+        ValueEval[] args = {
+            arg,
+        };
 
-		double result = NumericFunctionInvoker.invoke(PercentEval.instance, args, 0, 0);
+        double result = NumericFunctionInvoker.invoke(PercentEval.instance, args, 0, 0);
 
-		assertEquals(expectedResult, result, 0);
-	}
+        assertEquals(expectedResult, result, 0);
+    }
 
-	@Test
-	void testBasic() {
-		confirm(new NumberEval(5), 0.05);
-		confirm(new NumberEval(3000), 30.0);
-		confirm(new NumberEval(-150), -1.5);
-		confirm(new StringEval("0.2"), 0.002);
-		confirm(BoolEval.TRUE, 0.01);
-	}
+    @Test
+    void testBasic() {
+        confirm(new NumberEval(5), 0.05);
+        confirm(new NumberEval(3000), 30.0);
+        confirm(new NumberEval(-150), -1.5);
+        confirm(new StringEval("0.2"), 0.002);
+        confirm(BoolEval.TRUE, 0.01);
+    }
 
-	@Test
-	void test1x1Area() {
-		AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
-		confirm(ae, 0.5);
-	}
+    @Test
+    void test1x1Area() {
+        AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
+        confirm(ae, 0.5);
+    }
 
-	@Test
-	void testInSpreadSheet() throws IOException {
-		try (HSSFWorkbook wb = new HSSFWorkbook()) {
-			HSSFSheet sheet = wb.createSheet("Sheet1");
-			HSSFRow row = sheet.createRow(0);
-			HSSFCell cell = row.createCell(0);
-			cell.setCellFormula("B1%");
-			row.createCell(1).setCellValue(50.0);
+    @Test
+    void testInSpreadSheet() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellFormula("B1%");
+            row.createCell(1).setCellValue(50.0);
 
-			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 
-			// bug 44608 - NullPointerException
-			CellValue cv = fe.evaluate(cell);
-			assertEquals(CellType.NUMERIC, cv.getCellType());
-			assertEquals(0.5, cv.getNumberValue(), 0.0);
-		}
-	}
+            // bug 44608 - NullPointerException
+            CellValue cv = fe.evaluate(cell);
+            assertEquals(CellType.NUMERIC, cv.getCellType());
+            assertEquals(0.5, cv.getNumberValue(), 0.0);
+        }
+    }
 }

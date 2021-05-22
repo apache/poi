@@ -40,40 +40,40 @@ import org.apache.poi.util.LittleEndianOutput;
  *  format documentation.
  */
 public final class FeatSmartTag implements SharedFeature {
-	// TODO - process
-	private byte[] data;
+    // TODO - process
+    private byte[] data;
 
-	public FeatSmartTag() {
-		data = new byte[0];
-	}
+    public FeatSmartTag() {
+        data = new byte[0];
+    }
 
-	public FeatSmartTag(FeatSmartTag other) {
-		data = (other.data == null) ? null : other.data.clone();
-	}
+    public FeatSmartTag(FeatSmartTag other) {
+        data = (other.data == null) ? null : other.data.clone();
+    }
 
-	public FeatSmartTag(RecordInputStream in) {
-		data = in.readRemainder();
-	}
+    public FeatSmartTag(RecordInputStream in) {
+        data = in.readRemainder();
+    }
 
-	public String toString() {
-		return GenericRecordJsonWriter.marshal(this);
-	}
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
+    }
 
-	public int getDataSize() {
-		return data.length;
-	}
+    public int getDataSize() {
+        return data.length;
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.write(data);
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.write(data);
+    }
 
-	@Override
-	public FeatSmartTag copy() {
-		return new FeatSmartTag(this);
-	}
+    @Override
+    public FeatSmartTag copy() {
+        return new FeatSmartTag(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("data", () -> data);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("data", () -> data);
+    }
 }

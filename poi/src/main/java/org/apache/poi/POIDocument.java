@@ -58,7 +58,7 @@ public abstract class POIDocument implements Closeable {
     private SummaryInformation sInf;
     /** Holds further metadata on our document */
     private DocumentSummaryInformation dsInf;
-    /**	The directory that our document lives in */
+    /** The directory that our document lives in */
     private DirectoryNode directory;
 
     /** For our own logging use */
@@ -73,7 +73,7 @@ public abstract class POIDocument implements Closeable {
      * @param dir The {@link DirectoryNode} where information is read from.
      */
     protected POIDocument(DirectoryNode dir) {
-    	this.directory = dir;
+        this.directory = dir;
     }
 
     /**

@@ -124,7 +124,7 @@ public abstract class PageBreakRecord extends StandardRecord {
     }
 
     public boolean isEmpty() {
-    	return _breaks.isEmpty();
+        return _breaks.isEmpty();
     }
     protected int getDataSize() {
         return 2 + _breaks.size() * Break.ENCODED_SIZE;

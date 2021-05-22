@@ -31,71 +31,71 @@ import org.junit.jupiter.api.Test;
  */
 final class TestAverage {
 
-	private static ValueEval invokeAverage(ValueEval[] args) {
-		return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);
-	}
+    private static ValueEval invokeAverage(ValueEval[] args) {
+        return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);
+    }
 
-	private void confirmAverage(ValueEval[] args, double expected) {
-		ValueEval result = invokeAverage(args);
-		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
-	}
+    private void confirmAverage(ValueEval[] args, double expected) {
+        ValueEval result = invokeAverage(args);
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
+    }
 
-	private void confirmAverage(ValueEval[] args, ErrorEval expectedError) {
-		ValueEval result = invokeAverage(args);
-		assertEquals(ErrorEval.class, result.getClass());
-		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
-	}
+    private void confirmAverage(ValueEval[] args, ErrorEval expectedError) {
+        ValueEval result = invokeAverage(args);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
+    }
 
-	@Test
-	void testBasic() {
+    @Test
+    void testBasic() {
 
-		ValueEval[] values = {
-				new NumberEval(1),
-				new NumberEval(2),
-				new NumberEval(3),
-				new NumberEval(4),
-		};
+        ValueEval[] values = {
+                new NumberEval(1),
+                new NumberEval(2),
+                new NumberEval(3),
+                new NumberEval(4),
+        };
 
-		confirmAverage(values, 2.5);
+        confirmAverage(values, 2.5);
 
-		values = new ValueEval[] {
-				new NumberEval(1),
-				new NumberEval(2),
-				BlankEval.instance,
-				new NumberEval(3),
-				BlankEval.instance,
-				new NumberEval(4),
-				BlankEval.instance,
-		};
+        values = new ValueEval[] {
+                new NumberEval(1),
+                new NumberEval(2),
+                BlankEval.instance,
+                new NumberEval(3),
+                BlankEval.instance,
+                new NumberEval(4),
+                BlankEval.instance,
+        };
 
-		confirmAverage(values, 2.5);
-	}
+        confirmAverage(values, 2.5);
+    }
 
-	/**
-	 * Valid cases where values are not pure numbers
-	 */
-	@Test
-	void testUnusualArgs() {
-		ValueEval[] values = {
-				new NumberEval(1),
-				new NumberEval(2),
-				BoolEval.TRUE,
-				BoolEval.FALSE,
-		};
+    /**
+     * Valid cases where values are not pure numbers
+     */
+    @Test
+    void testUnusualArgs() {
+        ValueEval[] values = {
+                new NumberEval(1),
+                new NumberEval(2),
+                BoolEval.TRUE,
+                BoolEval.FALSE,
+        };
 
-		confirmAverage(values, 1.0);
+        confirmAverage(values, 1.0);
 
-	}
+    }
 
-	@Test
-	void testErrors() {
-		ValueEval[] values = {
-				new NumberEval(1),
-				ErrorEval.NAME_INVALID,
-				new NumberEval(3),
-				ErrorEval.DIV_ZERO,
-		};
-		confirmAverage(values, ErrorEval.NAME_INVALID);
-	}
+    @Test
+    void testErrors() {
+        ValueEval[] values = {
+                new NumberEval(1),
+                ErrorEval.NAME_INVALID,
+                new NumberEval(3),
+                ErrorEval.DIV_ZERO,
+        };
+        confirmAverage(values, ErrorEval.NAME_INVALID);
+    }
 }

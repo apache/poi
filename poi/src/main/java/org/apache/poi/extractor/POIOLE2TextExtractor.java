@@ -34,42 +34,42 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
 public interface POIOLE2TextExtractor extends POITextExtractor {
-	/**
-	 * Returns the document information metadata for the document
-	 *
+    /**
+     * Returns the document information metadata for the document
+     *
      * @return The Document Summary Information or null
      *      if it could not be read for this document.
-	 */
-	default DocumentSummaryInformation getDocSummaryInformation() {
-		return getDocument().getDocumentSummaryInformation();
-	}
+     */
+    default DocumentSummaryInformation getDocSummaryInformation() {
+        return getDocument().getDocumentSummaryInformation();
+    }
 
-	/**
-	 * Returns the summary information metadata for the document.
-	 *
+    /**
+     * Returns the summary information metadata for the document.
+     *
      * @return The Summary information for the document or null
      *      if it could not be read for this document.
-	 */
-	default SummaryInformation getSummaryInformation() {
-		return getDocument().getSummaryInformation();
-	}
+     */
+    default SummaryInformation getSummaryInformation() {
+        return getDocument().getSummaryInformation();
+    }
 
-	/**
-	 * Returns an HPSF powered text extractor for the
-	 *  document properties metadata, such as title and author.
-	 *
-	 * @return an instance of POIExtractor that can extract meta-data.
-	 */
-	@Override
+    /**
+     * Returns an HPSF powered text extractor for the
+     *  document properties metadata, such as title and author.
+     *
+     * @return an instance of POIExtractor that can extract meta-data.
+     */
+    @Override
     default POITextExtractor getMetadataTextExtractor() {
-		return new HPSFPropertiesExtractor(this);
-	}
+        return new HPSFPropertiesExtractor(this);
+    }
 
-	/**
-	 * Return the underlying DirectoryEntry of this document.
-	 *
-	 * @return the DirectoryEntry that is associated with the POIDocument of this extractor.
-	 */
+    /**
+     * Return the underlying DirectoryEntry of this document.
+     *
+     * @return the DirectoryEntry that is associated with the POIDocument of this extractor.
+     */
     default DirectoryEntry getRoot() {
         return getDocument().getDirectory();
     }

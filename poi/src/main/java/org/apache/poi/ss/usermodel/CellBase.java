@@ -127,7 +127,7 @@ public abstract class CellBase implements Cell {
     /**
      * Implementation-specific setting the formula. Formula is not null.
      * Shall not change the value.
-	 *
+     *
      * @param formula The text of the formula to set.
      */
     protected abstract void setCellFormulaImpl(String formula);

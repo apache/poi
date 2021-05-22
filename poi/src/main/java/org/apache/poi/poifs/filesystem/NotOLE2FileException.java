@@ -24,7 +24,7 @@ import java.io.IOException;
  *  seem to actually be an OLE2 file after all
  */
 public class NotOLE2FileException extends IOException {
-	public NotOLE2FileException(String s) {
-		super(s);
-	}
+    public NotOLE2FileException(String s) {
+        super(s);
+    }
 }

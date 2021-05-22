@@ -31,9 +31,9 @@ public interface ShapeContainer<
      * @return an list containing all of the elements in this container in proper
      *         sequence
      */
-	List<S> getShapes();
+    List<S> getShapes();
 
-	void addShape(S shape);
+    void addShape(S shape);
 
     /**
      * Removes the specified shape from this sheet, if it is present
@@ -45,7 +45,7 @@ public interface ShapeContainer<
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
-	boolean removeShape(S shape);
+    boolean removeShape(S shape);
 
     /**
      * create a new shape with a predefined geometry and add it to this shape container
@@ -60,22 +60,22 @@ public interface ShapeContainer<
     /**
      * create a text box
      */
-	TextBox<S,P> createTextBox();
+    TextBox<S,P> createTextBox();
 
     /**
      * create a connector
      */
-	ConnectorShape<S,P> createConnector();
+    ConnectorShape<S,P> createConnector();
 
     /**
      * create a group of shapes belonging to this container
      */
-	GroupShape<S,P> createGroup();
+    GroupShape<S,P> createGroup();
 
     /**
      * create a picture belonging to this container
      */
-	PictureShape<S,P> createPicture(PictureData pictureData);
+    PictureShape<S,P> createPicture(PictureData pictureData);
 
     /**
      * Create a new Table of the given number of rows and columns
@@ -83,12 +83,12 @@ public interface ShapeContainer<
      * @param numRows the number of rows
      * @param numCols the number of columns
      */
-	TableShape<S,P> createTable(int numRows, int numCols);
+    TableShape<S,P> createTable(int numRows, int numCols);
 
-	/**
-	 * Create a new OLE object shape with the given pictureData as preview image
-	 *
-	 * @param pictureData the preview image
-	 */
+    /**
+     * Create a new OLE object shape with the given pictureData as preview image
+     *
+     * @param pictureData the preview image
+     */
     ObjectShape<?,?> createOleShape(PictureData pictureData);
 }

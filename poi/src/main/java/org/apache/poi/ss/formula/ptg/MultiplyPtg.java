@@ -26,7 +26,7 @@ public final class MultiplyPtg extends ValueOperatorPtg {
     public static final MultiplyPtg instance = new MultiplyPtg();
 
     private MultiplyPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

@@ -39,8 +39,8 @@ import org.junit.jupiter.api.Test;
  *  at 20,30,500,200
  */
 final class TestEscherGraphics {
-	private HSSFWorkbook workbook;
-	private HSSFPatriarch patriarch;
+    private HSSFWorkbook workbook;
+    private HSSFPatriarch patriarch;
     private HSSFShapeGroup escherGroupA;
     private EscherGraphics graphics;
 
@@ -112,185 +112,185 @@ final class TestEscherGraphics {
 
     @Test
     void testGetDataBackAgain() {
-    	HSSFSheet s;
-    	HSSFShapeGroup s1;
-    	HSSFShapeGroup s2;
+        HSSFSheet s;
+        HSSFShapeGroup s1;
+        HSSFShapeGroup s2;
 
-    	patriarch.setCoordinates(10, 20, 30, 40);
+        patriarch.setCoordinates(10, 20, 30, 40);
 
-		workbook = writeOutAndReadBack(workbook);
-		s = workbook.getSheetAt(0);
-    	patriarch = s.getDrawingPatriarch();
+        workbook = writeOutAndReadBack(workbook);
+        s = workbook.getSheetAt(0);
+        patriarch = s.getDrawingPatriarch();
 
-    	assertNotNull(patriarch);
-    	assertEquals(10, patriarch.getX1());
-    	assertEquals(20, patriarch.getY1());
-    	assertEquals(30, patriarch.getX2());
-    	assertEquals(40, patriarch.getY2());
+        assertNotNull(patriarch);
+        assertEquals(10, patriarch.getX1());
+        assertEquals(20, patriarch.getY1());
+        assertEquals(30, patriarch.getX2());
+        assertEquals(40, patriarch.getY2());
 
-    	// Check the two groups too
-    	assertEquals(2, patriarch.countOfAllChildren());
-    	assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-    	assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+        // Check the two groups too
+        assertEquals(2, patriarch.countOfAllChildren());
+        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
+        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
 
-    	s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
-    	s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
+        s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
+        s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
 
-    	assertEquals(0, s1.getX1());
-    	assertEquals(0, s1.getY1());
-    	assertEquals(1023, s1.getX2());
-    	assertEquals(255, s1.getY2());
-    	assertEquals(0, s2.getX1());
-    	assertEquals(0, s2.getY1());
-    	assertEquals(1023, s2.getX2());
-    	assertEquals(255, s2.getY2());
+        assertEquals(0, s1.getX1());
+        assertEquals(0, s1.getY1());
+        assertEquals(1023, s1.getX2());
+        assertEquals(255, s1.getY2());
+        assertEquals(0, s2.getX1());
+        assertEquals(0, s2.getY1());
+        assertEquals(1023, s2.getX2());
+        assertEquals(255, s2.getY2());
 
-    	assertEquals(0, s1.getAnchor().getDx1());
-    	assertEquals(0, s1.getAnchor().getDy1());
-    	assertEquals(1022, s1.getAnchor().getDx2());
-    	assertEquals(255, s1.getAnchor().getDy2());
-    	assertEquals(20, s2.getAnchor().getDx1());
-    	assertEquals(30, s2.getAnchor().getDy1());
-    	assertEquals(500, s2.getAnchor().getDx2());
-    	assertEquals(200, s2.getAnchor().getDy2());
-
-
-    	// Write and re-load once more, to check that's ok
-		workbook = writeOutAndReadBack(workbook);
-		s = workbook.getSheetAt(0);
-		patriarch = s.getDrawingPatriarch();
-
-    	assertNotNull(patriarch);
-    	assertEquals(10, patriarch.getX1());
-    	assertEquals(20, patriarch.getY1());
-    	assertEquals(30, patriarch.getX2());
-    	assertEquals(40, patriarch.getY2());
-
-    	// Check the two groups too
-    	assertEquals(2, patriarch.countOfAllChildren());
-    	assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-    	assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
-
-    	s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
-    	s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
-
-    	assertEquals(0, s1.getX1());
-    	assertEquals(0, s1.getY1());
-    	assertEquals(1023, s1.getX2());
-    	assertEquals(255, s1.getY2());
-    	assertEquals(0, s2.getX1());
-    	assertEquals(0, s2.getY1());
-    	assertEquals(1023, s2.getX2());
-    	assertEquals(255, s2.getY2());
-
-    	assertEquals(0, s1.getAnchor().getDx1());
-    	assertEquals(0, s1.getAnchor().getDy1());
-    	assertEquals(1022, s1.getAnchor().getDx2());
-    	assertEquals(255, s1.getAnchor().getDy2());
-    	assertEquals(20, s2.getAnchor().getDx1());
-    	assertEquals(30, s2.getAnchor().getDy1());
-    	assertEquals(500, s2.getAnchor().getDx2());
-    	assertEquals(200, s2.getAnchor().getDy2());
-
-    	// Change the positions of the first groups,
-    	//  but not of their anchors
-    	s1.setCoordinates(2, 3, 1021, 242);
-
-		workbook = writeOutAndReadBack(workbook);
-		s = workbook.getSheetAt(0);
-		patriarch = s.getDrawingPatriarch();
-
-    	assertNotNull(patriarch);
-    	assertEquals(10, patriarch.getX1());
-    	assertEquals(20, patriarch.getY1());
-    	assertEquals(30, patriarch.getX2());
-    	assertEquals(40, patriarch.getY2());
-
-    	// Check the two groups too
-    	assertEquals(2, patriarch.countOfAllChildren());
-    	assertEquals(2, patriarch.getChildren().size());
-    	assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-    	assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
-
-    	s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
-    	s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
-
-    	assertEquals(2, s1.getX1());
-    	assertEquals(3, s1.getY1());
-    	assertEquals(1021, s1.getX2());
-    	assertEquals(242, s1.getY2());
-    	assertEquals(0, s2.getX1());
-    	assertEquals(0, s2.getY1());
-    	assertEquals(1023, s2.getX2());
-    	assertEquals(255, s2.getY2());
-
-    	assertEquals(0, s1.getAnchor().getDx1());
-    	assertEquals(0, s1.getAnchor().getDy1());
-    	assertEquals(1022, s1.getAnchor().getDx2());
-    	assertEquals(255, s1.getAnchor().getDy2());
-    	assertEquals(20, s2.getAnchor().getDx1());
-    	assertEquals(30, s2.getAnchor().getDy1());
-    	assertEquals(500, s2.getAnchor().getDx2());
-    	assertEquals(200, s2.getAnchor().getDy2());
+        assertEquals(0, s1.getAnchor().getDx1());
+        assertEquals(0, s1.getAnchor().getDy1());
+        assertEquals(1022, s1.getAnchor().getDx2());
+        assertEquals(255, s1.getAnchor().getDy2());
+        assertEquals(20, s2.getAnchor().getDx1());
+        assertEquals(30, s2.getAnchor().getDy1());
+        assertEquals(500, s2.getAnchor().getDx2());
+        assertEquals(200, s2.getAnchor().getDy2());
 
 
-    	// Now add some text to one group, and some more
-    	//  to the base, and check we can get it back again
-    	HSSFTextbox tbox1 =
-    		patriarch.createTextbox(new HSSFClientAnchor(1,2,3,4, (short)0,0,(short)0,0));
-    	tbox1.setString(new HSSFRichTextString("I am text box 1"));
-    	HSSFTextbox tbox2 =
-    		s2.createTextbox(new HSSFChildAnchor(41,42,43,44));
-    	tbox2.setString(new HSSFRichTextString("This is text box 2"));
+        // Write and re-load once more, to check that's ok
+        workbook = writeOutAndReadBack(workbook);
+        s = workbook.getSheetAt(0);
+        patriarch = s.getDrawingPatriarch();
 
-    	assertEquals(3, patriarch.getChildren().size());
+        assertNotNull(patriarch);
+        assertEquals(10, patriarch.getX1());
+        assertEquals(20, patriarch.getY1());
+        assertEquals(30, patriarch.getX2());
+        assertEquals(40, patriarch.getY2());
+
+        // Check the two groups too
+        assertEquals(2, patriarch.countOfAllChildren());
+        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
+        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+
+        s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
+        s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
+
+        assertEquals(0, s1.getX1());
+        assertEquals(0, s1.getY1());
+        assertEquals(1023, s1.getX2());
+        assertEquals(255, s1.getY2());
+        assertEquals(0, s2.getX1());
+        assertEquals(0, s2.getY1());
+        assertEquals(1023, s2.getX2());
+        assertEquals(255, s2.getY2());
+
+        assertEquals(0, s1.getAnchor().getDx1());
+        assertEquals(0, s1.getAnchor().getDy1());
+        assertEquals(1022, s1.getAnchor().getDx2());
+        assertEquals(255, s1.getAnchor().getDy2());
+        assertEquals(20, s2.getAnchor().getDx1());
+        assertEquals(30, s2.getAnchor().getDy1());
+        assertEquals(500, s2.getAnchor().getDx2());
+        assertEquals(200, s2.getAnchor().getDy2());
+
+        // Change the positions of the first groups,
+        //  but not of their anchors
+        s1.setCoordinates(2, 3, 1021, 242);
+
+        workbook = writeOutAndReadBack(workbook);
+        s = workbook.getSheetAt(0);
+        patriarch = s.getDrawingPatriarch();
+
+        assertNotNull(patriarch);
+        assertEquals(10, patriarch.getX1());
+        assertEquals(20, patriarch.getY1());
+        assertEquals(30, patriarch.getX2());
+        assertEquals(40, patriarch.getY2());
+
+        // Check the two groups too
+        assertEquals(2, patriarch.countOfAllChildren());
+        assertEquals(2, patriarch.getChildren().size());
+        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
+        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+
+        s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
+        s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
+
+        assertEquals(2, s1.getX1());
+        assertEquals(3, s1.getY1());
+        assertEquals(1021, s1.getX2());
+        assertEquals(242, s1.getY2());
+        assertEquals(0, s2.getX1());
+        assertEquals(0, s2.getY1());
+        assertEquals(1023, s2.getX2());
+        assertEquals(255, s2.getY2());
+
+        assertEquals(0, s1.getAnchor().getDx1());
+        assertEquals(0, s1.getAnchor().getDy1());
+        assertEquals(1022, s1.getAnchor().getDx2());
+        assertEquals(255, s1.getAnchor().getDy2());
+        assertEquals(20, s2.getAnchor().getDx1());
+        assertEquals(30, s2.getAnchor().getDy1());
+        assertEquals(500, s2.getAnchor().getDx2());
+        assertEquals(200, s2.getAnchor().getDy2());
 
 
-		workbook = writeOutAndReadBack(workbook);
-		s = workbook.getSheetAt(0);
-		patriarch = s.getDrawingPatriarch();
+        // Now add some text to one group, and some more
+        //  to the base, and check we can get it back again
+        HSSFTextbox tbox1 =
+            patriarch.createTextbox(new HSSFClientAnchor(1,2,3,4, (short)0,0,(short)0,0));
+        tbox1.setString(new HSSFRichTextString("I am text box 1"));
+        HSSFTextbox tbox2 =
+            s2.createTextbox(new HSSFChildAnchor(41,42,43,44));
+        tbox2.setString(new HSSFRichTextString("This is text box 2"));
 
-    	assertNotNull(patriarch);
-    	assertEquals(10, patriarch.getX1());
-    	assertEquals(20, patriarch.getY1());
-    	assertEquals(30, patriarch.getX2());
-    	assertEquals(40, patriarch.getY2());
+        assertEquals(3, patriarch.getChildren().size());
 
-    	// Check the two groups and the text
-    	// Result of patriarch.countOfAllChildren() makes no sense:
-    	// Returns 4 for 2 empty groups + 1 TextBox.
-    	//assertEquals(3, patriarch.countOfAllChildren());
-    	assertEquals(3, patriarch.getChildren().size());
 
-    	// Should be two groups and a text
-    	assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-    	assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
-    	assertTrue(patriarch.getChildren().get(2) instanceof HSSFTextbox);
+        workbook = writeOutAndReadBack(workbook);
+        s = workbook.getSheetAt(0);
+        patriarch = s.getDrawingPatriarch();
 
-    	s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
-    	tbox1 = (HSSFTextbox)patriarch.getChildren().get(2);
+        assertNotNull(patriarch);
+        assertEquals(10, patriarch.getX1());
+        assertEquals(20, patriarch.getY1());
+        assertEquals(30, patriarch.getX2());
+        assertEquals(40, patriarch.getY2());
 
-    	s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
+        // Check the two groups and the text
+        // Result of patriarch.countOfAllChildren() makes no sense:
+        // Returns 4 for 2 empty groups + 1 TextBox.
+        //assertEquals(3, patriarch.countOfAllChildren());
+        assertEquals(3, patriarch.getChildren().size());
 
-    	assertEquals(2, s1.getX1());
-    	assertEquals(3, s1.getY1());
-    	assertEquals(1021, s1.getX2());
-    	assertEquals(242, s1.getY2());
-    	assertEquals(0, s2.getX1());
-    	assertEquals(0, s2.getY1());
-    	assertEquals(1023, s2.getX2());
-    	assertEquals(255, s2.getY2());
+        // Should be two groups and a text
+        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
+        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+        assertTrue(patriarch.getChildren().get(2) instanceof HSSFTextbox);
 
-    	assertEquals(0, s1.getAnchor().getDx1());
-    	assertEquals(0, s1.getAnchor().getDy1());
-    	assertEquals(1022, s1.getAnchor().getDx2());
-    	assertEquals(255, s1.getAnchor().getDy2());
-    	assertEquals(20, s2.getAnchor().getDx1());
-    	assertEquals(30, s2.getAnchor().getDy1());
-    	assertEquals(500, s2.getAnchor().getDx2());
-    	assertEquals(200, s2.getAnchor().getDy2());
+        s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
+        tbox1 = (HSSFTextbox)patriarch.getChildren().get(2);
 
-    	// Not working just yet
-    	assertEquals("I am text box 1", tbox1.getString().getString());
+        s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
+
+        assertEquals(2, s1.getX1());
+        assertEquals(3, s1.getY1());
+        assertEquals(1021, s1.getX2());
+        assertEquals(242, s1.getY2());
+        assertEquals(0, s2.getX1());
+        assertEquals(0, s2.getY1());
+        assertEquals(1023, s2.getX2());
+        assertEquals(255, s2.getY2());
+
+        assertEquals(0, s1.getAnchor().getDx1());
+        assertEquals(0, s1.getAnchor().getDy1());
+        assertEquals(1022, s1.getAnchor().getDx2());
+        assertEquals(255, s1.getAnchor().getDy2());
+        assertEquals(20, s2.getAnchor().getDx1());
+        assertEquals(30, s2.getAnchor().getDy1());
+        assertEquals(500, s2.getAnchor().getDx2());
+        assertEquals(200, s2.getAnchor().getDy2());
+
+        // Not working just yet
+        assertEquals("I am text box 1", tbox1.getString().getString());
     }
 }

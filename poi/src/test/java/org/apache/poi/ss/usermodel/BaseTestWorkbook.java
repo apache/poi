@@ -752,16 +752,16 @@ public abstract class BaseTestWorkbook {
         }
     }
 
-	protected void assertSheetOrder(Workbook wb, String... sheets) {
-		StringBuilder sheetNames = new StringBuilder();
-		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
-		}
-		assertEquals(sheets.length, wb.getNumberOfSheets(), "Had: " + sheetNames);
-		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			assertEquals(sheets[i], wb.getSheetAt(i).getSheetName(), "Had: " + sheetNames);
-		}
-	}
+    protected void assertSheetOrder(Workbook wb, String... sheets) {
+        StringBuilder sheetNames = new StringBuilder();
+        for(int i = 0;i < wb.getNumberOfSheets();i++) {
+            sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
+        }
+        assertEquals(sheets.length, wb.getNumberOfSheets(), "Had: " + sheetNames);
+        for(int i = 0;i < wb.getNumberOfSheets();i++) {
+            assertEquals(sheets[i], wb.getSheetAt(i).getSheetName(), "Had: " + sheetNames);
+        }
+    }
 
     @Test
     void test58499() throws IOException {

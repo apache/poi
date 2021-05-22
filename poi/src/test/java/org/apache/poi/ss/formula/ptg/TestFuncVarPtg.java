@@ -26,31 +26,31 @@ import org.junit.jupiter.api.Test;
 
 final class TestFuncVarPtg {
 
-	/**
-	 * The first fix for bugzilla 44675 broke the encoding of SUM formulas (and probably others).
-	 * The operand classes of the parameters to SUM() should be coerced to 'reference' not 'value'.
-	 * In the case of SUM, Excel evaluates the formula to '#VALUE!' if a parameter operand class is
-	 * wrong.  In other cases Excel seems to tolerate bad operand classes.<p>
-	 *
-	 * This functionality is related to the setParameterRVA() methods of {@code FormulaParser}
-	 */
-	@Test
-	void testOperandClass() {
-		HSSFWorkbook book = new HSSFWorkbook();
-		Ptg[] ptgs = HSSFFormulaParser.parse("sum(A1:A2)", book);
-		assertEquals(2, ptgs.length);
-		assertEquals(AreaPtg.class, ptgs[0].getClass());
+    /**
+     * The first fix for bugzilla 44675 broke the encoding of SUM formulas (and probably others).
+     * The operand classes of the parameters to SUM() should be coerced to 'reference' not 'value'.
+     * In the case of SUM, Excel evaluates the formula to '#VALUE!' if a parameter operand class is
+     * wrong.  In other cases Excel seems to tolerate bad operand classes.<p>
+     *
+     * This functionality is related to the setParameterRVA() methods of {@code FormulaParser}
+     */
+    @Test
+    void testOperandClass() {
+        HSSFWorkbook book = new HSSFWorkbook();
+        Ptg[] ptgs = HSSFFormulaParser.parse("sum(A1:A2)", book);
+        assertEquals(2, ptgs.length);
+        assertEquals(AreaPtg.class, ptgs[0].getClass());
 
-		switch(ptgs[0].getPtgClass()) {
-			case Ptg.CLASS_REF:
-				// correct behaviour
-				break;
-			case Ptg.CLASS_VALUE:
-				fail("Identified bug 44675b");
-				break;
-			default:
-				fail("Unexpected operand class");
-				break;
-		}
-	}
+        switch(ptgs[0].getPtgClass()) {
+            case Ptg.CLASS_REF:
+                // correct behaviour
+                break;
+            case Ptg.CLASS_VALUE:
+                fail("Identified bug 44675b");
+                break;
+            default:
+                fail("Unexpected operand class");
+                break;
+        }
+    }
 }

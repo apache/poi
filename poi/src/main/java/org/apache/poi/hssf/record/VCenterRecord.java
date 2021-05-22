@@ -51,7 +51,7 @@ public final class VCenterRecord extends StandardRecord {
 
     public void setVCenter(boolean hc)
     {
-    	field_1_vcenter = hc ? 1 : 0;
+        field_1_vcenter = hc ? 1 : 0;
     }
 
     /**

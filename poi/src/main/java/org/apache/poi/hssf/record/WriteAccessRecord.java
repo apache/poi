@@ -34,135 +34,135 @@ import org.apache.poi.util.StringUtil;
  * login, on Windoze its the name you typed when you installed the thing)
  */
 public final class WriteAccessRecord extends StandardRecord {
-	public static final short sid = 0x005C;
+    public static final short sid = 0x005C;
 
-	private static final byte PAD_CHAR = (byte) ' ';
-	private static final int DATA_SIZE = 112;
-	/** this record is always padded to a constant length */
-	private static final byte[] PADDING = new byte[DATA_SIZE];
-	static {
-		Arrays.fill(PADDING, PAD_CHAR);
-	}
+    private static final byte PAD_CHAR = (byte) ' ';
+    private static final int DATA_SIZE = 112;
+    /** this record is always padded to a constant length */
+    private static final byte[] PADDING = new byte[DATA_SIZE];
+    static {
+        Arrays.fill(PADDING, PAD_CHAR);
+    }
 
-	private String field_1_username;
+    private String field_1_username;
 
 
-	public WriteAccessRecord() {
-		setUsername("");
-	}
+    public WriteAccessRecord() {
+        setUsername("");
+    }
 
-	public WriteAccessRecord(WriteAccessRecord other) {
-		super(other);
-		field_1_username = other.field_1_username;
-	}
+    public WriteAccessRecord(WriteAccessRecord other) {
+        super(other);
+        field_1_username = other.field_1_username;
+    }
 
-	public WriteAccessRecord(RecordInputStream in) {
-		if (in.remaining() > DATA_SIZE) {
-			throw new RecordFormatException("Expected data size (" + DATA_SIZE + ") but got ("
-					+ in.remaining() + ")");
-		}
-		// The string is always 112 characters (padded with spaces), therefore
-		// this record can not be continued.
+    public WriteAccessRecord(RecordInputStream in) {
+        if (in.remaining() > DATA_SIZE) {
+            throw new RecordFormatException("Expected data size (" + DATA_SIZE + ") but got ("
+                    + in.remaining() + ")");
+        }
+        // The string is always 112 characters (padded with spaces), therefore
+        // this record can not be continued.
 
-		int nChars = in.readUShort();
-		int is16BitFlag = in.readUByte();
-		if (nChars > DATA_SIZE || (is16BitFlag & 0xFE) != 0) {
-			// String header looks wrong (probably missing)
-			// OOO doc says this is optional anyway.
-			// reconstruct data
-			byte[] data = new byte[3 + in.remaining()];
-			LittleEndian.putUShort(data, 0, nChars);
-			LittleEndian.putByte(data, 2, is16BitFlag);
-			in.readFully(data, 3, data.length-3);
-			String rawValue = new String(data, StringUtil.UTF8);
-			setUsername(rawValue.trim());
-			return;
-		}
+        int nChars = in.readUShort();
+        int is16BitFlag = in.readUByte();
+        if (nChars > DATA_SIZE || (is16BitFlag & 0xFE) != 0) {
+            // String header looks wrong (probably missing)
+            // OOO doc says this is optional anyway.
+            // reconstruct data
+            byte[] data = new byte[3 + in.remaining()];
+            LittleEndian.putUShort(data, 0, nChars);
+            LittleEndian.putByte(data, 2, is16BitFlag);
+            in.readFully(data, 3, data.length-3);
+            String rawValue = new String(data, StringUtil.UTF8);
+            setUsername(rawValue.trim());
+            return;
+        }
 
-		String rawText;
-		if ((is16BitFlag & 0x01) == 0x00) {
-			rawText = StringUtil.readCompressedUnicode(in, nChars);
-		} else {
-			rawText = StringUtil.readUnicodeLE(in, nChars);
-		}
-		field_1_username = rawText.trim();
+        String rawText;
+        if ((is16BitFlag & 0x01) == 0x00) {
+            rawText = StringUtil.readCompressedUnicode(in, nChars);
+        } else {
+            rawText = StringUtil.readUnicodeLE(in, nChars);
+        }
+        field_1_username = rawText.trim();
 
-		// consume padding
-		int padSize = in.remaining();
-		while (padSize > 0) {
-			// in some cases this seems to be garbage (non spaces)
-			in.readUByte();
-			padSize--;
-		}
-	}
+        // consume padding
+        int padSize = in.remaining();
+        while (padSize > 0) {
+            // in some cases this seems to be garbage (non spaces)
+            in.readUByte();
+            padSize--;
+        }
+    }
 
-	/**
-	 * set the username for the user that created the report. HSSF uses the
-	 * logged in user.
-	 *
-	 * @param username of the user who is logged in (probably "tomcat" or "apache")
-	 */
-	public void setUsername(String username) {
-		boolean is16bit = StringUtil.hasMultibyte(username);
-		int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
-		int paddingSize = DATA_SIZE - encodedByteCount;
-		if (paddingSize < 0) {
-			throw new IllegalArgumentException("Name is too long: " + username);
-		}
+    /**
+     * set the username for the user that created the report. HSSF uses the
+     * logged in user.
+     *
+     * @param username of the user who is logged in (probably "tomcat" or "apache")
+     */
+    public void setUsername(String username) {
+        boolean is16bit = StringUtil.hasMultibyte(username);
+        int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
+        int paddingSize = DATA_SIZE - encodedByteCount;
+        if (paddingSize < 0) {
+            throw new IllegalArgumentException("Name is too long: " + username);
+        }
 
-		field_1_username = username;
-	}
+        field_1_username = username;
+    }
 
-	/**
-	 * get the username for the user that created the report. HSSF uses the
-	 * logged in user. On natively created M$ Excel sheet this would be the name
-	 * you typed in when you installed it in most cases.
-	 *
-	 * @return username of the user who is logged in (probably "tomcat" or "apache")
-	 */
-	public String getUsername() {
-		return field_1_username;
-	}
+    /**
+     * get the username for the user that created the report. HSSF uses the
+     * logged in user. On natively created M$ Excel sheet this would be the name
+     * you typed in when you installed it in most cases.
+     *
+     * @return username of the user who is logged in (probably "tomcat" or "apache")
+     */
+    public String getUsername() {
+        return field_1_username;
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		String username = getUsername();
-		boolean is16bit = StringUtil.hasMultibyte(username);
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        String username = getUsername();
+        boolean is16bit = StringUtil.hasMultibyte(username);
 
-		out.writeShort(username.length());
-		out.writeByte(is16bit ? 0x01 : 0x00);
-		if (is16bit) {
-			StringUtil.putUnicodeLE(username, out);
-		} else {
-			StringUtil.putCompressedUnicode(username, out);
-		}
-		int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
-		int paddingSize = DATA_SIZE - encodedByteCount;
-		out.write(PADDING, 0, paddingSize);
-	}
+        out.writeShort(username.length());
+        out.writeByte(is16bit ? 0x01 : 0x00);
+        if (is16bit) {
+            StringUtil.putUnicodeLE(username, out);
+        } else {
+            StringUtil.putCompressedUnicode(username, out);
+        }
+        int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
+        int paddingSize = DATA_SIZE - encodedByteCount;
+        out.write(PADDING, 0, paddingSize);
+    }
 
-	@Override
-	protected int getDataSize() {
-		return DATA_SIZE;
-	}
+    @Override
+    protected int getDataSize() {
+        return DATA_SIZE;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public WriteAccessRecord copy() {
-		return new WriteAccessRecord(this);
-	}
+    @Override
+    public WriteAccessRecord copy() {
+        return new WriteAccessRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.WRITE_ACCESS;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.WRITE_ACCESS;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("username", this::getUsername);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("username", this::getUsername);
+    }
 }

@@ -152,8 +152,8 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     }
 
     /**
-	 * NO-OP!
-	 */
+     * NO-OP!
+     */
     @Override
     public void setColumn(short col)
     {

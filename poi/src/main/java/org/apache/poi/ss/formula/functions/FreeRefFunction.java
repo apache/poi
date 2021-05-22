@@ -37,13 +37,13 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
  * arbitrary text into cell references, and evaluate them..
  */
 public interface FreeRefFunction {
-	/**
-	 * @param args the pre-evaluated arguments for this function. args is never {@code null},
-	 *             nor are any of its elements.
-	 * @param ec primarily used to identify the source cell containing the formula being evaluated.
-	 *             may also be used to dynamically create reference evals.
-	 * @return never {@code null}. Possibly an instance of {@code ErrorEval} in the case of
-	 * a specified Excel error (Exceptions are never thrown to represent Excel errors).
-	 */
-	ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec);
+    /**
+     * @param args the pre-evaluated arguments for this function. args is never {@code null},
+     *             nor are any of its elements.
+     * @param ec primarily used to identify the source cell containing the formula being evaluated.
+     *             may also be used to dynamically create reference evals.
+     * @return never {@code null}. Possibly an instance of {@code ErrorEval} in the case of
+     * a specified Excel error (Exceptions are never thrown to represent Excel errors).
+     */
+    ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec);
 }

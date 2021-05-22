@@ -27,74 +27,74 @@ import org.junit.jupiter.api.Test;
  */
 final class TestRowCol {
 
-	@Test
-	void testCol() {
-		Function target = Column::evaluate;
-		{
-			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
-			double actual = NumericFunctionInvoker.invoke(target, args);
-			assertEquals(3, actual, 0D);
-		}
-		{
-			ValueEval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
-			double actual = NumericFunctionInvoker.invoke(target, args);
-			assertEquals(5, actual, 0D);
-		}
-	}
+    @Test
+    void testCol() {
+        Function target = Column::evaluate;
+        {
+            ValueEval[] args = { EvalFactory.createRefEval("C5"), };
+            double actual = NumericFunctionInvoker.invoke(target, args);
+            assertEquals(3, actual, 0D);
+        }
+        {
+            ValueEval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
+            double actual = NumericFunctionInvoker.invoke(target, args);
+            assertEquals(5, actual, 0D);
+        }
+    }
 
-	@Test
-	void testRow() {
-		Function target = RowFunc::evaluate;
-		{
-			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
-			double actual = NumericFunctionInvoker.invoke(target, args);
-			assertEquals(5, actual, 0D);
-		}
-		{
-			ValueEval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
-			double actual = NumericFunctionInvoker.invoke(target, args);
-			assertEquals(2, actual, 0D);
-		}
-	}
+    @Test
+    void testRow() {
+        Function target = RowFunc::evaluate;
+        {
+            ValueEval[] args = { EvalFactory.createRefEval("C5"), };
+            double actual = NumericFunctionInvoker.invoke(target, args);
+            assertEquals(5, actual, 0D);
+        }
+        {
+            ValueEval[] args = { EvalFactory.createAreaEval("E2:H12", new ValueEval[44]), };
+            double actual = NumericFunctionInvoker.invoke(target, args);
+            assertEquals(2, actual, 0D);
+        }
+    }
 
-	@Test
-	void testColumns() {
+    @Test
+    void testColumns() {
 
-		confirmColumnsFunc("A1:F1", 6, 1);
-		confirmColumnsFunc("A1:C2", 3, 2);
-		confirmColumnsFunc("A1:B3", 2, 3);
-		confirmColumnsFunc("A1:A6", 1, 6);
+        confirmColumnsFunc("A1:F1", 6, 1);
+        confirmColumnsFunc("A1:C2", 3, 2);
+        confirmColumnsFunc("A1:B3", 2, 3);
+        confirmColumnsFunc("A1:A6", 1, 6);
 
-		ValueEval[] args = { EvalFactory.createRefEval("C5"), };
-		double actual = NumericFunctionInvoker.invoke(new Columns(), args);
-		assertEquals(1, actual, 0D);
-	}
+        ValueEval[] args = { EvalFactory.createRefEval("C5"), };
+        double actual = NumericFunctionInvoker.invoke(new Columns(), args);
+        assertEquals(1, actual, 0D);
+    }
 
-	@Test
-	void testRows() {
+    @Test
+    void testRows() {
 
-		confirmRowsFunc("A1:F1", 6, 1);
-		confirmRowsFunc("A1:C2", 3, 2);
-		confirmRowsFunc("A1:B3", 2, 3);
-		confirmRowsFunc("A1:A6", 1, 6);
+        confirmRowsFunc("A1:F1", 6, 1);
+        confirmRowsFunc("A1:C2", 3, 2);
+        confirmRowsFunc("A1:B3", 2, 3);
+        confirmRowsFunc("A1:A6", 1, 6);
 
-		ValueEval[] args = { EvalFactory.createRefEval("C5"), };
-		double actual = NumericFunctionInvoker.invoke(new Rows(), args);
-		assertEquals(1, actual, 0D);
-	}
+        ValueEval[] args = { EvalFactory.createRefEval("C5"), };
+        double actual = NumericFunctionInvoker.invoke(new Rows(), args);
+        assertEquals(1, actual, 0D);
+    }
 
-	private static void confirmRowsFunc(String areaRefStr, int nCols, int nRows) {
-		ValueEval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
+    private static void confirmRowsFunc(String areaRefStr, int nCols, int nRows) {
+        ValueEval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
 
-		double actual = NumericFunctionInvoker.invoke(new Rows(), args);
-		assertEquals(nRows, actual, 0D);
-	}
+        double actual = NumericFunctionInvoker.invoke(new Rows(), args);
+        assertEquals(nRows, actual, 0D);
+    }
 
 
-	private static void confirmColumnsFunc(String areaRefStr, int nCols, int nRows) {
-		ValueEval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
+    private static void confirmColumnsFunc(String areaRefStr, int nCols, int nRows) {
+        ValueEval[] args = { EvalFactory.createAreaEval(areaRefStr, new ValueEval[nCols * nRows]), };
 
-		double actual = NumericFunctionInvoker.invoke(new Columns(), args);
-		assertEquals(nCols, actual, 0D);
-	}
+        double actual = NumericFunctionInvoker.invoke(new Columns(), args);
+        assertEquals(nCols, actual, 0D);
+    }
 }

@@ -23,7 +23,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
  * Tests HSSFFormulaEvaluator for its handling of cell formula circular references.
  */
 final class TestHSSFCircularReferences extends BaseTestCircularReferences {
-	public TestHSSFCircularReferences() {
+    public TestHSSFCircularReferences() {
         super(HSSFITestDataProvider.instance);
     }
 }

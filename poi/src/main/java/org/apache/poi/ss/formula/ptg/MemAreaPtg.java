@@ -25,59 +25,59 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class MemAreaPtg extends OperandPtg {
-	public static final short sid = 0x26;
-	private static final int SIZE = 7;
-	private final int field_1_reserved;
-	private final int field_2_subex_len;
+    public static final short sid = 0x26;
+    private static final int SIZE = 7;
+    private final int field_1_reserved;
+    private final int field_2_subex_len;
 
-	/** Creates new MemAreaPtg */
+    /** Creates new MemAreaPtg */
 
-	public MemAreaPtg(int subexLen) {
-		field_1_reserved = 0;
-		field_2_subex_len = subexLen;
-	}
+    public MemAreaPtg(int subexLen) {
+        field_1_reserved = 0;
+        field_2_subex_len = subexLen;
+    }
 
-	public MemAreaPtg(LittleEndianInput in)  {
-		field_1_reserved = in.readInt();
-		field_2_subex_len = in.readShort();
-	}
+    public MemAreaPtg(LittleEndianInput in)  {
+        field_1_reserved = in.readInt();
+        field_2_subex_len = in.readShort();
+    }
 
-	public int getLenRefSubexpression() {
-		return field_2_subex_len;
-	}
+    public int getLenRefSubexpression() {
+        return field_2_subex_len;
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeInt(field_1_reserved);
-		out.writeShort(field_2_subex_len);
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeInt(field_1_reserved);
+        out.writeShort(field_2_subex_len);
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return SIZE;
-	}
+    public int getSize() {
+        return SIZE;
+    }
 
-	public String toFormulaString() {
-		return ""; // TODO: Not sure how to format this. -- DN
-	}
+    public String toFormulaString() {
+        return ""; // TODO: Not sure how to format this. -- DN
+    }
 
-	@Override
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_VALUE;
-	}
+        return Ptg.CLASS_VALUE;
+    }
 
-	@Override
-	public MemAreaPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public MemAreaPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
+    }
 }

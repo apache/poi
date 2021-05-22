@@ -25,8 +25,8 @@ package org.apache.poi.hpsf;
  */
 public class HPSFRuntimeException extends RuntimeException
 {
-	private static final long serialVersionUID = -7804271670232727159L;
-	/** <p>The underlying reason for this exception - may be
+    private static final long serialVersionUID = -7804271670232727159L;
+    /** <p>The underlying reason for this exception - may be
      * <code>null</code>.</p> */
     private Throwable reason;
 

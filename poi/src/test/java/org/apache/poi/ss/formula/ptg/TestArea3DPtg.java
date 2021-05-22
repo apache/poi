@@ -30,24 +30,24 @@ import org.junit.jupiter.api.Test;
  */
 final class TestArea3DPtg extends BaseTestPtg {
 
-	/**
-	 * confirms that sheet names get properly escaped
-	 */
-	@Test
-	void testToFormulaString() throws IOException {
+    /**
+     * confirms that sheet names get properly escaped
+     */
+    @Test
+    void testToFormulaString() throws IOException {
 
-		Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
+        Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
 
-		String sheetName = "my sheet";
-		try (HSSFWorkbook wb = createWorkbookWithSheet(sheetName)) {
-			HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
-			assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
+        String sheetName = "my sheet";
+        try (HSSFWorkbook wb = createWorkbookWithSheet(sheetName)) {
+            HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
+            assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
 
-			wb.setSheetName(0, "Sheet1");
-			assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
+            wb.setSheetName(0, "Sheet1");
+            assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
 
-			wb.setSheetName(0, "C64");
-			assertEquals("'C64'!A1:B1", target.toFormulaString(book));
-		}
-	}
+            wb.setSheetName(0, "C64");
+            assertEquals("'C64'!A1:B1", target.toFormulaString(book));
+        }
+    }
 }

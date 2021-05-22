@@ -33,49 +33,49 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link RecordFactoryInputStream}
  */
 final class TestRecordFactoryInputStream {
-	/**
-	 * Hex dump of a BOF record and most of a FILEPASS record.
-	 * A 16 byte saltHash should be added to complete the second record
-	 */
-	private static final String COMMON_HEX_DATA = ""
-		// BOF
-		+ "09 08 10 00"
-		+ "00 06  05 00  D3 10  CC 07  01 00 00 00  00 06 00 00"
-		// FILEPASS
-		+ "2F 00 36 00"
-		+ "01 00  01 00  01 00"
-		+ "BAADF00D BAADF00D BAADF00D BAADF00D" // docId
-		+ "DEADBEEF DEADBEEF DEADBEEF DEADBEEF" // saltData
-		;
+    /**
+     * Hex dump of a BOF record and most of a FILEPASS record.
+     * A 16 byte saltHash should be added to complete the second record
+     */
+    private static final String COMMON_HEX_DATA = ""
+        // BOF
+        + "09 08 10 00"
+        + "00 06  05 00  D3 10  CC 07  01 00 00 00  00 06 00 00"
+        // FILEPASS
+        + "2F 00 36 00"
+        + "01 00  01 00  01 00"
+        + "BAADF00D BAADF00D BAADF00D BAADF00D" // docId
+        + "DEADBEEF DEADBEEF DEADBEEF DEADBEEF" // saltData
+        ;
 
-	/**
-	 * Hex dump of a sample WINDOW1 record
-	 */
-	private static final String SAMPLE_WINDOW1 = "3D 00 12 00"
-		+ "00 00 00 00 40 38 55 23 38 00 00 00 00 00 01 00 58 02";
+    /**
+     * Hex dump of a sample WINDOW1 record
+     */
+    private static final String SAMPLE_WINDOW1 = "3D 00 12 00"
+        + "00 00 00 00 40 38 55 23 38 00 00 00 00 00 01 00 58 02";
 
 
-	/**
-	 * Makes sure that a default password mismatch condition is represented with {@link EncryptedDocumentException}
-	 */
-	@Test
-	void defaultPasswordWrong() {
-		// This encodng depends on docId, password and stream position
-		final String SAMPLE_WINDOW1_ENCR1 = "3D 00 12 00"
-			+ "C4, 9B, 02, 50, 86, E0, DF, 34, FB, 57, 0E, 8C, CE, 25, 45, E3, 80, 01";
+    /**
+     * Makes sure that a default password mismatch condition is represented with {@link EncryptedDocumentException}
+     */
+    @Test
+    void defaultPasswordWrong() {
+        // This encodng depends on docId, password and stream position
+        final String SAMPLE_WINDOW1_ENCR1 = "3D 00 12 00"
+            + "C4, 9B, 02, 50, 86, E0, DF, 34, FB, 57, 0E, 8C, CE, 25, 45, E3, 80, 01";
 
-		byte[] dataWrongDefault = HexRead.readFromString(""
-				+ COMMON_HEX_DATA
-				+ "00000000 00000000 00000000 00000001"
-				+ SAMPLE_WINDOW1_ENCR1
-		);
+        byte[] dataWrongDefault = HexRead.readFromString(""
+                + COMMON_HEX_DATA
+                + "00000000 00000000 00000000 00000001"
+                + SAMPLE_WINDOW1_ENCR1
+        );
 
-		EncryptedDocumentException ex = assertThrows(
-			EncryptedDocumentException.class,
-			() -> createRFIS(dataWrongDefault)
-		);
-		assertTrue(ex.getMessage().contains("Default password is invalid for salt/verifier/verifierHash"));
-	}
+        EncryptedDocumentException ex = assertThrows(
+            EncryptedDocumentException.class,
+            () -> createRFIS(dataWrongDefault)
+        );
+        assertTrue(ex.getMessage().contains("Default password is invalid for salt/verifier/verifierHash"));
+    }
 
     @Test
     void defaultPasswordOK() {
@@ -94,32 +94,32 @@ final class TestRecordFactoryInputStream {
     }
 
 
-	/**
-	 * Makes sure that an incorrect user supplied password condition is represented with {@link EncryptedDocumentException}
-	 */
-	@Test
-	void suppliedPasswordWrong() {
-		// This encoding depends on docId, password and stream position
-		final String SAMPLE_WINDOW1_ENCR2 = "3D 00 12 00"
-			+ "45, B9, 90, FE, B6, C6, EC, 73, EE, 3F, 52, 45, 97, DB, E3, C1, D6, FE";
+    /**
+     * Makes sure that an incorrect user supplied password condition is represented with {@link EncryptedDocumentException}
+     */
+    @Test
+    void suppliedPasswordWrong() {
+        // This encoding depends on docId, password and stream position
+        final String SAMPLE_WINDOW1_ENCR2 = "3D 00 12 00"
+            + "45, B9, 90, FE, B6, C6, EC, 73, EE, 3F, 52, 45, 97, DB, E3, C1, D6, FE";
 
-		byte[] dataWrongDefault = HexRead.readFromString(""
-				+ COMMON_HEX_DATA
-				+ "00000000 00000000 00000000 00000000"
-				+ SAMPLE_WINDOW1_ENCR2
-		);
+        byte[] dataWrongDefault = HexRead.readFromString(""
+                + COMMON_HEX_DATA
+                + "00000000 00000000 00000000 00000000"
+                + SAMPLE_WINDOW1_ENCR2
+        );
 
-		Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
-		try {
-			EncryptedDocumentException ex = assertThrows(
-				EncryptedDocumentException.class,
-				() -> createRFIS(dataWrongDefault)
-			);
-			assertEquals("Supplied password is invalid for salt/verifier/verifierHash", ex.getMessage());
-		} finally {
-			Biff8EncryptionKey.setCurrentUserPassword(null);
-		}
-	}
+        Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
+        try {
+            EncryptedDocumentException ex = assertThrows(
+                EncryptedDocumentException.class,
+                () -> createRFIS(dataWrongDefault)
+            );
+            assertEquals("Supplied password is invalid for salt/verifier/verifierHash", ex.getMessage());
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
+    }
 
     @Test
     void suppliedPasswordOK() {
@@ -133,28 +133,28 @@ final class TestRecordFactoryInputStream {
                 + SAMPLE_WINDOW1_ENCR2
         );
 
-		Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
-		try {
-			RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
-			confirmReadInitialRecords(rfis);
-		} finally {
-			Biff8EncryptionKey.setCurrentUserPassword(null);
-		}
+        Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
+        try {
+            RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
+            confirmReadInitialRecords(rfis);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 
 
-	/**
-	 * makes sure the record stream starts with {@link BOFRecord}, {@link FilePassRecord} and then {@link WindowOneRecord}
-	 * The third record is decrypted so this method also checks its content.
-	 */
-	private void confirmReadInitialRecords(RecordFactoryInputStream rfis) {
-		assertEquals(BOFRecord.class, rfis.nextRecord().getClass());
-		FilePassRecord recFP = (FilePassRecord) rfis.nextRecord();
-		WindowOneRecord rec1 = (WindowOneRecord) rfis.nextRecord();
-		assertArrayEquals(HexRead.readFromString(SAMPLE_WINDOW1),rec1.serialize());
-	}
+    /**
+     * makes sure the record stream starts with {@link BOFRecord}, {@link FilePassRecord} and then {@link WindowOneRecord}
+     * The third record is decrypted so this method also checks its content.
+     */
+    private void confirmReadInitialRecords(RecordFactoryInputStream rfis) {
+        assertEquals(BOFRecord.class, rfis.nextRecord().getClass());
+        FilePassRecord recFP = (FilePassRecord) rfis.nextRecord();
+        WindowOneRecord rec1 = (WindowOneRecord) rfis.nextRecord();
+        assertArrayEquals(HexRead.readFromString(SAMPLE_WINDOW1),rec1.serialize());
+    }
 
-	private static RecordFactoryInputStream createRFIS(byte[] data) {
-		return new RecordFactoryInputStream(new ByteArrayInputStream(data), true);
-	}
+    private static RecordFactoryInputStream createRFIS(byte[] data) {
+        return new RecordFactoryInputStream(new ByteArrayInputStream(data), true);
+    }
 }

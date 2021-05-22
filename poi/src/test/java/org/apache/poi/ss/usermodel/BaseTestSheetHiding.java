@@ -31,33 +31,33 @@ import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestSheetHiding {
 
-	protected final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
     protected Workbook wbH;
     protected Workbook wbU;
 
     private final String _file1, _file2;
 
     /**
-	 * @param testDataProvider an object that provides test data in HSSF /  specific way
-	 */
-	protected BaseTestSheetHiding(ITestDataProvider testDataProvider,
+     * @param testDataProvider an object that provides test data in HSSF /  specific way
+     */
+    protected BaseTestSheetHiding(ITestDataProvider testDataProvider,
                                   String file1, String file2) {
-		_testDataProvider = testDataProvider;
+        _testDataProvider = testDataProvider;
         _file1 = file1;
         _file2 = file2;
     }
 
-	@BeforeEach
+    @BeforeEach
     void setUp() {
         wbH = _testDataProvider.openSampleWorkbook(_file1);
         wbU = _testDataProvider.openSampleWorkbook(_file2);
     }
 
-	@AfterEach
-	void teadDown() throws IOException {
-	    wbH.close();
-	    wbU.close();
-	}
+    @AfterEach
+    void teadDown() throws IOException {
+        wbH.close();
+        wbU.close();
+    }
 
     @Test
     public final void testSheetVisibility() throws IOException {
@@ -98,7 +98,7 @@ public abstract class BaseTestSheetHiding {
      *  with the right text on them, no matter what
      *  the hidden flags are
      */
-	@Test
+    @Test
     void testTextSheets() {
         // Both should have two sheets
         assertEquals(2, wbH.getNumberOfSheets());
@@ -127,7 +127,7 @@ public abstract class BaseTestSheetHiding {
      * Check that we can get and set the hidden flags
      *  as expected
      */
-	@Test
+    @Test
     void testHideUnHideFlags() {
         assertTrue(wbH.isSheetHidden(0));
         assertFalse(wbH.isSheetHidden(1));
@@ -139,7 +139,7 @@ public abstract class BaseTestSheetHiding {
      * Turn the sheet with none hidden into the one with
      *  one hidden
      */
-	@Test
+    @Test
     void testHide() throws IOException {
         wbU.setSheetHidden(0, true);
         assertTrue(wbU.isSheetHidden(0));
@@ -154,7 +154,7 @@ public abstract class BaseTestSheetHiding {
      * Turn the sheet with one hidden into the one with
      *  none hidden
      */
-	@Test
+    @Test
     void testUnHide() throws IOException {
         wbH.setSheetHidden(0, false);
         assertFalse(wbH.isSheetHidden(0));

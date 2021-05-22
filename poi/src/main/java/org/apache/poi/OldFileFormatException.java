@@ -24,6 +24,6 @@ public abstract class OldFileFormatException extends UnsupportedFileFormatExcept
     private static final long serialVersionUID = 7849681804154571175L;
 
     public OldFileFormatException(String s) {
-		super(s);
-	}
+        super(s);
+    }
 }

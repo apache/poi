@@ -420,25 +420,25 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      */
     void removePrintArea(int sheetIndex);
 
-	/**
-	 * Retrieves the current policy on what to do when
-	 *  getting missing or blank cells from a row.
+    /**
+     * Retrieves the current policy on what to do when
+     *  getting missing or blank cells from a row.
      * <p>
-	 * The default is to return blank and null cells.
-	 *  {@link MissingCellPolicy}
+     * The default is to return blank and null cells.
+     *  {@link MissingCellPolicy}
      * </p>
-	 */
-	MissingCellPolicy getMissingCellPolicy();
+     */
+    MissingCellPolicy getMissingCellPolicy();
 
     /**
-	 * Sets the policy on what to do when
-	 *  getting missing or blank cells from a row.
+     * Sets the policy on what to do when
+     *  getting missing or blank cells from a row.
      *
-	 * This will then apply to all calls to
-	 *  {@link Row#getCell(int)} }. See
-	 *  {@link MissingCellPolicy}
-	 */
-	void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
+     * This will then apply to all calls to
+     *  {@link Row#getCell(int)} }. See
+     *  {@link MissingCellPolicy}
+     */
+    void setMissingCellPolicy(MissingCellPolicy missingCellPolicy);
 
     /**
      * Returns the instance of DataFormat for this workbook.

@@ -46,8 +46,8 @@ import org.junit.jupiter.params.provider.MethodSource;
  */
 final class TestRVA {
 
-	private static final String NEW_LINE = System.getProperty("line.separator");
-	private static POIFSFileSystem poifs;
+    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static POIFSFileSystem poifs;
     private static HSSFWorkbook workbook;
 
 
@@ -60,7 +60,7 @@ final class TestRVA {
     public static Stream<Arguments> data() throws Exception {
         poifs = new POIFSFileSystem(HSSFTestDataSamples.getSampleFile("testRVA.xls"), true);
         workbook = new HSSFWorkbook(poifs);
-		HSSFSheet sheet = workbook.getSheetAt(0);
+        HSSFSheet sheet = workbook.getSheetAt(0);
 
         List<Arguments> data = new ArrayList<>();
 
@@ -81,52 +81,52 @@ final class TestRVA {
         return data.stream();
     }
 
-	@ParameterizedTest
-	@MethodSource("data")
-	void confirmCell(HSSFCell formulaCell, String formula) {
-		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
-		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, workbook);
-		int nExcelTokens = excelPtgs.length;
-		int nPoiTokens = poiPtgs.length;
-		if (nExcelTokens != nPoiTokens) {
-			assertTrue(nExcelTokens == nPoiTokens + 1 && excelPtgs[0].getClass() == AttrPtg.class,
-				"Expected " + nExcelTokens + " tokens but got " + nPoiTokens);
+    @ParameterizedTest
+    @MethodSource("data")
+    void confirmCell(HSSFCell formulaCell, String formula) {
+        Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
+        Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, workbook);
+        int nExcelTokens = excelPtgs.length;
+        int nPoiTokens = poiPtgs.length;
+        if (nExcelTokens != nPoiTokens) {
+            assertTrue(nExcelTokens == nPoiTokens + 1 && excelPtgs[0].getClass() == AttrPtg.class,
+                "Expected " + nExcelTokens + " tokens but got " + nPoiTokens);
 
-			// compensate for missing tAttrVolatile, which belongs in any formula
-			// involving OFFSET() et al. POI currently does not insert where required
-			Ptg[] temp = new Ptg[nExcelTokens];
-			temp[0] = excelPtgs[0];
-			System.arraycopy(poiPtgs, 0, temp, 1, nPoiTokens);
-			poiPtgs = temp;
-		}
-		boolean hasMismatch = false;
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < nExcelTokens; i++) {
-			Ptg poiPtg = poiPtgs[i];
-			Ptg excelPtg = excelPtgs[i];
-			if (excelPtg.getClass() != poiPtg.getClass()) {
-				hasMismatch = true;
-				sb.append("  mismatch token type[").append(i).append("] ").append(getShortClassName(excelPtg)).append(" ").append(excelPtg.getRVAType()).append(" - ").append(getShortClassName(poiPtg)).append(" ").append(poiPtg.getRVAType());
-				sb.append(NEW_LINE);
-				continue;
-			}
-			if (poiPtg.isBaseToken()) {
-				continue;
-			}
-			sb.append("  token[").append(i).append("] ").append(excelPtg).append(" ").append(excelPtg.getRVAType());
+            // compensate for missing tAttrVolatile, which belongs in any formula
+            // involving OFFSET() et al. POI currently does not insert where required
+            Ptg[] temp = new Ptg[nExcelTokens];
+            temp[0] = excelPtgs[0];
+            System.arraycopy(poiPtgs, 0, temp, 1, nPoiTokens);
+            poiPtgs = temp;
+        }
+        boolean hasMismatch = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nExcelTokens; i++) {
+            Ptg poiPtg = poiPtgs[i];
+            Ptg excelPtg = excelPtgs[i];
+            if (excelPtg.getClass() != poiPtg.getClass()) {
+                hasMismatch = true;
+                sb.append("  mismatch token type[").append(i).append("] ").append(getShortClassName(excelPtg)).append(" ").append(excelPtg.getRVAType()).append(" - ").append(getShortClassName(poiPtg)).append(" ").append(poiPtg.getRVAType());
+                sb.append(NEW_LINE);
+                continue;
+            }
+            if (poiPtg.isBaseToken()) {
+                continue;
+            }
+            sb.append("  token[").append(i).append("] ").append(excelPtg).append(" ").append(excelPtg.getRVAType());
 
-			if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {
-				hasMismatch = true;
-				sb.append(" - was ").append(poiPtg.getRVAType());
-			}
-			sb.append(NEW_LINE);
-		}
-		assertFalse(hasMismatch);
-	}
+            if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {
+                hasMismatch = true;
+                sb.append(" - was ").append(poiPtg.getRVAType());
+            }
+            sb.append(NEW_LINE);
+        }
+        assertFalse(hasMismatch);
+    }
 
-	private String getShortClassName(Object o) {
-		String cn = o.getClass().getName();
-		int pos = cn.lastIndexOf('.');
-		return cn.substring(pos + 1);
-	}
+    private String getShortClassName(Object o) {
+        String cn = o.getClass().getName();
+        int pos = cn.lastIndexOf('.');
+        return cn.substring(pos + 1);
+    }
 }

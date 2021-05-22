@@ -23,8 +23,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Implemented by all functions that can be called with four arguments
  */
 public interface Function4Arg extends Function {
-	/**
-	 * see {@link Function#evaluate(ValueEval[], int, int)}
-	 */
-	ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2, ValueEval arg3);
+    /**
+     * see {@link Function#evaluate(ValueEval[], int, int)}
+     */
+    ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2, ValueEval arg3);
 }

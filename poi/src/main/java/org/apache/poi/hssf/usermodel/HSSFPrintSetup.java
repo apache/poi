@@ -27,14 +27,14 @@ import org.apache.poi.ss.usermodel.PrintSetup;
  * Paper size constants have been added for the ones I have access
  * to.  They follow as:<br>
  *  public static final short PRINTER_DEFAULT_PAPERSIZE   = 0;<br>
- *  public static final short LETTER_PAPERSIZE 	          = 1;<br>
- *  public static final short LEGAL_PAPERSIZE 		  = 5;<br>
- *  public static final short EXECUTIVE_PAPERSIZE 	  = 7;<br>
- *  public static final short A4_PAPERSIZE 	  	  = 9;<br>
- *  public static final short A5_PAPERSIZE 		  = 11;<br>
- *  public static final short ENVELOPE_10_PAPERSIZE 	  = 20;<br>
- *  public static final short ENVELOPE_DL_PAPERSIZE 	  = 27;<br>
- *  public static final short ENVELOPE_CS_PAPERSIZE 	  = 28;<br>
+ *  public static final short LETTER_PAPERSIZE            = 1;<br>
+ *  public static final short LEGAL_PAPERSIZE         = 5;<br>
+ *  public static final short EXECUTIVE_PAPERSIZE     = 7;<br>
+ *  public static final short A4_PAPERSIZE        = 9;<br>
+ *  public static final short A5_PAPERSIZE        = 11;<br>
+ *  public static final short ENVELOPE_10_PAPERSIZE       = 20;<br>
+ *  public static final short ENVELOPE_DL_PAPERSIZE       = 27;<br>
+ *  public static final short ENVELOPE_CS_PAPERSIZE       = 28;<br>
  *  public static final short ENVELOPE_MONARCH_PAPERSIZE  = 37;<br>
  */
 public class HSSFPrintSetup implements PrintSetup {    
@@ -45,7 +45,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param printSetupRecord the low level print setup record    
      */
     protected HSSFPrintSetup(PrintSetupRecord printSetupRecord) {
-	this.printSetupRecord = printSetupRecord;
+    this.printSetupRecord = printSetupRecord;
     }    
     
     /**    
@@ -53,7 +53,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param size the paper size.    
      */
     public void setPaperSize(short size)    {
-	printSetupRecord.setPaperSize(size);
+    printSetupRecord.setPaperSize(size);
     }    
     
     /**    
@@ -61,7 +61,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param scale the scale to use    
      */
     public void setScale(short scale)    {
-	printSetupRecord.setScale(scale);
+    printSetupRecord.setScale(scale);
     }    
     
     /**    
@@ -69,7 +69,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param start the page numbering start    
      */
     public void setPageStart(short start)    {
-	printSetupRecord.setPageStart(start);
+    printSetupRecord.setPageStart(start);
     }    
     
     /**    
@@ -77,7 +77,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param width the number of pages    
      */
     public void setFitWidth(short width)    {
-	printSetupRecord.setFitWidth(width);
+    printSetupRecord.setFitWidth(width);
     }    
     
     /**    
@@ -85,7 +85,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param height the number of pages    
      */
     public void setFitHeight(short height)    {
-	printSetupRecord.setFitHeight(height);
+    printSetupRecord.setFitHeight(height);
     }    
     
     /**    
@@ -93,7 +93,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param options The bit flags for the options    
      */
     public void setOptions(short options)    {
-	printSetupRecord.setOptions(options);
+    printSetupRecord.setOptions(options);
     }    
     
     /**    
@@ -101,7 +101,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param ltor left to right    
      */
     public void setLeftToRight(boolean ltor)    {
-	printSetupRecord.setLeftToRight(ltor);
+    printSetupRecord.setLeftToRight(ltor);
     }    
     
     /**    
@@ -109,7 +109,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param ls landscape    
      */
     public void setLandscape(boolean ls)    {
-	printSetupRecord.setLandscape(!ls);
+    printSetupRecord.setLandscape(!ls);
     }    
     
     /**    
@@ -117,7 +117,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param valid Valid    
      */
     public void setValidSettings(boolean valid)    {
-	printSetupRecord.setValidSettings(valid);
+    printSetupRecord.setValidSettings(valid);
     }    
     
     /**    
@@ -125,7 +125,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param mono Black and white    
      */
     public void setNoColor(boolean mono)    {
-	printSetupRecord.setNoColor(mono);
+    printSetupRecord.setNoColor(mono);
     }    
     
     /**    
@@ -133,7 +133,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param d draft    
      */
     public void setDraft(boolean d)    {
-	printSetupRecord.setDraft(d);
+    printSetupRecord.setDraft(d);
     }    
     
     /**    
@@ -141,7 +141,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param printnotes print the notes    
      */
     public void setNotes(boolean printnotes)    {
-	printSetupRecord.setNotes(printnotes);
+    printSetupRecord.setNotes(printnotes);
     }    
     
     /**    
@@ -149,7 +149,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param orientation Orientation.    
      */
     public void setNoOrientation(boolean orientation)    {
-	printSetupRecord.setNoOrientation(orientation);
+    printSetupRecord.setNoOrientation(orientation);
     }    
     
     /**    
@@ -157,7 +157,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param page Use page start    
      */
     public void setUsePage(boolean page)    {
-	printSetupRecord.setUsePage(page);
+    printSetupRecord.setUsePage(page);
     }    
     
     /**    
@@ -165,7 +165,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param resolution horizontal resolution    
      */
     public void setHResolution(short resolution)    {
-	printSetupRecord.setHResolution(resolution);
+    printSetupRecord.setHResolution(resolution);
     }    
     
     /**    
@@ -173,7 +173,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param resolution vertical resolution    
      */
     public void setVResolution(short resolution)    {
-	printSetupRecord.setVResolution(resolution);
+    printSetupRecord.setVResolution(resolution);
     }    
     
     /**    
@@ -181,7 +181,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param headermargin header margin    
      */
     public void setHeaderMargin(double headermargin)    {
-	printSetupRecord.setHeaderMargin(headermargin);
+    printSetupRecord.setHeaderMargin(headermargin);
     }    
     
     /**    
@@ -189,7 +189,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param footermargin footer margin    
      */
     public void setFooterMargin(double footermargin)    {
-	printSetupRecord.setFooterMargin(footermargin);
+    printSetupRecord.setFooterMargin(footermargin);
     }    
     
     /**    
@@ -197,7 +197,7 @@ public class HSSFPrintSetup implements PrintSetup {
      * @param copies number of copies    
      */
     public void setCopies(short copies)    {
-	printSetupRecord.setCopies(copies);
+    printSetupRecord.setCopies(copies);
     }    
     
     /**    

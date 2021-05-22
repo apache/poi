@@ -43,7 +43,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
 
 
     public static final class InfoSubRecord implements GenericRecord {
-    	public static final int ENCODED_SIZE = 8;
+        public static final int ENCODED_SIZE = 8;
         private int field_1_stream_pos;          // stream pointer to the SST record
         private int field_2_bucket_sst_offset;   // don't really understand this yet.
         /** unused - supposed to be zero */
@@ -101,7 +101,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
 
 
     public ExtSSTRecord() {
-    	_stringsPerBucket = DEFAULT_BUCKET_SIZE;
+        _stringsPerBucket = DEFAULT_BUCKET_SIZE;
         _sstInfos = new InfoSubRecord[0];
     }
 
@@ -140,7 +140,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
     }
 
     int getDataSize() {
-    	return 2 + InfoSubRecord.ENCODED_SIZE*_sstInfos.length;
+        return 2 + InfoSubRecord.ENCODED_SIZE*_sstInfos.length;
     }
 
     InfoSubRecord[] getInfoSubRecords() {
@@ -174,7 +174,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
     }
 
     public void setBucketOffsets(int[] bucketAbsoluteOffsets, int[] bucketRelativeOffsets) {
-    	// TODO - replace no-arg constructor with this logic
+        // TODO - replace no-arg constructor with this logic
         _sstInfos = new InfoSubRecord[bucketAbsoluteOffsets.length];
         for (int i = 0; i < bucketAbsoluteOffsets.length; i++) {
             _sstInfos[i] = new InfoSubRecord(bucketAbsoluteOffsets[i], bucketRelativeOffsets[i]);

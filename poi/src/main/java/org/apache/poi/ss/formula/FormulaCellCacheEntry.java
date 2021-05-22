@@ -30,94 +30,94 @@ import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
  * Stores the cached result of a formula evaluation, along with the set of sensitive input cells
  */
 final class FormulaCellCacheEntry extends CellCacheEntry {
-	
-	/**
-	 * Cells 'used' in the current evaluation of the formula corresponding to this cache entry
-	 *
-	 * If any of the following cells change, this cache entry needs to be cleared
-	 */
-	private CellCacheEntry[] _sensitiveInputCells;
+    
+    /**
+     * Cells 'used' in the current evaluation of the formula corresponding to this cache entry
+     *
+     * If any of the following cells change, this cache entry needs to be cleared
+     */
+    private CellCacheEntry[] _sensitiveInputCells;
 
-	private FormulaUsedBlankCellSet _usedBlankCellGroup;
+    private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
-	public FormulaCellCacheEntry() {
-		// leave fields un-set
-	}
-	
-	public boolean isInputSensitive() {
-		if (_sensitiveInputCells != null) {
-			if (_sensitiveInputCells.length > 0 ) {
-				return true;
-			}
-		}
-		return _usedBlankCellGroup == null ? false : !_usedBlankCellGroup.isEmpty();
-	}
+    public FormulaCellCacheEntry() {
+        // leave fields un-set
+    }
+    
+    public boolean isInputSensitive() {
+        if (_sensitiveInputCells != null) {
+            if (_sensitiveInputCells.length > 0 ) {
+                return true;
+            }
+        }
+        return _usedBlankCellGroup == null ? false : !_usedBlankCellGroup.isEmpty();
+    }
 
-	public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
-		// need to tell all cells that were previously used, but no longer are, 
-		// that they are not consumed by this cell any more
-	    if (sensitiveInputCells == null) {
+    public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
+        // need to tell all cells that were previously used, but no longer are, 
+        // that they are not consumed by this cell any more
+        if (sensitiveInputCells == null) {
             _sensitiveInputCells = null;
-	        changeConsumingCells(CellCacheEntry.EMPTY_ARRAY);
-	    } else {
-	        _sensitiveInputCells = sensitiveInputCells.clone();
-	        changeConsumingCells(_sensitiveInputCells);
-	    }
-	}
+            changeConsumingCells(CellCacheEntry.EMPTY_ARRAY);
+        } else {
+            _sensitiveInputCells = sensitiveInputCells.clone();
+            changeConsumingCells(_sensitiveInputCells);
+        }
+    }
 
-	public void clearFormulaEntry() {
-		CellCacheEntry[] usedCells = _sensitiveInputCells;
-		if (usedCells != null) {
-			for (int i = usedCells.length-1; i>=0; i--) {
-				usedCells[i].clearConsumingCell(this);
-			}
-		}
-		_sensitiveInputCells = null;
-		clearValue();
-	}
-	
-	private void changeConsumingCells(CellCacheEntry[] usedCells) {
+    public void clearFormulaEntry() {
+        CellCacheEntry[] usedCells = _sensitiveInputCells;
+        if (usedCells != null) {
+            for (int i = usedCells.length-1; i>=0; i--) {
+                usedCells[i].clearConsumingCell(this);
+            }
+        }
+        _sensitiveInputCells = null;
+        clearValue();
+    }
+    
+    private void changeConsumingCells(CellCacheEntry[] usedCells) {
 
-		CellCacheEntry[] prevUsedCells = _sensitiveInputCells;
-		int nUsed = usedCells.length;
-		for (int i = 0; i < nUsed; i++) {
-			usedCells[i].addConsumingCell(this);
-		}
-		if (prevUsedCells == null) {
-			return;
-		}
-		int nPrevUsed = prevUsedCells.length;
-		if (nPrevUsed < 1) {
-			return;
-		}
-		Set<CellCacheEntry> usedSet;
-		if (nUsed < 1) {
-			usedSet = Collections.emptySet();
-		} else {
-			usedSet = new HashSet<>(nUsed * 3 / 2);
-			usedSet.addAll(Arrays.asList(usedCells).subList(0, nUsed));
-		}
-		for (int i = 0; i < nPrevUsed; i++) {
-			CellCacheEntry prevUsed = prevUsedCells[i];
-			if (!usedSet.contains(prevUsed)) {
-				// previously was used by cellLoc, but not anymore
-				prevUsed.clearConsumingCell(this);
-			}
-		}
-	}
+        CellCacheEntry[] prevUsedCells = _sensitiveInputCells;
+        int nUsed = usedCells.length;
+        for (int i = 0; i < nUsed; i++) {
+            usedCells[i].addConsumingCell(this);
+        }
+        if (prevUsedCells == null) {
+            return;
+        }
+        int nPrevUsed = prevUsedCells.length;
+        if (nPrevUsed < 1) {
+            return;
+        }
+        Set<CellCacheEntry> usedSet;
+        if (nUsed < 1) {
+            usedSet = Collections.emptySet();
+        } else {
+            usedSet = new HashSet<>(nUsed * 3 / 2);
+            usedSet.addAll(Arrays.asList(usedCells).subList(0, nUsed));
+        }
+        for (int i = 0; i < nPrevUsed; i++) {
+            CellCacheEntry prevUsed = prevUsedCells[i];
+            if (!usedSet.contains(prevUsed)) {
+                // previously was used by cellLoc, but not anymore
+                prevUsed.clearConsumingCell(this);
+            }
+        }
+    }
 
-	public void updateFormulaResult(ValueEval result, CellCacheEntry[] sensitiveInputCells, FormulaUsedBlankCellSet usedBlankAreas) {
-		updateValue(result);
-		setSensitiveInputCells(sensitiveInputCells);
-		_usedBlankCellGroup = usedBlankAreas;
-	}
+    public void updateFormulaResult(ValueEval result, CellCacheEntry[] sensitiveInputCells, FormulaUsedBlankCellSet usedBlankAreas) {
+        updateValue(result);
+        setSensitiveInputCells(sensitiveInputCells);
+        _usedBlankCellGroup = usedBlankAreas;
+    }
 
-	public void notifyUpdatedBlankCell(BookSheetKey bsk, int rowIndex, int columnIndex, IEvaluationListener evaluationListener) {
-		if (_usedBlankCellGroup != null) {
-			if (_usedBlankCellGroup.containsCell(bsk, rowIndex, columnIndex)) {
-				clearFormulaEntry();
-				recurseClearCachedFormulaResults(evaluationListener);
-			}
-		}
-	}
+    public void notifyUpdatedBlankCell(BookSheetKey bsk, int rowIndex, int columnIndex, IEvaluationListener evaluationListener) {
+        if (_usedBlankCellGroup != null) {
+            if (_usedBlankCellGroup.containsCell(bsk, rowIndex, columnIndex)) {
+                clearFormulaEntry();
+                recurseClearCachedFormulaResults(evaluationListener);
+            }
+        }
+    }
 }

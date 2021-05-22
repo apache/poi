@@ -31,48 +31,48 @@ import org.junit.jupiter.api.Test;
  * Excel file.
  */
 final class TestCommonObjectDataSubRecord {
-	byte[] data = new byte[] {
-		(byte)0x12,(byte)0x00,(byte)0x01,(byte)0x00,
-		(byte)0x01,(byte)0x00,(byte)0x11,(byte)0x60,
-		(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
-		(byte)0x00,(byte)0x0D,(byte)0x26,(byte)0x01,
-		(byte)0x00,(byte)0x00,
-	};
+    byte[] data = new byte[] {
+        (byte)0x12,(byte)0x00,(byte)0x01,(byte)0x00,
+        (byte)0x01,(byte)0x00,(byte)0x11,(byte)0x60,
+        (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+        (byte)0x00,(byte)0x0D,(byte)0x26,(byte)0x01,
+        (byte)0x00,(byte)0x00,
+    };
 
-	@Test
-	void testLoad() {
-		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createLittleEndian(data), data.length);
+    @Test
+    void testLoad() {
+        CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createLittleEndian(data), data.length);
 
-		assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
-		assertEquals((short) 1, record.getObjectId());
-		assertEquals((short) 1, record.getOption());
+        assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
+        assertEquals((short) 1, record.getObjectId());
+        assertEquals((short) 1, record.getOption());
         assertTrue(record.isLocked());
         assertFalse(record.isPrintable());
         assertFalse(record.isAutofill());
         assertFalse(record.isAutoline());
-		assertEquals(24593, record.getReserved1());
-		assertEquals(218103808, record.getReserved2());
-		assertEquals(294, record.getReserved3());
-		assertEquals(18, record.getDataSize());
-	}
+        assertEquals(24593, record.getReserved1());
+        assertEquals(218103808, record.getReserved2());
+        assertEquals(294, record.getReserved3());
+        assertEquals(18, record.getDataSize());
+    }
 
-	@SuppressWarnings("squid:S2699")
-	@Test
-	void testStore() {
-		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();
+    @SuppressWarnings("squid:S2699")
+    @Test
+    void testStore() {
+        CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();
 
-		record.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX);
-		record.setObjectId( 1);
-		record.setOption((short) 1);
-		record.setLocked(true);
-		record.setPrintable(false);
-		record.setAutofill(false);
-		record.setAutoline(false);
-		record.setReserved1(24593);
-		record.setReserved2(218103808);
-		record.setReserved3(294);
+        record.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX);
+        record.setObjectId( 1);
+        record.setOption((short) 1);
+        record.setLocked(true);
+        record.setPrintable(false);
+        record.setAutofill(false);
+        record.setAutoline(false);
+        record.setReserved1(24593);
+        record.setReserved2(218103808);
+        record.setReserved3(294);
 
-		byte[] recordBytes = record.serialize();
-		confirmRecordEncoding(CommonObjectDataSubRecord.sid, data, recordBytes);
-	}
+        byte[] recordBytes = record.serialize();
+        confirmRecordEncoding(CommonObjectDataSubRecord.sid, data, recordBytes);
+    }
 }

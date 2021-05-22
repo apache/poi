@@ -71,7 +71,7 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
     /**
      * Bold boldness (bold)
      */
-    private static final short FONT_WEIGHT_BOLD	 = 0x2bc;
+    private static final short FONT_WEIGHT_BOLD  = 0x2bc;
 
     private final byte[] _rawData = new byte[RAW_DATA_SIZE];
 

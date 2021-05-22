@@ -379,8 +379,8 @@ final class TestCellStyle {
 
     @Test
     void testShrinkToFit() throws IOException {
-    	// Existing file
-    	try (HSSFWorkbook wb1 = openSample("ShrinkToFit.xls")) {
+        // Existing file
+        try (HSSFWorkbook wb1 = openSample("ShrinkToFit.xls")) {
             HSSFSheet s = wb1.getSheetAt(0);
             HSSFRow r = s.getRow(0);
             HSSFCellStyle cs = r.getCell(0).getCellStyle();

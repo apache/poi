@@ -36,69 +36,69 @@ import org.junit.jupiter.api.Test;
  */
 final class TestParseMissingBuiltInFuncs {
 
-	private static Ptg[] parse(String formula) throws IOException {
-		HSSFWorkbook book = new HSSFWorkbook();
-		Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
-		book.close();
-		return ptgs;
-	}
+    private static Ptg[] parse(String formula) throws IOException {
+        HSSFWorkbook book = new HSSFWorkbook();
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, book);
+        book.close();
+        return ptgs;
+    }
 
-	private static void confirmFunc(String formula, int expPtgArraySize, boolean isVarArgFunc, int funcIx)
-	throws IOException {
-		Ptg[] ptgs = parse(formula);
-		Ptg ptgF = ptgs[ptgs.length-1];  // func is last RPN token in all these formulas
+    private static void confirmFunc(String formula, int expPtgArraySize, boolean isVarArgFunc, int funcIx)
+    throws IOException {
+        Ptg[] ptgs = parse(formula);
+        Ptg ptgF = ptgs[ptgs.length-1];  // func is last RPN token in all these formulas
 
-		// Check critical things in the Ptg array encoding.
-		if(!(ptgF instanceof AbstractFunctionPtg)) {
-		    throw new RuntimeException("function token missing");
-		}
-		AbstractFunctionPtg func = (AbstractFunctionPtg) ptgF;
-		assertNotEquals(255, func.getFunctionIndex(), "Failed to recognise built-in function in formula");
-		assertEquals(expPtgArraySize, ptgs.length);
-		assertEquals(funcIx, func.getFunctionIndex());
-		Class<? extends AbstractFunctionPtg> expCls = isVarArgFunc ? FuncVarPtg.class : FuncPtg.class;
-		assertEquals(expCls, ptgF.getClass());
+        // Check critical things in the Ptg array encoding.
+        if(!(ptgF instanceof AbstractFunctionPtg)) {
+            throw new RuntimeException("function token missing");
+        }
+        AbstractFunctionPtg func = (AbstractFunctionPtg) ptgF;
+        assertNotEquals(255, func.getFunctionIndex(), "Failed to recognise built-in function in formula");
+        assertEquals(expPtgArraySize, ptgs.length);
+        assertEquals(funcIx, func.getFunctionIndex());
+        Class<? extends AbstractFunctionPtg> expCls = isVarArgFunc ? FuncVarPtg.class : FuncPtg.class;
+        assertEquals(expCls, ptgF.getClass());
 
-		// check that parsed Ptg array converts back to formula text OK
-		HSSFWorkbook book = new HSSFWorkbook();
-		String reRenderedFormula = HSSFFormulaParser.toFormulaString(book, ptgs);
-		assertEquals(formula, reRenderedFormula);
-		book.close();
-	}
+        // check that parsed Ptg array converts back to formula text OK
+        HSSFWorkbook book = new HSSFWorkbook();
+        String reRenderedFormula = HSSFFormulaParser.toFormulaString(book, ptgs);
+        assertEquals(formula, reRenderedFormula);
+        book.close();
+    }
 
-	@Test
-	void testDatedif() throws IOException {
-		int expSize = 4;   // NB would be 5 if POI added tAttrVolatile properly
-		confirmFunc("DATEDIF(NOW(),NOW(),\"d\")", expSize, false, 351);
-	}
+    @Test
+    void testDatedif() throws IOException {
+        int expSize = 4;   // NB would be 5 if POI added tAttrVolatile properly
+        confirmFunc("DATEDIF(NOW(),NOW(),\"d\")", expSize, false, 351);
+    }
 
-	@Test
-	void testDdb() throws IOException {
-		confirmFunc("DDB(1,1,1,1,1)", 6, true, 144);
-	}
+    @Test
+    void testDdb() throws IOException {
+        confirmFunc("DDB(1,1,1,1,1)", 6, true, 144);
+    }
 
-	@Test
-	void testAtan() throws IOException {
-		confirmFunc("ATAN(1)", 2, false, 18);
-	}
+    @Test
+    void testAtan() throws IOException {
+        confirmFunc("ATAN(1)", 2, false, 18);
+    }
 
-	@Test
-	void testUsdollar() throws IOException {
-		confirmFunc("USDOLLAR(1)", 2, true, 204);
-	}
+    @Test
+    void testUsdollar() throws IOException {
+        confirmFunc("USDOLLAR(1)", 2, true, 204);
+    }
 
-	@Test
-	void testDBCS() throws IOException {
-		confirmFunc("DBCS(\"abc\")", 2, false, 215);
-	}
+    @Test
+    void testDBCS() throws IOException {
+        confirmFunc("DBCS(\"abc\")", 2, false, 215);
+    }
 
-	@Test
-	void testIsnontext() throws IOException {
-		confirmFunc("ISNONTEXT(\"abc\")", 2, false, 190);
-	}
+    @Test
+    void testIsnontext() throws IOException {
+        confirmFunc("ISNONTEXT(\"abc\")", 2, false, 190);
+    }
 
-	@Test
-	void testDproduct() throws IOException {
-		confirmFunc("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", 4, false, 189);
-	}
+    @Test
+    void testDproduct() throws IOException {
+        confirmFunc("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", 4, false, 189);
+    }
 }

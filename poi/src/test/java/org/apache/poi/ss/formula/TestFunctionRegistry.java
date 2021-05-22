@@ -68,7 +68,7 @@ class TestFunctionRegistry {
     }
 
     @Test
-	void testRegisterInRuntimeA() {
+    void testRegisterInRuntimeA() {
         HSSFCell cellA = row.createCell(0);
         cellA.setCellFormula("FISHER(A5)");
         assertThrows(NotImplementedException.class, () -> fe.evaluate(cellA));
@@ -99,9 +99,9 @@ class TestFunctionRegistry {
 
         CellValue cv = fe.evaluate(cellB);
         assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), cv.getErrorValue());
-	}
+    }
 
-	private static ValueEval na(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+    private static ValueEval na(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         return ErrorEval.NA;
     }
 

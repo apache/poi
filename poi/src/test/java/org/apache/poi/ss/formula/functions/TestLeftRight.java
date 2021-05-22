@@ -32,29 +32,29 @@ import org.junit.jupiter.api.Test;
  */
 class TestLeftRight {
 
-	private static final NumberEval NEGATIVE_OPERAND = new NumberEval(-1.0);
-	private static final StringEval ANY_STRING_VALUE = new StringEval("ANYSTRINGVALUE");
+    private static final NumberEval NEGATIVE_OPERAND = new NumberEval(-1.0);
+    private static final StringEval ANY_STRING_VALUE = new StringEval("ANYSTRINGVALUE");
 
 
-	private static ValueEval invokeLeft(ValueEval text, ValueEval operand) {
-		ValueEval[] args = new ValueEval[] { text, operand };
-		return TextFunction.LEFT.evaluate(args, -1, (short)-1);
-	}
+    private static ValueEval invokeLeft(ValueEval text, ValueEval operand) {
+        ValueEval[] args = new ValueEval[] { text, operand };
+        return TextFunction.LEFT.evaluate(args, -1, (short)-1);
+    }
 
-	private static ValueEval invokeRight(ValueEval text, ValueEval operand) {
-		ValueEval[] args = new ValueEval[] { text, operand };
-		return TextFunction.RIGHT.evaluate(args, -1, (short)-1);
-	}
+    private static ValueEval invokeRight(ValueEval text, ValueEval operand) {
+        ValueEval[] args = new ValueEval[] { text, operand };
+        return TextFunction.RIGHT.evaluate(args, -1, (short)-1);
+    }
 
-	@Test
-	void testLeftRight_bug49841() {
-		assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
-		assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
-	}
+    @Test
+    void testLeftRight_bug49841() {
+        assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
+    }
 
-	@Test
-	void testLeftRightNegativeOperand() {
-		assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
-		assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
-	}
+    @Test
+    void testLeftRightNegativeOperand() {
+        assertEquals(ErrorEval.VALUE_INVALID, invokeRight(ANY_STRING_VALUE, NEGATIVE_OPERAND));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeLeft(ANY_STRING_VALUE, NEGATIVE_OPERAND));
+    }
 }

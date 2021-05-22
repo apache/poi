@@ -38,97 +38,97 @@ import org.apache.poi.ss.usermodel.DataFormat;
  * @see <a href="https://support.microsoft.com/en-us/office/review-guidelines-for-customizing-a-number-format-c0a1d1fa-d3f4-4018-96b7-9c9354dd99f5">Review guidelines for customizing a number format</a>
  */
 public final class HSSFDataFormat implements DataFormat {
-	private static final String[] _builtinFormats = BuiltinFormats.getAll();
+    private static final String[] _builtinFormats = BuiltinFormats.getAll();
 
-	private final Vector<String> _formats = new Vector<>();
-	private final InternalWorkbook _workbook;
-	private boolean _movedBuiltins;  // Flag to see if need to
-	// check the built in list
-	// or if the regular list
-	// has all entries.
+    private final Vector<String> _formats = new Vector<>();
+    private final InternalWorkbook _workbook;
+    private boolean _movedBuiltins;  // Flag to see if need to
+    // check the built in list
+    // or if the regular list
+    // has all entries.
 
-	/**
-	 * Constructs a new data formatter.  It takes a workbook to have
-	 * access to the workbooks format records.
-	 * @param workbook the workbook the formats are tied to.
-	 */
-	HSSFDataFormat(InternalWorkbook workbook) {
-		_workbook = workbook;
+    /**
+     * Constructs a new data formatter.  It takes a workbook to have
+     * access to the workbooks format records.
+     * @param workbook the workbook the formats are tied to.
+     */
+    HSSFDataFormat(InternalWorkbook workbook) {
+        _workbook = workbook;
 
-		Iterator<FormatRecord> i = workbook.getFormats().iterator();
-		while (i.hasNext()) {
-			FormatRecord r = i.next();
-			ensureFormatsSize(r.getIndexCode());
-			_formats.set(r.getIndexCode(), r.getFormatString());
-		}
-	}
+        Iterator<FormatRecord> i = workbook.getFormats().iterator();
+        while (i.hasNext()) {
+            FormatRecord r = i.next();
+            ensureFormatsSize(r.getIndexCode());
+            _formats.set(r.getIndexCode(), r.getFormatString());
+        }
+    }
 
-	public static List<String> getBuiltinFormats() {
-		return Arrays.asList(_builtinFormats);
-	}
+    public static List<String> getBuiltinFormats() {
+        return Arrays.asList(_builtinFormats);
+    }
 
-	/**
-	 * get the format index that matches the given format string<p>
-	 * Automatically converts "text" to excel's format string to represent text.
-	 * @param format string matching a built in format
-	 * @return index of format or -1 if undefined.
-	 */
-	public static short getBuiltinFormat(String format) {
-		return (short) BuiltinFormats.getBuiltinFormat(format);
-	}
+    /**
+     * get the format index that matches the given format string<p>
+     * Automatically converts "text" to excel's format string to represent text.
+     * @param format string matching a built in format
+     * @return index of format or -1 if undefined.
+     */
+    public static short getBuiltinFormat(String format) {
+        return (short) BuiltinFormats.getBuiltinFormat(format);
+    }
 
-	/**
-	 * Get the format index that matches the given format
-	 *  string, creating a new format entry if required.
-	 * Aliases text to the proper format as required.
-	 * @param pFormat string matching a built in format
-	 * @return index of format.
-	 */
-	public short getFormat(String pFormat) {
-	   // Normalise the format string
-		String format;
-		if (pFormat.equalsIgnoreCase("TEXT")) {
-			format = "@";
-		} else {
-			format = pFormat;
-		}
+    /**
+     * Get the format index that matches the given format
+     *  string, creating a new format entry if required.
+     * Aliases text to the proper format as required.
+     * @param pFormat string matching a built in format
+     * @return index of format.
+     */
+    public short getFormat(String pFormat) {
+       // Normalise the format string
+        String format;
+        if (pFormat.equalsIgnoreCase("TEXT")) {
+            format = "@";
+        } else {
+            format = pFormat;
+        }
 
-		// Merge in the built in formats if we haven't already
-		if (!_movedBuiltins) {
-			for (int i=0; i<_builtinFormats.length; i++) {
-			   ensureFormatsSize(i);
-				if (_formats.get(i) == null) {
-				   _formats.set(i, _builtinFormats[i]);
-				} else {
-				   // The workbook overrides this default format
-				}
-			}
-			_movedBuiltins = true;
-		}
+        // Merge in the built in formats if we haven't already
+        if (!_movedBuiltins) {
+            for (int i=0; i<_builtinFormats.length; i++) {
+               ensureFormatsSize(i);
+                if (_formats.get(i) == null) {
+                   _formats.set(i, _builtinFormats[i]);
+                } else {
+                   // The workbook overrides this default format
+                }
+            }
+            _movedBuiltins = true;
+        }
 
-		// See if we can find it
-		for(int i=0; i<_formats.size(); i++) {
-		   if(format.equals(_formats.get(i))) {
-		      return (short)i;
-		   }
-		}
+        // See if we can find it
+        for(int i=0; i<_formats.size(); i++) {
+           if(format.equals(_formats.get(i))) {
+              return (short)i;
+           }
+        }
 
-		// We can't find it, so add it as a new one
-		short index = _workbook.getFormat(format, true);
-		ensureFormatsSize(index);
-		_formats.set(index, format);
-		return index;
-	}
+        // We can't find it, so add it as a new one
+        short index = _workbook.getFormat(format, true);
+        ensureFormatsSize(index);
+        _formats.set(index, format);
+        return index;
+    }
 
-	/**
-	 * get the format string that matches the given format index
-	 * @param index of a format
-	 * @return string represented at index of format or null if there is not a  format at that index
-	 */
-	public String getFormat(short index) {
-		if (_movedBuiltins) {
-			return _formats.get(index);
-		}
+    /**
+     * get the format string that matches the given format index
+     * @param index of a format
+     * @return string represented at index of format or null if there is not a  format at that index
+     */
+    public String getFormat(short index) {
+        if (_movedBuiltins) {
+            return _formats.get(index);
+        }
 
         if(index == -1) {
             // YK: formatIndex can be -1, for example, for cell in column Y in test-data/spreadsheet/45322.xls
@@ -136,44 +136,44 @@ public final class HSSFDataFormat implements DataFormat {
             return null;
         }
 
-		String fmt = _formats.size() > index ? _formats.get(index) : null;
-		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
-		   // It's in the built in range
-		   if (fmt != null) {
-		      // It's been overriden, use that value
-		      return fmt;
-		   } else {
-		      // Standard built in format
-	         return _builtinFormats[index];
-		   }
-		}
-		return fmt;
-	}
+        String fmt = _formats.size() > index ? _formats.get(index) : null;
+        if (_builtinFormats.length > index && _builtinFormats[index] != null) {
+           // It's in the built in range
+           if (fmt != null) {
+              // It's been overriden, use that value
+              return fmt;
+           } else {
+              // Standard built in format
+             return _builtinFormats[index];
+           }
+        }
+        return fmt;
+    }
 
-	/**
-	 * get the format string that matches the given format index
-	 * @param index of a built in format
-	 * @return string represented at index of format or null if there is not a builtin format at that index
-	 */
-	public static String getBuiltinFormat(short index) {
-		return BuiltinFormats.getBuiltinFormat(index);
-	}
+    /**
+     * get the format string that matches the given format index
+     * @param index of a built in format
+     * @return string represented at index of format or null if there is not a builtin format at that index
+     */
+    public static String getBuiltinFormat(short index) {
+        return BuiltinFormats.getBuiltinFormat(index);
+    }
 
-	/**
-	 * get the number of built-in and reserved builtinFormats
-	 * @return number of built-in and reserved builtinFormats
-	 */
-	public static int getNumberOfBuiltinBuiltinFormats() {
-		return _builtinFormats.length;
-	}
+    /**
+     * get the number of built-in and reserved builtinFormats
+     * @return number of built-in and reserved builtinFormats
+     */
+    public static int getNumberOfBuiltinBuiltinFormats() {
+        return _builtinFormats.length;
+    }
 
-	/**
-	 * Ensures that the formats list can hold entries
-	 *  up to and including the entry with this index
-	 */
-	private void ensureFormatsSize(int index) {
-	   if(_formats.size() <= index) {
-	      _formats.setSize(index+1);
-	   }
-	}
+    /**
+     * Ensures that the formats list can hold entries
+     *  up to and including the entry with this index
+     */
+    private void ensureFormatsSize(int index) {
+       if(_formats.size() <= index) {
+          _formats.setSize(index+1);
+       }
+    }
 }

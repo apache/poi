@@ -21,14 +21,14 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianInput;
 
 public final class RefNPtg extends Ref2DPtgBase {
-	public static final byte sid = 0x2C;
+    public static final byte sid = 0x2C;
 
-	public RefNPtg(LittleEndianInput in)  {
-		super(in);
-	}
+    public RefNPtg(LittleEndianInput in)  {
+        super(in);
+    }
 
     public RefNPtg(RefNPtg other) {
-	    super(other);
+        super(other);
     }
 
     @Override

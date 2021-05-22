@@ -33,62 +33,62 @@ import org.junit.jupiter.api.Test;
  */
 final class TestExternalFunctionFormulas {
 
-	/**
-	 * tests {@code NameXPtg.toFormulaString(Workbook)} and logic in Workbook below that
-	 */
+    /**
+     * tests {@code NameXPtg.toFormulaString(Workbook)} and logic in Workbook below that
+     */
     @Test
-	void testReadFormulaContainingExternalFunction() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+    void testReadFormulaContainingExternalFunction() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 
-		String expectedFormula = "YEARFRAC(B1,C1)";
-		HSSFSheet sht = wb.getSheetAt(0);
-		String cellFormula = sht.getRow(0).getCell(0).getCellFormula();
-		assertEquals(expectedFormula, cellFormula);
+        String expectedFormula = "YEARFRAC(B1,C1)";
+        HSSFSheet sht = wb.getSheetAt(0);
+        String cellFormula = sht.getRow(0).getCell(0).getCellFormula();
+        assertEquals(expectedFormula, cellFormula);
 
-		wb.close();
-	}
+        wb.close();
+    }
 
     @Test
     void testParse() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
-		Ptg[] ptgs = HSSFFormulaParser.parse("YEARFRAC(B1,C1)", wb);
-		assertEquals(4, ptgs.length);
-		assertEquals(NameXPtg.class, ptgs[0].getClass());
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+        Ptg[] ptgs = HSSFFormulaParser.parse("YEARFRAC(B1,C1)", wb);
+        assertEquals(4, ptgs.length);
+        assertEquals(NameXPtg.class, ptgs[0].getClass());
 
-		wb.getSheetAt(0).getRow(0).createCell(6).setCellFormula("YEARFRAC(C1,B1)");
-//		if (false) {
-//			// In case you fancy checking in excel
-//			try {
-//				File tempFile = TempFile.createTempFile("testExtFunc", ".xls");
-//				FileOutputStream fout = new FileOutputStream(tempFile);
-//				wb.write(fout);
-//				fout.close();
-//				System.out.println("check out " + tempFile.getAbsolutePath());
-//			} catch (IOException e) {
-//				throw new RuntimeException(e);
-//			}
-//		}
-		wb.close();
-	}
+        wb.getSheetAt(0).getRow(0).createCell(6).setCellFormula("YEARFRAC(C1,B1)");
+//      if (false) {
+//          // In case you fancy checking in excel
+//          try {
+//              File tempFile = TempFile.createTempFile("testExtFunc", ".xls");
+//              FileOutputStream fout = new FileOutputStream(tempFile);
+//              wb.write(fout);
+//              fout.close();
+//              System.out.println("check out " + tempFile.getAbsolutePath());
+//          } catch (IOException e) {
+//              throw new RuntimeException(e);
+//          }
+//      }
+        wb.close();
+    }
 
     @Test
-	void testEvaluate() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
-		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		confirmCellEval(sheet, 0, 0, fe, "YEARFRAC(B1,C1)", 29.0/90.0);
-		confirmCellEval(sheet, 1, 0, fe, "YEARFRAC(B2,C2)", 0.0);
-		confirmCellEval(sheet, 2, 0, fe, "YEARFRAC(B3,C3,D3)", 0.0);
-		confirmCellEval(sheet, 3, 0, fe, "IF(ISEVEN(3),1.2,1.6)", 1.6);
-		confirmCellEval(sheet, 4, 0, fe, "IF(ISODD(3),1.2,1.6)", 1.2);
-		wb.close();
-	}
+    void testEvaluate() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        confirmCellEval(sheet, 0, 0, fe, "YEARFRAC(B1,C1)", 29.0/90.0);
+        confirmCellEval(sheet, 1, 0, fe, "YEARFRAC(B2,C2)", 0.0);
+        confirmCellEval(sheet, 2, 0, fe, "YEARFRAC(B3,C3,D3)", 0.0);
+        confirmCellEval(sheet, 3, 0, fe, "IF(ISEVEN(3),1.2,1.6)", 1.6);
+        confirmCellEval(sheet, 4, 0, fe, "IF(ISODD(3),1.2,1.6)", 1.2);
+        wb.close();
+    }
 
-	private static void confirmCellEval(HSSFSheet sheet, int rowIx, int colIx,
-			HSSFFormulaEvaluator fe, String expectedFormula, double expectedResult) {
-		HSSFCell cell = sheet.getRow(rowIx).getCell(colIx);
-		assertEquals(expectedFormula, cell.getCellFormula());
-		CellValue cv = fe.evaluate(cell);
-		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
-	}
+    private static void confirmCellEval(HSSFSheet sheet, int rowIx, int colIx,
+            HSSFFormulaEvaluator fe, String expectedFormula, double expectedResult) {
+        HSSFCell cell = sheet.getRow(rowIx).getCell(colIx);
+        assertEquals(expectedFormula, cell.getCellFormula());
+        CellValue cv = fe.evaluate(cell);
+        assertEquals(expectedResult, cv.getNumberValue(), 0.0);
+    }
 }

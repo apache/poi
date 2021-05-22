@@ -33,17 +33,17 @@ public interface SlideShow<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > extends Closeable {
-	Slide<S,P> createSlide() throws IOException;
+    Slide<S,P> createSlide() throws IOException;
 
-	List<? extends Slide<S,P>> getSlides();
+    List<? extends Slide<S,P>> getSlides();
 
     MasterSheet<S,P> createMasterSheet() throws IOException;
 
-	/**
+    /**
      * Returns all slide masters.
      * This doesn't include notes master and other arbitrary masters.
      */
-	List<? extends MasterSheet<S,P>> getSlideMasters();
+    List<? extends MasterSheet<S,P>> getSlideMasters();
 
     /**
      * Returns the current page size
@@ -79,7 +79,7 @@ public interface SlideShow<
     /**
      * Adds a picture to the presentation.
      *
-     * @param is	        The stream to read the image from
+     * @param is            The stream to read the image from
      * @param format        The format of the picture.
      *
      * @return the picture data reference.

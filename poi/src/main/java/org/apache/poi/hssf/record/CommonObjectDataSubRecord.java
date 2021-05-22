@@ -122,14 +122,14 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         out.writeInt(field_6_reserved3);
     }
 
-	@Override
+    @Override
     protected int getDataSize() {
         return 2 + 2 + 2 + 4 + 4 + 4;
     }
 
-	/**
-	 * @return the record sid
-	 */
+    /**
+     * @return the record sid
+     */
     public short getSid()
     {
         return sid;

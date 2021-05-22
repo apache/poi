@@ -32,74 +32,74 @@ import org.apache.poi.util.LittleEndianOutput;
  * {@link #finishReading(LittleEndianInput)} method.
  */
 final class ArrayInitialPtg extends Ptg {
-	private final int _reserved0;
-	private final int _reserved1;
-	private final int _reserved2;
+    private final int _reserved0;
+    private final int _reserved1;
+    private final int _reserved2;
 
-	public ArrayInitialPtg(LittleEndianInput in) {
-		_reserved0 = in.readInt();
-		_reserved1 = in.readUShort();
-		_reserved2 = in.readUByte();
-	}
-	private static RuntimeException invalid() {
-		throw new IllegalStateException("This object is a partially initialised tArray, and cannot be used as a Ptg");
-	}
-	@Override
+    public ArrayInitialPtg(LittleEndianInput in) {
+        _reserved0 = in.readInt();
+        _reserved1 = in.readUShort();
+        _reserved2 = in.readUByte();
+    }
+    private static RuntimeException invalid() {
+        throw new IllegalStateException("This object is a partially initialised tArray, and cannot be used as a Ptg");
+    }
+    @Override
     public byte getDefaultOperandClass() {
-		throw invalid();
-	}
-	public int getSize() {
-		return ArrayPtg.PLAIN_TOKEN_SIZE;
-	}
-	@Override
-	public boolean isBaseToken() {
-		return false;
-	}
-	public String toFormulaString() {
-		throw invalid();
-	}
-	public void write(LittleEndianOutput out) {
-		throw invalid();
-	}
-	/**
-	 * Read in the actual token (array) values. This occurs
-	 * AFTER the last Ptg in the expression.
-	 * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
-	 */
-	public ArrayPtg finishReading(LittleEndianInput in) {
-		int nColumns = in.readUByte();
-		short nRows = in.readShort();
-		//The token_1_columns and token_2_rows do not follow the documentation.
-		//The number of physical rows and columns is actually +1 of these values.
-		//Which is not explicitly documented.
-		nColumns++;
-		nRows++;
+        throw invalid();
+    }
+    public int getSize() {
+        return ArrayPtg.PLAIN_TOKEN_SIZE;
+    }
+    @Override
+    public boolean isBaseToken() {
+        return false;
+    }
+    public String toFormulaString() {
+        throw invalid();
+    }
+    public void write(LittleEndianOutput out) {
+        throw invalid();
+    }
+    /**
+     * Read in the actual token (array) values. This occurs
+     * AFTER the last Ptg in the expression.
+     * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
+     */
+    public ArrayPtg finishReading(LittleEndianInput in) {
+        int nColumns = in.readUByte();
+        short nRows = in.readShort();
+        //The token_1_columns and token_2_rows do not follow the documentation.
+        //The number of physical rows and columns is actually +1 of these values.
+        //Which is not explicitly documented.
+        nColumns++;
+        nRows++;
 
-		int totalCount = nRows * nColumns;
-		Object[] arrayValues = ConstantValueParser.parse(in, totalCount);
+        int totalCount = nRows * nColumns;
+        Object[] arrayValues = ConstantValueParser.parse(in, totalCount);
 
-		ArrayPtg result = new ArrayPtg(_reserved0, _reserved1, _reserved2, nColumns, nRows, arrayValues);
-		result.setClass(getPtgClass());
-		return result;
-	}
+        ArrayPtg result = new ArrayPtg(_reserved0, _reserved1, _reserved2, nColumns, nRows, arrayValues);
+        result.setClass(getPtgClass());
+        return result;
+    }
 
-	@Override
-	public ArrayInitialPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public ArrayInitialPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"reserved0", () -> _reserved0,
-			"reserved1", () -> _reserved1,
-			"reserved2", () -> _reserved2
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "reserved0", () -> _reserved0,
+            "reserved1", () -> _reserved1,
+            "reserved2", () -> _reserved2
+        );
+    }
 
-	@Override
-	public byte getSid() {
-		return -1;
-	}
+    @Override
+    public byte getSid() {
+        return -1;
+    }
 }

@@ -32,17 +32,17 @@ import org.apache.poi.util.IOUtils;
  */
 public final class RawDataUtil {
 
-	private RawDataUtil() {}
+    private RawDataUtil() {}
 
-	public static byte[] decode(String[] hexDataLines) {
-		UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32);
+    public static byte[] decode(String[] hexDataLines) {
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32);
 
-		for (String hexDataLine : hexDataLines) {
-			byte[] lineData = HexRead.readFromString(hexDataLine);
-			baos.write(lineData, 0, lineData.length);
-		}
-		return baos.toByteArray();
-	}
+        for (String hexDataLine : hexDataLines) {
+            byte[] lineData = HexRead.readFromString(hexDataLine);
+            baos.write(lineData, 0, lineData.length);
+        }
+        return baos.toByteArray();
+    }
 
     /**
      * Decompress previously gziped/base64ed data

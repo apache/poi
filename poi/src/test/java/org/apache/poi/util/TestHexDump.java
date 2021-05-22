@@ -159,7 +159,7 @@ class TestHexDump {
         assertEquals("0x0000000000003FCD", HexDump.longToHex(16333));
     }
 
-	@Test
+    @Test
     void testDumpToString() {
         byte[] testArray = testArray();
         String dump = HexDump.dump(testArray, 0, 0);

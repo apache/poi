@@ -28,38 +28,38 @@ import org.junit.jupiter.api.Test;
  */
 final class TestDivideEval {
 
-	private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
-		ValueEval[] args = {
-			arg0, arg1,
-		};
+    private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
+        ValueEval[] args = {
+            arg0, arg1,
+        };
 
-		double result = NumericFunctionInvoker.invoke(EvalInstances.Divide, args, 0, 0);
+        double result = NumericFunctionInvoker.invoke(EvalInstances.Divide, args, 0, 0);
 
-		assertEquals(expectedResult, result, 0);
-	}
+        assertEquals(expectedResult, result, 0);
+    }
 
-	@Test
-	void testBasic() {
-		confirm(new NumberEval(5), new NumberEval(2), 2.5);
-		confirm(new NumberEval(3), new NumberEval(16), 0.1875);
-		confirm(new NumberEval(-150), new NumberEval(-15), 10.0);
-		confirm(new StringEval("0.2"), new NumberEval(0.05), 4.0);
-		confirm(BoolEval.TRUE, new StringEval("-0.2"), -5.0);
-	}
+    @Test
+    void testBasic() {
+        confirm(new NumberEval(5), new NumberEval(2), 2.5);
+        confirm(new NumberEval(3), new NumberEval(16), 0.1875);
+        confirm(new NumberEval(-150), new NumberEval(-15), 10.0);
+        confirm(new StringEval("0.2"), new NumberEval(0.05), 4.0);
+        confirm(BoolEval.TRUE, new StringEval("-0.2"), -5.0);
+    }
 
-	@Test
-	void test1x1Area() {
-		AreaEval ae0 = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
-		AreaEval ae1 = EvalFactory.createAreaEval("C2:C2", new ValueEval[] { new NumberEval(10), });
-		confirm(ae0, ae1, 5);
-	}
+    @Test
+    void test1x1Area() {
+        AreaEval ae0 = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
+        AreaEval ae1 = EvalFactory.createAreaEval("C2:C2", new ValueEval[] { new NumberEval(10), });
+        confirm(ae0, ae1, 5);
+    }
 
-	@Test
-	void testDivZero() {
-		ValueEval[] args = {
-			new NumberEval(5), NumberEval.ZERO,
-		};
-		ValueEval result = EvalInstances.Divide.evaluate(args, 0, (short) 0);
-		assertEquals(ErrorEval.DIV_ZERO, result);
-	}
+    @Test
+    void testDivZero() {
+        ValueEval[] args = {
+            new NumberEval(5), NumberEval.ZERO,
+        };
+        ValueEval result = EvalInstances.Divide.evaluate(args, 0, (short) 0);
+        assertEquals(ErrorEval.DIV_ZERO, result);
+    }
 }

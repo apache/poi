@@ -21,31 +21,31 @@ package org.apache.poi.hssf.record;
  * Specifies a header for a sheet
  */
 public final class HeaderRecord extends HeaderFooterBase {
-	public static final short sid = 0x0014;
+    public static final short sid = 0x0014;
 
-	public HeaderRecord(String text) {
-		super(text);
-	}
+    public HeaderRecord(String text) {
+        super(text);
+    }
 
-	public HeaderRecord(HeaderRecord other) {
-		super(other);
-	}
+    public HeaderRecord(HeaderRecord other) {
+        super(other);
+    }
 
-	public HeaderRecord(RecordInputStream in) {
-		super(in);
-	}
+    public HeaderRecord(RecordInputStream in) {
+        super(in);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public HeaderRecord copy() {
-		return new HeaderRecord(this);
-	}
+    @Override
+    public HeaderRecord copy() {
+        return new HeaderRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.HEADER;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.HEADER;
+    }
 }

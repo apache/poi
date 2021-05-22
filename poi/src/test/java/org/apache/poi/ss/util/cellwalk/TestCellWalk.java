@@ -42,12 +42,12 @@ class TestCellWalk {
         CellRangeAddress range = CellRangeAddress.valueOf("A1:C3");
 
         CellWalk cellWalk = new CellWalk(sheet, range);
-		int[] cellsVisited = { 0 };
-		long[] ordinalNumberSum = { 0 };
+        int[] cellsVisited = { 0 };
+        long[] ordinalNumberSum = { 0 };
         cellWalk.traverse((cell,ctx) -> {
-			cellsVisited[0]++;
-			ordinalNumberSum[0] += ctx.getOrdinalNumber();
-		});
+            cellsVisited[0]++;
+            ordinalNumberSum[0] += ctx.getOrdinalNumber();
+        });
 
         assertEquals(4, cellsVisited[0]);
         /* 1 + 2 + 5 + 9 */

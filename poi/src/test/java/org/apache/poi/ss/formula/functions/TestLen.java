@@ -32,43 +32,43 @@ import org.junit.jupiter.api.Test;
  */
 final class TestLen {
 
-	private static ValueEval invokeLen(ValueEval text) {
-		ValueEval[] args = new ValueEval[] { text, };
-		return TextFunction.LEN.evaluate(args, -1, (short)-1);
-	}
+    private static ValueEval invokeLen(ValueEval text) {
+        ValueEval[] args = new ValueEval[] { text, };
+        return TextFunction.LEN.evaluate(args, -1, (short)-1);
+    }
 
-	private void confirmLen(ValueEval text, int expected) {
-		ValueEval result = invokeLen(text);
-		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
-	}
+    private void confirmLen(ValueEval text, int expected) {
+        ValueEval result = invokeLen(text);
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
+    }
 
-	private void confirmLen(ValueEval text, ErrorEval expectedError) {
-		ValueEval result = invokeLen(text);
-		assertEquals(ErrorEval.class, result.getClass());
-		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
-	}
+    private void confirmLen(ValueEval text, ErrorEval expectedError) {
+        ValueEval result = invokeLen(text);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
+    }
 
-	@Test
-	void testBasic() {
-		confirmLen(new StringEval("galactic"), 8);
-	}
+    @Test
+    void testBasic() {
+        confirmLen(new StringEval("galactic"), 8);
+    }
 
-	/**
-	 * Valid cases where text arg is not exactly a string
-	 */
-	@Test
-	void testUnusualArgs() {
+    /**
+     * Valid cases where text arg is not exactly a string
+     */
+    @Test
+    void testUnusualArgs() {
 
-		// text (first) arg type is number, other args are strings with fractional digits
-		confirmLen(new NumberEval(123456), 6);
-		confirmLen(BoolEval.FALSE, 5);
-		confirmLen(BoolEval.TRUE, 4);
-		confirmLen(BlankEval.instance, 0);
-	}
+        // text (first) arg type is number, other args are strings with fractional digits
+        confirmLen(new NumberEval(123456), 6);
+        confirmLen(BoolEval.FALSE, 5);
+        confirmLen(BoolEval.TRUE, 4);
+        confirmLen(BlankEval.instance, 0);
+    }
 
-	@Test
-	void testErrors() {
-		confirmLen(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
-	}
+    @Test
+    void testErrors() {
+        confirmLen(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
+    }
 }

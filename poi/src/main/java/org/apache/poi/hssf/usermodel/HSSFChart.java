@@ -142,9 +142,9 @@ public final class HSSFChart {
         records.add( createValuesLinkedDataRecord() );
         records.add( createCategoriesLinkedDataRecord() );
         records.add( createDataFormatRecord() );
-        //		records.add(createBeginRecord());
+        //      records.add(createBeginRecord());
         // unknown
-        //		records.add(createEndRecord());
+        //      records.add(createEndRecord());
         records.add( createSeriesToChartGroupRecord() );
         records.add( createEndRecord() );
         records.add( createSheetPropsRecord() );
@@ -590,7 +590,7 @@ public final class HSSFChart {
         r.setLogarithmicScale( false );
         r.setValuesInReverse( false );
         r.setCrossCategoryAxisAtMaximum( false );
-        r.setReserved( true );	// what's this do??
+        r.setReserved( true );  // what's this do??
         return r;
     }
 
@@ -847,9 +847,9 @@ public final class HSSFChart {
     private AreaFormatRecord createAreaFormatRecord1()
     {
         AreaFormatRecord r = new AreaFormatRecord();
-        r.setForegroundColor( 16777215 );	 // RGB Color
-        r.setBackgroundColor( 0 );			// RGB Color
-        r.setPattern( (short) 1 );			 // TODO: Add Pattern constants to record
+        r.setForegroundColor( 16777215 );    // RGB Color
+        r.setBackgroundColor( 0 );          // RGB Color
+        r.setPattern( (short) 1 );           // TODO: Add Pattern constants to record
         r.setAutomatic( true );
         r.setInvert( false );
         r.setForecolorIndex( (short) 78 );

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * Excel file.
  */
 final class TestTextObjectBaseRecord {
-	/** data for one TXO rec and two continue recs */
+    /** data for one TXO rec and two continue recs */
     private static final byte[] data = HexRead.readFromString(
         "B6 01 " + // TextObjectRecord.sid
         "12 00 " + // size 18

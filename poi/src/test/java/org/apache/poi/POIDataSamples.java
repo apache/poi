@@ -201,8 +201,8 @@ public final class POIDataSamples {
             }
 
             if (new File("test-data").exists()) {
-				dataDirName = "test-data";
-			} else if (new File("../test-data").exists()) {
+                dataDirName = "test-data";
+            } else if (new File("../test-data").exists()) {
                dataDirName = "../test-data";
             } else {
                throw new RuntimeException("Must set system property '" +

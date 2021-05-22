@@ -51,115 +51,115 @@ import org.junit.jupiter.api.Test;
  */
 final class TestLinkTable {
 
-	/**
-	 * The example file attached to bugzilla 45046 is a clear example of Name records being present
-	 * without an External Book (SupBook) record.  Excel has no trouble reading this file.<br>
-	 * TODO get OOO documentation updated to reflect this (that EXTERNALBOOK is optional).
-	 *
-	 * It's not clear what exact steps need to be taken in Excel to create such a workbook
-	 */
-	@Test
-	void testLinkTableWithoutExternalBookRecord_bug45046() {
-		// Bug 45046 b: DEFINEDNAME is part of LinkTable
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
-		// some other sanity checks
-		assertEquals(3, wb.getNumberOfSheets());
-		String formula = wb.getSheetAt(0).getRow(4).getCell(13).getCellFormula();
+    /**
+     * The example file attached to bugzilla 45046 is a clear example of Name records being present
+     * without an External Book (SupBook) record.  Excel has no trouble reading this file.<br>
+     * TODO get OOO documentation updated to reflect this (that EXTERNALBOOK is optional).
+     *
+     * It's not clear what exact steps need to be taken in Excel to create such a workbook
+     */
+    @Test
+    void testLinkTableWithoutExternalBookRecord_bug45046() {
+        // Bug 45046 b: DEFINEDNAME is part of LinkTable
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
+        // some other sanity checks
+        assertEquals(3, wb.getNumberOfSheets());
+        String formula = wb.getSheetAt(0).getRow(4).getCell(13).getCellFormula();
 
-		// The reported symptom of this bugzilla is an earlier bug (already fixed)
-		// This is observable in version 3.0
-		assertNotEquals("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)", formula);
+        // The reported symptom of this bugzilla is an earlier bug (already fixed)
+        // This is observable in version 3.0
+        assertNotEquals("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)", formula);
 
-		assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
-	}
+        assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
+    }
 
-	@Test
-	void testMultipleExternSheetRecords_bug45698() {
-		// Bug: Extern sheet is part of LinkTable
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
-		// some other sanity checks
-		assertEquals(7, wb.getNumberOfSheets());
-	}
+    @Test
+    void testMultipleExternSheetRecords_bug45698() {
+        // Bug: Extern sheet is part of LinkTable
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
+        // some other sanity checks
+        assertEquals(7, wb.getNumberOfSheets());
+    }
 
-	@Test
-	void testExtraSheetRefs_bug45978() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls");
-		/*
-		ex45978-extraLinkTableSheets.xls is a cut-down version of attachment 22561.
-		The original file produces the same error.
+    @Test
+    void testExtraSheetRefs_bug45978() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls");
+        /*
+        ex45978-extraLinkTableSheets.xls is a cut-down version of attachment 22561.
+        The original file produces the same error.
 
-		This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
-		record, and eager initialisation of the extern sheet references. Note - the workbook
-		has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
+        This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
+        record, and eager initialisation of the extern sheet references. Note - the workbook
+        has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
 
-		Offset 0x3954 (14676)
-		recordid = 0x17, size = 32
-		[EXTERNSHEET]
-		   numOfRefs	 = 5
-		refrec		 #0: extBook=0 firstSheet=0 lastSheet=0
-		refrec		 #1: extBook=1 firstSheet=2 lastSheet=2
-		refrec		 #2: extBook=2 firstSheet=1 lastSheet=1
-		refrec		 #3: extBook=0 firstSheet=-1 lastSheet=-1
-		refrec		 #4: extBook=0 firstSheet=1 lastSheet=1
-		[/EXTERNSHEET]
+        Offset 0x3954 (14676)
+        recordid = 0x17, size = 32
+        [EXTERNSHEET]
+           numOfRefs     = 5
+        refrec       #0: extBook=0 firstSheet=0 lastSheet=0
+        refrec       #1: extBook=1 firstSheet=2 lastSheet=2
+        refrec       #2: extBook=2 firstSheet=1 lastSheet=1
+        refrec       #3: extBook=0 firstSheet=-1 lastSheet=-1
+        refrec       #4: extBook=0 firstSheet=1 lastSheet=1
+        [/EXTERNSHEET]
 
-		As it turns out, the formula in question doesn't even use externSheetIndex #1 - it
-		uses #4, which resolves to sheetIndex 1 -> 'Data'.
+        As it turns out, the formula in question doesn't even use externSheetIndex #1 - it
+        uses #4, which resolves to sheetIndex 1 -> 'Data'.
 
-		It is not clear exactly what externSheetIndex #4 would refer to.  Excel seems to
-		display such a formula as "''!$A2", but then complains of broken link errors.
-		*/
+        It is not clear exactly what externSheetIndex #4 would refer to.  Excel seems to
+        display such a formula as "''!$A2", but then complains of broken link errors.
+        */
 
-		HSSFCell cell = wb.getSheetAt(0).getRow(1).getCell(1);
-		// Bug: IndexOutOfBoundsException - Index: 2, Size: 2
-		String cellFormula = cell.getCellFormula();
-		assertEquals("Data!$A2", cellFormula);
-	}
+        HSSFCell cell = wb.getSheetAt(0).getRow(1).getCell(1);
+        // Bug: IndexOutOfBoundsException - Index: 2, Size: 2
+        String cellFormula = cell.getCellFormula();
+        assertEquals("Data!$A2", cellFormula);
+    }
 
-	/**
-	 * This problem was visible in POI svn r763332
-	 * when reading the workbook of attachment 23468 from bugzilla 47001
-	 */
-	@Test
-	void testMissingExternSheetRecord_bug47001b() {
+    /**
+     * This problem was visible in POI svn r763332
+     * when reading the workbook of attachment 23468 from bugzilla 47001
+     */
+    @Test
+    void testMissingExternSheetRecord_bug47001b() {
 
-		Record[] recs = {
-				SupBookRecord.createAddInFunctions(),
-				new SSTRecord(),
-		};
-		List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
-		WorkbookRecordList wrl = new WorkbookRecordList();
+        Record[] recs = {
+                SupBookRecord.createAddInFunctions(),
+                new SSTRecord(),
+        };
+        List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
+        WorkbookRecordList wrl = new WorkbookRecordList();
 
-		// Bug 47001b: Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)
-		LinkTable lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
-		assertNotNull(lt);
-	}
+        // Bug 47001b: Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)
+        LinkTable lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
+        assertNotNull(lt);
+    }
 
-	@Test
-	void testNameCommentRecordBetweenNameRecords() {
+    @Test
+    void testNameCommentRecordBetweenNameRecords() {
 
-		final Record[] recs = {
+        final Record[] recs = {
         new NameRecord(),
         new NameCommentRecord("name1", "comment1"),
         new NameRecord(),
         new NameCommentRecord("name2", "comment2"),
 
-		};
-		final List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
-		final WorkbookRecordList wrl = new WorkbookRecordList();
-		final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<>();
+        };
+        final List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
+        final WorkbookRecordList wrl = new WorkbookRecordList();
+        final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<>();
 
-		final LinkTable	lt = new LinkTable(recList, 0, wrl, commentRecords);
-		assertNotNull(lt);
+        final LinkTable lt = new LinkTable(recList, 0, wrl, commentRecords);
+        assertNotNull(lt);
 
-		assertEquals(2, commentRecords.size());
+        assertEquals(2, commentRecords.size());
         assertSame(recs[1], commentRecords.get("name1")); //== is intentionally not .equals()!
         assertSame(recs[3], commentRecords.get("name2")); //== is intentionally not .equals()!
 
-    	assertEquals(2, lt.getNumNames());
-	}
+        assertEquals(2, lt.getNumNames());
+    }
 
-	@Test
+    @Test
     void testAddNameX(){
         WorkbookRecordList wrl = new WorkbookRecordList();
         wrl.add(0, new BOFRecord());
@@ -190,13 +190,13 @@ final class TestLinkTable {
         NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new rercords
         assertEquals(0, namex1.getSheetRefIndex());
         assertEquals(0, namex1.getNameIndex());
-		NameXPtg act = tbl.getNameXPtg("ISODD", -1);
-		assertNotNull(act);
+        NameXPtg act = tbl.getNameXPtg("ISODD", -1);
+        assertNotNull(act);
         assertEquals(namex1.toString(), act.toString());
 
         // Can only find on the right sheet ref, if restricting
-		act = tbl.getNameXPtg("ISODD", 0);
-		assertNotNull(act);
+        act = tbl.getNameXPtg("ISODD", 0);
+        assertNotNull(act);
         assertEquals(namex1.toString(), act.toString());
         assertNull(tbl.getNameXPtg("ISODD", 1));
         assertNull(tbl.getNameXPtg("ISODD", 2));
@@ -228,8 +228,8 @@ final class TestLinkTable {
         NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
         assertEquals(0, namex2.getSheetRefIndex());
         assertEquals(1, namex2.getNameIndex());  // name index increased by one
-		act = tbl.getNameXPtg("ISEVEN", -1);
-		assertNotNull(act);
+        act = tbl.getNameXPtg("ISEVEN", -1);
+        assertNotNull(act);
         assertEquals(namex2.toString(), act.toString());
         assertEquals(8, wrl.getRecords().size());
         // assure they are in place:

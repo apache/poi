@@ -30,58 +30,58 @@ import org.apache.poi.util.LittleEndianOutput;
  * DATALABEXT - Chart Data Label Extension (0x086A)
  */
 public final class DataLabelExtensionRecord extends StandardRecord {
-	public static final short sid = 0x086A;
+    public static final short sid = 0x086A;
 
-	private int rt;
-	private int grbitFrt;
-	private final byte[] unused = new byte[8];
+    private int rt;
+    private int grbitFrt;
+    private final byte[] unused = new byte[8];
 
-	public DataLabelExtensionRecord(DataLabelExtensionRecord other) {
-		super(other);
-		rt = other.rt;
-		grbitFrt = other.grbitFrt;
-		System.arraycopy(other.unused, 0, unused, 0, unused.length);
-	}
+    public DataLabelExtensionRecord(DataLabelExtensionRecord other) {
+        super(other);
+        rt = other.rt;
+        grbitFrt = other.grbitFrt;
+        System.arraycopy(other.unused, 0, unused, 0, unused.length);
+    }
 
-	public DataLabelExtensionRecord(RecordInputStream in) {
-		rt = in.readShort();
-		grbitFrt = in.readShort();
-		in.readFully(unused);
-	}
+    public DataLabelExtensionRecord(RecordInputStream in) {
+        rt = in.readShort();
+        grbitFrt = in.readShort();
+        in.readFully(unused);
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + 2 + 8;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + 2 + 8;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	protected void serialize(LittleEndianOutput out) {
-		out.writeShort(rt);
-		out.writeShort(grbitFrt);
-		out.write(unused);
-	}
+    @Override
+    protected void serialize(LittleEndianOutput out) {
+        out.writeShort(rt);
+        out.writeShort(grbitFrt);
+        out.write(unused);
+    }
 
-	@Override
-	public DataLabelExtensionRecord copy() {
-		return new DataLabelExtensionRecord(this);
-	}
+    @Override
+    public DataLabelExtensionRecord copy() {
+        return new DataLabelExtensionRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.DATA_LABEL_EXTENSION;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DATA_LABEL_EXTENSION;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"rt", () -> rt,
-			"grbitFrt", () -> grbitFrt,
-			"unused", () -> unused
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rt", () -> rt,
+            "grbitFrt", () -> grbitFrt,
+            "unused", () -> unused
+        );
+    }
 }

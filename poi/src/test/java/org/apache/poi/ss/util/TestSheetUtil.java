@@ -208,8 +208,8 @@ final class TestSheetUtil {
             Cell cell = row.createCell(0);
 
             cell.setCellValue((String)null);
-			//noinspection deprecation
-			cell.setCellType(CellType.STRING);
+            //noinspection deprecation
+            cell.setCellType(CellType.STRING);
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
             assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");

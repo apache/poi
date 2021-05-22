@@ -40,127 +40,127 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public class CellRangeAddressList implements GenericRecord {
 
-	/**
-	 * List of {@code CellRangeAddress}es. Each structure represents a cell range
-	 */
-	protected final List<CellRangeAddress> _list = new ArrayList<>();
+    /**
+     * List of {@code CellRangeAddress}es. Each structure represents a cell range
+     */
+    protected final List<CellRangeAddress> _list = new ArrayList<>();
 
-	public CellRangeAddressList() {
-	}
-	/**
-	 * Convenience constructor for creating a {@code CellRangeAddressList} with a single
-	 * {@code CellRangeAddress}.  Other {@code CellRangeAddress}es may be added later.
-	 */
-	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
-		addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
-	}
-	/**
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public CellRangeAddressList(RecordInputStream in) {
-		int nItems = in.readUShort();
+    public CellRangeAddressList() {
+    }
+    /**
+     * Convenience constructor for creating a {@code CellRangeAddressList} with a single
+     * {@code CellRangeAddress}.  Other {@code CellRangeAddress}es may be added later.
+     */
+    public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
+        addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
+    }
+    /**
+     * @param in the RecordInputstream to read the record from
+     */
+    public CellRangeAddressList(RecordInputStream in) {
+        int nItems = in.readUShort();
 
-		for (int k = 0; k < nItems; k++) {
-			_list.add(new CellRangeAddress(in));
-		}
-	}
-	/**
-	 * Get the number of following ADDR structures. The number of this
-	 * structures is automatically set when reading an Excel file and/or
-	 * increased when you manually add a new ADDR structure . This is the reason
-	 * there isn't a set method for this field .
-	 *
-	 * @return number of ADDR structures
-	 */
-	public int countRanges() {
-		return _list.size();
-	}
+        for (int k = 0; k < nItems; k++) {
+            _list.add(new CellRangeAddress(in));
+        }
+    }
+    /**
+     * Get the number of following ADDR structures. The number of this
+     * structures is automatically set when reading an Excel file and/or
+     * increased when you manually add a new ADDR structure . This is the reason
+     * there isn't a set method for this field .
+     *
+     * @return number of ADDR structures
+     */
+    public int countRanges() {
+        return _list.size();
+    }
 
-	/**
-	 * Add a cell range structure.
-	 *
-	 * @param firstRow - the upper left hand corner's row
-	 * @param firstCol - the upper left hand corner's col
-	 * @param lastRow - the lower right hand corner's row
-	 * @param lastCol - the lower right hand corner's col
-	 */
-	public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
-		CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-		addCellRangeAddress(region);
-	}
-	public void addCellRangeAddress(CellRangeAddress cra) {
-		_list.add(cra);
-	}
-	public CellRangeAddress remove(int rangeIndex) {
-		if (_list.isEmpty()) {
-			throw new RuntimeException("List is empty");
-		}
-		if (rangeIndex < 0 || rangeIndex >= _list.size()) {
-			throw new RuntimeException("Range index (" + rangeIndex
-					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
-		}
-		return _list.remove(rangeIndex);
-	}
+    /**
+     * Add a cell range structure.
+     *
+     * @param firstRow - the upper left hand corner's row
+     * @param firstCol - the upper left hand corner's col
+     * @param lastRow - the lower right hand corner's row
+     * @param lastCol - the lower right hand corner's col
+     */
+    public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
+        CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        addCellRangeAddress(region);
+    }
+    public void addCellRangeAddress(CellRangeAddress cra) {
+        _list.add(cra);
+    }
+    public CellRangeAddress remove(int rangeIndex) {
+        if (_list.isEmpty()) {
+            throw new RuntimeException("List is empty");
+        }
+        if (rangeIndex < 0 || rangeIndex >= _list.size()) {
+            throw new RuntimeException("Range index (" + rangeIndex
+                    + ") is outside allowable range (0.." + (_list.size()-1) + ")");
+        }
+        return _list.remove(rangeIndex);
+    }
 
-	/**
-	 * @return {@code CellRangeAddress} at the given index
-	 */
-	public CellRangeAddress getCellRangeAddress(int index) {
-		return _list.get(index);
-	}
+    /**
+     * @return {@code CellRangeAddress} at the given index
+     */
+    public CellRangeAddress getCellRangeAddress(int index) {
+        return _list.get(index);
+    }
 
-	public int getSize() {
-		return getEncodedSize(_list.size());
-	}
-	/**
-	 * @return the total size of for the specified number of ranges,
-	 *  including the initial 2 byte range count
-	 */
-	public static int getEncodedSize(int numberOfRanges) {
-		return 2 + CellRangeAddress.getEncodedSize(numberOfRanges);
-	}
+    public int getSize() {
+        return getEncodedSize(_list.size());
+    }
+    /**
+     * @return the total size of for the specified number of ranges,
+     *  including the initial 2 byte range count
+     */
+    public static int getEncodedSize(int numberOfRanges) {
+        return 2 + CellRangeAddress.getEncodedSize(numberOfRanges);
+    }
 
-	public int serialize(int offset, byte[] data) {
-		int totalSize = getSize();
-		try (LittleEndianByteArrayOutputStream lebaos =
-				new LittleEndianByteArrayOutputStream(data, offset, totalSize)) {
-			serialize(lebaos);
-		}
-		catch (IOException ioe) {
-			// should never happen in practice
-			throw new IllegalStateException(ioe);
-		}
-		return totalSize;
-	}
+    public int serialize(int offset, byte[] data) {
+        int totalSize = getSize();
+        try (LittleEndianByteArrayOutputStream lebaos =
+                new LittleEndianByteArrayOutputStream(data, offset, totalSize)) {
+            serialize(lebaos);
+        }
+        catch (IOException ioe) {
+            // should never happen in practice
+            throw new IllegalStateException(ioe);
+        }
+        return totalSize;
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		int nItems = _list.size();
-		out.writeShort(nItems);
-		for (CellRangeAddress region : _list) {
-			region.serialize(out);
-		}
-	}
+    public void serialize(LittleEndianOutput out) {
+        int nItems = _list.size();
+        out.writeShort(nItems);
+        for (CellRangeAddress region : _list) {
+            region.serialize(out);
+        }
+    }
 
-	public CellRangeAddressList copy() {
-		CellRangeAddressList result = new CellRangeAddressList();
-		for (CellRangeAddress region : _list) {
-			result.addCellRangeAddress(region.copy());
-		}
-		return result;
-	}
-	public CellRangeAddress[] getCellRangeAddresses() {
-		CellRangeAddress[] result = new CellRangeAddress[_list.size()];
-		_list.toArray(result);
-		return result;
-	}
+    public CellRangeAddressList copy() {
+        CellRangeAddressList result = new CellRangeAddressList();
+        for (CellRangeAddress region : _list) {
+            result.addCellRangeAddress(region.copy());
+        }
+        return result;
+    }
+    public CellRangeAddress[] getCellRangeAddresses() {
+        CellRangeAddress[] result = new CellRangeAddress[_list.size()];
+        _list.toArray(result);
+        return result;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return null;
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
+    }
 
-	@Override
-	public List<CellRangeAddress> getGenericChildren() {
-		return _list;
-	}
+    @Override
+    public List<CellRangeAddress> getGenericChildren() {
+        return _list;
+    }
 }

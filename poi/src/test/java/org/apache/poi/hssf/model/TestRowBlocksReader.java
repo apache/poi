@@ -38,26 +38,26 @@ import org.junit.jupiter.api.Test;
  */
 final class TestRowBlocksReader {
     @Test
-	void testAbnormalPivotTableRecords_bug46280() {
-		int SXVIEW_SID = ViewDefinitionRecord.sid;
-		Record[] inRecs = {
-			new RowRecord(0),
-			new NumberRecord(),
-			// normally MSODRAWING(0x00EC) would come here before SXVIEW
-			new UnknownRecord(SXVIEW_SID, "dummydata (SXVIEW: View Definition)".getBytes(LocaleUtil.CHARSET_1252)),
-			new WindowTwoRecord(),
-		};
-		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
-		RowBlocksReader rbr = new RowBlocksReader(rs);
-		assertNotEquals(WindowTwoRecord.class, rs.peekNextClass(),
-			"Should have stopped at the SXVIEW record - Identified bug 46280b");
+    void testAbnormalPivotTableRecords_bug46280() {
+        int SXVIEW_SID = ViewDefinitionRecord.sid;
+        Record[] inRecs = {
+            new RowRecord(0),
+            new NumberRecord(),
+            // normally MSODRAWING(0x00EC) would come here before SXVIEW
+            new UnknownRecord(SXVIEW_SID, "dummydata (SXVIEW: View Definition)".getBytes(LocaleUtil.CHARSET_1252)),
+            new WindowTwoRecord(),
+        };
+        RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
+        RowBlocksReader rbr = new RowBlocksReader(rs);
+        assertNotEquals(WindowTwoRecord.class, rs.peekNextClass(),
+            "Should have stopped at the SXVIEW record - Identified bug 46280b");
 
-		RecordStream rbStream = rbr.getPlainRecordStream();
-		assertEquals(inRecs[0], rbStream.getNext());
-		assertEquals(inRecs[1], rbStream.getNext());
-		assertFalse(rbStream.hasNext());
-		assertTrue(rs.hasNext());
-		assertEquals(inRecs[2], rs.getNext());
-		assertEquals(inRecs[3], rs.getNext());
-	}
+        RecordStream rbStream = rbr.getPlainRecordStream();
+        assertEquals(inRecs[0], rbStream.getNext());
+        assertEquals(inRecs[1], rbStream.getNext());
+        assertFalse(rbStream.hasNext());
+        assertTrue(rs.hasNext());
+        assertEquals(inRecs[2], rs.getNext());
+        assertEquals(inRecs[3], rs.getNext());
+    }
 }

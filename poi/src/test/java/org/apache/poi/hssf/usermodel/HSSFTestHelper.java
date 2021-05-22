@@ -54,15 +54,15 @@ public class HSSFTestHelper {
             return dg;
         }
     }
-	/**
-	 * Lets non UserModel tests at the low level Workbook
-	 */
-	public static InternalWorkbook getWorkbookForTest(HSSFWorkbook wb) {
-		return wb.getWorkbook();
-	}
-	public static InternalSheet getSheetForTest(HSSFSheet sheet) {
-		return sheet.getSheet();
-	}
+    /**
+     * Lets non UserModel tests at the low level Workbook
+     */
+    public static InternalWorkbook getWorkbookForTest(HSSFWorkbook wb) {
+        return wb.getWorkbook();
+    }
+    public static InternalSheet getSheetForTest(HSSFSheet sheet) {
+        return sheet.getSheet();
+    }
 
     public static HSSFPatriarch createTestPatriarch(HSSFSheet sheet, EscherAggregate agg){
         return new HSSFPatriarch(sheet, agg);

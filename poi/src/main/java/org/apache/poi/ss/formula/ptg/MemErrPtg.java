@@ -25,57 +25,57 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 public final class MemErrPtg extends OperandPtg {
-	public static final short sid = 0x27;
-	private static final int SIZE = 7;
-	private int field_1_reserved;
-	private short field_2_subex_len;
+    public static final short sid = 0x27;
+    private static final int SIZE = 7;
+    private int field_1_reserved;
+    private short field_2_subex_len;
 
-	public MemErrPtg(MemErrPtg other) {
-		super(other);
-		field_1_reserved = other.field_1_reserved;
-		field_2_subex_len = other.field_2_subex_len;
-	}
+    public MemErrPtg(MemErrPtg other) {
+        super(other);
+        field_1_reserved = other.field_1_reserved;
+        field_2_subex_len = other.field_2_subex_len;
+    }
 
-	public MemErrPtg(LittleEndianInput in)  {
-		field_1_reserved = in.readInt();
-		field_2_subex_len = in.readShort();
-	}
+    public MemErrPtg(LittleEndianInput in)  {
+        field_1_reserved = in.readInt();
+        field_2_subex_len = in.readShort();
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeInt(field_1_reserved);
-		out.writeShort(field_2_subex_len);
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeInt(field_1_reserved);
+        out.writeShort(field_2_subex_len);
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return SIZE;
-	}
+    public int getSize() {
+        return SIZE;
+    }
 
-	public String toFormulaString() {
-		return "ERR#";
-	}
+    public String toFormulaString() {
+        return "ERR#";
+    }
 
-	@Override
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_VALUE;
-	}
+        return Ptg.CLASS_VALUE;
+    }
 
-	public int getLenRefSubexpression() {
-		return field_2_subex_len;
-	}
+    public int getLenRefSubexpression() {
+        return field_2_subex_len;
+    }
 
-	@Override
-	public MemErrPtg copy() {
-		return new MemErrPtg(this);
-	}
+    @Override
+    public MemErrPtg copy() {
+        return new MemErrPtg(this);
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
+    }
 }

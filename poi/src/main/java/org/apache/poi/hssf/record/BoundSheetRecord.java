@@ -36,194 +36,194 @@ import org.apache.poi.util.StringUtil;
  * tells where the Beginning of file record is within the HSSF file.
  */
 public final class BoundSheetRecord extends StandardRecord {
-	public static final short sid = 0x0085;
-	private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
-	private static final BitField veryHiddenFlag = BitFieldFactory.getInstance(0x02);
+    public static final short sid = 0x0085;
+    private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
+    private static final BitField veryHiddenFlag = BitFieldFactory.getInstance(0x02);
 
-	private int field_1_position_of_BOF;
-	private int field_2_option_flags;
-	private int field_4_isMultibyteUnicode;
-	private String field_5_sheetname;
+    private int field_1_position_of_BOF;
+    private int field_2_option_flags;
+    private int field_4_isMultibyteUnicode;
+    private String field_5_sheetname;
 
-	public BoundSheetRecord(String sheetname) {
-		field_2_option_flags = 0;
-		setSheetname(sheetname);
-	}
+    public BoundSheetRecord(String sheetname) {
+        field_2_option_flags = 0;
+        setSheetname(sheetname);
+    }
 
-	public BoundSheetRecord(BoundSheetRecord other) {
-		super(other);
-		field_1_position_of_BOF = other.field_1_position_of_BOF;
-		field_2_option_flags = other.field_2_option_flags;
-		field_4_isMultibyteUnicode = other.field_4_isMultibyteUnicode;
-		field_5_sheetname = other.field_5_sheetname;
-	}
+    public BoundSheetRecord(BoundSheetRecord other) {
+        super(other);
+        field_1_position_of_BOF = other.field_1_position_of_BOF;
+        field_2_option_flags = other.field_2_option_flags;
+        field_4_isMultibyteUnicode = other.field_4_isMultibyteUnicode;
+        field_5_sheetname = other.field_5_sheetname;
+    }
 
-	/**
-	 * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
-	 * 1 + 1 + len(str)
-	 *
-	 * UNICODE: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
-	 * 1 + 1 + 2 * len(str)
-	 *
-	 * @param in the record stream to read from
-	 */
-	public BoundSheetRecord(RecordInputStream in) {
+    /**
+     * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
+     * 1 + 1 + len(str)
+     *
+     * UNICODE: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
+     * 1 + 1 + 2 * len(str)
+     *
+     * @param in the record stream to read from
+     */
+    public BoundSheetRecord(RecordInputStream in) {
         byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
-	    in.readPlain(buf, 0, buf.length);
-		field_1_position_of_BOF = LittleEndian.getInt(buf);
-		field_2_option_flags = in.readUShort();
-		int field_3_sheetname_length = in.readUByte();
-		field_4_isMultibyteUnicode = in.readByte();
+        in.readPlain(buf, 0, buf.length);
+        field_1_position_of_BOF = LittleEndian.getInt(buf);
+        field_2_option_flags = in.readUShort();
+        int field_3_sheetname_length = in.readUByte();
+        field_4_isMultibyteUnicode = in.readByte();
 
-		if (isMultibyte()) {
-			field_5_sheetname = in.readUnicodeLEString(field_3_sheetname_length);
-		} else {
-			field_5_sheetname = in.readCompressedUnicode(field_3_sheetname_length);
-		}
-	}
+        if (isMultibyte()) {
+            field_5_sheetname = in.readUnicodeLEString(field_3_sheetname_length);
+        } else {
+            field_5_sheetname = in.readCompressedUnicode(field_3_sheetname_length);
+        }
+    }
 
-	/**
-	 * set the offset in bytes of the Beginning of File Marker within the HSSF
-	 * Stream part of the POIFS file
-	 *
-	 * @param pos offset in bytes
-	 */
-	public void setPositionOfBof(int pos) {
-		field_1_position_of_BOF = pos;
-	}
+    /**
+     * set the offset in bytes of the Beginning of File Marker within the HSSF
+     * Stream part of the POIFS file
+     *
+     * @param pos offset in bytes
+     */
+    public void setPositionOfBof(int pos) {
+        field_1_position_of_BOF = pos;
+    }
 
-	/**
-	 * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
-	 * @param sheetName the name of the sheet
-	 * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
-	 *      for a safe way to create valid names
-	 * @throws IllegalArgumentException if sheet name will cause excel to crash.
-	 */
-	public void setSheetname(String sheetName) {
+    /**
+     * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
+     * @param sheetName the name of the sheet
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     *      for a safe way to create valid names
+     * @throws IllegalArgumentException if sheet name will cause excel to crash.
+     */
+    public void setSheetname(String sheetName) {
 
-		WorkbookUtil.validateSheetName(sheetName);
-		field_5_sheetname = sheetName;
-		field_4_isMultibyteUnicode = StringUtil.hasMultibyte(sheetName) ?  1 : 0;
-	}
+        WorkbookUtil.validateSheetName(sheetName);
+        field_5_sheetname = sheetName;
+        field_4_isMultibyteUnicode = StringUtil.hasMultibyte(sheetName) ?  1 : 0;
+    }
 
-	/**
-	 * get the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
-	 *
-	 * @return offset in bytes
-	 */
-	public int getPositionOfBof() {
-		return field_1_position_of_BOF;
-	}
+    /**
+     * get the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
+     *
+     * @return offset in bytes
+     */
+    public int getPositionOfBof() {
+        return field_1_position_of_BOF;
+    }
 
-	private boolean isMultibyte() {
-		return (field_4_isMultibyteUnicode & 0x01) != 0;
-	}
+    private boolean isMultibyte() {
+        return (field_4_isMultibyteUnicode & 0x01) != 0;
+    }
 
-	/**
-	 * get the sheetname for this sheet.  (this appears in the tabs at the bottom)
-	 * @return sheetname the name of the sheet
-	 */
-	public String getSheetname() {
-		return field_5_sheetname;
-	}
+    /**
+     * get the sheetname for this sheet.  (this appears in the tabs at the bottom)
+     * @return sheetname the name of the sheet
+     */
+    public String getSheetname() {
+        return field_5_sheetname;
+    }
 
-	protected int getDataSize() {
-		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
-	}
+    protected int getDataSize() {
+        return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeInt(getPositionOfBof());
-		out.writeShort(field_2_option_flags);
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(getPositionOfBof());
+        out.writeShort(field_2_option_flags);
 
-		String name = field_5_sheetname;
-		out.writeByte(name.length());
-		out.writeByte(field_4_isMultibyteUnicode);
+        String name = field_5_sheetname;
+        out.writeByte(name.length());
+        out.writeByte(field_4_isMultibyteUnicode);
 
-		if (isMultibyte()) {
-			StringUtil.putUnicodeLE(name, out);
-		} else {
-			StringUtil.putCompressedUnicode(name, out);
-		}
-	}
+        if (isMultibyte()) {
+            StringUtil.putUnicodeLE(name, out);
+        } else {
+            StringUtil.putCompressedUnicode(name, out);
+        }
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	/**
-	 * Is the sheet hidden? Different from very hidden
-	 *
-	 * @return {@code true} if hidden
-	 */
-	public boolean isHidden() {
-		return hiddenFlag.isSet(field_2_option_flags);
-	}
+    /**
+     * Is the sheet hidden? Different from very hidden
+     *
+     * @return {@code true} if hidden
+     */
+    public boolean isHidden() {
+        return hiddenFlag.isSet(field_2_option_flags);
+    }
 
-	/**
-	 * Is the sheet hidden? Different from very hidden
-	 *
-	 * @param hidden {@code true} if hidden
-	 */
-	public void setHidden(boolean hidden) {
-		field_2_option_flags = hiddenFlag.setBoolean(field_2_option_flags, hidden);
-	}
+    /**
+     * Is the sheet hidden? Different from very hidden
+     *
+     * @param hidden {@code true} if hidden
+     */
+    public void setHidden(boolean hidden) {
+        field_2_option_flags = hiddenFlag.setBoolean(field_2_option_flags, hidden);
+    }
 
-	/**
-	 * Is the sheet very hidden? Different from (normal) hidden
-	 *
-	 * @return {@code true} if very hidden
-	 */
-	public boolean isVeryHidden() {
-		return veryHiddenFlag.isSet(field_2_option_flags);
-	}
+    /**
+     * Is the sheet very hidden? Different from (normal) hidden
+     *
+     * @return {@code true} if very hidden
+     */
+    public boolean isVeryHidden() {
+        return veryHiddenFlag.isSet(field_2_option_flags);
+    }
 
-	/**
-	 * Is the sheet very hidden? Different from (normal) hidden
-	 *
-	 * @param veryHidden {@code true} if very hidden
-	 */
-	public void setVeryHidden(boolean veryHidden) {
-		field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
-	}
+    /**
+     * Is the sheet very hidden? Different from (normal) hidden
+     *
+     * @param veryHidden {@code true} if very hidden
+     */
+    public void setVeryHidden(boolean veryHidden) {
+        field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
+    }
 
-	/**
-	 * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
-	 * BOFs.
-	 *
-	 * @param boundSheetRecords the boundSheetRecord list to arrayify
-	 *
-	 * @return the sorted boundSheetRecords
-	 */
-	public static BoundSheetRecord[] orderByBofPosition(List<BoundSheetRecord> boundSheetRecords) {
-		BoundSheetRecord[] bsrs = new BoundSheetRecord[boundSheetRecords.size()];
-		boundSheetRecords.toArray(bsrs);
-		Arrays.sort(bsrs, BoundSheetRecord::compareRecords);
-	 	return bsrs;
-	}
+    /**
+     * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
+     * BOFs.
+     *
+     * @param boundSheetRecords the boundSheetRecord list to arrayify
+     *
+     * @return the sorted boundSheetRecords
+     */
+    public static BoundSheetRecord[] orderByBofPosition(List<BoundSheetRecord> boundSheetRecords) {
+        BoundSheetRecord[] bsrs = new BoundSheetRecord[boundSheetRecords.size()];
+        boundSheetRecords.toArray(bsrs);
+        Arrays.sort(bsrs, BoundSheetRecord::compareRecords);
+        return bsrs;
+    }
 
-	private static int compareRecords(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
-		return bsr1.getPositionOfBof() - bsr2.getPositionOfBof();
-	}
+    private static int compareRecords(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
+        return bsr1.getPositionOfBof() - bsr2.getPositionOfBof();
+    }
 
-	@Override
-	public BoundSheetRecord copy() {
-		return new BoundSheetRecord(this);
-	}
+    @Override
+    public BoundSheetRecord copy() {
+        return new BoundSheetRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.BOUND_SHEET;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BOUND_SHEET;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"bof", this::getPositionOfBof,
-			"optionFlags", () -> field_2_option_flags,
-			"multiByte", this::isMultibyte,
-			"sheetName", this::getSheetname,
-			"hidden", this::isHidden,
-			"veryHidden", this::isVeryHidden
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "bof", this::getPositionOfBof,
+            "optionFlags", () -> field_2_option_flags,
+            "multiByte", this::isMultibyte,
+            "sheetName", this::getSheetname,
+            "hidden", this::isHidden,
+            "veryHidden", this::isVeryHidden
+        );
+    }
 }

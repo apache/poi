@@ -31,52 +31,52 @@ import org.apache.poi.util.LittleEndianOutput;
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  */
 public class CellRangeAddress extends CellRangeAddressBase {
-	public static final int ENCODED_SIZE = 8;
+    public static final int ENCODED_SIZE = 8;
 
-	/**
-	 * Creates new cell range. Indexes are zero-based.
-	 *
-	 * @param firstRow Index of first row
-	 * @param lastRow Index of last row (inclusive), must be equal to or larger than {@code firstRow}
-	 * @param firstCol Index of first column
-	 * @param lastCol Index of last column (inclusive), must be equal to or larger than {@code firstCol}
-	 */
-	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
-		super(firstRow, lastRow, firstCol, lastCol);
+    /**
+     * Creates new cell range. Indexes are zero-based.
+     *
+     * @param firstRow Index of first row
+     * @param lastRow Index of last row (inclusive), must be equal to or larger than {@code firstRow}
+     * @param firstCol Index of first column
+     * @param lastCol Index of last column (inclusive), must be equal to or larger than {@code firstCol}
+     */
+    public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
+        super(firstRow, lastRow, firstCol, lastCol);
 
-		if (lastRow < firstRow || lastCol < firstCol) {
-			throw new IllegalArgumentException("Invalid cell range, having lastRow < firstRow || lastCol < firstCol, " +
-					"had rows " + lastRow + " >= " + firstRow + " or cells " + lastCol + " >= " + firstCol);
-		}
-	}
+        if (lastRow < firstRow || lastCol < firstCol) {
+            throw new IllegalArgumentException("Invalid cell range, having lastRow < firstRow || lastCol < firstCol, " +
+                    "had rows " + lastRow + " >= " + firstRow + " or cells " + lastCol + " >= " + firstCol);
+        }
+    }
 
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(getFirstRow());
-		out.writeShort(getLastRow());
-		out.writeShort(getFirstColumn());
-		out.writeShort(getLastColumn());
-	}
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getFirstRow());
+        out.writeShort(getLastRow());
+        out.writeShort(getFirstColumn());
+        out.writeShort(getLastColumn());
+    }
 
-	public CellRangeAddress(RecordInputStream in) {
-		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
-	}
+    public CellRangeAddress(RecordInputStream in) {
+        super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
+    }
 
-	private static int readUShortAndCheck(RecordInputStream in) {
-		if (in.remaining() < ENCODED_SIZE) {
-			// Ran out of data
-			throw new RuntimeException("Ran out of data reading CellRangeAddress");
-		}
-		return in.readUShort();
-	}
+    private static int readUShortAndCheck(RecordInputStream in) {
+        if (in.remaining() < ENCODED_SIZE) {
+            // Ran out of data
+            throw new RuntimeException("Ran out of data reading CellRangeAddress");
+        }
+        return in.readUShort();
+    }
 
-	@Override
-	public CellRangeAddress copy() {
-		return new CellRangeAddress(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
-	}
+    @Override
+    public CellRangeAddress copy() {
+        return new CellRangeAddress(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
+    }
 
-	public static int getEncodedSize(int numberOfItems) {
-		return numberOfItems * ENCODED_SIZE;
-	}
+    public static int getEncodedSize(int numberOfItems) {
+        return numberOfItems * ENCODED_SIZE;
+    }
 
     /**
      * @return the text format of this range.  Single cell ranges are formatted

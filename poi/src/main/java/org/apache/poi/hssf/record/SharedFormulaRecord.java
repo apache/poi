@@ -106,9 +106,9 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     public SharedFormulaRecord copy() {
         return new SharedFormulaRecord(this);
     }
-	public boolean isFormulaSame(SharedFormulaRecord other) {
-		return field_7_parsed_expr.isSame(other.field_7_parsed_expr);
-	}
+    public boolean isFormulaSame(SharedFormulaRecord other) {
+        return field_7_parsed_expr.isSame(other.field_7_parsed_expr);
+    }
 
     @Override
     public HSSFRecordTypes getGenericRecordType() {

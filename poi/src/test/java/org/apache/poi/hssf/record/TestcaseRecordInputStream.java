@@ -35,65 +35,65 @@ import org.apache.poi.util.LittleEndianInput;
  */
 public final class TestcaseRecordInputStream {
 
-	private TestcaseRecordInputStream() {
-		// no instances of this class
-	}
+    private TestcaseRecordInputStream() {
+        // no instances of this class
+    }
 
-	/**
-	 * Prepends a mock record identifier to the supplied data and opens a record input stream
-	 */
-	public static LittleEndianInput createLittleEndian(byte[] data) {
-		return new LittleEndianByteArrayInputStream(data);
+    /**
+     * Prepends a mock record identifier to the supplied data and opens a record input stream
+     */
+    public static LittleEndianInput createLittleEndian(byte[] data) {
+        return new LittleEndianByteArrayInputStream(data);
 
-	}
-	public static RecordInputStream create(int sid, byte[] data) {
-		return create(mergeDataAndSid(sid, data.length, data));
-	}
-	/**
-	 * First 4 bytes of {@code data} are assumed to be record identifier and length. The supplied
-	 * {@code data} can contain multiple records (sequentially encoded in the same way)
-	 */
-	public static RecordInputStream create(byte[] data) {
-		InputStream is = new ByteArrayInputStream(data);
-		RecordInputStream result = new RecordInputStream(is);
-		result.nextRecord();
-		return result;
-	}
+    }
+    public static RecordInputStream create(int sid, byte[] data) {
+        return create(mergeDataAndSid(sid, data.length, data));
+    }
+    /**
+     * First 4 bytes of {@code data} are assumed to be record identifier and length. The supplied
+     * {@code data} can contain multiple records (sequentially encoded in the same way)
+     */
+    public static RecordInputStream create(byte[] data) {
+        InputStream is = new ByteArrayInputStream(data);
+        RecordInputStream result = new RecordInputStream(is);
+        result.nextRecord();
+        return result;
+    }
 
-	public static byte[] mergeDataAndSid(int sid, int length, byte[] data) {
-	  byte[] result = new byte[data.length + 4];
-	  LittleEndian.putUShort(result, 0, sid);
-	  LittleEndian.putUShort(result, 2, length);
-	  System.arraycopy(data, 0, result, 4, data.length);
-	  return result;
-	}
-	/**
-	 * Confirms data sections are equal
-	 * @param expectedData - just raw data (without sid or size short ints)
-	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
-	 */
-	public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
-		confirmRecordEncoding(null, expectedSid, expectedData, actualRecordBytes);
-	}
-	/**
-	 * Confirms data sections are equal
-	 * @param msgPrefix message prefix to be displayed in case of failure
-	 * @param expectedData - just raw data (without ushort sid, ushort size)
-	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
-	 */
-	public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
-		int expectedDataSize = expectedData.length;
-		assertEquals(actualRecordBytes.length - 4, expectedDataSize, "Size of encode data mismatch");
-		assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
-		assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
-		assertArrayEquals(expectedData, cut(actualRecordBytes, 4));
-	}
+    public static byte[] mergeDataAndSid(int sid, int length, byte[] data) {
+      byte[] result = new byte[data.length + 4];
+      LittleEndian.putUShort(result, 0, sid);
+      LittleEndian.putUShort(result, 2, length);
+      System.arraycopy(data, 0, result, 4, data.length);
+      return result;
+    }
+    /**
+     * Confirms data sections are equal
+     * @param expectedData - just raw data (without sid or size short ints)
+     * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
+     */
+    public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
+        confirmRecordEncoding(null, expectedSid, expectedData, actualRecordBytes);
+    }
+    /**
+     * Confirms data sections are equal
+     * @param msgPrefix message prefix to be displayed in case of failure
+     * @param expectedData - just raw data (without ushort sid, ushort size)
+     * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
+     */
+    public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
+        int expectedDataSize = expectedData.length;
+        assertEquals(actualRecordBytes.length - 4, expectedDataSize, "Size of encode data mismatch");
+        assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
+        assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
+        assertArrayEquals(expectedData, cut(actualRecordBytes, 4));
+    }
 
-	public static byte[] cut( byte[] data, int fromInclusive ) {
-		return cut(data, fromInclusive, data.length);
-	}
+    public static byte[] cut( byte[] data, int fromInclusive ) {
+        return cut(data, fromInclusive, data.length);
+    }
 
-	public static byte[] cut(byte[] data, int fromInclusive, int toExclusive) {
-		return Arrays.copyOfRange(data, fromInclusive, toExclusive);
-	}
+    public static byte[] cut(byte[] data, int fromInclusive, int toExclusive) {
+        return Arrays.copyOfRange(data, fromInclusive, toExclusive);
+    }
 }

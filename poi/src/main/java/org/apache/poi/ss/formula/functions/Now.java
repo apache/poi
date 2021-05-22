@@ -28,11 +28,11 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * Implementation of Excel NOW() Function
  */
 public final class Now {
-	public static ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		if (args.length != 0) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		Date now = new Date(System.currentTimeMillis());
-		return new NumberEval(DateUtil.getExcelDate(now));
-	}
+    public static ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 0) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        Date now = new Date(System.currentTimeMillis());
+        return new NumberEval(DateUtil.getExcelDate(now));
+    }
 }

@@ -53,7 +53,7 @@ public class DocumentSummaryInformation extends PropertySet {
 
     @Override
     public PropertyIDMap getPropertySetIDMap() {
-    	return PropertyIDMap.getDocumentSummaryInformationProperties();
+        return PropertyIDMap.getDocumentSummaryInformationProperties();
     }
 
 

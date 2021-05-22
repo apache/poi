@@ -24,35 +24,35 @@ package org.apache.poi.hssf.record;
  */
 public final class HorizontalPageBreakRecord extends PageBreakRecord {
 
-	public static final short sid = 0x001B;
+    public static final short sid = 0x001B;
 
-	/**
-	 * Creates an empty horizontal page break record
-	 */
-	public HorizontalPageBreakRecord() {}
+    /**
+     * Creates an empty horizontal page break record
+     */
+    public HorizontalPageBreakRecord() {}
 
-	public HorizontalPageBreakRecord(HorizontalPageBreakRecord other) {
-		super(other);
-	}
+    public HorizontalPageBreakRecord(HorizontalPageBreakRecord other) {
+        super(other);
+    }
 
-	/**
-	 * @param in the RecordInputstream to read the record from
-	 */
-	public HorizontalPageBreakRecord(RecordInputStream in) {
-		super(in);
-	}
+    /**
+     * @param in the RecordInputstream to read the record from
+     */
+    public HorizontalPageBreakRecord(RecordInputStream in) {
+        super(in);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public HorizontalPageBreakRecord copy() {
-		return new HorizontalPageBreakRecord(this);
-	}
+    @Override
+    public HorizontalPageBreakRecord copy() {
+        return new HorizontalPageBreakRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.HORIZONTAL_PAGE_BREAK;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.HORIZONTAL_PAGE_BREAK;
+    }
 }

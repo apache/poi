@@ -114,7 +114,7 @@ public class VariantSupport extends Variant {
             Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))
             {
-            	LOG.atError().withThrowable(ex).log("Unsupported type");
+                LOG.atError().withThrowable(ex).log("Unsupported type");
                 unsupportedMessage.add(vt);
             }
         }

@@ -24,8 +24,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * Common Interface for all Shared Features
  */
 public interface SharedFeature extends GenericRecord {
-	String toString();
-	void serialize(LittleEndianOutput out);
-	int getDataSize();
-	SharedFeature copy();
+    String toString();
+    void serialize(LittleEndianOutput out);
+    int getDataSize();
+    SharedFeature copy();
 }

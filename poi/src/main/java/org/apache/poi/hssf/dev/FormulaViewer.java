@@ -121,9 +121,9 @@ public class FormulaViewer
     private String formulaString(FormulaRecord record) {
 
         StringBuilder buf = new StringBuilder();
-		Ptg[] tokens = record.getParsedExpression();
-		for (Ptg token : tokens) {
-			buf.append( token.toFormulaString());
+        Ptg[] tokens = record.getParsedExpression();
+        for (Ptg token : tokens) {
+            buf.append( token.toFormulaString());
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
                     buf.append("(R)");

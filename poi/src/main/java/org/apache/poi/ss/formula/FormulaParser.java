@@ -1155,7 +1155,7 @@ public final class FormulaParser {
     private SheetIdentifier parseSheetName() {
         String bookName;
         if (look == '[') {
-        	bookName = getBookName();
+            bookName = getBookName();
         } else {
             bookName = null;
         }
@@ -1164,7 +1164,7 @@ public final class FormulaParser {
             Match('\'');
 
             if (look == '[')
-            	bookName = getBookName();
+                bookName = getBookName();
 
             StringBuilder sb = new StringBuilder();
             boolean done = look == '\'';

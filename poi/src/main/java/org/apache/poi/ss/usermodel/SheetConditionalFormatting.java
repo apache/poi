@@ -88,16 +88,16 @@ public interface SheetConditionalFormatting {
      * </p>
      *
      * @param comparisonOperation - MUST be a constant value from
-     *		 {@link ComparisonOperator}:
+     *       {@link ComparisonOperator}:
      * <ul>
-     *		 <li>BETWEEN</li>
-     *		 <li>NOT_BETWEEN</li>
-     *		 <li>EQUAL</li>
-     *		 <li>NOT_EQUAL</li>
-     *		 <li>GT</li>
-     *		 <li>LT</li>
-     *		 <li>GE</li>
-     *		 <li>LE</li>
+     *       <li>BETWEEN</li>
+     *       <li>NOT_BETWEEN</li>
+     *       <li>EQUAL</li>
+     *       <li>NOT_EQUAL</li>
+     *       <li>GT</li>
+     *       <li>LT</li>
+     *       <li>GE</li>
+     *       <li>LE</li>
      * </ul>
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
@@ -116,7 +116,7 @@ public interface SheetConditionalFormatting {
      * </p>
      *
      * @param comparisonOperation  MUST be a constant value from
-     *		 {@link ComparisonOperator} except  BETWEEN and NOT_BETWEEN
+     *       {@link ComparisonOperator} except  BETWEEN and NOT_BETWEEN
      *
      * @param formula  the formula to determine if the conditional formatting is applied
      */

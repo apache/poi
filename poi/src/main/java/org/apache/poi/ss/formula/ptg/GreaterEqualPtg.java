@@ -28,7 +28,7 @@ public final class GreaterEqualPtg extends ValueOperatorPtg {
     public static final GreaterEqualPtg instance = new GreaterEqualPtg();
 
     private GreaterEqualPtg() {
-    	// enforce singleton
+        // enforce singleton
     }
 
     @Override

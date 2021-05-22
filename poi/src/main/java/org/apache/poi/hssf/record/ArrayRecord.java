@@ -33,78 +33,78 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class ArrayRecord extends SharedValueRecordBase {
 
-	public static final short sid = 0x0221;
-	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
-	private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
+    public static final short sid = 0x0221;
+    private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
+    private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
 
-	private int _options;
-	private int _field3notUsed;
-	private Formula _formula;
+    private int _options;
+    private int _field3notUsed;
+    private Formula _formula;
 
-	public ArrayRecord(ArrayRecord other) {
-		super(other);
-		_options = other._options;
-		_field3notUsed = other._field3notUsed;
-		_formula = (other._formula == null) ? null : other._formula.copy();
-	}
+    public ArrayRecord(ArrayRecord other) {
+        super(other);
+        _options = other._options;
+        _field3notUsed = other._field3notUsed;
+        _formula = (other._formula == null) ? null : other._formula.copy();
+    }
 
-	public ArrayRecord(RecordInputStream in) {
-		super(in);
-		_options = in.readUShort();
-		_field3notUsed = in.readInt();
-		int formulaTokenLen = in.readUShort();
-		int totalFormulaLen = in.available();
-		_formula = Formula.read(formulaTokenLen, in, totalFormulaLen);
-	}
+    public ArrayRecord(RecordInputStream in) {
+        super(in);
+        _options = in.readUShort();
+        _field3notUsed = in.readInt();
+        int formulaTokenLen = in.readUShort();
+        int totalFormulaLen = in.available();
+        _formula = Formula.read(formulaTokenLen, in, totalFormulaLen);
+    }
 
-	public ArrayRecord(Formula formula, CellRangeAddress8Bit range) {
-		super(range);
-		_options = 0; //YK: Excel 2007 leaves this field unset
-		_field3notUsed = 0;
-		_formula = formula;
-	}
+    public ArrayRecord(Formula formula, CellRangeAddress8Bit range) {
+        super(range);
+        _options = 0; //YK: Excel 2007 leaves this field unset
+        _field3notUsed = 0;
+        _formula = formula;
+    }
 
-	public boolean isAlwaysRecalculate() {
-		return (_options & OPT_ALWAYS_RECALCULATE) != 0;
-	}
-	public boolean isCalculateOnOpen() {
-		return (_options & OPT_CALCULATE_ON_OPEN) != 0;
-	}
+    public boolean isAlwaysRecalculate() {
+        return (_options & OPT_ALWAYS_RECALCULATE) != 0;
+    }
+    public boolean isCalculateOnOpen() {
+        return (_options & OPT_CALCULATE_ON_OPEN) != 0;
+    }
 
-	public Ptg[] getFormulaTokens() {
-		return _formula.getTokens();
-	}
+    public Ptg[] getFormulaTokens() {
+        return _formula.getTokens();
+    }
 
-	protected int getExtraDataSize() {
-		return 2 + 4 + _formula.getEncodedSize();
-	}
-	protected void serializeExtraData(LittleEndianOutput out) {
-		out.writeShort(_options);
-		out.writeInt(_field3notUsed);
-		_formula.serialize(out);
-	}
+    protected int getExtraDataSize() {
+        return 2 + 4 + _formula.getEncodedSize();
+    }
+    protected void serializeExtraData(LittleEndianOutput out) {
+        out.writeShort(_options);
+        out.writeInt(_field3notUsed);
+        _formula.serialize(out);
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
+    @Override
     public ArrayRecord copy() {
         return new ArrayRecord(this);
     }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.ARRAY;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.ARRAY;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"range", this::getRange,
-			"options", () -> _options,
-			"notUsed", () -> _field3notUsed,
-			"formula", () -> _formula
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "range", this::getRange,
+            "options", () -> _options,
+            "notUsed", () -> _field3notUsed,
+            "formula", () -> _formula
+        );
+    }
 }

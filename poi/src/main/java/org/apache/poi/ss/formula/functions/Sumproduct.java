@@ -46,190 +46,190 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * of the <b>n</b>th array<br>
  * Assuming each array has the same dimensions (W, H), the result is defined as:<br>
  * SUMPRODUCT = &Sigma;<sub><b>i</b>: 1..H</sub> &nbsp;
- * 	(&nbsp; &Sigma;<sub><b>j</b>: 1..W</sub> &nbsp;
- * 	  (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub>
- * 			A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
+ *  (&nbsp; &Sigma;<sub><b>j</b>: 1..W</sub> &nbsp;
+ *    (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub>
+ *          A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
  *    )&nbsp;
  *  )
  */
 public final class Sumproduct implements Function {
 
 
-	@Override
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+    @Override
+    public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 
-		int maxN = args.length;
+        int maxN = args.length;
 
-		if(maxN < 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		ValueEval firstArg = args[0];
-		try {
-			if(firstArg instanceof NumericValueEval) {
-				return evaluateSingleProduct(args);
-			}
-			if(firstArg instanceof RefEval) {
-				return evaluateSingleProduct(args);
-			}
-			if (firstArg instanceof TwoDEval) {
-				TwoDEval ae = (TwoDEval) firstArg;
-				if(ae.isRow() && ae.isColumn()) {
-					return evaluateSingleProduct(args);
-				}
-				return evaluateAreaSumProduct(args);
-			}
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		throw new RuntimeException("Invalid arg type for SUMPRODUCT: ("
-				+ firstArg.getClass().getName() + ")");
-	}
+        if(maxN < 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        ValueEval firstArg = args[0];
+        try {
+            if(firstArg instanceof NumericValueEval) {
+                return evaluateSingleProduct(args);
+            }
+            if(firstArg instanceof RefEval) {
+                return evaluateSingleProduct(args);
+            }
+            if (firstArg instanceof TwoDEval) {
+                TwoDEval ae = (TwoDEval) firstArg;
+                if(ae.isRow() && ae.isColumn()) {
+                    return evaluateSingleProduct(args);
+                }
+                return evaluateAreaSumProduct(args);
+            }
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        throw new RuntimeException("Invalid arg type for SUMPRODUCT: ("
+                + firstArg.getClass().getName() + ")");
+    }
 
-	private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
-		int maxN = evalArgs.length;
+    private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
+        int maxN = evalArgs.length;
 
-		double term = 1D;
-		for (ValueEval evalArg : evalArgs) {
-			double val = getScalarValue(evalArg);
-			term *= val;
-		}
-		return new NumberEval(term);
-	}
+        double term = 1D;
+        for (ValueEval evalArg : evalArgs) {
+            double val = getScalarValue(evalArg);
+            term *= val;
+        }
+        return new NumberEval(term);
+    }
 
-	private static double getScalarValue(ValueEval arg) throws EvaluationException {
+    private static double getScalarValue(ValueEval arg) throws EvaluationException {
 
-		ValueEval eval;
-		if (arg instanceof RefEval) {
-			RefEval re = (RefEval) arg;
-			if (re.getNumberOfSheets() > 1) {
+        ValueEval eval;
+        if (arg instanceof RefEval) {
+            RefEval re = (RefEval) arg;
+            if (re.getNumberOfSheets() > 1) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
-			}
-			eval = re.getInnerValueEval(re.getFirstSheetIndex());
-		} else {
-			eval = arg;
-		}
+            }
+            eval = re.getInnerValueEval(re.getFirstSheetIndex());
+        } else {
+            eval = arg;
+        }
 
-		if (eval == null) {
-			throw new RuntimeException("parameter may not be null");
-		}
-		if (eval instanceof AreaEval) {
-			AreaEval ae = (AreaEval) eval;
-			// an area ref can work as a scalar value if it is 1x1
-			if(!ae.isColumn() || !ae.isRow()) {
-				throw new EvaluationException(ErrorEval.VALUE_INVALID);
-			}
-			eval = ae.getRelativeValue(0, 0);
-		}
+        if (eval == null) {
+            throw new RuntimeException("parameter may not be null");
+        }
+        if (eval instanceof AreaEval) {
+            AreaEval ae = (AreaEval) eval;
+            // an area ref can work as a scalar value if it is 1x1
+            if(!ae.isColumn() || !ae.isRow()) {
+                throw new EvaluationException(ErrorEval.VALUE_INVALID);
+            }
+            eval = ae.getRelativeValue(0, 0);
+        }
 
-		return getProductTerm(eval, true);
-	}
+        return getProductTerm(eval, true);
+    }
 
-	private static ValueEval evaluateAreaSumProduct(ValueEval[] evalArgs) throws EvaluationException {
-		int maxN = evalArgs.length;
-		TwoDEval[] args;
-		try {
-			args = Arrays.copyOf(evalArgs, maxN, TwoDEval[].class);
-		} catch (ArrayStoreException e) {
-			// one of the other args was not an AreaRef
-			return ErrorEval.VALUE_INVALID;
-		}
-
-
-		TwoDEval firstArg = args[0];
-
-		int height = firstArg.getHeight();
-		int width = firstArg.getWidth(); // TODO - junit
-
-		// first check dimensions
-		if (!areasAllSameSize(args, height, width)) {
-			// normally this results in #VALUE!,
-			// but errors in individual cells take precedence
-			for (int i = 1; i < args.length; i++) {
-				throwFirstError(args[i]);
-			}
-			return ErrorEval.VALUE_INVALID;
-		}
-
-		double acc = 0;
-
-		for (int rrIx=0; rrIx<height; rrIx++) {
-			for (int rcIx=0; rcIx<width; rcIx++) {
-				double term = 1D;
-				for(int n=0; n<maxN; n++) {
-					double val = getProductTerm(args[n].getValue(rrIx, rcIx), false);
-					term *= val;
-				}
-				acc += term;
-			}
-		}
-
-		return new NumberEval(acc);
-	}
-
-	private static void throwFirstError(TwoDEval areaEval) throws EvaluationException {
-		int height = areaEval.getHeight();
-		int width = areaEval.getWidth();
-		for (int rrIx=0; rrIx<height; rrIx++) {
-			for (int rcIx=0; rcIx<width; rcIx++) {
-				ValueEval ve = areaEval.getValue(rrIx, rcIx);
-				if (ve instanceof ErrorEval) {
-					throw new EvaluationException((ErrorEval) ve);
-				}
-			}
-		}
-	}
-
-	private static boolean areasAllSameSize(TwoDEval[] args, int height, int width) {
-		for (TwoDEval areaEval : args) {
-			// check that height and width match
-			if (areaEval.getHeight() != height) {
-				return false;
-			}
-			if (areaEval.getWidth() != width) {
-				return false;
-			}
-		}
-		return true;
-	}
+    private static ValueEval evaluateAreaSumProduct(ValueEval[] evalArgs) throws EvaluationException {
+        int maxN = evalArgs.length;
+        TwoDEval[] args;
+        try {
+            args = Arrays.copyOf(evalArgs, maxN, TwoDEval[].class);
+        } catch (ArrayStoreException e) {
+            // one of the other args was not an AreaRef
+            return ErrorEval.VALUE_INVALID;
+        }
 
 
-	/**
-	 * Determines a {@code double} value for the specified {@code ValueEval}.
-	 * @param isScalarProduct {@code false} for SUMPRODUCTs over area refs.
-	 * @throws EvaluationException if {@code ve} represents an error value.
-	 * <p>
-	 * Note - string values and empty cells are interpreted differently depending on
-	 * {@code isScalarProduct}.  For scalar products, if any term is blank or a string, the
-	 * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the
-	 * result is zero.
-	 */
-	private static double getProductTerm(ValueEval ve, boolean isScalarProduct) throws EvaluationException {
+        TwoDEval firstArg = args[0];
 
-		if(ve instanceof BlankEval || ve == null) {
-			// TODO - shouldn't BlankEval.INSTANCE be used always instead of null?
-			// null seems to occur when the blank cell is part of an area ref (but not reliably)
-			if(isScalarProduct) {
-				throw new EvaluationException(ErrorEval.VALUE_INVALID);
-			}
-			return 0;
-		}
+        int height = firstArg.getHeight();
+        int width = firstArg.getWidth(); // TODO - junit
 
-		if(ve instanceof ErrorEval) {
-			throw new EvaluationException((ErrorEval)ve);
-		}
-		if(ve instanceof StringEval) {
-			if(isScalarProduct) {
-				throw new EvaluationException(ErrorEval.VALUE_INVALID);
-			}
-			// Note for area SUMPRODUCTs, string values are interpreted as zero
-			// even if they would parse as valid numeric values
-			return 0;
-		}
-		if(ve instanceof NumericValueEval) {
-			NumericValueEval nve = (NumericValueEval) ve;
-			return nve.getNumberValue();
-		}
-		throw new RuntimeException("Unexpected value eval class ("
-				+ ve.getClass().getName() + ")");
-	}
+        // first check dimensions
+        if (!areasAllSameSize(args, height, width)) {
+            // normally this results in #VALUE!,
+            // but errors in individual cells take precedence
+            for (int i = 1; i < args.length; i++) {
+                throwFirstError(args[i]);
+            }
+            return ErrorEval.VALUE_INVALID;
+        }
+
+        double acc = 0;
+
+        for (int rrIx=0; rrIx<height; rrIx++) {
+            for (int rcIx=0; rcIx<width; rcIx++) {
+                double term = 1D;
+                for(int n=0; n<maxN; n++) {
+                    double val = getProductTerm(args[n].getValue(rrIx, rcIx), false);
+                    term *= val;
+                }
+                acc += term;
+            }
+        }
+
+        return new NumberEval(acc);
+    }
+
+    private static void throwFirstError(TwoDEval areaEval) throws EvaluationException {
+        int height = areaEval.getHeight();
+        int width = areaEval.getWidth();
+        for (int rrIx=0; rrIx<height; rrIx++) {
+            for (int rcIx=0; rcIx<width; rcIx++) {
+                ValueEval ve = areaEval.getValue(rrIx, rcIx);
+                if (ve instanceof ErrorEval) {
+                    throw new EvaluationException((ErrorEval) ve);
+                }
+            }
+        }
+    }
+
+    private static boolean areasAllSameSize(TwoDEval[] args, int height, int width) {
+        for (TwoDEval areaEval : args) {
+            // check that height and width match
+            if (areaEval.getHeight() != height) {
+                return false;
+            }
+            if (areaEval.getWidth() != width) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Determines a {@code double} value for the specified {@code ValueEval}.
+     * @param isScalarProduct {@code false} for SUMPRODUCTs over area refs.
+     * @throws EvaluationException if {@code ve} represents an error value.
+     * <p>
+     * Note - string values and empty cells are interpreted differently depending on
+     * {@code isScalarProduct}.  For scalar products, if any term is blank or a string, the
+     * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the
+     * result is zero.
+     */
+    private static double getProductTerm(ValueEval ve, boolean isScalarProduct) throws EvaluationException {
+
+        if(ve instanceof BlankEval || ve == null) {
+            // TODO - shouldn't BlankEval.INSTANCE be used always instead of null?
+            // null seems to occur when the blank cell is part of an area ref (but not reliably)
+            if(isScalarProduct) {
+                throw new EvaluationException(ErrorEval.VALUE_INVALID);
+            }
+            return 0;
+        }
+
+        if(ve instanceof ErrorEval) {
+            throw new EvaluationException((ErrorEval)ve);
+        }
+        if(ve instanceof StringEval) {
+            if(isScalarProduct) {
+                throw new EvaluationException(ErrorEval.VALUE_INVALID);
+            }
+            // Note for area SUMPRODUCTs, string values are interpreted as zero
+            // even if they would parse as valid numeric values
+            return 0;
+        }
+        if(ve instanceof NumericValueEval) {
+            NumericValueEval nve = (NumericValueEval) ve;
+            return nve.getNumberValue();
+        }
+        throw new RuntimeException("Unexpected value eval class ("
+                + ve.getClass().getName() + ")");
+    }
 }

@@ -42,15 +42,15 @@ final class TestSumifs {
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 1, 0, null);
 
-	private static ValueEval invokeSumifs(ValueEval[] args) {
-		return new Sumifs().evaluate(args, EC);
-	}
+    private static ValueEval invokeSumifs(ValueEval[] args) {
+        return new Sumifs().evaluate(args, EC);
+    }
 
-	private static void confirmDouble(double expected, ValueEval actualEval) {
-	    assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
-		NumericValueEval nve = (NumericValueEval)actualEval;
-		assertEquals(expected, nve.getNumberValue(), 0);
-	}
+    private static void confirmDouble(double expected, ValueEval actualEval) {
+        assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
+        NumericValueEval nve = (NumericValueEval)actualEval;
+        assertEquals(expected, nve.getNumberValue(), 0);
+    }
 
     private static void confirm(double expectedResult, ValueEval[] args) {
         confirmDouble(expectedResult, invokeSumifs(args));
@@ -61,7 +61,7 @@ final class TestSumifs {
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
     @Test
-	void testExample1() {
+    void testExample1() {
         // mimic test sample from http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
         ValueEval[] a2a9 = new ValueEval[] {
                 new NumberEval(5),
@@ -137,7 +137,7 @@ final class TestSumifs {
         };
         assertEquals(ErrorEval.VALUE_INVALID, invokeSumifs(args));
 
-	}
+    }
 
     /**
      *  Example 2 from
@@ -151,7 +151,7 @@ final class TestSumifs {
                 new NumberEval(8321),
                 new NumberEval(500)
         };
-        // 1%	0.5%	3%	4%
+        // 1%   0.5%    3%  4%
         ValueEval[] b3e3 = new ValueEval[] {
                 new NumberEval(0.01),
                 new NumberEval(0.005),
@@ -159,7 +159,7 @@ final class TestSumifs {
                 new NumberEval(0.04)
         };
 
-        // 1%	1.3%	2.1%	2%
+        // 1%   1.3%    2.1%    2%
         ValueEval[] b4e4 = new ValueEval[] {
                 new NumberEval(0.01),
                 new NumberEval(0.013),
@@ -167,7 +167,7 @@ final class TestSumifs {
                 new NumberEval(0.02)
         };
 
-        // 0.5%	3%	1%	4%
+        // 0.5% 3%  1%  4%
         ValueEval[] b5e5 = new ValueEval[] {
                 new NumberEval(0.005),
                 new NumberEval(0.03),
@@ -196,14 +196,14 @@ final class TestSumifs {
      */
     @Test
     void testExample3() {
-        //3.3	0.8	5.5	5.5
+        //3.3   0.8 5.5 5.5
         ValueEval[] b2e2 = new ValueEval[] {
                 new NumberEval(3.3),
                 new NumberEval(0.8),
                 new NumberEval(5.5),
                 new NumberEval(5.5)
         };
-        // 55	39	39	57.5
+        // 55   39  39  57.5
         ValueEval[] b3e3 = new ValueEval[] {
                 new NumberEval(55),
                 new NumberEval(39),
@@ -211,7 +211,7 @@ final class TestSumifs {
                 new NumberEval(57.5)
         };
 
-        // 6.5	19.5	6	6.5
+        // 6.5  19.5    6   6.5
         ValueEval[] b4e4 = new ValueEval[] {
                 new NumberEval(6.5),
                 new NumberEval(19.5),
@@ -318,7 +318,7 @@ final class TestSumifs {
         sheet.getRow(1).createCell(1).setCellValue("A");
         setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
  */
-    	ValueEval[] a0a1 = new ValueEval[] {
+        ValueEval[] a0a1 = new ValueEval[] {
                 NumberEval.ZERO,
                 NumberEval.ZERO
         };

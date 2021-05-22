@@ -41,7 +41,7 @@ class TestPoisson {
         valueEvals[2] = BoolEval.valueOf(cumulative);
 
         return NumericFunction.POISSON.evaluate(valueEvals,-1,-1);
-	}
+    }
 
     @Test
     void testCumulativeProbability()

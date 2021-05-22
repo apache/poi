@@ -29,22 +29,22 @@ import org.apache.poi.hssf.record.*;
  */
 public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 
-	private final org.apache.poi.hssf.record.Record _begin;
-	private final org.apache.poi.hssf.record.Record _end;
-	/**
-	 * All the records between BOF and EOF
-	 */
-	private final List<RecordBase> _recs;
-	private PageSettingsBlock _psBlock;
+    private final org.apache.poi.hssf.record.Record _begin;
+    private final org.apache.poi.hssf.record.Record _end;
+    /**
+     * All the records between BOF and EOF
+     */
+    private final List<RecordBase> _recs;
+    private PageSettingsBlock _psBlock;
 
-	public CustomViewSettingsRecordAggregate(RecordStream rs) {
-		_begin = rs.getNext();
-		if (_begin.getSid() != UserSViewBegin.sid) {
-			throw new IllegalStateException("Bad begin record");
-		}
-		List<RecordBase> temp = new ArrayList<>();
-		while (rs.peekNextSid() != UserSViewEnd.sid) {
-			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
+    public CustomViewSettingsRecordAggregate(RecordStream rs) {
+        _begin = rs.getNext();
+        if (_begin.getSid() != UserSViewBegin.sid) {
+            throw new IllegalStateException("Bad begin record");
+        }
+        List<RecordBase> temp = new ArrayList<>();
+        while (rs.peekNextSid() != UserSViewEnd.sid) {
+            if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
                 if (_psBlock != null) {
                     if (rs.peekNextSid() == HeaderFooterRecord.sid) {
                         // test samples: 45538_classic_Footer.xls, 45538_classic_Header.xls
@@ -54,39 +54,39 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
                     throw new IllegalStateException(
                             "Found more than one PageSettingsBlock in chart sub-stream, had sid: " + rs.peekNextSid());
                 }
-				_psBlock = new PageSettingsBlock(rs);
-				temp.add(_psBlock);
-				continue;
-			}
-			temp.add(rs.getNext());
-		}
-		_recs = temp;
-		_end = rs.getNext(); // no need to save EOF in field
-		if (_end.getSid() != UserSViewEnd.sid) {
-			throw new IllegalStateException("Bad custom view settings end record");
-		}
-	}
+                _psBlock = new PageSettingsBlock(rs);
+                temp.add(_psBlock);
+                continue;
+            }
+            temp.add(rs.getNext());
+        }
+        _recs = temp;
+        _end = rs.getNext(); // no need to save EOF in field
+        if (_end.getSid() != UserSViewEnd.sid) {
+            throw new IllegalStateException("Bad custom view settings end record");
+        }
+    }
 
-	@Override
+    @Override
     public void visitContainedRecords(RecordVisitor rv) {
-		if (_recs.isEmpty()) {
-			return;
-		}
-		rv.visitRecord(_begin);
-		for (int i = 0; i < _recs.size(); i++) {
-			RecordBase rb = _recs.get(i);
-			if (rb instanceof RecordAggregate) {
-				((RecordAggregate) rb).visitContainedRecords(rv);
-			} else {
-				rv.visitRecord((org.apache.poi.hssf.record.Record) rb);
-			}
-		}
-		rv.visitRecord(_end);
-	}
+        if (_recs.isEmpty()) {
+            return;
+        }
+        rv.visitRecord(_begin);
+        for (int i = 0; i < _recs.size(); i++) {
+            RecordBase rb = _recs.get(i);
+            if (rb instanceof RecordAggregate) {
+                ((RecordAggregate) rb).visitContainedRecords(rv);
+            } else {
+                rv.visitRecord((org.apache.poi.hssf.record.Record) rb);
+            }
+        }
+        rv.visitRecord(_end);
+    }
 
-	public static boolean isBeginRecord(int sid) {
-		return sid == UserSViewBegin.sid;
-	}
+    public static boolean isBeginRecord(int sid) {
+        return sid == UserSViewBegin.sid;
+    }
 
     public void append(RecordBase r){
         _recs.add(r);

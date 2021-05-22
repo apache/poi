@@ -31,28 +31,28 @@ import org.junit.jupiter.api.Test;
  * Excel file.
  */
 final class TestChartFormatRecord {
-	/**
-	 * This rather uninteresting data came from attachment 23347 of bug 46693 at
-	 * offsets 0x6BB2 and 0x7BAF
-	 */
-	private static final byte[] data = HexRead.readFromString(
-			"14 10 14 00 " // BIFF header
-			+ "00 00 00 00 00 00 00 00 "
-			+ "00 00 00 00 00 00 00 00 "
-			+ "00 00 00 00");
+    /**
+     * This rather uninteresting data came from attachment 23347 of bug 46693 at
+     * offsets 0x6BB2 and 0x7BAF
+     */
+    private static final byte[] data = HexRead.readFromString(
+            "14 10 14 00 " // BIFF header
+            + "00 00 00 00 00 00 00 00 "
+            + "00 00 00 00 00 00 00 00 "
+            + "00 00 00 00");
 
-	/**
-	 * The correct size of a {@link ChartFormatRecord} is 20 bytes (not including header).
-	 */
-	@Test
-	void testLoad() {
-		RecordInputStream in = TestcaseRecordInputStream.create(data);
-		ChartFormatRecord record = new ChartFormatRecord(in);
-		assertNotEquals(2, in.remaining(), "Identified bug 44693d");
-		assertEquals(0, in.remaining());
-		assertEquals(24, record.getRecordSize());
+    /**
+     * The correct size of a {@link ChartFormatRecord} is 20 bytes (not including header).
+     */
+    @Test
+    void testLoad() {
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+        ChartFormatRecord record = new ChartFormatRecord(in);
+        assertNotEquals(2, in.remaining(), "Identified bug 44693d");
+        assertEquals(0, in.remaining());
+        assertEquals(24, record.getRecordSize());
 
-		byte[] data2 = record.serialize();
-		assertArrayEquals(data, data2);
-	}
+        byte[] data2 = record.serialize();
+        assertArrayEquals(data, data2);
+    }
 }

@@ -29,17 +29,17 @@ import org.junit.jupiter.api.Test;
  */
 final class TestAttrPtg extends BaseTestPtg {
 
-	/**
-	 * Fix for bug visible around svn r706772.
-	 */
-	@Test
-	void testReserializeAttrChoose() {
-		byte[] data = HexRead.readFromString("19, 04, 03, 00, 08, 00, 11, 00, 1A, 00, 23, 00");
-		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(data);
-		Ptg[] ptgs = Ptg.readTokens(data.length, in);
-		byte[] data2 = new byte[data.length];
-		// ArrayIndexOutOfBoundsException -> incorrect re-serialization of tAttrChoose
-		Ptg.serializePtgs(ptgs, data2, 0);
-		assertArrayEquals(data, data2);
-	}
+    /**
+     * Fix for bug visible around svn r706772.
+     */
+    @Test
+    void testReserializeAttrChoose() {
+        byte[] data = HexRead.readFromString("19, 04, 03, 00, 08, 00, 11, 00, 1A, 00, 23, 00");
+        LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(data);
+        Ptg[] ptgs = Ptg.readTokens(data.length, in);
+        byte[] data2 = new byte[data.length];
+        // ArrayIndexOutOfBoundsException -> incorrect re-serialization of tAttrChoose
+        Ptg.serializePtgs(ptgs, data2, 0);
+        assertArrayEquals(data, data2);
+    }
 }

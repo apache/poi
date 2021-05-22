@@ -249,7 +249,7 @@ public final class InternalSheet {
             }
 
             if (recSid == FeatRecord.sid ||
-            		recSid == FeatHdrRecord.sid) {
+                    recSid == FeatHdrRecord.sid) {
                 records.add(rec);
                 continue;
             }
@@ -737,7 +737,7 @@ public final class InternalSheet {
      * @return Iterator of CellValueRecordInterface representing the value records
      */
     public Iterator<CellValueRecordInterface> getCellValueIterator(){
-    	return _rowsAggregate.getCellValueIterator();
+        return _rowsAggregate.getCellValueIterator();
     }
 
     /**

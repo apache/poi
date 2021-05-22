@@ -34,65 +34,65 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 1.0-pre
  */
 public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDependentFormula {
-	public static final byte sid = 0x3d;
-	private final int field_1_index_extern_sheet;
-	private final int unused1;
-	private final int unused2;
+    public static final byte sid = 0x3d;
+    private final int field_1_index_extern_sheet;
+    private final int unused1;
+    private final int unused2;
 
-	public DeletedArea3DPtg(int externSheetIndex) {
-		field_1_index_extern_sheet = externSheetIndex;
-		unused1 = 0;
-		unused2 = 0;
-	}
+    public DeletedArea3DPtg(int externSheetIndex) {
+        field_1_index_extern_sheet = externSheetIndex;
+        unused1 = 0;
+        unused2 = 0;
+    }
 
-	public DeletedArea3DPtg(LittleEndianInput in)  {
-		field_1_index_extern_sheet = in.readUShort();
-		unused1 = in.readInt();
-		unused2 = in.readInt();
-	}
-	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
-	}
-	public String toFormulaString() {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
-	}
-	@Override
+    public DeletedArea3DPtg(LittleEndianInput in)  {
+        field_1_index_extern_sheet = in.readUShort();
+        unused1 = in.readInt();
+        unused2 = in.readInt();
+    }
+    public String toFormulaString(FormulaRenderingWorkbook book) {
+        return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
+    }
+    public String toFormulaString() {
+        throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
+    @Override
     public byte getDefaultOperandClass() {
-		return Ptg.CLASS_REF;
-	}
+        return Ptg.CLASS_REF;
+    }
 
-	@Override
-	public byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
-	public int getSize() {
-		return 11;
-	}
+    public int getSize() {
+        return 11;
+    }
 
-	public int getExternSheetIndex() {
-		return field_1_index_extern_sheet;
-	}
+    public int getExternSheetIndex() {
+        return field_1_index_extern_sheet;
+    }
 
-	public void write(LittleEndianOutput out) {
-		out.writeByte(sid + getPtgClass());
-		out.writeShort(field_1_index_extern_sheet);
-		out.writeInt(unused1);
-		out.writeInt(unused2);
-	}
+    public void write(LittleEndianOutput out) {
+        out.writeByte(sid + getPtgClass());
+        out.writeShort(field_1_index_extern_sheet);
+        out.writeInt(unused1);
+        out.writeInt(unused2);
+    }
 
-	@Override
-	public DeletedArea3DPtg copy() {
-		// immutable
-		return this;
-	}
+    @Override
+    public DeletedArea3DPtg copy() {
+        // immutable
+        return this;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"externSheetIndex", this::getExternSheetIndex,
-			"unused1", () -> unused1,
-			"unused2", () -> unused2
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "externSheetIndex", this::getExternSheetIndex,
+            "unused1", () -> unused1,
+            "unused2", () -> unused2
+        );
+    }
 }

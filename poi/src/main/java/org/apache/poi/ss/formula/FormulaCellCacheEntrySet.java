@@ -25,129 +25,129 @@ package org.apache.poi.ss.formula;
  * thousands of formula cells with multiple interdependencies, the savings can be very significant.
  */
 final class FormulaCellCacheEntrySet {
-	private static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
+    private static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
 
-	private int _size;
-	private FormulaCellCacheEntry[] _arr;
+    private int _size;
+    private FormulaCellCacheEntry[] _arr;
 
-	public FormulaCellCacheEntrySet() {
-		_arr = EMPTY_ARRAY;
-	}
+    public FormulaCellCacheEntrySet() {
+        _arr = EMPTY_ARRAY;
+    }
 
-	public FormulaCellCacheEntry[] toArray() {
-		int nItems = _size;
-		if (nItems < 1) {
-			return EMPTY_ARRAY;
-		}
-		FormulaCellCacheEntry[] result = new FormulaCellCacheEntry[nItems];
-		int j=0;
-		for(int i=0; i<_arr.length; i++) {
-			FormulaCellCacheEntry cce = _arr[i];
-			if (cce != null) {
-				result[j++] = cce;
-			}
-		}
-		if (j!= nItems) {
-			throw new IllegalStateException("size mismatch");
-		}
-		return result;
-	}
-
-
-	public void add(CellCacheEntry cce) {
-		if (_size * 3 >= _arr.length * 2) {
-			// re-hash
-			FormulaCellCacheEntry[] prevArr = _arr;
-			FormulaCellCacheEntry[] newArr = new FormulaCellCacheEntry[4 + _arr.length * 3 / 2]; // grow 50%
-			for(int i=0; i<prevArr.length; i++) {
-				FormulaCellCacheEntry prevCce = _arr[i];
-				if (prevCce != null) {
-					addInternal(newArr, prevCce);
-				}
-			}
-			_arr = newArr;
-		}
-		if (addInternal(_arr, cce)) {
-			_size++;
-		}
-	}
+    public FormulaCellCacheEntry[] toArray() {
+        int nItems = _size;
+        if (nItems < 1) {
+            return EMPTY_ARRAY;
+        }
+        FormulaCellCacheEntry[] result = new FormulaCellCacheEntry[nItems];
+        int j=0;
+        for(int i=0; i<_arr.length; i++) {
+            FormulaCellCacheEntry cce = _arr[i];
+            if (cce != null) {
+                result[j++] = cce;
+            }
+        }
+        if (j!= nItems) {
+            throw new IllegalStateException("size mismatch");
+        }
+        return result;
+    }
 
 
-	private static boolean addInternal(CellCacheEntry[] arr, CellCacheEntry cce) {
-		int startIx = Math.abs(cce.hashCode() % arr.length);
+    public void add(CellCacheEntry cce) {
+        if (_size * 3 >= _arr.length * 2) {
+            // re-hash
+            FormulaCellCacheEntry[] prevArr = _arr;
+            FormulaCellCacheEntry[] newArr = new FormulaCellCacheEntry[4 + _arr.length * 3 / 2]; // grow 50%
+            for(int i=0; i<prevArr.length; i++) {
+                FormulaCellCacheEntry prevCce = _arr[i];
+                if (prevCce != null) {
+                    addInternal(newArr, prevCce);
+                }
+            }
+            _arr = newArr;
+        }
+        if (addInternal(_arr, cce)) {
+            _size++;
+        }
+    }
 
-		for(int i=startIx; i<arr.length; i++) {
-			CellCacheEntry item = arr[i];
-			if (item == cce) {
-				// already present
-				return false;
-			}
-			if (item == null) {
-				arr[i] = cce;
-				return true;
-			}
-		}
-		for(int i=0; i<startIx; i++) {
-			CellCacheEntry item = arr[i];
-			if (item == cce) {
-				// already present
-				return false;
-			}
-			if (item == null) {
-				arr[i] = cce;
-				return true;
-			}
-		}
-		throw new IllegalStateException("No empty space found");
-	}
 
-	public boolean remove(CellCacheEntry cce) {
-		FormulaCellCacheEntry[] arr = _arr;
+    private static boolean addInternal(CellCacheEntry[] arr, CellCacheEntry cce) {
+        int startIx = Math.abs(cce.hashCode() % arr.length);
 
-		if (_size * 3 < _arr.length && _arr.length > 8) {
-			// re-hash
-			boolean found = false;
-			FormulaCellCacheEntry[] prevArr = _arr;
-			FormulaCellCacheEntry[] newArr = new FormulaCellCacheEntry[_arr.length / 2]; // shrink 50%
-			for(int i=0; i<prevArr.length; i++) {
-				FormulaCellCacheEntry prevCce = _arr[i];
-				if (prevCce != null) {
-					if (prevCce == cce) {
-						found=true;
-						_size--;
-						// skip it
-						continue;
-					}
-					addInternal(newArr, prevCce);
-				}
-			}
-			_arr = newArr;
-			return found;
-		}
-		// else - usual case
-		// delete single element (without re-hashing)
+        for(int i=startIx; i<arr.length; i++) {
+            CellCacheEntry item = arr[i];
+            if (item == cce) {
+                // already present
+                return false;
+            }
+            if (item == null) {
+                arr[i] = cce;
+                return true;
+            }
+        }
+        for(int i=0; i<startIx; i++) {
+            CellCacheEntry item = arr[i];
+            if (item == cce) {
+                // already present
+                return false;
+            }
+            if (item == null) {
+                arr[i] = cce;
+                return true;
+            }
+        }
+        throw new IllegalStateException("No empty space found");
+    }
 
-		int startIx = Math.abs(cce.hashCode() % arr.length);
+    public boolean remove(CellCacheEntry cce) {
+        FormulaCellCacheEntry[] arr = _arr;
 
-		// note - can't exit loops upon finding null because of potential previous deletes
-		for(int i=startIx; i<arr.length; i++) {
-			FormulaCellCacheEntry item = arr[i];
-			if (item == cce) {
-				// found it
-				arr[i] = null;
-				_size--;
-				return true;
-			}
-		}
-		for(int i=0; i<startIx; i++) {
-			FormulaCellCacheEntry item = arr[i];
-			if (item == cce) {
-				// found it
-				arr[i] = null;
-				_size--;
-				return true;
-			}
-		}
-		return false;
-	}
+        if (_size * 3 < _arr.length && _arr.length > 8) {
+            // re-hash
+            boolean found = false;
+            FormulaCellCacheEntry[] prevArr = _arr;
+            FormulaCellCacheEntry[] newArr = new FormulaCellCacheEntry[_arr.length / 2]; // shrink 50%
+            for(int i=0; i<prevArr.length; i++) {
+                FormulaCellCacheEntry prevCce = _arr[i];
+                if (prevCce != null) {
+                    if (prevCce == cce) {
+                        found=true;
+                        _size--;
+                        // skip it
+                        continue;
+                    }
+                    addInternal(newArr, prevCce);
+                }
+            }
+            _arr = newArr;
+            return found;
+        }
+        // else - usual case
+        // delete single element (without re-hashing)
+
+        int startIx = Math.abs(cce.hashCode() % arr.length);
+
+        // note - can't exit loops upon finding null because of potential previous deletes
+        for(int i=startIx; i<arr.length; i++) {
+            FormulaCellCacheEntry item = arr[i];
+            if (item == cce) {
+                // found it
+                arr[i] = null;
+                _size--;
+                return true;
+            }
+        }
+        for(int i=0; i<startIx; i++) {
+            FormulaCellCacheEntry item = arr[i];
+            if (item == cce) {
+                // found it
+                arr[i] = null;
+                _size--;
+                return true;
+            }
+        }
+        return false;
+    }
 }

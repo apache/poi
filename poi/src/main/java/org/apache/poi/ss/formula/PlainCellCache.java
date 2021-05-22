@@ -22,49 +22,49 @@ import java.util.Map;
 
 final class PlainCellCache {
 
-	public static final class Loc {
+    public static final class Loc {
 
-		private final long _bookSheetColumn;
+        private final long _bookSheetColumn;
 
-		private final int _rowIndex;
+        private final int _rowIndex;
 
-		public Loc(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
-			_bookSheetColumn = toBookSheetColumn(bookIndex, sheetIndex, columnIndex);
-			_rowIndex = rowIndex;
-		}
+        public Loc(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
+            _bookSheetColumn = toBookSheetColumn(bookIndex, sheetIndex, columnIndex);
+            _rowIndex = rowIndex;
+        }
 
-		public static long toBookSheetColumn(int bookIndex, int sheetIndex, int columnIndex) {
-			return ((bookIndex   & 0xFFFFL) << 48)  +
+        public static long toBookSheetColumn(int bookIndex, int sheetIndex, int columnIndex) {
+            return ((bookIndex   & 0xFFFFL) << 48)  +
                    ((sheetIndex  & 0xFFFFL) << 32) +
                    ((columnIndex & 0xFFFFL) << 0);
-		}
+        }
 
-		public Loc(long bookSheetColumn, int rowIndex) {
-			_bookSheetColumn = bookSheetColumn;
-			_rowIndex = rowIndex;
-		}
+        public Loc(long bookSheetColumn, int rowIndex) {
+            _bookSheetColumn = bookSheetColumn;
+            _rowIndex = rowIndex;
+        }
 
-		@Override
+        @Override
         public int hashCode() {
-			return (int)(_bookSheetColumn ^ (_bookSheetColumn >>> 32)) + 17 * _rowIndex;
-		}
+            return (int)(_bookSheetColumn ^ (_bookSheetColumn >>> 32)) + 17 * _rowIndex;
+        }
 
-		@Override
+        @Override
         public boolean equals(Object obj) {
-		    if (!(obj instanceof Loc)) {
-		        return false;
-		    }
-			Loc other = (Loc) obj;
-			return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
-		}
+            if (!(obj instanceof Loc)) {
+                return false;
+            }
+            Loc other = (Loc) obj;
+            return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
+        }
 
-		public int getRowIndex() {
-			return _rowIndex;
-		}
+        public int getRowIndex() {
+            return _rowIndex;
+        }
 
-		public int getColumnIndex() {
+        public int getColumnIndex() {
             return (int)(_bookSheetColumn & 0x000FFFF);
-		}
+        }
 
         public int getSheetIndex() {
             return (int)((_bookSheetColumn >> 32) & 0xFFFF);
@@ -73,27 +73,27 @@ final class PlainCellCache {
         public int getBookIndex() {
             return (int)((_bookSheetColumn >> 48) & 0xFFFF);
         }
-	}
+    }
 
-	private Map<Loc, PlainValueCellCacheEntry> _plainValueEntriesByLoc;
+    private Map<Loc, PlainValueCellCacheEntry> _plainValueEntriesByLoc;
 
-	public PlainCellCache() {
-		_plainValueEntriesByLoc = new HashMap<>();
-	}
+    public PlainCellCache() {
+        _plainValueEntriesByLoc = new HashMap<>();
+    }
 
-	public void put(Loc key, PlainValueCellCacheEntry cce) {
-		_plainValueEntriesByLoc.put(key, cce);
-	}
+    public void put(Loc key, PlainValueCellCacheEntry cce) {
+        _plainValueEntriesByLoc.put(key, cce);
+    }
 
-	public void clear() {
-		_plainValueEntriesByLoc.clear();
-	}
+    public void clear() {
+        _plainValueEntriesByLoc.clear();
+    }
 
-	public PlainValueCellCacheEntry get(Loc key) {
-		return _plainValueEntriesByLoc.get(key);
-	}
+    public PlainValueCellCacheEntry get(Loc key) {
+        return _plainValueEntriesByLoc.get(key);
+    }
 
-	public void remove(Loc key) {
-		_plainValueEntriesByLoc.remove(key);
-	}
+    public void remove(Loc key) {
+        _plainValueEntriesByLoc.remove(key);
+    }
 }

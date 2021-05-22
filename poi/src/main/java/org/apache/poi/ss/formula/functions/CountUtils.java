@@ -27,16 +27,16 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 final class CountUtils {
 
-	private CountUtils() {
-		// no instances of this class
-	}
+    private CountUtils() {
+        // no instances of this class
+    }
 
-	/**
-	 * Common interface for the matching criteria.
-	 */
-	public interface I_MatchPredicate {
-		boolean matches(ValueEval x);
-	}
+    /**
+     * Common interface for the matching criteria.
+     */
+    public interface I_MatchPredicate {
+        boolean matches(ValueEval x);
+    }
     public interface I_MatchAreaPredicate extends I_MatchPredicate {
         boolean matches(TwoDEval x, int rowIndex, int columnIndex);
     }
@@ -69,35 +69,35 @@ final class CountUtils {
         }
         return result;
     }
-	/**
+    /**
      * @return the number of evaluated cells in the range that match the specified criteria
-	 */
-	public static int countMatchingCellsInRef(RefEval refEval, I_MatchPredicate criteriaPredicate) {
-	    int result = 0;
+     */
+    public static int countMatchingCellsInRef(RefEval refEval, I_MatchPredicate criteriaPredicate) {
+        int result = 0;
 
         final int firstSheetIndex = refEval.getFirstSheetIndex();
         final int lastSheetIndex = refEval.getLastSheetIndex();
         for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
-	        ValueEval ve = refEval.getInnerValueEval(sIx);
+            ValueEval ve = refEval.getInnerValueEval(sIx);
             if(criteriaPredicate.matches(ve)) {
                 result++;
             }
-	    }
-		return result;
-	}
-	public static int countArg(ValueEval eval, I_MatchPredicate criteriaPredicate) {
-		if (eval == null) {
-			throw new IllegalArgumentException("eval must not be null");
-		}
+        }
+        return result;
+    }
+    public static int countArg(ValueEval eval, I_MatchPredicate criteriaPredicate) {
+        if (eval == null) {
+            throw new IllegalArgumentException("eval must not be null");
+        }
         if (eval instanceof ThreeDEval) {
             return countMatchingCellsInArea((ThreeDEval) eval, criteriaPredicate);
         }
-		if (eval instanceof TwoDEval) {
-		    throw new IllegalArgumentException("Count requires 3D Evals, 2D ones aren't supported");
-		}
-		if (eval instanceof RefEval) {
-			return CountUtils.countMatchingCellsInRef((RefEval) eval, criteriaPredicate);
-		}
-		return criteriaPredicate.matches(eval) ? 1 : 0;
-	}
+        if (eval instanceof TwoDEval) {
+            throw new IllegalArgumentException("Count requires 3D Evals, 2D ones aren't supported");
+        }
+        if (eval instanceof RefEval) {
+            return CountUtils.countMatchingCellsInRef((RefEval) eval, criteriaPredicate);
+        }
+        return criteriaPredicate.matches(eval) ? 1 : 0;
+    }
 }

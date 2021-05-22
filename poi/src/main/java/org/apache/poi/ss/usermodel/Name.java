@@ -149,7 +149,7 @@ public interface Name {
      *
      * @return true if this name is a function name
      */
-	boolean isFunctionName();
+    boolean isFunctionName();
 
     /**
      * Checks if this name points to a cell that no longer exists

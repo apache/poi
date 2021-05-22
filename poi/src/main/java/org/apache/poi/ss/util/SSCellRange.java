@@ -32,91 +32,91 @@ import org.apache.poi.util.Internal;
 @Internal
 public final class SSCellRange<K extends Cell> implements CellRange<K> {
 
-	private final int _height;
-	private final int _width;
-	private final K[] _flattenedArray;
-	private final int _firstRow;
-	private final int _firstColumn;
+    private final int _height;
+    private final int _width;
+    private final K[] _flattenedArray;
+    private final int _firstRow;
+    private final int _firstColumn;
 
-	private SSCellRange(int firstRow, int firstColumn, int height, int width, K[] flattenedArray) {
-		_firstRow = firstRow;
-		_firstColumn = firstColumn;
-		_height = height;
-		_width = width;
-		_flattenedArray = flattenedArray.clone();
-	}
+    private SSCellRange(int firstRow, int firstColumn, int height, int width, K[] flattenedArray) {
+        _firstRow = firstRow;
+        _firstColumn = firstColumn;
+        _height = height;
+        _width = width;
+        _flattenedArray = flattenedArray.clone();
+    }
 
-	public static <B extends Cell> SSCellRange<B> create(int firstRow, int firstColumn, int height, int width, List<B> flattenedList, Class<B> cellClass) {
-		int nItems = flattenedList.size();
-		if (height * width != nItems) {
-			throw new IllegalArgumentException("Array size mismatch.");
-		}
+    public static <B extends Cell> SSCellRange<B> create(int firstRow, int firstColumn, int height, int width, List<B> flattenedList, Class<B> cellClass) {
+        int nItems = flattenedList.size();
+        if (height * width != nItems) {
+            throw new IllegalArgumentException("Array size mismatch.");
+        }
 
-		@SuppressWarnings("unchecked")
-		B[] flattenedArray = (B[]) Array.newInstance(cellClass, nItems);
-		flattenedList.toArray(flattenedArray);
-		return new SSCellRange<>(firstRow, firstColumn, height, width, flattenedArray);
-	}
+        @SuppressWarnings("unchecked")
+        B[] flattenedArray = (B[]) Array.newInstance(cellClass, nItems);
+        flattenedList.toArray(flattenedArray);
+        return new SSCellRange<>(firstRow, firstColumn, height, width, flattenedArray);
+    }
 
-	@Override
+    @Override
     public int getHeight() {
-		return _height;
-	}
-	@Override
-	public int getWidth() {
-		return _width;
-	}
-	@Override
-	public int size() {
-		return _height*_width;
-	}
+        return _height;
+    }
+    @Override
+    public int getWidth() {
+        return _width;
+    }
+    @Override
+    public int size() {
+        return _height*_width;
+    }
 
-	@Override
-	public String getReferenceText() {
-		CellRangeAddress cra = new CellRangeAddress(_firstRow, _firstRow+_height-1, _firstColumn, _firstColumn+_width-1);
-		return cra.formatAsString();
-	}
+    @Override
+    public String getReferenceText() {
+        CellRangeAddress cra = new CellRangeAddress(_firstRow, _firstRow+_height-1, _firstColumn, _firstColumn+_width-1);
+        return cra.formatAsString();
+    }
 
-	@Override
-	public K getTopLeftCell() {
-		return _flattenedArray[0];
-	}
+    @Override
+    public K getTopLeftCell() {
+        return _flattenedArray[0];
+    }
 
-	@Override
-	public K getCell(int relativeRowIndex, int relativeColumnIndex) {
-		if (relativeRowIndex < 0 || relativeRowIndex >= _height) {
-			throw new ArrayIndexOutOfBoundsException("Specified row " + relativeRowIndex
-					+ " is outside the allowable range (0.." + (_height-1) + ").");
-		}
-		if (relativeColumnIndex < 0 || relativeColumnIndex >= _width) {
-			throw new ArrayIndexOutOfBoundsException("Specified colummn " + relativeColumnIndex
-					+ " is outside the allowable range (0.." + (_width-1) + ").");
-		}
-		int flatIndex = _width * relativeRowIndex + relativeColumnIndex;
-		return _flattenedArray[flatIndex];
-	}
-	@Override
-	public K[] getFlattenedCells() {
-		return _flattenedArray.clone();
-	}
+    @Override
+    public K getCell(int relativeRowIndex, int relativeColumnIndex) {
+        if (relativeRowIndex < 0 || relativeRowIndex >= _height) {
+            throw new ArrayIndexOutOfBoundsException("Specified row " + relativeRowIndex
+                    + " is outside the allowable range (0.." + (_height-1) + ").");
+        }
+        if (relativeColumnIndex < 0 || relativeColumnIndex >= _width) {
+            throw new ArrayIndexOutOfBoundsException("Specified colummn " + relativeColumnIndex
+                    + " is outside the allowable range (0.." + (_width-1) + ").");
+        }
+        int flatIndex = _width * relativeRowIndex + relativeColumnIndex;
+        return _flattenedArray[flatIndex];
+    }
+    @Override
+    public K[] getFlattenedCells() {
+        return _flattenedArray.clone();
+    }
 
-	@Override
-	public K[][] getCells() {
-		Class<?> itemCls = _flattenedArray.getClass();
-		@SuppressWarnings("unchecked")
-		K[][] result = (K[][]) Array.newInstance(itemCls, _height);
-		itemCls = itemCls.getComponentType();
-		for (int r=_height-1; r>=0; r--) {
-			@SuppressWarnings("unchecked")
-			K[] row = (K[]) Array.newInstance(itemCls, _width);
-			int flatIndex = _width * r;
-			System.arraycopy(_flattenedArray, flatIndex, row, 0, _width);
-		}
-		return result;
-	}
+    @Override
+    public K[][] getCells() {
+        Class<?> itemCls = _flattenedArray.getClass();
+        @SuppressWarnings("unchecked")
+        K[][] result = (K[][]) Array.newInstance(itemCls, _height);
+        itemCls = itemCls.getComponentType();
+        for (int r=_height-1; r>=0; r--) {
+            @SuppressWarnings("unchecked")
+            K[] row = (K[]) Array.newInstance(itemCls, _width);
+            int flatIndex = _width * r;
+            System.arraycopy(_flattenedArray, flatIndex, row, 0, _width);
+        }
+        return result;
+    }
 
-	@Override
-	public Iterator<K> iterator() {
-		return Stream.of(_flattenedArray).iterator();
-	}
+    @Override
+    public Iterator<K> iterator() {
+        return Stream.of(_flattenedArray).iterator();
+    }
 }

@@ -30,73 +30,73 @@ import org.apache.poi.util.LittleEndianOutput;
  * ENDBLOCK - Chart Future Record Type End Block (0x0853)
  */
 public final class ChartEndBlockRecord extends StandardRecord {
-	public static final short sid = 0x0853;
+    public static final short sid = 0x0853;
 
-	private short rt;
-	private short grbitFrt;
-	private short iObjectKind;
-	private byte[] unused;
+    private short rt;
+    private short grbitFrt;
+    private short iObjectKind;
+    private byte[] unused;
 
-	public ChartEndBlockRecord() {}
+    public ChartEndBlockRecord() {}
 
-	public ChartEndBlockRecord(ChartEndBlockRecord other) {
-		super(other);
-		rt = other.rt;
-		grbitFrt = other.grbitFrt;
-		iObjectKind = other.iObjectKind;
-		unused = (other.unused == null) ? null : other.unused.clone();
-	}
+    public ChartEndBlockRecord(ChartEndBlockRecord other) {
+        super(other);
+        rt = other.rt;
+        grbitFrt = other.grbitFrt;
+        iObjectKind = other.iObjectKind;
+        unused = (other.unused == null) ? null : other.unused.clone();
+    }
 
-	public ChartEndBlockRecord(RecordInputStream in) {
-		rt = in.readShort();
-		grbitFrt = in.readShort();
-		iObjectKind = in.readShort();
+    public ChartEndBlockRecord(RecordInputStream in) {
+        rt = in.readShort();
+        grbitFrt = in.readShort();
+        iObjectKind = in.readShort();
 
-		// Often, but not always has 6 unused bytes at the end
-		if(in.available() == 0) {
-			unused = new byte[0];
-		} else {
-			unused = new byte[6];
-			in.readFully(unused);
-		}
-	}
+        // Often, but not always has 6 unused bytes at the end
+        if(in.available() == 0) {
+            unused = new byte[0];
+        } else {
+            unused = new byte[6];
+            in.readFully(unused);
+        }
+    }
 
-	@Override
-	protected int getDataSize() {
-		return 2 + 2 + 2 + unused.length;
-	}
+    @Override
+    protected int getDataSize() {
+        return 2 + 2 + 2 + unused.length;
+    }
 
-	@Override
-	public short getSid() {
-		return sid;
-	}
+    @Override
+    public short getSid() {
+        return sid;
+    }
 
-	@Override
-	public void serialize(LittleEndianOutput out) {
-		out.writeShort(rt);
-		out.writeShort(grbitFrt);
-		out.writeShort(iObjectKind);
-		// 6 bytes unused
-		out.write(unused);
-	}
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(rt);
+        out.writeShort(grbitFrt);
+        out.writeShort(iObjectKind);
+        // 6 bytes unused
+        out.write(unused);
+    }
 
-	@Override
-	public ChartEndBlockRecord copy() {
-		return new ChartEndBlockRecord(this);
-	}
+    @Override
+    public ChartEndBlockRecord copy() {
+        return new ChartEndBlockRecord(this);
+    }
 
-	@Override
-	public HSSFRecordTypes getGenericRecordType() {
-		return HSSFRecordTypes.CHART_END_BLOCK;
-	}
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CHART_END_BLOCK;
+    }
 
-	@Override
-	public Map<String, Supplier<?>> getGenericProperties() {
-		return GenericRecordUtil.getGenericProperties(
-			"rt", () -> rt,
-			"grbitFrt", () -> grbitFrt,
-			"iObjectKind", () -> iObjectKind,
-			"unused", () -> unused
-		);
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rt", () -> rt,
+            "grbitFrt", () -> grbitFrt,
+            "iObjectKind", () -> iObjectKind,
+            "unused", () -> unused
+        );
+    }
 }

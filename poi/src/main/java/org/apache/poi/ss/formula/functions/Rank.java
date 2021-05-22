@@ -33,10 +33,10 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Returns the rank of a number in a list of numbers. The rank of a number is its size relative to other values in a list.
 
  * Syntax:
- *	RANK(number,ref,order)
- *	   Number   is the number whose rank you want to find.
- *	   Ref	 is an array of, or a reference to, a list of numbers. Nonnumeric values in ref are ignored.
- *	   Order   is a number specifying how to rank number.
+ *  RANK(number,ref,order)
+ *     Number   is the number whose rank you want to find.
+ *     Ref   is an array of, or a reference to, a list of numbers. Nonnumeric values in ref are ignored.
+ *     Order   is a number specifying how to rank number.
 
  * If order is 0 (zero) or omitted, Microsoft Excel ranks number as if ref were a list sorted in descending order.
  * If order is any nonzero value, Microsoft Excel ranks number as if ref were a list sorted in ascending order.

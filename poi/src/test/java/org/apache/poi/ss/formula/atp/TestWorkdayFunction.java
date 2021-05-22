@@ -87,10 +87,10 @@ class TestWorkdayFunction {
         Date expDate = expCal.getTime();
 
         ValueEval[] ve = {new StringEval("2013/09/30"), new NumberEval(-1)};
-		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
-		assertEquals(41544.0, numberValue, 0);
+        double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
+        assertEquals(41544.0, numberValue, 0);
 
-		Date actDate = DateUtil.getJavaDate(numberValue);
+        Date actDate = DateUtil.getJavaDate(numberValue);
         assertEquals(expDate, actDate);
     }
 

@@ -1699,7 +1699,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
         field_9_fill_palette_options = source.field_9_fill_palette_options;
     }
 
-	@Override
+    @Override
     public int hashCode() {
         return Objects.hash(
             field_1_font_index
@@ -1712,30 +1712,30 @@ public final class ExtendedFormatRecord extends StandardRecord {
             , field_8_adtl_palette_options
             , field_9_fill_palette_options
         );
-	}
+    }
 
-	/**
-	 * Will consider two different records with the same
-	 *  contents as equals, as the various indexes
-	 *  that matter are embedded in the records
-	 */
-	@Override
+    /**
+     * Will consider two different records with the same
+     *  contents as equals, as the various indexes
+     *  that matter are embedded in the records
+     */
+    @Override
     public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (obj instanceof ExtendedFormatRecord) {
-			final ExtendedFormatRecord other = (ExtendedFormatRecord) obj;
-			return Arrays.equals(stateSummary(), other.stateSummary());
-		}
-		return false;
-	}
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (obj instanceof ExtendedFormatRecord) {
+            final ExtendedFormatRecord other = (ExtendedFormatRecord) obj;
+            return Arrays.equals(stateSummary(), other.stateSummary());
+        }
+        return false;
+    }
 
-	public int[] stateSummary() {
-		return new int[] { field_1_font_index, field_2_format_index, field_3_cell_options, field_4_alignment_options,
-				field_5_indention_options, field_6_border_options, field_7_palette_options, field_8_adtl_palette_options, field_9_fill_palette_options };
-	}
+    public int[] stateSummary() {
+        return new int[] { field_1_font_index, field_2_format_index, field_3_cell_options, field_4_alignment_options,
+                field_5_indention_options, field_6_border_options, field_7_palette_options, field_8_adtl_palette_options, field_9_fill_palette_options };
+    }
 
 
     @Override
