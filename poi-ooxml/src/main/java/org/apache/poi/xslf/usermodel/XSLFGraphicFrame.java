@@ -122,7 +122,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      */
     @Override
     public void setRotation(double theta){
-    	throw new IllegalArgumentException("Operation not supported");
+        throw new IllegalArgumentException("Operation not supported");
     }
 
     /**
@@ -135,18 +135,18 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      * @return rotation angle in degrees
      */
     @Override
-	public double getRotation(){
-    	return 0;
+    public double getRotation(){
+        return 0;
     }
 
     @Override
-	public void setFlipHorizontal(boolean flip){
-    	throw new IllegalArgumentException("Operation not supported");
+    public void setFlipHorizontal(boolean flip){
+        throw new IllegalArgumentException("Operation not supported");
     }
 
     @Override
-	public void setFlipVertical(boolean flip){
-    	throw new IllegalArgumentException("Operation not supported");
+    public void setFlipVertical(boolean flip){
+        throw new IllegalArgumentException("Operation not supported");
     }
 
     /**
@@ -155,13 +155,13 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      * @return whether the shape is horizontally flipped
      */
     @Override
-	public boolean getFlipHorizontal(){
-    	return false;
+    public boolean getFlipHorizontal(){
+        return false;
     }
 
     @Override
-	public boolean getFlipVertical(){
-    	return false;
+    public boolean getFlipVertical(){
+        return false;
     }
 
     public boolean hasChart() {
@@ -203,7 +203,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/diagram")){
             copyDiagram(data, (XSLFGraphicFrame)sh);
         } if(uri.equals(DRAWINGML_CHART_URI)){
-        	copyChart(data, (XSLFGraphicFrame)sh);
+            copyChart(data, (XSLFGraphicFrame)sh);
         } else {
             // TODO  support other types of objects
 

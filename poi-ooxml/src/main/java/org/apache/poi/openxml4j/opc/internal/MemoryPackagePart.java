@@ -38,101 +38,101 @@ import org.apache.poi.util.IOUtils;
  */
 public final class MemoryPackagePart extends PackagePart {
 
-	/**
-	 * Storage for the part data.
-	 */
-	protected byte[] data;
+    /**
+     * Storage for the part data.
+     */
+    protected byte[] data;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param pack
-	 *            The owner package.
-	 * @param partName
-	 *            The part name.
-	 * @param contentType
-	 *            The content type.
-	 * @throws InvalidFormatException
-	 *             If the specified URI is not OPC compliant.
-	 */
-	public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
-			String contentType) throws InvalidFormatException {
-		super(pack, partName, contentType);
-	}
+    /**
+     * Constructor.
+     *
+     * @param pack
+     *            The owner package.
+     * @param partName
+     *            The part name.
+     * @param contentType
+     *            The content type.
+     * @throws InvalidFormatException
+     *             If the specified URI is not OPC compliant.
+     */
+    public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
+            String contentType) throws InvalidFormatException {
+        super(pack, partName, contentType);
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param pack
-	 *            The owner package.
-	 * @param partName
-	 *            The part name.
-	 * @param contentType
-	 *            The content type.
-	 * @param loadRelationships
-	 *            Specify if the relationships will be loaded.
-	 * @throws InvalidFormatException
-	 *             If the specified URI is not OPC compliant.
-	 */
-	public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
-			String contentType, boolean loadRelationships)
-			throws InvalidFormatException {
-		super(pack, partName, new ContentType(contentType), loadRelationships);
-	}
+    /**
+     * Constructor.
+     *
+     * @param pack
+     *            The owner package.
+     * @param partName
+     *            The part name.
+     * @param contentType
+     *            The content type.
+     * @param loadRelationships
+     *            Specify if the relationships will be loaded.
+     * @throws InvalidFormatException
+     *             If the specified URI is not OPC compliant.
+     */
+    public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
+            String contentType, boolean loadRelationships)
+            throws InvalidFormatException {
+        super(pack, partName, new ContentType(contentType), loadRelationships);
+    }
 
-	@Override
-	protected InputStream getInputStreamImpl() {
-		// If this part has been created from scratch and/or the data buffer is
-		// not
-		// initialize, so we do it now.
-		if (data == null) {
-			data = new byte[0];
-		}
-		return new ByteArrayInputStream(data);
-	}
+    @Override
+    protected InputStream getInputStreamImpl() {
+        // If this part has been created from scratch and/or the data buffer is
+        // not
+        // initialize, so we do it now.
+        if (data == null) {
+            data = new byte[0];
+        }
+        return new ByteArrayInputStream(data);
+    }
 
-	@Override
-	protected OutputStream getOutputStreamImpl() {
-		return new MemoryPackagePartOutputStream(this);
-	}
+    @Override
+    protected OutputStream getOutputStreamImpl() {
+        return new MemoryPackagePartOutputStream(this);
+    }
 
-	@Override
-	public long getSize() {
-		return data == null ? 0 : data.length;
-	}
+    @Override
+    public long getSize() {
+        return data == null ? 0 : data.length;
+    }
 
     @Override
     public void clear() {
-		data = null;
-	}
+        data = null;
+    }
 
-	@Override
-	public boolean save(OutputStream os) throws OpenXML4JException {
-		return new ZipPartMarshaller().marshall(this, os);
-	}
+    @Override
+    public boolean save(OutputStream os) throws OpenXML4JException {
+        return new ZipPartMarshaller().marshall(this, os);
+    }
 
-	@Override
-	public boolean load(InputStream ios) throws InvalidFormatException {
-	   try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
-		   // Grab the data
-	      IOUtils.copy(ios, baos);
-		   // Save it
-		   data = baos.toByteArray();
-	   } catch(IOException e) {
-	      throw new InvalidFormatException(e.getMessage());
-	   }
+    @Override
+    public boolean load(InputStream ios) throws InvalidFormatException {
+       try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+           // Grab the data
+          IOUtils.copy(ios, baos);
+           // Save it
+           data = baos.toByteArray();
+       } catch(IOException e) {
+          throw new InvalidFormatException(e.getMessage());
+       }
 
-	   // All done
-	   return true;
-	}
+       // All done
+       return true;
+    }
 
-	@Override
-	public void close() {
-		// Do nothing
-	}
+    @Override
+    public void close() {
+        // Do nothing
+    }
 
-	@Override
-	public void flush() {
-		// Do nothing
-	}
+    @Override
+    public void flush() {
+        // Do nothing
+    }
 }

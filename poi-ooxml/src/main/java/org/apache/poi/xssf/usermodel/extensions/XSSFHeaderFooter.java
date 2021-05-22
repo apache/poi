@@ -121,124 +121,124 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  *
  */
 public abstract class XSSFHeaderFooter implements HeaderFooter {
-	private final HeaderFooterHelper helper;
-	private final CTHeaderFooter headerFooter;
+    private final HeaderFooterHelper helper;
+    private final CTHeaderFooter headerFooter;
 
-	private boolean stripFields;
+    private boolean stripFields;
 
-	/**
-	 * Create an instance of XSSFAbstractHeaderFooter from the supplied XML bean
-	 */
-	public XSSFHeaderFooter(CTHeaderFooter headerFooter) {
+    /**
+     * Create an instance of XSSFAbstractHeaderFooter from the supplied XML bean
+     */
+    public XSSFHeaderFooter(CTHeaderFooter headerFooter) {
         this.headerFooter = headerFooter;
-		this.helper = new HeaderFooterHelper();
-	}
+        this.helper = new HeaderFooterHelper();
+    }
 
-	/**
-	 * Returns the underlying CTHeaderFooter xml bean
-	 *
-	 * @return the underlying CTHeaderFooter xml bean
-	 */
+    /**
+     * Returns the underlying CTHeaderFooter xml bean
+     *
+     * @return the underlying CTHeaderFooter xml bean
+     */
     @Internal
-	public CTHeaderFooter getHeaderFooter() {
-		return this.headerFooter;
-	}
+    public CTHeaderFooter getHeaderFooter() {
+        return this.headerFooter;
+    }
 
     /**
      * Returns the value of the header or footer.
      *
      * @return the value of the header or footer.
      */
-	public String getValue() {
-		String value = getText();
-		if (value == null)
-			return "";
-		return value;
-	}
+    public String getValue() {
+        String value = getText();
+        if (value == null)
+            return "";
+        return value;
+    }
 
-	/**
-	 * Are fields currently being stripped from the text that this
-	 * XSSFHeaderFooter returns? Default is false, but can be changed
-	 */
-	public boolean areFieldsStripped() {
-		return stripFields;
-	}
+    /**
+     * Are fields currently being stripped from the text that this
+     * XSSFHeaderFooter returns? Default is false, but can be changed
+     */
+    public boolean areFieldsStripped() {
+        return stripFields;
+    }
 
-	/**
-	 * Should fields (eg macros) be stripped from the text that this class
-	 * returns? Default is not to strip.
-	 */
-	public void setAreFieldsStripped(boolean stripFields) {
-		this.stripFields = stripFields;
-	}
+    /**
+     * Should fields (eg macros) be stripped from the text that this class
+     * returns? Default is not to strip.
+     */
+    public void setAreFieldsStripped(boolean stripFields) {
+        this.stripFields = stripFields;
+    }
 
-	/**
-	 * Removes any fields (eg macros, page markers etc) from the string.
-	 * Normally used to make some text suitable for showing to humans, and the
-	 * resultant text should not normally be saved back into the document!
-	 */
-	public static String stripFields(String text) {
-		return org.apache.poi.hssf.usermodel.HeaderFooter.stripFields(text);
-	}
+    /**
+     * Removes any fields (eg macros, page markers etc) from the string.
+     * Normally used to make some text suitable for showing to humans, and the
+     * resultant text should not normally be saved back into the document!
+     */
+    public static String stripFields(String text) {
+        return org.apache.poi.hssf.usermodel.HeaderFooter.stripFields(text);
+    }
 
-	public abstract String getText();
+    public abstract String getText();
 
-	protected abstract void setText(String text);
+    protected abstract void setText(String text);
 
-	/**
-	 * get the text representing the center part of this element
-	 */
-	@Override
-	public String getCenter() {
-		String text = helper.getCenterSection(getText());
-		if (stripFields)
-			return stripFields(text);
-		return text;
-	}
+    /**
+     * get the text representing the center part of this element
+     */
+    @Override
+    public String getCenter() {
+        String text = helper.getCenterSection(getText());
+        if (stripFields)
+            return stripFields(text);
+        return text;
+    }
 
-	/**
-	 * get the text representing the left part of this element
-	 */
-	@Override
-	public String getLeft() {
-		String text = helper.getLeftSection(getText());
-		if (stripFields)
-			return stripFields(text);
-		return text;
-	}
+    /**
+     * get the text representing the left part of this element
+     */
+    @Override
+    public String getLeft() {
+        String text = helper.getLeftSection(getText());
+        if (stripFields)
+            return stripFields(text);
+        return text;
+    }
 
-	/**
-	 * get the text representing the right part of this element
-	 */
-	@Override
-	public String getRight() {
-		String text = helper.getRightSection(getText());
-		if (stripFields)
-			return stripFields(text);
-		return text;
-	}
+    /**
+     * get the text representing the right part of this element
+     */
+    @Override
+    public String getRight() {
+        String text = helper.getRightSection(getText());
+        if (stripFields)
+            return stripFields(text);
+        return text;
+    }
 
-	/**
-	 * set a centered string value for this element
-	 */
-	@Override
-	public void setCenter(String newCenter) {
-		setText(helper.setCenterSection(getText(), newCenter));
-	}
+    /**
+     * set a centered string value for this element
+     */
+    @Override
+    public void setCenter(String newCenter) {
+        setText(helper.setCenterSection(getText(), newCenter));
+    }
 
-	/**
-	 * set a left string value for this element
-	 */
-	@Override
-	public void setLeft(String newLeft) {
-		setText(helper.setLeftSection(getText(), newLeft));
-	}
+    /**
+     * set a left string value for this element
+     */
+    @Override
+    public void setLeft(String newLeft) {
+        setText(helper.setLeftSection(getText(), newLeft));
+    }
 
-	/**
-	 * set a right string value for this element
-	 */
-	@Override
-	public void setRight(String newRight) {
-		setText(helper.setRightSection(getText(), newRight));
-	}
+    /**
+     * set a right string value for this element
+     */
+    @Override
+    public void setRight(String newRight) {
+        setText(helper.setRightSection(getText(), newRight));
+    }
 }

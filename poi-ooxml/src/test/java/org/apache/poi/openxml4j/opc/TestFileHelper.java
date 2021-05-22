@@ -30,27 +30,27 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestFileHelper {
 
-	/**
-	 * TODO - use simple JDK methods on {@link File} instead:<br>
-	 * {@link File#getParentFile()} instead of {@link FileHelper#getDirectory(File)
-	 * {@link File#getName()} instead of {@link FileHelper#getFilename(File)
-	 */
+    /**
+     * TODO - use simple JDK methods on {@link File} instead:<br>
+     * {@link File#getParentFile()} instead of {@link FileHelper#getDirectory(File)
+     * {@link File#getName()} instead of {@link FileHelper#getFilename(File)
+     */
     @Test
-	void testGetDirectory() {
-		TreeMap<String, String> expectedValue = new TreeMap<>();
-		expectedValue.put("/dir1/test.doc", "/dir1");
-		expectedValue.put("/dir1/dir2/test.doc.xml", "/dir1/dir2");
+    void testGetDirectory() {
+        TreeMap<String, String> expectedValue = new TreeMap<>();
+        expectedValue.put("/dir1/test.doc", "/dir1");
+        expectedValue.put("/dir1/dir2/test.doc.xml", "/dir1/dir2");
 
-		for (String filename : expectedValue.keySet()) {
-			File f1 = new File(expectedValue.get(filename));
-			File f2 = FileHelper.getDirectory(new File(filename));
+        for (String filename : expectedValue.keySet()) {
+            File f1 = new File(expectedValue.get(filename));
+            File f2 = FileHelper.getDirectory(new File(filename));
 
-//			if (false) {
-//				// YK: The original version asserted expected values against File#getAbsolutePath():
-//				assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
-//				// This comparison is platform dependent. A better approach is below
-//			}
-			assertEquals(f1, f2);
-		}
-	}
+//          if (false) {
+//              // YK: The original version asserted expected values against File#getAbsolutePath():
+//              assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
+//              // This comparison is platform dependent. A better approach is below
+//          }
+            assertEquals(f1, f2);
+        }
+    }
 }

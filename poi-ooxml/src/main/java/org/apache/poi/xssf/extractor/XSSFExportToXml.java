@@ -461,14 +461,14 @@ public class XSSFExportToXml implements Comparator<String>{
         return indexMap.getOrDefault(withPath, -1);
     }
 
-	private Node getNameOrRefElement(Node node) {
-		Node returnNode = node.getAttributes().getNamedItem("ref");
+    private Node getNameOrRefElement(Node node) {
+        Node returnNode = node.getAttributes().getNamedItem("ref");
         if(returnNode != null) {
             return returnNode;
-		}
-		
+        }
+        
         return node.getAttributes().getNamedItem("name");
-	}
+    }
 
     private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
         String elementNameWithoutNamespace = removeNamespace(elementName);

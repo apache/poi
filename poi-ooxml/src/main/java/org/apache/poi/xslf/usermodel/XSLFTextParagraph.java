@@ -717,18 +717,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             try {
                 cur.push();
                 if ((cur.toChild(nsPML, "txStyles") && cur.toChild(nsPML, defaultStyleSelector)) ||
-            		(cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
+                    (cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
                     while (level >= 0) {
                         cur.push();
-                    	if (cur.toChild(XSLFRelation.NS_DRAWINGML, "lvl" +(level+1)+ "pPr")) {
-                    		return (CTTextParagraphProperties)cur.getObject();
-                    	}
-                    	cur.pop();
-                    	level--;
+                        if (cur.toChild(XSLFRelation.NS_DRAWINGML, "lvl" +(level+1)+ "pPr")) {
+                            return (CTTextParagraphProperties)cur.getObject();
+                        }
+                        cur.pop();
+                        level--;
                     }
                 }
             } finally {
-            	cur.dispose();
+                cur.dispose();
             }
         }
 

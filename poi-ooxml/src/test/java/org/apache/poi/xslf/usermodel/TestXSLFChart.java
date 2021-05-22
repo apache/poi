@@ -147,22 +147,22 @@ class TestXSLFChart {
         pptx.close();
     }
 
-	private void fillChartData(XSLFChart chart, XDDFChartData data) {
-	    final int numOfPoints = 3;
+    private void fillChartData(XSLFChart chart, XDDFChartData data) {
+        final int numOfPoints = 3;
         final String[] categories = {"First", "Second", "Third"};
         final Integer[] values = {1, 3, 4};
 
         final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
         final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
 
-		final XDDFChartData.Series series = data.getSeries(0);
-		final XDDFDataSource<?> categoryData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
+        final XDDFChartData.Series series = data.getSeries(0);
+        final XDDFDataSource<?> categoryData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
         final XDDFNumericalDataSource<Integer> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
         series.replaceData(categoryData, valuesData);
         final String title = "Apache POI";
         series.setTitle(title, chart.setSheetTitle(title, 0));
         chart.plot(data);
-	}
+    }
 
     private XSLFChart findChart(XSLFSlide slide) {
         // find chart in the slide
@@ -188,147 +188,147 @@ class TestXSLFChart {
         assertEquals(1, data.size());
 
         XDDFChartData firstSeries = data.get(0);
-		assertNotNull(firstSeries);
-		if (firstSeries instanceof XDDFScatterChartData) {
+        assertNotNull(firstSeries);
+        if (firstSeries instanceof XDDFScatterChartData) {
             assertNull(firstSeries.getCategoryAxis());
             assertEquals(2, firstSeries.getValueAxes().size());
             checkAxisOperations(firstSeries.getValueAxes().get(0));
             checkAxisOperations(firstSeries.getValueAxes().get(1));
-		} else if (!(firstSeries instanceof XDDFPieChartData)) {
-			assertNotNull(firstSeries.getCategoryAxis());
-			assertEquals(1, firstSeries.getValueAxes().size());
-			checkAxisOperations(firstSeries.getValueAxes().get(0));
-		}
+        } else if (!(firstSeries instanceof XDDFPieChartData)) {
+            assertNotNull(firstSeries.getCategoryAxis());
+            assertEquals(1, firstSeries.getValueAxes().size());
+            checkAxisOperations(firstSeries.getValueAxes().get(0));
+        }
 
         return data;
     }
 
-	private void checkLegendOperations(XSLFChart chart) {
-		XDDFChartLegend legend = chart.getOrAddLegend();
+    private void checkLegendOperations(XSLFChart chart) {
+        XDDFChartLegend legend = chart.getOrAddLegend();
         assertFalse(legend.isOverlay());
-		legend.setOverlay(true);
+        legend.setOverlay(true);
         assertTrue(legend.isOverlay());
-		legend.setPosition(LegendPosition.TOP_RIGHT);
-		assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
+        legend.setPosition(LegendPosition.TOP_RIGHT);
+        assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
 
-		XDDFManualLayout layout = legend.getOrAddManualLayout();
-		assertNotNull(layout.getTarget());
-		assertNotNull(layout.getXMode());
-		assertNotNull(layout.getYMode());
-		assertNotNull(layout.getHeightMode());
-		assertNotNull(layout.getWidthMode());
-		/*
-		 * According to interface, 0.0 should be returned for
-		 * uninitialized double properties.
-		 */
+        XDDFManualLayout layout = legend.getOrAddManualLayout();
+        assertNotNull(layout.getTarget());
+        assertNotNull(layout.getXMode());
+        assertNotNull(layout.getYMode());
+        assertNotNull(layout.getHeightMode());
+        assertNotNull(layout.getWidthMode());
+        /*
+         * According to interface, 0.0 should be returned for
+         * uninitialized double properties.
+         */
         assertEquals(0.0, layout.getX(), 0.0);
         assertEquals(0.0, layout.getY(), 0.0);
         assertEquals(0.0, layout.getWidthRatio(), 0.0);
         assertEquals(0.0, layout.getHeightRatio(), 0.0);
 
-		final double newRatio = 1.1;
-		final double newCoordinate = 0.3;
-		final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
-		final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
+        final double newRatio = 1.1;
+        final double newCoordinate = 0.3;
+        final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
+        final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
 
-		layout.setWidthRatio(newRatio);
+        layout.setWidthRatio(newRatio);
         assertEquals(layout.getWidthRatio(), newRatio, 0.0);
 
-		layout.setHeightRatio(newRatio);
+        layout.setHeightRatio(newRatio);
         assertEquals(layout.getHeightRatio(), newRatio, 0.0);
 
-		layout.setX(newCoordinate);
+        layout.setX(newCoordinate);
         assertEquals(layout.getX(), newCoordinate, 0.0);
 
-		layout.setY(newCoordinate);
+        layout.setY(newCoordinate);
         assertEquals(layout.getY(), newCoordinate, 0.0);
 
-		layout.setXMode(nonDefaultMode);
+        layout.setXMode(nonDefaultMode);
         assertSame(layout.getXMode(), nonDefaultMode);
 
-		layout.setYMode(nonDefaultMode);
+        layout.setYMode(nonDefaultMode);
         assertSame(layout.getYMode(), nonDefaultMode);
 
-		layout.setWidthMode(nonDefaultMode);
+        layout.setWidthMode(nonDefaultMode);
         assertSame(layout.getWidthMode(), nonDefaultMode);
 
-		layout.setHeightMode(nonDefaultMode);
+        layout.setHeightMode(nonDefaultMode);
         assertSame(layout.getHeightMode(), nonDefaultMode);
 
-		layout.setTarget(nonDefaultTarget);
+        layout.setTarget(nonDefaultTarget);
         assertSame(layout.getTarget(), nonDefaultTarget);
-	}
+    }
 
-	private void checkAxisOperations(XDDFValueAxis axis) {
-		axis.setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
-		assertEquals(AxisCrossBetween.MIDPOINT_CATEGORY, axis.getCrossBetween());
+    private void checkAxisOperations(XDDFValueAxis axis) {
+        axis.setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
+        assertEquals(AxisCrossBetween.MIDPOINT_CATEGORY, axis.getCrossBetween());
 
-		axis.setCrosses(AxisCrosses.AUTO_ZERO);
-		assertEquals(AxisCrosses.AUTO_ZERO, axis.getCrosses());
+        axis.setCrosses(AxisCrosses.AUTO_ZERO);
+        assertEquals(AxisCrosses.AUTO_ZERO, axis.getCrosses());
 
-		final String numberFormat = "General";
-		axis.setNumberFormat(numberFormat);
-		assertEquals(numberFormat, axis.getNumberFormat());
+        final String numberFormat = "General";
+        axis.setNumberFormat(numberFormat);
+        assertEquals(numberFormat, axis.getNumberFormat());
 
-		axis.setPosition(AxisPosition.BOTTOM);
-		assertEquals(AxisPosition.BOTTOM, axis.getPosition());
+        axis.setPosition(AxisPosition.BOTTOM);
+        assertEquals(AxisPosition.BOTTOM, axis.getPosition());
 
-		axis.setMajorTickMark(AxisTickMark.NONE);
-		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.NONE);
+        assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.IN);
-		assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.IN);
+        assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.OUT);
-		assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.OUT);
+        assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.CROSS);
-		assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.CROSS);
+        assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.NONE);
-		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.NONE);
+        assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.IN);
-		assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.IN);
+        assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.OUT);
-		assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.OUT);
+        assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.CROSS);
-		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.CROSS);
+        assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
 
-		axis.setVisible(true);
-		assertTrue(axis.isVisible());
+        axis.setVisible(true);
+        assertTrue(axis.isVisible());
 
-		axis.setVisible(false);
-		assertFalse(axis.isVisible());
+        axis.setVisible(false);
+        assertFalse(axis.isVisible());
 
-		final double EPSILON = 1E-7;
-		axis.setLogBase(Math.E);
-		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
+        final double EPSILON = 1E-7;
+        axis.setLogBase(Math.E);
+        assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
 
-		final double newValue = 10.0;
+        final double newValue = 10.0;
 
-		axis.setMinimum(newValue);
-		assertTrue(Math.abs(axis.getMinimum() - newValue) < EPSILON);
+        axis.setMinimum(newValue);
+        assertTrue(Math.abs(axis.getMinimum() - newValue) < EPSILON);
 
-		axis.setMaximum(newValue);
-		assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
+        axis.setMaximum(newValue);
+        assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
 
-		IllegalArgumentException iae = null;
-		try {
-			axis.setLogBase(0.0);
-		} catch (IllegalArgumentException e) {
-			iae = e;
-		}
-		assertNotNull(iae);
+        IllegalArgumentException iae = null;
+        try {
+            axis.setLogBase(0.0);
+        } catch (IllegalArgumentException e) {
+            iae = e;
+        }
+        assertNotNull(iae);
 
-		iae = null;
-		try {
-			axis.setLogBase(30000.0);
-		} catch (IllegalArgumentException e) {
-			iae = e;
-		}
-		assertNotNull(iae);
-	}
+        iae = null;
+        try {
+            axis.setLogBase(30000.0);
+        } catch (IllegalArgumentException e) {
+            iae = e;
+        }
+        assertNotNull(iae);
+    }
 }

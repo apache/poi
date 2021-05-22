@@ -36,7 +36,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
  */
 public final class PackagePartCollection implements Serializable {
 
-	private static final long serialVersionUID = 2515031135957635517L;
+    private static final long serialVersionUID = 2515031135957635517L;
 
     /**
      * HashSet use to store this collection part names as string for rule
@@ -44,73 +44,73 @@ public final class PackagePartCollection implements Serializable {
      */
     private final Set<String> registerPartNameStr = new HashSet<>();
 
-	private final TreeMap<String, PackagePart> packagePartLookup =
+    private final TreeMap<String, PackagePart> packagePartLookup =
         new TreeMap<>(PackagePartName::compare);
 
 
-	/**
-	 * Check rule [M1.11]: a package implementer shall neither create nor
-	 * recognize a part with a part name derived from another part name by
-	 * appending segments to it.
-	 *
-	 * @param partName name of part
-	 * @param part part to put
+    /**
+     * Check rule [M1.11]: a package implementer shall neither create nor
+     * recognize a part with a part name derived from another part name by
+     * appending segments to it.
+     *
+     * @param partName name of part
+     * @param part part to put
      * @return the previous value associated with {@code partName}, or
      *         {@code null} if there was no mapping for {@code partName}.
-	 * @exception InvalidOperationException
-	 *                Throws if you try to add a part with a name derived from
-	 *                another part name.
-	 */
-	public PackagePart put(final PackagePartName partName, final PackagePart part) {
-	    final String ppName = partName.getName();
+     * @exception InvalidOperationException
+     *                Throws if you try to add a part with a name derived from
+     *                another part name.
+     */
+    public PackagePart put(final PackagePartName partName, final PackagePart part) {
+        final String ppName = partName.getName();
         final StringBuilder concatSeg = new StringBuilder();
         // split at slash, but keep leading slash
         final String delim = "(?=["+PackagingURIHelper.FORWARD_SLASH_STRING+".])";
-		for (String seg : ppName.split(delim)) {
-			concatSeg.append(seg);
-			if (registerPartNameStr.contains(concatSeg.toString())) {
-				throw new InvalidOperationException(
-					"You can't add a part with a part name derived from another part ! [M1.11]");
-			}
-		}
-		registerPartNameStr.add(ppName);
-		return packagePartLookup.put(ppName, part);
-	}
+        for (String seg : ppName.split(delim)) {
+            concatSeg.append(seg);
+            if (registerPartNameStr.contains(concatSeg.toString())) {
+                throw new InvalidOperationException(
+                    "You can't add a part with a part name derived from another part ! [M1.11]");
+            }
+        }
+        registerPartNameStr.add(ppName);
+        return packagePartLookup.put(ppName, part);
+    }
 
-	public PackagePart remove(PackagePartName key) {
-	    if (key == null) {
-	        return null;
-	    }
+    public PackagePart remove(PackagePartName key) {
+        if (key == null) {
+            return null;
+        }
         final String ppName = key.getName();
-	    PackagePart pp = packagePartLookup.remove(ppName);
-	    if (pp != null) {
-	        this.registerPartNameStr.remove(ppName);
-	    }
-		return pp;
-	}
+        PackagePart pp = packagePartLookup.remove(ppName);
+        if (pp != null) {
+            this.registerPartNameStr.remove(ppName);
+        }
+        return pp;
+    }
 
 
-	/**
-	 * The values themselves should be returned in sorted order. Doing it here
-	 * avoids paying the high cost of Natural Ordering per insertion.
+    /**
+     * The values themselves should be returned in sorted order. Doing it here
+     * avoids paying the high cost of Natural Ordering per insertion.
      * @return unmodifiable collection of parts
-	 */
-	public Collection<PackagePart> sortedValues() {
-	    return Collections.unmodifiableCollection(packagePartLookup.values());
+     */
+    public Collection<PackagePart> sortedValues() {
+        return Collections.unmodifiableCollection(packagePartLookup.values());
 
-	}
+    }
 
-	public boolean containsKey(PackagePartName partName) {
-		return partName != null && packagePartLookup.containsKey(partName.getName());
-	}
+    public boolean containsKey(PackagePartName partName) {
+        return partName != null && packagePartLookup.containsKey(partName.getName());
+    }
 
-	public PackagePart get(PackagePartName partName) {
-		return partName == null ? null : packagePartLookup.get(partName.getName());
-	}
+    public PackagePart get(PackagePartName partName) {
+        return partName == null ? null : packagePartLookup.get(partName.getName());
+    }
 
-	public int size() {
-		return packagePartLookup.size();
-	}
+    public int size() {
+        return packagePartLookup.size();
+    }
 
 
 

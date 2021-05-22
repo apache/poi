@@ -43,63 +43,63 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SingleXmlCellsDocumen
 public class SingleXmlCells extends POIXMLDocumentPart {
 
 
-	private CTSingleXmlCells singleXMLCells;
+    private CTSingleXmlCells singleXMLCells;
 
-	public SingleXmlCells() {
-		super();
-		singleXMLCells = CTSingleXmlCells.Factory.newInstance();
+    public SingleXmlCells() {
+        super();
+        singleXMLCells = CTSingleXmlCells.Factory.newInstance();
 
-	}
+    }
 
-	/**
-	 * @since POI 3.14-Beta1
-	 */
-	public SingleXmlCells(PackagePart part) throws IOException {
-		super(part);
-		readFrom(part.getInputStream());
-	}
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public SingleXmlCells(PackagePart part) throws IOException {
+        super(part);
+        readFrom(part.getInputStream());
+    }
 
-	public void readFrom(InputStream is) throws IOException {
-		try {
-			SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
-			singleXMLCells = doc.getSingleXmlCells();
-		} catch (XmlException e) {
-			throw new IOException(e.getLocalizedMessage());
-		}
-	}
+    public void readFrom(InputStream is) throws IOException {
+        try {
+            SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            singleXMLCells = doc.getSingleXmlCells();
+        } catch (XmlException e) {
+            throw new IOException(e.getLocalizedMessage());
+        }
+    }
 
-	public XSSFSheet getXSSFSheet(){
-		return (XSSFSheet) getParent();
-	}
+    public XSSFSheet getXSSFSheet(){
+        return (XSSFSheet) getParent();
+    }
 
-	protected void writeTo(OutputStream out) throws IOException {
-		SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.newInstance();
-		doc.setSingleXmlCells(singleXMLCells);
-		doc.save(out, DEFAULT_XML_OPTIONS);
-	}
+    protected void writeTo(OutputStream out) throws IOException {
+        SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.newInstance();
+        doc.setSingleXmlCells(singleXMLCells);
+        doc.save(out, DEFAULT_XML_OPTIONS);
+    }
 
-	@Override
-	protected void commit() throws IOException {
-		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		writeTo(out);
-		out.close();
-	}
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
+    }
 
-	public CTSingleXmlCells getCTSingleXMLCells(){
-		return singleXMLCells;
-	}
+    public CTSingleXmlCells getCTSingleXMLCells(){
+        return singleXMLCells;
+    }
 
-	/**
-	 *
-	 * @return all the SimpleXmlCell contained in this SingleXmlCells element
-	 */
-	public List<XSSFSingleXmlCell> getAllSimpleXmlCell(){
-		List<XSSFSingleXmlCell> list = new Vector<>();
+    /**
+     *
+     * @return all the SimpleXmlCell contained in this SingleXmlCells element
+     */
+    public List<XSSFSingleXmlCell> getAllSimpleXmlCell(){
+        List<XSSFSingleXmlCell> list = new Vector<>();
 
-		for(CTSingleXmlCell singleXmlCell: singleXMLCells.getSingleXmlCellArray()){
-			list.add(new XSSFSingleXmlCell(singleXmlCell,this));
-		}
-		return list;
-	}
+        for(CTSingleXmlCell singleXmlCell: singleXMLCells.getSingleXmlCellArray()){
+            list.add(new XSSFSingleXmlCell(singleXmlCell,this));
+        }
+        return list;
+    }
 }

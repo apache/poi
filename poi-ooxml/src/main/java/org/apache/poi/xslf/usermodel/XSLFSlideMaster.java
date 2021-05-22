@@ -53,7 +53,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
 @Beta
  public class XSLFSlideMaster extends XSLFSheet
  implements MasterSheet<XSLFShape,XSLFTextParagraph> {
-	private CTSlideMaster _slide;
+    private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
 
     /**
@@ -67,9 +67,9 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     }
 
     @Override
-	public CTSlideMaster getXmlObject() {
-		return _slide;
-	}
+    public CTSlideMaster getXmlObject() {
+        return _slide;
+    }
 
     @Override
     protected String getRootElementName(){

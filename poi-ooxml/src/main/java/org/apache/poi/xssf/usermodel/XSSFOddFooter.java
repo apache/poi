@@ -53,10 +53,10 @@ public class XSSFOddFooter extends XSSFHeaderFooter implements Footer{
      */
     @Override
     public void setText(String text) {
-    	if(text == null) {
-    		getHeaderFooter().unsetOddFooter();
-    	} else {
-    		getHeaderFooter().setOddFooter(text);
-    	}
+        if(text == null) {
+            getHeaderFooter().unsetOddFooter();
+        } else {
+            getHeaderFooter().setOddFooter(text);
+        }
     }
 }

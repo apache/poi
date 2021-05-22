@@ -257,7 +257,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
     @Test
     void testBug55814() throws IOException {
-		try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55814.xlsx")) {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55814.xlsx")) {
 
             int oldsheetIndex = wb.getSheetIndex("example");
             Sheet oldsheet = wb.getSheetAt(oldsheetIndex);

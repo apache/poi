@@ -32,30 +32,30 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
  */
 public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarshaller {
 
-	@Override
-	public boolean marshall(PackagePart part, OutputStream out)
-			throws OpenXML4JException {
-		if (!(out instanceof ZipArchiveOutputStream)) {
-			throw new IllegalArgumentException("ZipOutputStream expected!");
-		}
-		ZipArchiveOutputStream zos = (ZipArchiveOutputStream) out;
+    @Override
+    public boolean marshall(PackagePart part, OutputStream out)
+            throws OpenXML4JException {
+        if (!(out instanceof ZipArchiveOutputStream)) {
+            throw new IllegalArgumentException("ZipOutputStream expected!");
+        }
+        ZipArchiveOutputStream zos = (ZipArchiveOutputStream) out;
 
-		// Saving the part in the zip file
-		ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper
-				.getZipItemNameFromOPCName(part.getPartName().getURI()
-						.toString()));
-		try {
-			// Save in ZIP
-			zos.putArchiveEntry(ctEntry); // Add entry in ZIP
-			try {
-				super.marshall(part, out); // Marshall the properties inside a XML
-				// Document
-				return StreamHelper.saveXmlInStream(xmlDoc, out);
-			} finally {
-				zos.closeArchiveEntry();
-			}
-		} catch (IOException e) {
-			throw new OpenXML4JException(e.getLocalizedMessage(), e);
-		}
-	}
+        // Saving the part in the zip file
+        ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper
+                .getZipItemNameFromOPCName(part.getPartName().getURI()
+                        .toString()));
+        try {
+            // Save in ZIP
+            zos.putArchiveEntry(ctEntry); // Add entry in ZIP
+            try {
+                super.marshall(part, out); // Marshall the properties inside a XML
+                // Document
+                return StreamHelper.saveXmlInStream(xmlDoc, out);
+            } finally {
+                zos.closeArchiveEntry();
+            }
+        } catch (IOException e) {
+            throw new OpenXML4JException(e.getLocalizedMessage(), e);
+        }
+    }
 }

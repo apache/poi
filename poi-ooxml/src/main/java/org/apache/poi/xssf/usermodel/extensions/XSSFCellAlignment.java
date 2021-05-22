@@ -192,11 +192,11 @@ public class XSSFCellAlignment {
     }
 
     public boolean getShrinkToFit() {
-    	return cellAlignement.getShrinkToFit();
+        return cellAlignement.getShrinkToFit();
     }
 
     public void setShrinkToFit(boolean shrink) {
-    	cellAlignement.setShrinkToFit(shrink);
+        cellAlignement.setShrinkToFit(shrink);
     }
 
     /**

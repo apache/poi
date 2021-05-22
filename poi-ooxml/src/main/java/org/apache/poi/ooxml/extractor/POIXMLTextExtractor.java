@@ -28,72 +28,72 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 public interface POIXMLTextExtractor extends POITextExtractor {
-	/**
-	 * Returns the core document properties
-	 *
-	 * @return the core document properties
-	 */
-	default CoreProperties getCoreProperties() {
-		 return getDocument().getProperties().getCoreProperties();
-	}
-	/**
-	 * Returns the extended document properties
-	 *
-	 * @return the extended document properties
-	 */
-	default ExtendedProperties getExtendedProperties() {
-		return getDocument().getProperties().getExtendedProperties();
-	}
-	/**
-	 * Returns the custom document properties
-	 *
-	 * @return the custom document properties
-	 */
-	default CustomProperties getCustomProperties() {
-		return getDocument().getProperties().getCustomProperties();
-	}
+    /**
+     * Returns the core document properties
+     *
+     * @return the core document properties
+     */
+    default CoreProperties getCoreProperties() {
+         return getDocument().getProperties().getCoreProperties();
+    }
+    /**
+     * Returns the extended document properties
+     *
+     * @return the extended document properties
+     */
+    default ExtendedProperties getExtendedProperties() {
+        return getDocument().getProperties().getExtendedProperties();
+    }
+    /**
+     * Returns the custom document properties
+     *
+     * @return the custom document properties
+     */
+    default CustomProperties getCustomProperties() {
+        return getDocument().getProperties().getCustomProperties();
+    }
 
-	/**
-	 * Returns opened document
-	 *
-	 * @return the opened document
-	 */
-	@Override
-	POIXMLDocument getDocument();
+    /**
+     * Returns opened document
+     *
+     * @return the opened document
+     */
+    @Override
+    POIXMLDocument getDocument();
 
-	/**
-	 * Returns the opened OPCPackage that contains the document
-	 *
-	 * @return the opened OPCPackage
-	 */
-	default OPCPackage getPackage() {
-		POIXMLDocument doc = getDocument();
-	   	return doc != null ? doc.getPackage() : null;
-	}
+    /**
+     * Returns the opened OPCPackage that contains the document
+     *
+     * @return the opened OPCPackage
+     */
+    default OPCPackage getPackage() {
+        POIXMLDocument doc = getDocument();
+        return doc != null ? doc.getPackage() : null;
+    }
 
-	/**
-	 * Returns an OOXML properties text extractor for the
-	 *  document properties metadata, such as title and author.
-	 */
-	@Override
+    /**
+     * Returns an OOXML properties text extractor for the
+     *  document properties metadata, such as title and author.
+     */
+    @Override
     default POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
-		return new POIXMLPropertiesTextExtractor(getDocument());
-	}
+        return new POIXMLPropertiesTextExtractor(getDocument());
+    }
 
-	@Override
-	default void close() throws IOException {
-		// e.g. XSSFEventBaseExcelExtractor passes a null-document
-		if (isCloseFilesystem()) {
-			@SuppressWarnings("resource")
+    @Override
+    default void close() throws IOException {
+        // e.g. XSSFEventBaseExcelExtractor passes a null-document
+        if (isCloseFilesystem()) {
+            @SuppressWarnings("resource")
             OPCPackage pkg = getPackage();
-			if (pkg != null) {
-			    // revert the package to not re-write the file, which is very likely not wanted for a TextExtractor!
-				pkg.revert();
-			}
-		}
-	}
+            if (pkg != null) {
+                // revert the package to not re-write the file, which is very likely not wanted for a TextExtractor!
+                pkg.revert();
+            }
+        }
+    }
 
-	default void checkMaxTextSize(CharSequence text, String string) {
+    default void checkMaxTextSize(CharSequence text, String string) {
         if(string == null) {
             return;
         }

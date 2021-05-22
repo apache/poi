@@ -32,14 +32,14 @@ import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
  */
 public interface PartUnmarshaller {
 
-	/**
-	 * Save the content of the package in the stream
-	 *
-	 * @param in The input stream from which the part will be read.
-	 * @return The part freshly read from the input stream.
-	 * @throws InvalidFormatException If the data can not be interpreted correctly
-	 * @throws IOException if reading from the stream fails
-	 */
-	public PackagePart unmarshall(UnmarshallContext context, InputStream in)
-			throws InvalidFormatException, IOException;
+    /**
+     * Save the content of the package in the stream
+     *
+     * @param in The input stream from which the part will be read.
+     * @return The part freshly read from the input stream.
+     * @throws InvalidFormatException If the data can not be interpreted correctly
+     * @throws IOException if reading from the stream fails
+     */
+    public PackagePart unmarshall(UnmarshallContext context, InputStream in)
+            throws InvalidFormatException, IOException;
 }

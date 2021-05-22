@@ -24,7 +24,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
  * Tests XSSFFormulaEvaluator for its handling of cell formula circular references.
  */
 public final class TestXSSFCircularReferences extends BaseTestCircularReferences {
-	public TestXSSFCircularReferences() {
+    public TestXSSFCircularReferences() {
         super(XSSFITestDataProvider.instance);
     }
 }

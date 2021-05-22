@@ -61,7 +61,7 @@ public final class TestXSSFReader {
 
     @Test
     void testGetBits() throws Exception {
-		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
 
@@ -72,11 +72,11 @@ public final class TestXSSFReader {
             assertNotNull(r.getSharedStringsTable());
             assertNotNull(r.getStylesTable());
         }
-	}
+    }
 
     @Test
-	void testStyles() throws Exception {
-		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
+    void testStyles() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
 
@@ -90,10 +90,10 @@ public final class TestXSSFReader {
             assertNotNull(r.getStylesData());
             assertNotNull(r.getThemesData());
         }
-	}
+    }
 
     @Test
-	void testStrings() throws Exception {
+    void testStrings() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -101,10 +101,10 @@ public final class TestXSSFReader {
             assertEquals(11, r.getSharedStringsTable().getSharedStringItems().size());
             assertEquals("Test spreadsheet", r.getSharedStringsTable().getItemAt(0).toString());
         }
-	}
+    }
 
     @Test
-	void testSheets() throws Exception {
+    void testSheets() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -131,14 +131,14 @@ public final class TestXSSFReader {
             }
             assertEquals(3, count);
         }
-	}
+    }
 
-	/**
-	 * Check that the sheet iterator returns sheets in the logical order
-	 * (as they are defined in the workbook.xml)
-	 */
+    /**
+     * Check that the sheet iterator returns sheets in the logical order
+     * (as they are defined in the workbook.xml)
+     */
     @Test
-	void testOrderOfSheets() throws Exception {
+    void testOrderOfSheets() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"))) {
 
             XSSFReader r = new XSSFReader(pkg);
@@ -157,10 +157,10 @@ public final class TestXSSFReader {
             }
             assertEquals(4, count);
         }
-	}
+    }
 
     @Test
-	void testComments() throws Exception {
+    void testComments() throws Exception {
       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("comments.xlsx")) {
           XSSFReader r = new XSSFReader(pkg);
           XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
@@ -182,7 +182,7 @@ public final class TestXSSFReader {
           }
           assertEquals(3, count);
       }
-	}
+    }
 
    /**
     * Iterating over a workbook with chart sheets in it, using the

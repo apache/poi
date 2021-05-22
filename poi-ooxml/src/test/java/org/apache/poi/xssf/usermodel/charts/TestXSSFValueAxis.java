@@ -32,22 +32,22 @@ import org.junit.jupiter.api.Test;
 
 public final class TestXSSFValueAxis {
 
-	@Test
-	void testAccessMethods() throws Exception {
-		try (XSSFWorkbook wb = new XSSFWorkbook()) {
-			XSSFSheet sheet = wb.createSheet();
-			XSSFDrawing drawing = sheet.createDrawingPatriarch();
-			XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-			XSSFChart chart = drawing.createChart(anchor);
-			XDDFValueAxis axis = chart.createValueAxis(AxisPosition.BOTTOM);
+    @Test
+    void testAccessMethods() throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+            XSSFChart chart = drawing.createChart(anchor);
+            XDDFValueAxis axis = chart.createValueAxis(AxisPosition.BOTTOM);
 
-			axis.setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
-			assertEquals(axis.getCrossBetween(), AxisCrossBetween.MIDPOINT_CATEGORY);
+            axis.setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
+            assertEquals(axis.getCrossBetween(), AxisCrossBetween.MIDPOINT_CATEGORY);
 
-			axis.setCrosses(AxisCrosses.AUTO_ZERO);
-			assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
 
-			assertEquals(chart.getAxes().size(), 1);
-		}
-	}
+            assertEquals(chart.getAxes().size(), 1);
+        }
+    }
 }

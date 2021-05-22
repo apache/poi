@@ -67,14 +67,14 @@ public class XSSFEvenFooter extends XSSFHeaderFooter implements Footer{
      */
     @Override
     public void setText(String text) {
-    	if(text == null) {
-    		getHeaderFooter().unsetEvenFooter();
-    		if (!getHeaderFooter().isSetEvenHeader()) {
-    		    getHeaderFooter().unsetDifferentOddEven();
-    		}
-    	} else {
-    		getHeaderFooter().setEvenFooter(text);
-    	}
+        if(text == null) {
+            getHeaderFooter().unsetEvenFooter();
+            if (!getHeaderFooter().isSetEvenHeader()) {
+                getHeaderFooter().unsetDifferentOddEven();
+            }
+        } else {
+            getHeaderFooter().setEvenFooter(text);
+        }
     }
 
 }

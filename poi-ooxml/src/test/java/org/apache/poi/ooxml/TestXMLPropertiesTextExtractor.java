@@ -34,74 +34,74 @@ public final class TestXMLPropertiesTextExtractor {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples _slSamples = POIDataSamples.getSlideShowInstance();
 
-	@Test
-	void testGetFromMainExtractor() throws Exception {
-		OPCPackage pkg = PackageHelper.open(_ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm"));
+    @Test
+    void testGetFromMainExtractor() throws Exception {
+        OPCPackage pkg = PackageHelper.open(_ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm"));
 
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
-		XSSFExcelExtractor ext = new XSSFExcelExtractor(wb);
-		POIXMLPropertiesTextExtractor textExt = ext.getMetadataTextExtractor();
+        XSSFExcelExtractor ext = new XSSFExcelExtractor(wb);
+        POIXMLPropertiesTextExtractor textExt = ext.getMetadataTextExtractor();
 
-		// Check basics
-		assertNotNull(textExt);
-		assertTrue(textExt.getText().length() > 0);
+        // Check basics
+        assertNotNull(textExt);
+        assertTrue(textExt.getText().length() > 0);
 
-		// Check some of the content
-		String text = textExt.getText();
-		String cText = textExt.getCorePropertiesText();
+        // Check some of the content
+        String text = textExt.getText();
+        String cText = textExt.getCorePropertiesText();
 
-		assertContains(text, "LastModifiedBy = Yury Batrakov");
-		assertContains(cText, "LastModifiedBy = Yury Batrakov");
+        assertContains(text, "LastModifiedBy = Yury Batrakov");
+        assertContains(cText, "LastModifiedBy = Yury Batrakov");
 
-		textExt.close();
-		ext.close();
-	}
+        textExt.close();
+        ext.close();
+    }
 
-	@Test
-	void testCore() throws Exception {
-		OPCPackage pkg = PackageHelper.open(
+    @Test
+    void testCore() throws Exception {
+        OPCPackage pkg = PackageHelper.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
-		);
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        );
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
-		POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
-		ext.getText();
+        POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
+        ext.getText();
 
-		// Now check
-		String text = ext.getText();
-		String cText = ext.getCorePropertiesText();
+        // Now check
+        String text = ext.getText();
+        String cText = ext.getCorePropertiesText();
 
-		assertContains(text, "LastModifiedBy = Yury Batrakov");
-		assertContains(cText, "LastModifiedBy = Yury Batrakov");
+        assertContains(text, "LastModifiedBy = Yury Batrakov");
+        assertContains(cText, "LastModifiedBy = Yury Batrakov");
 
-		ext.close();
-	}
+        ext.close();
+    }
 
-	@Test
-	void testExtended() throws Exception {
-		OPCPackage pkg = OPCPackage.open(
+    @Test
+    void testExtended() throws Exception {
+        OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
-		);
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        );
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
-		POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
-		ext.getText();
+        POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
+        ext.getText();
 
-		// Now check
-		String text = ext.getText();
-		String eText = ext.getExtendedPropertiesText();
+        // Now check
+        String text = ext.getText();
+        String eText = ext.getExtendedPropertiesText();
 
-		assertContains(text, "Application = Microsoft Excel");
-		assertContains(text, "Company = Mera");
-		assertContains(eText, "Application = Microsoft Excel");
-		assertContains(eText, "Company = Mera");
+        assertContains(text, "Application = Microsoft Excel");
+        assertContains(text, "Company = Mera");
+        assertContains(eText, "Application = Microsoft Excel");
+        assertContains(eText, "Company = Mera");
 
-		ext.close();
-	}
+        ext.close();
+    }
 
-	@Test
-	void testCustom() throws Exception {
+    @Test
+    void testCustom() throws Exception {
       OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
       );
@@ -118,14 +118,14 @@ public final class TestXMLPropertiesTextExtractor {
       assertContains(cText, "description = another value");
 
       ext.close();
-	}
+    }
 
-	/**
-	 * Bug #49386 - some properties, especially
-	 *  dates can be null
-	 */
-	@Test
-	void testWithSomeNulls() throws Exception {
+    /**
+     * Bug #49386 - some properties, especially
+     *  dates can be null
+     */
+    @Test
+    void testWithSomeNulls() throws Exception {
       OPCPackage pkg = OPCPackage.open(
             _slSamples.openResourceAsStream("49386-null_dates.pptx")
       );
@@ -140,5 +140,5 @@ public final class TestXMLPropertiesTextExtractor {
       assertContains(text, "LastModifiedBy = IT Client Services");
 
       ext.close();
-	}
+    }
 }

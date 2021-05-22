@@ -39,39 +39,39 @@ import org.w3c.dom.Document;
 public class ZipContentTypeManager extends ContentTypeManager {
     private static final Logger LOG = LogManager.getLogger(ZipContentTypeManager.class);
 
-	/**
-	 * Delegate constructor to the super constructor.
-	 *
-	 * @param in
-	 *            The input stream to parse to fill internal content type
-	 *            collections.
-	 * @throws InvalidFormatException
-	 *             If the content types part content is not valid.
-	 */
-	public ZipContentTypeManager(InputStream in, OPCPackage pkg)
-			throws InvalidFormatException {
-		super(in, pkg);
-	}
+    /**
+     * Delegate constructor to the super constructor.
+     *
+     * @param in
+     *            The input stream to parse to fill internal content type
+     *            collections.
+     * @throws InvalidFormatException
+     *             If the content types part content is not valid.
+     */
+    public ZipContentTypeManager(InputStream in, OPCPackage pkg)
+            throws InvalidFormatException {
+        super(in, pkg);
+    }
 
-	@SuppressWarnings("resource")
+    @SuppressWarnings("resource")
     @Override
-	public boolean saveImpl(Document content, OutputStream out) {
-		final ZipArchiveOutputStream zos = (out instanceof ZipArchiveOutputStream)
-				? (ZipArchiveOutputStream) out : new ZipArchiveOutputStream(out);
+    public boolean saveImpl(Document content, OutputStream out) {
+        final ZipArchiveOutputStream zos = (out instanceof ZipArchiveOutputStream)
+                ? (ZipArchiveOutputStream) out : new ZipArchiveOutputStream(out);
 
-		ZipArchiveEntry partEntry = new ZipArchiveEntry(CONTENT_TYPES_PART_NAME);
-		try {
-			// Referenced in ZIP
-			zos.putArchiveEntry(partEntry);
-			try {
-				// Saving data in the ZIP file
-				return StreamHelper.saveXmlInStream(content, zos);
-			} finally {
-				zos.closeArchiveEntry();
-			}
-		} catch (IOException ioe) {
-			LOG.atError().withThrowable(ioe).log("Cannot write: " + CONTENT_TYPES_PART_NAME + " in Zip !");
-			return false;
-		}
-	}
+        ZipArchiveEntry partEntry = new ZipArchiveEntry(CONTENT_TYPES_PART_NAME);
+        try {
+            // Referenced in ZIP
+            zos.putArchiveEntry(partEntry);
+            try {
+                // Saving data in the ZIP file
+                return StreamHelper.saveXmlInStream(content, zos);
+            } finally {
+                zos.closeArchiveEntry();
+            }
+        } catch (IOException ioe) {
+            LOG.atError().withThrowable(ioe).log("Cannot write: " + CONTENT_TYPES_PART_NAME + " in Zip !");
+            return false;
+        }
+    }
 }

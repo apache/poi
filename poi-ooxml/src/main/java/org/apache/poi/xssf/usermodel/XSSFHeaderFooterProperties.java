@@ -29,85 +29,85 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  * </p>
  */
 public class XSSFHeaderFooterProperties {
-	private final CTHeaderFooter headerFooter;
-
-	/**
-	 * Create an instance of XSSFHeaderFooterProperties from the supplied XML bean
-	 */
-	public XSSFHeaderFooterProperties(CTHeaderFooter headerFooter) {
-        this.headerFooter = headerFooter;
-	}
-
-	/**
-	 * Returns the underlying CTHeaderFooter xml bean
-	 *
-	 * @return the underlying CTHeaderFooter xml bean
-	 */
-    @Internal
-	public CTHeaderFooter getHeaderFooter() {
-		return this.headerFooter;
-	}
+    private final CTHeaderFooter headerFooter;
 
     /**
-	 * returns alignWithMargins attribute
-	 */
-	public boolean getAlignWithMargins() {
-	  return getHeaderFooter().isSetAlignWithMargins() && getHeaderFooter().getAlignWithMargins();
-	}
+     * Create an instance of XSSFHeaderFooterProperties from the supplied XML bean
+     */
+    public XSSFHeaderFooterProperties(CTHeaderFooter headerFooter) {
+        this.headerFooter = headerFooter;
+    }
 
-	/**
-	 * returns differentFirst attribute
-	 */
-	public boolean getDifferentFirst() {
-	    return getHeaderFooter().isSetDifferentFirst() && getHeaderFooter().getDifferentFirst();
-	}
+    /**
+     * Returns the underlying CTHeaderFooter xml bean
+     *
+     * @return the underlying CTHeaderFooter xml bean
+     */
+    @Internal
+    public CTHeaderFooter getHeaderFooter() {
+        return this.headerFooter;
+    }
 
-	/**
-	 * returns differentOddEven attribute
-	 */
-	public boolean getDifferentOddEven() {
-	    return getHeaderFooter().isSetDifferentOddEven() && getHeaderFooter().getDifferentOddEven();
-	}
+    /**
+     * returns alignWithMargins attribute
+     */
+    public boolean getAlignWithMargins() {
+      return getHeaderFooter().isSetAlignWithMargins() && getHeaderFooter().getAlignWithMargins();
+    }
 
-	/**
-	 * returns scaleWithDoc attribute
-	 */
-	public boolean getScaleWithDoc() {
-	    return getHeaderFooter().isSetScaleWithDoc() && getHeaderFooter().getScaleWithDoc();
-	}
+    /**
+     * returns differentFirst attribute
+     */
+    public boolean getDifferentFirst() {
+        return getHeaderFooter().isSetDifferentFirst() && getHeaderFooter().getDifferentFirst();
+    }
 
-	/**
-	 * set alignWithMargins attribute
-	 */
-	public void setAlignWithMargins(boolean flag) {
-	    getHeaderFooter().setAlignWithMargins(flag);
-	}
+    /**
+     * returns differentOddEven attribute
+     */
+    public boolean getDifferentOddEven() {
+        return getHeaderFooter().isSetDifferentOddEven() && getHeaderFooter().getDifferentOddEven();
+    }
+
+    /**
+     * returns scaleWithDoc attribute
+     */
+    public boolean getScaleWithDoc() {
+        return getHeaderFooter().isSetScaleWithDoc() && getHeaderFooter().getScaleWithDoc();
+    }
+
+    /**
+     * set alignWithMargins attribute
+     */
+    public void setAlignWithMargins(boolean flag) {
+        getHeaderFooter().setAlignWithMargins(flag);
+    }
 
     /**
      * set differentFirst attribute
      */
-	public void setDifferentFirst(boolean flag) {
+    public void setDifferentFirst(boolean flag) {
         getHeaderFooter().setDifferentFirst(flag);
     }
 
     /**
      * set differentOddEven attribute
      */
-	public void setDifferentOddEven(boolean flag) {
+    public void setDifferentOddEven(boolean flag) {
         getHeaderFooter().setDifferentOddEven(flag);
     }
 
     /**
      * set scaleWithDoc attribute
      */
-	public void setScaleWithDoc(boolean flag) {
+    public void setScaleWithDoc(boolean flag) {
         getHeaderFooter().setScaleWithDoc(flag);
     }
 
     /**
      * remove alignWithMargins attribute
      */
-	public void removeAlignWithMargins() {
+    public void removeAlignWithMargins() {
         if (getHeaderFooter().isSetAlignWithMargins()) {
             getHeaderFooter().unsetAlignWithMargins();
         }
@@ -116,7 +116,7 @@ public class XSSFHeaderFooterProperties {
     /**
      * remove differentFirst attribute
      */
-	public void removeDifferentFirst() {
+    public void removeDifferentFirst() {
         if (getHeaderFooter().isSetDifferentFirst()) {
             getHeaderFooter().unsetDifferentFirst();
         }
@@ -125,7 +125,7 @@ public class XSSFHeaderFooterProperties {
     /**
      * remove differentOddEven attribute
      */
-	public void removeDifferentOddEven() {
+    public void removeDifferentOddEven() {
         if (getHeaderFooter().isSetDifferentOddEven()) {
             getHeaderFooter().unsetDifferentOddEven();
         }
@@ -134,7 +134,7 @@ public class XSSFHeaderFooterProperties {
     /**
      * remove scaleWithDoc attribute
      */
-	public void removeScaleWithDoc() {
+    public void removeScaleWithDoc() {
         if (getHeaderFooter().isSetScaleWithDoc()) {
             getHeaderFooter().unsetScaleWithDoc();
         }

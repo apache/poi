@@ -241,14 +241,14 @@ public class XWPFHeaderFooterPolicy {
     }
 
     private CTHdrFtr buildFtr(Enum type, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
-        //CTHdrFtr ftr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
+        //CTHdrFtr ftr = buildHdrFtr(pStyle, pars);             // MB 24 May 2010
         CTHdrFtr ftr = buildHdrFtr(pars, wrapper);        // MB 24 May 2010
         setFooterReference(type, wrapper);
         return ftr;
     }
 
     private CTHdrFtr buildHdr(Enum type, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
-        //CTHdrFtr hdr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
+        //CTHdrFtr hdr = buildHdrFtr(pStyle, pars);             // MB 24 May 2010
         CTHdrFtr hdr = buildHdrFtr(pars, wrapper);        // MB 24 May 2010
         setHeaderReference(type, wrapper);
         return hdr;

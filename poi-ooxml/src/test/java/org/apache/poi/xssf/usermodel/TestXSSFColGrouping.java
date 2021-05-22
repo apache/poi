@@ -43,16 +43,16 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
  */
 class TestXSSFColGrouping {
 
-	private static final Logger LOG = LogManager.getLogger(TestXSSFColGrouping.class);
+    private static final Logger LOG = LogManager.getLogger(TestXSSFColGrouping.class);
 
 
     /**
      * Tests that POI doesn't produce "col" elements without "width" attribute.
      * POI-52186
      */
-	@Test
+    @Test
     void testNoColsWithoutWidthWhenGrouping() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             sheet.setColumnWidth(4, 5000);
@@ -78,9 +78,9 @@ class TestXSSFColGrouping {
      * Tests that POI doesn't produce "col" elements without "width" attribute.
      * POI-52186
      */
-	@Test
-	void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+    @Test
+    void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             sheet.setColumnWidth(4, 5000);
@@ -110,9 +110,9 @@ class TestXSSFColGrouping {
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_WRAPS
      */
-	@Test
+    @Test
     void testMergingOverlappingCols_OVERLAPS_2_WRAPS() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             CTCols cols = sheet.getCTWorksheet().getColsArray(0);
@@ -158,9 +158,9 @@ class TestXSSFColGrouping {
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_WRAPS
      */
-	@Test
+    @Test
     void testMergingOverlappingCols_OVERLAPS_1_WRAPS() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             CTCols cols = sheet.getCTWorksheet().getColsArray(0);
@@ -206,9 +206,9 @@ class TestXSSFColGrouping {
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_MINOR
      */
-	@Test
+    @Test
     void testMergingOverlappingCols_OVERLAPS_1_MINOR() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             CTCols cols = sheet.getCTWorksheet().getColsArray(0);
@@ -255,9 +255,9 @@ class TestXSSFColGrouping {
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_MINOR
      */
-	@Test
+    @Test
     void testMergingOverlappingCols_OVERLAPS_2_MINOR() throws IOException {
-		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet = wb1.createSheet("test");
 
             CTCols cols = sheet.getCTWorksheet().getColsArray(0);

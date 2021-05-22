@@ -279,50 +279,50 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     @SuppressWarnings("unused")
     public void mergeCells(int firstRow, int lastRow, int firstCol, int lastCol) {
 
-    	if(firstRow > lastRow) {
-    		throw new IllegalArgumentException(
-    			"Cannot merge, first row > last row : "
-    			+ firstRow + " > " + lastRow
-    		);
-    	}
+        if(firstRow > lastRow) {
+            throw new IllegalArgumentException(
+                "Cannot merge, first row > last row : "
+                + firstRow + " > " + lastRow
+            );
+        }
 
-    	if(firstCol > lastCol) {
-    		throw new IllegalArgumentException(
-    			"Cannot merge, first column > last column : "
-    			+ firstCol + " > " + lastCol
-    		);
-    	}
+        if(firstCol > lastCol) {
+            throw new IllegalArgumentException(
+                "Cannot merge, first column > last column : "
+                + firstCol + " > " + lastCol
+            );
+        }
 
-    	int rowSpan = (lastRow - firstRow) + 1;
-    	boolean mergeRowRequired = rowSpan > 1;
+        int rowSpan = (lastRow - firstRow) + 1;
+        boolean mergeRowRequired = rowSpan > 1;
 
-    	int colSpan = (lastCol - firstCol) + 1;
-    	boolean mergeColumnRequired = colSpan > 1;
+        int colSpan = (lastCol - firstCol) + 1;
+        boolean mergeColumnRequired = colSpan > 1;
 
-    	for(int i = firstRow; i <= lastRow; i++) {
+        for(int i = firstRow; i <= lastRow; i++) {
 
-    		XSLFTableRow row = _rows.get(i);
+            XSLFTableRow row = _rows.get(i);
 
-    		for(int colPos = firstCol; colPos <= lastCol; colPos++) {
+            for(int colPos = firstCol; colPos <= lastCol; colPos++) {
 
-    			XSLFTableCell cell = row.getCells().get(colPos);
+                XSLFTableCell cell = row.getCells().get(colPos);
 
-    			if(mergeRowRequired) {
-	    			if(i == firstRow) {
-	    				cell.setRowSpan(rowSpan);
-	    			} else {
-	    				cell.setVMerge();
-	    			}
-    			}
-    			if(mergeColumnRequired) {
-    				if(colPos == firstCol) {
-    					cell.setGridSpan(colSpan);
-    				} else {
-    					cell.setHMerge();
-    				}
-    			}
-    		}
-    	}
+                if(mergeRowRequired) {
+                    if(i == firstRow) {
+                        cell.setRowSpan(rowSpan);
+                    } else {
+                        cell.setVMerge();
+                    }
+                }
+                if(mergeColumnRequired) {
+                    if(colPos == firstCol) {
+                        cell.setGridSpan(colSpan);
+                    } else {
+                        cell.setHMerge();
+                    }
+                }
+            }
+        }
     }
 
     /**

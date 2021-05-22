@@ -22,15 +22,15 @@ import org.junit.jupiter.api.AfterEach;
 
 
 class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventBasedExcelExtractor {
-	@Override
-	protected final XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
-		ExtractorFactory.setAllThreadsPreferEventExtractors(true);
-		return (XSSFEventBasedExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
-	}
+    @Override
+    protected final XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
+        ExtractorFactory.setAllThreadsPreferEventExtractors(true);
+        return (XSSFEventBasedExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
+    }
 
-	@AfterEach
+    @AfterEach
     void tearDown() {
-	    // reset setting to not affect other tests
-	    ExtractorFactory.setAllThreadsPreferEventExtractors(null);
-	}
+        // reset setting to not affect other tests
+        ExtractorFactory.setAllThreadsPreferEventExtractors(null);
+    }
 }

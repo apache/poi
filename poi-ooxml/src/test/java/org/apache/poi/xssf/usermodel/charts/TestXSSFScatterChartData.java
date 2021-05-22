@@ -53,8 +53,8 @@ public final class TestXSSFScatterChartData {
 
     @Test
     void testOneSeriePlot() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
-    	XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
         XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
         XSSFChart chart = drawing.createChart(anchor);

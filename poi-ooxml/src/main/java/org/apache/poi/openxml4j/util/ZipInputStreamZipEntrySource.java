@@ -34,66 +34,66 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
  *  done, to free up that memory!
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
-	private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
+    private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 
-	private InputStream streamToClose;
+    private InputStream streamToClose;
 
-	/**
-	 * Reads all the entries from the ZipInputStream 
-	 *  into memory, and don't close (since POI 4.0.1) the source stream.
-	 * We'll then eat lots of memory, but be able to
-	 *  work with the entries at-will.
-	 */
-	public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
-		for (;;) {
-			final ZipArchiveEntry zipEntry = inp.getNextEntry();
-			if (zipEntry == null) {
-				break;
-			}
-			zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
-		}
+    /**
+     * Reads all the entries from the ZipInputStream 
+     *  into memory, and don't close (since POI 4.0.1) the source stream.
+     * We'll then eat lots of memory, but be able to
+     *  work with the entries at-will.
+     */
+    public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
+        for (;;) {
+            final ZipArchiveEntry zipEntry = inp.getNextEntry();
+            if (zipEntry == null) {
+                break;
+            }
+            zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
+        }
 
-		streamToClose = inp;
-	}
+        streamToClose = inp;
+    }
 
-	@Override
-	public Enumeration<? extends ZipArchiveEntry> getEntries() {
-		return Collections.enumeration(zipEntries.values());
-	}
+    @Override
+    public Enumeration<? extends ZipArchiveEntry> getEntries() {
+        return Collections.enumeration(zipEntries.values());
+    }
 
-	@Override
-	public InputStream getInputStream(ZipArchiveEntry zipEntry) {
-	    assert (zipEntry instanceof ZipArchiveFakeEntry);
-		return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
-	}
+    @Override
+    public InputStream getInputStream(ZipArchiveEntry zipEntry) {
+        assert (zipEntry instanceof ZipArchiveFakeEntry);
+        return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
+    }
 
-	@Override
-	public void close() throws IOException {
-		// Free the memory
-		zipEntries.clear();
+    @Override
+    public void close() throws IOException {
+        // Free the memory
+        zipEntries.clear();
 
-		streamToClose.close();
-	}
+        streamToClose.close();
+    }
 
-	@Override
-	public boolean isClosed() {
-	    return zipEntries.isEmpty();
-	}
+    @Override
+    public boolean isClosed() {
+        return zipEntries.isEmpty();
+    }
 
-	@Override
-	public ZipArchiveEntry getEntry(final String path) {
-		final String normalizedPath = path.replace('\\', '/');
-		final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
-		if (ze != null) {
-			return ze;
-		}
+    @Override
+    public ZipArchiveEntry getEntry(final String path) {
+        final String normalizedPath = path.replace('\\', '/');
+        final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
+        if (ze != null) {
+            return ze;
+        }
 
-		for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
-			if (normalizedPath.equalsIgnoreCase(fze.getKey())) {
-				return fze.getValue();
-			}
-		}
+        for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
+            if (normalizedPath.equalsIgnoreCase(fze.getKey())) {
+                return fze.getValue();
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

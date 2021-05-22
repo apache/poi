@@ -87,7 +87,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     public CTColor getCTColor(String name) {
         CTBaseStyles elems = _theme.getThemeElements();
         CTColorScheme scheme = (elems == null) ? null : elems.getClrScheme();
-    	return getMapColor(name, scheme);
+        return getMapColor(name, scheme);
     }
 
 

@@ -56,16 +56,16 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 {@code {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}}:
+     *       {@code {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}}:
      * <ul>
-     *		 <li>BETWEEN</li>
-     *		 <li>NOT_BETWEEN</li>
-     *		 <li>EQUAL</li>
-     *		 <li>NOT_EQUAL</li>
-     *		 <li>GT</li>
-     *		 <li>LT</li>
-     *		 <li>GE</li>
-     *		 <li>LE</li>
+     *       <li>BETWEEN</li>
+     *       <li>NOT_BETWEEN</li>
+     *       <li>EQUAL</li>
+     *       <li>NOT_EQUAL</li>
+     *       <li>GT</li>
+     *       <li>LT</li>
+     *       <li>GE</li>
+     *       <li>LE</li>
      * </ul>
      *
      * @param formula1 - formula for the valued, compared with the cell
@@ -266,7 +266,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * gets Conditional Formatting object at a particular index
      *
      * @param index
-     *			of the Conditional Formatting object to fetch
+     *          of the Conditional Formatting object to fetch
      * @return Conditional Formatting object
      */
     @Override

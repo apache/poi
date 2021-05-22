@@ -54,49 +54,49 @@ import org.junit.jupiter.params.provider.MethodSource;
 public final class TestMultiSheetFormulaEvaluatorOnXSSF {
     private static final Logger LOG = LogManager.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
 
-	private static XSSFWorkbook workbook;
+    private static XSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
 
-	/**
-	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
-	 */
-	interface SS {
+    /**
+     * This class defines constants for navigating around the test data spreadsheet used for these tests.
+     */
+    interface SS {
 
-		/**
-		 * Name of the test spreadsheet (found in the standard test data folder)
-		 */
-		String FILENAME = "FormulaSheetRange.xlsx";
-		/**
-		 * Row (zero-based) in the test spreadsheet where the function examples start.
-		 */
-		int START_FUNCTIONS_ROW_INDEX = 10; // Row '11'
-		/**
-		 * Index of the column that contains the function names
-		 */
-		int COLUMN_INDEX_FUNCTION_NAME = 0; // Column 'A'
-		/**
-		 * Index of the column that contains the test names
-		 */
-		int COLUMN_INDEX_TEST_NAME = 1; // Column 'B'
-		/**
-		 * Used to indicate when there are no more functions left
-		 */
-		String FUNCTION_NAMES_END_SENTINEL = "<END>";
+        /**
+         * Name of the test spreadsheet (found in the standard test data folder)
+         */
+        String FILENAME = "FormulaSheetRange.xlsx";
+        /**
+         * Row (zero-based) in the test spreadsheet where the function examples start.
+         */
+        int START_FUNCTIONS_ROW_INDEX = 10; // Row '11'
+        /**
+         * Index of the column that contains the function names
+         */
+        int COLUMN_INDEX_FUNCTION_NAME = 0; // Column 'A'
+        /**
+         * Index of the column that contains the test names
+         */
+        int COLUMN_INDEX_TEST_NAME = 1; // Column 'B'
+        /**
+         * Used to indicate when there are no more functions left
+         */
+        String FUNCTION_NAMES_END_SENTINEL = "<END>";
 
-		/**
-		 * Index of the column where the test expected value is present
-		 */
-		short COLUMN_INDEX_EXPECTED_VALUE = 2; // Column 'C'
-		/**
-		 * Index of the column where the test actual value is present
-		 */
-		short COLUMN_INDEX_ACTUAL_VALUE = 3; // Column 'D'
-		/**
-		 * Test sheet name (sheet with all test formulae)
-		 */
-		String TEST_SHEET_NAME = "test";
-	}
+        /**
+         * Index of the column where the test expected value is present
+         */
+        short COLUMN_INDEX_EXPECTED_VALUE = 2; // Column 'C'
+        /**
+         * Index of the column where the test actual value is present
+         */
+        short COLUMN_INDEX_ACTUAL_VALUE = 3; // Column 'D'
+        /**
+         * Test sheet name (sheet with all test formulae)
+         */
+        String TEST_SHEET_NAME = "test";
+    }
 
 
     @AfterAll
@@ -130,7 +130,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 
             String targetFunctionName = getTargetFunctionName(r);
             assertNotNull(targetFunctionName,
-				"Test spreadsheet cell empty on row ("
+                "Test spreadsheet cell empty on row ("
                 + (rowIndex+1) + "). Expected function name or '"
                 + SS.FUNCTION_NAMES_END_SENTINEL + "'");
 
@@ -145,7 +145,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
                 // expected results are on the row below
                 Cell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);
                 assertNotNull(expectedValueCell,
-					"Missing expected values cell for function '"
+                    "Missing expected values cell for function '"
                     + targetFunctionName + ", test" + targetTestName + " (row " +
                     rowIndex + 1 + ")");
 
@@ -155,13 +155,13 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
     }
 
     @ParameterizedTest
-	@MethodSource("data")
+    @MethodSource("data")
     void processFunctionRow(String targetTestName, String targetFunctionName, int formulasRowIdx) {
         Row r = sheet.getRow(formulasRowIdx);
 
         Cell expValue = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);
         assertNotNull(expValue,
-			"Missing expected values cell for function '"
+            "Missing expected values cell for function '"
             + targetFunctionName + ", test" + targetTestName + " (row " +
             formulasRowIdx + 1 + ")");
 
@@ -195,7 +195,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
                 fail("Cannot expect formula as result of formula evaluation: " + msg);
             case NUMERIC:
                 assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
-				BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
+                BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
 //              double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
 //              double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
 //              assertTrue(msg, delta <= pctExpected);
@@ -210,43 +210,43 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
     }
 
     /**
-	 * @return <code>null</code> if cell is missing, empty or blank
-	 */
-	private static String getTargetFunctionName(Row r) {
-		if(r == null) {
-		    LOG.atWarn().log("Given null row, can't figure out function name");
-			return null;
-		}
-		Cell cell = r.getCell(COLUMN_INDEX_FUNCTION_NAME);
-		if(cell == null) {
-			LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
-			return null;
-		}
+     * @return <code>null</code> if cell is missing, empty or blank
+     */
+    private static String getTargetFunctionName(Row r) {
+        if(r == null) {
+            LOG.atWarn().log("Given null row, can't figure out function name");
+            return null;
+        }
+        Cell cell = r.getCell(COLUMN_INDEX_FUNCTION_NAME);
+        if(cell == null) {
+            LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
+            return null;
+        }
 
-		CellType ct = cell.getCellType();
-		assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
-			"Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+        CellType ct = cell.getCellType();
+        assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
+            "Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 
-		return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
-	}
+        return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
+    }
 
-	/**
-	 * @return <code>null</code> if cell is missing, empty or blank
-	 */
-	private static String getTargetTestName(Row r) {
-		if(r == null) {
+    /**
+     * @return <code>null</code> if cell is missing, empty or blank
+     */
+    private static String getTargetTestName(Row r) {
+        if(r == null) {
             LOG.atWarn().log("Given null row, can't figure out test name");
-			return null;
-		}
-		Cell cell = r.getCell(COLUMN_INDEX_TEST_NAME);
-		if(cell == null) {
-			LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_TEST_NAME + ", can't figure out test name", box(r.getRowNum()));
-			return null;
-		}
-		CellType ct = cell.getCellType();
-		assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
-			"Bad cell type for 'test name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+            return null;
+        }
+        Cell cell = r.getCell(COLUMN_INDEX_TEST_NAME);
+        if(cell == null) {
+            LOG.atWarn().log("Row {} has no cell " + COLUMN_INDEX_TEST_NAME + ", can't figure out test name", box(r.getRowNum()));
+            return null;
+        }
+        CellType ct = cell.getCellType();
+        assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
+            "Bad cell type for 'test name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 
-		return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
-	}
+        return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
+    }
 }

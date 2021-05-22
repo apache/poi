@@ -304,7 +304,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testRichTextFontAndColor() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -335,7 +335,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testSetTextSingleParagraph() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -371,7 +371,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testAddNewTextParagraph() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -381,7 +381,7 @@ class TestXSSFDrawing {
         para.addNewTextRun().setText("Line 1");
 
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
-        assertEquals(2, paras.size());	// this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
+        assertEquals(2, paras.size());  // this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
 
         List<XSSFTextRun> runs = para.getTextRuns();
         assertEquals(1, runs.size());
@@ -396,7 +396,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testAddNewTextParagraphWithRTS() throws IOException {
-    	XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -410,7 +410,7 @@ class TestXSSFDrawing {
 
         XSSFFont midfont = wb1.createFont();
         midfont.setColor(new XSSFColor(new Color(0, 255, 0), wb1.getStylesSource().getIndexedColors()));
-        rt.applyFont(5, 14, midfont);	// set the text "Rich Text" to be green and the default font
+        rt.applyFont(5, 14, midfont);   // set the text "Rich Text" to be green and the default font
 
         XSSFTextParagraph para = shape.addNewTextParagraph(rt);
 
@@ -429,7 +429,7 @@ class TestXSSFDrawing {
         XSSFSimpleShape sshape = (XSSFSimpleShape) shapes.get(0);
 
         List<XSSFTextParagraph> paras = sshape.getTextParagraphs();
-        assertEquals(2, paras.size());	// this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
+        assertEquals(2, paras.size());  // this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
 
         List<XSSFTextRun> runs = para.getTextRuns();
         assertEquals(3, runs.size());
@@ -469,7 +469,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testAddMultipleParagraphs() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -485,7 +485,7 @@ class TestXSSFDrawing {
         para.addNewTextRun().setText("Line 3");
 
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
-        assertEquals(4, paras.size());	// this should be 4 as XSSFSimpleShape creates a default paragraph (no text), and then we added 3 paragraphs
+        assertEquals(4, paras.size());  // this should be 4 as XSSFSimpleShape creates a default paragraph (no text), and then we added 3 paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
 
         checkRewrite(wb);
@@ -497,7 +497,7 @@ class TestXSSFDrawing {
      */
     @Test
     void testSetAddMultipleParagraphs() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -512,7 +512,7 @@ class TestXSSFDrawing {
         para.addNewTextRun().setText("Line 3");
 
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
-        assertEquals(3, paras.size());	// this should be 3 as we overwrote the default paragraph with setText, then added 2 new paragraphs
+        assertEquals(3, paras.size());  // this should be 3 as we overwrote the default paragraph with setText, then added 2 new paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
 
         checkRewrite(wb);
@@ -588,9 +588,9 @@ class TestXSSFDrawing {
         List<XSSFTextParagraph> paras = textbox.getTextParagraphs();
         assertEquals(3, paras.size());
 
-        assertEquals("Line 2", paras.get(1).getText());	// check content of second paragraph
+        assertEquals("Line 2", paras.get(1).getText()); // check content of second paragraph
 
-        assertEquals("Line 1\nLine 2\nLine 3", textbox.getText());	// check content of entire textbox
+        assertEquals("Line 1\nLine 2\nLine 3", textbox.getText());  // check content of entire textbox
 
         // check attributes of paragraphs
         assertEquals(TextAlign.LEFT, paras.get(0).getTextAlign());

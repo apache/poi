@@ -25,16 +25,16 @@ import org.junit.jupiter.api.AfterEach;
  * Tests for {@link XSSFExcelExtractor}
  */
 public final class TestXSSFExcelExtractorUsingFactory extends TestXSSFExcelExtractor {
-	@Override
-	protected final XSSFExcelExtractor getExtractor(String sampleName) {
-		ExtractorFactory.setAllThreadsPreferEventExtractors(false);
-		ExtractorFactory.setThreadPrefersEventExtractors(false);
-		try {
-			return (XSSFExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    protected final XSSFExcelExtractor getExtractor(String sampleName) {
+        ExtractorFactory.setAllThreadsPreferEventExtractors(false);
+        ExtractorFactory.setThreadPrefersEventExtractors(false);
+        try {
+            return (XSSFExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @AfterEach
     void tearDown() {

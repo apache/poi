@@ -30,23 +30,23 @@ import java.io.IOException;
 public final class OpenXML4JTestDataSamples {
     private static final POIDataSamples _samples = POIDataSamples.getOpenXML4JInstance();
 
-	private OpenXML4JTestDataSamples() {
-		// no instances of this class
-	}
+    private OpenXML4JTestDataSamples() {
+        // no instances of this class
+    }
 
-	public static InputStream openSampleStream(String sampleFileName) {
-		return _samples.openResourceAsStream(sampleFileName);
-	}
-	public static String getSampleFileName(String sampleFileName) {
-		return getSampleFile(sampleFileName).getAbsolutePath();
-	}
+    public static InputStream openSampleStream(String sampleFileName) {
+        return _samples.openResourceAsStream(sampleFileName);
+    }
+    public static String getSampleFileName(String sampleFileName) {
+        return getSampleFile(sampleFileName).getAbsolutePath();
+    }
 
-	public static File getSampleFile(String sampleFileName) {
-		return _samples.getFile(sampleFileName);
-	}
+    public static File getSampleFile(String sampleFileName) {
+        return _samples.getFile(sampleFileName);
+    }
 
-	public static File getOutputFile(String outputFileName) throws IOException {
-		int idx = outputFileName.lastIndexOf('.');
+    public static File getOutputFile(String outputFileName) throws IOException {
+        int idx = outputFileName.lastIndexOf('.');
         return TempFile.createTempFile(outputFileName.substring(0,idx), outputFileName.substring(idx));
-	}
+    }
 }

@@ -36,12 +36,12 @@ import org.junit.jupiter.api.Test;
 
 
 class TestRelationships {
-	private static final String HYPERLINK_REL_TYPE =
-		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
-	private static final String COMMENTS_REL_TYPE =
-		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
-	private static final String SHEET_WITH_COMMENTS =
-		"/xl/worksheets/sheet1.xml";
+    private static final String HYPERLINK_REL_TYPE =
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
+    private static final String COMMENTS_REL_TYPE =
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
+    private static final String SHEET_WITH_COMMENTS =
+        "/xl/worksheets/sheet1.xml";
 
     private static final Logger LOG = LogManager.getLogger(TestPackageCoreProperties.class);
 
@@ -155,72 +155,72 @@ class TestRelationships {
      */
     @Test
     void testCreateExcelHyperlinkRelations() throws Exception {
-    	String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
-	    OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
-	    PackagePart sheet = pkg.getPart(
-	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
-	    assertNotNull(sheet);
+        String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
+        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
+        PackagePart sheet = pkg.getPart(
+                PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
+        assertNotNull(sheet);
 
-	    assertEquals(3, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
+        assertEquals(3, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
 
-	    // Add three new ones
-	    PackageRelationship openxml4j =
-	    	sheet.addExternalRelationship("http://www.openxml4j.org/", HYPERLINK_REL_TYPE);
-	    PackageRelationship sf =
-	    	sheet.addExternalRelationship("http://openxml4j.sf.net/", HYPERLINK_REL_TYPE);
-	    PackageRelationship file =
-	    	sheet.addExternalRelationship("MyDocument.docx", HYPERLINK_REL_TYPE);
+        // Add three new ones
+        PackageRelationship openxml4j =
+            sheet.addExternalRelationship("http://www.openxml4j.org/", HYPERLINK_REL_TYPE);
+        PackageRelationship sf =
+            sheet.addExternalRelationship("http://openxml4j.sf.net/", HYPERLINK_REL_TYPE);
+        PackageRelationship file =
+            sheet.addExternalRelationship("MyDocument.docx", HYPERLINK_REL_TYPE);
 
-	    // Check they were added properly
-	    assertNotNull(openxml4j);
-	    assertNotNull(sf);
-	    assertNotNull(file);
+        // Check they were added properly
+        assertNotNull(openxml4j);
+        assertNotNull(sf);
+        assertNotNull(file);
 
-	    assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
+        assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
 
-	    assertEquals("http://www.openxml4j.org/", openxml4j.getTargetURI().toString());
-	    assertEquals("/xl/worksheets/sheet1.xml", openxml4j.getSourceURI().toString());
-	    assertEquals(HYPERLINK_REL_TYPE, openxml4j.getRelationshipType());
+        assertEquals("http://www.openxml4j.org/", openxml4j.getTargetURI().toString());
+        assertEquals("/xl/worksheets/sheet1.xml", openxml4j.getSourceURI().toString());
+        assertEquals(HYPERLINK_REL_TYPE, openxml4j.getRelationshipType());
 
-	    assertEquals("http://openxml4j.sf.net/", sf.getTargetURI().toString());
-	    assertEquals("/xl/worksheets/sheet1.xml", sf.getSourceURI().toString());
-	    assertEquals(HYPERLINK_REL_TYPE, sf.getRelationshipType());
+        assertEquals("http://openxml4j.sf.net/", sf.getTargetURI().toString());
+        assertEquals("/xl/worksheets/sheet1.xml", sf.getSourceURI().toString());
+        assertEquals(HYPERLINK_REL_TYPE, sf.getRelationshipType());
 
-	    assertEquals("MyDocument.docx", file.getTargetURI().toString());
-	    assertEquals("/xl/worksheets/sheet1.xml", file.getSourceURI().toString());
-	    assertEquals(HYPERLINK_REL_TYPE, file.getRelationshipType());
+        assertEquals("MyDocument.docx", file.getTargetURI().toString());
+        assertEquals("/xl/worksheets/sheet1.xml", file.getSourceURI().toString());
+        assertEquals(HYPERLINK_REL_TYPE, file.getRelationshipType());
 
-	    // Will get ids 7, 8 and 9, as we already have 1-6
-	    assertEquals("rId7", openxml4j.getId());
-	    assertEquals("rId8", sf.getId());
-	    assertEquals("rId9", file.getId());
+        // Will get ids 7, 8 and 9, as we already have 1-6
+        assertEquals("rId7", openxml4j.getId());
+        assertEquals("rId8", sf.getId());
+        assertEquals("rId9", file.getId());
 
 
-	    // Write out and re-load
-	    UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-	    pkg.save(baos);
+        // Write out and re-load
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        pkg.save(baos);
 
-	    // use revert to not re-write the input file
+        // use revert to not re-write the input file
         pkg.revert();
 
-	    pkg = OPCPackage.open(baos.toInputStream());
+        pkg = OPCPackage.open(baos.toInputStream());
 
-	    // Check again
-	    sheet = pkg.getPart(PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
+        // Check again
+        sheet = pkg.getPart(PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 
-	    assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
+        assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
 
-	    assertEquals("http://poi.apache.org/",
-	    		sheet.getRelationship("rId1").getTargetURI().toString());
-	    assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks",
-	    		sheet.getRelationship("rId3").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/",
+                sheet.getRelationship("rId1").getTargetURI().toString());
+        assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks",
+                sheet.getRelationship("rId3").getTargetURI().toString());
 
-	    assertEquals("http://www.openxml4j.org/",
-	    		sheet.getRelationship("rId7").getTargetURI().toString());
-	    assertEquals("http://openxml4j.sf.net/",
-	    		sheet.getRelationship("rId8").getTargetURI().toString());
-	    assertEquals("MyDocument.docx",
-	    		sheet.getRelationship("rId9").getTargetURI().toString());
+        assertEquals("http://www.openxml4j.org/",
+                sheet.getRelationship("rId7").getTargetURI().toString());
+        assertEquals("http://openxml4j.sf.net/",
+                sheet.getRelationship("rId8").getTargetURI().toString());
+        assertEquals("MyDocument.docx",
+                sheet.getRelationship("rId9").getTargetURI().toString());
     }
 
     @Test
@@ -352,9 +352,9 @@ class TestRelationships {
 
    @Test
    void testSelfRelations_bug51187() throws Exception {
-    	UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
         PackageRelationship rel1;
-    	try (OPCPackage pkg = OPCPackage.create(baos)) {
+        try (OPCPackage pkg = OPCPackage.create(baos)) {
 
             PackagePart partA =
                     pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
@@ -367,7 +367,7 @@ class TestRelationships {
             // Save, and re-load
         }
 
-    	try (OPCPackage pkg = OPCPackage.open(baos.toInputStream())) {
+        try (OPCPackage pkg = OPCPackage.open(baos.toInputStream())) {
             PackagePart partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
 
 

@@ -25,7 +25,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  */
 @SuppressWarnings("serial")
 public final class PartAlreadyExistsException extends InvalidOperationException {
-	public PartAlreadyExistsException(String message){
-		super(message);
-	}
+    public PartAlreadyExistsException(String message){
+        super(message);
+    }
 }

@@ -454,21 +454,21 @@ public final class TestXWPFDocument {
         doc.close();
     }
 
-	@Test
-	void testEnforcedWith() throws IOException {
+    @Test
+    void testEnforcedWith() throws IOException {
         try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx")) {
             assertTrue(docx.isEnforcedProtection());
         }
     }
 
-	@Test
-	@Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
-	void testWriteFromReadOnlyOPC() throws Exception {
-	    OPCPackage opc = OPCPackage.open(
-	            POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
-	            PackageAccess.READ
-	    );
-	    XWPFDocument doc = new XWPFDocument(opc);
+    @Test
+    @Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
+    void testWriteFromReadOnlyOPC() throws Exception {
+        OPCPackage opc = OPCPackage.open(
+                POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
+                PackageAccess.READ
+        );
+        XWPFDocument doc = new XWPFDocument(opc);
 
         final String origText;
         try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {

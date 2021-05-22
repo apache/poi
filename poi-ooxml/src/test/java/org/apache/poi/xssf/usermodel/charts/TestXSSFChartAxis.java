@@ -40,124 +40,124 @@ import org.junit.jupiter.api.Test;
 
 public final class TestXSSFChartAxis {
 
-	private static final double EPSILON = 1E-7;
-	private XSSFWorkbook wb;
-	private XDDFChartAxis axis;
+    private static final double EPSILON = 1E-7;
+    private XSSFWorkbook wb;
+    private XDDFChartAxis axis;
 
-	@BeforeEach
-	void setup() {
-		wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet();
-		XSSFDrawing drawing = sheet.createDrawingPatriarch();
-		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-		XSSFChart chart = drawing.createChart(anchor);
-		axis = chart.createValueAxis(AxisPosition.BOTTOM);
-	}
+    @BeforeEach
+    void setup() {
+        wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        XSSFChart chart = drawing.createChart(anchor);
+        axis = chart.createValueAxis(AxisPosition.BOTTOM);
+    }
 
-	@AfterEach
-	void teardown() throws IOException {
-		wb.close();
-		wb = null;
-		axis = null;
-	}
+    @AfterEach
+    void teardown() throws IOException {
+        wb.close();
+        wb = null;
+        axis = null;
+    }
 
-	@Test
-	void testLogBaseIllegalArgument() {
-		IllegalArgumentException iae = null;
-		try {
-			axis.setLogBase(0.0);
-		} catch (IllegalArgumentException e) {
-			iae = e;
-		}
-		assertNotNull(iae);
+    @Test
+    void testLogBaseIllegalArgument() {
+        IllegalArgumentException iae = null;
+        try {
+            axis.setLogBase(0.0);
+        } catch (IllegalArgumentException e) {
+            iae = e;
+        }
+        assertNotNull(iae);
 
-		iae = null;
-		try {
-			axis.setLogBase(30000.0);
-		} catch (IllegalArgumentException e) {
-			iae = e;
-		}
-		assertNotNull(iae);
-	}
+        iae = null;
+        try {
+            axis.setLogBase(30000.0);
+        } catch (IllegalArgumentException e) {
+            iae = e;
+        }
+        assertNotNull(iae);
+    }
 
-	@Test
-	void testLogBaseLegalArgument() {
-		axis.setLogBase(Math.E);
-		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
-	}
+    @Test
+    void testLogBaseLegalArgument() {
+        axis.setLogBase(Math.E);
+        assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
+    }
 
-	@Test
-	void testNumberFormat() {
-		final String numberFormat = "General";
-		axis.setNumberFormat(numberFormat);
-		assertEquals(numberFormat, axis.getNumberFormat());
-	}
+    @Test
+    void testNumberFormat() {
+        final String numberFormat = "General";
+        axis.setNumberFormat(numberFormat);
+        assertEquals(numberFormat, axis.getNumberFormat());
+    }
 
-	@Test
-	void testMaxAndMinAccessMethods() {
-		final double newValue = 10.0;
+    @Test
+    void testMaxAndMinAccessMethods() {
+        final double newValue = 10.0;
 
-		axis.setMinimum(newValue);
-		assertTrue(Math.abs(axis.getMinimum() - newValue) < EPSILON);
+        axis.setMinimum(newValue);
+        assertTrue(Math.abs(axis.getMinimum() - newValue) < EPSILON);
 
-		axis.setMaximum(newValue);
-		assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
-	}
+        axis.setMaximum(newValue);
+        assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
+    }
 
-	@Test
-	void testVisibleAccessMethods() {
-		axis.setVisible(true);
-		assertTrue(axis.isVisible());
+    @Test
+    void testVisibleAccessMethods() {
+        axis.setVisible(true);
+        assertTrue(axis.isVisible());
 
-		axis.setVisible(false);
-		assertFalse(axis.isVisible());
-	}
+        axis.setVisible(false);
+        assertFalse(axis.isVisible());
+    }
 
-	@Test
-	void testMajorTickMarkAccessMethods() {
-		axis.setMajorTickMark(AxisTickMark.NONE);
-		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
+    @Test
+    void testMajorTickMarkAccessMethods() {
+        axis.setMajorTickMark(AxisTickMark.NONE);
+        assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.IN);
-		assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.IN);
+        assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.OUT);
-		assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
+        axis.setMajorTickMark(AxisTickMark.OUT);
+        assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
 
-		axis.setMajorTickMark(AxisTickMark.CROSS);
-		assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
-	}
+        axis.setMajorTickMark(AxisTickMark.CROSS);
+        assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
+    }
 
-	@Test
-	void testMinorTickMarkAccessMethods() {
-		axis.setMinorTickMark(AxisTickMark.NONE);
-		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
+    @Test
+    void testMinorTickMarkAccessMethods() {
+        axis.setMinorTickMark(AxisTickMark.NONE);
+        assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.IN);
-		assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.IN);
+        assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.OUT);
-		assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
+        axis.setMinorTickMark(AxisTickMark.OUT);
+        assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
 
-		axis.setMinorTickMark(AxisTickMark.CROSS);
-		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
-	}
+        axis.setMinorTickMark(AxisTickMark.CROSS);
+        assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
+    }
 
-	@Test
-	void testGetChartAxisBug57362() throws IOException {
-	  //Load existing excel with some chart on it having primary and secondary axis.
-	    try (final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx")) {
-			final XSSFSheet sh = workbook.getSheetAt(0);
-			final XSSFDrawing drawing = sh.createDrawingPatriarch();
-			final XSSFChart chart = drawing.getCharts().get(0);
+    @Test
+    void testGetChartAxisBug57362() throws IOException {
+      //Load existing excel with some chart on it having primary and secondary axis.
+        try (final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx")) {
+            final XSSFSheet sh = workbook.getSheetAt(0);
+            final XSSFDrawing drawing = sh.createDrawingPatriarch();
+            final XSSFChart chart = drawing.getCharts().get(0);
 
-			final List<? extends XDDFChartAxis> axisList = chart.getAxes();
+            final List<? extends XDDFChartAxis> axisList = chart.getAxes();
 
-			assertEquals(4, axisList.size());
-			assertNotNull(axisList.get(0));
-			assertNotNull(axisList.get(1));
-			assertNotNull(axisList.get(2));
-			assertNotNull(axisList.get(3));
-		}
-	}
+            assertEquals(4, axisList.size());
+            assertNotNull(axisList.get(0));
+            assertNotNull(axisList.get(1));
+            assertNotNull(axisList.get(2));
+            assertNotNull(axisList.get(3));
+        }
+    }
 }

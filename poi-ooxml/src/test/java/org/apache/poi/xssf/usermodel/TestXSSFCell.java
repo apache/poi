@@ -488,7 +488,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         StringBuilder sb = new StringBuilder();
         // test all possible characters
         for(int i = 0; i < Character.MAX_VALUE; i++) {
-        	sb.append((char)i);
+            sb.append((char)i);
         }
 
         String strAll = sb.toString();
@@ -496,7 +496,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         // process in chunks as we have a limit on size of column now
         int pos = 0;
         while(pos < strAll.length()) {
-        	String str = strAll.substring(pos, Math.min(strAll.length(), pos+SpreadsheetVersion.EXCEL2007.getMaxTextLength()));
+            String str = strAll.substring(pos, Math.min(strAll.length(), pos+SpreadsheetVersion.EXCEL2007.getMaxTextLength()));
 
             Workbook wb = HSSFITestDataProvider.instance.createWorkbook();
             Cell cell = wb.createSheet().createRow(0).createCell(0);
@@ -507,31 +507,31 @@ public final class TestXSSFCell extends BaseTestXCell {
             Workbook swb = SXSSFITestDataProvider.instance.createWorkbook();
             Cell sCell = swb.createSheet().createRow(0).createCell(0);
 
-        	cell.setCellValue(str);
-        	assertEquals(str, cell.getStringCellValue());
-        	xCell.setCellValue(str);
-        	assertEquals(str, xCell.getStringCellValue());
-        	sCell.setCellValue(str);
-        	assertEquals(str, sCell.getStringCellValue());
+            cell.setCellValue(str);
+            assertEquals(str, cell.getStringCellValue());
+            xCell.setCellValue(str);
+            assertEquals(str, xCell.getStringCellValue());
+            sCell.setCellValue(str);
+            assertEquals(str, sCell.getStringCellValue());
 
-        	Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        	Workbook xwbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(xwb);
-        	Workbook swbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
-        	cell = wbBack.getSheetAt(0).createRow(0).createCell(0);
-        	xCell = xwbBack.getSheetAt(0).createRow(0).createCell(0);
-        	sCell = swbBack.getSheetAt(0).createRow(0).createCell(0);
+            Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+            Workbook xwbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(xwb);
+            Workbook swbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
+            cell = wbBack.getSheetAt(0).createRow(0).createCell(0);
+            xCell = xwbBack.getSheetAt(0).createRow(0).createCell(0);
+            sCell = swbBack.getSheetAt(0).createRow(0).createCell(0);
 
-        	assertEquals(cell.getStringCellValue(), xCell.getStringCellValue());
-        	assertEquals(cell.getStringCellValue(), sCell.getStringCellValue());
+            assertEquals(cell.getStringCellValue(), xCell.getStringCellValue());
+            assertEquals(cell.getStringCellValue(), sCell.getStringCellValue());
 
-        	pos += SpreadsheetVersion.EXCEL97.getMaxTextLength();
+            pos += SpreadsheetVersion.EXCEL97.getMaxTextLength();
 
-        	swbBack.close();
-        	xwbBack.close();
-        	wbBack.close();
-        	swb.close();
-        	xwb.close();
-        	wb.close();
+            swbBack.close();
+            xwbBack.close();
+            wbBack.close();
+            swb.close();
+            xwb.close();
+            wb.close();
         }
     }
 

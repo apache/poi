@@ -48,94 +48,94 @@ class TestXSLFSlideShow {
 
     @BeforeEach
     void setUp() throws Exception {
-		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
-	}
+        pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
+    }
 
-	@AfterEach
-	void tearDown() throws IOException {
-    	pack.close();
-	}
-
-    @Test
-	void testContainsMainContentType() throws Exception {
-		boolean found = false;
-		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
-				found = true;
-			}
-		}
-		assertTrue(found);
-	}
+    @AfterEach
+    void tearDown() throws IOException {
+        pack.close();
+    }
 
     @Test
-	void testOpen() throws IOException, OpenXML4JException, XmlException {
-		// With the finalized uri, should be fine
-		XSLFSlideShow xml = new XSLFSlideShow(pack);
-		// Check the core
-		assertNotNull(xml.getPresentation());
-
-		// Check it has some slides
-		assertNotEquals(0, xml.getSlideReferences().sizeOfSldIdArray());
-		assertNotEquals(0, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
-
-		xml.close();
-	}
+    void testContainsMainContentType() throws Exception {
+        boolean found = false;
+        for(PackagePart part : pack.getParts()) {
+            if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
+                found = true;
+            }
+        }
+        assertTrue(found);
+    }
 
     @Test
-	void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
-		XSLFSlideShow xml = new XSLFSlideShow(pack);
+    void testOpen() throws IOException, OpenXML4JException, XmlException {
+        // With the finalized uri, should be fine
+        XSLFSlideShow xml = new XSLFSlideShow(pack);
+        // Check the core
+        assertNotNull(xml.getPresentation());
 
-		// Should have 1 master
-		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
+        // Check it has some slides
+        assertNotEquals(0, xml.getSlideReferences().sizeOfSldIdArray());
+        assertNotEquals(0, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
 
-		// Should have three sheets
-		assertEquals(2, xml.getSlideReferences().sizeOfSldIdArray());
-
-		// Check they're as expected
-		CTSlideIdListEntry[] slides = xml.getSlideReferences().getSldIdArray();
-
-		assertEquals(256, slides[0].getId());
-		assertEquals(257, slides[1].getId());
-		assertEquals("rId2", slides[0].getId2());
-		assertEquals("rId3", slides[1].getId2());
-
-		// Now get those objects
-		assertNotNull(xml.getSlide(slides[0]));
-		assertNotNull(xml.getSlide(slides[1]));
-
-		// And check they have notes as expected
-		assertNotNull(xml.getNotes(slides[0]));
-		assertNotNull(xml.getNotes(slides[1]));
-
-		// And again for the master
-		CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
-
-		// see SlideAtom.USES_MASTER_SLIDE_ID
-		assertEquals(0x80000000L, masters[0].getId());
-		assertEquals("rId1", masters[0].getId2());
-		assertNotNull(xml.getSlideMaster(masters[0]));
-
-		xml.close();
-	}
+        xml.close();
+    }
 
     @Test
-	void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
-		XSLFSlideShow xml = new XSLFSlideShow(pack);
+    void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
+        XSLFSlideShow xml = new XSLFSlideShow(pack);
 
-		assertNotNull(xml.getProperties().getCoreProperties());
-		assertNotNull(xml.getProperties().getExtendedProperties());
+        // Should have 1 master
+        assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
 
-		CTProperties props = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
-		assertEquals("Microsoft Office PowerPoint", props.getApplication());
-		assertEquals(0, props.getCharacters());
-		assertEquals(0, props.getLines());
+        // Should have three sheets
+        assertEquals(2, xml.getSlideReferences().sizeOfSldIdArray());
 
-		CoreProperties cprops = xml.getProperties().getCoreProperties();
-		assertNull(cprops.getTitle());
-		assertFalse(cprops.getUnderlyingProperties().getSubjectProperty().isPresent());
+        // Check they're as expected
+        CTSlideIdListEntry[] slides = xml.getSlideReferences().getSldIdArray();
 
-		xml.close();
-	}
+        assertEquals(256, slides[0].getId());
+        assertEquals(257, slides[1].getId());
+        assertEquals("rId2", slides[0].getId2());
+        assertEquals("rId3", slides[1].getId2());
+
+        // Now get those objects
+        assertNotNull(xml.getSlide(slides[0]));
+        assertNotNull(xml.getSlide(slides[1]));
+
+        // And check they have notes as expected
+        assertNotNull(xml.getNotes(slides[0]));
+        assertNotNull(xml.getNotes(slides[1]));
+
+        // And again for the master
+        CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
+
+        // see SlideAtom.USES_MASTER_SLIDE_ID
+        assertEquals(0x80000000L, masters[0].getId());
+        assertEquals("rId1", masters[0].getId2());
+        assertNotNull(xml.getSlideMaster(masters[0]));
+
+        xml.close();
+    }
+
+    @Test
+    void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
+        XSLFSlideShow xml = new XSLFSlideShow(pack);
+
+        assertNotNull(xml.getProperties().getCoreProperties());
+        assertNotNull(xml.getProperties().getExtendedProperties());
+
+        CTProperties props = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
+        assertEquals("Microsoft Office PowerPoint", props.getApplication());
+        assertEquals(0, props.getCharacters());
+        assertEquals(0, props.getLines());
+
+        CoreProperties cprops = xml.getProperties().getCoreProperties();
+        assertNull(cprops.getTitle());
+        assertFalse(cprops.getUnderlyingProperties().getSubjectProperty().isPresent());
+
+        xml.close();
+    }
 
     @Test
     void testMasterBackground() throws IOException {

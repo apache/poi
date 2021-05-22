@@ -36,68 +36,68 @@ import org.w3c.dom.Document;
 
 public final class StreamHelper {
 
-	private StreamHelper() {
-		// Do nothing
-	}
+    private StreamHelper() {
+        // Do nothing
+    }
 
-	/**
-	 * Save the document object in the specified output stream.
-	 *
-	 * @param xmlContent
-	 *            The XML document.
-	 * @param outStream
-	 *            The OutputStream in which the XML document will be written.
-	 * @return <b>true</b> if the xml is successfully written in the stream,
-	 *         else <b>false</b>.
-	 */
-	public static boolean saveXmlInStream(Document xmlContent,
-										  OutputStream outStream) {
-		try {
-			Transformer trans = XMLHelper.newTransformer();
-			Source xmlSource = new DOMSource(xmlContent);
-			// prevent close of stream by transformer:
-			Result outputTarget = new StreamResult(new FilterOutputStream(
-					outStream) {
-				@Override
-				public void write(byte[] b, int off, int len)
-						throws IOException {
-					out.write(b, off, len);
-				}
+    /**
+     * Save the document object in the specified output stream.
+     *
+     * @param xmlContent
+     *            The XML document.
+     * @param outStream
+     *            The OutputStream in which the XML document will be written.
+     * @return <b>true</b> if the xml is successfully written in the stream,
+     *         else <b>false</b>.
+     */
+    public static boolean saveXmlInStream(Document xmlContent,
+                                          OutputStream outStream) {
+        try {
+            Transformer trans = XMLHelper.newTransformer();
+            Source xmlSource = new DOMSource(xmlContent);
+            // prevent close of stream by transformer:
+            Result outputTarget = new StreamResult(new FilterOutputStream(
+                    outStream) {
+                @Override
+                public void write(byte[] b, int off, int len)
+                        throws IOException {
+                    out.write(b, off, len);
+                }
 
-				@Override
-				public void close() throws IOException {
-					out.flush(); // only flush, don't close!
-				}
-			});
-			// xmlContent.setXmlStandalone(true);
-			trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			// don't indent xml documents, the indent will cause errors in calculating the xml signature
-			// because of different handling of linebreaks in Windows/Unix
-			// see https://stackoverflow.com/questions/36063375
-			trans.setOutputProperty(OutputKeys.INDENT, "no");
-			trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
-			trans.transform(xmlSource, outputTarget);
-		} catch (TransformerException e) {
-			return false;
-		}
-		return true;
-	}
+                @Override
+                public void close() throws IOException {
+                    out.flush(); // only flush, don't close!
+                }
+            });
+            // xmlContent.setXmlStandalone(true);
+            trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            // don't indent xml documents, the indent will cause errors in calculating the xml signature
+            // because of different handling of linebreaks in Windows/Unix
+            // see https://stackoverflow.com/questions/36063375
+            trans.setOutputProperty(OutputKeys.INDENT, "no");
+            trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            trans.transform(xmlSource, outputTarget);
+        } catch (TransformerException e) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * Copy the input stream into the output stream.
-	 *
-	 * @param inStream
-	 *            The source stream.
-	 * @param outStream
-	 *            The destination stream.
-	 * @return <b>true</b> if the operation succeed, else return <b>false</b>.
-	 */
-	public static boolean copyStream(InputStream inStream, OutputStream outStream) {
-		try {
-			IOUtils.copy(inStream, outStream);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    /**
+     * Copy the input stream into the output stream.
+     *
+     * @param inStream
+     *            The source stream.
+     * @param outStream
+     *            The destination stream.
+     * @return <b>true</b> if the operation succeed, else return <b>false</b>.
+     */
+    public static boolean copyStream(InputStream inStream, OutputStream outStream) {
+        try {
+            IOUtils.copy(inStream, outStream);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

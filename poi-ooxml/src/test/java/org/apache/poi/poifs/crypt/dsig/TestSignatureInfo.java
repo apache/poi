@@ -174,12 +174,12 @@ class TestSignatureInfo {
     private KeyPair keyPair;
     private X509Certificate x509;
 
-	@BeforeAll
-	public static void setUpClass() {
-		POITestCase.setImageIOCacheDir();
-	}
+    @BeforeAll
+    public static void setUpClass() {
+        POITestCase.setImageIOCacheDir();
+    }
 
-	@AfterAll
+    @AfterAll
     public static void removeUserLocale() {
         LocaleUtil.resetUserLocale();
     }
@@ -748,13 +748,13 @@ class TestSignatureInfo {
     void bug65214() throws Exception {
         initKeyPair();
 
-	    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-	    try (XWPFDocument doc = new XWPFDocument()) {
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (XWPFDocument doc = new XWPFDocument()) {
             XWPFHyperlinkRun r = doc.createParagraph().createHyperlinkRun("http://poi.apache.org");
-	        r.setText("Hyperlink");
-	        r.setUnderline(UnderlinePatterns.SINGLE);
-	        r.setUnderlineColor("0000FF");
-	        doc.write(bos);
+            r.setText("Hyperlink");
+            r.setUnderline(UnderlinePatterns.SINGLE);
+            r.setUnderlineColor("0000FF");
+            doc.write(bos);
         }
 
         SignatureConfig signatureConfig = new SignatureConfig();
@@ -966,7 +966,7 @@ class TestSignatureInfo {
             try (OPCPackage pkg = OPCPackage.open(signDoc, PackageAccess.READ)) {
                 SignatureLine line2 = sup.get();
                 try (POIXMLDocument doc = reinit.init(line2, pkg)) {
-                	assertNotNull(doc);
+                    assertNotNull(doc);
 
                     line2.parse();
                     assertEquals(line.getSuggestedSigner(), line2.getSuggestedSigner());

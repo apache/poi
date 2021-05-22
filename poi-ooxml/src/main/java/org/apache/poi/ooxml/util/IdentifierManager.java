@@ -28,8 +28,8 @@ public class IdentifierManager {
     private final long lowerbound;
 
     /**
-	 * List of segments of available identifiers
-	 */
+     * List of segments of available identifiers
+     */
     private LinkedList<Segment> segments;
 
     /**
@@ -220,8 +220,8 @@ public class IdentifierManager {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     private void verifyIdentifiersLeft() {
         if (segments.isEmpty()) {
             throw new IllegalStateException("No identifiers left");

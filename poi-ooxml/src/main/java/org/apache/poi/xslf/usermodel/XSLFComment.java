@@ -68,7 +68,7 @@ public class XSLFComment implements Comment {
         final CTCommentAuthor newAuthor = list.addNewCmAuthor();
         newAuthor.setName(author);
         newAuthor.setId(maxId+1);
-        newAuthor.setInitials(author.replaceAll(	"\\s*(\\w)\\S*", "$1").toUpperCase(LocaleUtil.getUserLocale()));
+        newAuthor.setInitials(author.replaceAll(    "\\s*(\\w)\\S*", "$1").toUpperCase(LocaleUtil.getUserLocale()));
         comment.setAuthorId(maxId+1);
     }
 

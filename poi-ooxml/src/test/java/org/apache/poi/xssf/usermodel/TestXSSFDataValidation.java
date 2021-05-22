@@ -58,9 +58,9 @@ class TestXSSFDataValidation extends BaseTestDataValidation {
         // application of a single validation definition to multiple cells.
         //
         // For list ( 3 validations for explicit and 3 for formula )
-        // 	- one validation that allows blank.
-        // 	- one that does not allow blank.
-        // 	- one that does not show the drop down arrow.
+        //  - one validation that allows blank.
+        //  - one that does not allow blank.
+        //  - one that does not show the drop down arrow.
         // = 2
         //
         // For number validations ( integer/decimal and text length ) with 8 different types of operators.

@@ -32,53 +32,53 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlPr;
  */
 public class XSSFSingleXmlCell {
 
-	private CTSingleXmlCell singleXmlCell;
-	private SingleXmlCells parent;
+    private CTSingleXmlCell singleXmlCell;
+    private SingleXmlCells parent;
 
 
-	public XSSFSingleXmlCell(CTSingleXmlCell singleXmlCell, SingleXmlCells parent){
-		this.singleXmlCell = singleXmlCell;
-		this.parent = parent;
-	}
+    public XSSFSingleXmlCell(CTSingleXmlCell singleXmlCell, SingleXmlCells parent){
+        this.singleXmlCell = singleXmlCell;
+        this.parent = parent;
+    }
 
-	/**
-	 * Gets the XSSFCell referenced by the R attribute or creates a new one if cell doesn't exists
-	 * @return the referenced XSSFCell, null if the cell reference is invalid
-	 */
-	public XSSFCell getReferencedCell(){
-		XSSFCell cell = null;
-
-
-		CellReference cellReference =  new CellReference(singleXmlCell.getR());
-
-		XSSFRow row = parent.getXSSFSheet().getRow(cellReference.getRow());
-		if(row==null){
-			row = parent.getXSSFSheet().createRow(cellReference.getRow());
-		}
-
-		cell = row.getCell(cellReference.getCol());
-		if(cell==null){
-			cell = row.createCell(cellReference.getCol());
-		}
+    /**
+     * Gets the XSSFCell referenced by the R attribute or creates a new one if cell doesn't exists
+     * @return the referenced XSSFCell, null if the cell reference is invalid
+     */
+    public XSSFCell getReferencedCell(){
+        XSSFCell cell = null;
 
 
-		return cell;
-	}
+        CellReference cellReference =  new CellReference(singleXmlCell.getR());
 
-	public String getXpath(){
-		CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
-		CTXmlPr xmlPr = xmlCellPr.getXmlPr();
+        XSSFRow row = parent.getXSSFSheet().getRow(cellReference.getRow());
+        if(row==null){
+            row = parent.getXSSFSheet().createRow(cellReference.getRow());
+        }
+
+        cell = row.getCell(cellReference.getCol());
+        if(cell==null){
+            cell = row.createCell(cellReference.getCol());
+        }
+
+
+        return cell;
+    }
+
+    public String getXpath(){
+        CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
+        CTXmlPr xmlPr = xmlCellPr.getXmlPr();
         return xmlPr.getXpath();
-	}
+    }
 
-	public long getMapId(){
-		return singleXmlCell.getXmlCellPr().getXmlPr().getMapId();
-	}
+    public long getMapId(){
+        return singleXmlCell.getXmlCellPr().getXmlPr().getMapId();
+    }
 
-	public String getXmlDataType() {
-		CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
-		CTXmlPr xmlPr = xmlCellPr.getXmlPr();
-		return xmlPr.getXmlDataType();
-	}
+    public String getXmlDataType() {
+        CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
+        CTXmlPr xmlPr = xmlCellPr.getXmlPr();
+        return xmlPr.getXmlDataType();
+    }
 
 }

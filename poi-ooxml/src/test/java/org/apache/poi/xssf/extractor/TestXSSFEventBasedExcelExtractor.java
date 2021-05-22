@@ -39,92 +39,92 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link XSSFEventBasedExcelExtractor}
  */
 class TestXSSFEventBasedExcelExtractor {
-	protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
+    protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
         return new XSSFEventBasedExcelExtractor(XSSFTestDataSamples.
                 openSamplePackage(sampleName));
-	}
+    }
 
-	/**
-	 * Get text out of the simple file
-	 */
-	@Test
-	void testGetSimpleText() throws Exception {
-		// a very simple file
-	   XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsx");
-		extractor.getText();
+    /**
+     * Get text out of the simple file
+     */
+    @Test
+    void testGetSimpleText() throws Exception {
+        // a very simple file
+       XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsx");
+        extractor.getText();
 
-		String text = extractor.getText();
-		assertTrue(text.length() > 0);
+        String text = extractor.getText();
+        assertTrue(text.length() > 0);
 
-		// Check sheet names
-		assertStartsWith(text, "Sheet1");
-		assertEndsWith(text, "Sheet3\n");
+        // Check sheet names
+        assertStartsWith(text, "Sheet1");
+        assertEndsWith(text, "Sheet3\n");
 
-		// Now without, will have text
-		extractor.setIncludeSheetNames(false);
-		text = extractor.getText();
-		String CHUNK1 =
-			"Lorem\t111\n" +
-    		"ipsum\t222\n" +
-    		"dolor\t333\n" +
-    		"sit\t444\n" +
-    		"amet\t555\n" +
-    		"consectetuer\t666\n" +
-    		"adipiscing\t777\n" +
-    		"elit\t888\n" +
-    		"Nunc\t999\n";
-		String CHUNK2 =
-			"The quick brown fox jumps over the lazy dog\n" +
-			"hello, xssf	hello, xssf\n" +
-			"hello, xssf	hello, xssf\n" +
-			"hello, xssf	hello, xssf\n" +
-			"hello, xssf	hello, xssf\n";
-		assertEquals(
-				CHUNK1 +
-				"at\t4995\n" +
-				CHUNK2
-				, text);
+        // Now without, will have text
+        extractor.setIncludeSheetNames(false);
+        text = extractor.getText();
+        String CHUNK1 =
+            "Lorem\t111\n" +
+            "ipsum\t222\n" +
+            "dolor\t333\n" +
+            "sit\t444\n" +
+            "amet\t555\n" +
+            "consectetuer\t666\n" +
+            "adipiscing\t777\n" +
+            "elit\t888\n" +
+            "Nunc\t999\n";
+        String CHUNK2 =
+            "The quick brown fox jumps over the lazy dog\n" +
+            "hello, xssf    hello, xssf\n" +
+            "hello, xssf    hello, xssf\n" +
+            "hello, xssf    hello, xssf\n" +
+            "hello, xssf    hello, xssf\n";
+        assertEquals(
+                CHUNK1 +
+                "at\t4995\n" +
+                CHUNK2
+                , text);
 
-		// Now get formulas not their values
-		extractor.setFormulasNotResults(true);
-		text = extractor.getText();
-		assertEquals(
-				CHUNK1 +
-				"at\tSUM(B1:B9)\n" +
-				CHUNK2, text);
+        // Now get formulas not their values
+        extractor.setFormulasNotResults(true);
+        text = extractor.getText();
+        assertEquals(
+                CHUNK1 +
+                "at\tSUM(B1:B9)\n" +
+                CHUNK2, text);
 
-		// With sheet names too
-		extractor.setIncludeSheetNames(true);
-		text = extractor.getText();
-		assertEquals(
-				"Sheet1\n" +
-				CHUNK1 +
-				"at\tSUM(B1:B9)\n" +
-				"rich test\n" +
-				CHUNK2 +
-				"Sheet3\n"
-				, text);
+        // With sheet names too
+        extractor.setIncludeSheetNames(true);
+        text = extractor.getText();
+        assertEquals(
+                "Sheet1\n" +
+                CHUNK1 +
+                "at\tSUM(B1:B9)\n" +
+                "rich test\n" +
+                CHUNK2 +
+                "Sheet3\n"
+                , text);
 
-		extractor.close();
-	}
+        extractor.close();
+    }
 
     @Test
-	void testGetComplexText() throws Exception {
-		// A fairly complex file
-	   XSSFEventBasedExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
-		extractor.getText();
+    void testGetComplexText() throws Exception {
+        // A fairly complex file
+       XSSFEventBasedExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
+        extractor.getText();
 
-		String text = extractor.getText();
-		assertTrue(text.length() > 0);
+        String text = extractor.getText();
+        assertTrue(text.length() > 0);
 
-		// Might not have all formatting it should do!
-		assertStartsWith(text,
-						"Avgtxfull\n" +
-						"(iii) AVERAGE TAX RATES ON ANNUAL"
-		);
+        // Might not have all formatting it should do!
+        assertStartsWith(text,
+                        "Avgtxfull\n" +
+                        "(iii) AVERAGE TAX RATES ON ANNUAL"
+        );
 
-		extractor.close();
-	}
+        extractor.close();
+    }
 
     @Test
     void testInlineStrings() throws Exception {
@@ -141,44 +141,44 @@ class TestXSSFEventBasedExcelExtractor {
       assertContains(text, "Long Text");
 
       // Inline Strings
-	  assertContains(text, "1st Inline String");
-	  assertContains(text, "And More");
+      assertContains(text, "1st Inline String");
+      assertContains(text, "And More");
 
       // Formulas
-	  assertContains(text, "A2");
-	  assertContains(text, "A5-A$2");
+      assertContains(text, "A2");
+      assertContains(text, "A5-A$2");
 
       extractor.close();
     }
 
-	/**
-	 * Test that we return pretty much the same as
-	 *  ExcelExtractor does, when we're both passed
-	 *  the same file, just saved as xls and xlsx
-	 */
+    /**
+     * Test that we return pretty much the same as
+     *  ExcelExtractor does, when we're both passed
+     *  the same file, just saved as xls and xlsx
+     */
     @Test
     void testComparedToOLE2() throws Exception {
-		// A fairly simple file - ooxml
-	   XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
+        // A fairly simple file - ooxml
+       XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
-		ExcelExtractor ole2Extractor =
-			new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
+        ExcelExtractor ole2Extractor =
+            new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 
-		POITextExtractor[] extractors =
-			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
-		for (POITextExtractor extractor : extractors) {
+        POITextExtractor[] extractors =
+            new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
+        for (POITextExtractor extractor : extractors) {
             String text = extractor.getText().replaceAll("[\r\t]", "");
-			assertStartsWith(text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
-			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
-			Matcher m = pattern.matcher(text);
-			assertTrue(m.matches());
-		}
+            assertStartsWith(text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
+            Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
+            Matcher m = pattern.matcher(text);
+            assertTrue(m.matches());
+        }
 
-		ole2Extractor.close();
-		ooxmlExtractor.close();
-	}
+        ole2Extractor.close();
+        ooxmlExtractor.close();
+    }
 
-	 /** Test text extraction from text box using getShapes() */
+     /** Test text extraction from text box using getShapes() */
     @Test
     void testShapes() throws Exception{
 
@@ -320,35 +320,35 @@ class TestXSSFEventBasedExcelExtractor {
     }
 
     @Test
-	void test59021() throws Exception {
-		XSSFEventBasedExcelExtractor ex =
-				new XSSFEventBasedExcelExtractor(
-						XSSFTestDataSamples.openSamplePackage("59021.xlsx"));
-		String text = ex.getText();
-		assertContains(text, "Abkhazia - Fixed");
-		assertContains(text, "10/02/2016");
-		ex.close();
-	}
+    void test59021() throws Exception {
+        XSSFEventBasedExcelExtractor ex =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("59021.xlsx"));
+        String text = ex.getText();
+        assertContains(text, "Abkhazia - Fixed");
+        assertContains(text, "10/02/2016");
+        ex.close();
+    }
 
-	@Test
-	void test51519() throws Exception {
-    	//default behavior: include phonetic runs
-		XSSFEventBasedExcelExtractor ex =
-				new XSSFEventBasedExcelExtractor(
-						XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
-		String text = ex.getText();
-		assertContains(text, "\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3");
-		ex.close();
+    @Test
+    void test51519() throws Exception {
+        //default behavior: include phonetic runs
+        XSSFEventBasedExcelExtractor ex =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
+        String text = ex.getText();
+        assertContains(text, "\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3");
+        ex.close();
 
-		//now try turning them off
-		ex =
-				new XSSFEventBasedExcelExtractor(
-						XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
-		ex.setConcatenatePhoneticRuns(false);
-		text = ex.getText();
-		assertFalse(text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"),
-			"should not be able to find appended phonetic run");
-		ex.close();
+        //now try turning them off
+        ex =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
+        ex.setConcatenatePhoneticRuns(false);
+        text = ex.getText();
+        assertFalse(text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"),
+            "should not be able to find appended phonetic run");
+        ex.close();
 
-	}
+    }
 }

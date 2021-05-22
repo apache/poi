@@ -31,31 +31,31 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestPackageThumbnail {
 
-	/**
-	 * Test package addThumbnail() method.
-	 */
-	@Test
-	void testSetProperties() throws Exception {
-		String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageThumbnail.docx");
+    /**
+     * Test package addThumbnail() method.
+     */
+    @Test
+    void testSetProperties() throws Exception {
+        String inputPath = OpenXML4JTestDataSamples.getSampleFileName("TestPackageThumbnail.docx");
 
-		String imagePath = OpenXML4JTestDataSamples.getSampleFileName("thumbnail.jpg");
+        String imagePath = OpenXML4JTestDataSamples.getSampleFileName("thumbnail.jpg");
 
-		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageThumbnailOUTPUT.docx");
+        File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageThumbnailOUTPUT.docx");
 
-		// Open package
-		try (OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE)) {
-    		p.addThumbnail(imagePath);
-    		// Save the package in the output directory
-    		p.save(outputFile);
+        // Open package
+        try (OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE)) {
+            p.addThumbnail(imagePath);
+            // Save the package in the output directory
+            p.save(outputFile);
 
-    		// Open the newly created file to check core properties saved values.
-    		try (OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ)) {
-    			assertNotEquals(0, p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL).size(),
-					"Thumbnail not added to the package !");
-				p2.revert();
-    		}
-			p.revert();
-		}
-		assertTrue(outputFile.delete());
-	}
+            // Open the newly created file to check core properties saved values.
+            try (OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ)) {
+                assertNotEquals(0, p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL).size(),
+                    "Thumbnail not added to the package !");
+                p2.revert();
+            }
+            p.revert();
+        }
+        assertTrue(outputFile.delete());
+    }
 }

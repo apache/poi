@@ -28,67 +28,67 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
  */
 public final class UnmarshallContext {
 
-	private OPCPackage _package;
+    private OPCPackage _package;
 
-	private PackagePartName partName;
+    private PackagePartName partName;
 
-	private ZipArchiveEntry zipEntry;
+    private ZipArchiveEntry zipEntry;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param targetPackage
-	 *            Container.
-	 * @param partName
-	 *            Name of the part to unmarshall.
-	 */
-	public UnmarshallContext(OPCPackage targetPackage, PackagePartName partName) {
-		this._package = targetPackage;
-		this.partName = partName;
-	}
+    /**
+     * Constructor.
+     *
+     * @param targetPackage
+     *            Container.
+     * @param partName
+     *            Name of the part to unmarshall.
+     */
+    public UnmarshallContext(OPCPackage targetPackage, PackagePartName partName) {
+        this._package = targetPackage;
+        this.partName = partName;
+    }
 
-	/**
-	 * @return the container
-	 */
-	OPCPackage getPackage() {
-		return _package;
-	}
+    /**
+     * @return the container
+     */
+    OPCPackage getPackage() {
+        return _package;
+    }
 
-	/**
-	 * @param container
-	 *            the container to set
-	 */
-	public void setPackage(OPCPackage container) {
-		this._package = container;
-	}
+    /**
+     * @param container
+     *            the container to set
+     */
+    public void setPackage(OPCPackage container) {
+        this._package = container;
+    }
 
-	/**
-	 * @return the partName
-	 */
-	PackagePartName getPartName() {
-		return partName;
-	}
+    /**
+     * @return the partName
+     */
+    PackagePartName getPartName() {
+        return partName;
+    }
 
-	/**
-	 * @param partName
-	 *            the partName to set
-	 */
-	public void setPartName(PackagePartName partName) {
-		this.partName = partName;
-	}
+    /**
+     * @param partName
+     *            the partName to set
+     */
+    public void setPartName(PackagePartName partName) {
+        this.partName = partName;
+    }
 
-	/**
-	 * @return the zipEntry
-	 */
-	ZipArchiveEntry getZipEntry() {
-		return zipEntry;
-	}
+    /**
+     * @return the zipEntry
+     */
+    ZipArchiveEntry getZipEntry() {
+        return zipEntry;
+    }
 
-	/**
-	 * @param zipEntry
-	 *            the zipEntry to set
-	 */
-	public void setZipEntry(ZipArchiveEntry zipEntry) {
-		this.zipEntry = zipEntry;
-	}
+    /**
+     * @param zipEntry
+     *            the zipEntry to set
+     */
+    public void setZipEntry(ZipArchiveEntry zipEntry) {
+        this.zipEntry = zipEntry;
+    }
 }

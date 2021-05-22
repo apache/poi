@@ -109,7 +109,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
         zoom.setPercent(BigInteger.valueOf(zoomPercent));
     }
 
-	/**
+    /**
      * Verifies the documentProtection tag inside settings.xml file <br>
      * if the protection is enforced (w:enforcement="1") <br>
      *  <p>
@@ -122,7 +122,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      *
      * @return true if documentProtection is enforced with option any
      */
-	public boolean isEnforcedWith() {
+    public boolean isEnforcedWith() {
         CTDocProtect ctDocProtect = ctSettings.getDocumentProtection();
         return ctDocProtect != null && POIXMLUnits.parseOnOff(ctDocProtect.xgetEnforcement());
 

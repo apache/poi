@@ -41,21 +41,21 @@ import org.w3c.dom.NodeList;
  */
 public final class XSSFGraphicFrame extends XSSFShape {
 
-	private static CTGraphicalObjectFrame prototype;
+    private static CTGraphicalObjectFrame prototype;
 
-	private final CTGraphicalObjectFrame graphicFrame;
+    private final CTGraphicalObjectFrame graphicFrame;
 
-	/**
-	 * Construct a new XSSFGraphicFrame object.
-	 *
-	 * @param drawing the XSSFDrawing that owns this frame
-	 * @param ctGraphicFrame the XML bean that stores this frame content
-	 */
-	protected XSSFGraphicFrame(XSSFDrawing drawing, CTGraphicalObjectFrame ctGraphicFrame) {
-		this.drawing = drawing; // protected field on XSSFShape
-		this.graphicFrame = ctGraphicFrame;
-		// TODO: there may be a better way to delegate this
-		CTGraphicalObjectData graphicData = graphicFrame.getGraphic().getGraphicData();
+    /**
+     * Construct a new XSSFGraphicFrame object.
+     *
+     * @param drawing the XSSFDrawing that owns this frame
+     * @param ctGraphicFrame the XML bean that stores this frame content
+     */
+    protected XSSFGraphicFrame(XSSFDrawing drawing, CTGraphicalObjectFrame ctGraphicFrame) {
+        this.drawing = drawing; // protected field on XSSFShape
+        this.graphicFrame = ctGraphicFrame;
+        // TODO: there may be a better way to delegate this
+        CTGraphicalObjectData graphicData = graphicFrame.getGraphic().getGraphicData();
         if (graphicData != null) {
             NodeList nodes = graphicData.getDomNode().getChildNodes();
             for (int i = 0; i < nodes.getLength(); i++) {
@@ -71,134 +71,134 @@ public final class XSSFGraphicFrame extends XSSFShape {
                 }
             }
         }
-	}
+    }
 
-	@Internal
-	public CTGraphicalObjectFrame getCTGraphicalObjectFrame() {
-		return graphicFrame;
-	}
+    @Internal
+    public CTGraphicalObjectFrame getCTGraphicalObjectFrame() {
+        return graphicFrame;
+    }
 
-	/**
-	 * Initialize default structure of a new graphic frame
-	 */
-	protected static CTGraphicalObjectFrame prototype() {
-		if (prototype == null) {
-			CTGraphicalObjectFrame graphicFrame = CTGraphicalObjectFrame.Factory.newInstance();
+    /**
+     * Initialize default structure of a new graphic frame
+     */
+    protected static CTGraphicalObjectFrame prototype() {
+        if (prototype == null) {
+            CTGraphicalObjectFrame graphicFrame = CTGraphicalObjectFrame.Factory.newInstance();
 
-			CTGraphicalObjectFrameNonVisual nvGraphic = graphicFrame.addNewNvGraphicFramePr();
-			CTNonVisualDrawingProps props = nvGraphic.addNewCNvPr();
-			props.setId(0);
-			props.setName("Diagramm 1");
-			nvGraphic.addNewCNvGraphicFramePr();
+            CTGraphicalObjectFrameNonVisual nvGraphic = graphicFrame.addNewNvGraphicFramePr();
+            CTNonVisualDrawingProps props = nvGraphic.addNewCNvPr();
+            props.setId(0);
+            props.setName("Diagramm 1");
+            nvGraphic.addNewCNvGraphicFramePr();
 
-			CTTransform2D transform = graphicFrame.addNewXfrm();
-			CTPositiveSize2D extPoint = transform.addNewExt();
-			CTPoint2D offPoint = transform.addNewOff();
+            CTTransform2D transform = graphicFrame.addNewXfrm();
+            CTPositiveSize2D extPoint = transform.addNewExt();
+            CTPoint2D offPoint = transform.addNewOff();
 
-			extPoint.setCx(0);
-			extPoint.setCy(0);
-			offPoint.setX(0);
-			offPoint.setY(0);
+            extPoint.setCx(0);
+            extPoint.setCy(0);
+            offPoint.setX(0);
+            offPoint.setY(0);
 
-			/* CTGraphicalObject graphic = */ graphicFrame.addNewGraphic();
+            /* CTGraphicalObject graphic = */ graphicFrame.addNewGraphic();
 
-			prototype = graphicFrame;
-		}
-		return prototype;
-	}
+            prototype = graphicFrame;
+        }
+        return prototype;
+    }
 
-	/**
-	 * Sets the frame macro.
-	 */
-	public void setMacro(String macro) {
-		graphicFrame.setMacro(macro);
-	}
+    /**
+     * Sets the frame macro.
+     */
+    public void setMacro(String macro) {
+        graphicFrame.setMacro(macro);
+    }
 
-	/**
-	 * Sets the frame name.
-	 */
-	public void setName(String name) {
-		getNonVisualProperties().setName(name);
-	}
+    /**
+     * Sets the frame name.
+     */
+    public void setName(String name) {
+        getNonVisualProperties().setName(name);
+    }
 
-	/**
-	 * Returns the frame name.
-	 * @return name of the frame
-	 */
-	public String getName() {
-		return getNonVisualProperties().getName();
-	}
+    /**
+     * Returns the frame name.
+     * @return name of the frame
+     */
+    public String getName() {
+        return getNonVisualProperties().getName();
+    }
 
-	private CTNonVisualDrawingProps getNonVisualProperties() {
-		CTGraphicalObjectFrameNonVisual nvGraphic = graphicFrame.getNvGraphicFramePr();
-		return nvGraphic.getCNvPr();
-	}
+    private CTNonVisualDrawingProps getNonVisualProperties() {
+        CTGraphicalObjectFrameNonVisual nvGraphic = graphicFrame.getNvGraphicFramePr();
+        return nvGraphic.getCNvPr();
+    }
 
-	/**
-	 * Attaches frame to an anchor.
-	 */
-	protected void setAnchor(XSSFClientAnchor anchor) {
-		this.anchor = anchor;
-	}
+    /**
+     * Attaches frame to an anchor.
+     */
+    protected void setAnchor(XSSFClientAnchor anchor) {
+        this.anchor = anchor;
+    }
 
-	/**
-	 * Returns the frame anchor.
-	 * @return the XSSFClientAnchor anchor this frame is attached to
-	 */
-	@Override
+    /**
+     * Returns the frame anchor.
+     * @return the XSSFClientAnchor anchor this frame is attached to
+     */
+    @Override
     public XSSFClientAnchor getAnchor() {
-		return (XSSFClientAnchor) anchor;
-	}
+        return (XSSFClientAnchor) anchor;
+    }
 
-	/**
-	 * Assign a DrawingML chart to the graphic frame.
-	 */
-	protected void setChart(XSSFChart chart, String relId) {
-		CTGraphicalObjectData data = graphicFrame.getGraphic().addNewGraphicData();
-		appendChartElement(data, relId);
-		chart.setGraphicFrame(this);
-	}
+    /**
+     * Assign a DrawingML chart to the graphic frame.
+     */
+    protected void setChart(XSSFChart chart, String relId) {
+        CTGraphicalObjectData data = graphicFrame.getGraphic().addNewGraphicData();
+        appendChartElement(data, relId);
+        chart.setGraphicFrame(this);
+    }
 
-	/**
-	 * Gets the frame id.
-	 */
-	public long getId() {
-		return graphicFrame.getNvGraphicFramePr().getCNvPr().getId();
-	}
+    /**
+     * Gets the frame id.
+     */
+    public long getId() {
+        return graphicFrame.getNvGraphicFramePr().getCNvPr().getId();
+    }
 
-	/**
-	 * Sets the frame id.
-	 */
-	protected void setId(long id) {
-		graphicFrame.getNvGraphicFramePr().getCNvPr().setId(id);
-	}
+    /**
+     * Sets the frame id.
+     */
+    protected void setId(long id) {
+        graphicFrame.getNvGraphicFramePr().getCNvPr().setId(id);
+    }
 
-	/**
-	 * The low level code to insert {@code <c:chart>} tag into
-	 * {@code <a:graphicData>}.
-	 *
-	 * Here is the schema (ECMA-376):
-	 * <pre>
-	 * {@code
-	 * <complexType name="CT_GraphicalObjectData">
-	 *   <sequence>
-	 *     <any minOccurs="0" maxOccurs="unbounded" processContents="strict"/>
-	 *   </sequence>
-	 *   <attribute name="uri" type="xsd:token"/>
-	 * </complexType>
-	 * }
-	 * </pre>
-	 */
-	private void appendChartElement(CTGraphicalObjectData data, String id) {
-		String r_namespaceUri = STRelationshipId.type.getName().getNamespaceURI();
-		String c_namespaceUri = XSSFDrawing.NAMESPACE_C;
-		XmlCursor cursor = data.newCursor();
-		cursor.toNextToken();
-		cursor.beginElement(new QName(c_namespaceUri, "chart", "c"));
-		cursor.insertAttributeWithValue(new QName(r_namespaceUri, "id", "r"), id);
-		cursor.dispose();
-		data.setUri(c_namespaceUri);
-	}
+    /**
+     * The low level code to insert {@code <c:chart>} tag into
+     * {@code <a:graphicData>}.
+     *
+     * Here is the schema (ECMA-376):
+     * <pre>
+     * {@code
+     * <complexType name="CT_GraphicalObjectData">
+     *   <sequence>
+     *     <any minOccurs="0" maxOccurs="unbounded" processContents="strict"/>
+     *   </sequence>
+     *   <attribute name="uri" type="xsd:token"/>
+     * </complexType>
+     * }
+     * </pre>
+     */
+    private void appendChartElement(CTGraphicalObjectData data, String id) {
+        String r_namespaceUri = STRelationshipId.type.getName().getNamespaceURI();
+        String c_namespaceUri = XSSFDrawing.NAMESPACE_C;
+        XmlCursor cursor = data.newCursor();
+        cursor.toNextToken();
+        cursor.beginElement(new QName(c_namespaceUri, "chart", "c"));
+        cursor.insertAttributeWithValue(new QName(r_namespaceUri, "id", "r"), id);
+        cursor.dispose();
+        data.setUri(c_namespaceUri);
+    }
 
     @Override
     protected CTShapeProperties getShapeProperties(){

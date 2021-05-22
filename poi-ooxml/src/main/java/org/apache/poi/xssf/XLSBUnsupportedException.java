@@ -28,6 +28,6 @@ public class XLSBUnsupportedException extends UnsupportedFileFormatException {
     public static final String MESSAGE = ".XLSB Binary Workbooks are not supported"; 
 
     public XLSBUnsupportedException() {
-		super(MESSAGE);
-	}
+        super(MESSAGE);
+    }
 }

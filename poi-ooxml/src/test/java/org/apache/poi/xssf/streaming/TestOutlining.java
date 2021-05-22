@@ -35,48 +35,48 @@ import org.junit.jupiter.api.Test;
 
 public final class TestOutlining {
     @Test
-	void testSetRowGroupCollapsed() throws IOException {
-		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
-		wb2.setCompressTempFiles(true);
-		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
+    void testSetRowGroupCollapsed() throws IOException {
+        SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
+        wb2.setCompressTempFiles(true);
+        SXSSFSheet sheet2 = wb2.createSheet("new sheet");
 
-		int rowCount = 20;
-		for (int i = 0; i < rowCount; i++) {
-			sheet2.createRow(i);
-		}
+        int rowCount = 20;
+        for (int i = 0; i < rowCount; i++) {
+            sheet2.createRow(i);
+        }
 
-		sheet2.groupRow(4, 9);
-		sheet2.groupRow(11, 19);
+        sheet2.groupRow(4, 9);
+        sheet2.groupRow(11, 19);
 
-		sheet2.setRowGroupCollapsed(4, true);
+        sheet2.setRowGroupCollapsed(4, true);
 
-		SXSSFRow r = sheet2.getRow(8);
-		assertTrue(r.getHidden());
-		r = sheet2.getRow(10);
-		assertTrue(r.getCollapsed());
-		r = sheet2.getRow(12);
-		assertNull(r.getHidden());
-		wb2.dispose();
+        SXSSFRow r = sheet2.getRow(8);
+        assertTrue(r.getHidden());
+        r = sheet2.getRow(10);
+        assertTrue(r.getCollapsed());
+        r = sheet2.getRow(12);
+        assertNull(r.getHidden());
+        wb2.dispose();
 
-		wb2.close();
-	}
+        wb2.close();
+    }
 
     @Test
     void testSetRowGroupCollapsedError() throws IOException {
-		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
-		wb2.setCompressTempFiles(true);
-		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
+        SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
+        wb2.setCompressTempFiles(true);
+        SXSSFSheet sheet2 = wb2.createSheet("new sheet");
 
-		int rowCount = 20;
-		for (int i = 0; i < rowCount; i++) {
-			sheet2.createRow(i);
-		}
+        int rowCount = 20;
+        for (int i = 0; i < rowCount; i++) {
+            sheet2.createRow(i);
+        }
 
-		sheet2.groupRow(4, 9);
-		sheet2.groupRow(11, 19);
+        sheet2.groupRow(4, 9);
+        sheet2.groupRow(11, 19);
 
         IllegalArgumentException e;
-		e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(3, true));
+        e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(3, true));
         assertTrue(e.getMessage().contains("row (3)"));
 
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(10, true));
@@ -88,17 +88,17 @@ public final class TestOutlining {
         e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(20, true));
         assertTrue(e.getMessage().contains("Row does not exist"), "Had: " + e.getMessage());
 
-		SXSSFRow r = sheet2.getRow(8);
-		assertNotNull(r);
-		assertNull(r.getHidden());
-		r = sheet2.getRow(10);
-		assertNull(r.getCollapsed());
-		r = sheet2.getRow(12);
-		assertNull(r.getHidden());
-		wb2.dispose();
+        SXSSFRow r = sheet2.getRow(8);
+        assertNotNull(r);
+        assertNull(r.getHidden());
+        r = sheet2.getRow(10);
+        assertNull(r.getCollapsed());
+        r = sheet2.getRow(12);
+        assertNull(r.getHidden());
+        wb2.dispose();
 
-		wb2.close();
-	}
+        wb2.close();
+    }
 
     @Test
     void testOutlineGettersHSSF() throws IOException {

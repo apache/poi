@@ -34,12 +34,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 class TestXSSFDialogSheet {
 
     @Test
-	void testCreateDialogSheet() throws IOException {
+    void testCreateDialogSheet() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", CTDialogsheet.Factory.newInstance());
         assertNotNull(dialogsheet);
         workbook.close();
-	}
+    }
 
     @Test
     void testGetDialog() throws IOException {
@@ -50,14 +50,14 @@ class TestXSSFDialogSheet {
     }
 
     @Test
-	void testAddRow() throws IOException {
+    void testAddRow() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet dialogsheet = workbook.createDialogsheet("Dialogsheet 1", CTDialogsheet.Factory.newInstance());
         assertNotNull(dialogsheet);
         Row row = dialogsheet.createRow(0);
         assertNull(row);
         workbook.close();
-	}
+    }
 
     @Test
     void testGetSetAutoBreaks() throws IOException {

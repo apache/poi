@@ -55,64 +55,64 @@ public final class TestXDDFManualLayout {
         wb.close();
     }
 
-	/*
-	 * Accessor methods are not trivial. They use lazy underlying bean
-	 * initialization so there can be some errors (NPE, for example).
-	 */
+    /*
+     * Accessor methods are not trivial. They use lazy underlying bean
+     * initialization so there can be some errors (NPE, for example).
+     */
     @Test
     void testAccessorMethods() {
-		final double newRatio = 1.1;
-		final double newCoordinate = 0.3;
-		final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
-		final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
+        final double newRatio = 1.1;
+        final double newCoordinate = 0.3;
+        final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
+        final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
 
-		layout.setWidthRatio(newRatio);
+        layout.setWidthRatio(newRatio);
         assertEquals(layout.getWidthRatio(), newRatio, 0.0);
 
-		layout.setHeightRatio(newRatio);
+        layout.setHeightRatio(newRatio);
         assertEquals(layout.getHeightRatio(), newRatio, 0.0);
 
-		layout.setX(newCoordinate);
+        layout.setX(newCoordinate);
         assertEquals(layout.getX(), newCoordinate, 0.0);
 
-		layout.setY(newCoordinate);
+        layout.setY(newCoordinate);
         assertEquals(layout.getY(), newCoordinate, 0.0);
 
-		layout.setXMode(nonDefaultMode);
+        layout.setXMode(nonDefaultMode);
         assertSame(layout.getXMode(), nonDefaultMode);
 
-		layout.setYMode(nonDefaultMode);
+        layout.setYMode(nonDefaultMode);
         assertSame(layout.getYMode(), nonDefaultMode);
 
-		layout.setWidthMode(nonDefaultMode);
+        layout.setWidthMode(nonDefaultMode);
         assertSame(layout.getWidthMode(), nonDefaultMode);
 
-		layout.setHeightMode(nonDefaultMode);
+        layout.setHeightMode(nonDefaultMode);
         assertSame(layout.getHeightMode(), nonDefaultMode);
 
-		layout.setTarget(nonDefaultTarget);
+        layout.setTarget(nonDefaultTarget);
         assertSame(layout.getTarget(), nonDefaultTarget);
 
-	}
+    }
 
-	/*
-	 * Layout must have reasonable default values and must not throw
-	 * any exceptions.
-	 */
+    /*
+     * Layout must have reasonable default values and must not throw
+     * any exceptions.
+     */
     @Test
     void testDefaultValues() {
-		assertNotNull(layout.getTarget());
-		assertNotNull(layout.getXMode());
-		assertNotNull(layout.getYMode());
-		assertNotNull(layout.getHeightMode());
-		assertNotNull(layout.getWidthMode());
-		/*
-		 * According to interface, 0.0 should be returned for
-		 * uninitialized double properties.
-		 */
+        assertNotNull(layout.getTarget());
+        assertNotNull(layout.getXMode());
+        assertNotNull(layout.getYMode());
+        assertNotNull(layout.getHeightMode());
+        assertNotNull(layout.getWidthMode());
+        /*
+         * According to interface, 0.0 should be returned for
+         * uninitialized double properties.
+         */
         assertEquals(0.0, layout.getX(), 0.0);
         assertEquals(0.0, layout.getY(), 0.0);
         assertEquals(0.0, layout.getWidthRatio(), 0.0);
         assertEquals(0.0, layout.getHeightRatio(), 0.0);
-	}
+    }
 }

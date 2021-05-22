@@ -31,35 +31,35 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
  *  being annoyingly very different.
  */
 public interface ZipEntrySource extends Closeable {
-	/**
-	 * Returns an Enumeration of all the Entries
-	 */
-	Enumeration<? extends ZipArchiveEntry> getEntries();
+    /**
+     * Returns an Enumeration of all the Entries
+     */
+    Enumeration<? extends ZipArchiveEntry> getEntries();
 
-	/**
-	 * Return an entry by its path
-	 * @param path the path in unix-notation
-	 * @return the entry or {@code null} if not found
-	 *
-	 * @since POI 4.0.0
-	 */
-	ZipArchiveEntry getEntry(String path);
+    /**
+     * Return an entry by its path
+     * @param path the path in unix-notation
+     * @return the entry or {@code null} if not found
+     *
+     * @since POI 4.0.0
+     */
+    ZipArchiveEntry getEntry(String path);
 
-	/**
-	 * Returns an InputStream of the decompressed 
-	 *  data that makes up the entry
-	 */
-	InputStream getInputStream(ZipArchiveEntry entry) throws IOException;
-	
-	/**
-	 * Indicates we are done with reading, and 
-	 *  resources may be freed
-	 */
-	@Override
-	void close() throws IOException;
-	
-	/**
-	 * Has close been called already?
-	 */
-	boolean isClosed();
+    /**
+     * Returns an InputStream of the decompressed 
+     *  data that makes up the entry
+     */
+    InputStream getInputStream(ZipArchiveEntry entry) throws IOException;
+    
+    /**
+     * Indicates we are done with reading, and 
+     *  resources may be freed
+     */
+    @Override
+    void close() throws IOException;
+    
+    /**
+     * Has close been called already?
+     */
+    boolean isClosed();
 }

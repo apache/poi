@@ -40,14 +40,14 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestXSSFDataFormat extends BaseTestDataFormat {
 
-	public TestXSSFDataFormat() {
-		super(XSSFITestDataProvider.instance);
-	}
+    public TestXSSFDataFormat() {
+        super(XSSFITestDataProvider.instance);
+    }
 
     /**
      * [Bug 58778] Built-in number formats can be overridden with XSSFDataFormat.putFormat(int id, String fmt)
      */
-	@Test
+    @Test
     void test58778() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             Cell cell = wb1.createSheet("bug58778").createRow(0).createCell(0);

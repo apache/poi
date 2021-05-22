@@ -39,11 +39,11 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
     public GZIPSheetDataWriter() throws IOException {
         super();
     }
-	
-	/**
+    
+    /**
      * @param sharedStringsTable the shared strings table, or null if inline text is used
      */
-	public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
+    public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
         super(sharedStringsTable);
     }
 

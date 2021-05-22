@@ -360,7 +360,7 @@ public class XSSFHyperlink implements Hyperlink {
     @Override
     public void setLastRow(int row) {
         setFirstRow(row);
-	}
+    }
 
     /**
      * @return additional text to help the user understand more about the hyperlink

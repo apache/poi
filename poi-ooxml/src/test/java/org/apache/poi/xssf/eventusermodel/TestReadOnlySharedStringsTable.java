@@ -42,7 +42,7 @@ public final class TestReadOnlySharedStringsTable {
 
     @Test
     void testParse() throws Exception {
-		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
 
@@ -60,11 +60,11 @@ public final class TestReadOnlySharedStringsTable {
                 assertEquals(i1.getString(), i2.getString());
             }
         }
-	}
+    }
 
-	//51519
+    //51519
     @Test
-	void testPhoneticRuns() throws Exception {
+    void testPhoneticRuns() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"))) {
             List < PackagePart > parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());

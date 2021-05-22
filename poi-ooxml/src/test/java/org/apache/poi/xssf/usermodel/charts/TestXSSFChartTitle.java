@@ -54,8 +54,8 @@ import org.junit.jupiter.api.Test;
  */
 class TestXSSFChartTitle {
     private XSSFWorkbook createWorkbookWithChart() {
-    	XSSFWorkbook wb = new XSSFWorkbook();
-    	XSSFSheet sheet = wb.createSheet("linechart");
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("linechart");
         final int NUM_OF_ROWS = 3;
         final int NUM_OF_COLUMNS = 10;
 

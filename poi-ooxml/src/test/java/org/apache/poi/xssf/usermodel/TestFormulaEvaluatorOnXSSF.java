@@ -61,20 +61,20 @@ import org.junit.jupiter.params.provider.MethodSource;
 public final class TestFormulaEvaluatorOnXSSF {
     private static final Logger LOG = LogManager.getLogger(TestFormulaEvaluatorOnXSSF.class);
 
-	private static XSSFWorkbook workbook;
+    private static XSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
     private static Locale userLocale;
 
-	/**
-	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
-	 */
-	private interface SS {
+    /**
+     * This class defines constants for navigating around the test data spreadsheet used for these tests.
+     */
+    private interface SS {
 
-		/**
-		 * Name of the test spreadsheet (found in the standard test data folder)
-		 */
-		String FILENAME = "FormulaEvalTestData_Copy.xlsx";
+        /**
+         * Name of the test spreadsheet (found in the standard test data folder)
+         */
+        String FILENAME = "FormulaEvalTestData_Copy.xlsx";
         /**
          * Row (zero-based) in the test spreadsheet where the operator examples start.
          */
@@ -102,7 +102,7 @@ public final class TestFormulaEvaluatorOnXSSF {
          * Each function takes 4 rows in the test spreadsheet
          */
         int NUMBER_OF_ROWS_PER_FUNCTION = 4;
-	}
+    }
 
     @AfterAll
     public static void closeResource() throws Exception {
@@ -167,100 +167,100 @@ public final class TestFormulaEvaluatorOnXSSF {
     }
 
 
-	@ParameterizedTest
-	@MethodSource("data")
-	void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
-	    Row formulasRow = sheet.getRow(formulasRowIdx);
-	    Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
+    @ParameterizedTest
+    @MethodSource("data")
+    void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
+        Row formulasRow = sheet.getRow(formulasRowIdx);
+        Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
 
-		short endcolnum = formulasRow.getLastCellNum();
+        short endcolnum = formulasRow.getLastCellNum();
 
-		// iterate across the row for all the evaluation cases
-		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
-			Cell c = formulasRow.getCell(colnum);
-			assumeTrue(c != null);
-			assumeTrue(c.getCellType() == CellType.FORMULA);
-			ignoredFormulaTestCase(c.getCellFormula());
+        // iterate across the row for all the evaluation cases
+        for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
+            Cell c = formulasRow.getCell(colnum);
+            assumeTrue(c != null);
+            assumeTrue(c.getCellType() == CellType.FORMULA);
+            ignoredFormulaTestCase(c.getCellFormula());
 
-			CellValue actValue = evaluator.evaluate(c);
-			Cell expValue = (expectedValuesRow == null) ? null : expectedValuesRow.getCell(colnum);
+            CellValue actValue = evaluator.evaluate(c);
+            Cell expValue = (expectedValuesRow == null) ? null : expectedValuesRow.getCell(colnum);
 
-			String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
-		        , targetFunctionName, c.getCellFormula(), formulasRow.getRowNum(), colnum);
+            String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
+                , targetFunctionName, c.getCellFormula(), formulasRow.getRowNum(), colnum);
 
-			assertNotNull(expValue, msg + " - Bad setup data expected value is null");
-			assertNotNull(actValue, msg + " - actual value was null");
+            assertNotNull(expValue, msg + " - Bad setup data expected value is null");
+            assertNotNull(actValue, msg + " - actual value was null");
 
-	        final CellType expectedCellType = expValue.getCellType();
-	        switch (expectedCellType) {
-	            case BLANK:
-	                assertEquals(CellType.BLANK, actValue.getCellType(), msg);
-	                break;
-	            case BOOLEAN:
-	                assertEquals(CellType.BOOLEAN, actValue.getCellType(), msg);
-	                assertEquals(expValue.getBooleanCellValue(), actValue.getBooleanValue(), msg);
-	                break;
-	            case ERROR:
-	                assertEquals(CellType.ERROR, actValue.getCellType(), msg);
-//	              if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
-//	                  assertEquals(msg, expValue.getErrorCellValue(), actValue.getErrorValue());
-//	              }
-	                break;
-	            case FORMULA: // will never be used, since we will call method after formula evaluation
-	                fail("Cannot expect formula as result of formula evaluation: " + msg);
-	            case NUMERIC:
-	                assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
-					BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
-//	              double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
-//	              double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
-//	              assertTrue(msg, delta <= pctExpValue);
-	                break;
-	            case STRING:
-	                assertEquals(CellType.STRING, actValue.getCellType(), msg);
-	                assertEquals(expValue.getRichStringCellValue().getString(), actValue.getStringValue(), msg);
-	                break;
-	            default:
-	                fail("Unexpected cell type: " + expectedCellType);
-	        }
-		}
-	}
+            final CellType expectedCellType = expValue.getCellType();
+            switch (expectedCellType) {
+                case BLANK:
+                    assertEquals(CellType.BLANK, actValue.getCellType(), msg);
+                    break;
+                case BOOLEAN:
+                    assertEquals(CellType.BOOLEAN, actValue.getCellType(), msg);
+                    assertEquals(expValue.getBooleanCellValue(), actValue.getBooleanValue(), msg);
+                    break;
+                case ERROR:
+                    assertEquals(CellType.ERROR, actValue.getCellType(), msg);
+//                if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
+//                    assertEquals(msg, expValue.getErrorCellValue(), actValue.getErrorValue());
+//                }
+                    break;
+                case FORMULA: // will never be used, since we will call method after formula evaluation
+                    fail("Cannot expect formula as result of formula evaluation: " + msg);
+                case NUMERIC:
+                    assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
+                    BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
+//                double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
+//                double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
+//                assertTrue(msg, delta <= pctExpValue);
+                    break;
+                case STRING:
+                    assertEquals(CellType.STRING, actValue.getCellType(), msg);
+                    assertEquals(expValue.getRichStringCellValue().getString(), actValue.getStringValue(), msg);
+                    break;
+                default:
+                    fail("Unexpected cell type: " + expectedCellType);
+            }
+        }
+    }
 
-	/*
-	 * TODO - these are all formulas which currently (Apr-2008) break on ooxml
-	 */
-	private static void ignoredFormulaTestCase(String cellFormula) {
+    /*
+     * TODO - these are all formulas which currently (Apr-2008) break on ooxml
+     */
+    private static void ignoredFormulaTestCase(String cellFormula) {
         // full row ranges are not parsed properly yet.
         // These cases currently work in svn trunk because of another bug which causes the
         // formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3)
-	    assumeFalse("COLUMN(1:2)".equals(cellFormula));
-	    assumeFalse("ROW(2:3)".equals(cellFormula));
+        assumeFalse("COLUMN(1:2)".equals(cellFormula));
+        assumeFalse("ROW(2:3)".equals(cellFormula));
 
         // currently throws NPE because unknown function "currentcell" causes name lookup
         // Name lookup requires some equivalent object of the Workbook within xSSFWorkbook.
-	    assumeFalse("ISREF(currentcell())".equals(cellFormula));
-	}
+        assumeFalse("ISREF(currentcell())".equals(cellFormula));
+    }
 
-	/**
-	 * @return <code>null</code> if cell is missing, empty or blank
-	 */
-	private static String getTargetFunctionName(Row r) {
-		if(r == null) {
+    /**
+     * @return <code>null</code> if cell is missing, empty or blank
+     */
+    private static String getTargetFunctionName(Row r) {
+        if(r == null) {
             LOG.atWarn().log("Given null row, can't figure out function name");
-			return null;
-		}
-		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
-		if(cell == null) {
-			LOG.atWarn().log("Row {} has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
-			return null;
-		}
-		if(cell.getCellType() == CellType.BLANK) {
-			return null;
-		}
-		if(cell.getCellType() == CellType.STRING) {
-			return cell.getRichStringCellValue().getString();
-		}
+            return null;
+        }
+        Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
+        if(cell == null) {
+            LOG.atWarn().log("Row {} has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", box(r.getRowNum()));
+            return null;
+        }
+        if(cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        if(cell.getCellType() == CellType.STRING) {
+            return cell.getRichStringCellValue().getString();
+        }
 
-		fail("Bad cell type for 'function name' column: ("+cell.getColumnIndex()+") row ("+(r.getRowNum()+1)+")");
-		return null;
-	}
+        fail("Bad cell type for 'function name' column: ("+cell.getColumnIndex()+") row ("+(r.getRowNum()+1)+")");
+        return null;
+    }
 }

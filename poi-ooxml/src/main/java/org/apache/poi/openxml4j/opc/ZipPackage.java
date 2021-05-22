@@ -407,151 +407,151 @@ public final class ZipPackage extends OPCPackage {
         // Flush the package
         flush();
 
-		if (this.originalPackagePath == null || this.originalPackagePath.isEmpty()) {
-		    return;
-		}
+        if (this.originalPackagePath == null || this.originalPackagePath.isEmpty()) {
+            return;
+        }
 
-		// Save the content
-		File targetFile = new File(this.originalPackagePath);
-		if (!targetFile.exists()) {
+        // Save the content
+        File targetFile = new File(this.originalPackagePath);
+        if (!targetFile.exists()) {
             throw new InvalidOperationException(
                 "Can't close a package not previously open with the open() method !");
         }
 
-		// Case of a package previously open
-		String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
-		File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
+        // Case of a package previously open
+        String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
+        File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
 
-		// Save the final package to a temporary file
+        // Save the final package to a temporary file
         boolean success = false;
-		try {
-			save(tempFile);
+        try {
+            save(tempFile);
             success = true;
-		} finally {
+        } finally {
             // Close the current zip file, so we can overwrite it on all platforms
             IOUtils.closeQuietly(this.zipArchive);
-			try {
-				// Copy the new file over the old one if save() succeed
+            try {
+                // Copy the new file over the old one if save() succeed
                 if(success) {
-				    FileHelper.copyFile(tempFile, targetFile);
+                    FileHelper.copyFile(tempFile, targetFile);
                 }
-			} finally {
-				// Either the save operation succeed or not, we delete the temporary file
-				if (!tempFile.delete()) {
+            } finally {
+                // Either the save operation succeed or not, we delete the temporary file
+                if (!tempFile.delete()) {
                     LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", targetFile.getAbsolutePath());
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	/**
-	 * Create a unique identifier to be use as a temp file name.
-	 *
-	 * @return A unique identifier use to be use as a temp file name.
-	 */
-	private synchronized String generateTempFileName(File directory) {
-		File tmpFilename;
-		do {
-			tmpFilename = new File(directory.getAbsoluteFile() + File.separator
-					+ "OpenXML4J" + System.nanoTime());
-		} while (tmpFilename.exists());
-		return FileHelper.getFilename(tmpFilename.getAbsoluteFile());
-	}
+    /**
+     * Create a unique identifier to be use as a temp file name.
+     *
+     * @return A unique identifier use to be use as a temp file name.
+     */
+    private synchronized String generateTempFileName(File directory) {
+        File tmpFilename;
+        do {
+            tmpFilename = new File(directory.getAbsoluteFile() + File.separator
+                    + "OpenXML4J" + System.nanoTime());
+        } while (tmpFilename.exists());
+        return FileHelper.getFilename(tmpFilename.getAbsoluteFile());
+    }
 
-	/**
-	 * Close the package without saving the document. Discard all the changes
-	 * made to this package.
-	 */
-	@Override
-	protected void revertImpl() {
-		try {
-			if (this.zipArchive != null) {
+    /**
+     * Close the package without saving the document. Discard all the changes
+     * made to this package.
+     */
+    @Override
+    protected void revertImpl() {
+        try {
+            if (this.zipArchive != null) {
                 this.zipArchive.close();
             }
-		} catch (IOException e) {
-			// Do nothing, user dont have to know
-		}
-	}
+        } catch (IOException e) {
+            // Do nothing, user dont have to know
+        }
+    }
 
-	/**
-	 * Save this package into the specified stream
-	 *
-	 *
-	 * @param outputStream
-	 *            The stream use to save this package.
-	 *
-	 * @see #save(OutputStream)
-	 */
-	@Override
-	public void saveImpl(OutputStream outputStream) {
-		// Check that the document was open in write mode
-		throwExceptionIfReadOnly();
+    /**
+     * Save this package into the specified stream
+     *
+     *
+     * @param outputStream
+     *            The stream use to save this package.
+     *
+     * @see #save(OutputStream)
+     */
+    @Override
+    public void saveImpl(OutputStream outputStream) {
+        // Check that the document was open in write mode
+        throwExceptionIfReadOnly();
 
-		final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream)
+        final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream)
             ? (ZipArchiveOutputStream) outputStream : new ZipArchiveOutputStream(outputStream);
 
-		try {
-			// If the core properties part does not exist in the part list,
-			// we save it as well
-			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
+        try {
+            // If the core properties part does not exist in the part list,
+            // we save it as well
+            if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
-				LOG.atDebug().log("Save core properties part");
+                LOG.atDebug().log("Save core properties part");
 
-				// Ensure that core properties are added if missing
-				getPackageProperties();
-				// Add core properties to part list ...
-				addPackagePart(this.packageProperties);
-				// ... and to add its relationship ...
-				this.relationships.addRelationship(this.packageProperties
-						.getPartName().getURI(), TargetMode.INTERNAL,
-						PackageRelationshipTypes.CORE_PROPERTIES, null);
-				// ... and the content if it has not been added yet.
-				if (!this.contentTypeManager
-						.isContentTypeRegister(ContentTypes.CORE_PROPERTIES_PART)) {
-					this.contentTypeManager.addContentType(
-							this.packageProperties.getPartName(),
-							ContentTypes.CORE_PROPERTIES_PART);
-				}
-			}
+                // Ensure that core properties are added if missing
+                getPackageProperties();
+                // Add core properties to part list ...
+                addPackagePart(this.packageProperties);
+                // ... and to add its relationship ...
+                this.relationships.addRelationship(this.packageProperties
+                        .getPartName().getURI(), TargetMode.INTERNAL,
+                        PackageRelationshipTypes.CORE_PROPERTIES, null);
+                // ... and the content if it has not been added yet.
+                if (!this.contentTypeManager
+                        .isContentTypeRegister(ContentTypes.CORE_PROPERTIES_PART)) {
+                    this.contentTypeManager.addContentType(
+                            this.packageProperties.getPartName(),
+                            ContentTypes.CORE_PROPERTIES_PART);
+                }
+            }
 
             // Save content type part.
             LOG.atDebug().log("Save content types part");
             this.contentTypeManager.save(zos);
 
-			// Save package relationships part.
-			LOG.atDebug().log("Save package relationships");
-			ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
-					PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
-					zos);
+            // Save package relationships part.
+            LOG.atDebug().log("Save package relationships");
+            ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
+                    PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
+                    zos);
 
-			// Save parts.
-			for (PackagePart part : getParts()) {
-				// If the part is a relationship part, we don't save it, it's
-				// the source part that will do the job.
-				if (part.isRelationshipPart()) {
+            // Save parts.
+            for (PackagePart part : getParts()) {
+                // If the part is a relationship part, we don't save it, it's
+                // the source part that will do the job.
+                if (part.isRelationshipPart()) {
                     continue;
                 }
 
-				final PackagePartName ppn = part.getPartName();
+                final PackagePartName ppn = part.getPartName();
                 LOG.atDebug().log(() -> new SimpleMessage("Save part '" + ZipHelper.getZipItemNameFromOPCName(ppn.getName()) + "'"));
-				final PartMarshaller marshaller = partMarshallers.get(part._contentType);
+                final PartMarshaller marshaller = partMarshallers.get(part._contentType);
 
-				final PartMarshaller pm = (marshaller != null) ? marshaller : defaultPartMarshaller;
+                final PartMarshaller pm = (marshaller != null) ? marshaller : defaultPartMarshaller;
                 if (!pm.marshall(part, zos)) {
                     String errMsg = "The part " + ppn.getURI() + " failed to be saved in the stream with marshaller " + pm +
                             ". Enable logging via Log4j 2 for more details.";
                     throw new OpenXML4JException(errMsg);
                 }
-			}
+            }
 
             zos.finish();
-		} catch (OpenXML4JRuntimeException e) {
-			// no need to wrap this type of Exception
-			throw e;
-		} catch (Exception e) {
+        } catch (OpenXML4JRuntimeException e) {
+            // no need to wrap this type of Exception
+            throw e;
+        } catch (Exception e) {
             throw new OpenXML4JRuntimeException(
                 "Fail to save: an error occurs while saving the package : "
-				+ e.getMessage(), e);
+                + e.getMessage(), e);
         }
     }
 

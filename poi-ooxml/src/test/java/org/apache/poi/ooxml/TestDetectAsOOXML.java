@@ -42,30 +42,30 @@ import org.junit.jupiter.params.provider.CsvSource;
 @SuppressWarnings("deprecation")
 class TestDetectAsOOXML {
     @Test
-	void testOpensProperly() throws IOException, InvalidFormatException {
-    	try (InputStream is = openSampleFileStream("sample.xlsx");
-			 OPCPackage pkg = OPCPackage.open(is)) {
-    		assertNotNull(pkg);
-		}
-	}
+    void testOpensProperly() throws IOException, InvalidFormatException {
+        try (InputStream is = openSampleFileStream("sample.xlsx");
+             OPCPackage pkg = OPCPackage.open(is)) {
+            assertNotNull(pkg);
+        }
+    }
 
     @ParameterizedTest
-	@CsvSource({"SampleSS.xlsx, OOXML", "SampleSS.xls, OLE2", "SampleSS.txt, UNKNOWN"})
-	void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
-		try (InputStream is = FileMagic.prepareToCheckMagic(openSampleFileStream(file))) {
-			FileMagic act = FileMagic.valueOf(is);
+    @CsvSource({"SampleSS.xlsx, OOXML", "SampleSS.xls, OLE2", "SampleSS.txt, UNKNOWN"})
+    void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
+        try (InputStream is = FileMagic.prepareToCheckMagic(openSampleFileStream(file))) {
+            FileMagic act = FileMagic.valueOf(is);
 
-			assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
-				"OOXML files should be detected, others not");
+            assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
+                "OOXML files should be detected, others not");
 
-			assertEquals(fm, act, "file magic failed for " + file);
-		}
-	}
+            assertEquals(fm, act, "file magic failed for " + file);
+        }
+    }
 
     @Test
     void testFileCorruption() throws Exception {
-	    // create test InputStream
-	    byte[] testData = { 1, 2, 3 };
+        // create test InputStream
+        byte[] testData = { 1, 2, 3 };
         ByteArrayInputStream testInput = new ByteArrayInputStream(testData);
         InputStream is = FileMagic.prepareToCheckMagic(testInput);
 
@@ -77,5 +77,5 @@ class TestDetectAsOOXML {
         assertArrayEquals(testData, act);
         assertEquals(-1, is.read());
         is.close();
-	}
+    }
 }

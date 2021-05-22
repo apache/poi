@@ -63,14 +63,14 @@ public class XSSFFirstHeader extends XSSFHeaderFooter implements Header{
      */
     @Override
     public void setText(String text) {
-    	if(text == null) {
-    		getHeaderFooter().unsetFirstHeader();
-    		if (!getHeaderFooter().isSetFirstFooter()) {
-    		    getHeaderFooter().unsetDifferentFirst();
-    		}
-    	} else {
-    		getHeaderFooter().setFirstHeader(text);
-    	}
+        if(text == null) {
+            getHeaderFooter().unsetFirstHeader();
+            if (!getHeaderFooter().isSetFirstFooter()) {
+                getHeaderFooter().unsetDifferentFirst();
+            }
+        } else {
+            getHeaderFooter().setFirstHeader(text);
+        }
     }
 
 }

@@ -42,9 +42,9 @@ import org.junit.jupiter.api.Test;
 class TestXSLFPowerPointExtractor {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-	/**
-	 * Get text out of the simple file
-	 */
+    /**
+     * Get text out of the simple file
+     */
     @Test
     void testGetSimpleText() throws IOException {
         try (XMLSlideShow xmlA = openPPTX("sample.pptx");
@@ -155,7 +155,7 @@ class TestXSLFPowerPointExtractor {
             text = extractor.getText();
             assertEquals("\n1\n\n2\n", text);
         }
-	}
+    }
 
     @Test
     void testGetComments() throws IOException {
@@ -176,8 +176,8 @@ class TestXSLFPowerPointExtractor {
     }
 
     @Test
-	void testGetMasterText() throws Exception {
-	    try (XMLSlideShow xml = openPPTX("WithMaster.pptx");
+    void testGetMasterText() throws Exception {
+        try (XMLSlideShow xml = openPPTX("WithMaster.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             extractor.setSlidesByDefault(true);
             extractor.setNotesByDefault(false);
@@ -210,10 +210,10 @@ class TestXSLFPowerPointExtractor {
                 "This text comes from the Master Slide\n";
             assertEquals(wholeText, text);
         }
-	}
+    }
 
-	@Test
-	void testTable() throws Exception {
+    @Test
+    void testTable() throws Exception {
         try (XMLSlideShow xml = openPPTX("present1.pptx");
              SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
 

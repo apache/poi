@@ -60,54 +60,54 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 class TestXSSFCellStyle {
-	private StylesTable stylesTable;
+    private StylesTable stylesTable;
     private XSSFCellStyle cellStyle;
 
     @BeforeEach
-	void setUp() {
-		stylesTable = new StylesTable();
+    void setUp() {
+        stylesTable = new StylesTable();
 
         CTStylesheet ctStylesheet = stylesTable.getCTStylesheet();
 
         CTBorder ctBorderA = CTBorder.Factory.newInstance();
-		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
-		long borderId = stylesTable.putBorder(borderA);
-		assertEquals(0, borderId);
+        XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
+        long borderId = stylesTable.putBorder(borderA);
+        assertEquals(0, borderId);
 
-		XSSFCellBorder borderB = new XSSFCellBorder();
-		assertEquals(0, stylesTable.putBorder(borderB));
+        XSSFCellBorder borderB = new XSSFCellBorder();
+        assertEquals(0, stylesTable.putBorder(borderB));
 
         CTFill ctFill = CTFill.Factory.newInstance();
-		XSSFCellFill fill = new XSSFCellFill(ctFill, null);
-		long fillId = stylesTable.putFill(fill);
-		assertEquals(2, fillId);
+        XSSFCellFill fill = new XSSFCellFill(ctFill, null);
+        long fillId = stylesTable.putFill(fill);
+        assertEquals(2, fillId);
 
         CTFont ctFont = CTFont.Factory.newInstance();
-		XSSFFont font = new XSSFFont(ctFont);
-		long fontId = stylesTable.putFont(font);
-		assertEquals(1, fontId);
+        XSSFFont font = new XSSFFont(ctFont);
+        long fontId = stylesTable.putFont(font);
+        assertEquals(1, fontId);
 
         CTXf cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
-		cellStyleXf.setBorderId(1);
-		cellStyleXf.setFillId(1);
-		cellStyleXf.setFontId(1);
+        cellStyleXf.setBorderId(1);
+        cellStyleXf.setFillId(1);
+        cellStyleXf.setFontId(1);
 
         CTCellXfs cellXfs = ctStylesheet.addNewCellXfs();
         CTXf cellXf = cellXfs.addNewXf();
-		cellXf.setXfId(1);
-		cellXf.setBorderId(1);
-		cellXf.setFillId(1);
-		cellXf.setFontId(1);
-		assertEquals(2, stylesTable.putCellStyleXf(cellStyleXf));
-		assertEquals(2, stylesTable.putCellXf(cellXf));
-		cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
+        cellXf.setXfId(1);
+        cellXf.setBorderId(1);
+        cellXf.setFillId(1);
+        cellXf.setFontId(1);
+        assertEquals(2, stylesTable.putCellStyleXf(cellStyleXf));
+        assertEquals(2, stylesTable.putCellXf(cellXf));
+        cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
 
-		assertNotNull(stylesTable.getFillAt(1).getCTFill().getPatternFill());
-		assertEquals(STPatternType.INT_DARK_GRAY, stylesTable.getFillAt(1).getCTFill().getPatternFill().getPatternType().intValue());
-	}
+        assertNotNull(stylesTable.getFillAt(1).getCTFill().getPatternFill());
+        assertEquals(STPatternType.INT_DARK_GRAY, stylesTable.getFillAt(1).getCTFill().getPatternFill().getPatternType().intValue());
+    }
 
-	@Test
-	void testGetSetBorderBottom() {
+    @Test
+    void testGetSetBorderBottom() {
         //default values
         assertEquals(BorderStyle.NONE, cellStyle.getBorderBottom());
 
@@ -144,7 +144,7 @@ class TestXSSFCellStyle {
         assertEquals(ctBorder.getBottom().getStyle(), STBorderStyle.NONE);
     }
 
-	@Test
+    @Test
     void testGetSetBorderRight() {
         //default values
         assertEquals(BorderStyle.NONE, cellStyle.getBorderRight());
@@ -182,7 +182,7 @@ class TestXSSFCellStyle {
         assertEquals(ctBorder.getRight().getStyle(), STBorderStyle.NONE);
     }
 
-	@Test
+    @Test
     void testGetSetBorderLeft() {
         //default values
         assertEquals(BorderStyle.NONE, cellStyle.getBorderLeft());
@@ -218,9 +218,9 @@ class TestXSSFCellStyle {
         //assertFalse(ctBorder.isSetLeft());
         //replacement:
         assertEquals(ctBorder.getLeft().getStyle(), STBorderStyle.NONE);
-	}
+    }
 
-	@Test
+    @Test
     void testGetSetBorderTop() {
         //default values
         assertEquals(BorderStyle.NONE, cellStyle.getBorderTop());
@@ -393,7 +393,7 @@ class TestXSSFCellStyle {
         assertNull(cellStyle.getBottomBorderXSSFColor());
     }
 
-	@Test
+    @Test
     void testGetSetTopBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getTopBorderColor());
@@ -432,9 +432,9 @@ class TestXSSFCellStyle {
         //passing null unsets the color
         cellStyle.setTopBorderColor(null);
         assertNull(cellStyle.getTopBorderXSSFColor());
-	}
+    }
 
-	@Test
+    @Test
     void testGetSetLeftBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getLeftBorderColor());
@@ -473,9 +473,9 @@ class TestXSSFCellStyle {
         //passing null unsets the color
         cellStyle.setLeftBorderColor(null);
         assertNull(cellStyle.getLeftBorderXSSFColor());
-	}
+    }
 
-	@Test
+    @Test
     void testGetSetRightBorderColor() {
         //defaults
         assertEquals(IndexedColors.BLACK.getIndex(), cellStyle.getRightBorderColor());
@@ -514,9 +514,9 @@ class TestXSSFCellStyle {
         //passing null unsets the color
         cellStyle.setRightBorderColor(null);
         assertNull(cellStyle.getRightBorderXSSFColor());
-	}
+    }
 
-	@Test
+    @Test
     void testGetSetFillBackgroundColor() {
 
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
@@ -556,14 +556,14 @@ class TestXSSFCellStyle {
         cellStyle.setFillBackgroundColor(null);
         assertNull(cellStyle.getFillBackgroundXSSFColor());
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
-	}
+    }
 
     @Test
     void testDefaultStyles() throws IOException {
 
-		XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
 
-		XSSFCellStyle style1 = wb1.createCellStyle();
+        XSSFCellStyle style1 = wb1.createCellStyle();
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), style1.getFillBackgroundColor());
         assertNull(style1.getFillBackgroundXSSFColor());
 
@@ -588,7 +588,7 @@ class TestXSSFCellStyle {
         assertEquals(style2.getBorderRight(), style1.getBorderRight());
         assertEquals(style2.getBorderTop(), style1.getBorderTop());
         wb2.close();
-	}
+    }
 
     @Test
     void testGetFillForegroundColor() throws IOException {
@@ -654,62 +654,62 @@ class TestXSSFCellStyle {
         fillId = (int)cellStyle.getCoreXf().getFillId();
         ctFill2 = stylesTable.getFillAt(fillId).getCTFill();
         assertNull(ctFill2.getPatternFill());
-	}
+    }
 
-	@Test
+    @Test
     void testGetFont() {
-		assertNotNull(cellStyle.getFont());
-	}
+        assertNotNull(cellStyle.getFont());
+    }
 
-	@Test
+    @Test
     void testGetSetHidden() {
-		assertFalse(cellStyle.getHidden());
-		cellStyle.setHidden(true);
-		assertTrue(cellStyle.getHidden());
-		cellStyle.setHidden(false);
-		assertFalse(cellStyle.getHidden());
-	}
+        assertFalse(cellStyle.getHidden());
+        cellStyle.setHidden(true);
+        assertTrue(cellStyle.getHidden());
+        cellStyle.setHidden(false);
+        assertFalse(cellStyle.getHidden());
+    }
 
-	@Test
+    @Test
     void testGetSetLocked() {
-		assertTrue(cellStyle.getLocked());
-		cellStyle.setLocked(true);
-		assertTrue(cellStyle.getLocked());
-		cellStyle.setLocked(false);
-		assertFalse(cellStyle.getLocked());
-	}
+        assertTrue(cellStyle.getLocked());
+        cellStyle.setLocked(true);
+        assertTrue(cellStyle.getLocked());
+        cellStyle.setLocked(false);
+        assertFalse(cellStyle.getLocked());
+    }
 
-	@Test
+    @Test
     void testGetSetIndent() {
-		assertEquals((short)0, cellStyle.getIndention());
-		cellStyle.setIndention((short)3);
-		assertEquals((short)3, cellStyle.getIndention());
-		cellStyle.setIndention((short) 13);
-		assertEquals((short)13, cellStyle.getIndention());
-	}
+        assertEquals((short)0, cellStyle.getIndention());
+        cellStyle.setIndention((short)3);
+        assertEquals((short)3, cellStyle.getIndention());
+        cellStyle.setIndention((short) 13);
+        assertEquals((short)13, cellStyle.getIndention());
+    }
 
     @Test
     void testGetSetAlignment() {
-		assertNull(cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
-		assertEquals(HorizontalAlignment.GENERAL, cellStyle.getAlignment());
+        assertNull(cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        assertEquals(HorizontalAlignment.GENERAL, cellStyle.getAlignment());
 
-		cellStyle.setAlignment(HorizontalAlignment.LEFT);
-		assertEquals(HorizontalAlignment.LEFT, cellStyle.getAlignment());
-		assertEquals(STHorizontalAlignment.LEFT, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        cellStyle.setAlignment(HorizontalAlignment.LEFT);
+        assertEquals(HorizontalAlignment.LEFT, cellStyle.getAlignment());
+        assertEquals(STHorizontalAlignment.LEFT, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 
-		cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
-		assertEquals(HorizontalAlignment.JUSTIFY, cellStyle.getAlignment());
-		assertEquals(STHorizontalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
+        assertEquals(HorizontalAlignment.JUSTIFY, cellStyle.getAlignment());
+        assertEquals(STHorizontalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 
-		cellStyle.setAlignment(HorizontalAlignment.CENTER);
-		assertEquals(HorizontalAlignment.CENTER, cellStyle.getAlignment());
-		assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
-	}
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        assertEquals(HorizontalAlignment.CENTER, cellStyle.getAlignment());
+        assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+    }
 
-	@Test
+    @Test
     void testGetSetReadingOrder() {
-	    assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
-	    assertEquals(ReadingOrder.CONTEXT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
+        assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
+        assertEquals(ReadingOrder.CONTEXT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
 
         cellStyle.setReadingOrder(ReadingOrder.LEFT_TO_RIGHT);
         assertEquals(ReadingOrder.LEFT_TO_RIGHT, cellStyle.getReadingOrder());
@@ -726,32 +726,32 @@ class TestXSSFCellStyle {
 
     @Test
     void testGetSetVerticalAlignment() {
-		assertEquals(VerticalAlignment.BOTTOM, cellStyle.getVerticalAlignment());
-		assertFalse(cellStyle.getCellAlignment().getCTCellAlignment().isSetVertical());
-		assertEquals(STVerticalAlignment.BOTTOM, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+        assertEquals(VerticalAlignment.BOTTOM, cellStyle.getVerticalAlignment());
+        assertFalse(cellStyle.getCellAlignment().getCTCellAlignment().isSetVertical());
+        assertEquals(STVerticalAlignment.BOTTOM, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
 
-		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		assertEquals(VerticalAlignment.CENTER, cellStyle.getVerticalAlignment());
-		assertEquals(STVerticalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        assertEquals(VerticalAlignment.CENTER, cellStyle.getVerticalAlignment());
+        assertEquals(STVerticalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
 
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
-		assertEquals(VerticalAlignment.JUSTIFY, cellStyle.getVerticalAlignment());
-		assertEquals(STVerticalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
-	}
+        cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
+        assertEquals(VerticalAlignment.JUSTIFY, cellStyle.getVerticalAlignment());
+        assertEquals(STVerticalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+    }
 
-	@Test
+    @Test
     void testGetSetWrapText() {
-		assertFalse(cellStyle.getWrapText());
-		cellStyle.setWrapText(true);
-		assertTrue(cellStyle.getWrapText());
-		cellStyle.setWrapText(false);
         assertFalse(cellStyle.getWrapText());
-	}
+        cellStyle.setWrapText(true);
+        assertTrue(cellStyle.getWrapText());
+        cellStyle.setWrapText(false);
+        assertFalse(cellStyle.getWrapText());
+    }
 
-	/**
-	 * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
-	 */
-	@Test
+    /**
+     * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
+     */
+    @Test
     void testCloneStyleSameWB() throws IOException {
       XSSFWorkbook wb = new XSSFWorkbook();
       assertEquals(1, wb.getNumberOfFonts());
@@ -785,7 +785,7 @@ class TestXSSFCellStyle {
       wb2.close();
 
       wb.close();
-	}
+    }
 
     /**
      * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
@@ -882,7 +882,7 @@ class TestXSSFCellStyle {
      * Avoid ArrayIndexOutOfBoundsException  when creating cell style
      * in a workbook that has an empty xf table.
      */
-	@Test
+    @Test
     void testBug52348() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
         StylesTable st = workbook.getStylesSource();
@@ -901,7 +901,7 @@ class TestXSSFCellStyle {
      * Avoid ArrayIndexOutOfBoundsException  when getting cell style
      * in a workbook that has an empty xf table.
      */
-	@Test
+    @Test
     void testBug55650() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
         StylesTable st = workbook.getStylesSource();
@@ -918,47 +918,47 @@ class TestXSSFCellStyle {
         workbook.close();
     }
 
-	@Test
+    @Test
     void testShrinkToFit() throws IOException {
-    	// Existing file
-    	XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("ShrinkToFit.xlsx");
-    	Sheet s = wb1.getSheetAt(0);
-    	Row r = s.getRow(0);
-    	CellStyle cs = r.getCell(0).getCellStyle();
+        // Existing file
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("ShrinkToFit.xlsx");
+        Sheet s = wb1.getSheetAt(0);
+        Row r = s.getRow(0);
+        CellStyle cs = r.getCell(0).getCellStyle();
 
         assertTrue(cs.getShrinkToFit());
 
-    	// New file
-    	XSSFWorkbook wb2 = new XSSFWorkbook();
-    	s = wb2.createSheet();
-    	r = s.createRow(0);
+        // New file
+        XSSFWorkbook wb2 = new XSSFWorkbook();
+        s = wb2.createSheet();
+        r = s.createRow(0);
 
-    	cs = wb2.createCellStyle();
-    	cs.setShrinkToFit(false);
-    	r.createCell(0).setCellStyle(cs);
+        cs = wb2.createCellStyle();
+        cs.setShrinkToFit(false);
+        r.createCell(0).setCellStyle(cs);
 
-    	cs = wb2.createCellStyle();
-    	cs.setShrinkToFit(true);
-    	r.createCell(1).setCellStyle(cs);
+        cs = wb2.createCellStyle();
+        cs.setShrinkToFit(true);
+        r.createCell(1).setCellStyle(cs);
 
-    	// Write out, read, and check
-    	XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
-    	s = wb3.getSheetAt(0);
-    	r = s.getRow(0);
+        // Write out, read, and check
+        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
+        s = wb3.getSheetAt(0);
+        r = s.getRow(0);
         assertFalse(r.getCell(0).getCellStyle().getShrinkToFit());
         assertTrue(r.getCell(1).getCellStyle().getShrinkToFit());
 
-    	XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
-    	assertNotNull(wb4);
-    	wb4.close();
+        XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
+        assertNotNull(wb4);
+        wb4.close();
 
-    	XSSFWorkbook wb5 = XSSFTestDataSamples.writeOutAndReadBack(wb3);
-    	assertNotNull(wb5);
-    	wb5.close();
+        XSSFWorkbook wb5 = XSSFTestDataSamples.writeOutAndReadBack(wb3);
+        assertNotNull(wb5);
+        wb5.close();
 
-    	wb3.close();
-    	wb2.close();
-    	wb1.close();
+        wb3.close();
+        wb2.close();
+        wb1.close();
 
     }
 

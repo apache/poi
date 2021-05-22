@@ -37,28 +37,28 @@ import org.junit.jupiter.api.Test;
  */
 public final class TestXDDFChartLegend {
     @Test
-	void testLegendPositionAccessMethods() throws IOException {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet();
-		XSSFDrawing drawing = sheet.createDrawingPatriarch();
-		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-		XSSFChart chart = drawing.createChart(anchor);
-		XDDFChartLegend legend = chart.getOrAddLegend();
+    void testLegendPositionAccessMethods() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        XSSFChart chart = drawing.createChart(anchor);
+        XDDFChartLegend legend = chart.getOrAddLegend();
 
-		legend.setPosition(LegendPosition.TOP_RIGHT);
-		assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
+        legend.setPosition(LegendPosition.TOP_RIGHT);
+        assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
 
-		wb.close();
-	}
+        wb.close();
+    }
 
     @Test
     void test_setOverlay_defaultChartLegend_expectOverlayInitialValueSetToFalse() throws IOException {
         // Arrange
-    	XSSFWorkbook wb = new XSSFWorkbook();
-    	XSSFSheet sheet = wb.createSheet();
-    	XSSFDrawing drawing = sheet.createDrawingPatriarch();
-    	XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-    	XSSFChart chart = drawing.createChart(anchor);
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        XSSFChart chart = drawing.createChart(anchor);
         XDDFChartLegend legend = chart.getOrAddLegend();
 
         // Act
@@ -72,19 +72,19 @@ public final class TestXDDFChartLegend {
     @Test
     void test_setOverlay_chartLegendSetToTrue_expectOverlayInitialValueSetToTrue() throws IOException {
         // Arrange
-    	XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
-		XSSFDrawing drawing = sheet.createDrawingPatriarch();
-		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-		XSSFChart chart = drawing.createChart(anchor);
-		XDDFChartLegend legend = chart.getOrAddLegend();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        XSSFChart chart = drawing.createChart(anchor);
+        XDDFChartLegend legend = chart.getOrAddLegend();
 
         // Act
-		legend.setOverlay(true);
+        legend.setOverlay(true);
 
         // Assert
         assertTrue(legend.isOverlay());
 
         wb.close();
-	}
+    }
 }

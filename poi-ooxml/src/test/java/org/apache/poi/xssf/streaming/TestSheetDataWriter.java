@@ -43,7 +43,7 @@ public final class TestSheetDataWriter {
             + "\uD835\uDF76\uD835\uDF77\uD835\uDF78\uD835\uDF79\uD835\uDF7A";
 
     @Test
-	void testReplaceWithQuestionMark() {
+    void testReplaceWithQuestionMark() {
         for(int i = 0; i < unicodeSurrogates.length(); i++) {
             assertFalse(SheetDataWriter.replaceWithQuestionMark(unicodeSurrogates.charAt(i)));
         }
@@ -52,7 +52,7 @@ public final class TestSheetDataWriter {
         assertTrue(SheetDataWriter.replaceWithQuestionMark('\u0000'));
         assertTrue(SheetDataWriter.replaceWithQuestionMark('\u000F'));
         assertTrue(SheetDataWriter.replaceWithQuestionMark('\u001F'));
-	}
+    }
 
     @Test
     void testWriteUnicodeSurrogates() throws IOException {

@@ -32,271 +32,271 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
  */
 public final class PackagePartName implements Comparable<PackagePartName> {
 
-	/**
-	 * Part name stored as an URI.
-	 */
-	private final URI partNameURI;
+    /**
+     * Part name stored as an URI.
+     */
+    private final URI partNameURI;
 
-	/*
-	 * URI Characters definition (RFC 3986)
-	 */
+    /*
+     * URI Characters definition (RFC 3986)
+     */
 
-	/**
-	 * Reserved characters for sub delimiters.
-	 */
-	private static final String RFC3986_PCHAR_SUB_DELIMS = "!$&'()*+,;=";
+    /**
+     * Reserved characters for sub delimiters.
+     */
+    private static final String RFC3986_PCHAR_SUB_DELIMS = "!$&'()*+,;=";
 
-	/**
-	 * Unreserved character (+ ALPHA & DIGIT).
-	 */
-	private static final String RFC3986_PCHAR_UNRESERVED_SUP = "-._~";
+    /**
+     * Unreserved character (+ ALPHA & DIGIT).
+     */
+    private static final String RFC3986_PCHAR_UNRESERVED_SUP = "-._~";
 
-	/**
-	 * Authorized reserved characters for pChar.
-	 */
-	private static final String RFC3986_PCHAR_AUTHORIZED_SUP = ":@";
+    /**
+     * Authorized reserved characters for pChar.
+     */
+    private static final String RFC3986_PCHAR_AUTHORIZED_SUP = ":@";
 
-	/**
-	 * Flag to know if this part name is from a relationship part name.
-	 */
-	private final boolean isRelationship;
+    /**
+     * Flag to know if this part name is from a relationship part name.
+     */
+    private final boolean isRelationship;
 
-	/**
-	 * Constructor. Makes a ValidPartName object from a java.net.URI
-	 *
-	 * @param uri
-	 *            The URI to validate and to transform into ValidPartName.
-	 * @param checkConformance
-	 *            Flag to specify if the constructor have to validate the OPC
-	 *            conformance. Must be always <code>true</code> except for
-	 *            special URI like '/' which is needed for internal use by
-	 *            OpenXML4J but is not valid.
-	 * @throws InvalidFormatException
-	 *             Throw if the specified part name is not conform to Open
-	 *             Packaging Convention specifications.
-	 * @see java.net.URI
-	 */
-	PackagePartName(URI uri, boolean checkConformance)
-			throws InvalidFormatException {
-		if (checkConformance) {
-			throwExceptionIfInvalidPartUri(uri);
-		} else {
-			if (!PackagingURIHelper.PACKAGE_ROOT_URI.equals(uri)) {
-				throw new OpenXML4JRuntimeException(
-						"OCP conformance must be check for ALL part name except special cases : ['/']");
-			}
-		}
-		this.partNameURI = uri;
-		this.isRelationship = isRelationshipPartURI(this.partNameURI);
-	}
+    /**
+     * Constructor. Makes a ValidPartName object from a java.net.URI
+     *
+     * @param uri
+     *            The URI to validate and to transform into ValidPartName.
+     * @param checkConformance
+     *            Flag to specify if the constructor have to validate the OPC
+     *            conformance. Must be always <code>true</code> except for
+     *            special URI like '/' which is needed for internal use by
+     *            OpenXML4J but is not valid.
+     * @throws InvalidFormatException
+     *             Throw if the specified part name is not conform to Open
+     *             Packaging Convention specifications.
+     * @see java.net.URI
+     */
+    PackagePartName(URI uri, boolean checkConformance)
+            throws InvalidFormatException {
+        if (checkConformance) {
+            throwExceptionIfInvalidPartUri(uri);
+        } else {
+            if (!PackagingURIHelper.PACKAGE_ROOT_URI.equals(uri)) {
+                throw new OpenXML4JRuntimeException(
+                        "OCP conformance must be check for ALL part name except special cases : ['/']");
+            }
+        }
+        this.partNameURI = uri;
+        this.isRelationship = isRelationshipPartURI(this.partNameURI);
+    }
 
-	/**
-	 * Constructor. Makes a ValidPartName object from a String part name.
-	 *
-	 * @param partName
-	 *            Part name to valid and to create.
-	 * @param checkConformance
-	 *            Flag to specify if the constructor have to validate the OPC
-	 *            conformance. Must be always <code>true</code> except for
-	 *            special URI like '/' which is needed for internal use by
-	 *            OpenXML4J but is not valid.
-	 * @throws InvalidFormatException
-	 *             Throw if the specified part name is not conform to Open
-	 *             Packaging Convention specifications.
-	 */
-	PackagePartName(String partName, boolean checkConformance)
-			throws InvalidFormatException {
-		URI partURI;
-		try {
-			partURI = new URI(partName);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(
-					"partName argmument is not a valid OPC part name !");
-		}
+    /**
+     * Constructor. Makes a ValidPartName object from a String part name.
+     *
+     * @param partName
+     *            Part name to valid and to create.
+     * @param checkConformance
+     *            Flag to specify if the constructor have to validate the OPC
+     *            conformance. Must be always <code>true</code> except for
+     *            special URI like '/' which is needed for internal use by
+     *            OpenXML4J but is not valid.
+     * @throws InvalidFormatException
+     *             Throw if the specified part name is not conform to Open
+     *             Packaging Convention specifications.
+     */
+    PackagePartName(String partName, boolean checkConformance)
+            throws InvalidFormatException {
+        URI partURI;
+        try {
+            partURI = new URI(partName);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(
+                    "partName argmument is not a valid OPC part name !");
+        }
 
-		if (checkConformance) {
-			throwExceptionIfInvalidPartUri(partURI);
-		} else {
-			if (!PackagingURIHelper.PACKAGE_ROOT_URI.equals(partURI)) {
-				throw new OpenXML4JRuntimeException(
-						"OCP conformance must be check for ALL part name except special cases : ['/']");
-			}
-		}
-		this.partNameURI = partURI;
-		this.isRelationship = isRelationshipPartURI(this.partNameURI);
-	}
+        if (checkConformance) {
+            throwExceptionIfInvalidPartUri(partURI);
+        } else {
+            if (!PackagingURIHelper.PACKAGE_ROOT_URI.equals(partURI)) {
+                throw new OpenXML4JRuntimeException(
+                        "OCP conformance must be check for ALL part name except special cases : ['/']");
+            }
+        }
+        this.partNameURI = partURI;
+        this.isRelationship = isRelationshipPartURI(this.partNameURI);
+    }
 
-	/**
-	 * Check if the specified part name is a relationship part name.
-	 *
-	 * @param partUri
-	 *            The URI to check.
-	 * @return <code>true</code> if this part name respect the relationship
-	 *         part naming convention else <code>false</code>.
-	 */
-	private boolean isRelationshipPartURI(URI partUri) {
-		if (partUri == null) {
+    /**
+     * Check if the specified part name is a relationship part name.
+     *
+     * @param partUri
+     *            The URI to check.
+     * @return <code>true</code> if this part name respect the relationship
+     *         part naming convention else <code>false</code>.
+     */
+    private boolean isRelationshipPartURI(URI partUri) {
+        if (partUri == null) {
             throw new IllegalArgumentException("partUri");
         }
 
-		return partUri.getPath().matches(
-				"^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
-						+ PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
-						+ "$");
-	}
+        return partUri.getPath().matches(
+                "^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
+                        + PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
+                        + "$");
+    }
 
-	/**
-	 * Know if this part name is a relationship part name.
-	 *
-	 * @return <code>true</code> if this part name respect the relationship
-	 *         part naming convention else <code>false</code>.
-	 */
-	public boolean isRelationshipPartURI() {
-		return this.isRelationship;
-	}
+    /**
+     * Know if this part name is a relationship part name.
+     *
+     * @return <code>true</code> if this part name respect the relationship
+     *         part naming convention else <code>false</code>.
+     */
+    public boolean isRelationshipPartURI() {
+        return this.isRelationship;
+    }
 
-	/**
-	 * Throws an exception (of any kind) if the specified part name does not
-	 * follow the Open Packaging Convention specifications naming rules.
-	 *
-	 * @param partUri
-	 *            The part name to check.
-	 * @throws InvalidFormatException
-	 *             Throws if the part name is invalid.
-	 */
-	private static void throwExceptionIfInvalidPartUri(URI partUri)
-			throws InvalidFormatException {
-		if (partUri == null) {
+    /**
+     * Throws an exception (of any kind) if the specified part name does not
+     * follow the Open Packaging Convention specifications naming rules.
+     *
+     * @param partUri
+     *            The part name to check.
+     * @throws InvalidFormatException
+     *             Throws if the part name is invalid.
+     */
+    private static void throwExceptionIfInvalidPartUri(URI partUri)
+            throws InvalidFormatException {
+        if (partUri == null) {
             throw new IllegalArgumentException("partUri");
         }
-		// Check if the part name URI is empty [M1.1]
-		throwExceptionIfEmptyURI(partUri);
+        // Check if the part name URI is empty [M1.1]
+        throwExceptionIfEmptyURI(partUri);
 
-		// Check if the part name URI is absolute
-		throwExceptionIfAbsoluteUri(partUri);
+        // Check if the part name URI is absolute
+        throwExceptionIfAbsoluteUri(partUri);
 
-		// Check if the part name URI starts with a forward slash [M1.4]
-		throwExceptionIfPartNameNotStartsWithForwardSlashChar(partUri);
+        // Check if the part name URI starts with a forward slash [M1.4]
+        throwExceptionIfPartNameNotStartsWithForwardSlashChar(partUri);
 
-		// Check if the part name URI ends with a forward slash [M1.5]
-		throwExceptionIfPartNameEndsWithForwardSlashChar(partUri);
+        // Check if the part name URI ends with a forward slash [M1.5]
+        throwExceptionIfPartNameEndsWithForwardSlashChar(partUri);
 
-		// Check if the part name does not have empty segments. [M1.3]
-		// Check if a segment ends with a dot ('.') character. [M1.9]
-		throwExceptionIfPartNameHaveInvalidSegments(partUri);
-	}
+        // Check if the part name does not have empty segments. [M1.3]
+        // Check if a segment ends with a dot ('.') character. [M1.9]
+        throwExceptionIfPartNameHaveInvalidSegments(partUri);
+    }
 
-	/**
-	 * Throws an exception if the specified URI is empty. [M1.1]
-	 *
-	 * @param partURI
-	 *            Part URI to check.
-	 * @throws InvalidFormatException
-	 *             If the specified URI is empty.
-	 */
-	private static void throwExceptionIfEmptyURI(URI partURI)
-			throws InvalidFormatException {
-		if (partURI == null) {
+    /**
+     * Throws an exception if the specified URI is empty. [M1.1]
+     *
+     * @param partURI
+     *            Part URI to check.
+     * @throws InvalidFormatException
+     *             If the specified URI is empty.
+     */
+    private static void throwExceptionIfEmptyURI(URI partURI)
+            throws InvalidFormatException {
+        if (partURI == null) {
             throw new IllegalArgumentException("partURI");
         }
 
-		String uriPath = partURI.getPath();
-		if (uriPath.length() == 0
-				|| ((uriPath.length() == 1) && (uriPath.charAt(0) == PackagingURIHelper.FORWARD_SLASH_CHAR))) {
+        String uriPath = partURI.getPath();
+        if (uriPath.length() == 0
+                || ((uriPath.length() == 1) && (uriPath.charAt(0) == PackagingURIHelper.FORWARD_SLASH_CHAR))) {
             throw new InvalidFormatException(
-					"A part name shall not be empty [M1.1]: "
-							+ partURI.getPath());
+                    "A part name shall not be empty [M1.1]: "
+                            + partURI.getPath());
         }
-	}
+    }
 
-	/**
-	 * Throws an exception if the part name has empty segments. [M1.3]
-	 *
-	 * Throws an exception if a segment any characters other than pchar
-	 * characters. [M1.6]
-	 *
-	 * Throws an exception if a segment contain percent-encoded forward slash
-	 * ('/'), or backward slash ('\') characters. [M1.7]
-	 *
-	 * Throws an exception if a segment contain percent-encoded unreserved
-	 * characters. [M1.8]
-	 *
-	 * Throws an exception if the specified part name's segments end with a dot
-	 * ('.') character. [M1.9]
-	 *
-	 * Throws an exception if a segment doesn't include at least one non-dot
-	 * character. [M1.10]
-	 *
-	 * @param partUri
-	 *            The part name to check.
-	 * @throws InvalidFormatException
-	 *             if the specified URI contain an empty segments or if one the
-	 *             segments contained in the part name, ends with a dot ('.')
-	 *             character.
-	 */
-	private static void throwExceptionIfPartNameHaveInvalidSegments(URI partUri)
-			throws InvalidFormatException {
-		if (partUri == null) {
-			throw new IllegalArgumentException("partUri");
-		}
-
-		// Split the URI into several part and analyze each
-		String[] segments = partUri.toASCIIString()
-	        .replaceFirst("^"+PackagingURIHelper.FORWARD_SLASH_CHAR,"")
-	        .split(PackagingURIHelper.FORWARD_SLASH_STRING);
-
-		if (segments.length < 1) {
-            throw new InvalidFormatException(
-				"A part name shall not have empty segments [M1.3]: " + partUri.getPath());
+    /**
+     * Throws an exception if the part name has empty segments. [M1.3]
+     *
+     * Throws an exception if a segment any characters other than pchar
+     * characters. [M1.6]
+     *
+     * Throws an exception if a segment contain percent-encoded forward slash
+     * ('/'), or backward slash ('\') characters. [M1.7]
+     *
+     * Throws an exception if a segment contain percent-encoded unreserved
+     * characters. [M1.8]
+     *
+     * Throws an exception if the specified part name's segments end with a dot
+     * ('.') character. [M1.9]
+     *
+     * Throws an exception if a segment doesn't include at least one non-dot
+     * character. [M1.10]
+     *
+     * @param partUri
+     *            The part name to check.
+     * @throws InvalidFormatException
+     *             if the specified URI contain an empty segments or if one the
+     *             segments contained in the part name, ends with a dot ('.')
+     *             character.
+     */
+    private static void throwExceptionIfPartNameHaveInvalidSegments(URI partUri)
+            throws InvalidFormatException {
+        if (partUri == null) {
+            throw new IllegalArgumentException("partUri");
         }
 
-		for (final String seg : segments) {
-			if (seg == null || seg.isEmpty()) {
-				throw new InvalidFormatException(
-					"A part name shall not have empty segments [M1.3]: " + partUri.getPath());
-			}
+        // Split the URI into several part and analyze each
+        String[] segments = partUri.toASCIIString()
+            .replaceFirst("^"+PackagingURIHelper.FORWARD_SLASH_CHAR,"")
+            .split(PackagingURIHelper.FORWARD_SLASH_STRING);
 
-			if (seg.endsWith(".")) {
-				throw new InvalidFormatException(
-					"A segment shall not end with a dot ('.') character [M1.9]: " + partUri.getPath());
-			}
+        if (segments.length < 1) {
+            throw new InvalidFormatException(
+                "A part name shall not have empty segments [M1.3]: " + partUri.getPath());
+        }
 
-			if (seg.replaceAll("\\\\.", "").isEmpty()) {
-				// Normally will never been invoked with the previous
-				// implementation rule [M1.9]
-				throw new InvalidFormatException(
-					"A segment shall include at least one non-dot character. [M1.10]: " + partUri.getPath());
-			}
+        for (final String seg : segments) {
+            if (seg == null || seg.isEmpty()) {
+                throw new InvalidFormatException(
+                    "A part name shall not have empty segments [M1.3]: " + partUri.getPath());
+            }
 
-			// Check for rule M1.6, M1.7, M1.8
-			checkPCharCompliance(seg);
-		}
-	}
+            if (seg.endsWith(".")) {
+                throw new InvalidFormatException(
+                    "A segment shall not end with a dot ('.') character [M1.9]: " + partUri.getPath());
+            }
 
-	/**
-	 * Throws an exception if a segment any characters other than pchar
-	 * characters. [M1.6]
-	 *
-	 * Throws an exception if a segment contain percent-encoded forward slash
-	 * ('/'), or backward slash ('\') characters. [M1.7]
-	 *
-	 * Throws an exception if a segment contain percent-encoded unreserved
-	 * characters. [M1.8]
-	 *
-	 * @param segment
-	 *            The segment to check
-	 */
-	private static void checkPCharCompliance(String segment)
-			throws InvalidFormatException {
-		final int length = segment.length();
-		for (int i = 0; i < length; ++i) {
-			final char c = segment.charAt(i);
+            if (seg.replaceAll("\\\\.", "").isEmpty()) {
+                // Normally will never been invoked with the previous
+                // implementation rule [M1.9]
+                throw new InvalidFormatException(
+                    "A segment shall include at least one non-dot character. [M1.10]: " + partUri.getPath());
+            }
 
-			/* Check rule M1.6 */
+            // Check for rule M1.6, M1.7, M1.8
+            checkPCharCompliance(seg);
+        }
+    }
 
-			if (
-    			// Check for digit or letter
-		        isDigitOrLetter(c) ||
+    /**
+     * Throws an exception if a segment any characters other than pchar
+     * characters. [M1.6]
+     *
+     * Throws an exception if a segment contain percent-encoded forward slash
+     * ('/'), or backward slash ('\') characters. [M1.7]
+     *
+     * Throws an exception if a segment contain percent-encoded unreserved
+     * characters. [M1.8]
+     *
+     * @param segment
+     *            The segment to check
+     */
+    private static void checkPCharCompliance(String segment)
+            throws InvalidFormatException {
+        final int length = segment.length();
+        for (int i = 0; i < length; ++i) {
+            final char c = segment.charAt(i);
+
+            /* Check rule M1.6 */
+
+            if (
+                // Check for digit or letter
+                isDigitOrLetter(c) ||
                 // Check "-", ".", "_", "~"
                 RFC3986_PCHAR_UNRESERVED_SUP.indexOf(c) > -1 ||
                 // Check ":", "@"
@@ -304,108 +304,108 @@ public final class PackagePartName implements Comparable<PackagePartName> {
                 // Check "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
                 RFC3986_PCHAR_SUB_DELIMS.indexOf(c) > -1
             ) {
-			    continue;
-			}
+                continue;
+            }
 
 
-			if (c != '%') {
-	            throw new InvalidFormatException(
+            if (c != '%') {
+                throw new InvalidFormatException(
                     "A segment shall not hold any characters other than pchar characters. [M1.6]");
-			}
+            }
 
-			// We certainly found an encoded character, check for length
-			// now ( '%' HEXDIGIT HEXDIGIT)
-			if ((length - i) < 2 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
-				throw new InvalidFormatException("The segment " + segment + " contain invalid encoded character !");
-			}
+            // We certainly found an encoded character, check for length
+            // now ( '%' HEXDIGIT HEXDIGIT)
+            if ((length - i) < 2 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
+                throw new InvalidFormatException("The segment " + segment + " contain invalid encoded character !");
+            }
 
-			// Decode the encoded character
-			final char decodedChar = (char) Integer.parseInt(segment.substring(i + 1, i + 3), 16);
-			i += 2;
+            // Decode the encoded character
+            final char decodedChar = (char) Integer.parseInt(segment.substring(i + 1, i + 3), 16);
+            i += 2;
 
-			/* Check rule M1.7 */
-			if (decodedChar == '/' || decodedChar == '\\') {
-				throw new InvalidFormatException(
-					"A segment shall not contain percent-encoded forward slash ('/'), or backward slash ('\') characters. [M1.7]");
-			}
+            /* Check rule M1.7 */
+            if (decodedChar == '/' || decodedChar == '\\') {
+                throw new InvalidFormatException(
+                    "A segment shall not contain percent-encoded forward slash ('/'), or backward slash ('\') characters. [M1.7]");
+            }
 
-			/* Check rule M1.8 */
-			if (
-			     // Check for unreserved character like define in RFC3986
-		        isDigitOrLetter(decodedChar) ||
-		        // Check for unreserved character "-", ".", "_", "~"
-		        RFC3986_PCHAR_UNRESERVED_SUP.indexOf(decodedChar) > -1
-	        ) {
+            /* Check rule M1.8 */
+            if (
+                 // Check for unreserved character like define in RFC3986
+                isDigitOrLetter(decodedChar) ||
+                // Check for unreserved character "-", ".", "_", "~"
+                RFC3986_PCHAR_UNRESERVED_SUP.indexOf(decodedChar) > -1
+            ) {
                 throw new InvalidFormatException(
                     "A segment shall not contain percent-encoded unreserved characters. [M1.8]");
-			}
-		}
-	}
-
-	/**
-	 * Throws an exception if the specified part name doesn't start with a
-	 * forward slash character '/'. [M1.4]
-	 *
-	 * @param partUri
-	 *            The part name to check.
-	 * @throws InvalidFormatException
-	 *             If the specified part name doesn't start with a forward slash
-	 *             character '/'.
-	 */
-	private static void throwExceptionIfPartNameNotStartsWithForwardSlashChar(
-			URI partUri) throws InvalidFormatException {
-		String uriPath = partUri.getPath();
-		if (uriPath.length() > 0
-				&& uriPath.charAt(0) != PackagingURIHelper.FORWARD_SLASH_CHAR) {
-            throw new InvalidFormatException(
-					"A part name shall start with a forward slash ('/') character [M1.4]: "
-							+ partUri.getPath());
+            }
         }
-	}
+    }
 
-	/**
-	 * Throws an exception if the specified part name ends with a forwar slash
-	 * character '/'. [M1.5]
-	 *
-	 * @param partUri
-	 *            The part name to check.
-	 * @throws InvalidFormatException
-	 *             If the specified part name ends with a forwar slash character
-	 *             '/'.
-	 */
-	private static void throwExceptionIfPartNameEndsWithForwardSlashChar(
-			URI partUri) throws InvalidFormatException {
-		String uriPath = partUri.getPath();
-		if (uriPath.length() > 0
-				&& uriPath.charAt(uriPath.length() - 1) == PackagingURIHelper.FORWARD_SLASH_CHAR) {
+    /**
+     * Throws an exception if the specified part name doesn't start with a
+     * forward slash character '/'. [M1.4]
+     *
+     * @param partUri
+     *            The part name to check.
+     * @throws InvalidFormatException
+     *             If the specified part name doesn't start with a forward slash
+     *             character '/'.
+     */
+    private static void throwExceptionIfPartNameNotStartsWithForwardSlashChar(
+            URI partUri) throws InvalidFormatException {
+        String uriPath = partUri.getPath();
+        if (uriPath.length() > 0
+                && uriPath.charAt(0) != PackagingURIHelper.FORWARD_SLASH_CHAR) {
             throw new InvalidFormatException(
-					"A part name shall not have a forward slash as the last character [M1.5]: "
-							+ partUri.getPath());
+                    "A part name shall start with a forward slash ('/') character [M1.4]: "
+                            + partUri.getPath());
         }
-	}
+    }
 
-	/**
-	 * Throws an exception if the specified URI is absolute.
-	 *
-	 * @param partUri
-	 *            The URI to check.
-	 * @throws InvalidFormatException
-	 *             Throws if the specified URI is absolute.
-	 */
-	private static void throwExceptionIfAbsoluteUri(URI partUri) throws InvalidFormatException {
-		if (partUri.isAbsolute()) {
+    /**
+     * Throws an exception if the specified part name ends with a forwar slash
+     * character '/'. [M1.5]
+     *
+     * @param partUri
+     *            The part name to check.
+     * @throws InvalidFormatException
+     *             If the specified part name ends with a forwar slash character
+     *             '/'.
+     */
+    private static void throwExceptionIfPartNameEndsWithForwardSlashChar(
+            URI partUri) throws InvalidFormatException {
+        String uriPath = partUri.getPath();
+        if (uriPath.length() > 0
+                && uriPath.charAt(uriPath.length() - 1) == PackagingURIHelper.FORWARD_SLASH_CHAR) {
+            throw new InvalidFormatException(
+                    "A part name shall not have a forward slash as the last character [M1.5]: "
+                            + partUri.getPath());
+        }
+    }
+
+    /**
+     * Throws an exception if the specified URI is absolute.
+     *
+     * @param partUri
+     *            The URI to check.
+     * @throws InvalidFormatException
+     *             Throws if the specified URI is absolute.
+     */
+    private static void throwExceptionIfAbsoluteUri(URI partUri) throws InvalidFormatException {
+        if (partUri.isAbsolute()) {
             throw new InvalidFormatException("Absolute URI forbidden: " + partUri);
         }
-	}
+    }
 
-	/**
-	 * Compare two part names following the rule M1.12 :
-	 *
-	 * Part name equivalence is determined by comparing part names as
-	 * case-insensitive ASCII strings. Packages shall not contain equivalent
-	 * part names and package implementers shall neither create nor recognize
-	 * packages with equivalent part names. [M1.12]
-	 */
+    /**
+     * Compare two part names following the rule M1.12 :
+     *
+     * Part name equivalence is determined by comparing part names as
+     * case-insensitive ASCII strings. Packages shall not contain equivalent
+     * part names and package implementers shall neither create nor recognize
+     * packages with equivalent part names. [M1.12]
+     */
     @Override
     public int compareTo(PackagePartName other) {
         // compare with natural sort order
@@ -413,64 +413,64 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     }
 
 
-	/**
-	 * Retrieves the extension of the part name if any. If there is no extension
-	 * returns an empty String. Example : '/document/content.xml' =&gt; 'xml'
-	 *
-	 * @return The extension of the part name.
-	 */
-	public String getExtension() {
-		String fragment = this.partNameURI.getPath();
-		if (fragment.length() > 0) {
-			int i = fragment.lastIndexOf('.');
-			if (i > -1) {
+    /**
+     * Retrieves the extension of the part name if any. If there is no extension
+     * returns an empty String. Example : '/document/content.xml' =&gt; 'xml'
+     *
+     * @return The extension of the part name.
+     */
+    public String getExtension() {
+        String fragment = this.partNameURI.getPath();
+        if (fragment.length() > 0) {
+            int i = fragment.lastIndexOf('.');
+            if (i > -1) {
                 return fragment.substring(i + 1);
             }
-		}
-		return "";
-	}
+        }
+        return "";
+    }
 
-	/**
-	 * Get this part name.
-	 *
-	 * @return The name of this part name.
-	 */
-	public String getName() {
-		return getURI().toASCIIString();
-	}
+    /**
+     * Get this part name.
+     *
+     * @return The name of this part name.
+     */
+    public String getName() {
+        return getURI().toASCIIString();
+    }
 
-	/**
-	 * Part name equivalence is determined by comparing part names as
-	 * case-insensitive ASCII strings. Packages shall not contain equivalent
-	 * part names and package implementers shall neither create nor recognize
-	 * packages with equivalent part names. [M1.12]
-	 */
-	@Override
-	public boolean equals(Object other) {
+    /**
+     * Part name equivalence is determined by comparing part names as
+     * case-insensitive ASCII strings. Packages shall not contain equivalent
+     * part names and package implementers shall neither create nor recognize
+     * packages with equivalent part names. [M1.12]
+     */
+    @Override
+    public boolean equals(Object other) {
         return (other instanceof PackagePartName) &&
             compare(this.getName(), ((PackagePartName)other).getName()) == 0;
     }
 
-	@Override
-	public int hashCode() {
-		return getName().toLowerCase(Locale.ROOT).hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return getName().toLowerCase(Locale.ROOT).hashCode();
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public String toString() {
+        return getName();
+    }
 
-	/* Getters and setters */
+    /* Getters and setters */
 
-	/**
-	 * Part name property getter.
-	 *
-	 * @return This part name URI.
-	 */
-	public URI getURI() {
-		return this.partNameURI;
-	}
+    /**
+     * Part name property getter.
+     *
+     * @return This part name URI.
+     */
+    public URI getURI() {
+        return this.partNameURI;
+    }
 
 
     /**
@@ -489,10 +489,10 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      * case-insensitive ASCII strings. Packages shall not contain equivalent
      * part names and package implementers shall neither create nor recognize
      * packages with equivalent part names. [M1.12]
-	 *
-	 * @param obj1 first {@code PackagePartName} to compare
-	 * @param obj2 second {@code PackagePartName} to compare
-	 * @return a negative integer, zero, or a positive integer as the first argument is less than,
+     *
+     * @param obj1 first {@code PackagePartName} to compare
+     * @param obj2 second {@code PackagePartName} to compare
+     * @return a negative integer, zero, or a positive integer as the first argument is less than,
      *         equal to, or greater than the second.
      */
     public static int compare(PackagePartName obj1, PackagePartName obj2) {

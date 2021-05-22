@@ -57,7 +57,7 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     
     @Beta
     protected void readFrom(InputStream is) throws IOException {
-	try {
+    try {
         XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
         //Removing root element
         options.setLoadReplaceDocumentElement(null);

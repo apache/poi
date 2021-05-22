@@ -44,97 +44,97 @@ import org.xml.sax.SAXException;
  */
 public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 
-	protected static final String KEYWORD_CATEGORY = "category";
+    protected static final String KEYWORD_CATEGORY = "category";
 
-	protected static final String KEYWORD_CONTENT_STATUS = "contentStatus";
+    protected static final String KEYWORD_CONTENT_STATUS = "contentStatus";
 
-	protected static final String KEYWORD_CONTENT_TYPE = "contentType";
+    protected static final String KEYWORD_CONTENT_TYPE = "contentType";
 
-	protected static final String KEYWORD_CREATED = "created";
+    protected static final String KEYWORD_CREATED = "created";
 
-	protected static final String KEYWORD_CREATOR = "creator";
+    protected static final String KEYWORD_CREATOR = "creator";
 
-	protected static final String KEYWORD_DESCRIPTION = "description";
+    protected static final String KEYWORD_DESCRIPTION = "description";
 
-	protected static final String KEYWORD_IDENTIFIER = "identifier";
+    protected static final String KEYWORD_IDENTIFIER = "identifier";
 
-	protected static final String KEYWORD_KEYWORDS = "keywords";
+    protected static final String KEYWORD_KEYWORDS = "keywords";
 
-	protected static final String KEYWORD_LANGUAGE = "language";
+    protected static final String KEYWORD_LANGUAGE = "language";
 
-	protected static final String KEYWORD_LAST_MODIFIED_BY = "lastModifiedBy";
+    protected static final String KEYWORD_LAST_MODIFIED_BY = "lastModifiedBy";
 
-	protected static final String KEYWORD_LAST_PRINTED = "lastPrinted";
+    protected static final String KEYWORD_LAST_PRINTED = "lastPrinted";
 
-	protected static final String KEYWORD_MODIFIED = "modified";
+    protected static final String KEYWORD_MODIFIED = "modified";
 
-	protected static final String KEYWORD_REVISION = "revision";
+    protected static final String KEYWORD_REVISION = "revision";
 
-	protected static final String KEYWORD_SUBJECT = "subject";
+    protected static final String KEYWORD_SUBJECT = "subject";
 
-	protected static final String KEYWORD_TITLE = "title";
+    protected static final String KEYWORD_TITLE = "title";
 
-	protected static final String KEYWORD_VERSION = "version";
+    protected static final String KEYWORD_VERSION = "version";
 
-	// TODO Load element with XMLBeans or dynamic table
-	// TODO Check every element/namespace for compliance
-	public PackagePart unmarshall(UnmarshallContext context, InputStream in)
-			throws InvalidFormatException, IOException {
-		PackagePropertiesPart coreProps = new PackagePropertiesPart(context
-				.getPackage(), context.getPartName());
+    // TODO Load element with XMLBeans or dynamic table
+    // TODO Check every element/namespace for compliance
+    public PackagePart unmarshall(UnmarshallContext context, InputStream in)
+            throws InvalidFormatException, IOException {
+        PackagePropertiesPart coreProps = new PackagePropertiesPart(context
+                .getPackage(), context.getPartName());
 
-		// If the input stream is null then we try to get it from the
-		// package.
-		if (in == null) {
-			if (context.getZipEntry() != null) {
-				in = ((ZipPackage) context.getPackage()).getZipArchive()
-						.getInputStream(context.getZipEntry());
-			} else if (context.getPackage() != null) {
-				// Try to retrieve the part inputstream from the URI
-				ZipArchiveEntry zipEntry = ZipHelper
-						.getCorePropertiesZipEntry((ZipPackage) context
-								.getPackage());
-				in = ((ZipPackage) context.getPackage()).getZipArchive()
-						.getInputStream(zipEntry);
-			} else
-				throw new IOException(
-						"Error while trying to get the part input stream.");
-		}
+        // If the input stream is null then we try to get it from the
+        // package.
+        if (in == null) {
+            if (context.getZipEntry() != null) {
+                in = ((ZipPackage) context.getPackage()).getZipArchive()
+                        .getInputStream(context.getZipEntry());
+            } else if (context.getPackage() != null) {
+                // Try to retrieve the part inputstream from the URI
+                ZipArchiveEntry zipEntry = ZipHelper
+                        .getCorePropertiesZipEntry((ZipPackage) context
+                                .getPackage());
+                in = ((ZipPackage) context.getPackage()).getZipArchive()
+                        .getInputStream(zipEntry);
+            } else
+                throw new IOException(
+                        "Error while trying to get the part input stream.");
+        }
 
-		Document xmlDoc;
-		try {
-			xmlDoc = DocumentHelper.readDocument(in);
+        Document xmlDoc;
+        try {
+            xmlDoc = DocumentHelper.readDocument(in);
 
-			/* Check OPC compliance */
+            /* Check OPC compliance */
 
-			// Rule M4.2, M4.3, M4.4 and M4.5/
-			checkElementForOPCCompliance(xmlDoc.getDocumentElement());
+            // Rule M4.2, M4.3, M4.4 and M4.5/
+            checkElementForOPCCompliance(xmlDoc.getDocumentElement());
 
-			/* End OPC compliance */
+            /* End OPC compliance */
 
         } catch (SAXException e) {
             throw new IOException(e.getMessage());
         }
 
         coreProps.setCategoryProperty(loadCategory(xmlDoc));
-		coreProps.setContentStatusProperty(loadContentStatus(xmlDoc));
-		coreProps.setContentTypeProperty(loadContentType(xmlDoc));
-		coreProps.setCreatedProperty(loadCreated(xmlDoc));
-		coreProps.setCreatorProperty(loadCreator(xmlDoc));
-		coreProps.setDescriptionProperty(loadDescription(xmlDoc));
-		coreProps.setIdentifierProperty(loadIdentifier(xmlDoc));
-		coreProps.setKeywordsProperty(loadKeywords(xmlDoc));
-		coreProps.setLanguageProperty(loadLanguage(xmlDoc));
-		coreProps.setLastModifiedByProperty(loadLastModifiedBy(xmlDoc));
-		coreProps.setLastPrintedProperty(loadLastPrinted(xmlDoc));
-		coreProps.setModifiedProperty(loadModified(xmlDoc));
-		coreProps.setRevisionProperty(loadRevision(xmlDoc));
-		coreProps.setSubjectProperty(loadSubject(xmlDoc));
-		coreProps.setTitleProperty(loadTitle(xmlDoc));
-		coreProps.setVersionProperty(loadVersion(xmlDoc));
+        coreProps.setContentStatusProperty(loadContentStatus(xmlDoc));
+        coreProps.setContentTypeProperty(loadContentType(xmlDoc));
+        coreProps.setCreatedProperty(loadCreated(xmlDoc));
+        coreProps.setCreatorProperty(loadCreator(xmlDoc));
+        coreProps.setDescriptionProperty(loadDescription(xmlDoc));
+        coreProps.setIdentifierProperty(loadIdentifier(xmlDoc));
+        coreProps.setKeywordsProperty(loadKeywords(xmlDoc));
+        coreProps.setLanguageProperty(loadLanguage(xmlDoc));
+        coreProps.setLastModifiedByProperty(loadLastModifiedBy(xmlDoc));
+        coreProps.setLastPrintedProperty(loadLastPrinted(xmlDoc));
+        coreProps.setModifiedProperty(loadModified(xmlDoc));
+        coreProps.setRevisionProperty(loadRevision(xmlDoc));
+        coreProps.setSubjectProperty(loadSubject(xmlDoc));
+        coreProps.setTitleProperty(loadTitle(xmlDoc));
+        coreProps.setVersionProperty(loadVersion(xmlDoc));
 
-		return coreProps;
-	}
+        return coreProps;
+    }
 
     private String readElement(Document xmlDoc, String localName, String namespaceURI) {
         Element el = (Element)xmlDoc.getDocumentElement().getElementsByTagNameNS(namespaceURI, localName).item(0);
@@ -144,97 +144,97 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
         return el.getTextContent();
     }
 
-	private String loadCategory(Document xmlDoc) {
+    private String loadCategory(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_CATEGORY, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
     private String loadContentStatus(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_CONTENT_STATUS, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadContentType(Document xmlDoc) {
+    private String loadContentType(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_CONTENT_TYPE, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadCreated(Document xmlDoc) {
+    private String loadCreated(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_CREATED, PackageProperties.NAMESPACE_DCTERMS);
-	}
+    }
 
-	private String loadCreator(Document xmlDoc) {
+    private String loadCreator(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_CREATOR, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadDescription(Document xmlDoc) {
+    private String loadDescription(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_DESCRIPTION, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadIdentifier(Document xmlDoc) {
+    private String loadIdentifier(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_IDENTIFIER, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadKeywords(Document xmlDoc) {
+    private String loadKeywords(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_KEYWORDS, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadLanguage(Document xmlDoc) {
+    private String loadLanguage(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_LANGUAGE, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadLastModifiedBy(Document xmlDoc) {
+    private String loadLastModifiedBy(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_LAST_MODIFIED_BY, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadLastPrinted(Document xmlDoc) {
+    private String loadLastPrinted(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_LAST_PRINTED, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadModified(Document xmlDoc) {
+    private String loadModified(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_MODIFIED, PackageProperties.NAMESPACE_DCTERMS);
-	}
+    }
 
-	private String loadRevision(Document xmlDoc) {
+    private String loadRevision(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_REVISION, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	private String loadSubject(Document xmlDoc) {
+    private String loadSubject(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_SUBJECT, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadTitle(Document xmlDoc) {
+    private String loadTitle(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_TITLE, PackageProperties.NAMESPACE_DC);
-	}
+    }
 
-	private String loadVersion(Document xmlDoc) {
+    private String loadVersion(Document xmlDoc) {
         return readElement(xmlDoc, KEYWORD_VERSION, PackageNamespaces.CORE_PROPERTIES);
-	}
+    }
 
-	/* OPC Compliance methods */
+    /* OPC Compliance methods */
 
-	/**
-	 * Check the element for the following OPC compliance rules:
-	 * <p>
-	 * Rule M4.2: A format consumer shall consider the use of the Markup
-	 * Compatibility namespace to be an error.
-	 * <p>
-	 * Rule M4.3: Producers shall not create a document element that contains
-	 * refinements to the Dublin Core elements, except for the two specified in
-	 * the schema: &lt;dcterms:created&gt; and &lt;dcterms:modified&gt; Consumers shall
-	 * consider a document element that violates this constraint to be an error.
-	 * <p>
-	 * Rule M4.4: Producers shall not create a document element that contains
-	 * the xml:lang attribute. Consumers shall consider a document element that
-	 * violates this constraint to be an error.
-	 * <p>
-	 * Rule M4.5: Producers shall not create a document element that contains
-	 * the xsi:type attribute, except for a &lt;dcterms:created&gt; or
-	 * &lt;dcterms:modified&gt; element where the xsi:type attribute shall be present
-	 * and shall hold the value dcterms:W3CDTF, where dcterms is the namespace
-	 * prefix of the Dublin Core namespace. Consumers shall consider a document
-	 * element that violates this constraint to be an error.
-	 */
-	public void checkElementForOPCCompliance(Element el)
-			throws InvalidFormatException {
-		// Check the current element
+    /**
+     * Check the element for the following OPC compliance rules:
+     * <p>
+     * Rule M4.2: A format consumer shall consider the use of the Markup
+     * Compatibility namespace to be an error.
+     * <p>
+     * Rule M4.3: Producers shall not create a document element that contains
+     * refinements to the Dublin Core elements, except for the two specified in
+     * the schema: &lt;dcterms:created&gt; and &lt;dcterms:modified&gt; Consumers shall
+     * consider a document element that violates this constraint to be an error.
+     * <p>
+     * Rule M4.4: Producers shall not create a document element that contains
+     * the xml:lang attribute. Consumers shall consider a document element that
+     * violates this constraint to be an error.
+     * <p>
+     * Rule M4.5: Producers shall not create a document element that contains
+     * the xsi:type attribute, except for a &lt;dcterms:created&gt; or
+     * &lt;dcterms:modified&gt; element where the xsi:type attribute shall be present
+     * and shall hold the value dcterms:W3CDTF, where dcterms is the namespace
+     * prefix of the Dublin Core namespace. Consumers shall consider a document
+     * element that violates this constraint to be an error.
+     */
+    public void checkElementForOPCCompliance(Element el)
+            throws InvalidFormatException {
+        // Check the current element
         NamedNodeMap namedNodeMap = el.getAttributes();
         int namedNodeCount = namedNodeMap.getLength();
         for (int i = 0; i < namedNodeCount; i++) {
@@ -249,42 +249,42 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
             }
         }
 
-		// Rule M4.3
+        // Rule M4.3
         String elName = el.getLocalName();
         if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS))
             if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
                 throw new InvalidFormatException(
                         "OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.");
 
-		// Rule M4.4
-		if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null)
-			throw new InvalidFormatException(
-					"OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.");
+        // Rule M4.4
+        if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null)
+            throw new InvalidFormatException(
+                    "OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.");
 
-		// Rule M4.5
-		if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS)) {
-			// DCTerms namespace only use with 'created' and 'modified' elements
-			if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
-				throw new InvalidFormatException("Namespace error : " + elName
-						+ " shouldn't have the following naemspace -> "
-						+ PackageProperties.NAMESPACE_DCTERMS);
+        // Rule M4.5
+        if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS)) {
+            // DCTerms namespace only use with 'created' and 'modified' elements
+            if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
+                throw new InvalidFormatException("Namespace error : " + elName
+                        + " shouldn't have the following naemspace -> "
+                        + PackageProperties.NAMESPACE_DCTERMS);
 
-			// Check for the 'xsi:type' attribute
-			Attr typeAtt = el.getAttributeNodeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-			if (typeAtt == null)
-				throw new InvalidFormatException("The element '" + elName
-						+ "' must have the 'xsi:type' attribute present !");
+            // Check for the 'xsi:type' attribute
+            Attr typeAtt = el.getAttributeNodeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+            if (typeAtt == null)
+                throw new InvalidFormatException("The element '" + elName
+                        + "' must have the 'xsi:type' attribute present !");
 
-			// Check for the attribute value => 'dcterms:W3CDTF'
-			if (!typeAtt.getValue().equals(el.getPrefix() + ":W3CDTF"))
-				throw new InvalidFormatException("The element '" + elName
-						+ "' must have the 'xsi:type' attribute with the value '" + el.getPrefix() + ":W3CDTF', but had '" + typeAtt.getValue() + "' !");
-		}
+            // Check for the attribute value => 'dcterms:W3CDTF'
+            if (!typeAtt.getValue().equals(el.getPrefix() + ":W3CDTF"))
+                throw new InvalidFormatException("The element '" + elName
+                        + "' must have the 'xsi:type' attribute with the value '" + el.getPrefix() + ":W3CDTF', but had '" + typeAtt.getValue() + "' !");
+        }
 
-		// Check its children
+        // Check its children
         NodeList childElements = el.getElementsByTagName("*");
         int childElementCount = childElements.getLength();
         for (int i = 0; i < childElementCount; i++)
             checkElementForOPCCompliance((Element)childElements.item(i));
-	}
+    }
 }

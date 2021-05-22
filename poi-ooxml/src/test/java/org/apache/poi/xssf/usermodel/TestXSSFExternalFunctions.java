@@ -24,7 +24,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
  * Tests setting and evaluating user-defined functions in HSSF
  */
 public final class TestXSSFExternalFunctions extends BaseTestExternalFunctions {
-	public TestXSSFExternalFunctions() {
-		super(XSSFITestDataProvider.instance, "atp.xlsx");
-	}
+    public TestXSSFExternalFunctions() {
+        super(XSSFITestDataProvider.instance, "atp.xlsx");
+    }
 }

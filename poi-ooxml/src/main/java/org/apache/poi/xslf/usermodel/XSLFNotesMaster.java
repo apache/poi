@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 @Beta
  public class XSLFNotesMaster extends XSLFSheet
      implements MasterSheet<XSLFShape,XSLFTextParagraph> {
-	 private CTNotesMaster _slide;
+     private CTNotesMaster _slide;
 
     XSLFNotesMaster() {
         super();

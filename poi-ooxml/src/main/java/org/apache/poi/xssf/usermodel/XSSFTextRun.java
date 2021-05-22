@@ -111,7 +111,7 @@ public class XSSFTextRun {
      */
     public double getFontSize(){
         double scale = 1;
-        double size = XSSFFont.DEFAULT_FONT_SIZE;	// default font size
+        double size = XSSFFont.DEFAULT_FONT_SIZE;   // default font size
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTxBody().getBodyPr().getNormAutofit();
         if(afit != null) scale = (double)afit.getFontScale() / 100000;
 

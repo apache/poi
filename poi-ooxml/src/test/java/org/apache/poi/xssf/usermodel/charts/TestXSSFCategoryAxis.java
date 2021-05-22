@@ -30,19 +30,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 public final class TestXSSFCategoryAxis {
-	@Test
-	void testAccessMethods() throws Exception {
-		try (XSSFWorkbook wb = new XSSFWorkbook()) {
-			XSSFSheet sheet = wb.createSheet();
-			XSSFDrawing drawing = sheet.createDrawingPatriarch();
-			XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-			XSSFChart chart = drawing.createChart(anchor);
-			XDDFCategoryAxis axis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+    @Test
+    void testAccessMethods() throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+            XSSFChart chart = drawing.createChart(anchor);
+            XDDFCategoryAxis axis = chart.createCategoryAxis(AxisPosition.BOTTOM);
 
-			axis.setCrosses(AxisCrosses.AUTO_ZERO);
-			assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
 
-			assertEquals(chart.getAxes().size(), 1);
-		}
-	}
+            assertEquals(chart.getAxes().size(), 1);
+        }
+    }
 }

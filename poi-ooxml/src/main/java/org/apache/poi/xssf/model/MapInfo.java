@@ -48,40 +48,40 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.MapInfoDocument;
 
 public class MapInfo extends POIXMLDocumentPart {
 
-	private CTMapInfo mapInfo;
+    private CTMapInfo mapInfo;
 
-	private Map<Integer, XSSFMap> maps ;
+    private Map<Integer, XSSFMap> maps ;
 
-	public MapInfo() {
-		super();
-		mapInfo = CTMapInfo.Factory.newInstance();
+    public MapInfo() {
+        super();
+        mapInfo = CTMapInfo.Factory.newInstance();
 
-	}
-
-	/**
-     * @since POI 3.14-Beta1
-     */
-	public MapInfo(PackagePart part) throws IOException {
-	    super(part);
-	    readFrom(part.getInputStream());
     }
 
-	public void readFrom(InputStream is) throws IOException {
-		try {
-			MapInfoDocument doc = MapInfoDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
-			mapInfo = doc.getMapInfo();
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public MapInfo(PackagePart part) throws IOException {
+        super(part);
+        readFrom(part.getInputStream());
+    }
+
+    public void readFrom(InputStream is) throws IOException {
+        try {
+            MapInfoDocument doc = MapInfoDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            mapInfo = doc.getMapInfo();
 
             maps= new HashMap<>();
             for(CTMap map :mapInfo.getMapArray()){
                 maps.put((int)map.getID(), new XSSFMap(map,this));
             }
 
-		} catch (XmlException e) {
-			throw new IOException(e.getLocalizedMessage());
-		}
-	}
+        } catch (XmlException e) {
+            throw new IOException(e.getLocalizedMessage());
+        }
+    }
 
-	/**
+    /**
      * Returns the parent XSSFWorkbook
      *
      * @return the parent XSSFWorkbook
@@ -90,70 +90,70 @@ public class MapInfo extends POIXMLDocumentPart {
         return (XSSFWorkbook)getParent();
     }
 
-	/**
-	 *
-	 * @return the internal data object
-	 */
-	public CTMapInfo getCTMapInfo(){
-		return mapInfo;
+    /**
+     *
+     * @return the internal data object
+     */
+    public CTMapInfo getCTMapInfo(){
+        return mapInfo;
 
-	}
+    }
 
-	/**
-	 * Gets the
-	 * @param schemaId the schema ID
-	 * @return CTSchema by it's ID
-	 */
-	public CTSchema getCTSchemaById(String schemaId){
-		CTSchema xmlSchema = null;
+    /**
+     * Gets the
+     * @param schemaId the schema ID
+     * @return CTSchema by it's ID
+     */
+    public CTSchema getCTSchemaById(String schemaId){
+        CTSchema xmlSchema = null;
 
-		for(CTSchema schema: mapInfo.getSchemaArray()){
-			if(schema.getID().equals(schemaId)){
-				xmlSchema = schema;
-				break;
-			}
-		}
-		return xmlSchema;
-	}
+        for(CTSchema schema: mapInfo.getSchemaArray()){
+            if(schema.getID().equals(schemaId)){
+                xmlSchema = schema;
+                break;
+            }
+        }
+        return xmlSchema;
+    }
 
 
-	public XSSFMap getXSSFMapById(int id){
-		return maps.get(id);
-	}
+    public XSSFMap getXSSFMapById(int id){
+        return maps.get(id);
+    }
 
-	public XSSFMap getXSSFMapByName(String name){
+    public XSSFMap getXSSFMapByName(String name){
 
-		XSSFMap matchedMap = null;
+        XSSFMap matchedMap = null;
 
-		for(XSSFMap map :maps.values()){
-			if(map.getCtMap().getName()!=null && map.getCtMap().getName().equals(name)){
-				matchedMap = map;
-			}
-		}
+        for(XSSFMap map :maps.values()){
+            if(map.getCtMap().getName()!=null && map.getCtMap().getName().equals(name)){
+                matchedMap = map;
+            }
+        }
 
-		return matchedMap;
-	}
+        return matchedMap;
+    }
 
-	/**
-	 *
-	 * @return all the mappings configured in this document
-	 */
-	public Collection<XSSFMap> getAllXSSFMaps(){
-		return maps.values();
-	}
+    /**
+     *
+     * @return all the mappings configured in this document
+     */
+    public Collection<XSSFMap> getAllXSSFMaps(){
+        return maps.values();
+    }
 
-	protected void writeTo(OutputStream out) throws IOException {
-		MapInfoDocument doc = MapInfoDocument.Factory.newInstance();
-		doc.setMapInfo(mapInfo);
-		doc.save(out, DEFAULT_XML_OPTIONS);
-	}
+    protected void writeTo(OutputStream out) throws IOException {
+        MapInfoDocument doc = MapInfoDocument.Factory.newInstance();
+        doc.setMapInfo(mapInfo);
+        doc.save(out, DEFAULT_XML_OPTIONS);
+    }
 
-	@Override
-	protected void commit() throws IOException {
-		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		writeTo(out);
-		out.close();
-	}
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
+    }
 
 }

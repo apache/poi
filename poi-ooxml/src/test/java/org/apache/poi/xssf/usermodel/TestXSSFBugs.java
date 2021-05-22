@@ -2242,7 +2242,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 //        List<XSSFCellFill> fills = table.getFills();
 //        System.out.println("Having " + fills.size() + " fills");
 //        for(XSSFCellFill fill : fills) {
-//        	System.out.println("Fill: " + fill.getFillBackgroundColor() + "/" + fill.getFillForegroundColor());
+//          System.out.println("Fill: " + fill.getFillBackgroundColor() + "/" + fill.getFillForegroundColor());
 //        }
             xlsToAppendWorkbook.close();
 

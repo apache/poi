@@ -83,7 +83,7 @@ class TestDocumentProtection {
 
     @Test
     void testShouldEnforceForReadOnly() throws IOException {
-        //		XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
+        //      XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedReadonlyProtection());
 

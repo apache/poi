@@ -72,8 +72,8 @@ public final class TestXSSFChart {
     }
 
     @Test
-	void testAddChartsToNewWorkbook() throws Exception {
-		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+    void testAddChartsToNewWorkbook() throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s1 = wb.createSheet();
             XSSFDrawing d1 = s1.createDrawingPatriarch();
             XSSFClientAnchor a1 = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
@@ -91,5 +91,5 @@ public final class TestXSSFChart {
 
             assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
         }
-	}
+    }
 }

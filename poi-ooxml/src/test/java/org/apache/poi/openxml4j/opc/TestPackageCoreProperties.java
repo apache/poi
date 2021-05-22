@@ -47,38 +47,38 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 public final class TestPackageCoreProperties {
-	/**
-	 * Test package core properties getters.
-	 */
+    /**
+     * Test package core properties getters.
+     */
     @Test
-	void testGetProperties() throws Exception {
-		// Open the package
-		@SuppressWarnings("resource")
+    void testGetProperties() throws Exception {
+        // Open the package
+        @SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(openSampleStream("TestPackageCoreProperiesGetters.docx"));
-		compareProperties(p);
-		p.revert();
-	}
+        compareProperties(p);
+        p.revert();
+    }
 
-	/**
-	 * Test package core properties setters.
-	 */
+    /**
+     * Test package core properties setters.
+     */
     @Test
     void testSetProperties() throws Exception {
-		String inputPath = getSampleFileName("TestPackageCoreProperiesSetters.docx");
+        String inputPath = getSampleFileName("TestPackageCoreProperiesSetters.docx");
 
-		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
+        File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
 
-		// Open package
-		@SuppressWarnings("resource")
+        // Open package
+        @SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(0));
+        Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(0));
 
         SimpleDateFormat msdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
         msdf.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 
-		PackageProperties props = p.getPackageProperties();
+        PackageProperties props = p.getPackageProperties();
 
         //test various date formats
         props.setCreatedProperty("2007-05-12T08:00:00Z");
@@ -106,59 +106,59 @@ public final class TestPackageCoreProperties {
         assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().orElse(null));
 
         props.setCategoryProperty("MyCategory");
-		props.setContentStatusProperty("MyContentStatus");
-		props.setContentTypeProperty("MyContentType");
-		props.setCreatorProperty("MyCreator");
-		props.setDescriptionProperty("MyDescription");
-		props.setIdentifierProperty("MyIdentifier");
-		props.setKeywordsProperty("MyKeywords");
-		props.setLanguageProperty("MyLanguage");
-		props.setLastModifiedByProperty("Julien Chable");
-		props.setLastPrintedProperty(Optional.of(dateToInsert));
-		props.setModifiedProperty(Optional.of(dateToInsert));
-		props.setRevisionProperty("2");
-		props.setTitleProperty("MyTitle");
-		props.setSubjectProperty("MySubject");
-		props.setVersionProperty("2");
-		// Save the package in the output directory
-		p.save(outputFile);
+        props.setContentStatusProperty("MyContentStatus");
+        props.setContentTypeProperty("MyContentType");
+        props.setCreatorProperty("MyCreator");
+        props.setDescriptionProperty("MyDescription");
+        props.setIdentifierProperty("MyIdentifier");
+        props.setKeywordsProperty("MyKeywords");
+        props.setLanguageProperty("MyLanguage");
+        props.setLastModifiedByProperty("Julien Chable");
+        props.setLastPrintedProperty(Optional.of(dateToInsert));
+        props.setModifiedProperty(Optional.of(dateToInsert));
+        props.setRevisionProperty("2");
+        props.setTitleProperty("MyTitle");
+        props.setSubjectProperty("MySubject");
+        props.setVersionProperty("2");
+        // Save the package in the output directory
+        p.save(outputFile);
         p.revert();
 
-		// Open the newly created file to check core properties saved values.
-		@SuppressWarnings("resource")
+        // Open the newly created file to check core properties saved values.
+        @SuppressWarnings("resource")
         OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
-	    compareProperties(p2);
-	    p2.revert();
-		assertTrue(outputFile.delete());
-	}
+        compareProperties(p2);
+        p2.revert();
+        assertTrue(outputFile.delete());
+    }
 
-	private void compareProperties(OPCPackage p) throws InvalidFormatException {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
-		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		Date expectedDate = df.parse("2007-05-12T08:00:00Z", new ParsePosition(0));
+    private void compareProperties(OPCPackage p) throws InvalidFormatException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+        Date expectedDate = df.parse("2007-05-12T08:00:00Z", new ParsePosition(0));
 
-		// Gets the core properties
-		PackageProperties props = p.getPackageProperties();
-		assertEquals("MyCategory", props.getCategoryProperty().orElse(null));
-		assertEquals("MyContentStatus", props.getContentStatusProperty().orElse(null));
-		assertEquals("MyContentType", props.getContentTypeProperty().orElse(null));
-		assertEquals(expectedDate, props.getCreatedProperty().orElse(null));
-		assertEquals("MyCreator", props.getCreatorProperty().orElse(null));
-		assertEquals("MyDescription", props.getDescriptionProperty().orElse(null));
-		assertEquals("MyIdentifier", props.getIdentifierProperty().orElse(null));
-		assertEquals("MyKeywords", props.getKeywordsProperty().orElse(null));
-		assertEquals("MyLanguage", props.getLanguageProperty().orElse(null));
-		assertEquals("Julien Chable", props.getLastModifiedByProperty().orElse(null));
-		assertEquals(expectedDate, props.getLastPrintedProperty().orElse(null));
-		assertEquals(expectedDate, props.getModifiedProperty().orElse(null));
-		assertEquals("2", props.getRevisionProperty().orElse(null));
-		assertEquals("MySubject", props.getSubjectProperty().orElse(null));
-		assertEquals("MyTitle", props.getTitleProperty().orElse(null));
-		assertEquals("2", props.getVersionProperty().orElse(null));
-	}
+        // Gets the core properties
+        PackageProperties props = p.getPackageProperties();
+        assertEquals("MyCategory", props.getCategoryProperty().orElse(null));
+        assertEquals("MyContentStatus", props.getContentStatusProperty().orElse(null));
+        assertEquals("MyContentType", props.getContentTypeProperty().orElse(null));
+        assertEquals(expectedDate, props.getCreatedProperty().orElse(null));
+        assertEquals("MyCreator", props.getCreatorProperty().orElse(null));
+        assertEquals("MyDescription", props.getDescriptionProperty().orElse(null));
+        assertEquals("MyIdentifier", props.getIdentifierProperty().orElse(null));
+        assertEquals("MyKeywords", props.getKeywordsProperty().orElse(null));
+        assertEquals("MyLanguage", props.getLanguageProperty().orElse(null));
+        assertEquals("Julien Chable", props.getLastModifiedByProperty().orElse(null));
+        assertEquals(expectedDate, props.getLastPrintedProperty().orElse(null));
+        assertEquals(expectedDate, props.getModifiedProperty().orElse(null));
+        assertEquals("2", props.getRevisionProperty().orElse(null));
+        assertEquals("MySubject", props.getSubjectProperty().orElse(null));
+        assertEquals("MyTitle", props.getTitleProperty().orElse(null));
+        assertEquals("2", props.getVersionProperty().orElse(null));
+    }
 
-	@Test
-	void testCoreProperties_bug51374() throws Exception {
+    @Test
+    void testCoreProperties_bug51374() throws Exception {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
         String strDate = "2007-05-12T08:00:00Z";
@@ -214,8 +214,8 @@ public final class TestPackageCoreProperties {
         }
     }
 
-	@Test
-	void testGetPropertiesLO() throws Exception {
+    @Test
+    void testGetPropertiesLO() throws Exception {
         UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
         // Open the package
         try (OPCPackage pkg1 = OPCPackage.open(openSampleStream("51444.xlsx"))) {
@@ -231,8 +231,8 @@ public final class TestPackageCoreProperties {
         }
     }
 
-	@Test
-	void testEntitiesInCoreProps_56164() throws Exception {
+    @Test
+    void testEntitiesInCoreProps_56164() throws Exception {
         try (InputStream is = openSampleStream("CorePropertiesHasEntities.ooxml");
              OPCPackage p = OPCPackage.open(is)) {
 
@@ -263,8 +263,8 @@ public final class TestPackageCoreProperties {
         }
     }
 
-	@Test
-	void testListOfCustomProperties() throws Exception {
+    @Test
+    void testListOfCustomProperties() throws Exception {
         File inp = POIDataSamples.getSpreadSheetInstance().getFile("ExcelWithAttachments.xlsm");
         try (OPCPackage pkg = OPCPackage.open(inp, PackageAccess.READ);
              XSSFWorkbook wb = new XSSFWorkbook(pkg)) {
@@ -278,8 +278,8 @@ public final class TestPackageCoreProperties {
         }
     }
 
-	@Test
-	void testAlternateCorePropertyTimezones() throws Exception {
+    @Test
+    void testAlternateCorePropertyTimezones() throws Exception {
         // We need predictable dates for testing!
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
@@ -329,5 +329,5 @@ public final class TestPackageCoreProperties {
             // CoreProperties are stored as xs:dateTime -> no milliseconds are saved!
             assertEquals("2007-06-21T09:59:00.000Z", df.format(props2.getModifiedProperty().orElse(null)));
         }
-	}
+    }
 }

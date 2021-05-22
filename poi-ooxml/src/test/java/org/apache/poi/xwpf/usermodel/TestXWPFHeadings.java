@@ -47,19 +47,19 @@ public final class TestXWPFHeadings {
             doc.createTOC();
         /*
         // TODO - finish this test
-		if (false) {
-			CTStyles styles = doc.getStyle();
-			CTStyle style = styles.addNewStyle();
-			style.setType(STStyleType.PARAGRAPH);
-			style.setStyleId("Heading1");
-		}
+        if (false) {
+            CTStyles styles = doc.getStyle();
+            CTStyle style = styles.addNewStyle();
+            style.setType(STStyleType.PARAGRAPH);
+            style.setStyleId("Heading1");
+        }
 
-		if (false) {
-			File file = TempFile.createTempFile("testHeaders", ".docx");
-			OutputStream out = new FileOutputStream(file);
-			doc.write(out);
-			out.close();
-		}
+        if (false) {
+            File file = TempFile.createTempFile("testHeaders", ".docx");
+            OutputStream out = new FileOutputStream(file);
+            doc.write(out);
+            out.close();
+        }
         */
         }
     }

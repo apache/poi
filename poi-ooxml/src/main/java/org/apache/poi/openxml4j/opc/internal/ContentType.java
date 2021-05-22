@@ -51,25 +51,25 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  */
 public final class ContentType {
 
-	/**
-	 * Type in Type/Subtype.
-	 */
-	private final String type;
+    /**
+     * Type in Type/Subtype.
+     */
+    private final String type;
 
-	/**
-	 * Subtype
-	 */
-	private final String subType;
+    /**
+     * Subtype
+     */
+    private final String subType;
 
-	/**
-	 * Parameters
-	 */
-	private final Map<String, String> parameters;
+    /**
+     * Parameters
+     */
+    private final Map<String, String> parameters;
 
-	/**
-	 * Media type compiled pattern, without parameters
-	 */
-	private static final Pattern patternTypeSubType;
+    /**
+     * Media type compiled pattern, without parameters
+     */
+    private static final Pattern patternTypeSubType;
     /**
      * Media type compiled pattern, with parameters.
      */
@@ -80,184 +80,184 @@ public final class ContentType {
      */
     private static final Pattern patternParams;
 
-	static {
-		/*
-		 * token = 1*<any CHAR except CTLs or separators>
-		 *
-		 * separators = "(" | ")" | "<" | ">" | "@" | "," | ";" | ":" | "\" |
-		 * <"> | "/" | "[" | "]" | "?" | "=" | "{" | "}" | SP | HT
-		 *
-		 * CTL = <any US-ASCII control character (octets 0 - 31) and DEL (127)>
-		 *
-		 * CHAR = <any US-ASCII character (octets 0 - 127)>
-		 */
-		String token = "[\\x21-\\x7E&&[^()<>@,;:\\\\/\"\\[\\]?={}\\x20\\x09]]";
+    static {
+        /*
+         * token = 1*<any CHAR except CTLs or separators>
+         *
+         * separators = "(" | ")" | "<" | ">" | "@" | "," | ";" | ":" | "\" |
+         * <"> | "/" | "[" | "]" | "?" | "=" | "{" | "}" | SP | HT
+         *
+         * CTL = <any US-ASCII control character (octets 0 - 31) and DEL (127)>
+         *
+         * CHAR = <any US-ASCII character (octets 0 - 127)>
+         */
+        String token = "[\\x21-\\x7E&&[^()<>@,;:\\\\/\"\\[\\]?={}\\x20\\x09]]";
 
-		/*
-		 * parameter = attribute "=" value
-		 *
-		 * attribute = token
-		 *
-		 * value = token | quoted-string
-		 */
-		String parameter = "(" + token + "+)=(\"?" + token + "+\"?)";
-		/*
-		 * Pattern for media type.
-		 *
-		 * Don't allow comment, rule M1.15: The package implementer shall
-		 * require a content type that does not include comments and the format
-		 * designer shall specify such a content type.
-		 *
-		 * comment = "(" *( ctext | quoted-pair | comment ) ")"
-		 *
-		 * ctext = <any TEXT excluding "(" and ")">
-		 *
-		 * TEXT = <any OCTET except CTLs, but including LWS>
-		 *
-		 * LWS = [CRLF] 1*( SP | HT )
-		 *
-		 * CR = <US-ASCII CR, carriage return (13)>
-		 *
-		 * LF = <US-ASCII LF, linefeed (10)>
-		 *
-		 * SP = <US-ASCII SP, space (32)>
-		 *
-		 * HT = <US-ASCII HT, horizontal-tab (9)>
-		 *
-		 * quoted-pair = "\" CHAR
-		 */
+        /*
+         * parameter = attribute "=" value
+         *
+         * attribute = token
+         *
+         * value = token | quoted-string
+         */
+        String parameter = "(" + token + "+)=(\"?" + token + "+\"?)";
+        /*
+         * Pattern for media type.
+         *
+         * Don't allow comment, rule M1.15: The package implementer shall
+         * require a content type that does not include comments and the format
+         * designer shall specify such a content type.
+         *
+         * comment = "(" *( ctext | quoted-pair | comment ) ")"
+         *
+         * ctext = <any TEXT excluding "(" and ")">
+         *
+         * TEXT = <any OCTET except CTLs, but including LWS>
+         *
+         * LWS = [CRLF] 1*( SP | HT )
+         *
+         * CR = <US-ASCII CR, carriage return (13)>
+         *
+         * LF = <US-ASCII LF, linefeed (10)>
+         *
+         * SP = <US-ASCII SP, space (32)>
+         *
+         * HT = <US-ASCII HT, horizontal-tab (9)>
+         *
+         * quoted-pair = "\" CHAR
+         */
 
-		patternTypeSubType       = Pattern.compile("^(" + token + "+)/(" +
-		                                           token + "+)$");
-		patternTypeSubTypeParams = Pattern.compile("^(" + token + "+)/(" +
-		                                           token + "+)(;" + parameter + ")*$");
-		patternParams            = Pattern.compile(";" + parameter);
-	}
+        patternTypeSubType       = Pattern.compile("^(" + token + "+)/(" +
+                                                   token + "+)$");
+        patternTypeSubTypeParams = Pattern.compile("^(" + token + "+)/(" +
+                                                   token + "+)(;" + parameter + ")*$");
+        patternParams            = Pattern.compile(";" + parameter);
+    }
 
-	/**
-	 * Constructor. Check the input with the RFC 2616 grammar.
-	 *
-	 * @param contentType
-	 *            The content type to store.
-	 * @throws InvalidFormatException
-	 *             If the specified content type is not valid with RFC 2616.
-	 */
-	public ContentType(String contentType) throws InvalidFormatException {
-		Matcher mMediaType = patternTypeSubType.matcher(contentType);
-		if (!mMediaType.matches()) {
-			// How about with parameters?
-			mMediaType = patternTypeSubTypeParams.matcher(contentType);
-		}
-		if (!mMediaType.matches()) {
-			throw new InvalidFormatException(
-					"The specified content type '"
-					+ contentType
-					+ "' is not compliant with RFC 2616: malformed content type.");
-		}
+    /**
+     * Constructor. Check the input with the RFC 2616 grammar.
+     *
+     * @param contentType
+     *            The content type to store.
+     * @throws InvalidFormatException
+     *             If the specified content type is not valid with RFC 2616.
+     */
+    public ContentType(String contentType) throws InvalidFormatException {
+        Matcher mMediaType = patternTypeSubType.matcher(contentType);
+        if (!mMediaType.matches()) {
+            // How about with parameters?
+            mMediaType = patternTypeSubTypeParams.matcher(contentType);
+        }
+        if (!mMediaType.matches()) {
+            throw new InvalidFormatException(
+                    "The specified content type '"
+                    + contentType
+                    + "' is not compliant with RFC 2616: malformed content type.");
+        }
 
-		// Type/subtype
-		if (mMediaType.groupCount() >= 2) {
-			this.type = mMediaType.group(1);
-			this.subType = mMediaType.group(2);
+        // Type/subtype
+        if (mMediaType.groupCount() >= 2) {
+            this.type = mMediaType.group(1);
+            this.subType = mMediaType.group(2);
 
-			// Parameters
-			this.parameters = new HashMap<>();
-			// Java RegExps are unhelpful, and won't do multiple group captures
-			// See http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#cg
-			if (mMediaType.groupCount() >= 5) {
-				Matcher mParams = patternParams.matcher(contentType.substring(mMediaType.end(2)));
-				while (mParams.find()) {
-					this.parameters.put(mParams.group(1), mParams.group(2));
-				}
-			}
-		} else {
-			// missing media type and subtype
-			this.type = "";
-			this.subType = "";
-			this.parameters = Collections.emptyMap();
-		}
-	}
+            // Parameters
+            this.parameters = new HashMap<>();
+            // Java RegExps are unhelpful, and won't do multiple group captures
+            // See http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#cg
+            if (mMediaType.groupCount() >= 5) {
+                Matcher mParams = patternParams.matcher(contentType.substring(mMediaType.end(2)));
+                while (mParams.find()) {
+                    this.parameters.put(mParams.group(1), mParams.group(2));
+                }
+            }
+        } else {
+            // missing media type and subtype
+            this.type = "";
+            this.subType = "";
+            this.parameters = Collections.emptyMap();
+        }
+    }
 
     /**
      * Returns the content type as a string, including parameters
      */
-	@Override
-	public final String toString() {
-	    return toString(true);
-	}
+    @Override
+    public final String toString() {
+        return toString(true);
+    }
 
-	public final String toString(boolean withParameters) {
-		StringBuilder retVal = new StringBuilder(64);
-	    retVal.append(this.getType());
-	    retVal.append('/');
-	    retVal.append(this.getSubType());
+    public final String toString(boolean withParameters) {
+        StringBuilder retVal = new StringBuilder(64);
+        retVal.append(this.getType());
+        retVal.append('/');
+        retVal.append(this.getSubType());
 
-	    if (withParameters) {
-	        for (Entry<String, String> me : parameters.entrySet()) {
-	            retVal.append(';');
-	            retVal.append(me.getKey());
-	            retVal.append('=');
-	            retVal.append(me.getValue());
-	        }
-	    }
-	    return retVal.toString();
-	}
+        if (withParameters) {
+            for (Entry<String, String> me : parameters.entrySet()) {
+                retVal.append(';');
+                retVal.append(me.getKey());
+                retVal.append('=');
+                retVal.append(me.getValue());
+            }
+        }
+        return retVal.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return (!(obj instanceof ContentType))
-				|| (this.toString().equalsIgnoreCase(obj.toString()));
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return (!(obj instanceof ContentType))
+                || (this.toString().equalsIgnoreCase(obj.toString()));
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(type,subType,parameters);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(type,subType,parameters);
+    }
 
-	/* Getters */
+    /* Getters */
 
-	/**
-	 * Get the subtype.
-	 *
-	 * @return The subtype of this content type.
-	 */
-	public String getSubType() {
-		return this.subType;
-	}
+    /**
+     * Get the subtype.
+     *
+     * @return The subtype of this content type.
+     */
+    public String getSubType() {
+        return this.subType;
+    }
 
-	/**
-	 * Get the type.
-	 *
-	 * @return The type of this content type.
-	 */
-	public String getType() {
-		return this.type;
-	}
+    /**
+     * Get the type.
+     *
+     * @return The type of this content type.
+     */
+    public String getType() {
+        return this.type;
+    }
 
-	/**
-	 * Does this content type have any parameters associated with it?
-	 */
-	public boolean hasParameters() {
-	    return (parameters != null) && !parameters.isEmpty();
-	}
+    /**
+     * Does this content type have any parameters associated with it?
+     */
+    public boolean hasParameters() {
+        return (parameters != null) && !parameters.isEmpty();
+    }
 
-	/**
-	 * Return the parameter keys
-	 */
-	public String[] getParameterKeys() {
-	    if (parameters == null)
-	        return new String[0];
-	    return parameters.keySet().toArray(new String[0]);
-	}
+    /**
+     * Return the parameter keys
+     */
+    public String[] getParameterKeys() {
+        if (parameters == null)
+            return new String[0];
+        return parameters.keySet().toArray(new String[0]);
+    }
 
-	/**
-	 * Gets the value associated to the specified key.
-	 *
-	 * @param key
-	 *            The key of the key/value pair.
-	 * @return The value associated to the specified key.
-	 */
-	public String getParameter(String key) {
-		return parameters.get(key);
-	}
+    /**
+     * Gets the value associated to the specified key.
+     *
+     * @param key
+     *            The key of the key/value pair.
+     * @return The value associated to the specified key.
+     */
+    public String getParameter(String key) {
+        return parameters.get(key);
+    }
 }

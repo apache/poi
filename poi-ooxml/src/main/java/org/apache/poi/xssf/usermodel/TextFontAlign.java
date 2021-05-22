@@ -22,10 +22,10 @@ package org.apache.poi.xssf.usermodel;
  * Specified a list of text font alignment types
  */
 public enum TextFontAlign {
-	/**
-	 * Automatic alignment
-	 */
-	AUTO,
+    /**
+     * Automatic alignment
+     */
+    AUTO,
     /**
      * Align text to the top.
      */

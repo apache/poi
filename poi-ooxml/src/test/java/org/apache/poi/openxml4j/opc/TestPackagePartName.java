@@ -23,14 +23,14 @@ import org.junit.jupiter.api.Test;
 
 public final class TestPackagePartName {
 
-	/**
-	 * Test method getExtension().
-	 */
-	@Test
-	void testGetExtension() throws Exception{
-		PackagePartName name1 = PackagingURIHelper.createPartName("/doc/props/document.xml");
-		PackagePartName name2 = PackagingURIHelper.createPartName("/root/document");
-		assertEquals("xml", name1.getExtension());
-		assertEquals("", name2.getExtension());
-	}
+    /**
+     * Test method getExtension().
+     */
+    @Test
+    void testGetExtension() throws Exception{
+        PackagePartName name1 = PackagingURIHelper.createPartName("/doc/props/document.xml");
+        PackagePartName name2 = PackagingURIHelper.createPartName("/root/document");
+        assertEquals("xml", name1.getExtension());
+        assertEquals("", name2.getExtension());
+    }
 }

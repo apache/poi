@@ -113,8 +113,8 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
                 int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
                 if (lastFlushedRowNum > -1) {
                     if (!skipOutOfWindow) {
-                    	throw new RowFlushedException(0, lastFlushedRowNum);
-					}
+                        throw new RowFlushedException(0, lastFlushedRowNum);
+                    }
 
                     LOG.atInfo().log("Rows up to {} have already been flushed, skipping", box(lastFlushedRowNum));
                 }
