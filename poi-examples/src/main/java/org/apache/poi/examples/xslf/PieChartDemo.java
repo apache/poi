@@ -76,42 +76,42 @@ public final class PieChartDemo {
                     }
                 }
 
-	            if(chart == null) {
-	                throw new IllegalStateException("chart not found in the template");
-	            }
+                if(chart == null) {
+                    throw new IllegalStateException("chart not found in the template");
+                }
 
-	            // Series Text
-	            List<XDDFChartData> series = chart.getChartSeries();
-	            XDDFPieChartData pie = (XDDFPieChartData) series.get(0);
+                // Series Text
+                List<XDDFChartData> series = chart.getChartSeries();
+                XDDFPieChartData pie = (XDDFPieChartData) series.get(0);
 
-	            // Category Axis Data
-	            List<String> listCategories = new ArrayList<>(3);
+                // Category Axis Data
+                List<String> listCategories = new ArrayList<>(3);
 
-	            // Values
-	            List<Double> listValues = new ArrayList<>(3);
+                // Values
+                List<Double> listValues = new ArrayList<>(3);
 
-	            // set model
-	            String ln;
-	            while((ln = modelReader.readLine()) != null){
-	                String[] vals = ln.split("\\s+");
-	                listCategories.add(vals[0]);
-	                listValues.add(Double.valueOf(vals[1]));
-	            }
-	            String[] categories = listCategories.toArray(new String[0]);
-	            Double[] values = listValues.toArray(new Double[0]);
+                // set model
+                String ln;
+                while((ln = modelReader.readLine()) != null){
+                    String[] vals = ln.split("\\s+");
+                    listCategories.add(vals[0]);
+                    listValues.add(Double.valueOf(vals[1]));
+                }
+                String[] categories = listCategories.toArray(new String[0]);
+                Double[] values = listValues.toArray(new Double[0]);
 
-	            final int numOfPoints = categories.length;
-	            final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
-	            final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
-	            final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
-	            final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
+                final int numOfPoints = categories.length;
+                final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
+                final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
+                final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
+                final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
 
-	            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
-	            firstSeries.replaceData(categoriesData, valuesData);
-	            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle, 0));
-	            firstSeries.setExplosion(25L);
-	            firstSeries.getDataPoint(1).setExplosion(35L);
-	            chart.plot(pie);
+                XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
+                firstSeries.replaceData(categoriesData, valuesData);
+                firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle, 0));
+                firstSeries.setExplosion(25L);
+                firstSeries.getDataPoint(1).setExplosion(35L);
+                chart.plot(pie);
 
                 // save the result
                 try (OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx")) {

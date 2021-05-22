@@ -30,7 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class HyperlinkFormula {
     public static void main(String[] args) throws IOException {
-    	try (HSSFWorkbook wb = new HSSFWorkbook()) {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
             HSSFRow row = sheet.createRow(0);
 

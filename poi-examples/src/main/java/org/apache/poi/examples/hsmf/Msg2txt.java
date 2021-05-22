@@ -35,33 +35,33 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 @SuppressWarnings({"java:S106","java:S4823"})
 public class Msg2txt {
 
-	/**
-	 * The stem used to create file names for the text file and the directory
-	 * that contains the attachments.
-	 */
-	private String fileNameStem;
+    /**
+     * The stem used to create file names for the text file and the directory
+     * that contains the attachments.
+     */
+    private String fileNameStem;
 
-	/**
-	 * The Outlook MSG file being processed.
-	 */
-	private MAPIMessage msg;
+    /**
+     * The Outlook MSG file being processed.
+     */
+    private MAPIMessage msg;
 
-	public Msg2txt(String fileName) throws IOException {
-		fileNameStem = fileName;
-		if(fileNameStem.endsWith(".msg") || fileNameStem.endsWith(".MSG")) {
-			fileNameStem = fileNameStem.substring(0, fileNameStem.length() - 4);
-		}
-		msg = new MAPIMessage(fileName);
-	}
+    public Msg2txt(String fileName) throws IOException {
+        fileNameStem = fileName;
+        if(fileNameStem.endsWith(".msg") || fileNameStem.endsWith(".MSG")) {
+            fileNameStem = fileNameStem.substring(0, fileNameStem.length() - 4);
+        }
+        msg = new MAPIMessage(fileName);
+    }
 
-	/**
-	 * Processes the message.
-	 *
-	 * @throws IOException if an exception occurs while writing the message out
-	 */
-	public void processMessage() throws IOException {
-		String txtFileName = fileNameStem + ".txt";
-		String attDirName = fileNameStem + "-att";
+    /**
+     * Processes the message.
+     *
+     * @throws IOException if an exception occurs while writing the message out
+     */
+    public void processMessage() throws IOException {
+        String txtFileName = fileNameStem + ".txt";
+        String attDirName = fileNameStem + "-att";
         try (PrintWriter txtOut = new PrintWriter(txtFileName, "UTF-8")) {
             try {
                 String displayFrom = msg.getDisplayFrom();
@@ -112,47 +112,47 @@ public class Msg2txt {
                 }
             }
         }
-	}
+    }
 
-	/**
-	 * Processes a single attachment: reads it from the Outlook MSG file and
-	 * writes it to disk as an individual file.
-	 *
-	 * @param attachment the chunk group describing the attachment
-	 * @param dir the directory in which to write the attachment file
-	 * @throws IOException when any of the file operations fails
-	 */
-	public void processAttachment(AttachmentChunks attachment,
-	      File dir) throws IOException {
-	   String fileName = attachment.getAttachFileName().toString();
-	   if(attachment.getAttachLongFileName() != null) {
-	      fileName = attachment.getAttachLongFileName().toString();
-	   }
+    /**
+     * Processes a single attachment: reads it from the Outlook MSG file and
+     * writes it to disk as an individual file.
+     *
+     * @param attachment the chunk group describing the attachment
+     * @param dir the directory in which to write the attachment file
+     * @throws IOException when any of the file operations fails
+     */
+    public void processAttachment(AttachmentChunks attachment,
+          File dir) throws IOException {
+       String fileName = attachment.getAttachFileName().toString();
+       if(attachment.getAttachLongFileName() != null) {
+          fileName = attachment.getAttachLongFileName().toString();
+       }
 
-		File f = new File(dir, fileName);
+        File f = new File(dir, fileName);
         try (OutputStream fileOut = new FileOutputStream(f)) {
             fileOut.write(attachment.getAttachData().getValue());
         }
-	}
+    }
 
-	/**
-	 * Processes the list of arguments as a list of names of Outlook MSG files.
-	 *
-	 * @param args the list of MSG files to process
-	 */
-	public static void main(String[] args) {
-		if(args.length <= 0) {
-			System.err.println("No files names provided");
-		} else {
-			for (String arg : args) {
-				try {
-					Msg2txt processor = new Msg2txt(arg);
-					processor.processMessage();
-				} catch (IOException e) {
-					System.err.println("Could not process " + arg + ": " + e);
-				}
-			}
-		}
-	}
+    /**
+     * Processes the list of arguments as a list of names of Outlook MSG files.
+     *
+     * @param args the list of MSG files to process
+     */
+    public static void main(String[] args) {
+        if(args.length <= 0) {
+            System.err.println("No files names provided");
+        } else {
+            for (String arg : args) {
+                try {
+                    Msg2txt processor = new Msg2txt(arg);
+                    processor.processMessage();
+                } catch (IOException e) {
+                    System.err.println("Could not process " + arg + ": " + e);
+                }
+            }
+        }
+    }
 
 }

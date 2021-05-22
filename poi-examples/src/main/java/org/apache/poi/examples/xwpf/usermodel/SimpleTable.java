@@ -49,20 +49,20 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 public class SimpleTable {
 
     public static void main(String[] args) throws Exception {
-    	try {
-    		createSimpleTable();
-    	}
-    	catch(Exception e) {
-    		System.out.println("Error trying to create simple table.");
-    		throw(e);
-    	}
-    	try {
-    		createStyledTable();
-    	}
-    	catch(Exception e) {
-    		System.out.println("Error trying to create styled table.");
-    		throw(e);
-    	}
+        try {
+            createSimpleTable();
+        }
+        catch(Exception e) {
+            System.out.println("Error trying to create simple table.");
+            throw(e);
+        }
+        try {
+            createStyledTable();
+        }
+        catch(Exception e) {
+            System.out.println("Error trying to create styled table.");
+            throw(e);
+        }
     }
 
     public static void createSimpleTable() throws Exception {
@@ -107,7 +107,7 @@ public class SimpleTable {
      * instructive and give you ideas for your own solutions.
      */
     public static void createStyledTable() throws Exception {
-    	// Create a new document from scratch
+        // Create a new document from scratch
 
         try (XWPFDocument doc = new XWPFDocument()) {
             // -- OR --

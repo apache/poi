@@ -34,82 +34,82 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TestXLSX2CSV {
-	private PrintStream err;
-	private final UnsynchronizedByteArrayOutputStream errorBytes = new UnsynchronizedByteArrayOutputStream();
+    private PrintStream err;
+    private final UnsynchronizedByteArrayOutputStream errorBytes = new UnsynchronizedByteArrayOutputStream();
 
-	@BeforeEach
-	public void setUp() throws UnsupportedEncodingException {
-		// remember and replace default error streams
-		err = System.err;
+    @BeforeEach
+    public void setUp() throws UnsupportedEncodingException {
+        // remember and replace default error streams
+        err = System.err;
 
-		PrintStream error = new PrintStream(errorBytes, true, "UTF-8");
-		System.setErr(error);
-	}
+        PrintStream error = new PrintStream(errorBytes, true, "UTF-8");
+        System.setErr(error);
+    }
 
-	@AfterEach
-	public void tearDown() {
-		// restore output-streams again
-		System.setErr(err);
+    @AfterEach
+    public void tearDown() {
+        // restore output-streams again
+        System.setErr(err);
 
-		// Print out found error
-		if (errorBytes.size() > 0) {
-			System.err.println("Had stderr: " + errorBytes.toString(StandardCharsets.UTF_8));
-		}
-	}
+        // Print out found error
+        if (errorBytes.size() > 0) {
+            System.err.println("Had stderr: " + errorBytes.toString(StandardCharsets.UTF_8));
+        }
+    }
 
-	@Test
-	public void testNoArgument() throws Exception {
-		// returns with some System.err
-		XLSX2CSV.main(new String[0]);
+    @Test
+    public void testNoArgument() throws Exception {
+        // returns with some System.err
+        XLSX2CSV.main(new String[0]);
 
-		String output = errorBytes.toString(StandardCharsets.UTF_8);
-		assertTrue(output.contains("XLSX2CSV <xlsx file>"), "Had: " + output);
-	}
+        String output = errorBytes.toString(StandardCharsets.UTF_8);
+        assertTrue(output.contains("XLSX2CSV <xlsx file>"), "Had: " + output);
+    }
 
-	@Test
-	public void testInvalidFile() throws Exception {
-		// returns with some System.err
-		XLSX2CSV.main(new String[] { "not-existing-file.xlsx" });
+    @Test
+    public void testInvalidFile() throws Exception {
+        // returns with some System.err
+        XLSX2CSV.main(new String[] { "not-existing-file.xlsx" });
 
-		String output = errorBytes.toString("UTF-8");
-		assertTrue(output.contains("Not found or not a file: not-existing-file.xlsx"), "Had: " + output);
-	}
+        String output = errorBytes.toString("UTF-8");
+        assertTrue(output.contains("Not found or not a file: not-existing-file.xlsx"), "Had: " + output);
+    }
 
-	@Test
-	public void testSampleFile() throws Exception {
-		final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-		PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
+    @Test
+    public void testSampleFile() throws Exception {
+        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
 
-		// The package open is instantaneous, as it should be.
-		try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
-			XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, -1);
-			xlsx2csv.process();
-		}
+        // The package open is instantaneous, as it should be.
+        try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
+            XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, -1);
+            xlsx2csv.process();
+        }
 
-		String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
-		assertEquals(errorOutput.length(), 0);
+        String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
+        assertEquals(errorOutput.length(), 0);
 
-		String output = outputBytes.toString(StandardCharsets.UTF_8);
-		assertTrue(output.contains("\"Lorem\",111"), "Had: " + output);
-		assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\""), "Had: " + output);
-	}
+        String output = outputBytes.toString(StandardCharsets.UTF_8);
+        assertTrue(output.contains("\"Lorem\",111"), "Had: " + output);
+        assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\""), "Had: " + output);
+    }
 
-	@Test
-	public void testMinColumns() throws Exception {
-		final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-		PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
+    @Test
+    public void testMinColumns() throws Exception {
+        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
 
-		// The package open is instantaneous, as it should be.
-		try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
-			XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, 5);
-			xlsx2csv.process();
-		}
+        // The package open is instantaneous, as it should be.
+        try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
+            XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, 5);
+            xlsx2csv.process();
+        }
 
-		String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
-		assertEquals(errorOutput.length(), 0);
+        String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
+        assertEquals(errorOutput.length(), 0);
 
-		String output = outputBytes.toString(StandardCharsets.UTF_8);
-		assertTrue(output.contains("\"Lorem\",111,,,"), "Had: " + output);
-		assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\","), "Had: " + output);
-	}
+        String output = outputBytes.toString(StandardCharsets.UTF_8);
+        assertTrue(output.contains("\"Lorem\",111,,,"), "Had: " + output);
+        assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\","), "Had: " + output);
+    }
 }

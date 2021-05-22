@@ -28,7 +28,7 @@ import java.io.IOException;
 
 public class RubyOutputStream extends OutputStream {
 
-	//pointer to native ruby VALUE
+    //pointer to native ruby VALUE
     protected long rubyIO;
 
     public RubyOutputStream (long rubyIO)
@@ -38,7 +38,7 @@ public class RubyOutputStream extends OutputStream {
     }
 
     @Override
-	protected void finalize()
+    protected void finalize()
         throws Throwable
     {
 //        decRef();
@@ -48,14 +48,14 @@ public class RubyOutputStream extends OutputStream {
 //    protected native void decRef();
 
     @Override
-	public native void close()
+    public native void close()
         throws IOException;
 
 
-	/* (non-Javadoc)
-	 * @see java.io.OutputStream#write(int)
-	 */
-	@Override
-	public native void write(int arg0) throws IOException;
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#write(int)
+     */
+    @Override
+    public native void write(int arg0) throws IOException;
 }
 

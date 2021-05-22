@@ -388,16 +388,16 @@ public class AddDimensionedImage {
         // to the method, the images type is identified before it is added to the
         // sheet.
         String sURL = imageFile.toString().toLowerCase(Locale.ROOT);
-	if( sURL.endsWith(".png") ) {
+    if( sURL.endsWith(".png") ) {
             imageType = Workbook.PICTURE_TYPE_PNG;
-	}
-	else if( sURL.endsWith(".jpg") || sURL.endsWith(".jpeg") ) {
+    }
+    else if( sURL.endsWith(".jpg") || sURL.endsWith(".jpeg") ) {
             imageType = Workbook.PICTURE_TYPE_JPEG;
-	}
-	else  {
+    }
+    else  {
             throw new IllegalArgumentException("Invalid Image file : " +
                 sURL);
-	}
+    }
         int index = sheet.getWorkbook().addPicture(
             IOUtils.toByteArray(imageFile.openStream()), imageType);
         drawing.createPicture(anchor, index);
@@ -818,9 +818,9 @@ public class AddDimensionedImage {
      */
     public static void main(String[] args) throws IOException {
         if(args.length < 2){
-    		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
-    		return;
-    	}
+            System.err.println("Usage: AddDimensionedImage imageFile outputFile");
+            return;
+        }
 
         final String imageFile = args[0];
         final String outputFile = args[1];

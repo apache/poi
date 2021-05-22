@@ -51,9 +51,9 @@ public class FromHowTo {
 
             // process the first sheet
             try (InputStream sheet = r.getSheetsData().next()) {
-				InputSource sheetSource = new InputSource(sheet);
-				parser.parse(sheetSource);
-			}
+                InputSource sheetSource = new InputSource(sheet);
+                parser.parse(sheetSource);
+            }
         }
     }
 
@@ -68,9 +68,9 @@ public class FromHowTo {
             while (sheets.hasNext()) {
                 System.out.println("Processing new sheet:\n");
                 try (InputStream sheet = sheets.next()) {
-					InputSource sheetSource = new InputSource(sheet);
-					parser.parse(sheetSource);
-				}
+                    InputSource sheetSource = new InputSource(sheet);
+                    parser.parse(sheetSource);
+                }
                 System.out.println();
             }
         }

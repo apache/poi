@@ -45,7 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class TimesheetDemo {
     private static final String[] titles = {
-            "Person",	"ID", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
+            "Person",   "ID", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
             "Total\nHrs", "Overtime\nHrs", "Regular\nHrs"
     };
 
