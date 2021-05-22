@@ -50,7 +50,7 @@ class TestXSSFEventBasedExcelExtractor {
     @Test
     void testGetSimpleText() throws Exception {
         // a very simple file
-       XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsx");
+        XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsx");
         extractor.getText();
 
         String text = extractor.getText();
@@ -64,25 +64,25 @@ class TestXSSFEventBasedExcelExtractor {
         extractor.setIncludeSheetNames(false);
         text = extractor.getText();
         String CHUNK1 =
-            "Lorem\t111\n" +
-            "ipsum\t222\n" +
-            "dolor\t333\n" +
-            "sit\t444\n" +
-            "amet\t555\n" +
-            "consectetuer\t666\n" +
-            "adipiscing\t777\n" +
-            "elit\t888\n" +
-            "Nunc\t999\n";
+                "Lorem\t111\n" +
+                        "ipsum\t222\n" +
+                        "dolor\t333\n" +
+                        "sit\t444\n" +
+                        "amet\t555\n" +
+                        "consectetuer\t666\n" +
+                        "adipiscing\t777\n" +
+                        "elit\t888\n" +
+                        "Nunc\t999\n";
         String CHUNK2 =
-            "The quick brown fox jumps over the lazy dog\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n";
+                "The quick brown fox jumps over the lazy dog\n" +
+                        "hello, xssf\thello, xssf\n" +
+                        "hello, xssf\thello, xssf\n" +
+                        "hello, xssf\thello, xssf\n" +
+                        "hello, xssf\thello, xssf\n";
         assertEquals(
                 CHUNK1 +
-                "at\t4995\n" +
-                CHUNK2
+                        "at\t4995\n" +
+                        CHUNK2
                 , text);
 
         // Now get formulas not their values
@@ -90,19 +90,19 @@ class TestXSSFEventBasedExcelExtractor {
         text = extractor.getText();
         assertEquals(
                 CHUNK1 +
-                "at\tSUM(B1:B9)\n" +
-                CHUNK2, text);
+                        "at\tSUM(B1:B9)\n" +
+                        CHUNK2, text);
 
         // With sheet names too
         extractor.setIncludeSheetNames(true);
         text = extractor.getText();
         assertEquals(
                 "Sheet1\n" +
-                CHUNK1 +
-                "at\tSUM(B1:B9)\n" +
-                "rich test\n" +
-                CHUNK2 +
-                "Sheet3\n"
+                        CHUNK1 +
+                        "at\tSUM(B1:B9)\n" +
+                        "rich test\n" +
+                        CHUNK2 +
+                        "Sheet3\n"
                 , text);
 
         extractor.close();
@@ -111,7 +111,7 @@ class TestXSSFEventBasedExcelExtractor {
     @Test
     void testGetComplexText() throws Exception {
         // A fairly complex file
-       XSSFEventBasedExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
+        XSSFEventBasedExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
         extractor.getText();
 
         String text = extractor.getText();
@@ -119,7 +119,7 @@ class TestXSSFEventBasedExcelExtractor {
 
         // Might not have all formatting it should do!
         assertStartsWith(text,
-                        "Avgtxfull\n" +
+                "Avgtxfull\n" +
                         "(iii) AVERAGE TAX RATES ON ANNUAL"
         );
 
@@ -128,27 +128,27 @@ class TestXSSFEventBasedExcelExtractor {
 
     @Test
     void testInlineStrings() throws Exception {
-      XSSFEventBasedExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
-      extractor.setFormulasNotResults(true);
-      String text = extractor.getText();
+        XSSFEventBasedExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
+        extractor.setFormulasNotResults(true);
+        String text = extractor.getText();
 
-      // Numbers
-      assertContains(text, "43");
-      assertContains(text, "22");
+        // Numbers
+        assertContains(text, "43");
+        assertContains(text, "22");
 
-      // Strings
-      assertContains(text, "ABCDE");
-      assertContains(text, "Long Text");
+        // Strings
+        assertContains(text, "ABCDE");
+        assertContains(text, "Long Text");
 
-      // Inline Strings
-      assertContains(text, "1st Inline String");
-      assertContains(text, "And More");
+        // Inline Strings
+        assertContains(text, "1st Inline String");
+        assertContains(text, "And More");
 
-      // Formulas
-      assertContains(text, "A2");
-      assertContains(text, "A5-A$2");
+        // Formulas
+        assertContains(text, "A2");
+        assertContains(text, "A5-A$2");
 
-      extractor.close();
+        extractor.close();
     }
 
     /**
@@ -159,13 +159,13 @@ class TestXSSFEventBasedExcelExtractor {
     @Test
     void testComparedToOLE2() throws Exception {
         // A fairly simple file - ooxml
-       XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
+        XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
         ExcelExtractor ole2Extractor =
-            new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
+                new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 
         POITextExtractor[] extractors =
-            new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
+                new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
         for (POITextExtractor extractor : extractors) {
             String text = extractor.getText().replaceAll("[\r\t]", "");
             assertStartsWith(text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
@@ -178,7 +178,7 @@ class TestXSSFEventBasedExcelExtractor {
         ooxmlExtractor.close();
     }
 
-     /** Test text extraction from text box using getShapes() */
+    /** Test text extraction from text box using getShapes() */
     @Test
     void testShapes() throws Exception{
 
@@ -217,17 +217,17 @@ class TestXSSFEventBasedExcelExtractor {
      */
     @Test
     void testHeadersAndFootersComparedToNonEventBasedExtractor()
-        throws Exception {
+            throws Exception {
 
         String expectedOutputWithHeadersAndFooters =
                 "Sheet1\n" +
-                "&\"Calibri,Regular\"&K000000top left\t&\"Calibri,Regular\"&K000000top center\t&\"Calibri,Regular\"&K000000top right\n" +
-                "abc\t123\n" +
-                "&\"Calibri,Regular\"&K000000bottom left\t&\"Calibri,Regular\"&K000000bottom center\t&\"Calibri,Regular\"&K000000bottom right\n";
+                        "&\"Calibri,Regular\"&K000000top left\t&\"Calibri,Regular\"&K000000top center\t&\"Calibri,Regular\"&K000000top right\n" +
+                        "abc\t123\n" +
+                        "&\"Calibri,Regular\"&K000000bottom left\t&\"Calibri,Regular\"&K000000bottom center\t&\"Calibri,Regular\"&K000000bottom right\n";
 
         String expectedOutputWithoutHeadersAndFooters =
                 "Sheet1\n" +
-                "abc\t123\n";
+                        "abc\t123\n";
 
         try (XSSFExcelExtractor extractor = new XSSFExcelExtractor(
                 XSSFTestDataSamples.openSampleWorkbook("headerFooterTest.xlsx"))) {
@@ -245,47 +245,47 @@ class TestXSSFEventBasedExcelExtractor {
     }
 
     /**
-      * Test that XSSFEventBasedExcelExtractor outputs comments when specified.
-      * The output will contain two improvements over the output from
+     * Test that XSSFEventBasedExcelExtractor outputs comments when specified.
+     * The output will contain two improvements over the output from
      *  XSSFExcelExtractor in that (1) comments from empty cells will be
-      * outputted, and (2) the author will not be outputted twice.
-      * <p>
-      * This test will need to be modified if these improvements are ported to
-      * XSSFExcelExtractor.
-      */
+     * outputted, and (2) the author will not be outputted twice.
+     * <p>
+     * This test will need to be modified if these improvements are ported to
+     * XSSFExcelExtractor.
+     */
     @Test
     void testCommentsComparedToNonEventBasedExtractor()
-        throws Exception {
+            throws Exception {
 
         String expectedOutputWithoutComments =
                 "Sheet1\n" +
-                "\n" +
-                "abc\n" +
-                "\n" +
-                "123\n" +
-                "\n" +
-                "\n" +
-                "\n";
+                        "\n" +
+                        "abc\n" +
+                        "\n" +
+                        "123\n" +
+                        "\n" +
+                        "\n" +
+                        "\n";
 
         String nonEventBasedExtractorOutputWithComments =
                 "Sheet1\n" +
-                "\n" +
-                "abc Comment by Shaun Kalley: Shaun Kalley: Comment A2\n" +
-                "\n" +
-                "123 Comment by Shaun Kalley: Shaun Kalley: Comment B4\n" +
-                "\n" +
-                "\n" +
-                "\n";
+                        "\n" +
+                        "abc Comment by Shaun Kalley: Shaun Kalley: Comment A2\n" +
+                        "\n" +
+                        "123 Comment by Shaun Kalley: Shaun Kalley: Comment B4\n" +
+                        "\n" +
+                        "\n" +
+                        "\n";
 
         String eventBasedExtractorOutputWithComments =
                 "Sheet1\n" +
-                "Comment by Shaun Kalley: Comment A1\tComment by Shaun Kalley: Comment B1\n" +
-                "abc Comment by Shaun Kalley: Comment A2\tComment by Shaun Kalley: Comment B2\n" +
-                "Comment by Shaun Kalley: Comment A3\tComment by Shaun Kalley: Comment B3\n" +
-                "Comment by Shaun Kalley: Comment A4\t123 Comment by Shaun Kalley: Comment B4\n" +
-                "Comment by Shaun Kalley: Comment A5\tComment by Shaun Kalley: Comment B5\n" +
-                "Comment by Shaun Kalley: Comment A7\tComment by Shaun Kalley: Comment B7\n" +
-                "Comment by Shaun Kalley: Comment A8\tComment by Shaun Kalley: Comment B8\n";
+                        "Comment by Shaun Kalley: Comment A1\tComment by Shaun Kalley: Comment B1\n" +
+                        "abc Comment by Shaun Kalley: Comment A2\tComment by Shaun Kalley: Comment B2\n" +
+                        "Comment by Shaun Kalley: Comment A3\tComment by Shaun Kalley: Comment B3\n" +
+                        "Comment by Shaun Kalley: Comment A4\t123 Comment by Shaun Kalley: Comment B4\n" +
+                        "Comment by Shaun Kalley: Comment A5\tComment by Shaun Kalley: Comment B5\n" +
+                        "Comment by Shaun Kalley: Comment A7\tComment by Shaun Kalley: Comment B7\n" +
+                        "Comment by Shaun Kalley: Comment A8\tComment by Shaun Kalley: Comment B8\n";
 
         try (XSSFExcelExtractor extractor = new XSSFExcelExtractor(
                 XSSFTestDataSamples.openSampleWorkbook("commentTest.xlsx"))) {
@@ -347,7 +347,7 @@ class TestXSSFEventBasedExcelExtractor {
         ex.setConcatenatePhoneticRuns(false);
         text = ex.getText();
         assertFalse(text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"),
-            "should not be able to find appended phonetic run");
+                "should not be able to find appended phonetic run");
         ex.close();
 
     }

@@ -75,10 +75,10 @@ class TestXSSFExcelExtractor {
             "Nunc\t999\n";
         String CHUNK2 =
             "The quick brown fox jumps over the lazy dog\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n" +
-            "hello, xssf    hello, xssf\n";
+            "hello, xssf\thello, xssf\n" +
+            "hello, xssf\thello, xssf\n" +
+            "hello, xssf\thello, xssf\n" +
+            "hello, xssf\thello, xssf\n";
         assertEquals(
                 CHUNK1 +
                 "at\t4995\n" +
