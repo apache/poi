@@ -17,6 +17,8 @@
 
 package org.apache.poi.xdgf.usermodel;
 
+import static org.apache.poi.xdgf.usermodel.section.GeometrySection.combineGeometries;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
@@ -33,7 +35,6 @@ import com.microsoft.schemas.office.visio.x2012.main.TextType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
-import org.apache.poi.xdgf.usermodel.section.CombinedIterable;
 import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 import org.apache.poi.xdgf.usermodel.section.XDGFSection;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
@@ -832,8 +833,7 @@ public class XDGFShape extends XDGFSheet {
     //
 
     public Iterable<GeometrySection> getGeometrySections() {
-        return new CombinedIterable<>(_geometry,
-                _masterShape != null ? _masterShape._geometry : null);
+        return combineGeometries(_geometry, _masterShape != null ? _masterShape._geometry : null);
     }
 
     /**

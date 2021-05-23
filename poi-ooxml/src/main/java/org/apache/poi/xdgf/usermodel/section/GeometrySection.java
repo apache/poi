@@ -18,6 +18,7 @@
 package org.apache.poi.xdgf.usermodel.section;
 
 import java.awt.geom.Path2D;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -26,6 +27,7 @@ import java.util.TreeMap;
 import com.microsoft.schemas.office.visio.x2012.main.RowType;
 import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.geom.SplineCollector;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -86,9 +88,20 @@ public class GeometrySection extends XDGFSection {
         return noShow;
     }
 
+    @Internal
+    public static <T,S extends SortedMap<Long,T>> Collection<T> combineGeometries(S map1, S map2) {
+        SortedMap<Long,T> map;
+        if (map2 == null) {
+            map = map1;
+        } else {
+            map = new TreeMap<>(map2);
+            map.putAll(map1);
+        }
+        return map.values();
+    }
+
     public Iterable<GeometryRow> getCombinedRows() {
-        return new CombinedIterable<>(_rows,
-                _master == null ? null : _master._rows);
+        return combineGeometries(_rows, _master == null ? null : _master._rows);
     }
 
     public Path2D.Double getPath(XDGFShape parent) {
