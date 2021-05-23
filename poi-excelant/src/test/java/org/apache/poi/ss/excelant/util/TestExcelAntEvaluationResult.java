@@ -24,9 +24,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TestExcelAntEvaluationResult {
-	private ExcelAntEvaluationResult fixture;
+    private ExcelAntEvaluationResult fixture;
 
-	private boolean completedWithError;
+    private boolean completedWithError;
     private boolean passed;
     private double retValue  = 1.1;
     private String errMessage = "error message";
@@ -34,43 +34,43 @@ class TestExcelAntEvaluationResult {
     private String cellId = "testCell!$F$1";
 
     @BeforeEach
-	void setUp() {
-		fixture = new ExcelAntEvaluationResult(completedWithError,
-				                                passed,
-				                                retValue,
-				                                errMessage,
-				                                delta,
-				                                cellId);
-	}
+    void setUp() {
+        fixture = new ExcelAntEvaluationResult(completedWithError,
+                                                passed,
+                                                retValue,
+                                                errMessage,
+                                                delta,
+                                                cellId);
+    }
 
     @AfterEach
-	void tearDown() {
-		fixture = null;
-	}
+    void tearDown() {
+        fixture = null;
+    }
 
     @Test
-	void testCompletedWithErrorMessage() {
-		String errMsg = fixture.getErrorMessage();
- 		assertNotNull(errMsg);
- 		assertEquals(errMsg, errMessage);
-	}
+    void testCompletedWithErrorMessage() {
+        String errMsg = fixture.getErrorMessage();
+        assertNotNull(errMsg);
+        assertEquals(errMsg, errMessage);
+    }
 
     @Test
-	void testPassed() {
-		boolean passedValue = fixture.didTestPass();
-		assertEquals(passedValue, passed);
-	}
+    void testPassed() {
+        boolean passedValue = fixture.didTestPass();
+        assertEquals(passedValue, passed);
+    }
 
     @Test
-	void testDelta() {
-		double deltaValue = fixture.getDelta();
-		assertEquals(deltaValue, delta, 0.0);
-	}
+    void testDelta() {
+        double deltaValue = fixture.getDelta();
+        assertEquals(deltaValue, delta, 0.0);
+    }
 
     @Test
-	void testCellId() {
-		String cellIdValue = fixture.getCellName();
-		assertNotNull(cellIdValue);
-		assertEquals(cellIdValue, cellId);
-	}
+    void testCellId() {
+        String cellIdValue = fixture.getCellName();
+        assertNotNull(cellIdValue);
+        assertEquals(cellIdValue, cellId);
+    }
 }

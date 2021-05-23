@@ -25,31 +25,31 @@ import org.apache.tools.ant.Project;
  * sheet cell using the cell id ('Sheet Name'!cellId).
  */
 public class ExcelAntSetDoubleCell extends ExcelAntSet {
-	private double cellValue;
+    private double cellValue;
 
-	public ExcelAntSetDoubleCell() {}
+    public ExcelAntSetDoubleCell() {}
 
-	/**
-	 * Set the value of the specified cell as the double passed in.
-	 * @param value The double-value that should be set when this task is executed.
-	 */
-	public void setValue( double value ) {
-		cellValue = value ;
-	}
+    /**
+     * Set the value of the specified cell as the double passed in.
+     * @param value The double-value that should be set when this task is executed.
+     */
+    public void setValue( double value ) {
+        cellValue = value ;
+    }
 
-	/**
-	 * Return the cell value as a double.
-	 * @return The double-value of the cell as populated via setValue(), null
-	 * 		if the value was not set yet.
-	 */
-	public double getCellValue() {
-		return cellValue;
-	}
+    /**
+     * Return the cell value as a double.
+     * @return The double-value of the cell as populated via setValue(), null
+     *      if the value was not set yet.
+     */
+    public double getCellValue() {
+        return cellValue;
+    }
 
-	@Override
+    @Override
     public void execute() throws BuildException {
-		wbUtil.setDoubleValue(cellStr, cellValue ) ;
+        wbUtil.setDoubleValue(cellStr, cellValue ) ;
 
-		log( "set cell " + cellStr + " to value " + cellValue + " as double.", Project.MSG_DEBUG ) ;
-	}
+        log( "set cell " + cellStr + " to value " + cellValue + " as double.", Project.MSG_DEBUG ) ;
+    }
 }

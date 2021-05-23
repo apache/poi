@@ -32,105 +32,105 @@ import org.apache.tools.ant.Task;
  */
 public class ExcelAntEvaluateCell extends Task {
 
-	private String cell ;
-	private double expectedValue ;
-	private double precision ;
-	private double globalPrecision ;
-	private boolean requiredToPass;
+    private String cell ;
+    private double expectedValue ;
+    private double precision ;
+    private double globalPrecision ;
+    private boolean requiredToPass;
 
 
-	private ExcelAntEvaluationResult result  ;
+    private ExcelAntEvaluationResult result  ;
 
-	private ExcelAntWorkbookUtil wbUtil ;
+    private ExcelAntWorkbookUtil wbUtil ;
 
-	private boolean showDelta;
+    private boolean showDelta;
 
 
-	public ExcelAntEvaluateCell() {}
+    public ExcelAntEvaluateCell() {}
 
-	protected void setWorkbookUtil( ExcelAntWorkbookUtil wb ) {
-		wbUtil = wb ;
-	}
+    protected void setWorkbookUtil( ExcelAntWorkbookUtil wb ) {
+        wbUtil = wb ;
+    }
 
-	public void setShowDelta( boolean value ) {
-		showDelta = value ;
-	}
+    public void setShowDelta( boolean value ) {
+        showDelta = value ;
+    }
 
-	protected boolean showDelta() {
-		return showDelta ;
-	}
+    protected boolean showDelta() {
+        return showDelta ;
+    }
 
-	public void setCell(String cell) {
-		this.cell = cell;
-	}
+    public void setCell(String cell) {
+        this.cell = cell;
+    }
 
-	public void setRequiredToPass( boolean val ) {
-	    requiredToPass = val ;
-	}
+    public void setRequiredToPass( boolean val ) {
+        requiredToPass = val ;
+    }
 
-	protected boolean requiredToPass() {
-	    return requiredToPass ;
-	}
+    protected boolean requiredToPass() {
+        return requiredToPass ;
+    }
 
-	public void setExpectedValue(double expectedValue) {
-		this.expectedValue = expectedValue;
-	}
+    public void setExpectedValue(double expectedValue) {
+        this.expectedValue = expectedValue;
+    }
 
-	public void setPrecision(double precision) {
-		this.precision = precision;
-	}
+    public void setPrecision(double precision) {
+        this.precision = precision;
+    }
 
-	protected void setGlobalPrecision( double prec ) {
-		globalPrecision = prec ;
-	}
+    protected void setGlobalPrecision( double prec ) {
+        globalPrecision = prec ;
+    }
 
-	protected String getCell() {
-		return cell;
-	}
+    protected String getCell() {
+        return cell;
+    }
 
-	protected double getExpectedValue() {
-		return expectedValue;
-	}
+    protected double getExpectedValue() {
+        return expectedValue;
+    }
 
-	@SuppressWarnings("squid:S4275")
-	protected double getPrecision() {
-		// if there is a globalPrecision we will use it unless there is also
-		// precision set at the evaluate level, then we use that.  If there
-		// is not a globalPrecision, we will use the local precision.
-		log( "test precision = " + precision + "\tglobal precision = " + globalPrecision, Project.MSG_VERBOSE ) ;
-		if( globalPrecision > 0 ) {
-			if( precision > 0 ) {
-				log( "Using evaluate precision of " + precision + " over the " +
-							 "global precision of " + globalPrecision, Project.MSG_VERBOSE ) ;
-				return precision ;
-			} else {
-				log( "Using global precision of " + globalPrecision, Project.MSG_VERBOSE ) ;
-				return globalPrecision ;
-			}
-		} else {
-			log( "Using evaluate precision of " + precision, Project.MSG_VERBOSE ) ;
-			return precision ;
-		}
-	}
+    @SuppressWarnings("squid:S4275")
+    protected double getPrecision() {
+        // if there is a globalPrecision we will use it unless there is also
+        // precision set at the evaluate level, then we use that.  If there
+        // is not a globalPrecision, we will use the local precision.
+        log( "test precision = " + precision + "\tglobal precision = " + globalPrecision, Project.MSG_VERBOSE ) ;
+        if( globalPrecision > 0 ) {
+            if( precision > 0 ) {
+                log( "Using evaluate precision of " + precision + " over the " +
+                             "global precision of " + globalPrecision, Project.MSG_VERBOSE ) ;
+                return precision ;
+            } else {
+                log( "Using global precision of " + globalPrecision, Project.MSG_VERBOSE ) ;
+                return globalPrecision ;
+            }
+        } else {
+            log( "Using evaluate precision of " + precision, Project.MSG_VERBOSE ) ;
+            return precision ;
+        }
+    }
 
-	@Override
+    @Override
     public void execute() throws BuildException {
-		result = wbUtil.evaluateCell(cell, expectedValue, getPrecision() ) ;
+        result = wbUtil.evaluateCell(cell, expectedValue, getPrecision() ) ;
 
-		StringBuilder sb = new StringBuilder() ;
-		sb.append( "evaluation of cell " ) ;
-		sb.append( cell ) ;
-		sb.append( " resulted in " ) ;
-		sb.append( result.getReturnValue() ) ;
-		if(showDelta) {
-			sb.append(" with a delta of ").append(result.getDelta());
-		}
+        StringBuilder sb = new StringBuilder() ;
+        sb.append( "evaluation of cell " ) ;
+        sb.append( cell ) ;
+        sb.append( " resulted in " ) ;
+        sb.append( result.getReturnValue() ) ;
+        if(showDelta) {
+            sb.append(" with a delta of ").append(result.getDelta());
+        }
 
-		log( sb.toString(), Project.MSG_DEBUG) ;
+        log( sb.toString(), Project.MSG_DEBUG) ;
 
-	}
+    }
 
-	public ExcelAntEvaluationResult getResult() {
-		return result ;
-	}
+    public ExcelAntEvaluationResult getResult() {
+        return result ;
+    }
 }

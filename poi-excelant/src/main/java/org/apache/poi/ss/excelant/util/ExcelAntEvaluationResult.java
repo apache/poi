@@ -23,86 +23,86 @@ package org.apache.poi.ss.excelant.util;
  */
 public class ExcelAntEvaluationResult {
 
-	/**
-	 * This boolean flag is used to determine if the evaluation completed
-	 * without error.  This alone doesn't ensure that the evaluation was
-	 * successful.
-	 */
-	private boolean evaluationCompletedWithError ;
+    /**
+     * This boolean flag is used to determine if the evaluation completed
+     * without error.  This alone doesn't ensure that the evaluation was
+     * successful.
+     */
+    private boolean evaluationCompletedWithError ;
 
-	/**
-	 * This boolean flag is used to determine if the result was within
-	 * the specified precision.
-	 */
-	private boolean didPass ;
+    /**
+     * This boolean flag is used to determine if the result was within
+     * the specified precision.
+     */
+    private boolean didPass ;
 
-	/**
-	 * This is the actual value returned from the evaluation.
-	 */
-	private double returnValue ;
+    /**
+     * This is the actual value returned from the evaluation.
+     */
+    private double returnValue ;
 
-	/**
-	 * Any error message String values that need to be returned.
-	 */
-	private String errorMessage ;
+    /**
+     * Any error message String values that need to be returned.
+     */
+    private String errorMessage ;
 
-	/**
-	 * Stores the absolute value of the delta for this evaluation.
-	 */
-	private double actualDelta ;
+    /**
+     * Stores the absolute value of the delta for this evaluation.
+     */
+    private double actualDelta ;
 
-	/**
-	 * This stores the fully qualified cell name (sheetName!cellId).
-	 */
-	private String cellName ;
+    /**
+     * This stores the fully qualified cell name (sheetName!cellId).
+     */
+    private String cellName ;
 
 
 
-	public ExcelAntEvaluationResult(boolean completedWithError,
-			                 boolean passed,
-			                 double retValue,
-			                 String errMessage,
-			                 double delta,
-			                 String cellId) {
+    public ExcelAntEvaluationResult(boolean completedWithError,
+                             boolean passed,
+                             double retValue,
+                             String errMessage,
+                             double delta,
+                             String cellId) {
 
-		evaluationCompletedWithError = completedWithError;
-		didPass = passed;
-		returnValue = retValue;
-		errorMessage = errMessage;
-		actualDelta = delta ;
-		cellName = cellId ;
-	}
+        evaluationCompletedWithError = completedWithError;
+        didPass = passed;
+        returnValue = retValue;
+        errorMessage = errMessage;
+        actualDelta = delta ;
+        cellName = cellId ;
+    }
 
-	public double getReturnValue() {
-		return returnValue;
-	}
+    public double getReturnValue() {
+        return returnValue;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public boolean didTestPass() {
-		return didPass ;
-	}
+    public boolean didTestPass() {
+        return didPass ;
+    }
 
-	public boolean evaluationCompleteWithError() {
-		return evaluationCompletedWithError ;
-	}
+    public boolean evaluationCompleteWithError() {
+        return evaluationCompletedWithError ;
+    }
 
-	public double getDelta() {
-		return actualDelta ;
-	}
+    public double getDelta() {
+        return actualDelta ;
+    }
 
-	public String getCellName() {
-		return cellName ;
-	}
+    public String getCellName() {
+        return cellName ;
+    }
 
-	@Override
-	public String toString() {
-		return "ExcelAntEvaluationResult [evaluationCompletedWithError="
-				+ evaluationCompletedWithError + ", didPass=" + didPass
-				+ ", returnValue=" + returnValue + ", errorMessage="
-				+ errorMessage + ", actualDelta=" + actualDelta + ", cellName="
-				+ cellName + "]";
-	}
+    @Override
+    public String toString() {
+        return "ExcelAntEvaluationResult [evaluationCompletedWithError="
+                + evaluationCompletedWithError + ", didPass=" + didPass
+                + ", returnValue=" + returnValue + ", errorMessage="
+                + errorMessage + ", actualDelta=" + actualDelta + ", cellName="
+                + cellName + "]";
+    }
 }

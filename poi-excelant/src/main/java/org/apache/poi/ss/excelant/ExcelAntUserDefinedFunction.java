@@ -26,33 +26,33 @@ import org.apache.tools.ant.taskdefs.Typedef;
 public class ExcelAntUserDefinedFunction extends Typedef {
 
 
-	private String functionAlias ;
+    private String functionAlias ;
 
-	private String className ;
+    private String className ;
 
 
-	public ExcelAntUserDefinedFunction() {}
+    public ExcelAntUserDefinedFunction() {}
 
-	protected String getFunctionAlias() {
-		return functionAlias;
-	}
+    protected String getFunctionAlias() {
+        return functionAlias;
+    }
 
-	public void setFunctionAlias(String functionAlias) {
-		this.functionAlias = functionAlias;
-	}
+    public void setFunctionAlias(String functionAlias) {
+        this.functionAlias = functionAlias;
+    }
 
-	protected String getClassName() {
-	    // workaround for IBM JDK assigning the classname to the lowercase instance provided by Definer!?!
-	    // I could not find out why that happens, the wrong assignment seems to be done somewhere deep inside Ant itself
-	    // or even in IBM JDK as Oracle JDK does not have this problem.
-	    if(className == null) {
-	        return getClassname();
-	    }
+    protected String getClassName() {
+        // workaround for IBM JDK assigning the classname to the lowercase instance provided by Definer!?!
+        // I could not find out why that happens, the wrong assignment seems to be done somewhere deep inside Ant itself
+        // or even in IBM JDK as Oracle JDK does not have this problem.
+        if(className == null) {
+            return getClassname();
+        }
 
-		return className;
-	}
+        return className;
+    }
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
+    public void setClassName(String className) {
+        this.className = className;
+    }
 }

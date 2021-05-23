@@ -28,42 +28,42 @@ import org.junit.jupiter.api.Test;
 class TestExcelAntSet {
 
 
-	// This is abstract in nature, so we'll use a
-	// concrete instance to test the set methods.
-	private ExcelAntSet fixture ;
+    // This is abstract in nature, so we'll use a
+    // concrete instance to test the set methods.
+    private ExcelAntSet fixture ;
 
     private static final String mortgageCalculatorFileName =
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
     @BeforeEach
-	void setUp() {
-		fixture = new ExcelAntSetDoubleCell() ;
-	}
+    void setUp() {
+        fixture = new ExcelAntSetDoubleCell() ;
+    }
 
     @AfterEach
-	void tearDown() {
-		fixture = null ;
-	}
+    void tearDown() {
+        fixture = null ;
+    }
 
-	@Test
-	void testSetter() {
-		String cell = "simpleCellRef!$F$1" ;
+    @Test
+    void testSetter() {
+        String cell = "simpleCellRef!$F$1" ;
 
-		fixture.setCell( cell ) ;
+        fixture.setCell( cell ) ;
 
-		String cellStr = fixture.getCell() ;
+        String cellStr = fixture.getCell() ;
 
-		assertNotNull( cellStr ) ;
-		assertEquals( cell, cellStr ) ;
-	}
+        assertNotNull( cellStr ) ;
+        assertEquals( cell, cellStr ) ;
+    }
 
-	@Test
-	void testSetWorkbookUtil() {
-		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
-				                                 mortgageCalculatorFileName ) ;
+    @Test
+    void testSetWorkbookUtil() {
+        ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
+                                                 mortgageCalculatorFileName ) ;
 
-		assertNotNull( util ) ;
+        assertNotNull( util ) ;
 
-		fixture.setWorkbookUtil( util ) ;
-	}
+        fixture.setWorkbookUtil( util ) ;
+    }
 }

@@ -21,13 +21,13 @@ import org.apache.tools.ant.taskdefs.Typedef;
 
 public class ExcelAntPrecision extends Typedef {
 
-	private double value ;
+    private double value ;
 
-	public void setValue( double precision ) {
-		value = precision ;
-	}
+    public void setValue( double precision ) {
+        value = precision ;
+    }
 
-	public double getValue() {
-		return value ;
-	}
+    public double getValue() {
+        return value ;
+    }
 }

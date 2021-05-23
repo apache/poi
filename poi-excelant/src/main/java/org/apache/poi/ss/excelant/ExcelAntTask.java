@@ -35,104 +35,104 @@ public class ExcelAntTask extends Task {
 
     public static final String VERSION = "0.5.0" ;
 
-	private String excelFileName ;
+    private String excelFileName ;
 
-	private boolean failOnError;
+    private boolean failOnError;
 
-	private ExcelAntWorkbookUtil workbookUtil ;
+    private ExcelAntWorkbookUtil workbookUtil ;
 
-	private ExcelAntPrecision precision ;
+    private ExcelAntPrecision precision ;
 
-	private LinkedList<ExcelAntTest> tests ;
-	private LinkedList<ExcelAntUserDefinedFunction> functions ;
+    private LinkedList<ExcelAntTest> tests ;
+    private LinkedList<ExcelAntUserDefinedFunction> functions ;
 
-	public ExcelAntTask() {
-		tests = new LinkedList<>() ;
-		functions = new LinkedList<>() ;
-	}
+    public ExcelAntTask() {
+        tests = new LinkedList<>() ;
+        functions = new LinkedList<>() ;
+    }
 
-	public void addPrecision( ExcelAntPrecision prec ) {
-		precision = prec ;
-	}
+    public void addPrecision( ExcelAntPrecision prec ) {
+        precision = prec ;
+    }
 
-	public void setFailOnError( boolean value ) {
-		failOnError = value ;
-	}
-	public void setFileName( String fileName ) {
-		excelFileName = fileName ;
-	}
+    public void setFailOnError( boolean value ) {
+        failOnError = value ;
+    }
+    public void setFileName( String fileName ) {
+        excelFileName = fileName ;
+    }
 
-	public void addTest( ExcelAntTest testElement ) {
-		tests.add( testElement ) ;
-	}
+    public void addTest( ExcelAntTest testElement ) {
+        tests.add( testElement ) ;
+    }
 
-	public void addUdf( ExcelAntUserDefinedFunction def ) {
-		functions.add( def ) ;
-	}
+    public void addUdf( ExcelAntUserDefinedFunction def ) {
+        functions.add( def ) ;
+    }
 
-	@Override
+    @Override
     public void execute() throws BuildException {
         checkClassPath();
 
-		int totalCount = 0 ;
-		int successCount = 0 ;
+        int totalCount = 0 ;
+        int successCount = 0 ;
 
-		StringBuilder versionBffr = new StringBuilder() ;
-		versionBffr.append(  "ExcelAnt version " ) ;
-		versionBffr.append( VERSION ) ;
-		versionBffr.append( " Copyright 2011" ) ;
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy", Locale.ROOT ) ;
-		double currYear = Double.parseDouble( sdf.format( new Date() ) );
-		if( currYear > 2011 ) {
-		    versionBffr.append( "-" ) ;
-		    versionBffr.append( currYear ) ;
-		}
-		log( versionBffr.toString(), Project.MSG_INFO ) ;
+        StringBuilder versionBffr = new StringBuilder() ;
+        versionBffr.append(  "ExcelAnt version " ) ;
+        versionBffr.append( VERSION ) ;
+        versionBffr.append( " Copyright 2011" ) ;
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy", Locale.ROOT ) ;
+        double currYear = Double.parseDouble( sdf.format( new Date() ) );
+        if( currYear > 2011 ) {
+            versionBffr.append( "-" ) ;
+            versionBffr.append( currYear ) ;
+        }
+        log( versionBffr.toString(), Project.MSG_INFO ) ;
 
-		log( "Using input file: " + excelFileName, Project.MSG_INFO ) ;
+        log( "Using input file: " + excelFileName, Project.MSG_INFO ) ;
 
         workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
 
-		for (ExcelAntTest test : tests) {
-			log("executing test: " + test.getName(), Project.MSG_DEBUG);
+        for (ExcelAntTest test : tests) {
+            log("executing test: " + test.getName(), Project.MSG_DEBUG);
 
-			if (workbookUtil == null) {
-			    workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
-			}
+            if (workbookUtil == null) {
+                workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
+            }
 
-			for (ExcelAntUserDefinedFunction eaUdf : functions) {
-				try {
-					workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
-				} catch (Exception e) {
-					throw new BuildException(e.getMessage(), e);
-				}
-			}
-			test.setWorkbookUtil(workbookUtil);
+            for (ExcelAntUserDefinedFunction eaUdf : functions) {
+                try {
+                    workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
+                } catch (Exception e) {
+                    throw new BuildException(e.getMessage(), e);
+                }
+            }
+            test.setWorkbookUtil(workbookUtil);
 
-			if (precision != null && precision.getValue() > 0) {
-				log("setting precision for the test " + test.getName(), Project.MSG_VERBOSE);
-				test.setPrecision(precision.getValue());
-			}
+            if (precision != null && precision.getValue() > 0) {
+                log("setting precision for the test " + test.getName(), Project.MSG_VERBOSE);
+                test.setPrecision(precision.getValue());
+            }
 
-			test.execute();
+            test.execute();
 
-			if (test.didTestPass()) {
-				successCount++;
-			} else {
-				if (failOnError) {
-					throw new BuildException("Test " + test.getName() + " failed.");
-				}
-			}
-			totalCount++;
+            if (test.didTestPass()) {
+                successCount++;
+            } else {
+                if (failOnError) {
+                    throw new BuildException("Test " + test.getName() + " failed.");
+                }
+            }
+            totalCount++;
 
-			workbookUtil = null;
-		}
+            workbookUtil = null;
+        }
 
-		if( !tests.isEmpty() ) {
-		    log( successCount + "/" + totalCount + " tests passed.", Project.MSG_INFO );
-		}
+        if( !tests.isEmpty() ) {
+            log( successCount + "/" + totalCount + " tests passed.", Project.MSG_INFO );
+        }
         workbookUtil = null;
-	}
+    }
 
 
     /**

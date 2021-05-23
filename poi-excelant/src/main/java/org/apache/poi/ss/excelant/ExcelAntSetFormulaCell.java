@@ -27,23 +27,23 @@ import org.apache.tools.ant.Project;
 public class ExcelAntSetFormulaCell extends ExcelAntSet {
 
 
-	private String cellValue ;
+    private String cellValue ;
 
-	public ExcelAntSetFormulaCell() {}
+    public ExcelAntSetFormulaCell() {}
 
-	public void setValue( String value ) {
-		cellValue = value ;
-	}
+    public void setValue( String value ) {
+        cellValue = value ;
+    }
 
-	protected String getCellValue() {
-		return cellValue;
-	}
+    protected String getCellValue() {
+        return cellValue;
+    }
 
-	@Override
+    @Override
     public void execute() throws BuildException {
 
-		wbUtil.setFormulaValue( cellStr, cellValue ) ;
+        wbUtil.setFormulaValue( cellStr, cellValue ) ;
 
-		log( "set cell " + cellStr + " to formula " + cellValue, Project.MSG_DEBUG ) ;
-	}
+        log( "set cell " + cellStr + " to formula " + cellValue, Project.MSG_DEBUG ) ;
+    }
 }

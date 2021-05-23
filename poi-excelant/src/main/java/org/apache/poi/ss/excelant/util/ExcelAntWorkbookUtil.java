@@ -204,15 +204,15 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns the list of sheet names.
      */
     public List<String> getSheets() {
-    	ArrayList<String> sheets = new ArrayList<>();
+        ArrayList<String> sheets = new ArrayList<>();
 
-    	int sheetCount = workbook.getNumberOfSheets();
+        int sheetCount = workbook.getNumberOfSheets();
 
-    	for(int x=0; x<sheetCount; x++) {
-    		sheets.add(workbook.getSheetName(x));
-    	}
+        for(int x=0; x<sheetCount; x++) {
+            sheets.add(workbook.getSheetName(x));
+        }
 
-    	return sheets;
+        return sheets;
     }
 
     /**
@@ -305,8 +305,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns a Cell as a String value.
      */
     public String getCellAsString(String cellName) {
-    	Cell cell = getCell(cellName);
-		return cell.getStringCellValue();
+        Cell cell = getCell(cellName);
+        return cell.getStringCellValue();
     }
 
 
@@ -314,8 +314,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns the value of the Cell as a double.
      */
     public double getCellAsDouble(String cellName) {
-    	Cell cell = getCell(cellName);
-		return cell.getNumericCellValue();
+        Cell cell = getCell(cellName);
+        return cell.getNumericCellValue();
     }
     /**
      * Returns a cell reference based on a String in standard Excel format
@@ -335,13 +335,13 @@ public class ExcelAntWorkbookUtil extends Typedef {
         Row row = sheet.getRow(rowIdx);
 
         if(row == null) {
-        	row = sheet.createRow(rowIdx);
+            row = sheet.createRow(rowIdx);
         }
 
         Cell cell = row.getCell(colIdx);
 
         if(cell == null) {
-        	cell = row.createCell(colIdx);
+            cell = row.createCell(colIdx);
         }
 
         return cell;

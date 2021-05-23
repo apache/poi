@@ -24,34 +24,34 @@ import org.junit.jupiter.api.Test;
 
 class TestExcelAntUserDefinedFunction {
 
-	private ExcelAntUserDefinedFunctionTestHelper fixture ;
+    private ExcelAntUserDefinedFunctionTestHelper fixture ;
 
-	@BeforeEach
-	void setUp() {
-		fixture = new ExcelAntUserDefinedFunctionTestHelper() ;
-	}
+    @BeforeEach
+    void setUp() {
+        fixture = new ExcelAntUserDefinedFunctionTestHelper() ;
+    }
 
-	@Test
-	void testSetClassName() {
-		String className = "simple.class.name" ;
+    @Test
+    void testSetClassName() {
+        String className = "simple.class.name" ;
 
-		fixture.setClassName( className ) ;
-		String value = fixture.getClassName() ;
+        fixture.setClassName( className ) ;
+        String value = fixture.getClassName() ;
 
-		assertNotNull( value ) ;
-		assertEquals( className, value ) ;
-	}
+        assertNotNull( value ) ;
+        assertEquals( className, value ) ;
+    }
 
-	@Test
-	void testSetFunction() {
-		String functionAlias = "alias" ;
+    @Test
+    void testSetFunction() {
+        String functionAlias = "alias" ;
 
-		fixture.setFunctionAlias( functionAlias ) ;
+        fixture.setFunctionAlias( functionAlias ) ;
 
-		String alias = fixture.getFunctionAlias() ;
+        String alias = fixture.getFunctionAlias() ;
 
-		assertNotNull( alias ) ;
-		assertEquals( functionAlias, alias ) ;
-	}
+        assertNotNull( alias ) ;
+        assertEquals( functionAlias, alias ) ;
+    }
 
 }

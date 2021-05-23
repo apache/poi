@@ -32,37 +32,37 @@ class TestExcelAntWorkbookUtilFactory {
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
 
-	/**
-	 * Simple test to determine if the factory properly returns an non-null
-	 * instance of the ExcelAntWorkbookUtil class.
-	 */
+    /**
+     * Simple test to determine if the factory properly returns an non-null
+     * instance of the ExcelAntWorkbookUtil class.
+     */
     @Test
-	void testGetNewWorkbookUtilInstance() {
-		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
-				                              mortgageCalculatorWorkbookFile) ;
+    void testGetNewWorkbookUtilInstance() {
+        ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
+                                              mortgageCalculatorWorkbookFile) ;
 
-		assertNotNull(util) ;
-	}
+        assertNotNull(util) ;
+    }
 
 
-	/**
-	 * Test whether or not the factory will properly return the same reference
-	 * to an ExcelAnt WorkbookUtil when two different Strings, that point to
-	 * the same resource, are passed in.
-	 */
+    /**
+     * Test whether or not the factory will properly return the same reference
+     * to an ExcelAnt WorkbookUtil when two different Strings, that point to
+     * the same resource, are passed in.
+     */
     @Test
-	void testVerifyEquivalence() {
-		String sameFileName = TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
+    void testVerifyEquivalence() {
+        String sameFileName = TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
-		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
+        ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
                 mortgageCalculatorWorkbookFile) ;
 
-		ExcelAntWorkbookUtil util2 = ExcelAntWorkbookUtilFactory.getInstance(
-				                       sameFileName) ;
+        ExcelAntWorkbookUtil util2 = ExcelAntWorkbookUtilFactory.getInstance(
+                                       sameFileName) ;
 
-		assertNotNull(util) ;
-		assertNotNull(util2) ;
+        assertNotNull(util) ;
+        assertNotNull(util2) ;
 
-		assertEquals(util, util2) ;
-	}
+        assertEquals(util, util2) ;
+    }
 }

@@ -34,173 +34,173 @@ import org.apache.tools.ant.Task;
  */
 @SuppressWarnings("unused")
 public class ExcelAntTest extends Task{
-	private LinkedList<ExcelAntEvaluateCell> evaluators;
+    private LinkedList<ExcelAntEvaluateCell> evaluators;
 
-	private LinkedList<Task> testTasks;
+    private LinkedList<Task> testTasks;
 
-	private String name;
+    private String name;
 
-	private double globalPrecision;
+    private double globalPrecision;
 
-	private boolean showSuccessDetails;
+    private boolean showSuccessDetails;
 
-	private boolean showFailureDetail;
-	LinkedList<String> failureMessages;
-
-
-	private ExcelAntWorkbookUtil workbookUtil;
-
-	private boolean passed = true;
+    private boolean showFailureDetail;
+    LinkedList<String> failureMessages;
 
 
-	public ExcelAntTest() {
-		evaluators = new LinkedList<>();
-		failureMessages = new LinkedList<>();
-		testTasks = new LinkedList<>();
-	}
+    private ExcelAntWorkbookUtil workbookUtil;
 
-	public void setPrecision( double precision ) {
-		globalPrecision = precision;
-	}
-
-	public void setWorkbookUtil( ExcelAntWorkbookUtil wbUtil ) {
-		workbookUtil = wbUtil;
-	}
+    private boolean passed = true;
 
 
-	public void setShowFailureDetail( boolean value ) {
-		showFailureDetail = value;
-	}
+    public ExcelAntTest() {
+        evaluators = new LinkedList<>();
+        failureMessages = new LinkedList<>();
+        testTasks = new LinkedList<>();
+    }
 
-	public void setName( String nm ) {
-		name = nm;
-	}
+    public void setPrecision( double precision ) {
+        globalPrecision = precision;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setWorkbookUtil( ExcelAntWorkbookUtil wbUtil ) {
+        workbookUtil = wbUtil;
+    }
 
-	public void setShowSuccessDetails( boolean details ) {
-	    showSuccessDetails = details;
-	}
 
-	public boolean showSuccessDetails() {
-	    return showSuccessDetails;
-	}
+    public void setShowFailureDetail( boolean value ) {
+        showFailureDetail = value;
+    }
 
-	public void addSetDouble( ExcelAntSetDoubleCell setter ) {
-	    addSetter( setter );
-	}
+    public void setName( String nm ) {
+        name = nm;
+    }
 
-	public void addSetString( ExcelAntSetStringCell setter ){
-	    addSetter( setter );
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void addSetFormula( ExcelAntSetFormulaCell setter ) {
-	    addSetter( setter );
-	}
+    public void setShowSuccessDetails( boolean details ) {
+        showSuccessDetails = details;
+    }
 
-	public void addHandler( ExcelAntHandlerTask handler ) {
-	    testTasks.add( handler );
-	}
+    public boolean showSuccessDetails() {
+        return showSuccessDetails;
+    }
 
-	private void addSetter( ExcelAntSet setter ) {
-		testTasks.add( setter );
-	}
+    public void addSetDouble( ExcelAntSetDoubleCell setter ) {
+        addSetter( setter );
+    }
 
-	public void addEvaluate( ExcelAntEvaluateCell evaluator ) {
-		testTasks.add( evaluator );
-	}
+    public void addSetString( ExcelAntSetStringCell setter ){
+        addSetter( setter );
+    }
 
-	protected LinkedList<ExcelAntEvaluateCell> getEvaluators() {
-		return evaluators;
-	}
+    public void addSetFormula( ExcelAntSetFormulaCell setter ) {
+        addSetter( setter );
+    }
 
-	@Override
+    public void addHandler( ExcelAntHandlerTask handler ) {
+        testTasks.add( handler );
+    }
+
+    private void addSetter( ExcelAntSet setter ) {
+        testTasks.add( setter );
+    }
+
+    public void addEvaluate( ExcelAntEvaluateCell evaluator ) {
+        testTasks.add( evaluator );
+    }
+
+    protected LinkedList<ExcelAntEvaluateCell> getEvaluators() {
+        return evaluators;
+    }
+
+    @Override
     public void execute() throws BuildException {
 
-	    Iterator<Task> taskIt = testTasks.iterator();
+        Iterator<Task> taskIt = testTasks.iterator();
 
-	    int testCount = evaluators.size();
-	    int failureCount = 0;
+        int testCount = evaluators.size();
+        int failureCount = 0;
 
-	    // roll over all sub task elements in one loop.  This allows the
-	    // ordering of the sub elements to be considered.
-	    while( taskIt.hasNext() ) {
-	        Task task = taskIt.next();
+        // roll over all sub task elements in one loop.  This allows the
+        // ordering of the sub elements to be considered.
+        while( taskIt.hasNext() ) {
+            Task task = taskIt.next();
 
-	       // log( task.getClass().getName(), Project.MSG_INFO );
+           // log( task.getClass().getName(), Project.MSG_INFO );
 
-	        if( task instanceof ExcelAntSet ) {
-	            ExcelAntSet set = (ExcelAntSet) task;
-	            set.setWorkbookUtil(workbookUtil);
-	            set.execute();
-	        }
+            if( task instanceof ExcelAntSet ) {
+                ExcelAntSet set = (ExcelAntSet) task;
+                set.setWorkbookUtil(workbookUtil);
+                set.execute();
+            }
 
-	        if( task instanceof ExcelAntHandlerTask ) {
-	            ExcelAntHandlerTask handler = (ExcelAntHandlerTask)task;
-	            handler.setEAWorkbookUtil(workbookUtil );
-	            handler.execute();
-	        }
+            if( task instanceof ExcelAntHandlerTask ) {
+                ExcelAntHandlerTask handler = (ExcelAntHandlerTask)task;
+                handler.setEAWorkbookUtil(workbookUtil );
+                handler.execute();
+            }
 
-	        if (task instanceof ExcelAntEvaluateCell ) {
-	            ExcelAntEvaluateCell eval = (ExcelAntEvaluateCell)task;
-	            eval.setWorkbookUtil( workbookUtil );
+            if (task instanceof ExcelAntEvaluateCell ) {
+                ExcelAntEvaluateCell eval = (ExcelAntEvaluateCell)task;
+                eval.setWorkbookUtil( workbookUtil );
 
-	            if( globalPrecision > 0 ) {
-	                log( "setting globalPrecision to " + globalPrecision + " in the evaluator", Project.MSG_VERBOSE );
-	                eval.setGlobalPrecision( globalPrecision );
-	            }
+                if( globalPrecision > 0 ) {
+                    log( "setting globalPrecision to " + globalPrecision + " in the evaluator", Project.MSG_VERBOSE );
+                    eval.setGlobalPrecision( globalPrecision );
+                }
 
-	            try {
-	                eval.execute();
-	                ExcelAntEvaluationResult result = eval.getResult();
+                try {
+                    eval.execute();
+                    ExcelAntEvaluationResult result = eval.getResult();
 
-					Supplier<String> details = () ->
-						result.getCellName() + ".  It evaluated to " +
-						result.getReturnValue() + " when the value of " +
-						eval.getExpectedValue() + " with precision of " +
-						eval.getPrecision();
+                    Supplier<String> details = () ->
+                        result.getCellName() + ".  It evaluated to " +
+                        result.getReturnValue() + " when the value of " +
+                        eval.getExpectedValue() + " with precision of " +
+                        eval.getPrecision();
 
-	                if( result.didTestPass() && !result.evaluationCompleteWithError()) {
-	                    if(showSuccessDetails) {
-	                        log("Succeeded when evaluating " + details.get(), Project.MSG_INFO );
-	                    }
-	                } else {
-	                    if(showFailureDetail) {
-	                        failureMessages.add( "\tFailed to evaluate cell " + details.get() + " was expected." );
-	                    }
-	                    passed = false;
-	                    failureCount++;
+                    if( result.didTestPass() && !result.evaluationCompleteWithError()) {
+                        if(showSuccessDetails) {
+                            log("Succeeded when evaluating " + details.get(), Project.MSG_INFO );
+                        }
+                    } else {
+                        if(showFailureDetail) {
+                            failureMessages.add( "\tFailed to evaluate cell " + details.get() + " was expected." );
+                        }
+                        passed = false;
+                        failureCount++;
 
-	                    if(eval.requiredToPass()) {
-	                        throw new BuildException( "\tFailed to evaluate cell " + details.get() + " was expected." );
-	                    }
-	                }
-	            } catch( NullPointerException npe ) {
-	                // this means the cell reference in the test is bad.
-	                log( "Cell assignment " + eval.getCell() + " in test " + getName() +
-	                      " appears to point to an empy cell.  Please check the " +
-	                      " reference in the ant script.", Project.MSG_ERR );
-	            }
-	        }
-	    }
+                        if(eval.requiredToPass()) {
+                            throw new BuildException( "\tFailed to evaluate cell " + details.get() + " was expected." );
+                        }
+                    }
+                } catch( NullPointerException npe ) {
+                    // this means the cell reference in the test is bad.
+                    log( "Cell assignment " + eval.getCell() + " in test " + getName() +
+                          " appears to point to an empy cell.  Please check the " +
+                          " reference in the ant script.", Project.MSG_ERR );
+                }
+            }
+        }
 
-		if(!passed) {
-			log( "Test named " + name + " failed because " + failureCount +
-					 " of " + testCount + " evaluations failed to " +
-					 "evaluate correctly.",
-					 Project.MSG_ERR );
-			if(showFailureDetail && failureMessages.size() > 0 ) {
-				for (String failureMessage : failureMessages) {
-					log(failureMessage, Project.MSG_ERR);
-				}
-			}
-		}
-	}
+        if(!passed) {
+            log( "Test named " + name + " failed because " + failureCount +
+                     " of " + testCount + " evaluations failed to " +
+                     "evaluate correctly.",
+                     Project.MSG_ERR );
+            if(showFailureDetail && failureMessages.size() > 0 ) {
+                for (String failureMessage : failureMessages) {
+                    log(failureMessage, Project.MSG_ERR);
+                }
+            }
+        }
+    }
 
-	public boolean didTestPass() {
+    public boolean didTestPass() {
 
-		return passed;
-	}
+        return passed;
+    }
  }

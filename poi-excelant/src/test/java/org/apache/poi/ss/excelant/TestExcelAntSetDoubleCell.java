@@ -27,44 +27,44 @@ import org.junit.jupiter.api.Test;
 
 class TestExcelAntSetDoubleCell {
 
-	private ExcelAntSetDoubleCell fixture ;
+    private ExcelAntSetDoubleCell fixture ;
 
-	private ExcelAntWorkbookUtil util ;
+    private ExcelAntWorkbookUtil util ;
 
     private static final String mortgageCalculatorFileName =
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
     @BeforeEach
-	void setUp() {
-		fixture = new ExcelAntSetDoubleCell() ;
-		util = ExcelAntWorkbookUtilFactory.getInstance(mortgageCalculatorFileName ) ;
-		fixture.setWorkbookUtil( util ) ;
-	}
+    void setUp() {
+        fixture = new ExcelAntSetDoubleCell() ;
+        util = ExcelAntWorkbookUtilFactory.getInstance(mortgageCalculatorFileName ) ;
+        fixture.setWorkbookUtil( util ) ;
+    }
 
     @AfterEach
-	void tearDown() {
-		fixture = null ;
-	}
+    void tearDown() {
+        fixture = null ;
+    }
 
-	@Test
-	void testSetDouble() {
-		String cellId = "'Sheet3'!$A$1" ;
-		double testValue = 1.1 ;
+    @Test
+    void testSetDouble() {
+        String cellId = "'Sheet3'!$A$1" ;
+        double testValue = 1.1 ;
 
-		fixture.setCell( cellId ) ;
-		fixture.setValue( testValue ) ;
+        fixture.setCell( cellId ) ;
+        fixture.setValue( testValue ) ;
 
-		double value = fixture.getCellValue() ;
+        double value = fixture.getCellValue() ;
 
-		assertTrue( value > 0 ) ;
-		assertEquals( testValue, value, 0.0 ) ;
+        assertTrue( value > 0 ) ;
+        assertEquals( testValue, value, 0.0 ) ;
 
-		fixture.execute() ;
+        fixture.execute() ;
 
-		double setValue = util.getCellAsDouble( cellId ) ;
+        double setValue = util.getCellAsDouble( cellId ) ;
 
-		assertEquals( setValue, testValue, 0.0 ) ;
-	}
+        assertEquals( setValue, testValue, 0.0 ) ;
+    }
 
 
 }

@@ -25,30 +25,30 @@ import org.junit.jupiter.api.Test;
 
 class TestExcelAntPrecision {
 
-	private ExcelAntPrecision fixture ;
+    private ExcelAntPrecision fixture ;
 
     @BeforeEach
-	void setUp() {
-		fixture = new ExcelAntPrecision() ;
-	}
+    void setUp() {
+        fixture = new ExcelAntPrecision() ;
+    }
 
     @AfterEach
-	void tearDown() {
-		fixture = null ;
-	}
+    void tearDown() {
+        fixture = null ;
+    }
 
-	@Test
-	void testVerifyPrecision() {
+    @Test
+    void testVerifyPrecision() {
 
-		double value = 1.0E-1 ;
+        double value = 1.0E-1 ;
 
-		fixture.setValue( value ) ;
+        fixture.setValue( value ) ;
 
-		double result = fixture.getValue() ;
+        double result = fixture.getValue() ;
 
-		assertTrue( result > 0 ) ;
+        assertTrue( result > 0 ) ;
 
-		assertEquals( value, result, 0.0 ) ;
-	}
+        assertEquals( value, result, 0.0 ) ;
+    }
 
 }

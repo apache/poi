@@ -17,18 +17,18 @@
 package org.apache.poi.ss.excelant;
 
 public class ExcelAntUserDefinedFunctionTestHelper extends
-		ExcelAntUserDefinedFunction {
+        ExcelAntUserDefinedFunction {
 
-	@Override
-	protected String getFunctionAlias() {
-		// TODO Auto-generated method stub
-		return super.getFunctionAlias();
-	}
+    @Override
+    protected String getFunctionAlias() {
+        // TODO Auto-generated method stub
+        return super.getFunctionAlias();
+    }
 
-	@Override
-	protected String getClassName() {
-		// TODO Auto-generated method stub
-		return super.getClassName();
-	}
+    @Override
+    protected String getClassName() {
+        // TODO Auto-generated method stub
+        return super.getClassName();
+    }
 
 }
