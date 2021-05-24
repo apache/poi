@@ -2388,7 +2388,8 @@ under the License.
                       ooxml-testlib/**,
                       scripts/**,
                       TEST*,
-                      gradlew.*,
+                      gradlew,
+                      gradlew.bat
                       *.ipr,
                       **/*.iml,
                       *.iws,
