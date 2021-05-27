@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +26,9 @@ import java.util.Map;
  */
 public enum TableRowAlign {
     
-    LEFT(1),
-    CENTER(2),
-    RIGHT(3);
+    LEFT(STJcTable.INT_START),
+    CENTER(STJcTable.INT_CENTER),
+    RIGHT(STJcTable.INT_END);
 
     private static Map<Integer, TableRowAlign> imap = new HashMap<>();
 

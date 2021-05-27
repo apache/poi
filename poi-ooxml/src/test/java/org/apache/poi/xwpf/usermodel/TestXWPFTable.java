@@ -38,6 +38,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGridCol;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 
 
 /**
@@ -574,10 +575,13 @@ class TestXWPFTable {
             XWPFTable tbl = doc.createTable(1, 1);
             tbl.setTableAlignment(TableRowAlign.LEFT);
             assertEquals(TableRowAlign.LEFT, tbl.getTableAlignment());
+            assertEquals(STJcTable.INT_START, tbl.getTableAlignment().getValue());
             tbl.setTableAlignment(TableRowAlign.CENTER);
             assertEquals(TableRowAlign.CENTER, tbl.getTableAlignment());
+            assertEquals(STJcTable.INT_CENTER, tbl.getTableAlignment().getValue());
             tbl.setTableAlignment(TableRowAlign.RIGHT);
             assertEquals(TableRowAlign.RIGHT, tbl.getTableAlignment());
+            assertEquals(STJcTable.INT_END, tbl.getTableAlignment().getValue());
             tbl.removeTableAlignment();
             assertNull(tbl.getTableAlignment());
         }
