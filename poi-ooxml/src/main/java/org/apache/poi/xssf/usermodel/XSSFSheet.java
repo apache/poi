@@ -593,7 +593,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Get VML drawing for this sheet (aka 'legacy' drawig)
+     * Get VML drawing for this sheet (aka 'legacy' drawing)
      *
      * @param autoCreate if true, then a new VML drawing part is created
      *
