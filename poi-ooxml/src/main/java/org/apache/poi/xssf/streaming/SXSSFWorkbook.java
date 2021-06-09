@@ -1265,12 +1265,12 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Register a new toolpack in this workbook.
      *
-     * @param toopack the toolpack to register
+     * @param toolpack the toolpack to register
      */
     @Override
-    public void addToolPack(UDFFinder toopack)
+    public void addToolPack(UDFFinder toolpack)
     {
-        _wb.addToolPack(toopack);
+        _wb.addToolPack(toolpack);
     }
 
     /**

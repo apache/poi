@@ -546,9 +546,9 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /**
      * Register a new toolpack in this workbook.
      *
-     * @param toopack the toolpack to register
+     * @param toolpack the toolpack to register
      */
-    void addToolPack(UDFFinder toopack);
+    void addToolPack(UDFFinder toolpack);
 
     /**
      * Whether the application shall perform a full recalculation when the workbook is opened.

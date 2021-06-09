@@ -2146,11 +2146,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Register a new toolpack in this workbook.
      *
-     * @param toopack the toolpack to register
+     * @param toolpack the toolpack to register
      */
     @Override
-    public void addToolPack(UDFFinder toopack){
-        _udfFinder.add(toopack);
+    public void addToolPack(UDFFinder toolpack){
+        _udfFinder.add(toolpack);
     }
 
     /**

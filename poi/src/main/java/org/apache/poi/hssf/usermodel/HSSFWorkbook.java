@@ -2127,12 +2127,12 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     /**
      * Register a new toolpack in this workbook.
      *
-     * @param toopack the toolpack to register
+     * @param toolpack the toolpack to register
      */
     @Override
-    public void addToolPack(UDFFinder toopack) {
+    public void addToolPack(UDFFinder toolpack) {
         AggregatingUDFFinder udfs = (AggregatingUDFFinder) _udfFinder;
-        udfs.add(toopack);
+        udfs.add(toolpack);
     }
 
     /**
