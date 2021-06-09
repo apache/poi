@@ -141,8 +141,7 @@ public class XSSFExcelExtractor
             }
 
             // Rows and cells
-            for (Object rawR : sheet) {
-                Row row = (Row)rawR;
+            for (Row row : sheet) {
                 for(Iterator<Cell> ri = row.cellIterator(); ri.hasNext();) {
                     Cell cell = ri.next();
 
