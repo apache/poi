@@ -65,7 +65,7 @@ ant.taskdef(name: "junit",
 
 wrapper {
     // https://stackoverflow.com/a/54741656/2066598
-    gradleVersion = '7.0.1'
+    gradleVersion = '7.1'
 }
 
 task adjustWrapperPropertiesFile {
