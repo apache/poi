@@ -233,7 +233,7 @@ public final class CellUtil {
     public static void setFont(Cell cell, Font font) {
         // Check if font belongs to workbook
         Workbook wb = cell.getSheet().getWorkbook();
-        final int fontIndex = font.getIndexAsInt();
+        final int fontIndex = font.getIndex();
         if (!wb.getFontAt(fontIndex).equals(font)) {
             throw new IllegalArgumentException("Font does not belong to this workbook");
         }
