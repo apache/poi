@@ -94,9 +94,8 @@ task copy_xsds(type: Copy) {
 }
 
 task generate_beans(dependsOn: copy_xsds) {
-    // incremental feature is not working ...
-    inputs.files fileTree(dir: 'build/xsds', include: '*.xsd')
-    outputs.file 'build/generated-resources/org/apache/poi/schemas/ooxml/system/ooxml/TypeSystemHolder.class'
+    inputs.dir 'build/xsds'
+    outputs.dir 'build/generated-resources'
 
     doLast {
         ant.uptodate(
