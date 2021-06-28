@@ -323,9 +323,9 @@ under the License.
     <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
-    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.22" usage="ooxml-provided"/>
-    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.22" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.31" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.24" usage="ooxml-provided"/>
+    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.24" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.32" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
@@ -336,7 +336,7 @@ under the License.
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.31" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -692,6 +692,7 @@ under the License.
                 <include name="bc*-1.65.jar"/>
                 <include name="bc*-1.66.jar"/>
                 <include name="batik*.jar"/>
+                <include name="slf4j*-1.7.30.jar"/>
                 <include name="xmlsec*-2.2.1.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
