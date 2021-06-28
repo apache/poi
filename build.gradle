@@ -100,7 +100,7 @@ subprojects {
 
     version = '5.0.1-SNAPSHOT'
     ext {
-        bouncyCastleVersion = '1.69'
+        bouncyCastleVersion = '1.68'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsIoVersion = '2.10.0'
