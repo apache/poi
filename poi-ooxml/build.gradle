@@ -52,6 +52,7 @@ dependencies {
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api 'org.apache.santuario:xmlsec:2.2.2'
     api "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    api "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
     api 'com.github.virtuald:curvesapi:1.06'
     implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
