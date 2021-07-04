@@ -19,7 +19,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         # for now verify JDK 8 and 11
-        java: [ 8, 11.0.x ]
+        java: [ '8', '11' ]
 
     name: Java ${{ matrix.java }} build
     steps:
@@ -28,7 +28,9 @@ jobs:
       - name: Setup java ${{ matrix.java }}
         uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: ${{ matrix.java }}
+          check-latest: true
 
       - name: Set up Ant
         id: setup-ant
