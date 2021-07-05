@@ -102,6 +102,7 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.ConditionalExecution.DisabledOnJreEx;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
@@ -444,6 +445,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheetWithSignatureInfo() throws Exception {
         initKeyPair();
         String testFile = "hello-world-unsigned.xlsx";
@@ -467,6 +469,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
@@ -716,6 +719,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testNonSha1() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         initKeyPair();
@@ -745,6 +749,7 @@ class TestSignatureInfo {
 
     // Test signing of external references / hyperlinks
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void bug65214() throws Exception {
         initKeyPair();
 
@@ -783,6 +788,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void bug58630() throws Exception {
         // test deletion of sheet 0 and signing
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
@@ -915,6 +921,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testSignatureImage() throws Exception {
         initKeyPair();
 
