@@ -443,37 +443,43 @@ rat {
     inputDir.set(file("."))
 
     // include all directories which contain files that are included in releases
-    includes.add("poi-examples/**")
-    includes.add("poi-excelant/**")
-    includes.add("poi-integration/**")
-    includes.add("legal/**")
-    includes.add("poi/**")
-    includes.add("maven/**")
-    includes.add("poi-ooxml/**")
-    includes.add("poi-ooxml-full/**")
-    includes.add("poi-ooxml-lite/**")
-    includes.add("poi-ooxml-lite-agent/**")
-    //includes.add("osgi/**")
-    includes.add("poi-scratchpad/**")
-    includes.add("src/**")
-    //includes.add("sonar/**")
-    includes.add("build.*")
+	includes = [
+        "poi-examples/**",
+        "poi-excelant/**",
+        "poi-integration/**",
+        "legal/**",
+        "poi/**",
+        "maven/**",
+        "poi-ooxml/**",
+        "poi-ooxml-full/**",
+        "poi-ooxml-lite/**",
+        "poi-ooxml-lite-agent/**",
+        "osgi/**",
+        "poi-scratchpad/**",
+        "src/**",
+    //    "sonar/**",
+        "build.*"
+	]
 
     // List of Gradle exclude directives, defaults to ['**/.gradle/**']
     //excludes.add("main/java/org/apache/poi/**/*-chart-data.txt")
-    excludes.add("build.javacheck.xml")
-    excludes.add("**/build/**")
-    excludes.add("**/out/**")
-    excludes.add("**/*.iml")
-    excludes.add("**/*.log")
-    excludes.add("**/gradle-wrapper.properties")
-    excludes.add("**/main/java/org/apache/poi/**/*-chart-data.txt")
-    excludes.add("poi/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml")
-    excludes.add("poi-ooxml/src/main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml")
-    excludes.add("poi-ooxml/src/main/resources/org/apache/poi/xssf/usermodel/presetTableStyles.xml")
-    excludes.add("poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/XAdES*.xsd")
-    excludes.add("poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd")
-    excludes.add("poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd")
+    excludes = [
+	    "build.javacheck.xml",
+        "**/build/**",
+        "**/out/**",
+        "**/*.iml",
+        "**/*.log",
+        "**/gradle-wrapper.properties",
+        "**/main/java/org/apache/poi/**/*-chart-data.txt",
+        "poi/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml",
+        "poi-ooxml/src/main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml",
+        "poi-ooxml/src/main/resources/org/apache/poi/xssf/usermodel/presetTableStyles.xml",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/XAdES*.xsd",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd",
+		"osgi/README.md"
+	]
+
     /*
     <exclude name="documentation/*.txt" />
     <exclude name="documentation/content/xdocs/dtd/" />
