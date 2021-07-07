@@ -217,7 +217,7 @@ public final class ExtractorFactory {
      *      no TextExtractor can be created for some reason.
      *
      * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
-     * @throws OldFileFormatException If the {@link DirectoryNode} points to a format of
+     * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
      *      an unsupported version of Excel.
      * @throws IllegalArgumentException If creating the Extractor fails
      */
@@ -246,7 +246,7 @@ public final class ExtractorFactory {
          * @return An array of resulting extractors. Empty if no embedded documents are found.
          *
          * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
-         * @throws OldFileFormatException If the {@link DirectoryNode} points to a format of
+         * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
          *      an unsupported version of Excel.
          * @throws IllegalArgumentException If creating the Extractor fails
          */
