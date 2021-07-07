@@ -210,7 +210,6 @@ subprojects {
         exclude '**/BaseTestCellUtil.class'
         exclude '**/TestUnfixedBugs.class'
         exclude '**/TestOneFile.class'
-        include '**/TestSig*.class'
 
         // Exclude Test Suites
         exclude '**/All*Tests.class'
