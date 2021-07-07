@@ -73,7 +73,7 @@ public class CustomProperties implements Map<String,Object> {
      * The custom properties
      */
     private final HashMap<Long,CustomProperty> props = new HashMap<>();
-    
+
     /**
      * Maps property IDs to property names and vice versa.
      */
@@ -90,10 +90,10 @@ public class CustomProperties implements Map<String,Object> {
      * Puts a {@link CustomProperty} into this map. It is assumed that the
      * {@link CustomProperty} already has a valid ID. Otherwise use
      * {@link #put(CustomProperty)}.
-     * 
+     *
      * @param name the property name
      * @param cp the property
-     * 
+     *
      * @return the previous property stored under this name
      */
     public CustomProperty put(final String name, final CustomProperty cp) {
@@ -102,7 +102,7 @@ public class CustomProperties implements Map<String,Object> {
             isPure = false;
             return null;
         }
-        
+
         if (!name.equals(cp.getName())) {
             throw new IllegalArgumentException("Parameter \"name\" (" + name +
                     ") and custom property's name (" + cp.getName() +
@@ -110,7 +110,7 @@ public class CustomProperties implements Map<String,Object> {
         }
 
         checkCodePage(name);
-        
+
         /* Register name and ID in the dictionary. Mapping in both directions is possible. If there is already a  */
         props.remove(dictionary.getKey(name));
         dictionary.put(cp.getID(), name);
@@ -156,7 +156,7 @@ public class CustomProperties implements Map<String,Object> {
         final Property p = new Property(-1, variantType, value);
         return put(new CustomProperty(p, key));
     }
-    
+
     /**
      * Gets a named value from the custom properties - only works for keys of type String
      *
@@ -196,7 +196,7 @@ public class CustomProperties implements Map<String,Object> {
     public void clear() {
         props.clear();
     }
-    
+
     @Override
     public int hashCode() {
         return props.hashCode();
@@ -222,9 +222,9 @@ public class CustomProperties implements Map<String,Object> {
         list.addAll(props.values());
         return Collections.unmodifiableList(list);
     }
-    
+
     /**
-     * @return the list of property values - use {@link #properties()} for the wrapped values 
+     * @return the list of property values - use {@link #properties()} for the wrapped values
      */
     @Override
     public Collection<Object> values() {
@@ -247,18 +247,17 @@ public class CustomProperties implements Map<String,Object> {
     /**
      * Returns a set of all the names of our custom properties.
      * Equivalent to {@link #nameSet()}
-     * 
+     *
      * @return a set of all the names of our custom properties
      */
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Set keySet() {
+    public Set<String> keySet() {
         return Collections.unmodifiableSet(dictionary.values());
     }
 
     /**
      * Returns a set of all the names of our custom properties
-     * 
+     *
      * @return a set of all the names of our custom properties
      */
     public Set<String> nameSet() {
@@ -267,7 +266,7 @@ public class CustomProperties implements Map<String,Object> {
 
     /**
      * Returns a set of all the IDs of our custom properties
-     * 
+     *
      * @return a set of all the IDs of our custom properties
      */
     public Set<Long> idSet() {
@@ -313,14 +312,14 @@ public class CustomProperties implements Map<String,Object> {
     }
 
     /**
-     * Checks against both the property, and its values. 
+     * Checks against both the property, and its values.
      */
     @Override
     public boolean containsValue(Object value) {
         if(value instanceof CustomProperty) {
             return props.containsValue(value);
         }
-      
+
         for(CustomProperty cp : props.values()) {
             if(cp.getValue() == value) {
                 return true;
