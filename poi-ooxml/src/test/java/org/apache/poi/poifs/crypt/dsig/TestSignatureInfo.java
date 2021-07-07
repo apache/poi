@@ -400,6 +400,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheet() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
@@ -418,6 +419,7 @@ class TestSignatureInfo {
     }
 
     @Test
+    @DisabledOnJreEx("1.8.0_292")
     void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
