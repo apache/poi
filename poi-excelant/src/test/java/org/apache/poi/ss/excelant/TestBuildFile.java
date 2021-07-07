@@ -20,16 +20,16 @@ package org.apache.poi.ss.excelant;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.commons.io.output.NullPrintStream;
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
@@ -44,18 +44,13 @@ import org.junit.jupiter.api.Test;
 public class TestBuildFile {
 
     protected Project project;
-
-    private StringBuilder logBuffer;
-    private StringBuilder fullLogBuffer;
-
+    private final StringBuilder logBuffer = new StringBuilder();
 
     @BeforeEach
     void setUp() {
         String filename = TestBuildFile.getDataDir() + "/../poi-excelant/src/test/resources/tests.xml";
         int logLevel = Project.MSG_DEBUG;
-
-        logBuffer = new StringBuilder();
-        fullLogBuffer = new StringBuilder();
+        logBuffer.setLength(0);
         project = new Project();
         project.init();
         project.setNewProperty("data.dir.name", getDataDir());
@@ -63,7 +58,6 @@ public class TestBuildFile {
         project.setUserProperty("ant.file", antFile.getAbsolutePath());
         project.addBuildListener(new AntTestListener(logLevel));
         ProjectHelper.configureProject(project, antFile);
-
     }
 
     /**
@@ -92,16 +86,6 @@ public class TestBuildFile {
         if (project.getTargets().containsKey(tearDown)) {
             project.executeTarget(tearDown);
         }
-    }
-
-    /**
-     * run a target, expect for any build exception
-     *
-     * @param target target to run
-     * @param cause  information string to reader of report
-     */
-    void expectBuildException(String target, String cause) {
-        expectSpecificBuildException(target, cause, null);
     }
 
     /**
@@ -134,21 +118,7 @@ public class TestBuildFile {
      * @param targetName target to run
      */
     void executeTarget(String targetName) {
-        PrintStream sysOut = System.out;
-        PrintStream sysErr = System.err;
-        try {
-            sysOut.flush();
-            sysErr.flush();
-            System.setOut(new NullPrintStream());
-            System.setErr(new NullPrintStream());
-            logBuffer = new StringBuilder();
-            fullLogBuffer = new StringBuilder();
-            project.executeTarget(targetName);
-        } finally {
-            System.setOut(sysOut);
-            System.setErr(sysErr);
-        }
-
+        project.executeTarget(targetName);
     }
 
     /**
@@ -159,16 +129,11 @@ public class TestBuildFile {
      * @param msg    the message value of the build exception we are waiting
      *               for set to null for any build exception to be valid
      */
-    void expectSpecificBuildException(String target, String cause, String msg) {
-        try {
-            executeTarget(target);
-        } catch (org.apache.tools.ant.BuildException ex) {
-            assertTrue(msg == null || ex.getMessage().equals(msg),
-                "Should throw BuildException because '" + cause + "' with message '" + msg + "' (actual message '" + ex.getMessage() + "' instead)"
-            );
-            return;
+    void expectBuildException(String target, String cause, String msg) {
+        BuildException be = assertThrows(BuildException.class, () -> executeTarget(target));
+        if (msg != null) {
+            assertEquals(msg, be.getMessage(), cause);
         }
-        fail("Should throw BuildException because: " + cause);
     }
 
     public static String getDataDir() {
@@ -194,8 +159,7 @@ public class TestBuildFile {
          * Fired before any targets are started.
          */
         @Override
-        public void buildStarted(BuildEvent event) {
-        }
+        public void buildStarted(BuildEvent event) { }
 
         /**
          * Fired after the last target has finished. This event
@@ -204,8 +168,7 @@ public class TestBuildFile {
          * @see BuildEvent#getException()
          */
         @Override
-        public void buildFinished(BuildEvent event) {
-        }
+        public void buildFinished(BuildEvent event) { }
 
         /**
          * Fired when a target is started.
@@ -213,9 +176,7 @@ public class TestBuildFile {
          * @see BuildEvent#getTarget()
          */
         @Override
-        public void targetStarted(BuildEvent event) {
-            //System.out.println("targetStarted " + event.getTarget().getName());
-        }
+        public void targetStarted(BuildEvent event) { }
 
         /**
          * Fired when a target has finished. This event will
@@ -224,9 +185,7 @@ public class TestBuildFile {
          * @see BuildEvent#getException()
          */
         @Override
-        public void targetFinished(BuildEvent event) {
-            //System.out.println("targetFinished " + event.getTarget().getName());
-        }
+        public void targetFinished(BuildEvent event) { }
 
         /**
          * Fired when a task is started.
@@ -234,9 +193,7 @@ public class TestBuildFile {
          * @see BuildEvent#getTask()
          */
         @Override
-        public void taskStarted(BuildEvent event) {
-            //System.out.println("taskStarted " + event.getTask().getTaskName());
-        }
+        public void taskStarted(BuildEvent event) { }
 
         /**
          * Fired when a task has finished. This event will still
@@ -245,9 +202,7 @@ public class TestBuildFile {
          * @see BuildEvent#getException()
          */
         @Override
-        public void taskFinished(BuildEvent event) {
-            //System.out.println("taskFinished " + event.getTask().getTaskName());
-        }
+        public void taskFinished(BuildEvent event) { }
 
         /**
          * Fired whenever a message is logged.
@@ -267,20 +222,18 @@ public class TestBuildFile {
                     event.getPriority() == Project.MSG_ERR) {
                 logBuffer.append(event.getMessage());
             }
-            fullLogBuffer.append(event.getMessage());
         }
     }
 
     @Test
     void testMissingFilename() {
-        expectSpecificBuildException("test-nofile", "required argument not specified",
-                                     "fileName attribute must be set!");
+        expectBuildException("test-nofile", "required argument not specified", "fileName attribute must be set!");
     }
 
     @Test
     void testFileNotFound() {
-        expectSpecificBuildException("test-filenotfound", "required argument not specified",
-                                     "Cannot load file invalid.xls. Make sure the path and file permissions are correct.");
+        expectBuildException("test-filenotfound", "required argument not specified",
+             "Cannot load file invalid.xls. Make sure the path and file permissions are correct.");
     }
 
     @Test
@@ -303,18 +256,19 @@ public class TestBuildFile {
 
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-                                    "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-4");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-4");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-                                    "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-5");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-5");
         assertLogContaining("Failed to evaluate cell 'MortgageCalculator'!$B$4.  " +
-                                    "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
+            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
         assertLogContaining("2/3 tests passed");
     }
 
     @Test
     void testPrecisionFail() {
-        expectSpecificBuildException("test-precision-fails", "precision not matched",
-                                     "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
+        expectBuildException("test-precision-fails", "precision not matched",
+             "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 " +
+             "when the value of 2285.576149 with precision of 1.0E-10 was expected.");
     }
 
     @Test
@@ -326,16 +280,18 @@ public class TestBuildFile {
 
     @Test
     void testFailOnError() {
-        expectBuildException("test-failonerror", "fail on error");
+        expectBuildException("test-failonerror", "fail on error", null);
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
-        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
+        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. " +
+            "Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
     }
 
     @Test
     void testFailOnErrorNoDetails() {
-        expectBuildException("test-failonerror-nodetails", "fail on error");
+        expectBuildException("test-failonerror-nodetails", "fail on error", null);
         assertLogNotContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
-        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
+        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. " +
+            "Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
     }
 
     @Test
@@ -369,7 +325,7 @@ public class TestBuildFile {
 
     @Test
     void testAddHandlerFails() {
-        expectSpecificBuildException("test-addhandler-fails", "NullPointException", null);
+        expectBuildException("test-addhandler-fails", "NullPointException", null);
     }
 
 }
