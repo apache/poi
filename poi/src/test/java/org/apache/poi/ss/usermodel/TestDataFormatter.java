@@ -69,7 +69,7 @@ class TestDataFormatter {
         assertTrue(Locale.ROOT.equals(ul) || Locale.getDefault().equals(ul));
         final String textValue = NumberToTextConverter.toText(1234.56);
         assertEquals(-1, textValue.indexOf('E'));
-        Object cellValueO = Double.valueOf(1234.56);
+        Object cellValueO = 1234.56;
 
         /*CellFormat cellFormat = new CellFormat("_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-");
         CellFormatResult result = cellFormat.apply(cellValueO);
@@ -78,7 +78,9 @@ class TestDataFormatter {
         CellFormat cfmt = CellFormat.getInstance("_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-");
         CellFormatResult result = cfmt.apply(cellValueO);
         assertEquals("    1,234.56 ", result.text,
-            "This failure can indicate that the wrong locale is used during test-execution, ensure you run with english/US via -Duser.language=en -Duser.country=US");
+            "This failure can indicate that the wrong locale is used during test-execution, "
+					+ "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
+					+ "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"));
     }
 
     /**
@@ -975,7 +977,7 @@ class TestDataFormatter {
      * A numeric format string like 0E+0 should be E+
      */
     @Test
-    void testWithEinFormat() throws Exception {
+    void testWithEinFormat() {
         DataFormatter formatter = new DataFormatter();
 
         // Format string literals with an E in them shouldn't be
