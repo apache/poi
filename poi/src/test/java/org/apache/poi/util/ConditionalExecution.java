@@ -71,19 +71,27 @@ public class ConditionalExecution {
         @Override
         public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
             String version = Runtime.class.getPackage().getImplementationVersion();
-            return findAnnotation(context.getElement(), DisabledOnJreEx.class).filter(annotation -> !isEnabled(annotation))
-                .map(annotation -> disabled("PatchLevel skipped", "JRE version " + version + " skipped"))
-                .orElseGet(() -> enabled("PatchLevel not matched"));
+            try {
+				return findAnnotation(context.getElement(), DisabledOnJreEx.class).filter(annotation -> !isEnabled(annotation))
+						.map(annotation -> disabled("PatchLevel skipped", "JRE version " + version + " skipped"))
+						.orElseGet(() -> enabled("PatchLevel not matched"));
+			} catch (IllegalAccessError e) {
+            	// cannot access org.junit.platform.commons.util.AnnotationUtils when run in JPMS
+				// for now let's ignore this check and report "enabled"
+				return ConditionEvaluationResult.enabled("Cannot check annotation: " + e);
+			}
         }
-
 
         boolean isEnabled(DisabledOnJreEx annotation) {
             String[] versions = annotation.value();
             Preconditions.condition(versions.length > 0, "You must declare at least one JRE version in @DisabledOnJreEx");
-            String version = Runtime.class.getPackage().getImplementationVersion();
+            String version1 = Runtime.class.getPackage().getImplementationVersion();
+            if (version1 == null) {
+            	// revert to system-property if no implementation version is available
+				version1 = System.getProperty("java.version");
+			}
+            String version = version1;
             return Arrays.stream(versions).noneMatch(p -> Pattern.matches(p, version));
         }
-
     }
-
 }
