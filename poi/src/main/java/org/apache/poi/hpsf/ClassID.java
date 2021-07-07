@@ -68,8 +68,8 @@ public class ClassID implements Duplicatable, GenericRecord {
 
     /**
      * Clones the given ClassID
-	 *
-	 * @param other The ClassID to use a base for creating this one
+     *
+     * @param other The ClassID to use a base for creating this one
      */
     public ClassID(ClassID other) {
         System.arraycopy(other.bytes, 0, bytes, 0, bytes.length);

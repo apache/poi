@@ -79,8 +79,8 @@ class TestDataFormatter {
         CellFormatResult result = cfmt.apply(cellValueO);
         assertEquals("    1,234.56 ", result.text,
             "This failure can indicate that the wrong locale is used during test-execution, "
-					+ "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
-					+ "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"));
+                    + "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
+                    + "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"));
     }
 
     /**

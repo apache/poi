@@ -82,14 +82,14 @@ final class TestOperandResolver {
         values.put("18-Jan-2019", 43483.);
 
         for (String str : values.keySet()) {
-        	try {
-				assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
-			} catch (EvaluationException e) {
-        		fail("While handling: " + str + ". "
-						+ "This failure can indicate that the wrong locale is used during test-execution, "
-						+ "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
-						+ "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"), e);
-			}
+            try {
+                assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
+            } catch (EvaluationException e) {
+                fail("While handling: " + str + ". "
+                        + "This failure can indicate that the wrong locale is used during test-execution, "
+                        + "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
+                        + "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"), e);
+            }
         }
     }
 
