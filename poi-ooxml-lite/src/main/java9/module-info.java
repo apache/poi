@@ -25,20 +25,28 @@ open module org.apache.poi.ooxml.schemas {
 
 
 
+    exports com.microsoft.schemas.compatibility;
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;
+    exports com.microsoft.schemas.office.visio.x2012.main;
+    exports com.microsoft.schemas.office.word;
     exports com.microsoft.schemas.office.x2006.digsig;
     exports com.microsoft.schemas.vml;
     exports org.apache.poi.schemas.ooxml.system.ooxml;
     exports org.apache.poi.schemas.vmldrawing;
     exports org.etsi.uri.x01903.v13;
+    exports org.openxmlformats.schemas.drawingml.x2006.chart;
     exports org.openxmlformats.schemas.drawingml.x2006.main;
     exports org.openxmlformats.schemas.drawingml.x2006.picture;
     exports org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing;
+    exports org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing;
     exports org.openxmlformats.schemas.officeDocument.x2006.customProperties;
+    exports org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes;
     exports org.openxmlformats.schemas.officeDocument.x2006.extendedProperties;
+    exports org.openxmlformats.schemas.officeDocument.x2006.math;
     exports org.openxmlformats.schemas.officeDocument.x2006.relationships;
     exports org.openxmlformats.schemas.officeDocument.x2006.sharedTypes;
+    exports org.openxmlformats.schemas.presentationml.x2006.main;
     exports org.openxmlformats.schemas.spreadsheetml.x2006.main;
     exports org.openxmlformats.schemas.wordprocessingml.x2006.main;
     exports org.openxmlformats.schemas.xpackage.x2006.digitalSignature;
