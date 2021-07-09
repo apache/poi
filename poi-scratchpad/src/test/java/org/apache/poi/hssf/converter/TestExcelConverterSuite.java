@@ -32,6 +32,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -64,6 +65,7 @@ public class TestExcelConverterSuite
     void testFo(File child) throws Exception
     {
         HSSFWorkbook workbook;
+        int sheetNumber = 0;
         try {
             workbook = AbstractExcelUtils.loadXls( child );
         } catch ( Exception exc ) {
@@ -73,7 +75,8 @@ public class TestExcelConverterSuite
 
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
                 XMLHelper.newDocumentBuilder().newDocument() );
-        excelToHtmlConverter.processWorkbook( workbook );
+        excelToHtmlConverter.processWorkbookSheet( workbook);
+        excelToHtmlConverter.processWorkbookSheet( workbook, sheetNumber);
 
         StringWriter stringWriter = new StringWriter();
 
@@ -90,6 +93,8 @@ public class TestExcelConverterSuite
     void testHtml(File child) throws Exception
     {
         HSSFWorkbook workbook;
+        int sheetNumber = 0; //
+
         try {
             workbook = AbstractExcelUtils.loadXls( child );
         } catch ( Exception exc ) {
@@ -99,7 +104,8 @@ public class TestExcelConverterSuite
 
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
                 XMLHelper.newDocumentBuilder().newDocument() );
-        excelToHtmlConverter.processWorkbook( workbook );
+        excelToHtmlConverter.processWorkbookSheet( workbook);
+        excelToHtmlConverter.processWorkbookSheet( workbook, sheetNumber);
 
         StringWriter stringWriter = new StringWriter();
 
