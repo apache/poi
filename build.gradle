@@ -109,7 +109,7 @@ subprojects {
         log4jVersion = '2.14.0'
         mockitoVersion = '3.6.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '5.0.0'
+        xmlbeansVersion = '5.0.1'
         batikVersion = '1.14'
 
 		JAVA9_SRC = 'src/main/java9'
