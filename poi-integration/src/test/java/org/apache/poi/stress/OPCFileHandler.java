@@ -23,6 +23,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -31,17 +35,18 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Test;
 
 class OPCFileHandler extends AbstractFileHandler {
+    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+            "document/truncated62886.docx"
+    );
+
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        OPCPackage p;
-        try {
-            p = OPCPackage.open(stream);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to open '" + path + "' as OPCPackage", e);
-        }
+        if (EXPECTED_FAILURES.contains(path)) return;
+
+        OPCPackage p = OPCPackage.open(stream);
 
         for (PackagePart part : p.getParts()) {
             if (part.getPartName().toString().equals("/docProps/core.xml")) {
@@ -74,5 +79,9 @@ class OPCFileHandler extends AbstractFileHandler {
         }
 
         handleExtracting(file);
+    }
+
+    private static Set<String> unmodifiableHashSet(String... a) {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }

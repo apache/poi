@@ -26,16 +26,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
 class XWPFFileHandler extends AbstractFileHandler {
+    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+            "document/truncated62886.docx"
+    );
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
+
+        if (EXPECTED_FAILURES.contains(path)) return;
 
         try (XWPFDocument doc = new XWPFDocument(stream)) {
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
@@ -43,8 +47,6 @@ class XWPFFileHandler extends AbstractFileHandler {
         } catch (POIXMLException e) {
             Exception cause = (Exception)e.getCause();
             throw cause == null ? e : cause;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to open '" + path + "' as XWPFDocument", e);
         }
     }
 
