@@ -36,7 +36,12 @@ class OPCFileHandler extends AbstractFileHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        OPCPackage p = OPCPackage.open(stream);
+        OPCPackage p;
+        try {
+            p = OPCPackage.open(stream);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to open '" + path + "' as OPCPackage", e);
+        }
 
         for (PackagePart part : p.getParts()) {
             if (part.getPartName().toString().equals("/docProps/core.xml")) {

@@ -20,24 +20,31 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
 class XWPFFileHandler extends AbstractFileHandler {
+
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
         try (XWPFDocument doc = new XWPFDocument(stream)) {
-
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
             POIXMLDocumentHandler.cursorRecursive(doc.getDocument());
         } catch (POIXMLException e) {
             Exception cause = (Exception)e.getCause();
             throw cause == null ? e : cause;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to open '" + path + "' as XWPFDocument", e);
         }
     }
 
@@ -52,5 +59,9 @@ class XWPFFileHandler extends AbstractFileHandler {
         }
 
         handleExtracting(file);
+    }
+
+    private static Set<String> unmodifiableHashSet(String... a) {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }
