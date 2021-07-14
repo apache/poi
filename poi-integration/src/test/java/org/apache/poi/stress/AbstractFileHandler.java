@@ -57,6 +57,8 @@ public abstract class AbstractFileHandler implements FileHandler {
         EXPECTED_EXTRACTOR_FAILURES.add("hpsf/Test0313rur.adm");
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/64322.ole2");
+        //commons-compress 1.21 no longer supports truncated files
+        EXPECTED_EXTRACTOR_FAILURES.add("document/truncated62886.docx");
     }
 
     @Override
