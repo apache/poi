@@ -29,8 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
@@ -79,6 +78,10 @@ public class TestAllFiles {
         "**/.git/**",
     };
 
+    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+            "document/truncated62886.docx"
+    );
+
     public static Stream<Arguments> allfiles(String testName) throws IOException {
         StressMap sm = new StressMap();
         sm.load(new File(ROOT_DIR, "spreadsheet/stress.xls"));
@@ -115,6 +118,8 @@ public class TestAllFiles {
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("extractFiles")
     void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
+        if (EXPECTED_FAILURES.contains(file)) return;
+
         System.out.println("Running extractFiles on "+file);
         FileHandler fileHandler = handler.fileHandler.get();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
@@ -197,5 +202,9 @@ public class TestAllFiles {
         }
 
         return msg;
+    }
+
+    private static Set<String> unmodifiableHashSet(String... a) {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }
