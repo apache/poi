@@ -36,8 +36,8 @@ jobs:
         id: setup-ant
         run: |
           wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.11-bin.tar.gz
-          tar --exclude=apache-ant-1.10.9/manual -xzvf apache-ant-1.10.11-bin.tar.gz
-          ANT_HOME=`pwd`/apache-ant-1.10.9 apache-ant-1.10.11/bin/ant -version
+          tar --exclude=apache-ant-1.10.11/manual -xzvf apache-ant-1.10.11-bin.tar.gz
+          ANT_HOME=`pwd`/apache-ant-1.10.11 apache-ant-1.10.11/bin/ant -version
 
       - name: Cache downloaded third-party libraries
         uses: actions/cache@v2.1.3
