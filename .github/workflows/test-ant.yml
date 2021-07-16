@@ -53,4 +53,4 @@ jobs:
           svn co https://svn.apache.org/repos/asf/poi/site/src/documentation src/documentation
 
       - name: Build with Ant
-        run: ANT_HOME=`pwd`/apache-ant-1.10.9 apache-ant-1.10.9/bin/ant clean jenkins
+        run: ANT_HOME=`pwd`/apache-ant-1.10.11 apache-ant-1.10.11/bin/ant clean jenkins
