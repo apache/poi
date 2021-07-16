@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -78,7 +77,7 @@ public class TestAllFiles {
         "**/.git/**",
     };
 
-    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+    private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx"
     );
 
@@ -118,7 +117,7 @@ public class TestAllFiles {
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("extractFiles")
     void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
-        if (EXPECTED_FAILURES.contains(file)) return;
+        if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES)) return;
 
         System.out.println("Running extractFiles on "+file);
         FileHandler fileHandler = handler.fileHandler.get();
@@ -202,9 +201,5 @@ public class TestAllFiles {
         }
 
         return msg;
-    }
-
-    private static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }

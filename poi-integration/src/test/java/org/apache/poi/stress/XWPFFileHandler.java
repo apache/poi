@@ -20,9 +20,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.ooxml.POIXMLException;
@@ -30,7 +27,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
 class XWPFFileHandler extends AbstractFileHandler {
-    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+    private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx"
     );
 
@@ -39,7 +36,7 @@ class XWPFFileHandler extends AbstractFileHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        if (EXPECTED_FAILURES.contains(path)) return;
+        if (StressTestUtils.excludeFile(path, EXPECTED_FAILURES)) return;
 
         try (XWPFDocument doc = new XWPFDocument(stream)) {
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
@@ -61,9 +58,5 @@ class XWPFFileHandler extends AbstractFileHandler {
         }
 
         handleExtracting(file);
-    }
-
-    private static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }

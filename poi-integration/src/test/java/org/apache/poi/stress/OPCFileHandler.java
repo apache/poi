@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -35,7 +32,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Test;
 
 class OPCFileHandler extends AbstractFileHandler {
-    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
+    private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx"
     );
 
@@ -44,7 +41,7 @@ class OPCFileHandler extends AbstractFileHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        if (EXPECTED_FAILURES.contains(path)) return;
+        if (StressTestUtils.excludeFile(path, EXPECTED_FAILURES)) return;
 
         OPCPackage p = OPCPackage.open(stream);
 
@@ -79,9 +76,5 @@ class OPCFileHandler extends AbstractFileHandler {
         }
 
         handleExtracting(file);
-    }
-
-    private static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 }

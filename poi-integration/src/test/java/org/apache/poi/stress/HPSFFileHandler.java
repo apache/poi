@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -49,7 +46,7 @@ class HPSFFileHandler extends POIFSFileHandler {
 
     private static final ThreadLocal<File> copyOutput = ThreadLocal.withInitial(HPSFFileHandler::getTempFile);
 
-    static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
+    static final Set<String> EXCLUDES_HANDLE_ADD = StressTestUtils.unmodifiableHashSet(
         "spreadsheet/45290.xls",
         "spreadsheet/46904.xls",
         "spreadsheet/55982.xls",
@@ -58,11 +55,6 @@ class HPSFFileHandler extends POIFSFileHandler {
         "hpsf/Test_Humor-Generation.ppt",
         "document/word2.doc"
     );
-
-    private static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
-    }
-
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
