@@ -22,6 +22,8 @@ jobs:
         java: [ '8', '11' ]
 
     name: Java ${{ matrix.java }} build
+    env:
+      ANT_VERSION: 1.10.11
     steps:
       - uses: actions/checkout@v2
 
@@ -35,9 +37,9 @@ jobs:
       - name: Set up Ant
         id: setup-ant
         run: |
-          wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.11-bin.tar.gz
-          tar --exclude=apache-ant-1.10.11/manual -xzvf apache-ant-1.10.11-bin.tar.gz
-          ANT_HOME=`pwd`/apache-ant-1.10.11 apache-ant-1.10.11/bin/ant -version
+          wget https://archive.apache.org/dist/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz
+          tar --exclude=apache-ant-$ANT_VERSION/manual -xzvf apache-ant-$ANT_VERSION-bin.tar.gz
+          ANT_HOME=`pwd`/apache-ant-$ANT_VERSION $ANT_HOME/bin/ant -version
 
       - name: Cache downloaded third-party libraries
         uses: actions/cache@v2.1.3
@@ -53,4 +55,4 @@ jobs:
           svn co https://svn.apache.org/repos/asf/poi/site/src/documentation src/documentation
 
       - name: Build with Ant
-        run: ANT_HOME=`pwd`/apache-ant-1.10.11 apache-ant-1.10.11/bin/ant clean jenkins
+        run: ANT_HOME=`pwd`/apache-ant-$ANT_VERSION $ANT_HOME/bin/ant clean jenkins
