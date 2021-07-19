@@ -46,25 +46,14 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
 
-
-task compileOoxmlLite(type: Copy) {
+task generateModuleInfo() {
     dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
 
     File fileIn = file("${OOXML_LITE_REPORT}.clazz")
     File fileOut = file("src/main/java9/module-info.java")
 
-    outputs.upToDateWhen{
-        ant.uptodate(property: "ooxmlLiteUnchanged", srcfile: fileIn.path, targetfile: fileOut.path)
-        ant.properties.ooxmlLiteUnchanged
-    }
-
-    // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
-    from(project(':poi-ooxml-full').buildDir) {
-        include 'generated-sources/**'
-        include 'generated-resources/**'
-        include 'classes/java/main/**'
-    }
-    into(buildDir)
+    inputs.file fileIn
+    outputs.file fileOut
 
     doLast {
         String header = fileOut.collect().findAll { !(it =~ /exports|}/) }.join('\n')
@@ -74,11 +63,26 @@ task compileOoxmlLite(type: Copy) {
             collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
             findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
 
-        String content = header + '\n' + exports + '\n}'
+        String content = header + '\n' + exports + '\n}\n'
         if (fileOut.text != content) {
             fileOut.write content
         }
     }
+}
+
+task compileOoxmlLite(type: Copy) {
+    dependsOn 'generateModuleInfo'
+
+    // This task is currently always executed, because gradle thinks files with two dollar signs
+    // (as in AlternateContentDocument$AlternateContent$Choice.class) are always stale
+
+    // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
+    from(project(':poi-ooxml-full').buildDir) {
+        include 'generated-sources/**'
+        include 'generated-resources/**'
+        include 'classes/java/main/**'
+    }
+    into(buildDir)
 }
 
 

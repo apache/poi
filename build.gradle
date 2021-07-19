@@ -17,19 +17,20 @@
 
 buildscript {
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://plugins.gradle.org/m2/' }
         mavenCentral()
     }
 
     dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.1.1"
-        classpath "de.thetaphi:forbiddenapis:3.1"
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.1.1'
+        classpath 'de.thetaphi:forbiddenapis:3.1'
     }
 }
 
 plugins {
     id 'base'
-    id("org.nosphere.apache.rat") version "0.7.0"
+    id('org.nosphere.apache.rat') version '0.7.0'
+    id 'distribution'
 }
 
 repositories {
@@ -39,7 +40,7 @@ repositories {
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
-    apply plugin: "org.sonarqube"
+    apply plugin: 'org.sonarqube'
 }
 
 // For help converting an Ant build to a Gradle build, see
@@ -393,12 +394,13 @@ subprojects {
 
 // initial try to provide a combined JavaDoc, grouping is still missing here, though!
 task allJavaDoc(type: Javadoc) {
-	source subprojects.collect { it.sourceSets.main.allJava }
+    var prj = [ project(':poi'), project(':poi-excelant'), project(':poi-ooxml'), project(':poi-scratchpad') ]
+	source prj.collect { it.sourceSets.main.allJava }
 
 	// for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
 	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
 	destinationDir = file("${buildDir}/docs/javadoc")
-	maxMemory="768M"
+	maxMemory="2048M"
 
 	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
 	options.use = true
@@ -427,11 +429,11 @@ task allJavaDoc(type: Javadoc) {
 	options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
 	options.group('Utilities', 'org.apache.poi.util*')
 	options.group('Excelant', 'org.apache.poi.ss.excelant**')
-	options.group('Examples', 'org.apache.poi.examples*')
+//	options.group('Examples', 'org.apache.poi.examples*')
 }
 
-task jenkins
-jenkins.dependsOn allJavaDoc
+
+task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'binDistZip','binDistTar','srcDistZip','srcDistTar']) {}
 
 clean {
     delete "${rootDir}/build/dist"
@@ -501,56 +503,152 @@ rat {
 
 //compileJava.dependsOn 'downloadJarsToLibs'
 
-task site(type:Exec) {
-    doFirst {
-        if (System.env.FORREST_HOME == null) {
-            throw new InvalidUserDataException(
-                'Apache Forrest is not installed.\n' +
-                    'Please install Apache Forrest (see https://forrest.apache.org/index.html) and set the\n' +
-                    'FORREST_HOME environment variable!')
-        }
+task replaceVersion() {
+    outputs.upToDateWhen { false }
 
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-            // maybe Java 9-11 works too?
-            throw new GradleException("Apache Forrest must be executed with Java 8!")
-        }
-    }
-
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', "${System.env.FORREST_HOME}/bin/forrest.bat"
-    } else {
-        commandLine "${System.env.FORREST_HOME}/bin/forrest"
-    }
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    ext.output = {
-        return standardOutput.toString()
-    }
+    var version = subprojects[0].version
+    var tokens = [
+        [ 'sonar', '**/pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ],
+        [ 'sonar', '**/pom.xml', '(poi-parent&lt;/artifactId>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\1${version}" ],
+        [ 'osgi', 'pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ]
+        // [ '.', 'build.gradle', ' version = \'[0-9.]+(?:-SNAPSHOT)?\'', " version = '${version}'" ]
+    ]
 
     doLast {
-        println 'Broken links:'
-        println file("${buildDir}/tmp/brokenlinks.xml").text
-
-        /* Apache Forrest is dead, so we cannot expect fixes there however it does not handle "https" in "credits"
-        currently if the *.xml file is in a sub-directory, see Apache Forrest code at
-        main/webapp/skins/pelt/xslt/html/site-to-xhtml.xsl:350
-
-        So we need to replace the links afterwards to have a fully "https" website and avoid browser warning about
-        a "mixed content" website */
-        def buildSite = "${buildDir}/site"
-
-        println "Fix https in ${buildSite}"
-
-        ant.replace(dir: buildSite, summary:'true', includes:'**/*.html',
-            token:'http://www.apache.org/events/current-event-125x125.png',
-            value:'https://www.apache.org/events/current-event-125x125.png')
-
-        ant.replace(dir: buildSite, summary:'true', includes:'**/*.html',
-            token:'http://www.google.com/search',
-            value:'https://www.google.com/search')
-
-        ant.fixcrlf(srcdir: buildSite, includes:'**/*.html,**/*.css', eol:'unix', eof:'remove')
+        tokens.forEach {
+            var dir = it[0], name = it[1], match = it[2], replace = it[3]
+            ant.replaceregexp(match: match, replace: replace) {
+                fileset(dir: dir) {
+                    include(name: name)
+                }
+            }
+        }
     }
 }
+
+task zipJavadocs(type: Zip, dependsOn: allJavaDoc) {
+    from('build/docs/javadoc/')
+    destinationDir = file('build/dist')
+    archiveBaseName = 'poi'
+    archiveVersion = subprojects[0].version
+    archiveAppendix = 'javadoc'
+    archiveExtension = 'jar'
+}
+
+tasks.withType(Tar) {
+    compression = Compression.GZIP
+    archiveExtension = 'tgz'
+}
+
+distributions {
+    var version = subprojects[0].version
+    var date = new Date().format('yyyyMMdd')
+
+    var poiDep = project(':poi').configurations.getAt('compileClasspath')
+    var ooxmlImp = project(':poi-ooxml').configurations.getAt('compileClasspath')
+
+    bin {
+        distributionBaseName = "poi-bin-${version}-${date}"
+        contents {
+            from('build/dist/maven') {
+                include "**/*${version}.jar"
+                exclude "**/*lite-agent*.jar"
+                exclude "**/*integration*.jar"
+            }
+
+            from('build/dist') { include 'poi-javadoc*.jar'}
+            from('legal') { exclude 'HEADER' }
+            from(poiDep) { include "**/*.jar" }
+            from(ooxmlImp) { include "**/*.jar" }
+
+            includeEmptyDirs = false
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+            eachFile {
+                var root = "poi-bin-${version}/"
+                if (name.startsWith('poi')) {
+                    path = root + name
+                } else if (poiDep.contains(file)) {
+                    path = root + 'lib/' + name
+                } else if (name =~ /^(batik|bc|fontbox|graphics|pdfbox|xml-apis|xmlgraphics|xmlsec)/) {
+                    path = root + 'auxiliary/' + name
+                } else if (ooxmlImp.contains(file)) {
+                    path = root + 'ooxml-lib/' + name
+                } else {
+                    path = root + name
+                }
+            }
+        }
+    }
+
+    src {
+        distributionBaseName = "poi-src-${version}-${date}"
+        contents {
+            from('.') {
+                exclude '*/build/**'
+                exclude 'build/**'
+                exclude 'dist*/**'
+                exclude 'lib/**'
+                exclude 'lib.stored/**'
+                exclude 'bin/**'
+                exclude 'out/**'
+                exclude 'tmp/**'
+                exclude 'gradle/**'
+                exclude 'sonar/**/target/**'
+                exclude 'sonar/*/src/**'
+                exclude 'compile-lib/**'
+                exclude 'ooxml-lib/**'
+                exclude 'ooxml-testlib/**'
+                exclude 'scripts/**'
+                exclude '.gradle/**'
+                exclude '.idea/**'
+                exclude '.classpath'
+                exclude '.settings/**'
+                exclude '.project'
+                exclude 'TEST*'
+                exclude 'gradlew'
+                exclude 'gradlew.bat'
+                exclude '**/*.iml'
+                exclude '*.ipr'
+                exclude '*.iws'
+                exclude '*.rdf'
+                exclude '*.png'
+                exclude '*.gif'
+                exclude '*.jpg'
+                exclude '*.jpeg'
+                exclude '*.swp'
+                exclude '*.lnk'
+                exclude '*.log'
+                exclude '*.launch'
+                exclude '*.docx'
+                exclude '*.pptx'
+                exclude '*.xlsx'
+            }
+            from('legal') { exclude 'HEADER' }
+        }
+    }
+}
+
+binDistZip.dependsOn 'zipJavadocs'
+binDistTar.dependsOn 'zipJavadocs'
+
+var srcDep = [
+    ':poi:cacheJava9',
+    ':poi:cacheTest9',
+    ':poi-ooxml-full:cacheJava9',
+    ':poi-ooxml-lite-agent:cacheJava9',
+    ':poi-ooxml:cacheJava9',
+    ':poi-ooxml:cacheTest9',
+    ':poi-scratchpad:cacheJava9',
+    ':poi-scratchpad:cacheTest9',
+    ':poi-excelant:cacheJava9',
+    ':poi-excelant:cacheTest9',
+    ':poi-examples:cacheJava9',
+    ':poi-integration:cacheTest9',
+    ':poi-ooxml-lite:cacheJava9',
+    ':poi-ooxml-lite:generateModuleInfo'
+]
+
+srcDistTar.dependsOn srcDep
+srcDistZip.dependsOn srcDep
+rat.dependsOn srcDep
