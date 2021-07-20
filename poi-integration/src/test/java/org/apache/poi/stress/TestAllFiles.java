@@ -75,6 +75,7 @@ public class TestAllFiles {
         "**/.svn/**",
         "lost+found",
         "**/.git/**",
+        "**/right-to-left.xlsx" //the threaded comments in this file cause XSSF clone to fail
     };
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
