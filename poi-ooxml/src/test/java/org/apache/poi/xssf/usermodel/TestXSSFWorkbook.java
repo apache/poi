@@ -31,11 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
@@ -58,16 +54,10 @@ import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
@@ -83,7 +73,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
-public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
+public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestXSSFWorkbook() {
         super(XSSFITestDataProvider.instance);
@@ -1135,5 +1125,34 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
         workbook.close();
         wbBack.close();
         wbBack2.close();
+    }
+
+    @Test
+    void testRightToLeft() throws IOException {
+        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")){
+            Sheet sheet = workbook.getSheet("عربى");
+
+            Cell A1 = sheet.getRow(0).getCell(0);
+            Cell A2 = sheet.getRow(1).getCell(0);
+            Cell A3 = sheet.getRow(2).getCell(0);
+            Cell A4 = sheet.getRow(3).getCell(0);
+
+            expectFormattedContent(A1, "نص");
+            expectFormattedContent(A2, "123"); //this should really be ۱۲۳
+            expectFormattedContent(A3, "text with comment");
+            expectFormattedContent(A4, " עִבְרִית and اَلْعَرَبِيَّةُ");
+
+            Comment a3Comment = sheet.getCellComment(new CellAddress("A3"));
+            assertTrue(a3Comment.getString().getString().contains("تعليق الاختبا"));
+        }
+    }
+
+    private static void expectFormattedContent(Cell cell, String value) {
+        assertEquals(value, new DataFormatter().formatCellValue(cell),
+                "Cell " + ref(cell) + " has wrong formatted content.");
+    }
+
+    private static String ref(Cell cell) {
+        return new CellReference(cell).formatAsString();
     }
 }
