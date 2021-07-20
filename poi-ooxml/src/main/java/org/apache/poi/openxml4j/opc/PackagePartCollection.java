@@ -65,7 +65,7 @@ public final class PackagePartCollection implements Serializable {
         final String ppName = partName.getName();
         final StringBuilder concatSeg = new StringBuilder();
         // split at slash, but keep leading slash
-        final String delim = "(?=["+PackagingURIHelper.FORWARD_SLASH_STRING+".])";
+        final String delim = "(?=["+PackagingURIHelper.FORWARD_SLASH_STRING+"])";
         for (String seg : ppName.split(delim)) {
             concatSeg.append(seg);
             if (registerPartNameStr.contains(concatSeg.toString())) {
