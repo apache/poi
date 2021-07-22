@@ -154,7 +154,7 @@ public final class ModifyDocumentSummaryInformation {
 
             /* Write the POI filesystem back to the original file. Please note that
              * in production code you should take care when write directly to the
-             * origin, to make sure you don't loose things on error */
+             * origin, to make sure you don't lose things on error */
             poifs.writeFilesystem();
         }
     }
