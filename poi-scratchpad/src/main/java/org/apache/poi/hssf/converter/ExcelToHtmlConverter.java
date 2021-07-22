@@ -136,7 +136,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
     public static Document process(HSSFWorkbook workbook) throws IOException, ParserConfigurationException {
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
             XMLHelper.newDocumentBuilder().newDocument());
-        excelToHtmlConverter.processWorkbook(workbook);
+        excelToHtmlConverter.processWorkbookSheet(workbook);
         return excelToHtmlConverter.getDocument();
     }
 
@@ -668,7 +668,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
         htmlBody.appendChild(h2);
     }
 
-    public void processWorkbook(HSSFWorkbook workbook) {
+    public void processWorkbookSheet(HSSFWorkbook workbook) {
         final SummaryInformation summaryInformation = workbook
             .getSummaryInformation();
         if (summaryInformation != null) {
@@ -688,6 +688,24 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             HSSFSheet sheet = workbook.getSheetAt(s);
             processSheet(sheet);
         }
+
+        htmlDocumentFacade.updateStylesheet();
+    }
+
+    public void processWorkbookSheet(HSSFWorkbook workbook, int sheetNumber) {
+        SummaryInformation summaryInformation = workbook.getSummaryInformation();
+
+        if (summaryInformation != null) {
+            this.processDocumentInformation(summaryInformation);
+        }
+
+        if (workbook.getNumberOfSheets() < sheetNumber) {
+            throw new IllegalArgumentException("invalid sheet number: " + sheetNumber);
+        }
+
+        HSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+
+        this.processSheet(sheet);
 
         htmlDocumentFacade.updateStylesheet();
     }
