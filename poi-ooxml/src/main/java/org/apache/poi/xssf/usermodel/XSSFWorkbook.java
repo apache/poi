@@ -688,9 +688,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
+     * Modified in POI 5.0.1 to only log issues with unknown relationship types
+     * - see https://bz.apache.org/bugzilla/show_bug.cgi?id=64759
+     *
      * @since 3.14-Beta1
      */
-    private static void addRelation(RelationPart rp, POIXMLDocumentPart target) {
+    private static boolean addRelation(RelationPart rp, POIXMLDocumentPart target) {
         PackageRelationship rel = rp.getRelationship();
         if (rel.getTargetMode() == TargetMode.EXTERNAL) {
             target.getPackagePart().addRelationship(
@@ -699,10 +702,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             XSSFRelation xssfRel = XSSFRelation.getInstance(rel.getRelationshipType());
             if (xssfRel == null) {
                 // Don't copy all relations blindly, but only the ones we know about
-                throw new POIXMLException("Can't clone sheet - unknown relation type found: "+rel.getRelationshipType());
+                LOG.atWarn().log("Can't clone sheet relationship (some data will be lost in the cloned sheet) - unknown relation type found: {}", rel.getRelationshipType());
+                return false;
             }
             target.addRelation(rel.getId(), xssfRel, rp.getDocumentPart());
         }
+        return true;
     }
 
     /**
