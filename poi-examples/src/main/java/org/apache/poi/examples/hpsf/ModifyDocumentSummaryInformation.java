@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.examples.hpsf;
+package com.github.pjfanning.poi.sample;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -98,6 +98,7 @@ public final class ModifyDocumentSummaryInformation {
 
             /* Change the author to "Rainer Klute". Any former author value will
              * be lost. If there has been no author yet, it will be created. */
+            System.out.println("Author is " + si.getAuthor());
             si.setAuthor("Rainer Klute");
             System.out.println("Author changed to " + si.getAuthor() + ".");
 
@@ -120,6 +121,7 @@ public final class ModifyDocumentSummaryInformation {
 
             /* Change the category to "POI example". Any former category value will
              * be lost. If there has been no category yet, it will be created. */
+            System.out.println("Category is " + dsi.getCategory());
             dsi.setCategory("POI example");
             System.out.println("Category changed to " + dsi.getCategory() + ".");
 
