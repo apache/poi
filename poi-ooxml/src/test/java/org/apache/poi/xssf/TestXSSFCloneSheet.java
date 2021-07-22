@@ -37,7 +37,7 @@ import java.io.IOException;
 
 class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
-        super(HSSFITestDataProvider.instance);
+        super(XSSFITestDataProvider.instance);
     }
 
     private static final String OTHER_SHEET_NAME = "Another";
