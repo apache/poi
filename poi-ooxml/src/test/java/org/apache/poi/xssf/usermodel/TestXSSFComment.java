@@ -26,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.microsoft.schemas.vml.CTShape;
@@ -308,6 +311,38 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertNull(comment1); // comment should be null but will fail due to bug
         comment2 = sheet.getCellComment(new CellAddress(2, 2));
         assertNull(comment2); // comment should be null but will fail due to bug
+
+        wb.close();
+    }
+
+    @Test
+    void bug59388CommentVisible() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59388.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+        Cell a1 = sheet.getRow(0).getCell(0);
+        Cell d1 = sheet.getRow(0).getCell(3);
+
+        Comment commentA1 = a1.getCellComment();
+        Comment commentD1 = d1.getCellComment();
+
+        // assert original visibility
+        assertTrue(commentA1.isVisible());
+        assertFalse(commentD1.isVisible());
+
+        commentA1.setVisible(false);
+        commentD1.setVisible(true);
+
+        // assert after changing
+        assertFalse(commentA1.isVisible());
+        assertTrue(commentD1.isVisible());
+
+        // check result
+
+//        File file = new File("bug59388Output.xlsx");
+//        if (!file.exists()) {
+//            file.createNewFile();
+//        }
+//        wb.write(new FileOutputStream(file));
 
         wb.close();
     }

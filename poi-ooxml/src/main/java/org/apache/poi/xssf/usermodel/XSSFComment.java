@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBlank;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
@@ -108,8 +109,8 @@ public class XSSFComment implements Comment {
     public boolean isVisible() {
         boolean visible = false;
         if(_vmlShape != null) {
-            String style = _vmlShape.getStyle();
-            visible = style != null && style.contains("visibility:visible");
+            CTClientData clientData = _vmlShape.getClientDataArray(0);
+            visible = clientData != null && clientData.sizeOfVisibleArray() > 0;
         }
         return visible;
     }
@@ -122,10 +123,19 @@ public class XSSFComment implements Comment {
     @Override
     public void setVisible(boolean visible) {
         if(_vmlShape != null){
-            String style;
-            if(visible) style = "position:absolute;visibility:visible";
-            else style = "position:absolute;visibility:hidden";
-            _vmlShape.setStyle(style);
+            if (visible) {
+                _vmlShape.setStyle("position:absolute");
+                CTClientData clientData = _vmlShape.getClientDataArray(0);
+                if (clientData != null && clientData.sizeOfVisibleArray() == 0) {
+                    clientData.addVisible(STTrueFalseBlank.X);
+                }
+            } else {
+                _vmlShape.setStyle("position:absolute;visibility:hidden");
+                CTClientData clientData = _vmlShape.getClientDataArray(0);
+                if (clientData != null && clientData.sizeOfVisibleArray() > 0) {
+                    clientData.removeVisible(0);
+                }
+            }
         }
     }
     
