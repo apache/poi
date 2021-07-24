@@ -432,8 +432,6 @@ final class TestFormulaShifter {
     @Test
     void testInvalidArgument() {
         assertThrows(IllegalArgumentException.class, () ->
-            FormulaShifter.createForRowShift(1, "name", 1, 2, 0, SpreadsheetVersion.EXCEL97));
-        assertThrows(IllegalArgumentException.class, () ->
             FormulaShifter.createForRowShift(1, "name", 2, 1, 2, SpreadsheetVersion.EXCEL97));
     }
 
