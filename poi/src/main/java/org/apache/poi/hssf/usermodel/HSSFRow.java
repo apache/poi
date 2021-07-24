@@ -803,6 +803,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param srcRow the rows to copy from
      * @param policy the policy to determine what gets copied
      * @param context the context - see {@link CellCopyContext}
+     * @since v5.0.1
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
