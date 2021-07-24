@@ -23,13 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellCopyPolicy;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
@@ -149,6 +145,27 @@ public final class TestXSSFRow extends BaseTestXRow {
         cell = destRow.getCell(col++);
         assertNotNull(destRow.getCell(7));
         assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
+
+        workbook.close();
+    }
+
+    @Test
+    void testCopyRowWithHyperlink() throws IOException {
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final Sheet srcSheet = workbook.createSheet("src");
+        final XSSFSheet destSheet = workbook.createSheet("dest");
+        Row srcRow = srcSheet.createRow(0);
+        Cell srcCell = srcRow.createCell(0);
+        Hyperlink srcHyperlink = new XSSFHyperlink(HyperlinkType.URL);
+        srcHyperlink.setAddress("https://poi.apache.org");
+        srcCell.setHyperlink(srcHyperlink);
+
+        final XSSFRow destRow = destSheet.createRow(0);
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+
+        Cell destCell = destRow.getCell(0);
+        assertEquals(srcCell.getHyperlink().getAddress(), destCell.getHyperlink().getAddress(), "cell hyperlink addresses match");
+        assertEquals(srcCell.getHyperlink().getType(), destCell.getHyperlink().getType(), "cell hyperlink types match");
 
         workbook.close();
     }
