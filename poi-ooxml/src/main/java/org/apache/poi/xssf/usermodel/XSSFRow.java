@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -651,7 +650,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
                 final XSSFCell srcCell = null;
-                CellUtil.copyCell(srcCell, destCell, policy);
+                // FIXME: remove type casting when copyCellFrom(Cell, CellCopyPolicy) is added to Cell interface
+                ((XSSFCell)destCell).copyCellFrom(srcCell, policy);
             }
 
             if (policy.isCopyMergedRegions()) {
