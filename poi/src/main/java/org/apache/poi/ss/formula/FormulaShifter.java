@@ -76,9 +76,6 @@ public final class FormulaShifter {
      */
     private FormulaShifter(int externSheetIndex, String sheetName, int firstMovedIndex, int lastMovedIndex, int amountToMove,
             ShiftMode mode, SpreadsheetVersion version) {
-        if (amountToMove == 0) {
-            throw new IllegalArgumentException("amountToMove must not be zero");
-        }
         if (firstMovedIndex > lastMovedIndex) {
             throw new IllegalArgumentException("firstMovedIndex, lastMovedIndex out of order");
         }
