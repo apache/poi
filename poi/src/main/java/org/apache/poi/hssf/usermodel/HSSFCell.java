@@ -929,7 +929,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * <p>Set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
+     * <p>Set the style for the cell.  The style should be an HSSFCellStyle created/retrieved from
      * the HSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
