@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.*;
@@ -324,6 +325,27 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertEquals(destStyleCount, destWorkbook.getNumCellStyles(), "destWorkbook styles");
         srcWorkbook.close();
         destWorkbook.close();
+    }
+
+    @Test
+    void testCopyRowWithHyperlink() throws IOException {
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final Sheet srcSheet = workbook.createSheet("src");
+        final XSSFSheet destSheet = workbook.createSheet("dest");
+        Row srcRow = srcSheet.createRow(0);
+        Cell srcCell = srcRow.createCell(0);
+        Hyperlink srcHyperlink = new XSSFHyperlink(HyperlinkType.URL);
+        srcHyperlink.setAddress("https://poi.apache.org");
+        srcCell.setHyperlink(srcHyperlink);
+
+        final XSSFRow destRow = destSheet.createRow(0);
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+
+        Cell destCell = destRow.getCell(0);
+        assertEquals(srcCell.getHyperlink().getAddress(), destCell.getHyperlink().getAddress(), "cell hyperlink addresses match");
+        assertEquals(srcCell.getHyperlink().getType(), destCell.getHyperlink().getType(), "cell hyperlink types match");
+
+        workbook.close();
     }
 
     @Test

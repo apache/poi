@@ -682,9 +682,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 setHeight((short)-1);
             }
 
-        }
-        else {
-            for (final Cell c : srcRow){
+        } else {
+            for (final Cell c : srcRow) {
                 final XSSFCell destCell = createCell(c.getColumnIndex());
                 CellUtil.copyCell(c, destCell, policy, context);
             }
@@ -695,9 +694,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
 
-            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
-            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
-            rowShifter.updateRowFormulas(this, formulaShifter);
+            if (rowDifference != 0) {
+                final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
+                final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
+                rowShifter.updateRowFormulas(this, formulaShifter);
+            }
 
             // Copy merged regions that are fully contained on the row
             // FIXME: is this something that rowShifter could be doing?
