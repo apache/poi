@@ -26,12 +26,7 @@ import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellCopyPolicy;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -647,10 +642,25 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy) {
+        copyRowFrom(srcRow, policy, null);
+    }
+
+    /**
+     * Copy the cells from srcRow to this row
+     * If this row is not a blank row, this will merge the two rows, overwriting
+     * the cells in this row with the cells in srcRow
+     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy
+     * srcRow may be from a different sheet in the same workbook
+     * @param srcRow the rows to copy from
+     * @param policy the policy to determine what gets copied
+     * @param context the context - see {@link CellCopyContext}
+     */
+    @Beta
+    public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                CellUtil.copyCell(null, destCell, policy);
+                CellUtil.copyCell(null, destCell, policy, context);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -676,7 +686,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         else {
             for (final Cell c : srcRow){
                 final XSSFCell destCell = createCell(c.getColumnIndex());
-                destCell.copyCellFrom(c, policy);
+                CellUtil.copyCell(c, destCell, policy, context);
             }
 
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);

@@ -24,12 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import java.io.IOException;
 
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellCopyPolicy;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
@@ -87,6 +82,8 @@ public final class TestXSSFRow extends BaseTestXRow {
 
         //////////////////
 
+        final int styleCount = workbook.getNumCellStyles();
+
         final XSSFRow destRow = destSheet.createRow(1);
         destRow.copyRowFrom(srcRow, new CellCopyPolicy());
 
@@ -150,6 +147,7 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertNotNull(destRow.getCell(7));
         assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
+        assertEquals(styleCount, workbook.getNumCellStyles(), "no new styles should be added by copyRow");
         workbook.close();
     }
 
@@ -183,8 +181,9 @@ public final class TestXSSFRow extends BaseTestXRow {
 
         //////////////////
 
+        final int destStyleCount = destWorkbook.getNumCellStyles();
         final XSSFRow destRow = destSheet.createRow(1);
-        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy(), new CellCopyContext());
 
         //////////////////
 
@@ -246,6 +245,8 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertNotNull(destRow.getCell(7));
         assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
+        assertEquals(1, srcWorkbook.getNumCellStyles(), "srcWorkbook styles");
+        assertEquals(destStyleCount + 1, destWorkbook.getNumCellStyles(), "destWorkbook styles");
         srcWorkbook.close();
         destWorkbook.close();
     }

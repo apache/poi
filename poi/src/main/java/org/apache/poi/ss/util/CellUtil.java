@@ -188,12 +188,12 @@ public final class CellUtil {
      * @param srcCell The cell to take value, formula and style from
      * @param destCell The cell to copy to
      * @param policy The policy for copying the information, see {@link CellCopyPolicy}
+     * @param context The context for copying, see {@link CellCopyContext}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
      * @throws IllegalStateException if srcCell hyperlink is not an instance of {@link Duplicatable}
      */
     @Beta
-    @Internal
-    public static void copyCell(Cell srcCell, Cell destCell, CellCopyPolicy policy) {
+    public static void copyCell(Cell srcCell, Cell destCell, CellCopyPolicy policy, CellCopyContext context) {
         // Copy cell value (cell type is updated implicitly)
         if (policy.isCopyCellValue()) {
             if (srcCell != null) {
@@ -242,10 +242,13 @@ public final class CellUtil {
             if (destCell.getSheet().getWorkbook() == srcCell.getSheet().getWorkbook()) {
                 destCell.setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
             } else {
-                //TODO will this create too many styles in the dest workbook (many cells in src might have same style)?
                 CellStyle srcStyle = srcCell.getCellStyle();
-                CellStyle destStyle = destCell.getSheet().getWorkbook().createCellStyle();
-                destStyle.cloneStyleFrom(srcStyle);
+                CellStyle destStyle = context == null ? null : context.getMappedStyle(srcStyle);
+                if (destStyle == null) {
+                    destStyle = destCell.getSheet().getWorkbook().createCellStyle();
+                    destStyle.cloneStyleFrom(srcStyle);
+                    if (context != null) context.putMappedStyle(srcStyle, destStyle);
+                }
                 destCell.setCellStyle(destStyle);
             }
         }
