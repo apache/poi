@@ -538,7 +538,7 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * <p>Set the style for the cell.  The style should be an XSSFCellStyle created/retreived from
+     * <p>Set the style for the cell.  The style should be an XSSFCellStyle created/retrieved from
      * the XSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
