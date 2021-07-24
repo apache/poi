@@ -22,7 +22,7 @@ import org.apache.poi.util.Removal;
 public interface CellStyle {
 
     /**
-     * get the index within the Workbook (sequence within the collection of ExtnededFormat objects)
+     * get the index within the Workbook (sequence within the collection of ExtendedFormat objects)
      * @return unique index number of the underlying record this style represents (probably you don't care
      *  unless you're comparing which one is which)
      */
