@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -140,11 +141,11 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertEquals("SUM(src!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
-        assertNotNull(destRow.getCell(6));
+        assertNotNull(cell);
         assertEquals("SUM(dest!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
-        assertNotNull(destRow.getCell(7));
+        assertNotNull(cell);
         assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         assertEquals(styleCount, workbook.getNumCellStyles(), "no new styles should be added by copyRow");
@@ -158,6 +159,7 @@ public final class TestXSSFRow extends BaseTestXRow {
         final Sheet srcSheet = srcWorkbook.createSheet("src");
         final XSSFSheet destSheet = destWorkbook.createSheet("dest");
         srcWorkbook.createSheet("other");
+        destWorkbook.createSheet("other");
 
         final Row srcRow = srcSheet.createRow(0);
         int col = 0;
@@ -238,15 +240,88 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertEquals("SUM(src!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
-        assertNotNull(destRow.getCell(6));
+        assertNotNull(cell);
         assertEquals("SUM(dest!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
-        assertNotNull(destRow.getCell(7));
+        assertNotNull(cell);
         assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         assertEquals(1, srcWorkbook.getNumCellStyles(), "srcWorkbook styles");
         assertEquals(destStyleCount + 1, destWorkbook.getNumCellStyles(), "destWorkbook styles");
+        srcWorkbook.close();
+        destWorkbook.close();
+    }
+
+    @Test
+    void testCopyRowFromDifferentHssfWorkbook() throws IOException {
+        final HSSFWorkbook srcWorkbook = new HSSFWorkbook();
+        final XSSFWorkbook destWorkbook = new XSSFWorkbook();
+        final Sheet srcSheet = srcWorkbook.createSheet("src");
+        final XSSFSheet destSheet = destWorkbook.createSheet("dest");
+        srcWorkbook.createSheet("other");
+        destWorkbook.createSheet("other");
+
+        final Row srcRow = srcSheet.createRow(0);
+        int col = 0;
+        //Test 2D and 3D Ref Ptgs (Pxg for OOXML Workbooks)
+        srcRow.createCell(col++).setCellFormula("B5");
+        srcRow.createCell(col++).setCellFormula("other!B5");
+
+        //Test 2D and 3D Ref Ptgs with absolute row
+        srcRow.createCell(col++).setCellFormula("B$5");
+        srcRow.createCell(col++).setCellFormula("other!B$5");
+
+        //Test 2D and 3D Area Ptgs (Pxg for OOXML Workbooks)
+        srcRow.createCell(col++).setCellFormula("SUM(B5:D$5)");
+        srcRow.createCell(col++).setCellFormula("SUM(other!B5:D$5)");
+
+        //////////////////
+
+        final int destStyleCount = destWorkbook.getNumCellStyles();
+        final XSSFRow destRow = destSheet.createRow(1);
+        CellCopyPolicy policy = new CellCopyPolicy();
+        //hssf to xssf copy does not support cell style copying
+        policy.setCopyCellStyle(false);
+        destRow.copyRowFrom(srcRow, policy, new CellCopyContext());
+
+        //////////////////
+
+        //Test 2D and 3D Ref Ptgs (Pxg for OOXML Workbooks)
+        col = 0;
+        Cell cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("B6", cell.getCellFormula(), "RefPtg");
+
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("other!B6", cell.getCellFormula(), "Ref3DPtg");
+
+        /////////////////////////////////////////////
+
+        //Test 2D and 3D Ref Ptgs with absolute row (Ptg row number shouldn't change)
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("B$5", cell.getCellFormula(), "RefPtg");
+
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("other!B$5", cell.getCellFormula(), "Ref3DPtg");
+
+        //////////////////////////////////////////
+
+        //Test 2D and 3D Area Ptgs (Pxg for OOXML Workbooks)
+        // Note: absolute row changes from last cell to first cell in order
+        // to maintain topLeft:bottomRight order
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("SUM(B$5:D6)", cell.getCellFormula(), "Area2DPtg");
+
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
+
+        assertEquals(destStyleCount, destWorkbook.getNumCellStyles(), "destWorkbook styles");
         srcWorkbook.close();
         destWorkbook.close();
     }
