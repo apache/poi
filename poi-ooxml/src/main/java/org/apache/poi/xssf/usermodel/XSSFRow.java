@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -649,9 +650,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                final XSSFCell srcCell = null;
-                // FIXME: remove type casting when copyCellFrom(Cell, CellCopyPolicy) is added to Cell interface
-                ((XSSFCell)destCell).copyCellFrom(srcCell, policy);
+                CellUtil.copyCell(null, destCell, policy);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -676,9 +675,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
         else {
             for (final Cell c : srcRow){
-                final XSSFCell srcCell = (XSSFCell)c;
-                final XSSFCell destCell = createCell(srcCell.getColumnIndex());
-                destCell.copyCellFrom(srcCell, policy);
+                final XSSFCell destCell = createCell(c.getColumnIndex());
+                destCell.copyCellFrom(c, policy);
             }
 
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);
