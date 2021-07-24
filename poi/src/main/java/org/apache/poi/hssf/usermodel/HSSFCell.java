@@ -1114,7 +1114,12 @@ public class HSSFCell extends CellBase {
             return;
         }
 
-        HSSFHyperlink link = (HSSFHyperlink)hyperlink;
+        HSSFHyperlink link;
+        if (hyperlink instanceof HSSFHyperlink) {
+            link = (HSSFHyperlink)hyperlink;
+        } else {
+            link = new HSSFHyperlink(hyperlink);
+        }
 
         link.setFirstRow(_record.getRow());
         link.setLastRow(_record.getRow());
