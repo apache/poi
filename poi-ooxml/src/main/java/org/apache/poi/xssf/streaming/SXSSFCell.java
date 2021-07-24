@@ -548,7 +548,7 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * <p>Set the style for the cell.  The style should be an CellStyle created/retreived from
+     * <p>Set the style for the cell.  The style should be an CellStyle created/retrieved from
      * the Workbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
