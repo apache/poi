@@ -239,7 +239,15 @@ public final class CellUtil {
 
         // Copy CellStyle
         if (policy.isCopyCellStyle()) {
-            destCell.setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
+            if (destCell.getSheet().getWorkbook() == srcCell.getSheet().getWorkbook()) {
+                destCell.setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
+            } else {
+                //TODO will this create too many styles in the dest workbook (many cells in src might have same style)?
+                CellStyle srcStyle = srcCell.getCellStyle();
+                CellStyle destStyle = destCell.getSheet().getWorkbook().createCellStyle();
+                destStyle.cloneStyleFrom(srcStyle);
+                destCell.setCellStyle(destStyle);
+            }
         }
 
         final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
