@@ -1064,7 +1064,12 @@ public final class XSSFCell extends CellBase {
             return;
         }
 
-        XSSFHyperlink link = (XSSFHyperlink)hyperlink;
+        XSSFHyperlink link;
+        if (hyperlink instanceof XSSFHyperlink) {
+            link = (XSSFHyperlink)hyperlink;
+        } else {
+            link = new XSSFHyperlink(hyperlink);
+        }
 
         // Assign to us
         link.setCellReference( new CellReference(_row.getRowNum(), _cellNum).formatAsString() );
