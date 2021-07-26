@@ -21,21 +21,20 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestCellUtilCopy {
+public class TestSXSSFCellUtilCopy {
 
-    private XSSFCell srcCell, destCell; //used for testCopyCellFrom_CellCopyPolicy
+    private Cell srcCell, destCell; //used for testCopyCellFrom_CellCopyPolicy
 
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_default() {
@@ -111,18 +110,18 @@ public class TestCellUtilCopy {
         assertSame(srcCell.getSheet(), destCell.getSheet(),
                 "unit test assumes srcCell and destCell are on the same sheet");
 
-        final List<XSSFHyperlink> links = srcCell.getSheet().getHyperlinkList();
+        final List<? extends Hyperlink> links = srcCell.getSheet().getHyperlinkList();
         assertEquals(2, links.size(), "number of hyperlinks on sheet");
-        assertEquals(new CellAddress(srcCell).formatAsString(), links.get(0).getCellRef(), "source hyperlink");
-        assertEquals(new CellAddress(destCell).formatAsString(), links.get(1).getCellRef(), "destination hyperlink");
+        assertEquals(new CellAddress(srcCell).formatAsString(), ((XSSFHyperlink)links.get(0)).getCellRef(), "source hyperlink");
+        assertEquals(new CellAddress(destCell).formatAsString(), ((XSSFHyperlink)links.get(1)).getCellRef(), "destination hyperlink");
 
         wb.close();
     }
 
     private void setUp_testCopyCellFrom_CellCopyPolicy() {
         @SuppressWarnings("resource")
-        final XSSFWorkbook wb = new XSSFWorkbook();
-        final XSSFRow row = wb.createSheet("Sheet1").createRow(0);
+        final SXSSFWorkbook wb = new SXSSFWorkbook();
+        final SXSSFRow row = wb.createSheet("Sheet1").createRow(0);
         srcCell = row.createCell(0);
         destCell = row.createCell(1);
 
@@ -136,7 +135,7 @@ public class TestCellUtilCopy {
         destCell.setCellValue(true);
     }
 
-    private void setLinkCellStyle(Workbook wb, XSSFCell srcCell) {
+    private void setLinkCellStyle(Workbook wb, Cell srcCell) {
         CellStyle hlinkStyle = wb.createCellStyle();
         Font hlinkFont = wb.createFont();
         hlinkFont.setUnderline(Font.U_SINGLE);
