@@ -148,13 +148,14 @@ public abstract class TextFunction implements Function {
     /**
      * An implementation of the TRIM function:
      * Removes leading and trailing spaces from value if evaluated operand
-     *  value is string.
+     *  value is string. Since POI 5.0.1, this also trims double spaces so that only 1
+     *  is kept (https://bz.apache.org/bugzilla/show_bug.cgi?id=65230).
      * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
      */
     public static final Function TRIM = new SingleArgTextFunc() {
         @Override
         protected ValueEval evaluate(String arg) {
-            return new StringEval(arg.trim());
+            return new StringEval(arg.trim().replaceAll(" +", " "));
         }
     };
 
