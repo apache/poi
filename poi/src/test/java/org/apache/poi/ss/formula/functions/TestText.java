@@ -101,15 +101,22 @@ final class TestText {
             ValueEval numArg = new NumberEval(321.321);
             ValueEval formatArg = new StringEval("dd:MM:yyyy hh:mm:ss");
             ValueEval[] args = { numArg, formatArg };
-            ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+            ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
             ValueEval testResult = new StringEval("16:11:1900 07:42:14");
             assertEquals(testResult.toString(), result.toString());
 
             // Excel also supports "m before h is month"
             formatArg = new StringEval("dd:mm:yyyy hh:mm:ss");
             args[1] = formatArg;
-            result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+            result = TextFunction.TEXT.evaluate(args, -1, -1);
             testResult = new StringEval("16:11:1900 07:42:14");
+            assertEquals(testResult.toString(), result.toString());
+
+            // Excel also supports ".SSS"
+            formatArg = new StringEval("dd:mm:yyyy hh:mm:ss.SSS");
+            args[1] = formatArg;
+            result = TextFunction.TEXT.evaluate(args, -1, -1);
+            testResult = new StringEval("16:11:1900 07:42:14.014");
             assertEquals(testResult.toString(), result.toString());
 
             // this line is intended to compute how "November" would look like in the current locale
@@ -150,7 +157,7 @@ final class TestText {
         formatArg = new StringEval("yyyy-mm-ddThh:MM:ss.000");
         args[1] = formatArg;
         result = TextFunction.TEXT.evaluate(args, -1, -1);
-        testResult = new StringEval("16:11:1900 07:42:14.400");
+        testResult = new StringEval("1900-11-16T07:42:14.400");
         assertEquals(testResult.toString(), result.toString());
 
     }
