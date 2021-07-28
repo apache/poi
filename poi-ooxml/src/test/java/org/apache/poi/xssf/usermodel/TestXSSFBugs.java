@@ -117,13 +117,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -3542,6 +3536,27 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             assertEquals(HorizontalAlignment.RIGHT, cellRight.getCellStyle().getAlignment());
             assertEquals(HorizontalAlignment.LEFT, cellLeft.getCellStyle().getAlignment());
+        }
+    }
+
+    @Test
+    void test65464() throws IOException {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug65464.xlsx")) {
+            XSSFSheet sheet = wb.getSheet("SheetWithSharedFormula");
+            XSSFCell v15 = sheet.getRow(14).getCell(21);
+            XSSFCell v16 = sheet.getRow(15).getCell(21);
+            assertEquals("U15/R15", v15.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
+            assertEquals("U16/R16", v16.getCellFormula());
+            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            int calcChainSize = wb.getCalculationChain().getCTCalcChain().sizeOfCArray();
+
+            v15.removeFormula();
+            assertEquals(CellType.NUMERIC, v15.getCellType(), "V15 is no longer a function");
+            assertNull(v15.getCTCell().getF(), "V15 xmlbeans function removed");
+            assertEquals("U16/R16", v16.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v16.getCTCell().getF().getT());
+            assertEquals(calcChainSize - 1, wb.getCalculationChain().getCTCalcChain().sizeOfCArray());
         }
     }
 }
