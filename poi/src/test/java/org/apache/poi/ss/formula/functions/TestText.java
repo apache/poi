@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -45,7 +46,7 @@ final class TestText {
     }
 
     @Test
-    void testTextWithDeciamlFormatSecondArg() {
+    void testTextWithDecimalFormatSecondArg() {
         ValueEval numArg = new NumberEval(321321.321);
         ValueEval formatArg = new StringEval("#,###.00000");
         ValueEval[] args = { numArg, formatArg };
@@ -136,4 +137,23 @@ final class TestText {
             LocaleUtil.setUserTimeZone(userTZ);
         }
     }
+
+    @Disabled("see https://bz.apache.org/bugzilla/show_bug.cgi?id=65471")
+    @Test
+    void testTextWithISODateTimeFormatSecondArg() {
+        TimeZone userTZ = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        try {
+            // Test with Java style M=Month
+            ValueEval numArg = new NumberEval(321.321);
+            ValueEval formatArg = new StringEval("yyyy-mm-ddThh:MM:ss");
+            ValueEval[] args = { numArg, formatArg };
+            ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+            ValueEval testResult = new StringEval("1900-11-16T07:42:14");
+            assertEquals(testResult.toString(), result.toString());
+        } finally {
+            LocaleUtil.setUserTimeZone(userTZ);
+        }
+    }
+
 }

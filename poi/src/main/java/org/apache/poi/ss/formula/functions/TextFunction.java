@@ -352,8 +352,8 @@ public abstract class TextFunction implements Function {
             }
 
             try {
-            // Ask DataFormatter to handle the String for us
-               String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
+                // Ask DataFormatter to handle the String for us
+                String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
                 return new StringEval(formattedStr);
             } catch (Exception e) {
                 return ErrorEval.VALUE_INVALID;
