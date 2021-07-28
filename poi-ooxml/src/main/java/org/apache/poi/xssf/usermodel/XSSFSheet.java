@@ -4619,18 +4619,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 DONE:
                 for(int i = cell.getRowIndex(); i <= ref.getLastRow(); i++){
                     XSSFRow row = getRow(i);
-                    if(row != null) for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
-                        XSSFCell nextCell = row.getCell(j);
-                        if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA){
-                            CTCellFormula nextF = nextCell.getCTCell().getF();
-                            nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                            CellRangeAddress nextRef = new CellRangeAddress(
-                                    nextCell.getRowIndex(), ref.getLastRow(),
-                                    nextCell.getColumnIndex(), ref.getLastColumn());
-                            nextF.setRef(nextRef.formatAsString());
+                    if(row != null) {
+                        for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
+                            XSSFCell nextCell = row.getCell(j);
+                            if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
+                                CTCellFormula nextF = nextCell.getCTCell().getF();
+                                nextF.setStringValue(nextCell.getCellFormula(evalWb));
+                                nextF.setT(STCellFormulaType.SHARED); //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
+                                CellRangeAddress nextRef = new CellRangeAddress(
+                                        nextCell.getRowIndex(), ref.getLastRow(),
+                                        nextCell.getColumnIndex(), ref.getLastColumn());
+                                nextF.setRef(nextRef.formatAsString());
 
-                            sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
-                            break DONE;
+                                sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
+                                break DONE;
+                            }
                         }
                     }
                 }
