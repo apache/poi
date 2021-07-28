@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.util.DateParser;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+
+import java.time.DateTimeException;
 
 /**
  * Implementation for the DATEVALUE() Excel function.<p>
@@ -44,6 +44,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
  */
 public class DateValue extends Fixed1ArgFunction {
 
+    private static final Logger LOG = LogManager.getLogger(DateValue.class);
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval dateTextArg) {
         try {
@@ -55,6 +57,9 @@ public class DateValue extends Fixed1ArgFunction {
             }
 
             return new NumberEval(DateUtil.getExcelDate(DateParser.parseLocalDate(dateText)));
+        } catch (DateTimeException dte) {
+            LOG.atInfo().log("Failed to parse date", dte);
+            return ErrorEval.VALUE_INVALID;
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

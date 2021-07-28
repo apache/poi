@@ -25,11 +25,7 @@ import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,6 +82,16 @@ final class TestDateValue {
         } finally {
             LocaleUtil.setUserLocale(null);
         }
+    }
+
+    @Test
+    void testInvalidDateValue() {
+        assertEquals(ErrorEval.VALUE_INVALID, invokeDateValue(new StringEval("not-date")),
+                "not-date evals to invalid");
+        assertEquals(ErrorEval.VALUE_INVALID, invokeDateValue(BoolEval.FALSE),
+                "false evals to invalid");
+        assertEquals(ErrorEval.VALUE_INVALID, invokeDateValue(new NumberEval(Math.E)),
+                "Math.E evals to invalid");
     }
 
     private ValueEval invokeDateValue(ValueEval text) {
