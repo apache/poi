@@ -123,14 +123,14 @@ final class TestText {
             // Again with Java style
             formatArg = new StringEval("MMMM dd, yyyy");
             args[1] = formatArg;
-            result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+            result = TextFunction.TEXT.evaluate(args, -1, -1);
             testResult = new StringEval(november + " 16, 1900");
             assertEquals(testResult.toString(), result.toString());
 
             // And Excel style
             formatArg = new StringEval("mmmm dd, yyyy");
             args[1] = formatArg;
-            result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+            result = TextFunction.TEXT.evaluate(args, -1, -1);
             testResult = new StringEval(november + " 16, 1900");
             assertEquals(testResult.toString(), result.toString());
         } finally {
@@ -138,22 +138,22 @@ final class TestText {
         }
     }
 
-    @Disabled("see https://bz.apache.org/bugzilla/show_bug.cgi?id=65471")
     @Test
     void testTextWithISODateTimeFormatSecondArg() {
-        TimeZone userTZ = LocaleUtil.getUserTimeZone();
-        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
-        try {
-            // Test with Java style M=Month
-            ValueEval numArg = new NumberEval(321.321);
-            ValueEval formatArg = new StringEval("yyyy-mm-ddThh:MM:ss");
-            ValueEval[] args = { numArg, formatArg };
-            ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
-            ValueEval testResult = new StringEval("1900-11-16T07:42:14");
-            assertEquals(testResult.toString(), result.toString());
-        } finally {
-            LocaleUtil.setUserTimeZone(userTZ);
-        }
+        ValueEval numArg = new NumberEval(321.321);
+        ValueEval formatArg = new StringEval("yyyy-mm-ddThh:MM:ss");
+        ValueEval[] args = { numArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
+        ValueEval testResult = new StringEval("1900-11-16T07:42:14");
+        assertEquals(testResult.toString(), result.toString());
+
+        // test milliseconds
+        formatArg = new StringEval("yyyy-mm-ddThh:MM:ss.000");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, -1);
+        testResult = new StringEval("16:11:1900 07:42:14.400");
+        assertEquals(testResult.toString(), result.toString());
+
     }
 
 }
