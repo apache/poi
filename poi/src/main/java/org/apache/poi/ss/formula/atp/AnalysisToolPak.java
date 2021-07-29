@@ -80,7 +80,7 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     private Map<String, FreeRefFunction> createFunctionsMap() {
-        Map<String, FreeRefFunction> m = new HashMap<>(108);
+        Map<String, FreeRefFunction> m = new HashMap<>(127);
 
         r(m, "ACCRINT", null);
         r(m, "ACCRINTM", null);
@@ -136,6 +136,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "HEX2DEC", Hex2Dec.instance);
         r(m, "HEX2OCT", null);
         r(m, "IFERROR", IfError.instance);
+        r(m, "IFNA", IfNa.instance);
         r(m, "IFS", Ifs.instance);
         r(m, "IMABS", null);
         r(m, "IMAGINARY", Imaginary.instance);
@@ -260,7 +261,7 @@ public final class AnalysisToolPak implements UDFFinder {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
             if(metaData != null) {
                 throw new IllegalArgumentException(name + " is a built-in Excel function. " +
-                        "Use FunctoinEval.registerFunction(String name, Function func) instead.");
+                        "Use FunctionEval.registerFunction(String name, Function func) instead.");
             }
 
             throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");

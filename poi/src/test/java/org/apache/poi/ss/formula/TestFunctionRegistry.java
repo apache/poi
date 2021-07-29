@@ -163,7 +163,7 @@ class TestFunctionRegistry {
             () -> AnalysisToolPak.registerFunction("SUM", TestFunctionRegistry::atpFunc)
         );
         assertEquals("SUM is a built-in Excel function. " +
-             "Use FunctoinEval.registerFunction(String name, Function func) instead.",
+             "Use FunctionEval.registerFunction(String name, Function func) instead.",
              ex.getMessage());
     }
 }
