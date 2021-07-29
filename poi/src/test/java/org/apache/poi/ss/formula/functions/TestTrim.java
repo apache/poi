@@ -52,13 +52,19 @@ final class TestTrim {
 
     @Test
     void testBasic() {
-
         confirmTrim(new StringEval(" hi "), "hi");
         confirmTrim(new StringEval("hi "), "hi");
         confirmTrim(new StringEval("  hi"), "hi");
         confirmTrim(new StringEval(" hi there  "), "hi there");
         confirmTrim(new StringEval(""), "");
         confirmTrim(new StringEval("   "), "");
+    }
+
+    @Test
+    void testExtraSpaces() {
+        //https://bz.apache.org/bugzilla/show_bug.cgi?id=65230
+        confirmTrim(new StringEval(" hi  there  "), "hi there");
+        confirmTrim(new StringEval("hi   there"), "hi there");
     }
 
     /**

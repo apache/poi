@@ -136,6 +136,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "HEX2DEC", Hex2Dec.instance);
         r(m, "HEX2OCT", null);
         r(m, "IFERROR", IfError.instance);
+        r(m, "IFS", Ifs.instance);
         r(m, "IMABS", null);
         r(m, "IMAGINARY", Imaginary.instance);
         r(m, "IMARGUMENT", null);
@@ -181,9 +182,11 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "SINGLE", Single.instance);
         r(m, "SQRTPI", null);
         r(m, "SUMIFS", Sumifs.instance);
+        r(m, "SWITCH", Switch.instance);
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
+        r(m, "TEXTJOIN", TextJoinFunction.instance);
         r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
         r(m, "XIRR", null);
