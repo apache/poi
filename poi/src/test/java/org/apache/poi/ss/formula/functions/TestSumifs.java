@@ -19,6 +19,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,7 +34,10 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * Test cases for SUMIFS()
@@ -357,5 +361,47 @@ final class TestSumifs {
         ValueEval result = invokeSumifs(args);
         assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
         assertEquals(ErrorEval.NAME_INVALID, result);
+    }
+
+    @Test
+    void testMicrosoftExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "SUMIFS(A2:A9, B2:B9, \"=A*\", C2:C9, \"Tom\")", 20);
+            assertDouble(fe, cell, "SUMIFS(A2:A9, B2:B9, \"<>Bananas\", C2:C9, \"Tom\")", 30);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1WithNA() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1WithNA()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "SUMIFS(A2:A10, B2:B10, \"<>Bananas\", C2:C10, \"Tom\")", FormulaError.NA);
+        }
+    }
+
+    //see https://support.microsoft.com/en-us/office/sumifs-function-c9e748f5-7ea7-455d-9406-611cebce642b
+    private HSSFWorkbook initWorkbook1() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Quantity Sold", "Product", "Salesperson");
+        addRow(sheet, 1, 5, "Apples", "Tom");
+        addRow(sheet, 2, 4, "Apples", "Sarah");
+        addRow(sheet, 3, 15, "Artichokes", "Tom");
+        addRow(sheet, 4, 3, "Artichokes", "Sarah");
+        addRow(sheet, 5, 22, "Bananas", "Tom");
+        addRow(sheet, 6, 12, "Bananas", "Sarah");
+        addRow(sheet, 7, 10, "Carrots", "Tom");
+        addRow(sheet, 8, 33, "Carrots", "Sarah");
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook1WithNA() {
+        HSSFWorkbook wb = initWorkbook1();
+        HSSFSheet sheet = wb.getSheetAt(0);
+        addRow(sheet, 9, FormulaError.NA, "Pears", "Tom");
+        return wb;
     }
 }

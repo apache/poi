@@ -17,15 +17,14 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Utils {
     public static void addRow(Sheet sheet, int rownum, Object... values) {
@@ -56,4 +55,19 @@ public class Utils {
         }
     }
 
+    public static void assertDouble(FormulaEvaluator fe, Cell cell, String formulaText, double expectedResult) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(result.getCellType(), CellType.NUMERIC);
+        assertEquals(expectedResult, result.getNumberValue());
+    }
+
+    public static void assertError(FormulaEvaluator fe, Cell cell, String formulaText, FormulaError expectedError) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(result.getCellType(), CellType.ERROR);
+        assertEquals(expectedError.getCode(), result.getErrorValue());
+    }
 }

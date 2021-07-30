@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,10 +111,10 @@ final class TestSumif {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmDouble(fe, cell, "SUMIF(A2:A5,\">160000\",B2:B5)", 63000);
-            confirmDouble(fe, cell, "SUMIF(A2:A5,\">160000\")", 900000);
-            confirmDouble(fe, cell, "SUMIF(A2:A5,300000,B2:B5)", 21000);
-            confirmDouble(fe, cell, "SUMIF(A2:A5,\">\" & C2,B2:B5)", 49000);
+            assertDouble(fe, cell, "SUMIF(A2:A5,\">160000\",B2:B5)", 63000);
+            assertDouble(fe, cell, "SUMIF(A2:A5,\">160000\")", 900000);
+            assertDouble(fe, cell, "SUMIF(A2:A5,300000,B2:B5)", 21000);
+            assertDouble(fe, cell, "SUMIF(A2:A5,\">\" & C2,B2:B5)", 49000);
         }
     }
 
@@ -123,7 +123,7 @@ final class TestSumif {
         try (HSSFWorkbook wb = initWorkbook1WithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B6)", FormulaError.NA);
+            assertError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B6)", FormulaError.NA);
         }
     }
 
@@ -132,7 +132,7 @@ final class TestSumif {
         try (HSSFWorkbook wb = initWorkbook1WithBooleanAndString()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmDouble(fe, cell, "SUMIF(A2:A7,\">160000\",B2:B7)", 63000);
+            assertDouble(fe, cell, "SUMIF(A2:A7,\">160000\",B2:B7)", 63000);
         }
     }
 
@@ -141,10 +141,10 @@ final class TestSumif {
         try (HSSFWorkbook wb = initWorkbook2()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmDouble(fe, cell, "SUMIF(A2:A7,\"Fruits\",C2:C7)", 2000);
-            confirmDouble(fe, cell, "SUMIF(A2:A7,\"Vegetables\",C2:C7)", 12000);
-            confirmDouble(fe, cell, "SUMIF(B2:B7,\"*es\",C2:C7)", 4300);
-            confirmDouble(fe, cell, "SUMIF(A2:A7,\"\",C2:C7)", 400);
+            assertDouble(fe, cell, "SUMIF(A2:A7,\"Fruits\",C2:C7)", 2000);
+            assertDouble(fe, cell, "SUMIF(A2:A7,\"Vegetables\",C2:C7)", 12000);
+            assertDouble(fe, cell, "SUMIF(B2:B7,\"*es\",C2:C7)", 4300);
+            assertDouble(fe, cell, "SUMIF(A2:A7,\"\",C2:C7)", 400);
         }
     }
 
@@ -200,21 +200,5 @@ final class TestSumif {
         assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
         NumericValueEval nve = (NumericValueEval)actualEval;
         assertEquals(expected, nve.getNumberValue(), 0);
-    }
-
-    private static void confirmDouble(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, double expectedResult) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
-        assertEquals(expectedResult, result.getNumberValue());
-    }
-
-    private static void confirmError(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, FormulaError expectedError) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.ERROR);
-        assertEquals(expectedError.getCode(), result.getErrorValue());
     }
 }
