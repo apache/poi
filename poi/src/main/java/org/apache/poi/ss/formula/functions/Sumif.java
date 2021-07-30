@@ -102,8 +102,11 @@ public final class Sumif extends Var2or3ArgFunction {
             ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
             if (addend instanceof NumberEval) {
                 return ((NumberEval) addend).getNumberValue();
+            } else if (addend instanceof ErrorEval) {
+                throw new EvaluationException((ErrorEval)addend);
             } else {
-                throw new EvaluationException(ErrorEval.NA);
+                // everything else (including string and boolean values) counts as zero
+                return 0.0;
             }
         }
     }
