@@ -110,7 +110,7 @@ final class TestSumif {
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmDouble(fe, cell, "SUMIF(A2:A5,\">160000\",B2:B5)", 63000);
             confirmDouble(fe, cell, "SUMIF(A2:A5,\">160000\")", 900000);
             confirmDouble(fe, cell, "SUMIF(A2:A5,300000,B2:B5)", 21000);
@@ -123,7 +123,7 @@ final class TestSumif {
     void testMicrosoftExample1WithNA() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1WithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B6)", FormulaError.NA);
         }
     }
@@ -132,10 +132,9 @@ final class TestSumif {
     void testMicrosoftExample2() throws IOException {
         try (HSSFWorkbook wb = initWorkbook2()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmDouble(fe, cell, "SUMIF(A2:A7,\"Fruits\",C2:C7)", 2000);
-            //next test is broken and needs investigation
-            //confirmDouble(fe, cell, "SUMIF(A2:A7,\"Vegetables\",C2:C7)", 12000);
+            confirmDouble(fe, cell, "SUMIF(A2:A7,\"Vegetables\",C2:C7)", 12000);
             confirmDouble(fe, cell, "SUMIF(B2:B7,\"*es\",C2:C7)", 4300);
             confirmDouble(fe, cell, "SUMIF(A2:A7,\"\",C2:C7)", 400);
         }
