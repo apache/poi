@@ -30,7 +30,6 @@ import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.*;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -118,7 +117,6 @@ final class TestSumif {
         }
     }
 
-    @Disabled("https://bz.apache.org/bugzilla/show_bug.cgi?id=65475")
     @Test
     void testMicrosoftExample1WithNA() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1WithNA()) {

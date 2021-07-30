@@ -66,45 +66,46 @@ public final class Sumif extends Var2or3ArgFunction {
         return eval(srcRowIndex, srcColumnIndex, arg1, aeRange, aeSum);
     }
 
-    private static ValueEval eval(int srcRowIndex, int srcColumnIndex, ValueEval arg1, AreaEval aeRange,
-            AreaEval aeSum) {
-        // TODO - junit to prove last arg must be srcColumnIndex and not srcRowIndex
+    private static ValueEval eval(int srcRowIndex, int srcColumnIndex, ValueEval arg1, AreaEval aeRange, AreaEval aeSum) {
         I_MatchPredicate mp = Countif.createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
-
-        // handle empty cells
-        if(mp == null) {
+        if (mp == null) {
             return NumberEval.ZERO;
-        }
+        } else {
+            try {
+                double result = sumMatchingCells(aeRange, mp, aeSum);
+                return new NumberEval(result);
+            } catch (EvaluationException var) {
+                return var.getErrorEval();
+            }
 
-        double result = sumMatchingCells(aeRange, mp, aeSum);
-        return new NumberEval(result);
+        }
     }
 
-    private static double sumMatchingCells(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum) {
-        int height=aeRange.getHeight();
-        int width= aeRange.getWidth();
+    private static double sumMatchingCells(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum) throws EvaluationException {
+        int height = aeRange.getHeight();
+        int width = aeRange.getWidth();
+        double result = 0.0D;
 
-        double result = 0.0;
-        for (int r=0; r<height; r++) {
-            for (int c=0; c<width; c++) {
+        for(int r = 0; r < height; ++r) {
+            for(int c = 0; c < width; ++c) {
                 result += accumulate(aeRange, mp, aeSum, r, c);
             }
         }
+
         return result;
     }
 
-    private static double accumulate(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum, int relRowIndex,
-            int relColIndex) {
-
+    private static double accumulate(AreaEval aeRange, I_MatchPredicate mp, AreaEval aeSum, int relRowIndex, int relColIndex) throws EvaluationException {
         if (!mp.matches(aeRange.getRelativeValue(relRowIndex, relColIndex))) {
-            return 0.0;
+            return 0.0D;
+        } else {
+            ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
+            if (addend instanceof NumberEval) {
+                return ((NumberEval) addend).getNumberValue();
+            } else {
+                throw new EvaluationException(ErrorEval.NA);
+            }
         }
-        ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
-        if (addend instanceof NumberEval) {
-            return ((NumberEval)addend).getNumberValue();
-        }
-        // everything else (including string and boolean values) counts as zero
-        return 0.0;
     }
 
     /**
