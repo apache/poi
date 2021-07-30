@@ -29,10 +29,8 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -120,6 +118,16 @@ final class TestSumif {
         }
     }
 
+    @Disabled("https://bz.apache.org/bugzilla/show_bug.cgi?id=65475")
+    @Test
+    void testMicrosoftExample1WithNA() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1WithNA()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            confirmError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B5)", FormulaError.NA);
+        }
+    }
+
     @Test
     void testMicrosoftExample2() throws IOException {
         try (HSSFWorkbook wb = initWorkbook2()) {
@@ -145,6 +153,13 @@ final class TestSumif {
         return wb;
     }
 
+    private HSSFWorkbook initWorkbook1WithNA() {
+        HSSFWorkbook wb = initWorkbook1();
+        HSSFSheet sheet = wb.getSheetAt(0);
+        addRow(sheet, 5, 500000, "#N/A");
+        return wb;
+    }
+
     private HSSFWorkbook initWorkbook2() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -166,6 +181,8 @@ final class TestSumif {
                 cell.setCellValue((Integer)values[i]);
             } else if (values[i] == null) {
                 cell.setBlank();
+            } else if (values[i] == "#N/A") {
+                cell.setCellErrorValue(FormulaError.NA.getCode());
             } else {
                 cell.setCellValue(values[i].toString());
             }
@@ -192,5 +209,13 @@ final class TestSumif {
         CellValue result = fe.evaluate(cell);
         assertEquals(result.getCellType(), CellType.NUMERIC);
         assertEquals(expectedResult, result.getNumberValue());
+    }
+
+    private static void confirmError(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, FormulaError expectedError) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(result.getCellType(), CellType.ERROR);
+        assertEquals(expectedError.getCode(), result.getErrorValue());
     }
 }
