@@ -382,6 +382,15 @@ final class TestSumifs {
         }
     }
 
+    @Test
+    void testMicrosoftExample1WithBooleanAndString() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "SUMIFS(A2:A11, B2:B11, \"<>Bananas\", C2:C11, \"Tom\")", 30);
+        }
+    }
+
     //see https://support.microsoft.com/en-us/office/sumifs-function-c9e748f5-7ea7-455d-9406-611cebce642b
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -402,6 +411,14 @@ final class TestSumifs {
         HSSFWorkbook wb = initWorkbook1();
         HSSFSheet sheet = wb.getSheetAt(0);
         addRow(sheet, 9, FormulaError.NA, "Pears", "Tom");
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook1WithBooleanAnString() {
+        HSSFWorkbook wb = initWorkbook1();
+        HSSFSheet sheet = wb.getSheetAt(0);
+        addRow(sheet, 9, true, "Pears", "Tom");
+        addRow(sheet, 10, "abc", "Kumquats", "Tom");
         return wb;
     }
 }
