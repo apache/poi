@@ -124,7 +124,7 @@ final class TestSumif {
         try (HSSFWorkbook wb = initWorkbook1WithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
-            confirmError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B5)", FormulaError.NA);
+            confirmError(fe, cell, "SUMIF(A2:A6,\">160000\",B2:B6)", FormulaError.NA);
         }
     }
 
