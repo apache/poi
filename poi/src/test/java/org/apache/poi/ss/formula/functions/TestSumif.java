@@ -128,6 +128,15 @@ final class TestSumif {
     }
 
     @Test
+    void testMicrosoftExample1WithBooleanAndString() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1WithBooleanAndString()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            confirmDouble(fe, cell, "SUMIF(A2:A7,\">160000\",B2:B7)", 63000);
+        }
+    }
+
+    @Test
     void testMicrosoftExample2() throws IOException {
         try (HSSFWorkbook wb = initWorkbook2()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -155,6 +164,14 @@ final class TestSumif {
         HSSFWorkbook wb = initWorkbook1();
         HSSFSheet sheet = wb.getSheetAt(0);
         addRow(sheet, 5, 500000, FormulaError.NA);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook1WithBooleanAndString() {
+        HSSFWorkbook wb = initWorkbook1();
+        HSSFSheet sheet = wb.getSheetAt(0);
+        addRow(sheet, 5, 500000, true);
+        addRow(sheet, 6, 600000, "abc");
         return wb;
     }
 

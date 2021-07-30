@@ -38,7 +38,7 @@ final class TestSum {
 
     @Test
     void testSum() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1()) {
+        try (HSSFWorkbook wb = initWorkbookWithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmDouble(fe, cell, "SUM(B2:B5)", 70000);
@@ -46,15 +46,24 @@ final class TestSum {
     }
 
     @Test
+    void testSumWithBooleanAndString() throws IOException {
+        try (HSSFWorkbook wb = initWorkbookWithBooleanAndString()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            confirmDouble(fe, cell, "SUM(B2:B7)", 70000);
+        }
+    }
+
+    @Test
     void testSumWithNA() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1()) {
+        try (HSSFWorkbook wb = initWorkbookWithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmError(fe, cell, "SUM(B2:B6)", FormulaError.NA);
         }
     }
 
-    private HSSFWorkbook initWorkbook1() {
+    private HSSFWorkbook initWorkbookWithNA() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, "Property Value", "Commission", "Data");
@@ -63,6 +72,19 @@ final class TestSum {
         addRow(sheet, 3, 300000, 21000);
         addRow(sheet, 4, 400000, 28000);
         addRow(sheet, 5, 500000, FormulaError.NA);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbookWithBooleanAndString() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Property Value", "Commission", "Data");
+        addRow(sheet, 1, 100000, 7000, 250000);
+        addRow(sheet, 2, 200000, 14000);
+        addRow(sheet, 3, 300000, 21000);
+        addRow(sheet, 4, 400000, 28000);
+        addRow(sheet, 5, 500000, true);
+        addRow(sheet, 6, 600000, "abc");
         return wb;
     }
 
