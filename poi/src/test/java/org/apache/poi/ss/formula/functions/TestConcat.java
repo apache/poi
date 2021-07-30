@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.apache.poi.ss.util.Utils.addRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -51,11 +52,25 @@ final class TestConcat {
     }
 
     @Test
-    void testConcatWithCellRefs() throws IOException {
+    void testConcatWithCellRanges() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(0);
             confirmResult(fe, cell, "CONCAT(B2:C8)", "a1b1a2b2a4b4a5b5a6b6a7b7");
+        }
+    }
+
+    @Test
+    void testConcatWithCellRefs() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            confirmResult(fe, cell, "CONCAT(\"Stream population for \", A2,\" \", A3, \" is \", A4, \"/mile.\")",
+                    "Stream population for brook trout species is 32/mile.");
+            confirmResult(fe, cell, "CONCAT(B2,\" \", C2)", "Andreas Hauser");
+            confirmResult(fe, cell, "CONCAT(C2, \", \", B2)", "Hauser, Andreas");
+            confirmResult(fe, cell, "CONCAT(B3,\" & \", C3)", "Fourth & Pine");
+            confirmResult(fe, cell, "B3 & \" & \" & C3", "Fourth & Pine");
         }
     }
 
@@ -71,11 +86,14 @@ final class TestConcat {
         return wb;
     }
 
-    private void addRow(HSSFSheet sheet, int rownum, String... values) {
-        HSSFRow row = sheet.createRow(rownum);
-        for (int i = 0; i < values.length; i++) {
-            row.createCell(i).setCellValue(values[i]);
-        }
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Data", "First Name", "Last name");
+        addRow(sheet, 1, "brook trout", "Andreas", "Hauser");
+        addRow(sheet, 2, "species", "Fourth", "Pine");
+        addRow(sheet, 3, "32");
+        return wb;
     }
 
     private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, String expectedResult) {

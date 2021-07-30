@@ -74,6 +74,7 @@ final class TestDateValue {
 
             // // EXCEL
             confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
+            confirmDateValue(new StringEval("8/22/2011 12:00"), 40777); // Serial number of a date entered as text.
             confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
             confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
 
