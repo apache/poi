@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.addRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -153,7 +154,7 @@ final class TestSumif {
     private HSSFWorkbook initWorkbook1WithNA() {
         HSSFWorkbook wb = initWorkbook1();
         HSSFSheet sheet = wb.getSheetAt(0);
-        addRow(sheet, 5, 500000, "#N/A");
+        addRow(sheet, 5, 500000, FormulaError.NA);
         return wb;
     }
 
@@ -168,22 +169,6 @@ final class TestSumif {
         addRow(sheet, 5, "Vegetables", "Carrots", 4200);
         addRow(sheet, 6, "Fruits", "Apples", 1200);
         return wb;
-    }
-
-    private void addRow(HSSFSheet sheet, int rownum, Object... values) {
-        HSSFRow row = sheet.createRow(rownum);
-        for (int i = 0; i < values.length; i++) {
-            Cell cell = row.createCell(i);
-            if (values[i] instanceof Integer) {
-                cell.setCellValue((Integer)values[i]);
-            } else if (values[i] == null) {
-                cell.setBlank();
-            } else if (values[i] == "#N/A") {
-                cell.setCellErrorValue(FormulaError.NA.getCode());
-            } else {
-                cell.setCellValue(values[i].toString());
-            }
-        }
     }
 
     private static void confirm(double expectedResult, ValueEval...args) {

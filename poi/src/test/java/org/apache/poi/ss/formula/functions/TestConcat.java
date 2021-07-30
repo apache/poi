@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.apache.poi.ss.util.Utils.addRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -93,13 +94,6 @@ final class TestConcat {
         addRow(sheet, 2, "species", "Fourth", "Pine");
         addRow(sheet, 3, "32");
         return wb;
-    }
-
-    private void addRow(HSSFSheet sheet, int rownum, String... values) {
-        HSSFRow row = sheet.createRow(rownum);
-        for (int i = 0; i < values.length; i++) {
-            row.createCell(i).setCellValue(values[i]);
-        }
     }
 
     private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, String expectedResult) {
