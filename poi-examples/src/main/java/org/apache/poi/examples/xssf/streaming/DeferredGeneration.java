@@ -18,6 +18,8 @@
 package org.apache.poi.examples.xssf.streaming;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.DeferredSXSSFSheet;
 import org.apache.poi.xssf.streaming.DeferredSXSSFWorkbook;
@@ -36,10 +38,15 @@ public class DeferredGeneration {
         try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
             DeferredSXSSFSheet sheet1 = wb.createSheet("new sheet");
 
+            // cell styles should be created outside the row generator function
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+
             sheet1.setRowGenerator((ssxSheet) -> {
                 for (int i = 0; i < 10; i++) {
                     Row row = ssxSheet.createRow(i);
                     Cell cell = row.createCell(1);
+                    cell.setCellStyle(cellStyle);
                     cell.setCellValue("value " + i);
                 }
             });
