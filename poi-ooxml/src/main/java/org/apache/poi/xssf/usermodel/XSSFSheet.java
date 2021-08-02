@@ -4625,7 +4625,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                             if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
                                 CTCellFormula nextF = nextCell.getCTCell().getF();
                                 nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                nextF.setT(STCellFormulaType.SHARED); //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
+                                //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
+                                nextF.setT(STCellFormulaType.SHARED);
+                                if (!nextF.isSetSi()) {
+                                    nextF.setSi(f.getSi());
+                                }
                                 CellRangeAddress nextRef = new CellRangeAddress(
                                         nextCell.getRowIndex(), ref.getLastRow(),
                                         nextCell.getColumnIndex(), ref.getLastColumn());
