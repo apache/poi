@@ -330,7 +330,7 @@ under the License.
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
-    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.0" usage="ooxml"/>
+    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.1" usage="ooxml"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.21" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
@@ -1902,7 +1902,7 @@ under the License.
             </filterchain>
         </copy>
 
-        <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true">
+        <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true" failonerror="false">
             <filterchain>
                 <sortfilter/>
                 <prefixlines prefix="org/apache/poi/schemas/ooxml/system/ooxml/"/>
