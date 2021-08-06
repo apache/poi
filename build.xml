@@ -1902,13 +1902,15 @@ under the License.
             </filterchain>
         </copy>
 
-        <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true" failonerror="false">
+        <!-- fails with xmlbeans 5.0.1
+        <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true">
             <filterchain>
                 <sortfilter/>
                 <prefixlines prefix="org/apache/poi/schemas/ooxml/system/ooxml/"/>
                 <suffixlines suffix=".xsb"/>
             </filterchain>
         </copy>
+        -->
 
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
