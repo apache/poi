@@ -181,7 +181,7 @@ public final class FunctionEval {
         retval[130] = new T();
         // 131: N
         retval[140] = new DateValue();
-        // 141: TIMEVALUE
+        retval[141] = new TimeValue();
         // 142: SLN
         // 143: SYD
         // 144: DDB
