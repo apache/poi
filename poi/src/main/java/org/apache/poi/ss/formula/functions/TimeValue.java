@@ -25,7 +25,6 @@ import org.apache.poi.ss.util.DateParser;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Implementation for the TIMEVALUE() Excel function.<p>
@@ -59,10 +58,12 @@ public class TimeValue extends Fixed1ArgFunction {
             }
 
             try {
-                return parseTime(dateTimeText);
+                return parseTimeFromDateTime(dateTimeText);
             } catch (Exception e) {
                 try {
-                    return parseTime("1/01/2000 " + dateTimeText);
+                    //this could be a time (with no date part) - prepend a dummy date because
+                    //parseTimeFromDateTime needs it
+                    return parseTimeFromDateTime("1/01/2000 " + dateTimeText);
                 } catch (Exception e2) {
                     LocalDate ld = DateParser.parseLocalDate(dateTimeText);
                     //return 0 as this is a pure date with no time element
@@ -77,7 +78,7 @@ public class TimeValue extends Fixed1ArgFunction {
         }
     }
 
-    private NumberEval parseTime(String dateTimeText) throws EvaluationException {
+    private NumberEval parseTimeFromDateTime(String dateTimeText) throws EvaluationException {
         double dateTimeValue = DateUtil.parseDateTime(dateTimeText);
         return new NumberEval(dateTimeValue - DateUtil.getExcelDate(DateParser.parseLocalDate(dateTimeText)));
     }
