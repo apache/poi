@@ -201,6 +201,8 @@ public class TestTextJoinFunction {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             confirmResult(fe, cell, "TEXTJOIN(A8:D8, TRUE, A2:D7)",
                     "Tulsa,OK,74133,US;Seattle,WA,98109,US;Iselin,NJ,08830,US;Fort Lauderdale,FL,33309,US;Tempe,AZ,85285,US;end");
+            confirmResult(fe, cell, "TEXTJOIN(, TRUE, A2:D7)",
+                    "TulsaOK74133USSeattleWA98109USIselinNJ08830USFort LauderdaleFL33309USTempeAZ85285USend");
         }
     }
 
