@@ -133,14 +133,18 @@ public final class PercentRank implements Function {
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }
-            NumberEval below = (NumberEval)belowRank;
-            NumberEval above = (NumberEval)aboveRank;
-            double diff = closestMatchAbove - closestMatchBelow;
-            double pos = x - closestMatchBelow;
-            double rankDiff = above.getNumberValue() - below.getNumberValue();
-            BigDecimal result = new BigDecimal(below.getNumberValue() + (rankDiff * (pos / diff)));
-            return new NumberEval(round(result, significance, RoundingMode.HALF_UP));
+            return interpolate(x, closestMatchBelow, closestMatchAbove, (NumberEval)belowRank, (NumberEval)aboveRank, significance);
         }
+    }
+
+    @Internal
+    public static NumberEval interpolate(double x, double closestMatchBelow, double closestMatchAbove,
+                                         NumberEval belowRank, NumberEval aboveRank, int significance) {
+        double diff = closestMatchAbove - closestMatchBelow;
+        double pos = x - closestMatchBelow;
+        double rankDiff = aboveRank.getNumberValue() - belowRank.getNumberValue();
+        BigDecimal result = new BigDecimal(belowRank.getNumberValue() + (rankDiff * (pos / diff)));
+        return new NumberEval(round(result, significance, RoundingMode.HALF_UP));
     }
 
     @Internal

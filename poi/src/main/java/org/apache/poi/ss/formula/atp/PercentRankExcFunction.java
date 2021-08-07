@@ -25,7 +25,6 @@ import org.apache.poi.ss.formula.functions.PercentRank;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -132,12 +131,8 @@ final class PercentRankExcFunction implements FreeRefFunction {
         }
         if (!recurse || closestMatchBelow == x || closestMatchAbove == x) {
             int lessThanCount = 0;
-            int greaterThanCount = 0;
-            int matchesCount = 0;
             for (Double d : numbers) {
                 if (d < x) lessThanCount++;
-                else if (d > x) greaterThanCount++;
-                else matchesCount++;
             }
             BigDecimal result = new BigDecimal((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
             return new NumberEval(PercentRank.round(result, significance, RoundingMode.DOWN));
@@ -150,13 +145,8 @@ final class PercentRankExcFunction implements FreeRefFunction {
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }
-            NumberEval below = (NumberEval)belowRank;
-            NumberEval above = (NumberEval)aboveRank;
-            double diff = closestMatchAbove - closestMatchBelow;
-            double pos = x - closestMatchBelow;
-            double rankDiff = above.getNumberValue() - below.getNumberValue();
-            BigDecimal result = new BigDecimal(below.getNumberValue() + (rankDiff * (pos / diff)));
-            return new NumberEval(PercentRank.round(result, significance, RoundingMode.HALF_UP));
+            return PercentRank.interpolate(x, closestMatchBelow, closestMatchAbove,
+                    (NumberEval)belowRank, (NumberEval)aboveRank, significance);
         }
     }
 }
