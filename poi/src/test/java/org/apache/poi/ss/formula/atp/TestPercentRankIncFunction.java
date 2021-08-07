@@ -48,6 +48,8 @@ public class TestPercentRankIncFunction {
             assertDouble(fe, cell, "PERCENTRANK.INC(A2:A11,8,2)", 0.66);
             assertDouble(fe, cell, "PERCENTRANK.INC(A2:A11,8,4)", 0.6666);
             assertDouble(fe, cell, "PERCENTRANK.INC(A2:A11,5)", 0.583);
+            assertDouble(fe, cell, "PERCENTRANK(A2:A11,1)", 0);
+            assertDouble(fe, cell, "PERCENTRANK(A2:A11,13)", 1);
         }
     }
 
