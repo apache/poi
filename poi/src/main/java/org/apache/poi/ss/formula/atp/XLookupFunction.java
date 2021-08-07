@@ -58,7 +58,11 @@ final class XLookupFunction implements FreeRefFunction {
             if (matchedRow != -1) {
                 if (valueEval instanceof AreaEval) {
                     AreaEval area = (AreaEval)valueEval;
-                    return area.getRelativeValue(matchedRow, 0);
+                    if (area.getWidth() == 1) {
+                        return area.getRelativeValue(matchedRow, 0);
+                    } else {
+                        return area.getRow(matchedRow);
+                    }
                 }
             }
             return ErrorEval.NUM_ERROR;
