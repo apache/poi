@@ -182,6 +182,18 @@ public class TestTextJoinFunction {
         }
     }
 
+    @Test
+    void testMicrosoftExample2() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            confirmResult(fe, cell, "TEXTJOIN(\", \", TRUE, A2:B8)",
+                    "a1, b1, a2, b2, a4, b4, a5, b5, a6, b6, a7, b7");
+            confirmResult(fe, cell, "TEXTJOIN(\", \", FALSE, A2:B8)",
+                    "a1, b1, a2, b2, , , a4, b4, a5, b5, a6, b6, a7, b7");
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -193,6 +205,18 @@ public class TestTextJoinFunction {
         addRow(sheet, 5, "Israeli Shekel");
         addRow(sheet, 6, "South Korean Won");
         addRow(sheet, 7, "Russian Ruble");
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "A’s", "B’s");
+        for (int i = 1; i <= 7; i++) {
+            if (i != 3) {
+                addRow(sheet, i, "a" + i, "b" + i);
+            }
+        }
         return wb;
     }
 
