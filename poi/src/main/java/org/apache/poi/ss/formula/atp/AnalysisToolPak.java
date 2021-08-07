@@ -22,25 +22,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.Bin2Dec;
-import org.apache.poi.ss.formula.functions.Complex;
-import org.apache.poi.ss.formula.functions.Countifs;
-import org.apache.poi.ss.formula.functions.Dec2Bin;
-import org.apache.poi.ss.formula.functions.Dec2Hex;
-import org.apache.poi.ss.formula.functions.Delta;
-import org.apache.poi.ss.formula.functions.EDate;
-import org.apache.poi.ss.formula.functions.EOMonth;
-import org.apache.poi.ss.formula.functions.FactDouble;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Hex2Dec;
-import org.apache.poi.ss.formula.functions.ImReal;
-import org.apache.poi.ss.formula.functions.Imaginary;
-import org.apache.poi.ss.formula.functions.Oct2Dec;
-import org.apache.poi.ss.formula.functions.Quotient;
-import org.apache.poi.ss.formula.functions.Single;
-import org.apache.poi.ss.formula.functions.Sumifs;
-import org.apache.poi.ss.formula.functions.TextFunction;
-import org.apache.poi.ss.formula.functions.WeekNum;
+import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 
 /**
@@ -173,6 +155,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ODDLPRICE", null);
         r(m, "ODDLYIELD", null);
         r(m, "PRICE", null);
+        r(m, "PERCENTRANK.INC", PercentRankIncFunction.instance);
         r(m, "PRICEDISC", null);
         r(m, "PRICEMAT", null);
         r(m, "QUOTIENT", Quotient.instance);
