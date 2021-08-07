@@ -57,6 +57,7 @@ public class TestPercentRank {
             confirmErrorResult(fe, cell, "PERCENTRANK(A2:A11,0)", FormulaError.NA);
             confirmErrorResult(fe, cell, "PERCENTRANK(A2:A11,100)", FormulaError.NA);
             confirmErrorResult(fe, cell, "PERCENTRANK(B2:B11,100)", FormulaError.NUM);
+            confirmErrorResult(fe, cell, "PERCENTRANK(A2:A11,8,0)", FormulaError.NUM);
         }
     }
 

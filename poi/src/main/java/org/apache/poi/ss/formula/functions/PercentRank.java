@@ -89,6 +89,9 @@ public final class PercentRank implements Function {
             try {
                 ValueEval ev = OperandResolver.getSingleValue(args[2], srcRowIndex, srcColumnIndex);
                 significance = OperandResolver.coerceValueToInt(ev);
+                if (significance < 1) {
+                    return ErrorEval.NUM_ERROR;
+                }
             } catch (EvaluationException e) {
                 return e.getErrorEval();
             }
