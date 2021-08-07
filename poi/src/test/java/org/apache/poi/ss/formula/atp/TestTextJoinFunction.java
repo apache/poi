@@ -194,6 +194,16 @@ public class TestTextJoinFunction {
         }
     }
 
+    @Test
+    void testMicrosoftExample3() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook3()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            confirmResult(fe, cell, "TEXTJOIN(A8:D8, TRUE, A2:D7)",
+                    "Tulsa,OK,74133,US;Seattle,WA,98109,US;Iselin,NJ,08830,US;Fort Lauderdale,FL,33309,US;Tempe,AZ,85285,US;end");
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -217,6 +227,20 @@ public class TestTextJoinFunction {
                 addRow(sheet, i, "a" + i, "b" + i);
             }
         }
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook3() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "City", "State", "Postcode", "Country");
+        addRow(sheet, 1, "Tulsa", "OK", "74133", "US");
+        addRow(sheet, 2, "Seattle", "WA", "98109", "US");
+        addRow(sheet, 3, "Iselin", "NJ", "08830", "US");
+        addRow(sheet, 4, "Fort Lauderdale", "FL", "33309", "US");
+        addRow(sheet, 5, "Tempe", "AZ", "85285", "US");
+        addRow(sheet, 6, "end");
+        addRow(sheet, 7, ",", ",", ",", ";");
         return wb;
     }
 

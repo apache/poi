@@ -71,8 +71,7 @@ final class TextJoinFunction implements FreeRefFunction {
 
         try {
             // Get the delimiter argument
-            ValueEval delimiterArg = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
-            String delimiter = OperandResolver.coerceValueToString(delimiterArg);
+            List<ValueEval> delimiterArgs = getValues(args[0], srcRowIndex, srcColumnIndex, true);
 
             // Get the boolean ignoreEmpty argument
             ValueEval ignoreEmptyArg = OperandResolver.getSingleValue(args[1], srcRowIndex, srcColumnIndex);
@@ -82,7 +81,7 @@ final class TextJoinFunction implements FreeRefFunction {
             ArrayList<String> textValues = new ArrayList<>();
 
             for (int i = 2; i < args.length; i++) {
-                List<ValueEval> textArgs = getValues(args[i], srcRowIndex, srcColumnIndex);
+                List<ValueEval> textArgs = getValues(args[i], srcRowIndex, srcColumnIndex, false);
                 for (ValueEval textArg : textArgs) {
                     String textValue = OperandResolver.coerceValueToString(textArg);
 
@@ -94,17 +93,43 @@ final class TextJoinFunction implements FreeRefFunction {
             }
 
             // Join the list of values with the specified delimiter and return
-            return new StringEval(String.join(delimiter, textValues));
+            if (delimiterArgs.size() == 0) {
+                return new StringEval(String.join("", textValues));
+            } else if (delimiterArgs.size() == 1) {
+                String delimiter = OperandResolver.coerceValueToString(delimiterArgs.get(0));
+                return new StringEval(String.join(delimiter, textValues));
+            } else {
+                //https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c
+                //see example 3 to see why this is needed
+                List<String> delimiters = new ArrayList<>();
+                for (ValueEval delimiterArg: delimiterArgs) {
+                    delimiters.add(OperandResolver.coerceValueToString(delimiterArg));
+                }
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < textValues.size(); i++) {
+                    if (i > 0) {
+                        int delimiterIndex = (i - 1) % delimiters.size();
+                        sb.append(delimiters.get(delimiterIndex));
+                    }
+                    sb.append(textValues.get(i));
+                }
+                return new StringEval(sb.toString());
+            }
         } catch (EvaluationException e){
             return e.getErrorEval();
         }
     }
 
-    private List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
+    //https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c
+    //in example 3, the delimiter is defined by a large area but only the last row of that area seems to be used
+    //this is why lastRowOnly is supported
+    private List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex,
+                                      boolean lastRowOnly) throws EvaluationException {
         if (eval instanceof AreaEval) {
             AreaEval ae = (AreaEval)eval;
             List<ValueEval> list = new ArrayList<>();
-            for (int r = ae.getFirstRow(); r <= ae.getLastRow(); r++) {
+            int startRow = lastRowOnly ? ae.getLastRow() : ae.getFirstRow();
+            for (int r = startRow; r <= ae.getLastRow(); r++) {
                 for (int c = ae.getFirstColumn(); c <= ae.getLastColumn(); c++) {
                     list.add(OperandResolver.getSingleValue(ae.getAbsoluteValue(r, c), r, c));
                 }
