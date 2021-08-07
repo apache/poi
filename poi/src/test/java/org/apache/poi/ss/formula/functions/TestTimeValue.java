@@ -115,6 +115,6 @@ final class TestTimeValue {
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
         assertEquals(result.getCellType(), CellType.NUMERIC);
-        assertEquals(expectedResult, result.getNumberValue());
+        assertEquals(expectedResult, result.getNumberValue(), 0.0001);
     }
 }
