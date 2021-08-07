@@ -155,6 +155,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ODDLPRICE", null);
         r(m, "ODDLYIELD", null);
         r(m, "PRICE", null);
+        r(m, "PERCENTRANK.EXC", PercentRankExcFunction.instance);
         r(m, "PERCENTRANK.INC", PercentRankIncFunction.instance);
         r(m, "PRICEDISC", null);
         r(m, "PRICEMAT", null);

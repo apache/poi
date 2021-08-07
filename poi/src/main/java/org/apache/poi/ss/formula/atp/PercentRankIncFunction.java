@@ -33,9 +33,11 @@ import org.apache.poi.ss.formula.functions.PercentRank;
  * <b>significance</b>  Optional. A value that identifies the number of significant digits for the returned percentage value.
  * If omitted, PERCENTRANK.INC uses three digits (0.xxx).<br>
  * <br>
- * Returns a number between 0 and 1 representing a percentage.
+ * Returns a number between 0 and 1 representing a percentage. PERCENTRANK.INC gives same result as PERCENTRANK
+ * with min value having a result of 0 and max has a result of 1. PERCENTRANK.EXC returns value between 0 and 1 (exclusive).
  *
  * @see PercentRank
+ * @see PercentRankExcFunction
  * @since POI 5.0.1
  */
 final class PercentRankIncFunction implements FreeRefFunction {

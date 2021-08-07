@@ -15,10 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.apache.poi.ss.formula.atp;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.PercentRank;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,29 +29,38 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of 'the Excel function PERCENTRANK()
+ * Implementation of 'Analysis Toolpak' the Excel function PERCENTRANK.EXC()
  *
  * <b>Syntax</b>:<br>
- * <b>PERCENTRANK</b>(<b>array</b>, <b>X</b>, <b>[significance]</b>)<p>
+ * <b>PERCENTRANK.EXC</b>(<b>array</b>, <b>X</b>, <b>[significance]</b>)<p>
  *
  * <b>array</b>  The array or range of data with numeric values that defines relative standing.<br>
  * <b>X</b>  The value for which you want to know the rank.<br>
  * <b>significance</b>  Optional. A value that identifies the number of significant digits for the returned percentage value.
- * If omitted, PERCENTRANK uses three digits (0.xxx).<br>
+ * If omitted, PERCENTRANK.EXC uses three digits (0.xxx).<br>
  * <br>
- * Returns a number between 0 and 1 representing a percentage.
+ * Returns a number between 0 and 1 (exclusive) representing a percentage. PERCENTRANK.INC returns value between 0 and 1 (inclusive).
  *
+ * @see PercentRank
+ * @see PercentRankIncFunction
  * @since POI 5.0.1
  */
-public final class PercentRank implements Function {
+final class PercentRankExcFunction implements FreeRefFunction {
 
-    public static final Function instance = new PercentRank();
+    public static final FreeRefFunction instance = new PercentRankExcFunction(ArgumentsEvaluator.instance);
 
-    private PercentRank() {
-        // Enforce singleton
+    private ArgumentsEvaluator evaluator;
+
+    private PercentRankExcFunction(ArgumentsEvaluator anEvaluator) {
+        // enforces singleton
+        this.evaluator = anEvaluator;
     }
 
-    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        return evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
+    }
+
+    private ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         if (args.length < 2) {
             return ErrorEval.VALUE_INVALID;
         }
@@ -67,7 +78,7 @@ public final class PercentRank implements Function {
 
         ArrayList<Double> numbers = new ArrayList<>();
         try {
-            List<ValueEval> values = getValues(args[0], srcRowIndex, srcColumnIndex);
+            List<ValueEval> values = PercentRank.getValues(args[0], srcRowIndex, srcColumnIndex);
             for (ValueEval ev : values) {
                 if (ev instanceof BlankEval || ev instanceof MissingArgEval) {
                     //skip
@@ -106,24 +117,30 @@ public final class PercentRank implements Function {
     private ValueEval calculateRank(List<Double> numbers, double x, int significance, boolean recurse) {
         double closestMatchBelow = Double.MIN_VALUE;
         double closestMatchAbove = Double.MAX_VALUE;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
         if (recurse) {
             for (Double d : numbers) {
                 if (d <= x && d > closestMatchBelow) closestMatchBelow = d;
                 if (d > x && d < closestMatchAbove) closestMatchAbove = d;
+                if (d < min) min = d;
+                if (d > max) max = d;
+            }
+            if (x < min || x > max) {
+                return ErrorEval.NA;
             }
         }
         if (!recurse || closestMatchBelow == x || closestMatchAbove == x) {
             int lessThanCount = 0;
             int greaterThanCount = 0;
+            int matchesCount = 0;
             for (Double d : numbers) {
                 if (d < x) lessThanCount++;
                 else if (d > x) greaterThanCount++;
+                else matchesCount++;
             }
-            if (greaterThanCount == numbers.size() || lessThanCount == numbers.size()) {
-                return ErrorEval.NA;
-            }
-            BigDecimal result = new BigDecimal((double)lessThanCount / (double)(lessThanCount + greaterThanCount));
-            return new NumberEval(round(result, significance, RoundingMode.DOWN));
+            BigDecimal result = new BigDecimal((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
+            return new NumberEval(PercentRank.round(result, significance, RoundingMode.DOWN));
         } else {
             ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance, false);
             if (!(belowRank instanceof NumberEval)) {
@@ -139,30 +156,7 @@ public final class PercentRank implements Function {
             double pos = x - closestMatchBelow;
             double rankDiff = above.getNumberValue() - below.getNumberValue();
             BigDecimal result = new BigDecimal(below.getNumberValue() + (rankDiff * (pos / diff)));
-            return new NumberEval(round(result, significance, RoundingMode.HALF_UP));
-        }
-    }
-
-    @Internal
-    public static double round(BigDecimal bd, int significance, RoundingMode rounding) {
-        //the rounding in https://support.microsoft.com/en-us/office/percentrank-function-f1b5836c-9619-4847-9fc9-080ec9024442
-        //is very inconsistent, this hodge podge of rounding modes is the only way to match Excel results
-        return bd.setScale(significance, rounding).doubleValue();
-    }
-
-    @Internal
-    public static List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval)eval;
-            List<ValueEval> list = new ArrayList<>();
-            for (int r = ae.getFirstRow(); r <= ae.getLastRow(); r++) {
-                for (int c = ae.getFirstColumn(); c <= ae.getLastColumn(); c++) {
-                    list.add(OperandResolver.getSingleValue(ae.getAbsoluteValue(r, c), r, c));
-                }
-            }
-            return list;
-        } else {
-            return Collections.singletonList(OperandResolver.getSingleValue(eval, srcRowIndex, srcColumnIndex));
+            return new NumberEval(PercentRank.round(result, significance, RoundingMode.HALF_UP));
         }
     }
 }
