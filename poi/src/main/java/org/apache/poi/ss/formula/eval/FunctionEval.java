@@ -309,7 +309,7 @@ public final class FunctionEval {
         retval[326] = AggregateFunction.SMALL;
         // 327: QUARTILE
         retval[328] = AggregateFunction.PERCENTILE;
-        // 329: PERCENTRANK
+        retval[329] = PercentRank.instance;
         retval[330] = new Mode();
         // 331: TRIMMEAN
         // 332: TINV
