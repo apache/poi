@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of 'Analysis Toolpak' the Excel function PERCENTRANK()
+ * Implementation of 'the Excel function PERCENTRANK()
  *
  * <b>Syntax</b>:<br>
  * <b>PERCENTRANK</b>(<b>array</b>, <b>X</b>, <b>[significance]</b>)<p>
@@ -37,6 +37,8 @@ import java.util.List;
  * If omitted, PERCENTRANK uses three digits (0.xxx).<br>
  * <br>
  * Returns a number between 0 and 1 representing a percentage.
+ *
+ * @since POI 5.0.1
  */
 public final class PercentRank implements Function {
 
