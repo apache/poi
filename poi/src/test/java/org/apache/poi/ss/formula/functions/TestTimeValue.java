@@ -19,8 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Locale;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -89,7 +88,7 @@ final class TestTimeValue {
             HSSFRow row = sheet.createRow(0);
             row.createCell(0).setCellValue("8/22/2011 12:00");
             HSSFCell cell = row.createCell(1);
-            confirmNumericResult(fe, cell, "TIMEVALUE(A1)", 0.5);
+            assertDouble(fe, cell, "TIMEVALUE(A1)", 0.5);
         }
     }
 
@@ -112,13 +111,5 @@ final class TestTimeValue {
         ValueEval result = invokeTimeValue(text);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), ((ErrorEval) result).getErrorCode());
-    }
-
-    private static void confirmNumericResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, double expectedResult) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
-        assertEquals(expectedResult, result.getNumberValue(), 0.0001);
     }
 }

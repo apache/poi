@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertError;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -59,7 +60,7 @@ final class TestSum {
         try (HSSFWorkbook wb = initWorkbookWithNA()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmError(fe, cell, "SUM(B2:B6)", FormulaError.NA);
+            assertError(fe, cell, "SUM(B2:B6)", FormulaError.NA);
         }
     }
 
@@ -92,15 +93,7 @@ final class TestSum {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
+        assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue());
-    }
-
-    private static void confirmError(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, FormulaError expectedError) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.ERROR);
-        assertEquals(expectedError.getCode(), result.getErrorValue());
     }
 }

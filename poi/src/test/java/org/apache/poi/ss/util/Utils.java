@@ -59,7 +59,7 @@ public class Utils {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
+        assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue());
     }
 
@@ -67,7 +67,7 @@ public class Utils {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.ERROR);
+        assertEquals(CellType.ERROR, result.getCellType());
         assertEquals(expectedError.getCode(), result.getErrorValue());
     }
 }

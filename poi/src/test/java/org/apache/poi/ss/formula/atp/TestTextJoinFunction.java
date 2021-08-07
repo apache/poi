@@ -41,11 +41,9 @@ public class TestTextJoinFunction {
     private FormulaEvaluator evaluator;
     private Cell textCell1;
     private Cell textCell2;
-    private Cell textCell3;
     private Cell numericCell1;
     private Cell numericCell2;
     private Cell blankCell;
-    private Cell emptyCell;
     private Cell formulaCell;
 
     @BeforeEach
@@ -250,7 +248,7 @@ public class TestTextJoinFunction {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.STRING);
+        assertEquals(CellType.STRING, result.getCellType());
         assertEquals(expectedResult, result.getStringValue());
     }
 }
