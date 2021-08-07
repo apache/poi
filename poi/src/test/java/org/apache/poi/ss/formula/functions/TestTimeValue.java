@@ -62,6 +62,7 @@ final class TestTimeValue {
             confirmTimeValue(new StringEval("1/01/2000 6:00 PM"), 0.75); // Serial number of a time entered as text.
             confirmTimeValue(new StringEval("12:00"), 0.5); // Serial number of a time entered as text.
             confirmTimeValue(new StringEval("6:00 PM"), 0.75); // Serial number of a time entered as text.
+            confirmTimeValue(new StringEval("12:03:45"), 0.5026041666642413); // Serial number of a time entered as text.
         } finally {
             LocaleUtil.setUserLocale(null);
         }
