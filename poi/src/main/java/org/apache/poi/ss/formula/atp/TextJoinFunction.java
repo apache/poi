@@ -104,9 +104,9 @@ final class TextJoinFunction implements FreeRefFunction {
         if (eval instanceof AreaEval) {
             AreaEval ae = (AreaEval)eval;
             List<ValueEval> list = new ArrayList<>();
-            for (int r = 0; r < ae.getHeight(); r++) {
-                for (int c = 0; c < ae.getWidth(); c++) {
-                    list.add(ae.getRelativeValue(r, c));
+            for (int r = ae.getFirstRow(); r <= ae.getLastRow(); r++) {
+                for (int c = ae.getFirstColumn(); c <= ae.getLastColumn(); c++) {
+                    list.add(OperandResolver.getSingleValue(ae.getAbsoluteValue(r, c), r, c));
                 }
             }
             return list;
