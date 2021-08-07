@@ -22,9 +22,21 @@ import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Implementation of Excel function TEXTJOIN()
+ *
+ * <b>Syntax</b><br>
+ * <b>TEXTJOIN</b>(<b>delimiter</b>, <b>ignore_empty</b>, <b>text1</b>, <b>[text2]<b>, …)<p>
+ *
+ * <b>delimiter</b> A text string, either empty, or one or more characters enclosed by double quotes, or a reference to a valid text string.
+ * If a number is supplied, it will be treated as text.<br>
+ * <b>ignore_empty</b> If TRUE, ignores empty cells.<br>
+ * <b>text1</b> Text item to be joined. A text string, or array of strings, such as a range of cells.<br>
+ * <b>text2 ...</b> Optional. Additional text items to be joined. There can be a maximum of 252 text arguments for the text items, including text1.
+ * Each can be a text string, or array of strings, such as a range of cells.<br>
  *
  * @since POI 5.0.1
  */
@@ -70,12 +82,14 @@ final class TextJoinFunction implements FreeRefFunction {
             ArrayList<String> textValues = new ArrayList<>();
 
             for (int i = 2; i < args.length; i++) {
-                ValueEval textArg = OperandResolver.getSingleValue(args[i], srcRowIndex, srcColumnIndex);
-                String textValue = OperandResolver.coerceValueToString(textArg);
+                List<ValueEval> textArgs = getValues(args[i], srcRowIndex, srcColumnIndex);
+                for (ValueEval textArg : textArgs) {
+                    String textValue = OperandResolver.coerceValueToString(textArg);
 
-                // If we're not ignoring empty values or if our value is not empty, add it to the list
-                if (!ignoreEmpty || (textValue != null && textValue.length() > 0)) {
-                    textValues.add(textValue);
+                    // If we're not ignoring empty values or if our value is not empty, add it to the list
+                    if (!ignoreEmpty || (textValue != null && textValue.length() > 0)) {
+                        textValues.add(textValue);
+                    }
                 }
             }
 
@@ -83,6 +97,21 @@ final class TextJoinFunction implements FreeRefFunction {
             return new StringEval(String.join(delimiter, textValues));
         } catch (EvaluationException e){
             return e.getErrorEval();
+        }
+    }
+
+    private List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
+        if (eval instanceof AreaEval) {
+            AreaEval ae = (AreaEval)eval;
+            List<ValueEval> list = new ArrayList<>();
+            for (int r = 0; r < ae.getHeight(); r++) {
+                for (int c = 0; c < ae.getWidth(); c++) {
+                    list.add(ae.getRelativeValue(r, c));
+                }
+            }
+            return list;
+        } else {
+            return Collections.singletonList(OperandResolver.getSingleValue(eval, srcRowIndex, srcColumnIndex));
         }
     }
 

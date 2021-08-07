@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
  * Implementation of 'Analysis Toolpak' the Excel function IFNA()
  *
  * <b>Syntax</b>:<br>
- * <b>IFNA</b>(<b>test_value</b>,<b>default_value</b>)<p>
+ * <b>IFNA</b>(<b>test_value</b>, <b>default_value</b>)<p>
  *
  * <b>test_value</b>  The value to be tested<br>
  * <b>default_value</b>  The value to be tested<br>

@@ -17,12 +17,18 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static org.apache.poi.ss.util.Utils.addRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -165,4 +171,36 @@ public class TestTextJoinFunction {
         assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
     }
 
+    //https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c
+    @Test
+    void testMicrosoftExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            confirmResult(fe, cell, "TEXTJOIN(\", \", TRUE, A2:A8)",
+                    "US Dollar, Australian Dollar, Chinese Yuan, Hong Kong Dollar, Israeli Shekel, South Korean Won, Russian Ruble");
+        }
+    }
+
+    private HSSFWorkbook initWorkbook1() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Currency");
+        addRow(sheet, 1, "US Dollar");
+        addRow(sheet, 2, "Australian Dollar");
+        addRow(sheet, 3, "Chinese Yuan");
+        addRow(sheet, 4, "Hong Kong Dollar");
+        addRow(sheet, 5, "Israeli Shekel");
+        addRow(sheet, 6, "South Korean Won");
+        addRow(sheet, 7, "Russian Ruble");
+        return wb;
+    }
+
+    private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, String expectedResult) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(result.getCellType(), CellType.STRING);
+        assertEquals(expectedResult, result.getStringValue());
+    }
 }
