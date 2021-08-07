@@ -63,6 +63,9 @@ final class TestTimeValue {
             confirmTimeValue(new StringEval("12:00"), 0.5); // Serial number of a time entered as text.
             confirmTimeValue(new StringEval("6:00 PM"), 0.75); // Serial number of a time entered as text.
             confirmTimeValue(new StringEval("12:03:45"), 0.5026041666642413); // Serial number of a time entered as text.
+
+            // this is not yet right as the milliseconds are not counted - but this used to cause a parse issue before
+            confirmTimeValue(new StringEval("12:03:45.386"), 0.5026041666642413);
         } finally {
             LocaleUtil.setUserLocale(null);
         }
