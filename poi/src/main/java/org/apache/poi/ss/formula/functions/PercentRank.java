@@ -33,7 +33,7 @@ import java.util.List;
  *
  * <b>array</b>  The array or range of data with numeric values that defines relative standing.<br>
  * <b>X</b>  The value for which you want to know the rank.<br>
- * <b>significance</b>  TOptional. A value that identifies the number of significant digits for the returned percentage value.
+ * <b>significance</b>  Optional. A value that identifies the number of significant digits for the returned percentage value.
  * If omitted, PERCENTRANK uses three digits (0.xxx).<br>
  * <br>
  * Returns a number between 0 and 1 representing a percentage.
