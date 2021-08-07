@@ -135,13 +135,13 @@ final class PercentRankExcFunction implements FreeRefFunction {
                 if (d < x) lessThanCount++;
             }
             BigDecimal result = new BigDecimal((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
-            return new NumberEval(PercentRank.round(result, significance, RoundingMode.DOWN));
+            return new NumberEval(PercentRank.round(result, significance));
         } else {
-            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance, false);
+            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance + 3, false);
             if (!(belowRank instanceof NumberEval)) {
                 return belowRank;
             }
-            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance, false);
+            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance + 3, false);
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }

@@ -38,7 +38,7 @@ public class TestPercentRankExcFunction {
 
     // PERCENTRANK.INC test case (for comparison)
     @Test
-    void testMicrosoftExample1() throws IOException {
+    void testPercentRankIncExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
@@ -50,6 +50,18 @@ public class TestPercentRankExcFunction {
             assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A11,8,2)", 0.63);
             assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A11,8,4)", 0.6363);
             assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A11,5)", 0.568);
+        }
+    }
+
+    //https://support.microsoft.com/en-us/office/percentrank-exc-function-d8afee96-b7e2-4a2f-8c01-8fcdedaa6314
+    @Test
+    void testMicrosoftExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A10, 7)", 0.7);
+            assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A10,5.43)", 0.381);
+            assertDouble(fe, cell, "PERCENTRANK.EXC(A2:A10,5.43,1)", 0.3);
         }
     }
 
@@ -79,6 +91,22 @@ public class TestPercentRankExcFunction {
         addRow(sheet, 8, 1);
         addRow(sheet, 9, 1);
         addRow(sheet, 10, 1);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Data");
+        addRow(sheet, 1, 1);
+        addRow(sheet, 2, 2);
+        addRow(sheet, 3, 3);
+        addRow(sheet, 4, 6);
+        addRow(sheet, 5, 6);
+        addRow(sheet, 6, 6);
+        addRow(sheet, 7, 7);
+        addRow(sheet, 8, 8);
+        addRow(sheet, 9, 9);
         return wb;
     }
 

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
 
 import java.math.BigDecimal;
@@ -123,13 +124,13 @@ public final class PercentRank implements Function {
                 return ErrorEval.NA;
             }
             BigDecimal result = new BigDecimal((double)lessThanCount / (double)(lessThanCount + greaterThanCount));
-            return new NumberEval(round(result, significance, RoundingMode.DOWN));
+            return new NumberEval(round(result, significance));
         } else {
-            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance, false);
+            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance + 3, false);
             if (!(belowRank instanceof NumberEval)) {
                 return belowRank;
             }
-            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance, false);
+            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance + 3, false);
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }
@@ -142,16 +143,17 @@ public final class PercentRank implements Function {
                                          NumberEval belowRank, NumberEval aboveRank, int significance) {
         double diff = closestMatchAbove - closestMatchBelow;
         double pos = x - closestMatchBelow;
-        double rankDiff = aboveRank.getNumberValue() - belowRank.getNumberValue();
-        BigDecimal result = new BigDecimal(belowRank.getNumberValue() + (rankDiff * (pos / diff)));
-        return new NumberEval(round(result, significance, RoundingMode.HALF_UP));
+        BigDecimal rankDiff = new BigDecimal(NumberToTextConverter.toText(aboveRank.getNumberValue() - belowRank.getNumberValue()));
+        BigDecimal result = new BigDecimal(belowRank.getNumberValue()).add(rankDiff.multiply(new BigDecimal(pos / diff)));
+        return new NumberEval(round(result, significance));
     }
 
     @Internal
-    public static double round(BigDecimal bd, int significance, RoundingMode rounding) {
+    public static double round(BigDecimal bd, int significance) {
         //the rounding in https://support.microsoft.com/en-us/office/percentrank-function-f1b5836c-9619-4847-9fc9-080ec9024442
         //is very inconsistent, this hodge podge of rounding modes is the only way to match Excel results
-        return bd.setScale(significance, rounding).doubleValue();
+        BigDecimal bd2 = bd.setScale(significance + 3, RoundingMode.HALF_UP);
+        return bd2.setScale(significance, RoundingMode.DOWN).doubleValue();
     }
 
     @Internal
