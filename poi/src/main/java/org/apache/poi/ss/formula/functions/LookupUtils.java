@@ -36,7 +36,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
  */
-final class LookupUtils {
+public final class LookupUtils {
 
     /**
      * Represents a single row or column within an {@code AreaEval}.

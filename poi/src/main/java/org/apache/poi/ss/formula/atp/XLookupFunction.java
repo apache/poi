@@ -18,15 +18,17 @@
 package org.apache.poi.ss.formula.atp;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.LookupUtils;
 
 import java.util.Optional;
 
 /**
  * Implementation of Excel function XLOOKUP()
  *
- * POI does not currently support have return values with multiple columns and just takes the first cell
+ * POI does not currently support having return values with multiple columns and just takes the first cell
  * right now.
  *
  * <b>Syntax</b><br>
@@ -66,46 +68,57 @@ final class XLookupFunction implements FreeRefFunction {
                 return e.getErrorEval();
             }
         }
-        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound);
+        int matchMode = 0;
+        if (args.length > 4) {
+            try {
+                ValueEval matchModeValue = OperandResolver.getSingleValue(args[4], srcRowIndex, srcColumnIndex);
+                matchMode = OperandResolver.coerceValueToInt(matchModeValue);
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
+        }
+        int searchMode = 1;
+        if (args.length > 5) {
+            try {
+                ValueEval searchModeValue = OperandResolver.getSingleValue(args[5], srcRowIndex, srcColumnIndex);
+                searchMode = OperandResolver.coerceValueToInt(searchModeValue);
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
+        }
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode);
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
-                               ValueEval returnEval, Optional<String> notFound) {
+                               ValueEval returnEval, Optional<String> notFound, int matchMode, int searchMode) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
-            String lookup = laxValueToString(lookupValue);
-            int matchedRow = matchedIndex(indexEval, lookup);
-            if (matchedRow != -1) {
-                if (returnEval instanceof AreaEval) {
-                    AreaEval area = (AreaEval)returnEval;
-                    //TODO to fully support XLOOKUP, we should return the full row
-                    //but POI does not currently support functions returning multiple cell values
-                    return area.getRelativeValue(matchedRow, 0);
+            TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
+            boolean isRangeLookup = false;
+            int matchedRow;
+            try {
+                matchedRow = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
+            } catch (EvaluationException e) {
+                if (ErrorEval.NA.equals(e.getErrorEval())) {
+                    if (notFound.isPresent()) {
+                        return new StringEval(notFound.get());
+                    }
+                    return ErrorEval.NA;
+                } else {
+                    return e.getErrorEval();
                 }
             }
-            if (notFound.isPresent()) {
-                return new StringEval(notFound.get());
+            if (returnEval instanceof AreaEval) {
+                AreaEval area = (AreaEval)returnEval;
+                //TODO to fully support XLOOKUP, we should return the full row
+                //but POI does not currently support functions returning multiple cell values
+                return area.getRelativeValue(matchedRow, 0);
+            } else {
+                return ErrorEval.VALUE_INVALID;
             }
-            return ErrorEval.NA;
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-    }
-
-    private int matchedIndex(ValueEval areaEval, String lookup) {
-        if (areaEval instanceof AreaEval) {
-            AreaEval area = (AreaEval)areaEval;
-            for (int r = 0; r <= area.getHeight(); r++) {
-                for (int c = 0; c <= area.getWidth(); c++) {
-                    ValueEval cellEval = area.getRelativeValue(r, c);
-                    String cellValue = OperandResolver.coerceValueToString(cellEval);
-                    if (lookup.equals(cellValue)) {
-                        return r;
-                    }
-                }
-            }
-        }
-        return -1;
     }
 
     private String laxValueToString(ValueEval eval) {
