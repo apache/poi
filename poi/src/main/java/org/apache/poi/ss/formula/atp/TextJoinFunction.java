@@ -96,14 +96,14 @@ final class TextJoinFunction implements FreeRefFunction {
             if (delimiterArgs.size() == 0) {
                 return new StringEval(String.join("", textValues));
             } else if (delimiterArgs.size() == 1) {
-                String delimiter = coerceValueToString(delimiterArgs.get(0));
+                String delimiter = laxValueToString(delimiterArgs.get(0));
                 return new StringEval(String.join(delimiter, textValues));
             } else {
                 //https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c
                 //see example 3 to see why this is needed
                 List<String> delimiters = new ArrayList<>();
                 for (ValueEval delimiterArg: delimiterArgs) {
-                    delimiters.add(coerceValueToString(delimiterArg));
+                    delimiters.add(laxValueToString(delimiterArg));
                 }
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < textValues.size(); i++) {
@@ -120,7 +120,7 @@ final class TextJoinFunction implements FreeRefFunction {
         }
     }
 
-    private String coerceValueToString(ValueEval eval) {
+    private String laxValueToString(ValueEval eval) {
         return  (eval instanceof MissingArgEval) ? "" : OperandResolver.coerceValueToString(eval);
     }
 

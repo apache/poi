@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -40,7 +40,29 @@ public class TestXLookupFunction {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            confirmResult(fe, cell, "XLOOKUP(F2,B2:B11,D2:D11)", "+55");
+            assertString(fe, cell, "XLOOKUP(F2,B2:B11,D2:D11)", "+55");
+        }
+    }
+
+    @Test
+    void testMicrosoftExample2() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            cell.setCellFormula("XLOOKUP(B2,B5:B14,C5:D14)");
+            fe.notifyUpdateCell(cell);
+            CellValue result = fe.evaluate(cell);
+            //TODO add assertions
+        }
+    }
+
+    @Test
+    void testMicrosoftExample3() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11)", FormulaError.NA);
+            assertString(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11,\"not found\")", "not found");
         }
     }
 
@@ -61,11 +83,23 @@ public class TestXLookupFunction {
         return wb;
     }
 
-    private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, String expectedResult) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(CellType.STRING, result.getCellType());
-        assertEquals(expectedResult, result.getStringValue());
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null, "Emp Id", "Employee Name", "Department");
+        addRow(sheet, 1, null, 8389);
+        addRow(sheet, 3, null, "Emp Id", "Employee Name", "Department");
+        addRow(sheet, 4, null, 4390, "Ned Lanning", "Marketing");
+        addRow(sheet, 5, null, 8604, "Margo Hendrix", "Sales");
+        addRow(sheet, 6, null, 8389, "Dianne Pugh", "Finance");
+        addRow(sheet, 7, null, 4937, "Earlene McCarty", "Accounting");
+        addRow(sheet, 8, null, 8299, "Mia Arnold", "Operation");
+        addRow(sheet, 9, null, 2643, "Jorge Fellows", "Executive");
+        addRow(sheet, 10, null, 5243, "Rose Winters", "Sales");
+        addRow(sheet, 11, null, 9693, "Carmela Hahn", "Finance");
+        addRow(sheet, 12, null, 1636, "Delia Cochran", "Accounting");
+        addRow(sheet, 13, null, 6703, "Marguerite Cervantes", "Marketing");
+        return wb;
     }
+
 }

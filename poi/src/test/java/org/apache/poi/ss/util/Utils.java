@@ -55,6 +55,14 @@ public class Utils {
         }
     }
 
+    public static void assertString(FormulaEvaluator fe, Cell cell, String formulaText, String expectedResult) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(CellType.STRING, result.getCellType());
+        assertEquals(expectedResult, result.getStringValue());
+    }
+
     public static void assertDouble(FormulaEvaluator fe, Cell cell, String formulaText, double expectedResult) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);

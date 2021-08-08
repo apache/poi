@@ -21,11 +21,13 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
+import java.util.Optional;
+
 /**
  * Implementation of Excel function XLOOKUP()
  *
  * <b>Syntax</b><br>
- * <b>XLOOKUP</b><p>
+ * <b>XLOOKUP</b>(<b>lookup_value</b>, <b>lookup_array</b>, <b>return_array</b>, <b>[if_not_found]</b>, <b>[match_mode]</b>, <b>[search_mode]</b>)<p>
  *
  * @since POI 5.0.1
  */
@@ -46,18 +48,33 @@ final class XLookupFunction implements FreeRefFunction {
         if (args.length < 3) {
             return ErrorEval.VALUE_INVALID;
         }
-        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+        Optional<String> notFound = Optional.empty();
+        if (args.length > 3) {
+            try {
+                ValueEval notFoundValue = OperandResolver.getSingleValue(args[3], srcRowIndex, srcColumnIndex);
+                String notFoundText = laxValueToString(notFoundValue);
+                if (notFoundText != null) {
+                    String trimmedText = notFoundText.trim();
+                    if (trimmedText.length() > 0) {
+                        notFound = Optional.of(trimmedText);
+                    }
+                }
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
+        }
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound);
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
-                               ValueEval valueEval) {
+                               ValueEval returnEval, Optional<String> notFound) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
-            String lookup = OperandResolver.coerceValueToString(lookupValue);
+            String lookup = laxValueToString(lookupValue);
             int matchedRow = matchedIndex(indexEval, lookup);
             if (matchedRow != -1) {
-                if (valueEval instanceof AreaEval) {
-                    AreaEval area = (AreaEval)valueEval;
+                if (returnEval instanceof AreaEval) {
+                    AreaEval area = (AreaEval)returnEval;
                     if (area.getWidth() == 1) {
                         return area.getRelativeValue(matchedRow, 0);
                     } else {
@@ -65,7 +82,10 @@ final class XLookupFunction implements FreeRefFunction {
                     }
                 }
             }
-            return ErrorEval.NUM_ERROR;
+            if (notFound.isPresent()) {
+                return new StringEval(notFound.get());
+            }
+            return ErrorEval.NA;
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -85,5 +105,9 @@ final class XLookupFunction implements FreeRefFunction {
             }
         }
         return -1;
+    }
+
+    private String laxValueToString(ValueEval eval) {
+        return  (eval instanceof MissingArgEval) ? "" : OperandResolver.coerceValueToString(eval);
     }
 }
