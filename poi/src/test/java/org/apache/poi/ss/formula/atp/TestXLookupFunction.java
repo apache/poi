@@ -49,10 +49,7 @@ public class TestXLookupFunction {
         try (HSSFWorkbook wb = initWorkbook2()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            cell.setCellFormula("XLOOKUP(B2,B5:B14,C5:D14)");
-            fe.notifyUpdateCell(cell);
-            CellValue result = fe.evaluate(cell);
-            //TODO add assertions
+            assertString(fe, cell, "XLOOKUP(B2,B5:B14,C5:D14)", "Dianne Pugh");
         }
     }
 

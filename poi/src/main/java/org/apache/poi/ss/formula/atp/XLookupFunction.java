@@ -26,6 +26,9 @@ import java.util.Optional;
 /**
  * Implementation of Excel function XLOOKUP()
  *
+ * POI does not currently support have return values with multiple columns and just takes the first cell
+ * right now.
+ *
  * <b>Syntax</b><br>
  * <b>XLOOKUP</b>(<b>lookup_value</b>, <b>lookup_array</b>, <b>return_array</b>, <b>[if_not_found]</b>, <b>[match_mode]</b>, <b>[search_mode]</b>)<p>
  *
@@ -75,11 +78,9 @@ final class XLookupFunction implements FreeRefFunction {
             if (matchedRow != -1) {
                 if (returnEval instanceof AreaEval) {
                     AreaEval area = (AreaEval)returnEval;
-                    if (area.getWidth() == 1) {
-                        return area.getRelativeValue(matchedRow, 0);
-                    } else {
-                        return area.getRow(matchedRow);
-                    }
+                    //TODO to fully support XLOOKUP, we should return the full row
+                    //but POI does not currently support functions returning multiple cell values
+                    return area.getRelativeValue(matchedRow, 0);
                 }
             }
             if (notFound.isPresent()) {
