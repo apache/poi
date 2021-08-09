@@ -652,3 +652,17 @@ var srcDep = [
 srcDistTar.dependsOn srcDep
 srcDistZip.dependsOn srcDep
 rat.dependsOn srcDep
+
+task fixDistDir {
+    doLast {
+        ant.mkdir(dir: 'build/dist')
+        ant.move(todir: 'build/dist') {
+            fileset(dir: 'build/distributions', includes: '*')
+        }
+    }
+}
+
+binDistZip.finalizedBy fixDistDir
+binDistTar.finalizedBy fixDistDir
+srcDistZip.finalizedBy fixDistDir
+srcDistTar.finalizedBy fixDistDir
