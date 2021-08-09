@@ -442,10 +442,10 @@ poijobs.each { poijob ->
 
                     // this is a workaround until the Gradle build can do this compilation before invoking any
                     // Ant script or when building via Ant is removed completely
-                    ant {
-                        targets(['init'] + (poijob.properties ?: []))
-                        antInstallation(antRT)
-                    }
+                    //ant {
+                    //    targets(['init'] + (poijob.properties ?: []))
+                    //    antInstallation(antRT)
+                    //}
 
                     gradle {
                         tasks('jenkins')
