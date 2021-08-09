@@ -14,7 +14,7 @@ def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesIm
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
+        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *', gradle: true
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
@@ -39,11 +39,11 @@ def poijobs = [
           // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         // building with JDK 16 fails currently because of findbugs/spotbugs
         // therefore we do not set a trigger for now and only run it manually
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: '', skipcigame: true
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -61,9 +61,7 @@ def poijobs = [
         // it was impossible to make this run stable in Gradle, thus disabling this for now
         [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
-        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
-          // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-          addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
+        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
@@ -439,6 +437,9 @@ poijobs.each { poijob ->
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
                 if(poijob.gradle) {
+                    // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+                    shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
+
                     // this is a workaround until the Gradle build can do this compilation before invoking any
                     // Ant script or when building via Ant is removed completely
                     ant {
@@ -447,7 +448,7 @@ poijobs.each { poijob ->
                     }
 
                     gradle {
-                        tasks('check')
+                        tasks('jenkins')
                         useWrapper(true)
                     }
                 } else if (poijob.noScratchpad) {
