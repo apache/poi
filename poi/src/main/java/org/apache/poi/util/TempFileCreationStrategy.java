@@ -22,10 +22,10 @@ import java.io.IOException;
 
 /**
  * Interface used by the {@link TempFile} utility class to create temporary files.
- * 
+ *
  * Classes that implement a TempFileCreationStrategy attempt to handle the cleanup
  * of temporary files.
- * 
+ *
  * Examples include:
  * <ul>
  *   <li>{@link DefaultTempFileCreationStrategy} deletes temporary files when
@@ -36,7 +36,7 @@ import java.io.IOException;
  *       You may wish to implement your own strategy that meets the needs of
  *       your situation.
  *   </li>
- *   <li>A strategy that keeps the <code>n</code> most-recent files, discarding
+ *   <li>A strategy that keeps the {@code n} most-recent files, discarding
  *       older files on a first-in, first-out basis.
  *       A java.util.Deque or org.apache.commons.collections4.queue.CircularFifoQueue
  *       may be helpful for achieving this.
@@ -46,7 +46,7 @@ import java.io.IOException;
  *       delete the temporary files in the reverse order that they were created.
  *       This is the same as DefaultTempFileCreationStrategy, except the strategy
  *       class would maintain the list of files to delete rather than or in
- *       addition to {@link java.io.DeleteOnExitHook} maintaining the list, and
+ *       addition to {@code java.io.DeleteOnExitHook} maintaining the list, and
  *       the files could be deleted before the JVM exit.
  *   </li>
  *   <li>A strategy that creates a directory that is deleted on JVM exit.
@@ -58,7 +58,7 @@ import java.io.IOException;
  *       creating regular (unregistered) files in the temp directory.
  *   </li>
  * </ul>
- * 
+ *
  */
 public interface TempFileCreationStrategy {
     /**
@@ -66,22 +66,22 @@ public interface TempFileCreationStrategy {
      *
      * @param prefix The prefix to be used to generate the name of the temporary file.
      * @param suffix The suffix to be used to generate the name of the temporary file.
-     * 
+     *
      * @return The path to the newly created and empty temporary file.
-     * 
+     *
      * @throws IOException If no temporary file could be created.
      */
     File createTempFile(String prefix, String suffix) throws IOException;
-    
+
     /**
      * Creates a new and empty temporary directory.
      *
      * @param prefix The directory name to be used to generate the name of the temporary directory.
-     * 
+     *
      * @return The path to the newly created and empty temporary directory.
-     * 
+     *
      * @throws IOException If no temporary directory could be created.
-     * 
+     *
      * @since POI 3.15 beta 3.
      */
     File createTempDirectory(String prefix) throws IOException;
