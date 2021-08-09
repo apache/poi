@@ -341,8 +341,11 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public void setFirstColumn(int col) {
+        int lastColumn = getLastColumn();
+        if (col > lastColumn) lastColumn = col;
         String firstCellRef = CellReference.convertNumToColString(col) + (getFirstRow() + 1);
-        setCellRange(firstCellRef + ":" + buildLastCellReference().formatAsString());
+        String lastCellRef = CellReference.convertNumToColString(lastColumn) + (getLastRow() + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
     }
 
     /**
@@ -363,8 +366,11 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public void setFirstRow(int row) {
+        int lastRow = getLastRow();
+        if (row > lastRow) lastRow = row;
         String firstCellRef = CellReference.convertNumToColString(getFirstColumn()) + (row + 1);
-        setCellRange(firstCellRef + ":" + buildLastCellReference().formatAsString());
+        String lastCellRef = CellReference.convertNumToColString(getLastColumn()) + (lastRow + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
     }
 
     /**
