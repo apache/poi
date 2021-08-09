@@ -22,7 +22,9 @@ import java.net.URISyntaxException;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
@@ -264,19 +266,31 @@ public class XSSFHyperlink implements Hyperlink {
     public void setCellReference(String ref) {
         _ctHyperlink.setRef(ref);
     }
+
     @Internal
     public void setCellReference(CellReference ref) {
         setCellReference(ref.formatAsString());
     }
 
-    private CellReference buildCellReference() {
+    private CellReference buildFirstCellReference() {
+        return buildCellReference(false);
+    }
+
+    private CellReference buildLastCellReference() {
+        return buildCellReference(true);
+    }
+
+    private CellReference buildCellReference(boolean lastCell) {
         String ref = _ctHyperlink.getRef();
         if (ref == null) {
             ref = "A1";
         }
+        if (ref.contains(":")) {
+            AreaReference area = new AreaReference(ref, SpreadsheetVersion.EXCEL2007);
+            return lastCell ? area.getLastCell() : area.getFirstCell();
+        }
         return new CellReference(ref);
     }
-
 
     /**
      * Return the column of the first cell that contains the hyperlink
@@ -285,7 +299,7 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public int getFirstColumn() {
-        return buildCellReference().getCol();
+        return buildFirstCellReference().getCol();
     }
 
 
@@ -296,7 +310,7 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public int getLastColumn() {
-        return buildCellReference().getCol();
+        return buildLastCellReference().getCol();
     }
 
     /**
@@ -306,7 +320,7 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public int getFirstRow() {
-        return buildCellReference().getRow();
+        return buildFirstCellReference().getRow();
     }
 
 
@@ -317,7 +331,7 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public int getLastRow() {
-        return buildCellReference().getRow();
+        return buildLastCellReference().getRow();
     }
 
     /**
@@ -327,18 +341,19 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public void setFirstColumn(int col) {
-        setCellReference(new CellReference( getFirstRow(), col ));
+        String firstCellRef = CellReference.convertNumToColString(col) + (getFirstRow() + 1);
+        setCellRange(firstCellRef + ":" + buildLastCellReference().formatAsString());
     }
 
     /**
      * Set the column of the last cell that contains the hyperlink.
-     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
     @Override
     public void setLastColumn(int col) {
-        setFirstColumn(col);
+        String lastCellRef = CellReference.convertNumToColString(col) + (getLastRow() + 1);
+        setCellRange(buildFirstCellReference().formatAsString() + ":" + lastCellRef);
     }
 
     /**
@@ -348,18 +363,28 @@ public class XSSFHyperlink implements Hyperlink {
      */
     @Override
     public void setFirstRow(int row) {
-        setCellReference(new CellReference( row, getFirstColumn() ));
+        String firstCellRef = CellReference.convertNumToColString(getFirstColumn()) + (row + 1);
+        setCellRange(firstCellRef + ":" + buildLastCellReference().formatAsString());
     }
 
     /**
      * Set the row of the last cell that contains the hyperlink.
-     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param row the 0-based row of the last cell that contains the hyperlink
      */
     @Override
     public void setLastRow(int row) {
-        setFirstRow(row);
+        String lastCellRef = CellReference.convertNumToColString(getLastColumn()) + (row + 1);
+        setCellRange(buildFirstCellReference().formatAsString() + ":" + lastCellRef);
+    }
+
+    private void setCellRange(String range) {
+        AreaReference ref = new AreaReference(range, SpreadsheetVersion.EXCEL2007);
+        if(ref.isSingleCell()) {
+            setCellReference(ref.getFirstCell());
+        } else {
+            setCellReference(ref.formatAsString());
+        }
     }
 
     /**

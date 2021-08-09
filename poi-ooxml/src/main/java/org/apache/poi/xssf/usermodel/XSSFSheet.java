@@ -55,23 +55,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellCopyPolicy;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.IgnoredErrorType;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Table;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -846,9 +830,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
-        String ref = addr.formatAsString();
-        for(XSSFHyperlink hyperlink : hyperlinks) {
-            if(hyperlink.getCellRef().equals(ref)) {
+        for (XSSFHyperlink hyperlink : getHyperlinkList()) {
+            if (addr.getRow() >= hyperlink.getFirstRow() && addr.getRow() <= hyperlink.getLastRow()
+                    && addr.getColumn() >= hyperlink.getFirstColumn() && addr.getColumn() <= hyperlink.getLastColumn()) {
                 return hyperlink;
             }
         }
