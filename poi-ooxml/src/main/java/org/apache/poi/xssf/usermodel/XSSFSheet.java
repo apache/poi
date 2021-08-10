@@ -3356,13 +3356,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Register a hyperlink in the collection of hyperlinks on this sheet
+     * Register a hyperlink in the collection of hyperlinks on this sheet.
+     * Use {@link XSSFCell#setHyperlink(Hyperlink)} if the hyperlink is just for that one cell.
+     * Use this method if you want to add a Hyperlink that covers a range of sells. If you use
+     * this method, you will need to call {@link XSSFHyperlink#setCellReference(String)} to
+     * explicitly cell the value, eg B2 or B2:C3 (the 4 cells with B2 at top left and C3 at bottom right)
      *
      * @param hyperlink the link to add
      */
-    @Internal
     public void addHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.add(hyperlink);
+    }
+
+    /**
+     * Remove a hyperlink in the collection of hyperlinks on this sheet.
+     * {@link XSSFCell#removeHyperlink()} can be used if the hyperlink is just for that one cell.
+     *
+     * @param hyperlink the link to remove
+     * @since POI 5.0.1
+     */
+    public void removeHyperlink(XSSFHyperlink hyperlink) {
+        hyperlinks.remove(hyperlink);
     }
 
     /**

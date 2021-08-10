@@ -1790,29 +1790,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFCreationHelper creationHelper = wb.getCreationHelper();
-            XSSFHyperlink hyperlink;
 
             // Try with a cell reference
-            hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
-            sheet.addHyperlink(hyperlink);
-            hyperlink.setAddress("http://myurl");
-            hyperlink.setCellReference("B4");
-            assertEquals(3, hyperlink.getFirstRow());
-            assertEquals(1, hyperlink.getFirstColumn());
-            assertEquals(3, hyperlink.getLastRow());
-            assertEquals(1, hyperlink.getLastColumn());
+            XSSFHyperlink hyperlink1 = creationHelper.createHyperlink(HyperlinkType.URL);
+            sheet.addHyperlink(hyperlink1);
+            hyperlink1.setAddress("http://myurl");
+            hyperlink1.setCellReference("B4");
+            assertEquals(3, hyperlink1.getFirstRow());
+            assertEquals(1, hyperlink1.getFirstColumn());
+            assertEquals(3, hyperlink1.getLastRow());
+            assertEquals(1, hyperlink1.getLastColumn());
 
             // Try with explicit rows / columns
-            hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
-            sheet.addHyperlink(hyperlink);
-            hyperlink.setAddress("http://myurl");
-            hyperlink.setFirstRow(5);
-            hyperlink.setFirstColumn(3);
+            XSSFHyperlink hyperlink2 = creationHelper.createHyperlink(HyperlinkType.URL);
+            sheet.addHyperlink(hyperlink2);
+            hyperlink2.setAddress("http://myurl");
+            hyperlink2.setFirstRow(5);
+            hyperlink2.setFirstColumn(3);
 
-            assertEquals(5, hyperlink.getFirstRow());
-            assertEquals(3, hyperlink.getFirstColumn());
-            assertEquals(5, hyperlink.getLastRow());
-            assertEquals(3, hyperlink.getLastColumn());
+            assertEquals(5, hyperlink2.getFirstRow());
+            assertEquals(3, hyperlink2.getFirstColumn());
+            assertEquals(5, hyperlink2.getLastRow());
+            assertEquals(3, hyperlink2.getLastColumn());
+
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink1), "sheet contains hyperlink1");
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink2), "sheet contains hyperlink2");
+
+            sheet.removeHyperlink(hyperlink1);
+            assertFalse(sheet.getHyperlinkList().contains(hyperlink1), "sheet no longer contains hyperlink1");
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink2), "sheet still contains hyperlink2");
         }
     }
 
