@@ -396,44 +396,84 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 
     @Test
     void testChangeReference() throws IOException {
-        try (XSSFWorkbook wb = new XSSFWorkbook()) {
-            XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
-            hyperlink.setCellReference("B2");
-            assertEquals(1, hyperlink.getFirstRow());
-            assertEquals(1, hyperlink.getLastRow());
-            assertEquals(1, hyperlink.getFirstColumn());
-            assertEquals(1, hyperlink.getLastColumn());
-            hyperlink.setFirstRow(0);
-            assertEquals("B1:B2", hyperlink.getCellRef());
-            assertEquals(0, hyperlink.getFirstRow());
-            assertEquals(1, hyperlink.getLastRow());
-            assertEquals(1, hyperlink.getFirstColumn());
-            assertEquals(1, hyperlink.getLastColumn());
-            hyperlink.setLastRow(2);
-            assertEquals("B1:B3", hyperlink.getCellRef());
-            assertEquals(0, hyperlink.getFirstRow());
-            assertEquals(2, hyperlink.getLastRow());
-            assertEquals(1, hyperlink.getFirstColumn());
-            assertEquals(1, hyperlink.getLastColumn());
-            hyperlink.setFirstColumn(0);
-            assertEquals("A1:B3", hyperlink.getCellRef());
-            assertEquals(0, hyperlink.getFirstRow());
-            assertEquals(2, hyperlink.getLastRow());
-            assertEquals(0, hyperlink.getFirstColumn());
-            assertEquals(1, hyperlink.getLastColumn());
-            hyperlink.setLastColumn(2);
-            assertEquals("A1:C3", hyperlink.getCellRef());
-            assertEquals(0, hyperlink.getFirstRow());
-            assertEquals(2, hyperlink.getLastRow());
-            assertEquals(0, hyperlink.getFirstColumn());
-            assertEquals(2, hyperlink.getLastColumn());
-            hyperlink.setFirstColumn(2);
-            hyperlink.setFirstRow(2);
-            assertEquals("C3", hyperlink.getCellRef());
-            assertEquals(2, hyperlink.getFirstRow());
-            assertEquals(2, hyperlink.getLastRow());
-            assertEquals(2, hyperlink.getFirstColumn());
-            assertEquals(2, hyperlink.getLastColumn());
-        }
+        XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
+        hyperlink.setCellReference("B2");
+        assertEquals(1, hyperlink.getFirstRow());
+        assertEquals(1, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setFirstRow(0);
+        assertEquals("B1:B2", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(1, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setLastRow(2);
+        assertEquals("B1:B3", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setFirstColumn(0);
+        assertEquals("A1:B3", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(0, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setLastColumn(2);
+        assertEquals("A1:C3", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(0, hyperlink.getFirstColumn());
+        assertEquals(2, hyperlink.getLastColumn());
+        hyperlink.setFirstColumn(2);
+        hyperlink.setFirstRow(2);
+        assertEquals("C3", hyperlink.getCellRef());
+        assertEquals(2, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(2, hyperlink.getFirstColumn());
+        assertEquals(2, hyperlink.getLastColumn());
+    }
+
+    @Test
+    void testChangeRowsAndColumns() throws IOException {
+        XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
+        hyperlink.setCellReference("B2");
+        hyperlink.setLastRow(0);
+        assertEquals("B1", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(0, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setLastColumn(0);
+        assertEquals("A1", hyperlink.getCellRef());
+        assertEquals(0, hyperlink.getFirstRow());
+        assertEquals(0, hyperlink.getLastRow());
+        assertEquals(0, hyperlink.getFirstColumn());
+        assertEquals(0, hyperlink.getLastColumn());
+        hyperlink.setFirstRow(1);
+        assertEquals("A2", hyperlink.getCellRef());
+        assertEquals(1, hyperlink.getFirstRow());
+        assertEquals(1, hyperlink.getLastRow());
+        assertEquals(0, hyperlink.getFirstColumn());
+        assertEquals(0, hyperlink.getLastColumn());
+        hyperlink.setFirstColumn(1);
+        assertEquals("B2", hyperlink.getCellRef());
+        assertEquals(1, hyperlink.getFirstRow());
+        assertEquals(1, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setLastRow(2);
+        assertEquals("B2:B3", hyperlink.getCellRef());
+        assertEquals(1, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(1, hyperlink.getLastColumn());
+        hyperlink.setLastColumn(2);
+        assertEquals("B2:C3", hyperlink.getCellRef());
+        assertEquals(1, hyperlink.getFirstRow());
+        assertEquals(2, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(2, hyperlink.getLastColumn());
     }
 }
