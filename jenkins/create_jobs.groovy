@@ -448,7 +448,7 @@ poijobs.each { poijob ->
                     //}
 
                     gradle {
-                        tasks('jenkins')
+                        tasks('clean jenkins')
                         useWrapper(true)
                     }
                 } else if (poijob.noScratchpad) {
