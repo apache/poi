@@ -3387,6 +3387,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Internal
     public void removeHyperlink(int row, int column) {
+        // CTHyperlinks is regenerated from scratch when writing out the spreadsheet
+        // so don't worry about maintaining hyperlinks and CTHyperlinks in parallel.
+        // only maintain hyperlinks
         XSSFHyperlink hyperlink = getHyperlink(row, column);
         if (hyperlink != null) {
             if (hyperlink.getFirstRow() == row && hyperlink.getLastRow() == row
