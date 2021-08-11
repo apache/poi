@@ -32,6 +32,8 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -489,6 +491,32 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D3"));
         testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D4"));
         testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D5"));
+    }
+
+    @Test
+    void testRemoveSharedHyperlinkFromOneCellWithCellRefs() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
+            hyperlink.setAddress("https://poi.apache.org");
+            hyperlink.setLocation("poi-location");
+            hyperlink.setLabel("poi-label");
+            hyperlink.setCellReference("A1:E5");
+            sheet.addHyperlink(hyperlink);
+            CellAddress cellAddress = new CellAddress("C3");
+            sheet.removeHyperlink(cellAddress.getRow(), cellAddress.getColumn());
+            assertNull(sheet.getHyperlink(cellAddress), "cell " + cellAddress.formatAsString() + "should no longer has a hyperlink");
+            ArrayList<String> newRefs = new ArrayList<>();
+            for (XSSFHyperlink testHyperlink : sheet.getHyperlinkList()) {
+                newRefs.add(testHyperlink.getCellRef());
+            }
+            assertEquals(4, newRefs.size());
+            HashSet<String> set = new HashSet<>(newRefs);
+            assertTrue(set.contains("A1:B5"), "contains A1:B5");
+            assertTrue(set.contains("D1:E5"), "contains D1:E5");
+            assertTrue(set.contains("C1:C2"), "contains C1:C2");
+            assertTrue(set.contains("C4:C5"), "contains C4:C5");
+        }
     }
 
     private void testRemoveSharedHyperlinkFromOneCell(String area, CellAddress cellAddress) throws IOException {
