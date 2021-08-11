@@ -124,6 +124,10 @@ subprojects {
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:unchecked'
         options.deprecation = true
+
+        onlyIf {
+            (name != "compileJava9" && name != "compileTest9") || JavaVersion.current() != JavaVersion.VERSION_1_8
+        }
     }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
