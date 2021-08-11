@@ -3387,15 +3387,56 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Internal
     public void removeHyperlink(int row, int column) {
-        // CTHyperlinks is regenerated from scratch when writing out the spreadsheet
-        // so don't worry about maintaining hyperlinks and CTHyperlinks in parallel.
-        // only maintain hyperlinks
-        String ref = new CellReference(row, column).formatAsString();
-        for (Iterator<XSSFHyperlink> it = hyperlinks.iterator(); it.hasNext();) {
-            XSSFHyperlink hyperlink = it.next();
-            if (hyperlink.getCellRef().equals(ref)) {
-                it.remove();
-                return;
+        XSSFHyperlink hyperlink = getHyperlink(row, column);
+        if (hyperlink != null) {
+            if (hyperlink.getFirstRow() == row && hyperlink.getLastRow() == row
+                && hyperlink.getFirstColumn() == column && hyperlink.getLastColumn() == column) {
+                removeHyperlink(hyperlink);
+            } else {
+                //we have a cellRef that spans multiple cells - we just want to remove the hyperlink from one cell
+                //we delete this hyperlink but add new hyperlinks to cover the other cells that were served
+                //by the old hyperlink
+                boolean leftCreated = false;
+                boolean rightCreated = false;
+                if (hyperlink.getFirstColumn() < column) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    newLink.setFirstColumn(hyperlink.getFirstColumn());
+                    newLink.setLastColumn(column - 1);
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                    leftCreated = true;
+                }
+                if (hyperlink.getLastColumn() > column) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    newLink.setFirstColumn(column + 1);
+                    newLink.setLastColumn(hyperlink.getLastColumn());
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                    rightCreated = true;
+                }
+                if (hyperlink.getFirstRow() < row) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    newLink.setFirstColumn(firstColumn);
+                    newLink.setLastColumn(lastColumn);
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(row - 1);
+                    addHyperlink(newLink);
+                }
+                if (hyperlink.getLastRow() > row) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    newLink.setFirstColumn(firstColumn);
+                    newLink.setLastColumn(lastColumn);
+                    newLink.setFirstRow(row + 1);
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                }
+                removeHyperlink(hyperlink);
             }
         }
     }

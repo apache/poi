@@ -22,7 +22,9 @@ import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -395,7 +397,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    void testChangeReference() throws IOException {
+    void testChangeReference() {
         XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
         hyperlink.setCellReference("B2");
         assertEquals(1, hyperlink.getFirstRow());
@@ -436,7 +438,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    void testChangeRowsAndColumns() throws IOException {
+    void testChangeRowsAndColumns() {
         XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
         hyperlink.setCellReference("B2");
         hyperlink.setLastRow(0);
@@ -476,4 +478,46 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals(1, hyperlink.getFirstColumn());
         assertEquals(2, hyperlink.getLastColumn());
     }
+
+    @Test
+    void testRemoveSharedHyperlinkFromOneCell() throws IOException {
+        testRemoveSharedHyperlinkFromOneCell("A1:E5", new CellAddress("C3"));
+        testRemoveSharedHyperlinkFromOneCell("A1:E5", new CellAddress("A1"));
+        testRemoveSharedHyperlinkFromOneCell("A1:E5", new CellAddress("E5"));
+        testRemoveSharedHyperlinkFromOneCell("A1:E5", new CellAddress("E1"));
+        testRemoveSharedHyperlinkFromOneCell("A1:E5", new CellAddress("A5"));
+        testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D3"));
+        testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D4"));
+        testRemoveSharedHyperlinkFromOneCell("D3:D5", new CellAddress("D5"));
+    }
+
+    private void testRemoveSharedHyperlinkFromOneCell(String area, CellAddress cellAddress) throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
+            hyperlink.setAddress("https://poi.apache.org");
+            hyperlink.setLocation("poi-location");
+            hyperlink.setLabel("poi-label");
+            hyperlink.setCellReference(area);
+            sheet.addHyperlink(hyperlink);
+            AreaReference areaRef = new AreaReference(hyperlink.getCellRef(), SpreadsheetVersion.EXCEL2007);
+            for (CellReference cellRef : areaRef.getAllReferencedCells()) {
+                XSSFHyperlink testHyperlink = sheet.getHyperlink(cellRef.getRow(), cellRef.getCol());
+                assertEquals(hyperlink, testHyperlink, "cell " + cellRef.formatAsString() + "has hyperlink?");
+            }
+            sheet.removeHyperlink(cellAddress.getRow(), cellAddress.getColumn());
+            assertNull(sheet.getHyperlink(cellAddress), "cell " + cellAddress.formatAsString() + "should no longer has a hyperlink");
+            for (CellReference cellRef : areaRef.getAllReferencedCells()) {
+                if (cellRef.formatAsString().equals(cellAddress.formatAsString())) {
+                    //ignore
+                } else {
+                    XSSFHyperlink testHyperlink = sheet.getHyperlink(cellRef.getRow(), cellRef.getCol());
+                    assertEquals(hyperlink.getAddress(), testHyperlink.getAddress(), "cell " + cellRef.formatAsString() + "has hyperlink with right address?");
+                    assertEquals(hyperlink.getLocation(), testHyperlink.getLocation(), "cell " + cellRef.formatAsString() + "has hyperlink with right location?");
+                    assertEquals(hyperlink.getLabel(), testHyperlink.getLabel(), "cell " + cellRef.formatAsString() + "has hyperlink with right label?");
+                }
+            }
+        }
+    }
+
 }
