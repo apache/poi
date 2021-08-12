@@ -32,12 +32,10 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.Internal;
 
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
  */
-@Internal
 public final class LookupUtils {
 
     /**
