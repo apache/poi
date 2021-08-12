@@ -69,7 +69,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "AMORDEGRC", null);
         r(m, "AMORLINC", null);
         r(m, "AVERAGEIF", null);
-        r(m, "AVERAGEIFS", null);
+        r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
         r(m, "BESSELJ", null);
@@ -142,7 +142,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ISODD", ParityFunction.IS_ODD);
         r(m, "JIS", null);
         r(m, "LCM", null);
+        r(m, "MAXIFS", Maxifs.instance);
         r(m, "MDURATION", null);
+        r(m, "MINIFS", Minifs.instance);
         r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", NetworkdaysFunction.instance);

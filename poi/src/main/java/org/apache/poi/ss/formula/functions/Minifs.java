@@ -23,13 +23,13 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for the Excel function SUMIFS<p>
+ * Implementation for the Excel function MINIFS<p>
  *
  * Syntax : <p>
- *  SUMIFS ( <b>sum_range</b>, <b>criteria_range1</b>, <b>criteria1</b>,
+ *  MINIFS ( <b>min_range</b>, <b>criteria_range1</b>, <b>criteria1</b>,
  *  [<b>criteria_range2</b>,  <b>criteria2</b>], ...)
  *    <ul>
- *      <li><b>sum_range</b> Required. One or more cells to sum, including numbers or names, ranges,
+ *      <li><b>min_range</b> Required. One or more cells to determine the minimum value of, including numbers or names, ranges,
  *      or cell references that contain numbers. Blank and text values are ignored.</li>
  *      <li><b>criteria1_range</b> Required. The first range in which
  *      to evaluate the associated criteria.</li>
@@ -40,16 +40,16 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *      Up to 127 range/criteria pairs are allowed.
  *    </ul>
  */
-public final class Sumifs extends Baseifs {
+public final class Minifs extends Baseifs {
     /**
      * Singleton
      */
-    public static final FreeRefFunction instance = new Sumifs();
+    public static final FreeRefFunction instance = new Minifs();
 
     /**
-     * https://support.office.com/en-us/article/SUMIFS-function-c9e748f5-7ea7-455d-9406-611cebce642b
-     * COUNTIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...
-     * need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
+     * https://support.microsoft.com/en-us/office/minifs-function-6ca1ddaa-079b-4e74-80cc-72eef32e6599
+     * MINIFS(min_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...
+     * need at least 3 arguments and need to have an odd number of arguments (min-range plus x*(criteria_range, criteria))
      */
     @Override
     protected boolean hasInitialRange() {
@@ -59,16 +59,19 @@ public final class Sumifs extends Baseifs {
 	@Override
 	protected Aggregator createAggregator() {
 		return new Aggregator() {
-	    	double accumulator = 0.0;
+			Double accumulator = null;
 	    	
 	    	@Override
 	    	public void addValue(ValueEval value) {
-	    		accumulator += (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+	    		double d = (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+	    		if(accumulator == null || accumulator > d) {
+	    			accumulator = d;	
+	    		}
 	    	}
 	    	
 	    	@Override
 	    	public ValueEval getResult() {
-	    		return new NumberEval(accumulator); 
+	    		return new NumberEval(accumulator == null ? 0.0 : accumulator); 
 	    	}
 		};
 	}
