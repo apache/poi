@@ -45,21 +45,21 @@ public class Countifs extends Baseifs {
         return false;
     }
 
-	@Override
-	protected Aggregator createAggregator() {
-		return new Aggregator() {
-	    	double accumulator = 0.0;
-	    	
-	    	@Override
-	    	public void addValue(ValueEval value) {
-	    		accumulator += 1.0;
-	    	}
-	    	
-	    	@Override
-	    	public ValueEval getResult() {
-	    		return new NumberEval(accumulator); 
-	    	}
-		};
-	}
+    @Override
+    protected Aggregator createAggregator() {
+        return new Aggregator() {
+            double accumulator = 0.0;
+            
+            @Override
+            public void addValue(ValueEval value) {
+                accumulator += 1.0;
+            }
+            
+            @Override
+            public ValueEval getResult() {
+                return new NumberEval(accumulator); 
+            }
+        };
+    }
 }
 
