@@ -57,26 +57,26 @@ public final class Averageifs extends Baseifs {
         return true;
     }
 
-	@Override
-	protected Aggregator createAggregator() {
-		return new Aggregator() {
-			Double sum = 0.0;
-			Integer count = 0;
-	    	
-	    	@Override
-	    	public void addValue(ValueEval value) {
-	    		if(!(value instanceof NumberEval)) return;
-	    		
-	    		double d = ((NumberEval) value).getNumberValue();;
-	    		sum += d;
-	    		count++;
-	    		
-	    	}
-	    	
-	    	@Override
-	    	public ValueEval getResult() {
-	    		return count == 0 ? ErrorEval.DIV_ZERO : new NumberEval(sum / count);
-	    	}
-		};
-	}
+    @Override
+    protected Aggregator createAggregator() {
+        return new Aggregator() {
+            Double sum = 0.0;
+            Integer count = 0;
+            
+            @Override
+            public void addValue(ValueEval value) {
+                if(!(value instanceof NumberEval)) return;
+                
+                double d = ((NumberEval) value).getNumberValue();;
+                sum += d;
+                count++;
+                
+            }
+            
+            @Override
+            public ValueEval getResult() {
+                return count == 0 ? ErrorEval.DIV_ZERO : new NumberEval(sum / count);
+            }
+        };
+    }
 }

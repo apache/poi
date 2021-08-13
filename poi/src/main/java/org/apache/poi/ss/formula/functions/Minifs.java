@@ -56,23 +56,23 @@ public final class Minifs extends Baseifs {
         return true;
     }
 
-	@Override
-	protected Aggregator createAggregator() {
-		return new Aggregator() {
-			Double accumulator = null;
-	    	
-	    	@Override
-	    	public void addValue(ValueEval value) {
-	    		double d = (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
-	    		if(accumulator == null || accumulator > d) {
-	    			accumulator = d;	
-	    		}
-	    	}
-	    	
-	    	@Override
-	    	public ValueEval getResult() {
-	    		return new NumberEval(accumulator == null ? 0.0 : accumulator); 
-	    	}
-		};
-	}
+    @Override
+    protected Aggregator createAggregator() {
+        return new Aggregator() {
+            Double accumulator = null;
+            
+            @Override
+            public void addValue(ValueEval value) {
+                double d = (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+                if(accumulator == null || accumulator > d) {
+                    accumulator = d;	
+                }
+            }
+            
+            @Override
+            public ValueEval getResult() {
+                return new NumberEval(accumulator == null ? 0.0 : accumulator); 
+            }
+        };
+    }
 }

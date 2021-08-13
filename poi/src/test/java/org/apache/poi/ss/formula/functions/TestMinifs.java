@@ -76,7 +76,7 @@ final class TestMinifs {
         };
 
         ValueEval[] b2b7 = new ValueEval[] {
-    		   new NumberEval(1),
+               new NumberEval(1),
                new NumberEval(2),
                new NumberEval(2),
                new NumberEval(3),

@@ -42,11 +42,11 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
     protected abstract boolean hasInitialRange();
   
     /**
-     * Implements the details of a specific aggregation functions
+     * Implements the details of a specific aggregation function
      */
     protected static interface Aggregator {
-    	void addValue(ValueEval d);
-    	ValueEval getResult();
+        void addValue(ValueEval d);
+        ValueEval getResult();
     }
 
     protected abstract Aggregator createAggregator();
@@ -150,32 +150,22 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                         matches = false;
                         break;
                     }
-
                 }
 
                 if(matches) { // aggregate only if all of the corresponding criteria specified are true for that cell.
-                    aggregator.addValue(accumulate(sumRange, r, c));
+                    if(sumRange != null) {
+                        ValueEval value = sumRange.getRelativeValue(r, c);
+                        if (value instanceof ErrorEval) {
+                            throw new EvaluationException((ErrorEval)value);
+                        }
+                        aggregator.addValue(value);
+                    } else {
+                        aggregator.addValue(null);
+                    }
                 }
             }
         }
         return aggregator.getResult();
-    }
-
-    /**
-     * For counts, this would return 1, for sums it returns a cell value or zero.
-     * This is only called after all the criteria are confirmed true for the coordinates.
-     * @param sumRange if used
-     * @param relRowIndex
-     * @param relColIndex
-     * @return the aggregate input value corresponding to the given range coordinates
-     * @throws EvaluationException if there is an issue with eval
-     */
-    private static ValueEval accumulate(AreaEval sumRange, int relRowIndex, int relColIndex) throws EvaluationException {
-        ValueEval addend = sumRange.getRelativeValue(relRowIndex, relColIndex);
-        if (addend instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval)addend);
-        }
-        return addend;
     }
 
     protected static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
