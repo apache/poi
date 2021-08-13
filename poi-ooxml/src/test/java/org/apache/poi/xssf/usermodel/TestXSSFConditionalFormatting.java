@@ -47,6 +47,11 @@ class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
     }
 
     @Override
+    protected int defaultDataBarMinLength() { return 10; }
+    @Override
+    protected int defaultDataBarMaxLength() { return 90; }
+
+    @Override
     protected void assertColor(String hexExpected, Color actual) {
         assertNotNull(actual, "Color must be given");
         XSSFColor color = (XSSFColor)actual;
