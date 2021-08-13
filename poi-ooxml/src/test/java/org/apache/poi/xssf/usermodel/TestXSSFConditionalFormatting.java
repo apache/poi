@@ -46,6 +46,8 @@ class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
         super(XSSFITestDataProvider.instance);
     }
 
+    //https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.databar?view=openxml-2.8.1
+    //defaults are 10% and 90%
     @Override
     protected int defaultDataBarMinLength() { return 10; }
     @Override
