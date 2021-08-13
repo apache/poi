@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +41,64 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class LookupUtils {
+
+    public enum MatchMode {
+        ExactMatch(0),
+        ExactMatchFallbackToSmallerValue(-1),
+        ExactMatchFallbackToLargerValue(1),
+        WildcardMatch(2);
+
+        private final int intValue;
+
+        MatchMode(final int intValue) {
+            this.intValue = intValue;
+        }
+
+        public int getIntValue() { return intValue; }
+    }
+
+    public enum SearchMode {
+        IterateForward(1),
+        IterateBackward(-1),
+        BinarySearchForward(2),
+        BinarySearchBackward(-2);
+
+        private final int intValue;
+
+        SearchMode(final int intValue) {
+            this.intValue = intValue;
+        }
+
+        public int getIntValue() { return intValue; }
+    }
+
+    private static Map<Integer, MatchMode> matchModeMap = new HashMap<>();
+    private static Map<Integer, SearchMode> searchModeMap = new HashMap<>();
+
+    static {
+        for (MatchMode mode : MatchMode.values()) {
+            matchModeMap.put(mode.getIntValue(), mode);
+        }
+        for (SearchMode mode : SearchMode.values()) {
+            searchModeMap.put(mode.getIntValue(), mode);
+        }
+    }
+
+    public static MatchMode matchMode(int m) {
+        MatchMode mode = matchModeMap.get(m);
+        if (mode == null) {
+            throw new IllegalArgumentException("unknown match mode " + m);
+        }
+        return mode;
+    }
+
+    public static SearchMode searchMode(int s) {
+        SearchMode mode = searchModeMap.get(s);
+        if (mode == null) {
+            throw new IllegalArgumentException("unknown search mode " + s);
+        }
+        return mode;
+    }
 
     /**
      * Represents a single row or column within an {@code AreaEval}.

@@ -68,29 +68,35 @@ final class XLookupFunction implements FreeRefFunction {
                 return e.getErrorEval();
             }
         }
-        int matchMode = 0;
+        LookupUtils.MatchMode matchMode = LookupUtils.MatchMode.ExactMatch;
         if (args.length > 4) {
             try {
                 ValueEval matchModeValue = OperandResolver.getSingleValue(args[4], srcRowIndex, srcColumnIndex);
-                matchMode = OperandResolver.coerceValueToInt(matchModeValue);
+                int matchInt = OperandResolver.coerceValueToInt(matchModeValue);
+                matchMode = LookupUtils.matchMode(matchInt);
             } catch (EvaluationException e) {
                 return e.getErrorEval();
+            } catch (Exception e) {
+                return ErrorEval.VALUE_INVALID;
             }
         }
-        int searchMode = 1;
+        LookupUtils.SearchMode searchMode = LookupUtils.SearchMode.IterateForward;
         if (args.length > 5) {
             try {
                 ValueEval searchModeValue = OperandResolver.getSingleValue(args[5], srcRowIndex, srcColumnIndex);
-                searchMode = OperandResolver.coerceValueToInt(searchModeValue);
+                int searchInt = OperandResolver.coerceValueToInt(searchModeValue);
+                searchMode = LookupUtils.searchMode(searchInt);
             } catch (EvaluationException e) {
                 return e.getErrorEval();
+            } catch (Exception e) {
+                return ErrorEval.VALUE_INVALID;
             }
         }
         return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode);
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
-                               ValueEval returnEval, Optional<String> notFound, int matchMode, int searchMode) {
+                               ValueEval returnEval, Optional<String> notFound, LookupUtils.MatchMode matchMode, LookupUtils.SearchMode searchMode) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
