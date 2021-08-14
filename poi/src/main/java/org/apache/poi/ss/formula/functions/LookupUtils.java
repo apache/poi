@@ -365,14 +365,11 @@ public final class LookupUtils {
             StringEval se = (StringEval) other;
 
             String stringValue = se.getStringValue();
-            if (_wildCardPattern != null) {
+            if (_wildCardPattern != null && (_isMatchFunction || !_matchExact)) {
                 Matcher matcher = _wildCardPattern.matcher(stringValue);
                 boolean matches = matcher.matches();
 
-                if (_isMatchFunction ||
-                    !_matchExact) {
-                  return CompareResult.valueOf(matches);
-                }
+                return CompareResult.valueOf(matches);
             }
 
             return CompareResult.valueOf(_value.compareToIgnoreCase(stringValue));

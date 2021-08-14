@@ -52,17 +52,17 @@ public class XSSFDataBarFormatting implements DataBarFormatting {
     }
 
     public int getWidthMin() {
-        return 0;
+        return (int)_databar.getMinLength();
     }
     public void setWidthMin(int width) {
-        // TODO How does XSSF encode this?
+        _databar.setMinLength(width);
     }
 
     public int getWidthMax() {
-        return 100;
+        return (int)_databar.getMaxLength();
     }
     public void setWidthMax(int width) {
-        // TODO How does XSSF encode this?
+        _databar.setMaxLength(width);
     }
 
     public XSSFColor getColor() {
