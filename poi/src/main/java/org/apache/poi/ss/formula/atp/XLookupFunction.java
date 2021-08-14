@@ -100,10 +100,9 @@ final class XLookupFunction implements FreeRefFunction {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
-            boolean isRangeLookup = false;
             int matchedRow;
             try {
-                matchedRow = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
+                matchedRow = LookupUtils.xlookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), matchMode, searchMode);
             } catch (EvaluationException e) {
                 if (ErrorEval.NA.equals(e.getErrorEval())) {
                     if (notFound.isPresent()) {

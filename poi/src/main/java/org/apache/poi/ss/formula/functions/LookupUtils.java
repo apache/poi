@@ -344,13 +344,12 @@ public final class LookupUtils {
         protected abstract String getValueAsString();
     }
 
+    private static class StringLookupComparer extends LookupValueComparerBase {
 
-    private static final class StringLookupComparer extends LookupValueComparerBase {
-
-        private final String _value;
-        private final Pattern _wildCardPattern;
-        private final boolean _matchExact;
-        private final boolean _isMatchFunction;
+        protected final String _value;
+        protected final Pattern _wildCardPattern;
+        protected final boolean _matchExact;
+        protected final boolean _isMatchFunction;
 
         protected StringLookupComparer(StringEval se, boolean matchExact, boolean isMatchFunction) {
             super(se);
@@ -360,11 +359,14 @@ public final class LookupUtils {
             _isMatchFunction = isMatchFunction;
         }
 
+        protected String convertToString(ValueEval other) {
+            StringEval se = (StringEval) other;
+            return se.getStringValue();
+        }
+
         @Override
         protected CompareResult compareSameType(ValueEval other) {
-            StringEval se = (StringEval) other;
-
-            String stringValue = se.getStringValue();
+            String stringValue = convertToString(other);
             if (_wildCardPattern != null && (_isMatchFunction || !_matchExact)) {
                 Matcher matcher = _wildCardPattern.matcher(stringValue);
                 boolean matches = matcher.matches();
@@ -379,6 +381,28 @@ public final class LookupUtils {
             return _value;
         }
     }
+
+    private static final class TolerantStringLookupComparer extends StringLookupComparer {
+
+        static StringEval convertToStringEval(ValueEval eval) {
+            if (eval instanceof StringEval) {
+                return (StringEval)eval;
+            }
+            String sv = OperandResolver.coerceValueToString(eval);
+            return new StringEval(sv);
+        }
+
+        protected TolerantStringLookupComparer(ValueEval eval, boolean matchExact, boolean isMatchFunction) {
+            super(convertToStringEval(eval), matchExact, isMatchFunction);
+        }
+
+        @Override
+        protected String convertToString(ValueEval other) {
+            StringEval se = (StringEval) other;
+            return OperandResolver.coerceValueToString(other);
+        }
+    }
+
     private static final class NumberLookupComparer extends LookupValueComparerBase {
         private final double _value;
 
@@ -553,13 +577,13 @@ public final class LookupUtils {
         throw new RuntimeException("Unexpected eval type (" + valEval + ")");
     }
 
-    public static int lookupIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {
+    public static int lookupFirstIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {
         LookupValueComparer lookupComparer = createLookupComparer(lookupValue, isRangeLookup, false);
         int result;
         if(isRangeLookup) {
             result = performBinarySearch(vector, lookupComparer);
         } else {
-            result = lookupIndexOfExactValue(lookupComparer, vector);
+            result = lookupFirstIndexOfValue(lookupComparer, vector);
         }
         if(result < 0) {
             throw new EvaluationException(ErrorEval.NA);
@@ -567,15 +591,28 @@ public final class LookupUtils {
         return result;
     }
 
+    public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
+        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, matchMode == MatchMode.ExactMatch, true);
+        int result;
+        if (searchMode == SearchMode.IterateBackward || searchMode == SearchMode.BinarySearchBackward) {
+            result = lookupLastIndexOfValue(lookupComparer, vector);
+        } else {
+            result = lookupFirstIndexOfValue(lookupComparer, vector);
+        }
+        if(result < 0) {
+            throw new EvaluationException(ErrorEval.NA);
+        }
+        return result;
+    }
 
     /**
-     * Finds first (lowest index) exact occurrence of specified value.
+     * Finds first (lowest index) matching occurrence of specified value.
      * @param lookupComparer the value to be found in column or row vector
      * @param vector the values to be searched. For VLOOKUP this is the first column of the
      *  tableArray. For HLOOKUP this is the first row of the tableArray.
      * @return zero based index into the vector, -1 if value cannot be found
      */
-    private static int lookupIndexOfExactValue(LookupValueComparer lookupComparer, ValueVector vector) {
+    private static int lookupFirstIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector) {
 
         // find first occurrence of lookup value
         int size = vector.getSize();
@@ -587,6 +624,24 @@ public final class LookupUtils {
         return -1;
     }
 
+    /**
+     * Finds last (greatest index) matching occurrence of specified value.
+     * @param lookupComparer the value to be found in column or row vector
+     * @param vector the values to be searched. For VLOOKUP this is the first column of the
+     *  tableArray. For HLOOKUP this is the first row of the tableArray.
+     * @return zero based index into the vector, -1 if value cannot be found
+     */
+    private static int lookupLastIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector) {
+
+        // find last occurrence of lookup value
+        int size = vector.getSize();
+        for (int i = size - 1; i >= 0; i--) {
+            if(lookupComparer.compareTo(vector.getItem(i)).isEqual()) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     /**
      * Encapsulates some standard binary search functionality so the unusual Excel behaviour can
@@ -712,7 +767,7 @@ public final class LookupUtils {
         return maxIx - 1;
     }
 
-    public static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact, boolean isMatchFunction) {
+    static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact, boolean isMatchFunction) {
 
         if (lookupValue == BlankEval.instance) {
             // blank eval translates to zero
@@ -731,5 +786,18 @@ public final class LookupUtils {
             return new BooleanLookupComparer((BoolEval) lookupValue);
         }
         throw new IllegalArgumentException("Bad lookup value type (" + lookupValue.getClass().getName() + ")");
+    }
+
+    private static LookupValueComparer createTolerantLookupComparer(ValueEval lookupValue, boolean matchExact, boolean isMatchFunction) {
+        if (lookupValue == BlankEval.instance) {
+            return new TolerantStringLookupComparer(new StringEval(""), matchExact, isMatchFunction);
+        }
+        if (lookupValue instanceof BoolEval) {
+            return new BooleanLookupComparer((BoolEval) lookupValue);
+        }
+        if (matchExact && lookupValue instanceof NumberEval) {
+            return new NumberLookupComparer((NumberEval) lookupValue);
+        }
+        return new TolerantStringLookupComparer(lookupValue, matchExact, isMatchFunction);
     }
 }

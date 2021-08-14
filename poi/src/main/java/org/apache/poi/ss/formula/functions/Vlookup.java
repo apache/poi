@@ -60,7 +60,7 @@ public final class Vlookup extends Var3or4ArgFunction {
             } catch(RuntimeException e) {
                 isRangeLookup = true;
             }
-            int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
+            int rowIndex = LookupUtils.lookupFirstIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
             int colIndex = LookupUtils.resolveRowOrColIndexArg(col_index, srcRowIndex, srcColumnIndex);
             ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
             return resultCol.getItem(rowIndex);

@@ -65,7 +65,7 @@ public final class Lookup extends Var2or3ArgFunction {
             // if a rectangular area reference was passed in as arg1, lookupVector and resultVector should be the same size
             assert (lookupVector.getSize() == resultVector.getSize());
 
-            int index = LookupUtils.lookupIndexOfValue(lookupValue, lookupVector, true);
+            int index = LookupUtils.lookupFirstIndexOfValue(lookupValue, lookupVector, true);
             return resultVector.getItem(index);
         } catch (final EvaluationException e) {
             return e.getErrorEval();
@@ -86,7 +86,7 @@ public final class Lookup extends Var2or3ArgFunction {
                 // Excel seems to handle this by accessing past the end of the result vector.
                 throw new RuntimeException("Lookup vector and result vector of differing sizes not supported yet");
             }
-            int index = LookupUtils.lookupIndexOfValue(lookupValue, lookupVector, true);
+            int index = LookupUtils.lookupFirstIndexOfValue(lookupValue, lookupVector, true);
 
             return resultVector.getItem(index);
         } catch (EvaluationException e) {
