@@ -53,6 +53,9 @@ public abstract class BaseTestConditionalFormatting {
 
     protected abstract void assertColor(String hexExpected, Color actual);
 
+    protected int defaultDataBarMinLength() { return 0; }
+    protected int defaultDataBarMaxLength() { return 100; }
+
     @Test
     void testBasic() throws Throwable {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
@@ -764,8 +767,8 @@ public abstract class BaseTestConditionalFormatting {
         assertNotNull(databar);
         assertFalse(databar.isIconOnly());
         assertTrue(databar.isLeftToRight());
-        assertEquals(0, databar.getWidthMin());
-        assertEquals(100, databar.getWidthMax());
+        assertEquals(defaultDataBarMinLength(), databar.getWidthMin());
+        assertEquals(defaultDataBarMaxLength(), databar.getWidthMax());
 
         assertColor(color, databar.getColor());
 
@@ -1177,8 +1180,8 @@ public abstract class BaseTestConditionalFormatting {
 
             assertFalse(dbFmt.isIconOnly());
             assertTrue(dbFmt.isLeftToRight());
-            assertEquals(0, dbFmt.getWidthMin());
-            assertEquals(100, dbFmt.getWidthMax());
+            assertEquals(defaultDataBarMinLength(), dbFmt.getWidthMin());
+            assertEquals(defaultDataBarMaxLength(), dbFmt.getWidthMax());
             assertColor(colorHex, dbFmt.getColor());
 
             dbFmt.getMinThreshold().setRangeType(RangeType.MIN);
@@ -1201,8 +1204,8 @@ public abstract class BaseTestConditionalFormatting {
 
                 assertFalse(dbFmt.isIconOnly());
                 assertTrue(dbFmt.isLeftToRight());
-                assertEquals(0, dbFmt.getWidthMin());
-                assertEquals(100, dbFmt.getWidthMax());
+                assertEquals(defaultDataBarMinLength(), dbFmt.getWidthMin());
+                assertEquals(defaultDataBarMaxLength(), dbFmt.getWidthMax());
                 assertColor(colorHex, dbFmt.getColor());
 
                 assertEquals(RangeType.MIN, dbFmt.getMinThreshold().getRangeType());
