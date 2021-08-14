@@ -126,11 +126,12 @@ public final class PercentRank implements Function {
             BigDecimal result = new BigDecimal((double)lessThanCount / (double)(lessThanCount + greaterThanCount));
             return new NumberEval(round(result, significance));
         } else {
-            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance + 3, false);
+            int intermediateSignificance = significance < 5 ? 8 : significance + 3;
+            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
             if (!(belowRank instanceof NumberEval)) {
                 return belowRank;
             }
-            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance + 3, false);
+            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }
