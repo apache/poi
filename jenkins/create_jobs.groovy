@@ -19,7 +19,7 @@ def poijobs = [
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
           slaves: 'ubuntu',
-          skipcigame: true
+          skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 10 had EOL in September 2018
@@ -137,7 +137,7 @@ def jdkMapping = [
         '1.14': 'jdk_14_latest',
         '1.15': 'jdk_15_latest',
         '1.16': 'jdk_16_latest',
-        'OpenJDK 1.8': 'openjdk_1.8.0_252',
+        'OpenJDK 1.8': 'adoptopenjdk_hotspot_8u282',
         'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
 
@@ -654,7 +654,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_14_latest',
                 'jdk_15_latest',
                 'jdk_16_latest',
-                'openjdk_1.8.0_252',
+                'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
         // Note H50 is reserved according to it's node-descripion
