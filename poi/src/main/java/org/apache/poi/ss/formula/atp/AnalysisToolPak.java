@@ -69,7 +69,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "AMORDEGRC", null);
         r(m, "AMORLINC", null);
         r(m, "AVERAGEIF", null);
-        r(m, "AVERAGEIFS", null);
+        r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
         r(m, "BESSELJ", null);
@@ -142,7 +142,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ISODD", ParityFunction.IS_ODD);
         r(m, "JIS", null);
         r(m, "LCM", null);
+        r(m, "MAXIFS", Maxifs.instance);
         r(m, "MDURATION", null);
+        r(m, "MINIFS", Minifs.instance);
         r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", NetworkdaysFunction.instance);
@@ -239,7 +241,7 @@ public final class AnalysisToolPak implements UDFFinder {
      * @throws IllegalArgumentException if the function is unknown or already  registered.
      * @since 3.8 beta6
      */
-   public static void registerFunction(String name, FreeRefFunction func){
+    public static void registerFunction(String name, FreeRefFunction func){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         if(!isATPFunction(name)) {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
