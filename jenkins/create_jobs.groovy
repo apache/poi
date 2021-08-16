@@ -25,7 +25,7 @@ def poijobs = [
           // let's save some CPU cycles here, 10 had EOL in September 2018
           disabled: true
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
