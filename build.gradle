@@ -412,8 +412,7 @@ task allJavaDoc(type: Javadoc) {
     options.addBooleanOption('Xdoclint:all,-missing', true)
 
 	title = 'POI API Documentation'
-	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or\n' +
-			'its licensors, as applicable.</i>]]>'
+	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or its licensors, as applicable.</i>]]>'
 
 	options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
 	options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
