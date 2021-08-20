@@ -156,7 +156,7 @@ test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-scratchpad-tests:' + files(TEST_MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
     }
