@@ -72,21 +72,21 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', gradle: true, sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', gradle: true
         ],
-        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
           // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
 		  // let's only verify the latest two JDKs
 		  disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
 		// building with JDK 16 fails currently because of findbugs/spotbugs
 		// therefore we do not set a trigger for now and only run it manually
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: '', windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: '', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
