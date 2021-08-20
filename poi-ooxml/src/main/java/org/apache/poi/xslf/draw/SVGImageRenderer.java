@@ -33,8 +33,6 @@ import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.ext.awt.image.renderable.ClipRable8Bit;
 import org.apache.batik.gvt.GraphicsNode;
@@ -42,31 +40,30 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
-import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGDocument;
 
 public class SVGImageRenderer implements ImageRenderer {
+    private final SAXSVGDocumentFactory svgFact;
     private final GVTBuilder builder = new GVTBuilder();
     private final BridgeContext context;
-    private final SAXSVGDocumentFactory svgFact;
-    private GraphicsNode svgRoot;
     private double alpha = 1.0;
 
     public SVGImageRenderer() {
         String parser = XMLResourceDescriptor.getXMLParserClassName();
         // TOOO: tell the batik guys to use secure parsing feature
         svgFact = new SAXSVGDocumentFactory(parser);
+        SVGUserAgent agent = new SVGUserAgent();
 
-        UserAgent agent = new UserAgentAdapter();
         DocumentLoader loader = new DocumentLoader(agent);
         context = new BridgeContext(agent, loader);
         context.setDynamic(true);
     }
 
-
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {
-        Document document = svgFact.createDocument("", data);
-        svgRoot = builder.build(context, document);
+        SVGDocument document = (SVGDocument)svgFact.createDocument("", data);
+        ((SVGUserAgent)context.getUserAgent()).initViewbox(document);
+        builder.build(context, document);
     }
 
     @Override
@@ -76,7 +73,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public Rectangle2D getBounds() {
-        return svgRoot.getPrimitiveBounds();
+        return ((SVGUserAgent)context.getUserAgent()).getViewbox();
     }
 
     @Override
@@ -106,7 +103,7 @@ public class SVGImageRenderer implements ImageRenderer {
         double scaleY = dim.getHeight() / dimSVG.getHeight();
         g2d.scale(scaleX, scaleY);
 
-        svgRoot.paint(g2d);
+        getSVGRoot().paint(g2d);
         g2d.dispose();
 
         return bi;
@@ -121,6 +118,7 @@ public class SVGImageRenderer implements ImageRenderer {
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip) {
         graphics.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, graphics.getRenderingHint(Drawable.BUFFERED_IMAGE));
 
+        GraphicsNode svgRoot = getSVGRoot();
         Dimension2D bounds = getDimension();
 
         AffineTransform at = new AffineTransform();
@@ -152,6 +150,10 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public Rectangle2D getNativeBounds() {
-        return svgRoot.getPrimitiveBounds();
+        return getSVGRoot().getPrimitiveBounds();
+    }
+
+    public GraphicsNode getSVGRoot() {
+        return context.getGraphicsNode(context.getDocument());
     }
 }
