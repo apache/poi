@@ -437,15 +437,10 @@ poijobs.each { poijob ->
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
                 if(poijob.gradle) {
-                    // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-                    shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
-
-                    // this is a workaround until the Gradle build can do this compilation before invoking any
-                    // Ant script or when building via Ant is removed completely
-                    //ant {
-                    //    targets(['init'] + (poijob.properties ?: []))
-                    //    antInstallation(antRT)
-                    //}
+                    if (!poijob.windows) {
+                        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+                        shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
+                    }
 
                     gradle {
                         tasks('clean jenkins')
