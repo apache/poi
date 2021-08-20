@@ -154,6 +154,8 @@ artifacts {
 test {
     dependsOn { testJar }
 
+    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+
     doFirst {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs << [

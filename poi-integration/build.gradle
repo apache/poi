@@ -126,6 +126,8 @@ test {
 
     dependsOn { testJar }
 
+    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+
     doFirst {
         jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
