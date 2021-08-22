@@ -169,9 +169,9 @@ public class OldExcelExtractor implements POITextExtractor {
             System.err.println("   OldExcelExtractor <filename>");
             System.exit(1);
         }
-        OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]));
-        System.out.println(extractor.getText());
-        extractor.close();
+        try (OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]))) {
+            System.out.println(extractor.getText());
+        }
     }
 
     private void prepare() {
