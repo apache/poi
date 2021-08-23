@@ -222,7 +222,7 @@ subprojects {
 
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
-        maxHeapSize = "768m"
+        maxHeapSize = "1512m"
 
         // Specifying the local via system properties did not work, so we set them this way
         jvmArgs << [
