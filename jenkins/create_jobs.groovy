@@ -484,7 +484,7 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }

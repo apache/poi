@@ -24,6 +24,7 @@ buildscript {
     dependencies {
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.1.1'
         classpath 'de.thetaphi:forbiddenapis:3.1'
+        classpath 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.3'
     }
 }
 
@@ -98,6 +99,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
     apply plugin: 'de.thetaphi.forbiddenapis'
+    apply plugin: 'com.github.spotbugs'
 
     version = '5.0.1-SNAPSHOT'
     ext {
@@ -390,6 +392,10 @@ subprojects {
 
     signing {
         sign publishing.publications.POI
+    }
+
+    spotbugs {
+        ignoreFailures = true
     }
 }
 

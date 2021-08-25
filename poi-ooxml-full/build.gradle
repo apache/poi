@@ -161,3 +161,6 @@ publishing {
         }
     }
 }
+
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false
