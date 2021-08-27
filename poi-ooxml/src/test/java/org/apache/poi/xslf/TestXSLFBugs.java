@@ -32,9 +32,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
@@ -49,6 +47,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -75,7 +74,6 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
-import org.apache.poi.util.IOUtils;
 import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xslf.util.DummyGraphics2d;
@@ -1042,6 +1040,23 @@ class TestXSLFBugs {
                 .map(XSLFTextRun::getTextCap)
                 .findFirst().orElse(null);
             assertEquals(TextRun.TextCap.ALL, act);
+        }
+    }
+
+    @Test
+    public void bug65523() throws IOException {
+        try (XMLSlideShow sourcePresentation = openSampleDocument("bug65523.pptx")) {
+            XMLSlideShow targetPresentation = new XMLSlideShow();
+            XSLFSlide targetPresentationSlide = targetPresentation.createSlide();
+
+            XSLFSlide sourceSlide = sourcePresentation.getSlides().get(0);
+
+            targetPresentationSlide.getSlideMaster().importContent(sourceSlide.getSlideMaster());
+            targetPresentationSlide.getSlideLayout().importContent(sourceSlide.getSlideLayout());
+
+            targetPresentationSlide.importContent(sourceSlide);
+
+            targetPresentation.write(new UnsynchronizedByteArrayOutputStream());
         }
     }
 }
