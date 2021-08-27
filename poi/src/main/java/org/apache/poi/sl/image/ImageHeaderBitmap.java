@@ -19,11 +19,11 @@ package org.apache.poi.sl.image;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.Internal;
@@ -38,7 +38,7 @@ public class ImageHeaderBitmap {
     public ImageHeaderBitmap(byte[] data, int offset) {
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new ByteArrayInputStream(data, offset, data.length-offset));
+            img = ImageIO.read(new UnsynchronizedByteArrayInputStream(data, offset, data.length-offset));
         } catch (IOException e) {
             LOG.atWarn().withThrowable(e).log("Can't determine image dimensions");
         }

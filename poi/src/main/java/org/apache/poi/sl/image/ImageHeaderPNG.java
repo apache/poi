@@ -18,10 +18,10 @@
 package org.apache.poi.sl.image;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
@@ -46,7 +46,7 @@ public final class ImageHeaderPNG {
     public byte[] extractPNG() {
         //
         //Just cut it off!.
-        try (InputStream is = new ByteArrayInputStream(data)) {
+        try (InputStream is = new UnsynchronizedByteArrayInputStream(data)) {
             if (is.skip(MAGIC_OFFSET) == MAGIC_OFFSET && FileMagic.valueOf(is) == FileMagic.PNG) {
                 return IOUtils.toByteArray(is);
             }

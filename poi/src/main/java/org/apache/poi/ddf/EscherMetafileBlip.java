@@ -21,7 +21,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -177,7 +177,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      * @return the inflated picture data.
      */
     private static byte[] inflatePictureData(byte[] data) {
-        try (InflaterInputStream in = new InflaterInputStream(new ByteArrayInputStream(data));
+        try (InflaterInputStream in = new InflaterInputStream(new UnsynchronizedByteArrayInputStream(data));
              UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
             IOUtils.copy(in, out);
             return out.toByteArray();

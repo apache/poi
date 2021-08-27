@@ -39,6 +39,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,7 +92,7 @@ public class BitmapImageRenderer implements ImageRenderer {
             cachedImage = data.clone();
             cachedContentType = contentType;
         }
-        img = readImage(new ByteArrayInputStream(data), contentType);
+        img = readImage(new UnsynchronizedByteArrayInputStream(data), contentType);
     }
 
     /**
@@ -109,6 +110,8 @@ public class BitmapImageRenderer implements ImageRenderer {
 
         final InputStream bis;
         if (data instanceof ByteArrayInputStream) {
+            bis = data;
+        } else if (data instanceof UnsynchronizedByteArrayInputStream) {
             bis = data;
         } else {
             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(0x3FFFF);
