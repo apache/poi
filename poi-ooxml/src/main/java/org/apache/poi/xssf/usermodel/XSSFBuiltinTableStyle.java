@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
@@ -29,6 +28,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
@@ -410,7 +410,7 @@ public enum XSSFBuiltinTableStyle {
                     // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
                     // - build a fake styles.xml file with just this built-in
                     StylesTable styles = new StylesTable();
-                    styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)));
+                    styles.readFrom(new UnsynchronizedByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)));
                     styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
                 }
             } finally {

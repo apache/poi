@@ -17,11 +17,11 @@
 
 package org.apache.poi.openxml4j.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.util.IOUtils;
 
 
@@ -48,6 +48,6 @@ import org.apache.poi.util.IOUtils;
     }
 
     public InputStream getInputStream() {
-        return new ByteArrayInputStream(data);
+        return new UnsynchronizedByteArrayInputStream(data);
     }
 }

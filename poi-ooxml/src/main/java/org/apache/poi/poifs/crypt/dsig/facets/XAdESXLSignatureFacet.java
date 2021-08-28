@@ -27,7 +27,6 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CRLException;
@@ -46,6 +45,7 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -191,7 +191,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 X509CRL crl;
                 try {
                     crl = (X509CRL) this.certificateFactory
-                            .generateCRL(new ByteArrayInputStream(encodedCrl));
+                            .generateCRL(new UnsynchronizedByteArrayInputStream(encodedCrl));
                 } catch (CRLException e) {
                     throw new RuntimeException("CRL parse error: "
                             + e.getMessage(), e);

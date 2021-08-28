@@ -24,7 +24,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -37,6 +36,7 @@ import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.ext.awt.image.renderable.ClipRable8Bit;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -68,7 +68,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public void loadImage(byte[] data, String contentType) throws IOException {
-        loadImage(new ByteArrayInputStream(data), contentType);
+        loadImage(new UnsynchronizedByteArrayInputStream(data), contentType);
     }
 
     @Override

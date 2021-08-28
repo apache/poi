@@ -20,9 +20,9 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -46,7 +46,7 @@ public class XSLFMetroShape {
     public static Shape<?,?> parseShape(byte[] metroBytes)
     throws InvalidFormatException, IOException, XmlException {
         PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
-        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(metroBytes))) {
+        try (OPCPackage pkg = OPCPackage.open(new UnsynchronizedByteArrayInputStream(metroBytes))) {
             PackagePart shapePart = pkg.getPart(shapePN);
             CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), DEFAULT_XML_OPTIONS);
             XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
