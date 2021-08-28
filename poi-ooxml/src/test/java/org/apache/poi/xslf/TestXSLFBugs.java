@@ -1046,6 +1046,7 @@ class TestXSLFBugs {
     @Test
     public void bug65523() throws IOException {
         try (XMLSlideShow sourcePresentation = openSampleDocument("bug65523.pptx")) {
+            assertEquals(2, sourcePresentation.getPictureData().size());
             XMLSlideShow targetPresentation = new XMLSlideShow();
             XSLFSlide targetPresentationSlide = targetPresentation.createSlide();
 
@@ -1055,6 +1056,9 @@ class TestXSLFBugs {
             targetPresentationSlide.getSlideLayout().importContent(sourceSlide.getSlideLayout());
 
             targetPresentationSlide.importContent(sourceSlide);
+
+            XSLFSlide targetSlide = targetPresentation.getSlides().get(0);
+            assertEquals(2, targetPresentation.getPictureData().size());
 
             targetPresentation.write(new UnsynchronizedByteArrayOutputStream());
         }
