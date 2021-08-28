@@ -18,8 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        # for now verify JDK 8 and 11
-        java: [ '8', '11' ]
+        # for now verify JDK 8
+        java: [ '8' ]
 
     name: Java ${{ matrix.java }} build
     env:
