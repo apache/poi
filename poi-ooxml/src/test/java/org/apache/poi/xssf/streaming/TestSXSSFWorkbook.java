@@ -55,6 +55,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
@@ -98,225 +100,201 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void existingWorkbook() throws IOException {
-        XSSFWorkbook xssfWb1 = new XSSFWorkbook();
-        xssfWb1.createSheet("S1");
-        SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
-        XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
-        assertTrue(wb1.dispose());
+        try (XSSFWorkbook xssfWb1 = new XSSFWorkbook()) {
+            xssfWb1.createSheet("S1");
+            try (SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
+                 XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {
+                assertTrue(wb1.dispose());
 
-        SXSSFWorkbook wb2 = new SXSSFWorkbook(xssfWb2);
-        assertEquals(1, wb2.getNumberOfSheets());
-        Sheet sheet  = wb2.getSheetAt(0);
-        assertNotNull(sheet);
-        assertEquals("S1", sheet.getSheetName());
-        assertTrue(wb2.dispose());
-        xssfWb2.close();
-        xssfWb1.close();
-
-        wb2.close();
-        wb1.close();
+                try (SXSSFWorkbook wb2 = new SXSSFWorkbook(xssfWb2)) {
+                    assertEquals(1, wb2.getNumberOfSheets());
+                    Sheet sheet = wb2.getSheetAt(0);
+                    assertNotNull(sheet);
+                    assertEquals("S1", sheet.getSheetName());
+                    assertTrue(wb2.dispose());
+                }
+            }
+        }
     }
 
     @Test
     void useSharedStringsTable() throws Exception {
-        SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true)) {
 
-        SharedStringsTable sss = wb.getSharedStringSource();
+            SharedStringsTable sss = wb.getSharedStringSource();
 
-        assertNotNull(sss);
+            assertNotNull(sss);
 
-        Row row = wb.createSheet("S1").createRow(0);
+            Row row = wb.createSheet("S1").createRow(0);
 
-        row.createCell(0).setCellValue("A");
-        row.createCell(1).setCellValue("B");
-        row.createCell(2).setCellValue("A");
+            row.createCell(0).setCellValue("A");
+            row.createCell(1).setCellValue("B");
+            row.createCell(2).setCellValue("A");
 
-        XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        sss = wb.getSharedStringSource();
-        assertEquals(2, sss.getUniqueCount());
-        assertTrue(wb.dispose());
+            try (XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                sss = wb.getSharedStringSource();
+                assertEquals(2, sss.getUniqueCount());
+                assertTrue(wb.dispose());
 
-        Sheet sheet1 = xssfWorkbook.getSheetAt(0);
-        assertEquals("S1", sheet1.getSheetName());
-        assertEquals(1, sheet1.getPhysicalNumberOfRows());
-        row = sheet1.getRow(0);
-        assertNotNull(row);
-        Cell cell = row.getCell(0);
-        assertNotNull(cell);
-        assertEquals("A", cell.getStringCellValue());
-        cell = row.getCell(1);
-        assertNotNull(cell);
-        assertEquals("B", cell.getStringCellValue());
-        cell = row.getCell(2);
-        assertNotNull(cell);
-        assertEquals("A", cell.getStringCellValue());
-
-        xssfWorkbook.close();
-        wb.close();
+                Sheet sheet1 = xssfWorkbook.getSheetAt(0);
+                assertEquals("S1", sheet1.getSheetName());
+                assertEquals(1, sheet1.getPhysicalNumberOfRows());
+                row = sheet1.getRow(0);
+                assertNotNull(row);
+                Cell cell = row.getCell(0);
+                assertNotNull(cell);
+                assertEquals("A", cell.getStringCellValue());
+                cell = row.getCell(1);
+                assertNotNull(cell);
+                assertEquals("B", cell.getStringCellValue());
+                cell = row.getCell(2);
+                assertNotNull(cell);
+                assertEquals("A", cell.getStringCellValue());
+            }
+        }
     }
 
     @Test
     void addToExistingWorkbook() throws IOException {
-        XSSFWorkbook xssfWb1 = new XSSFWorkbook();
-        xssfWb1.createSheet("S1");
-        Sheet sheet = xssfWb1.createSheet("S2");
-        Row row = sheet.createRow(1);
-        Cell cell = row.createCell(1);
-        cell.setCellValue("value 2_1_1");
-        SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
-        XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
-        assertTrue(wb1.dispose());
-        xssfWb1.close();
+        try (XSSFWorkbook xssfWb1 = new XSSFWorkbook()) {
+            xssfWb1.createSheet("S1");
+            Sheet sheet = xssfWb1.createSheet("S2");
+            Row row = sheet.createRow(1);
+            Cell cell = row.createCell(1);
+            cell.setCellValue("value 2_1_1");
+            try (SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
+                 XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {
+                assertTrue(wb1.dispose());
 
-        SXSSFWorkbook wb2 = new SXSSFWorkbook(xssfWb2);
-        // Add a row to the existing empty sheet
-        Sheet sheet1 = wb2.getSheetAt(0);
-        Row row1_1 = sheet1.createRow(1);
-        Cell cell1_1_1 = row1_1.createCell(1);
-        cell1_1_1.setCellValue("value 1_1_1");
+                try (SXSSFWorkbook wb2 = new SXSSFWorkbook(xssfWb2)) {
+                    // Add a row to the existing empty sheet
+                    Sheet sheet1 = wb2.getSheetAt(0);
+                    Row row1_1 = sheet1.createRow(1);
+                    Cell cell1_1_1 = row1_1.createCell(1);
+                    cell1_1_1.setCellValue("value 1_1_1");
 
-        // Add a row to the existing non-empty sheet
-        Sheet sheet2 = wb2.getSheetAt(1);
-        Row row2_2 = sheet2.createRow(2);
-        Cell cell2_2_1 = row2_2.createCell(1);
-        cell2_2_1.setCellValue("value 2_2_1");
+                    // Add a row to the existing non-empty sheet
+                    Sheet sheet2 = wb2.getSheetAt(1);
+                    Row row2_2 = sheet2.createRow(2);
+                    Cell cell2_2_1 = row2_2.createCell(1);
+                    cell2_2_1.setCellValue("value 2_2_1");
 
-        // Add a sheet with one row
-        Sheet sheet3 = wb2.createSheet("S3");
-        Row row3_1 = sheet3.createRow(1);
-        Cell cell3_1_1 = row3_1.createCell(1);
-        cell3_1_1.setCellValue("value 3_1_1");
+                    // Add a sheet with one row
+                    Sheet sheet3 = wb2.createSheet("S3");
+                    Row row3_1 = sheet3.createRow(1);
+                    Cell cell3_1_1 = row3_1.createCell(1);
+                    cell3_1_1.setCellValue("value 3_1_1");
 
-        XSSFWorkbook xssfWb3 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb2);
-        wb2.close();
-
-        assertEquals(3, xssfWb3.getNumberOfSheets());
-        // Verify sheet 1
-        sheet1 = xssfWb3.getSheetAt(0);
-        assertEquals("S1", sheet1.getSheetName());
-        assertEquals(1, sheet1.getPhysicalNumberOfRows());
-        row1_1 = sheet1.getRow(1);
-        assertNotNull(row1_1);
-        cell1_1_1 = row1_1.getCell(1);
-        assertNotNull(cell1_1_1);
-        assertEquals("value 1_1_1", cell1_1_1.getStringCellValue());
-        // Verify sheet 2
-        sheet2 = xssfWb3.getSheetAt(1);
-        assertEquals("S2", sheet2.getSheetName());
-        assertEquals(2, sheet2.getPhysicalNumberOfRows());
-        Row row2_1 = sheet2.getRow(1);
-        assertNotNull(row2_1);
-        Cell cell2_1_1 = row2_1.getCell(1);
-        assertNotNull(cell2_1_1);
-        assertEquals("value 2_1_1", cell2_1_1.getStringCellValue());
-        row2_2 = sheet2.getRow(2);
-        assertNotNull(row2_2);
-        cell2_2_1 = row2_2.getCell(1);
-        assertNotNull(cell2_2_1);
-        assertEquals("value 2_2_1", cell2_2_1.getStringCellValue());
-        // Verify sheet 3
-        sheet3 = xssfWb3.getSheetAt(2);
-        assertEquals("S3", sheet3.getSheetName());
-        assertEquals(1, sheet3.getPhysicalNumberOfRows());
-        row3_1 = sheet3.getRow(1);
-        assertNotNull(row3_1);
-        cell3_1_1 = row3_1.getCell(1);
-        assertNotNull(cell3_1_1);
-        assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
-
-        xssfWb2.close();
-        xssfWb3.close();
-        wb1.close();
+                    try (XSSFWorkbook xssfWb3 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb2)) {
+                        assertEquals(3, xssfWb3.getNumberOfSheets());
+                        // Verify sheet 1
+                        sheet1 = xssfWb3.getSheetAt(0);
+                        assertEquals("S1", sheet1.getSheetName());
+                        assertEquals(1, sheet1.getPhysicalNumberOfRows());
+                        row1_1 = sheet1.getRow(1);
+                        assertNotNull(row1_1);
+                        cell1_1_1 = row1_1.getCell(1);
+                        assertNotNull(cell1_1_1);
+                        assertEquals("value 1_1_1", cell1_1_1.getStringCellValue());
+                        // Verify sheet 2
+                        sheet2 = xssfWb3.getSheetAt(1);
+                        assertEquals("S2", sheet2.getSheetName());
+                        assertEquals(2, sheet2.getPhysicalNumberOfRows());
+                        Row row2_1 = sheet2.getRow(1);
+                        assertNotNull(row2_1);
+                        Cell cell2_1_1 = row2_1.getCell(1);
+                        assertNotNull(cell2_1_1);
+                        assertEquals("value 2_1_1", cell2_1_1.getStringCellValue());
+                        row2_2 = sheet2.getRow(2);
+                        assertNotNull(row2_2);
+                        cell2_2_1 = row2_2.getCell(1);
+                        assertNotNull(cell2_2_1);
+                        assertEquals("value 2_2_1", cell2_2_1.getStringCellValue());
+                        // Verify sheet 3
+                        sheet3 = xssfWb3.getSheetAt(2);
+                        assertEquals("S3", sheet3.getSheetName());
+                        assertEquals(1, sheet3.getPhysicalNumberOfRows());
+                        row3_1 = sheet3.getRow(1);
+                        assertNotNull(row3_1);
+                        cell3_1_1 = row3_1.getCell(1);
+                        assertNotNull(cell3_1_1);
+                        assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
+                    }
+                }
+            }
+        }
     }
 
     @Test
     void sheetdataWriter() throws IOException{
-        SXSSFWorkbook wb = new SXSSFWorkbook();
-        SXSSFSheet sh = wb.createSheet();
-        SheetDataWriter wr = sh.getSheetDataWriter();
-        assertSame(wr.getClass(), SheetDataWriter.class);
-        File tmp = wr.getTempFile();
-        assertStartsWith(tmp.getName(), "poi-sxssf-sheet");
-        assertEndsWith(tmp.getName(), ".xml");
-        assertTrue(wb.dispose());
-        wb.close();
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            SXSSFSheet sh = wb.createSheet();
+            SheetDataWriter wr = sh.getSheetDataWriter();
+            assertSame(wr.getClass(), SheetDataWriter.class);
+            File tmp = wr.getTempFile();
+            assertStartsWith(tmp.getName(), "poi-sxssf-sheet");
+            assertEndsWith(tmp.getName(), ".xml");
+            assertTrue(wb.dispose());
+        }
 
-        wb = new SXSSFWorkbook();
-        wb.setCompressTempFiles(true);
-        sh = wb.createSheet();
-        wr = sh.getSheetDataWriter();
-        assertSame(wr.getClass(), GZIPSheetDataWriter.class);
-        tmp = wr.getTempFile();
-        assertStartsWith(tmp.getName(), "poi-sxssf-sheet-xml");
-        assertEndsWith(tmp.getName(), ".gz");
-        assertTrue(wb.dispose());
-        wb.close();
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            wb.setCompressTempFiles(true);
+            SXSSFSheet sh = wb.createSheet();
+            SheetDataWriter wr = sh.getSheetDataWriter();
+            assertSame(wr.getClass(), GZIPSheetDataWriter.class);
+            File tmp = wr.getTempFile();
+            assertStartsWith(tmp.getName(), "poi-sxssf-sheet-xml");
+            assertEndsWith(tmp.getName(), ".gz");
+            assertTrue(wb.dispose());
+        }
 
         //Test escaping of Unicode control characters
-        wb = new SXSSFWorkbook();
-        wb.createSheet("S1").createRow(0).createCell(0).setCellValue("value\u0019");
-        XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
-        assertEquals("value?", cell.getStringCellValue());
-
-        assertTrue(wb.dispose());
-        wb.close();
-        xssfWorkbook.close();
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            wb.createSheet("S1").createRow(0).createCell(0).setCellValue("value\u0019");
+            try (XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
+                assertEquals("value?", cell.getStringCellValue());
+                assertTrue(wb.dispose());
+            }
+        }
     }
 
     @Test
     void gzipSheetdataWriter() throws IOException {
-        SXSSFWorkbook wb = new SXSSFWorkbook();
-        wb.setCompressTempFiles(true);
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            wb.setCompressTempFiles(true);
 
-        final int rowNum = 1000;
-        final int sheetNum = 5;
-        populateData(wb, 1000, 5);
+            final int rowNum = 1000;
+            final int sheetNum = 5;
+            populateData(wb);
 
-        XSSFWorkbook xwb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        for(int i = 0; i < sheetNum; i++){
-            Sheet sh = xwb.getSheetAt(i);
-            assertEquals("sheet" + i, sh.getSheetName());
-            for(int j = 0; j < rowNum; j++){
-                Row row = sh.getRow(j);
-                assertNotNull(row, "row[" + j + "]");
-                Cell cell1 = row.getCell(0);
-                assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
+            try (XSSFWorkbook xwb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                for (int i = 0; i < sheetNum; i++) {
+                    Sheet sh = xwb.getSheetAt(i);
+                    assertEquals("sheet" + i, sh.getSheetName());
+                    for (int j = 0; j < rowNum; j++) {
+                        Row row = sh.getRow(j);
+                        assertNotNull(row, "row[" + j + "]");
+                        Cell cell1 = row.getCell(0);
+                        assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
 
-                Cell cell2 = row.getCell(1);
-                assertEquals(i, (int)cell2.getNumericCellValue());
+                        Cell cell2 = row.getCell(1);
+                        assertEquals(i, (int) cell2.getNumericCellValue());
 
-                Cell cell3 = row.getCell(2);
-                assertEquals(j, (int)cell3.getNumericCellValue());
+                        Cell cell3 = row.getCell(2);
+                        assertEquals(j, (int) cell3.getNumericCellValue());
+                    }
+                }
+
+                assertTrue(wb.dispose());
             }
         }
-
-        assertTrue(wb.dispose());
-        xwb.close();
-        wb.close();
     }
 
-    private static void assertWorkbookDispose(SXSSFWorkbook wb)
-    {
-        populateData(wb, 1000, 5);
-
-        for (Sheet sheet : wb) {
-            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
-            assertTrue(sxSheet.getSheetDataWriter().getTempFile().exists());
-        }
-
-        assertTrue(wb.dispose());
-
-        for (Sheet sheet : wb) {
-            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
-            assertFalse(sxSheet.getSheetDataWriter().getTempFile().exists());
-        }
-    }
-
-    private static void populateData(Workbook wb, final int rowNum, final int sheetNum) {
-        for(int i = 0; i < sheetNum; i++){
+    private static void populateData(Workbook wb) {
+        for(int i = 0; i < 5; i++){
             Sheet sh = wb.createSheet("sheet" + i);
-            for(int j = 0; j < rowNum; j++){
+            for(int j = 0; j < 1000; j++){
                 Row row = sh.createRow(j);
                 Cell cell1 = row.createCell(0);
                 cell1.setCellValue(new CellReference(cell1).formatAsString());
@@ -330,28 +308,40 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    @Test
-    void workbookDispose() throws IOException {
-        SXSSFWorkbook wb1 = new SXSSFWorkbook();
-        // the underlying writer is SheetDataWriter
-        assertWorkbookDispose(wb1);
-        wb1.close();
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void workbookDispose(boolean compressTempFiles) throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            // compressTempFiles == false: the underlying writer is SheetDataWriter
+            // compressTempFiles == true: the underlying writer is GZIPSheetDataWriter
+            wb.setCompressTempFiles(compressTempFiles);
 
-        SXSSFWorkbook wb2 = new SXSSFWorkbook();
-        wb2.setCompressTempFiles(true);
-        // the underlying writer is GZIPSheetDataWriter
-        assertWorkbookDispose(wb2);
-        wb2.close();
+            populateData(wb);
+
+            for (Sheet sheet : wb) {
+                SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+                assertTrue(sxSheet.getSheetDataWriter().getTempFile().exists());
+            }
+
+            assertTrue(wb.dispose());
+
+            for (Sheet sheet : wb) {
+                SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+                assertFalse(sxSheet.getSheetDataWriter().getTempFile().exists());
+            }
+        }
     }
 
     @Test
     void bug53515() throws Exception {
         try (Workbook wb1 = new SXSSFWorkbook(10)) {
             populateWorkbook(wb1);
-            saveTwice(wb1);
+            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
             try (Workbook wb2 = new XSSFWorkbook()) {
                 populateWorkbook(wb2);
-                saveTwice(wb2);
+                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
+                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
             }
         }
     }
@@ -405,18 +395,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    private static void saveTwice(Workbook wb) throws Exception {
-        for (int i = 0; i < 2; i++) {
-            try {
-                wb.write(NULL_OUTPUT_STREAM);
-            } catch (Exception e) {
-                throw new Exception("ERROR: failed on " + (i + 1)
-                        + "th time calling " + wb.getClass().getName()
-                        + ".write() with exception " + e.getMessage(), e);
-            }
-        }
-    }
-
     @Test
     void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xlsx";
@@ -460,10 +438,10 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             char[] useless = new char[32767];
             Arrays.fill(useless, ' ');
 
-            for (int row = 0; row < 1; row++) {
+            for (int row = 0; row < 10; row++) {
                 Row r = s.createRow(row);
                 for (int col = 0; col < 10; col++) {
-                    char[] prefix = Integer.toHexString(row * 1000 + col).toCharArray();
+                    char[] prefix = Integer.toHexString(row * 10 + col).toCharArray();
                     Arrays.fill(useless, 0, 10, ' ');
                     System.arraycopy(prefix, 0, useless, 0, prefix.length);
                     String ul = new String(useless);
@@ -528,8 +506,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Override
     @Disabled("not implemented")
-    @Test
-    void changeSheetNameWithSharedFormulas() {
+    protected void changeSheetNameWithSharedFormulas() {
     }
 }

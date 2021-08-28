@@ -65,6 +65,8 @@ task cacheJava9(type: Copy) {
 }
 
 jar {
+    dependsOn cacheJava9
+
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {

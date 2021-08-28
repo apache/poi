@@ -100,7 +100,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -117,7 +116,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -2714,6 +2720,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             CellStyle style = wb.createCellStyle();
             style.setRotation((short) -90);
             cell.setCellStyle(style);
+            assertEquals(180, style.getRotation());
 
             XSSFTestDataSamples.writeOut(wb, fileName);
         }

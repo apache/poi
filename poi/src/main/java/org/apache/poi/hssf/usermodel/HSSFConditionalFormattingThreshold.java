@@ -31,32 +31,40 @@ public final class HSSFConditionalFormattingThreshold implements org.apache.poi.
     private final HSSFSheet sheet;
     private final HSSFWorkbook workbook;
 
-    protected HSSFConditionalFormattingThreshold(Threshold threshold, HSSFSheet sheet) {
+    HSSFConditionalFormattingThreshold(Threshold threshold, HSSFSheet sheet) {
         this.threshold = threshold;
         this.sheet = sheet;
         this.workbook = sheet.getWorkbook();
     }
-    protected Threshold getThreshold() {
+
+    Threshold getThreshold() {
         return threshold;
     }
 
+    @Override
     public RangeType getRangeType() {
         return RangeType.byId(threshold.getType());
     }
+    @Override
     public void setRangeType(RangeType type) {
         threshold.setType((byte)type.id);
     }
 
+    @Override
     public String getFormula() {
         return toFormulaString(threshold.getParsedExpression(), workbook);
     }
+    @Override
     public void setFormula(String formula) {
         threshold.setParsedExpression(parseFormula(formula, sheet));
     }
 
+    @Override
     public Double getValue() {
         return threshold.getValue();
     }
+
+    @Override
     public void setValue(Double value) {
         threshold.setValue(value);
     }

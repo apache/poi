@@ -735,53 +735,54 @@ public class Section {
         }
 
         final int[][] offsets = new int[properties.size()][2];
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        final LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
 
-        /* Write the section's length - dummy value, fixed later */
-        leos.writeInt(-1);
-
-        /* Write the section's number of properties: */
-        leos.writeInt(properties.size());
-
-        int propCnt = 0;
-        for (Property p : properties.values()) {
-            /* Write the property list entry. */
-            leos.writeUInt(p.getID());
-            // dummy offset to be fixed later
-            offsets[propCnt++][0] = bos.size();
+            /* Write the section's length - dummy value, fixed later */
             leos.writeInt(-1);
-        }
 
+            /* Write the section's number of properties: */
+            leos.writeInt(properties.size());
 
-        /* Write the properties and the property list into their respective
-         * streams: */
-        propCnt = 0;
-        for (Property p : properties.values()) {
-            offsets[propCnt++][1] = bos.size();
-            /* If the property ID is not equal 0 we write the property and all
-             * is fine. However, if it equals 0 we have to write the section's
-             * dictionary which has an implicit type only and an explicit
-             * value. */
-            if (p.getID() != 0) {
-                /* Write the property and update the position to the next
-                 * property. */
-                p.write(bos, codepage);
-            } else {
-                writeDictionary(bos, codepage);
+            int propCnt = 0;
+            for (Property p : properties.values()) {
+                /* Write the property list entry. */
+                leos.writeUInt(p.getID());
+                // dummy offset to be fixed later
+                offsets[propCnt++][0] = bos.size();
+                leos.writeInt(-1);
             }
+
+
+            /* Write the properties and the property list into their respective
+             * streams: */
+            propCnt = 0;
+            for (Property p : properties.values()) {
+                offsets[propCnt++][1] = bos.size();
+                /* If the property ID is not equal 0 we write the property and all
+                 * is fine. However, if it equals 0 we have to write the section's
+                 * dictionary which has an implicit type only and an explicit
+                 * value. */
+                if (p.getID() != 0) {
+                    /* Write the property and update the position to the next
+                     * property. */
+                    p.write(bos, codepage);
+                } else {
+                    writeDictionary(bos, codepage);
+                }
+            }
+
+            byte[] result = bos.toByteArray();
+            LittleEndian.putInt(result, 0, bos.size());
+
+            for (int[] off : offsets) {
+                LittleEndian.putUInt(result, off[0], off[1]);
+            }
+
+            out.write(result);
+
+            return bos.size();
         }
-
-        byte[] result = bos.toByteArray();
-        LittleEndian.putInt(result, 0, bos.size());
-
-        for (int[] off : offsets) {
-            LittleEndian.putUInt(result, off[0], off[1]);
-        }
-
-        out.write(result);
-
-        return bos.size();
     }
 
     /**

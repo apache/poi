@@ -141,3 +141,5 @@ jar {
     }
 }
 
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false

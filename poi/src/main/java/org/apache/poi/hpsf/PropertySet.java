@@ -514,51 +514,52 @@ public class PropertySet {
     }
 
     private byte[] toBytes() throws WritingNotSupportedException, IOException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
 
-        /* Write the number of sections in this property set stream. */
-        final int nrSections = getSectionCount();
+            /* Write the number of sections in this property set stream. */
+            final int nrSections = getSectionCount();
 
-        /* Write the property set's header. */
-        leos.writeShort(getByteOrder());
-        leos.writeShort(getFormat());
-        leos.writeInt(getOSVersion());
-        putClassId(bos, getClassID());
-        leos.writeInt(nrSections);
+            /* Write the property set's header. */
+            leos.writeShort(getByteOrder());
+            leos.writeShort(getFormat());
+            leos.writeInt(getOSVersion());
+            putClassId(bos, getClassID());
+            leos.writeInt(nrSections);
 
-        assert(bos.size() == OFFSET_HEADER);
+            assert (bos.size() == OFFSET_HEADER);
 
-        final int[][] offsets = new int[getSectionCount()][2];
+            final int[][] offsets = new int[getSectionCount()][2];
 
-        /* Write the section list, i.e. the references to the sections. Each
-         * entry in the section list consist of the section's class ID and the
-         * section's offset relative to the beginning of the stream. */
-        int secCnt = 0;
-        for (final Section section : getSections()) {
-            final ClassID formatID = section.getFormatID();
-            if (formatID == null) {
-                throw new NoFormatIDException();
+            /* Write the section list, i.e. the references to the sections. Each
+             * entry in the section list consist of the section's class ID and the
+             * section's offset relative to the beginning of the stream. */
+            int secCnt = 0;
+            for (final Section section : getSections()) {
+                final ClassID formatID = section.getFormatID();
+                if (formatID == null) {
+                    throw new NoFormatIDException();
+                }
+                putClassId(bos, formatID);
+                offsets[secCnt++][0] = bos.size();
+                // offset dummy - filled later
+                leos.writeInt(-1);
             }
-            putClassId(bos, formatID);
-            offsets[secCnt++][0] = bos.size();
-            // offset dummy - filled later
-            leos.writeInt(-1);
-        }
 
-        /* Write the sections themselves. */
-        secCnt = 0;
-        for (final Section section : getSections()) {
-            offsets[secCnt++][1] = bos.size();
-            section.write(bos);
-        }
+            /* Write the sections themselves. */
+            secCnt = 0;
+            for (final Section section : getSections()) {
+                offsets[secCnt++][1] = bos.size();
+                section.write(bos);
+            }
 
-        byte[] result = bos.toByteArray();
-        for (int[] off : offsets) {
-            LittleEndian.putInt(result, off[0], off[1]);
-        }
+            byte[] result = bos.toByteArray();
+            for (int[] off : offsets) {
+                LittleEndian.putInt(result, off[0], off[1]);
+            }
 
-        return result;
+            return result;
+        }
     }
 
     /**

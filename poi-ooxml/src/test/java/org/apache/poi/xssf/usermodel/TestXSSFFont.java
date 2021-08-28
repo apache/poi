@@ -259,11 +259,11 @@ public final class TestXSSFFont extends BaseTestFont{
 
         xssfFont.setUnderline(Font.U_DOUBLE);
         assertEquals(ctFont.sizeOfUArray(),1);
-        assertEquals(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
+        assertSame(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
 
         xssfFont.setUnderline(FontUnderline.DOUBLE_ACCOUNTING);
         assertEquals(ctFont.sizeOfUArray(),1);
-        assertEquals(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
+        assertSame(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
     }
 
     @Test
@@ -342,7 +342,7 @@ public final class TestXSSFFont extends BaseTestFont{
         assertEquals(FontScheme.MAJOR,font.getScheme());
 
         font.setScheme(FontScheme.NONE);
-        assertEquals(STFontScheme.NONE,ctFont.getSchemeArray(0).getVal());
+        assertSame(STFontScheme.NONE,ctFont.getSchemeArray(0).getVal());
     }
 
     @Test
@@ -356,17 +356,15 @@ public final class TestXSSFFont extends BaseTestFont{
         assertEquals(Font.SS_NONE,font.getTypeOffset());
 
         font.setTypeOffset(XSSFFont.SS_SUPER);
-        assertEquals(STVerticalAlignRun.SUPERSCRIPT,ctFont.getVertAlignArray(0).getVal());
+        assertSame(STVerticalAlignRun.SUPERSCRIPT,ctFont.getVertAlignArray(0).getVal());
     }
 
     // store test from TestSheetUtil here as it uses XSSF
     @Test
     void testCanComputeWidthXSSF() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
-
             // cannot check on result because on some machines we get back false here!
-            SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
-
+            assertDoesNotThrow(() -> SheetUtil.canComputeColumnWidth(wb.getFontAt(0)));
         }
     }
 
@@ -377,7 +375,7 @@ public final class TestXSSFFont extends BaseTestFont{
         font.setFontName("some non existing font name");
 
         // Even with invalid fonts we still get back useful data most of the time...
-        SheetUtil.canComputeColumnWidth(font);
+        assertDoesNotThrow(() -> SheetUtil.canComputeColumnWidth(font));
     }
 
     /**

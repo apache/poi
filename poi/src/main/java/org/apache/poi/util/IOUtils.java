@@ -178,29 +178,29 @@ public final class IOUtils {
         }
 
         final int len = Math.min(length, maxLength);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len)) {
+            byte[] buffer = new byte[4096];
+            int totalBytes = 0, readBytes;
+            do {
+                readBytes = stream.read(buffer, 0, Math.min(buffer.length, len - totalBytes));
+                totalBytes += Math.max(readBytes, 0);
+                if (readBytes > 0) {
+                    baos.write(buffer, 0, readBytes);
+                }
 
-        byte[] buffer = new byte[4096];
-        int totalBytes = 0, readBytes;
-        do {
-            readBytes = stream.read(buffer, 0, Math.min(buffer.length, len-totalBytes));
-            totalBytes += Math.max(readBytes,0);
-            if (readBytes > 0) {
-                baos.write(buffer, 0, readBytes);
+                checkByteSizeLimit(totalBytes);
+            } while (totalBytes < len && readBytes > -1);
+
+            if (maxLength != Integer.MAX_VALUE && totalBytes == maxLength) {
+                throw new IOException("MaxLength (" + maxLength + ") reached - stream seems to be invalid.");
             }
 
-            checkByteSizeLimit(totalBytes);
-        } while (totalBytes < len && readBytes > -1);
+            if (len != Integer.MAX_VALUE && totalBytes < len) {
+                throw new EOFException("unexpected EOF - expected len: " + len + " - actual len: " + totalBytes);
+            }
 
-        if (maxLength != Integer.MAX_VALUE && totalBytes == maxLength) {
-            throw new IOException("MaxLength ("+maxLength+") reached - stream seems to be invalid.");
+            return baos.toByteArray();
         }
-
-        if (len != Integer.MAX_VALUE && totalBytes < len) {
-            throw new EOFException("unexpected EOF - expected len: "+len+" - actual len: "+totalBytes);
-        }
-
-        return baos.toByteArray();
     }
 
     private static void checkLength(long length, int maxLength) {

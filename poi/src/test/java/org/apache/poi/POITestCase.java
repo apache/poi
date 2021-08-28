@@ -25,8 +25,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -47,6 +45,7 @@ import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
  * Util class for POI JUnit TestCases, which provide additional features
  */
 @Internal
+@SuppressWarnings("java:S2187")
 public final class POITestCase {
 
     private POITestCase() {
@@ -141,68 +140,6 @@ public final class POITestCase {
         assertTrue(new ReflectionEquals(expected, "$jacocoData").matches(actual));
     }
 
-    /**
-     * Rather than adding {@literal @}Ignore to known-failing tests,
-     * write the test so that it notifies us if it starts passing.
-     * This is useful for closing related or forgotten bugs.
-     *
-     * An Example:
-     * <code><pre>
-     * public static int add(int a, int b) {
-     *     // a known bug in behavior that has not been fixed yet
-     *     raise UnsupportedOperationException("add");
-     * }
-     *
-     * {@literal @}Test
-     * void knownFailingUnitTest() {
-     *     try {
-     *         assertEquals(2, add(1,1));
-     *         // this test fails because the assumption that this bug had not been fixed is false
-     *         testPassesNow(12345);
-     *     } catch (UnsupportedOperationException e) {
-     *         // test is skipped because the assumption that this bug had not been fixed is true
-     *         skipTest(e);
-     *     }
-     * }
-     *
-     * Once passing, this unit test can be rewritten as:
-     * {@literal @}Test
-     * void knownPassingUnitTest() {
-     *     assertEquals(2, add(1,1));
-     * }
-     *
-     * If you have a better idea how to simplify test code while still notifying
-     * us when a previous known-failing test now passes, please improve these.
-     * As a bonus, a known-failing test that fails should not be counted as a
-     * passing test.
-     *
-     * One possible alternative is to expect the known exception, but without
-     * a clear message that it is a good thing to no longer get the expected
-     * exception once the test passes.
-     * {@literal @}Test(expected=UnsupportedOperationException.class)
-     * void knownFailingUnitTest() {
-     *     assertEquals(2, add(1,1));
-     * }
-     *
-     * @param e  the exception that was caught that will no longer
-     * be raised when the bug is fixed
-     */
-    public static void skipTest(Throwable e) {
-        assumeTrue(e != null, "This test currently fails with");
-    }
-    /**
-     * @see #skipTest(Throwable)
-     *
-     * @param bug  the bug number corresponding to a known bug in bugzilla
-     */
-    public static void testPassesNow(int bug) {
-        fail("This test passes now. Please update the unit test and bug " + bug + ".");
-    }
-
-    public static void assertBetween(String message, int value, int min, int max) {
-        assertTrue(min <= value, message + ": " + value + " is less than the minimum value of " + min);
-        assertTrue(value <= max, message + ": " + value + " is greater than the maximum value of " + max);
-    }
 
     /**
      * Ensures that the temporary directory is defined and exists and

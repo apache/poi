@@ -139,6 +139,7 @@ public class XSSFWorkbookFactory implements WorkbookProvider {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
+    @Override
     @SuppressWarnings("resource")
     public XSSFWorkbook create(File file, String password, boolean readOnly) throws IOException {
         FileMagic fm = FileMagic.valueOf(file);

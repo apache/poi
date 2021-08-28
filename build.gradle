@@ -209,7 +209,7 @@ subprojects {
         // make XML test-results available for Jenkins CI
         useJUnitPlatform()
         reports {
-            junitXml.enabled = true
+            junitXml.required = true
         }
 
         // Exclude some tests that are not actually tests or do not run cleanly on purpose
@@ -238,7 +238,7 @@ subprojects {
             "-Dversion.id=${project.version}",
             '-ea',
             '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=3'
+            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
             // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
 
@@ -278,7 +278,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled true
+            xml.required = true
         }
     }
 
@@ -396,6 +396,7 @@ subprojects {
 
     spotbugs {
         ignoreFailures = true
+        showStackTraces = false
     }
 }
 
@@ -536,7 +537,7 @@ task replaceVersion() {
 
 task zipJavadocs(type: Zip, dependsOn: allJavaDoc) {
     from('build/docs/javadoc/')
-    destinationDir = file('build/dist')
+    destinationDirectory = file('build/dist')
     archiveBaseName = 'poi'
     archiveVersion = subprojects[0].version
     archiveAppendix = 'javadoc'

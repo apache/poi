@@ -110,33 +110,29 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         if (!(current instanceof HwmfEscape)) {
             return null;
         }
-        final HwmfEscape esc = (HwmfEscape)current;
-        assert(esc.getEscapeFunction() == EscapeFunction.META_ESCAPE_ENHANCED_METAFILE);
-
-        WmfEscapeEMF img = esc.getEscapeData();
-        assert(img.isValid());
-        current = null;
 
         final HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.EMF);
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        try {
-            for (;;) {
-                bos.write(img.getEmfData());
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            WmfEscapeEMF img;
+            do {
+                final HwmfEscape esc = (HwmfEscape)current;
+                assert(esc.getEscapeFunction() == EscapeFunction.META_ESCAPE_ENHANCED_METAFILE);
 
+                img = esc.getEscapeData();
+                assert(img.isValid());
+
+                bos.write(img.getEmfData());
                 current = null;
-                if (img.getRemainingBytes() > 0 && hasNext() && (current instanceof HwmfEscape)) {
-                    img = ((HwmfEscape)current).getEscapeData();
-                } else {
-                    return emb;
-                }
-            }
+            } while (img.getRemainingBytes() > 0 && hasNext() && (current instanceof HwmfEscape));
+
+            emb.setData(bos.toByteArray());
+            return emb;
+
         } catch (IOException ignored) {
             // UnsynchronizedByteArrayOutputStream doesn't throw IOException
             return null;
-        } finally {
-            emb.setData(bos.toByteArray());
         }
     }
 }

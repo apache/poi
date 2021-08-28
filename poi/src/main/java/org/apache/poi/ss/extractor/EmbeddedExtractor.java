@@ -162,14 +162,13 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     protected EmbeddedData extract(DirectoryNode dn) throws IOException {
         assert(canExtract(dn));
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(20000);
-        try (POIFSFileSystem dest = new POIFSFileSystem()) {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(20000);
+            POIFSFileSystem dest = new POIFSFileSystem()) {
             copyNodes(dn, dest.getRoot());
             // start with a reasonable big size
             dest.writeFilesystem(bos);
+            return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
         }
-
-        return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
     }
 
     protected EmbeddedData extract(Picture source) throws IOException {

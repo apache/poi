@@ -104,6 +104,8 @@ task cacheTest9(type: Copy) {
 }
 
 jar {
+    dependsOn cacheJava9
+
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
@@ -117,7 +119,7 @@ jar {
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: testClasses) {
+task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
     classifier 'tests'

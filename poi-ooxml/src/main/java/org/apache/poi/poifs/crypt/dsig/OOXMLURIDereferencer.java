@@ -90,12 +90,13 @@ public class OOXMLURIDereferencer implements URIDereferencer {
                 // although xmlsec has an option to ignore line breaks, currently this
                 // only affects .rels files, so we only modify these
                 // http://stackoverflow.com/questions/4728300
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-                for (int ch; (ch = dataStream.read()) != -1; ) {
-                    if (ch == 10 || ch == 13) continue;
-                    bos.write(ch);
+                try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                    for (int ch; (ch = dataStream.read()) != -1; ) {
+                        if (ch == 10 || ch == 13) continue;
+                        bos.write(ch);
+                    }
+                    dataStream = bos.toInputStream();
                 }
-                dataStream = bos.toInputStream();
             }
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);

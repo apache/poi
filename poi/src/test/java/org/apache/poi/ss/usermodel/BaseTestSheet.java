@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.apache.poi.POITestCase.assertBetween;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -50,8 +49,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing {@link org.apache.poi.hssf.usermodel.HSSFCell},
- * {@link org.apache.poi.xssf.usermodel.XSSFCell} and
- * {@link org.apache.poi.xssf.streaming.SXSSFCell}
+ * XSSFCell and SXSSFCell
  */
 public abstract class BaseTestSheet {
     private static final int ROW_COUNT = 40000;
@@ -430,7 +428,7 @@ public abstract class BaseTestSheet {
             assertCollectionEquals(mergedRegions.values(), sheet.getMergedRegions());
 
             Collection<Integer> removed = Arrays.asList(0, 2, 3, 6, 8);
-            mergedRegions.keySet().removeAll(removed);
+            removed.forEach(mergedRegions.keySet()::remove);
             sheet.removeMergedRegions(removed);
             assertCollectionEquals(mergedRegions.values(), sheet.getMergedRegions());
         }
@@ -1363,5 +1361,10 @@ public abstract class BaseTestSheet {
             assertBetween("Date column width", s.getColumnWidth(0), 4750, 7300);
             assertBetween("Date column width", s.getColumnWidth(1), 4750, 7300);
         }
+    }
+
+    private static void assertBetween(String message, int value, int min, int max) {
+        assertTrue(min <= value, message + ": " + value + " is less than the minimum value of " + min);
+        assertTrue(value <= max, message + ": " + value + " is greater than the maximum value of " + max);
     }
 }

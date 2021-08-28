@@ -49,7 +49,7 @@ public class ClassID implements Duplicatable, GenericRecord {
     private final byte[] bytes = new byte[LENGTH];
 
     /**
-     * Creates a {@link ClassID} and reads its value from a byte array.
+     * Creates a ClassID and reads its value from a byte array.
      *
      * @param src The byte array to read from.
      * @param offset The offset of the first byte to read.
@@ -60,7 +60,7 @@ public class ClassID implements Duplicatable, GenericRecord {
 
 
     /**
-     * Creates a {@link ClassID} and initializes its value with 0x00 bytes.
+     * Creates a ClassID and initializes its value with 0x00 bytes.
      */
     public ClassID() {
         Arrays.fill(bytes, (byte)0);
@@ -77,7 +77,7 @@ public class ClassID implements Duplicatable, GenericRecord {
 
 
     /**
-     * Creates a {@link ClassID} from a human-readable representation of the Class ID in standard
+     * Creates a ClassID from a human-readable representation of the Class ID in standard
      * format {@code "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"}.
      *
      * @param externalForm representation of the Class ID represented by this object.
@@ -102,11 +102,10 @@ public class ClassID implements Duplicatable, GenericRecord {
     /**
      * @return The number of bytes occupied by this object in the byte stream.
      */
+    @SuppressWarnings("java:S1845")
     public int length() {
         return LENGTH;
     }
-
-
 
     /**
      * Gets the bytes making out the class ID. They are returned in correct order, i.e. big-endian.
@@ -117,8 +116,6 @@ public class ClassID implements Duplicatable, GenericRecord {
         return bytes;
     }
 
-
-
     /**
      * Sets the bytes making out the class ID.
      *
@@ -128,8 +125,6 @@ public class ClassID implements Duplicatable, GenericRecord {
     public void setBytes(final byte[] bytes) {
         System.arraycopy(bytes, 0, this.bytes, 0, LENGTH);
     }
-
-
 
     /**
      * Reads the class ID's value from a byte array by turning little-endian into big-endian.
@@ -249,10 +244,6 @@ public class ClassID implements Duplicatable, GenericRecord {
         ;
     }
 
-
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return toString().hashCode();

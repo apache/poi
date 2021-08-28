@@ -289,8 +289,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream();
-        try {
+        try (UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream()) {
             for (Node node : nodeList) {
                 /*
                  * Re-initialize the c14n else the namespaces will get cached
@@ -299,12 +298,12 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 Canonicalizer c14n = Canonicalizer.getInstance(c14nAlgoId);
                 c14n.canonicalizeSubtree(node, c14nValue);
             }
+            return c14nValue.toByteArray();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("c14n error: " + e.getMessage(), e);
         }
-        return c14nValue.toByteArray();
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {
