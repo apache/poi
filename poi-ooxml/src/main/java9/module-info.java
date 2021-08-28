@@ -29,6 +29,7 @@ module org.apache.poi.ooxml {
     requires java.logging;
     requires java.desktop;
     requires java.security.jgss;
+    requires jdk.xml.dom;
 
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
     provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
