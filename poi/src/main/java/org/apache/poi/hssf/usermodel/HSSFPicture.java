@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
-import java.io.ByteArrayInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -191,7 +191,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
-        return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
+        return ImageUtils.getImageDimension(new UnsynchronizedByteArrayInputStream(data), type);
     }
 
     /**

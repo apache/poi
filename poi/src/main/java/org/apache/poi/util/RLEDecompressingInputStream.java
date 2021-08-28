@@ -17,11 +17,11 @@
 
 package org.apache.poi.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 
 /**
@@ -278,8 +278,8 @@ public class RLEDecompressingInputStream extends InputStream {
 
     public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
         try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-            InputStream instream = new ByteArrayInputStream(compressed, offset, length);
-            InputStream stream = new RLEDecompressingInputStream(instream)) {
+             InputStream instream = new UnsynchronizedByteArrayInputStream(compressed, offset, length);
+             InputStream stream = new RLEDecompressingInputStream(instream)) {
 
             IOUtils.copy(stream, out);
             return out.toByteArray();

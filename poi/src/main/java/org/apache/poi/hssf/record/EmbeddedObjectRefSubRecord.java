@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -179,7 +179,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
     }
 
     private static Ptg readRefPtg(byte[] formulaRawBytes) {
-        LittleEndianInput in = new LittleEndianInputStream(new ByteArrayInputStream(formulaRawBytes));
+        LittleEndianInput in = new LittleEndianInputStream(new UnsynchronizedByteArrayInputStream(formulaRawBytes));
         byte ptgSid = in.readByte();
         switch(ptgSid) {
             case AreaPtg.sid:   return new AreaPtg(in);

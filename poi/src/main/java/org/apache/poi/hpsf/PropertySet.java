@@ -17,7 +17,6 @@
 
 package org.apache.poi.hpsf;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -598,7 +598,7 @@ public class PropertySet {
      * @throws IOException if an I/O exception occurs.
      */
     public InputStream toInputStream() throws WritingNotSupportedException, IOException {
-        return new ByteArrayInputStream(toBytes());
+        return new UnsynchronizedByteArrayInputStream(toBytes());
     }
 
     /**

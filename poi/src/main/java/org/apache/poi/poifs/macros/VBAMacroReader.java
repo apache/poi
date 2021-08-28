@@ -21,7 +21,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
@@ -37,6 +36,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -232,7 +232,7 @@ public class VBAMacroReader implements Closeable {
         } else {
             // Decompress a previously found module and store the decompressed result into module.buf
             InputStream stream = new RLEDecompressingInputStream(
-                    new ByteArrayInputStream(module.buf, moduleOffset, module.buf.length - moduleOffset)
+                    new UnsynchronizedByteArrayInputStream(module.buf, moduleOffset, module.buf.length - moduleOffset)
             );
             module.read(stream);
             stream.close();
@@ -274,7 +274,7 @@ public class VBAMacroReader implements Closeable {
             }
 
             if (decompressedBytes != null) {
-                module.read(new ByteArrayInputStream(decompressedBytes));
+                module.read(new UnsynchronizedByteArrayInputStream(decompressedBytes));
             }
         }
 
@@ -802,7 +802,7 @@ public class VBAMacroReader implements Closeable {
                 if (w <= 0 || (w & 0x7000) != 0x3000) {
                     continue;
                 }
-                decompressed = tryToDecompress(new ByteArrayInputStream(compressed, i, compressed.length - i));
+                decompressed = tryToDecompress(new UnsynchronizedByteArrayInputStream(compressed, i, compressed.length - i));
                 if (decompressed != null) {
                     if (decompressed.length > 9) {
                         //this is a complete hack.  The challenge is that there
