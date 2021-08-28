@@ -20,7 +20,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'adopt'
+        distribution: 'zulu'
         java-version: '11'
         check-latest: true
 
