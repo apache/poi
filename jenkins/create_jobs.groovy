@@ -45,7 +45,7 @@ def poijobs = [
         // therefore we do not set a trigger for now and only run it manually
         [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
           shell: "test -s ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
