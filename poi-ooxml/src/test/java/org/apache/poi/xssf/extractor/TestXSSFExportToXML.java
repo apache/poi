@@ -216,12 +216,13 @@ public final class TestXSSFExportToXML {
 
     @Test
     void testExportToXMLSingleAttributeNamespace() throws Exception {
+        Pattern p = Pattern.compile("Failed to read (external )?schema document .*Schema11., because .file. access is not allowed");
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 SAXParseException ex = assertThrows(SAXParseException.class, () -> exporter.exportToXML(os, true));
-                assertEquals("schema_reference: Failed to read schema document 'Schema11', because 'file' access is not allowed due to restriction set by the accessExternalSchema property.", ex.getMessage().trim());
+                assertTrue(p.matcher(ex.getMessage()).find());
             }
         }
     }
