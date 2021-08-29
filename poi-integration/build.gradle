@@ -32,7 +32,9 @@ sourceSets {
             output.dir(TEST9_OUT, builtBy: 'cacheTest9')
         }
         if (IBMVM) {
-            exclude '**/HeapDump**'
+            java {
+                exclude '**/HeapDump**'
+            }
         }
     }
 }
