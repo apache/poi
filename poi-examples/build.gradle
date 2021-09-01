@@ -28,20 +28,29 @@ sourceSets {
 
 dependencies {
     api project(':poi-ooxml')
-    api project(':poi-scratchpad')
+//    api project(':poi-scratchpad')
     implementation project(path: ':poi-ooxml', configuration: 'archives')
     implementation project(path: ':poi-ooxml-full', configuration: 'archives')
-    implementation project(path: ':poi-scratchpad', configuration: 'archives')
+
+    if (NO_SCRATCHPAD) {
+        compileOnly project(path: ':poi-scratchpad', configuration: 'archives')
+    } else {
+        implementation project(path: ':poi-scratchpad', configuration: 'archives')
+    }
 
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 
-	testImplementation project(path: ':poi-ooxml', configuration: 'tests')
+	testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
+        if (NO_SCRATCHPAD) {
+            exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+        }
+    }
 	testImplementation project(path: ':poi', configuration: 'tests')
 }
 
 final String MODULE_NAME = 'org.apache.poi.examples'
 final Pattern MODULE_REGEX = ~'\\.jar$'
-final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
+final List MODULE_COMPILE_PATH = sourceSets.main.compileClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
@@ -53,7 +62,7 @@ task compileJava9(type: JavaCompile) {
     classpath = files()
     options.compilerArgs = [
         '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-        '--module-path', files(MAIN_MODULE_PATH).asPath
+        '--module-path', files(MODULE_COMPILE_PATH).asPath
     ]
 }
 

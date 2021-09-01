@@ -64,11 +64,12 @@ dependencies {
 
     api 'de.rototor.pdfbox:graphics2d:0.32'
 
-
-    testImplementation project(':poi-scratchpad')
+    if (!NO_SCRATCHPAD) {
+         testImplementation project(':poi-scratchpad')
+         testImplementation project(path:':poi-scratchpad', configuration:'tests')
+    }
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
-    testImplementation project(path:':poi-scratchpad', configuration:'tests')
     testImplementation 'org.xmlunit:xmlunit-core:2.8.0'
     testImplementation 'org.reflections:reflections:0.9.12'
     testImplementation 'org.openjdk.jmh:jmh-core:1.26'
@@ -219,6 +220,12 @@ test {
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
 
+    if (NO_SCRATCHPAD) {
+        useJUnitPlatform {
+            excludeTags 'scratchpad.ignore'
+        }
+    }
+
     doFirst {
         jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
@@ -226,7 +233,7 @@ test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-ooxml-tests' + java.io.File.pathSeparator + files(TEST_MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-ooxml-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
     }

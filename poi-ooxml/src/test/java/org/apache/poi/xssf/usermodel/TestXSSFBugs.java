@@ -111,6 +111,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -3439,6 +3440,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
+    @Tag("scratchpad.ignore")
     void testXLSXinPPT() throws Exception {
         assumeFalse(Boolean.getBoolean("scratchpad.ignore"));
 

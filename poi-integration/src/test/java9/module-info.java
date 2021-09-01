@@ -24,6 +24,7 @@ module org.apache.poi.stress {
 
     requires org.apache.commons.collections4;
     requires org.apache.poi.examples;
+    requires static org.apache.poi.scratchpad;
 
     exports org.apache.poi.stress;
 

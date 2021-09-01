@@ -120,6 +120,8 @@ subprojects {
 		TEST9_SRC = 'src/test/java9'
 		TEST9_OUT = "${buildDir}/classes/java9/test/"
 		VERSIONS9 = 'META-INF/versions/9'
+
+        NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
     }
 
     tasks.withType(JavaCompile) {

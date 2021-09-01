@@ -63,8 +63,10 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFObjectData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag("scratchpad.ignore")
 class TestEmbedOLEPackage {
     private static byte[] samplePPT, samplePPTX, samplePNG;
 

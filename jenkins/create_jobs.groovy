@@ -63,7 +63,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
         ],
-        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
+        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
         [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
           email: 'kiwiwings@apache.org',
@@ -445,17 +445,9 @@ poijobs.each { poijob ->
                     gradle {
                         tasks('clean jenkins')
                         useWrapper(true)
-                    }
-                } else if (poijob.noScratchpad) {
-                    ant {
-                        targets(['clean', 'compile'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
-                        antInstallation(antRT)
-                    }
-                    ant {
-                        targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-all', 'testcoveragereport'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
-                        antInstallation(antRT)
+                        if (poijob.noScratchpad) {
+                            switches('-Pscratchpad.ignore=true')
+                        }
                     }
                 } else {
                     ant {

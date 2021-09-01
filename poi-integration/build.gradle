@@ -44,13 +44,34 @@ dependencies {
     testImplementation 'org.apache.commons:commons-collections4:4.4'
     testImplementation 'com.google.guava:guava:30.0-jre'
 
-    testImplementation project(':poi-ooxml')
-    testImplementation project(':poi-scratchpad')
-    testImplementation project(':poi-examples')
-    testImplementation project(path:':poi-examples', configuration:'archives')
+    testImplementation(project(':poi-ooxml')) {
+        if (NO_SCRATCHPAD) {
+            exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+        }
+    }
+    if (NO_SCRATCHPAD) {
+        testCompileOnly project(':poi-scratchpad')
+        testCompileOnly project(path:':poi-scratchpad', configuration:'tests')
+    } else {
+        testImplementation project(':poi-scratchpad')
+        testImplementation project(path:':poi-scratchpad', configuration:'tests')
+    }
+    testImplementation(project(':poi-examples')) {
+        if (NO_SCRATCHPAD) {
+            exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+        }
+    }
+    testImplementation(project(path:':poi-examples', configuration:'archives')) {
+        if (NO_SCRATCHPAD) {
+            exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+        }
+    }
     testImplementation project(path:':poi', configuration:'tests')
-    testImplementation project(path:':poi-ooxml', configuration:'tests')
-    testImplementation project(path:':poi-scratchpad', configuration:'tests')
+    testImplementation(project(path:':poi-ooxml', configuration:'tests')) {
+        if (NO_SCRATCHPAD) {
+            exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+        }
+    }
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
 }
@@ -58,7 +79,8 @@ dependencies {
 final String MODULE_NAME = 'org.apache.poi.stress'
 final Pattern MODULE_NOT_REGEX = ~'((poi|poi-scratchpad|poi-ooxml)[/\\\\][^/\\\\]+$|batik-script)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
-final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+final List MODULE_COMPILE_PATH = sourceSets.test.compileClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+final List MODULE_RUNTIME_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
@@ -79,7 +101,7 @@ task compileTest9(type: JavaCompile) {
     source = file(TEST9_SRC)
     options.compilerArgs = [
         '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-        '--module-path', files(TEST_MODULE_PATH).asPath
+        '--module-path', files(MODULE_COMPILE_PATH).asPath
     ]
     classpath = files()
 }
@@ -141,8 +163,11 @@ test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-integration-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-integration-tests' + File.pathSeparator + files(MODULE_RUNTIME_PATH).asPath,
             ]
+        }
+        if (NO_SCRATCHPAD) {
+            systemProperty 'scratchpad.ignore', 'true'
         }
     }
 }
