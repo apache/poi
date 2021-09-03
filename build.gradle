@@ -22,7 +22,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.1.1'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
         classpath 'de.thetaphi:forbiddenapis:3.1'
         classpath 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.3'
     }
@@ -56,8 +56,8 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.7.1")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.9")
+    antLibs("org.junit.jupiter:junit-jupiter:5.7.2")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.11")
 }
 
 ant.taskdef(name: "junit",
@@ -101,16 +101,16 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
 
-    version = '5.0.1-SNAPSHOT'
+    version = '5.1.0'
     ext {
         bouncyCastleVersion = '1.69'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.21'
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.7.1'
-        log4jVersion = '2.14.0'
-        mockitoVersion = '3.6.0'
+        junitVersion = '5.7.2'
+        log4jVersion = '2.14.1'
+        mockitoVersion = '3.12.4'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.0.1'
         batikVersion = '1.14'
@@ -399,6 +399,10 @@ subprojects {
     spotbugs {
         ignoreFailures = true
         showStackTraces = false
+    }
+
+    build {
+        dependsOn 'signPOIPublication'
     }
 }
 

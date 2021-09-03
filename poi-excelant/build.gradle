@@ -35,7 +35,7 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.9'
+    api 'org.apache.ant:ant:1.10.11'
 
     api project(':poi-ooxml')
     api project(path: ':poi-ooxml', configuration: 'archives')
@@ -45,8 +45,8 @@ dependencies {
     testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         exclude group: 'org.apache.poi', module: 'poi-scratchpad'
     }
-    testImplementation 'com.google.guava:guava:30.0-jre'
-    testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+    testImplementation 'com.google.guava:guava:30.1.1-jre'
+    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 }
 
 final String MODULE_NAME = 'org.apache.poi.excelant'
