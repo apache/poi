@@ -24,7 +24,7 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-bundle</artifactId>
     <packaging>bundle</packaging>
-    <version>5.1.0</version>
+    <version>5.1.1-SNAPSHOT</version>
 
     <name>Apache POI OSGi bundle</name>
     <properties>
