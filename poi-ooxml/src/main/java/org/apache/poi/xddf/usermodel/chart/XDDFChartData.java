@@ -258,7 +258,7 @@ public abstract class XDDFChartData {
          *
          * @param index
          *      data point index.
-         * @since POI 5.0.1
+         * @since POI 5.1.0
          */
         public void clearDataPoint(long index) {
             List<CTDPt> points = getDPtList();
@@ -278,7 +278,7 @@ public abstract class XDDFChartData {
          *      data point index.
          * @return
          *      the data point with the given {@code index}.
-         * @since POI 5.0.1
+         * @since POI 5.1.0
          */
         public XDDFDataPoint getDataPoint(long index) {
             List<CTDPt> points = getDPtList();

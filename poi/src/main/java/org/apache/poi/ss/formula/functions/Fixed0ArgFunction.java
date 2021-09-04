@@ -24,7 +24,7 @@ import org.apache.poi.util.Removal;
 /**
  * Convenience base class for functions that only take zero arguments.
  *
- * @deprecated replaced by lambda expressions in 5.0.1
+ * @deprecated replaced by lambda expressions in 5.1.0
  */
 @Deprecated
 @Removal(version = "6.0.0")

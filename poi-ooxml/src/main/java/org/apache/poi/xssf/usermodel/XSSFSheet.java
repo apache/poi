@@ -3373,7 +3373,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * {@link XSSFCell#removeHyperlink()} can be used if the hyperlink is just for that one cell.
      *
      * @param hyperlink the link to remove
-     * @since POI 5.0.1
+     * @since POI 5.1.0
      */
     public void removeHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.remove(hyperlink);

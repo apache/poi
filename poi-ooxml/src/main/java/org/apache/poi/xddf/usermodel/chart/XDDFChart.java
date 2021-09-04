@@ -1070,7 +1070,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param newSheet
      *          sheet to be used in the data references.
      *
-     * @since POI 5.0.1
+     * @since POI 5.1.0
      */
     public void replaceReferences(XSSFSheet newSheet) {
         for (XDDFChartData data : getChartSeries()) {

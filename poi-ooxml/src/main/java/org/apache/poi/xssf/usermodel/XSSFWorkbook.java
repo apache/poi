@@ -688,7 +688,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Modified in POI 5.0.1 to only log issues with unknown relationship types
+     * Modified in POI 5.1.0 to only log issues with unknown relationship types
      * - see https://bz.apache.org/bugzilla/show_bug.cgi?id=64759
      *
      * @since 3.14-Beta1

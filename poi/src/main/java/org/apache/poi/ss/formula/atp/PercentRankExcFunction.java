@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @see PercentRank
  * @see PercentRankIncFunction
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 final class PercentRankExcFunction implements FreeRefFunction {
 

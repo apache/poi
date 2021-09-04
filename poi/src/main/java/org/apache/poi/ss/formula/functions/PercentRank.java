@@ -40,7 +40,7 @@ import java.util.List;
  * <br>
  * Returns a number between 0 and 1 representing a percentage.
  *
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 public final class PercentRank implements Function {
 
