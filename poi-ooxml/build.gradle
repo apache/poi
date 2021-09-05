@@ -245,6 +245,18 @@ publishing {
             pom {
                 name = 'Apache POI - API based on OPC and OOXML schemas'
                 description = 'Apache POI - Java API To Access Microsoft Format Files'
+
+                withXml {
+                    // Update dependencies with resolved versions
+                    def hasDependencies = !asNode().dependencies.isEmpty()
+                    if (hasDependencies) {
+                        asNode().dependencies.first().each {
+                            String artifactId = it.get("artifactId").first().value().first()
+                            String modifiedName = artifactId.equals("poi-ooxml-full") ? "poi-ooxml-lite" : artifactId
+                            it.get("artifactId").first().value = modifiedName
+                        }
+                    }
+                }
             }
         }
     }
