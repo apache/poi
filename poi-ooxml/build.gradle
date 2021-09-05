@@ -44,11 +44,10 @@ sourceSets {
 
 dependencies {
     api project(':poi')
-    compileOnly project(':poi-ooxml-full')
-    //need to find some way to add poi-ooxml-lite without causing cicular dependency failure
-    //implementation project(path: ':poi-ooxml-lite', configuration: 'archives')
+    api project(':poi-ooxml-full')
 
     implementation 'org.apache.commons:commons-collections4:4.4'
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'org.apache.santuario:xmlsec:2.2.2'
