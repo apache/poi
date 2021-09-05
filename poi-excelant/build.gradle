@@ -38,7 +38,7 @@ dependencies {
     api 'org.apache.ant:ant:1.10.11'
 
     api project(':poi-ooxml')
-    api project(path: ':poi-ooxml', configuration: 'archives')
+    compileOnly project(path: ':poi-ooxml', configuration: 'archives')
 
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation project(path: ':poi', configuration: 'tests')
