@@ -210,7 +210,6 @@ public final class OperationEvaluationContext {
         }
         SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
 
-        // ugly typecast - TODO - make spreadsheet version more easily accessible
         SpreadsheetVersion ssVersion = _workbook.getSpreadsheetVersion();
 
         NameType part1refType = classifyCellReference(refStrPart1, ssVersion);
@@ -219,7 +218,11 @@ public final class OperationEvaluationContext {
                 return ErrorEval.REF_INVALID;
             case NAMED_RANGE:
                 EvaluationName nm = _workbook.getName(refStrPart1, _sheetIndex);
-                if(!nm.isRange()){
+                if(nm == null) {
+                    throw new RuntimeException("Specified name '" + refStrPart1 +
+                            "' is not found in the workbook (sheetIndex=" + _sheetIndex +").");
+                }
+                if(!nm.isRange()) {
                     throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
                 }
                 return _bookEvaluator.evaluateNameFormula(nm.getNameDefinition(), this);
