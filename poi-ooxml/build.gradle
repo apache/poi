@@ -44,9 +44,9 @@ sourceSets {
 
 dependencies {
     api project(':poi')
-    api project(':poi-ooxml-full')
-    api project(path: ':poi', configuration: 'archives')
-    api project(path: ':poi-ooxml-full', configuration: 'archives')
+    compileOnly project(':poi-ooxml-full')
+    //need to find some way to add poi-ooxml-lite without causing cicular dependency failure
+    //implementation project(path: ':poi-ooxml-lite', configuration: 'archives')
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
