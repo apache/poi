@@ -38,7 +38,7 @@ sourceSets {
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     compileOnly project(':poi-ooxml-full')
-    implementation project(path:':poi-integration', configuration:'tests')
+    compileOnly project(path:':poi-integration', configuration:'tests')
 }
 
 final MODULE_NAME = 'org.apache.poi.ooxml.schemas'
