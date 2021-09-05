@@ -31,7 +31,7 @@ dependencies {
 //    api project(':poi-scratchpad')
     implementation project(path: ':poi', configuration: 'archives')
     implementation project(path: ':poi-ooxml', configuration: 'archives')
-    implementation project(path: ':poi-ooxml-full', configuration: 'archives')
+    compileOnly project(path: ':poi-ooxml-full', configuration: 'archives')
 
     if (NO_SCRATCHPAD) {
         compileOnly project(path: ':poi-scratchpad', configuration: 'archives')
