@@ -37,7 +37,7 @@ sourceSets {
 
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-    implementation project(':poi-ooxml-full')
+    compileOnly project(':poi-ooxml-full')
     implementation project(path:':poi-integration', configuration:'tests')
 }
 
