@@ -28,9 +28,8 @@ sourceSets {
 
 dependencies {
     api project(':poi-ooxml')
-//    api project(':poi-scratchpad')
     implementation project(path: ':poi', configuration: 'archives')
-    implementation project(path: ':poi-ooxml', configuration: 'archives')
+    compileOnly project(path: ':poi-ooxml', configuration: 'archives')
     compileOnly project(path: ':poi-ooxml-full', configuration: 'archives')
 
     if (NO_SCRATCHPAD) {
