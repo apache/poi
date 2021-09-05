@@ -45,7 +45,8 @@ sourceSets {
 dependencies {
     api project(':poi')
     api project(':poi-ooxml-full')
-
+    api project(path: ':poi-ooxml-full', configuration: 'archives')
+    
     implementation 'org.apache.commons:commons-collections4:4.4'
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
