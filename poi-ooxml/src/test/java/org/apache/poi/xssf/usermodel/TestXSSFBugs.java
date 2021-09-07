@@ -1887,7 +1887,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             SAXParseException e = assertThrows(SAXParseException.class,
                 () -> reader.parse(new InputSource(zip.getInputStream(ze))));
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+            assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
         }
     }
 
