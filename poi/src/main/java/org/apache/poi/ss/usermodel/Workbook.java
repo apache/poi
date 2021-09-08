@@ -310,7 +310,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     CellStyle getCellStyleAt(int idx);
 
     /**
-     * Write out this workbook to an Outputstream.
+     * Write out this workbook to an OutputStream.
      *
      * @param stream - the java OutputStream you wish to write to
      * @exception IOException if anything can't be written.
