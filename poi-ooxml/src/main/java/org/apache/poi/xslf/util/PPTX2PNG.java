@@ -272,7 +272,7 @@ public final class PPTX2PNG {
         }
 
         if (!"long,short,width,height,scale".contains(fixSide)) {
-            usage("<fixside> must be one of long / short / width / height");
+            usage("<fixside> must be one of long / short / width / height / scale");
             return false;
         }
 
