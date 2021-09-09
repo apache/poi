@@ -466,7 +466,7 @@ public final class PPTX2PNG {
                 break;
         }
         proxy.setIgnoreParse(ignoreParse);
-        proxy.setQuite(quiet);
+        proxy.setQuiet(quiet);
         con.parse(proxy);
         proxy.setDefaultCharset(charset);
 
