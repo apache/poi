@@ -166,7 +166,8 @@ public abstract class XDDFChartData {
             if (categoryData != null && values != null) {
                 int numOfPoints = category.getPointCount();
                 if (numOfPoints != values.getPointCount()) {
-                    throw new IllegalStateException("Category and values must have the same point count.");
+                    throw new IllegalStateException("Category and values must have the same point count, but had " +
+							numOfPoints + " categories and " + values.getPointCount() + " values.");
                 }
             }
             this.categoryData = category;

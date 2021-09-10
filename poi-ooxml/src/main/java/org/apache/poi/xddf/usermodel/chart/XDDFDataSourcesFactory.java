@@ -47,8 +47,8 @@ public class XDDFDataSourcesFactory {
         }
         if (categoryDS.getNumRef() != null && categoryDS.getNumRef().getNumCache() != null) {
             return new XDDFCategoryDataSource() {
-                private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
-                private String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
+                private final CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
+                private final String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
 
                 @Override
                 public boolean isCellRange() {
@@ -72,6 +72,10 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
+					if (category.getPtArray().length <= index) {
+						throw new IllegalArgumentException("Cannot access 0-based index " + index +
+								" in point-array with " + category.getPtArray().length + " items");
+					}
                     return category.getPtArray(index).getV();
                 }
 
@@ -80,7 +84,7 @@ public class XDDFDataSourcesFactory {
             };
         } else if (categoryDS.getStrRef() != null && categoryDS.getStrRef().getStrCache() != null) {
             return new XDDFCategoryDataSource() {
-                private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
+                private final CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
 
                 @Override
                 public boolean isCellRange() {
@@ -107,8 +111,8 @@ public class XDDFDataSourcesFactory {
             };
         } else if (categoryDS.getNumLit() != null) {
             return new XDDFCategoryDataSource() {
-                private CTNumData category = (CTNumData) categoryDS.getNumLit().copy();
-                private String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
+                private final CTNumData category = (CTNumData) categoryDS.getNumLit().copy();
+                private final String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
 
                 @Override
                 public boolean isCellRange() {
@@ -150,7 +154,7 @@ public class XDDFDataSourcesFactory {
             };
         } else if (categoryDS.getStrLit() != null) {
             return new XDDFCategoryDataSource() {
-                private CTStrData category = (CTStrData) categoryDS.getStrLit().copy();
+                private final CTStrData category = (CTStrData) categoryDS.getStrLit().copy();
 
                 @Override
                 public boolean isCellRange() {
@@ -196,7 +200,7 @@ public class XDDFDataSourcesFactory {
         }
         if (valuesDS.getNumRef() != null && valuesDS.getNumRef().getNumCache() != null) {
             return new XDDFNumericalDataSource<Double>() {
-                private CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
+                private final CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
                 private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
                 @Override
@@ -246,7 +250,7 @@ public class XDDFDataSourcesFactory {
             };
         } else if (valuesDS.getNumLit() != null) {
             return new XDDFNumericalDataSource<Double>() {
-                private CTNumData values = (CTNumData) valuesDS.getNumLit().copy();
+                private final CTNumData values = (CTNumData) valuesDS.getNumLit().copy();
                 private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
                 @Override
@@ -457,7 +461,7 @@ public class XDDFDataSourcesFactory {
         private final XSSFSheet sheet;
         private final CellRangeAddress cellRangeAddress;
         private final int numOfCells;
-        private XSSFFormulaEvaluator evaluator;
+        private final XSSFFormulaEvaluator evaluator;
 
         protected AbstractCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
             this.sheet = sheet;
@@ -530,7 +534,7 @@ public class XDDFDataSourcesFactory {
         public Double getPointAt(int index) {
             CellValue cellValue = getCellValueAt(index);
             if (cellValue != null && cellValue.getCellType() == CellType.NUMERIC) {
-                return Double.valueOf(cellValue.getNumberValue());
+                return cellValue.getNumberValue();
             } else {
                 return null;
             }
