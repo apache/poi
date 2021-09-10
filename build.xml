@@ -1490,6 +1490,7 @@ under the License.
                 <path refid="ooxml.classpath"/>
                 <path refid="test.jar.classpath"/>
                 <pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${ooxml.output.test.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
