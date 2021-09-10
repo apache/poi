@@ -118,7 +118,7 @@ public class SXSSFSheet implements Sheet
      *
      * @param rownum  row number
      * @return high level Row object representing a row in the sheet
-     * @throws IllegalArgumentException If the max. number of rows is exceeded or 
+     * @throws IllegalArgumentException If the max. number of rows is exceeded or
      *      a rownum is provided where the row is already flushed to disk.
      * @see #removeRow(Row)
      */
@@ -1877,7 +1877,7 @@ public class SXSSFSheet implements Sheet
     {
         Integer firstRowNum = _rows.firstKey();
         if (firstRowNum!=null) {
-            int rowIndex = firstRowNum.intValue();
+            int rowIndex = firstRowNum;
             SXSSFRow row = _rows.get(firstRowNum);
             // Update the best fit column widths for auto-sizing just before the rows are flushed
             _autoSizeColumnTracker.updateColumnWidths(row);
