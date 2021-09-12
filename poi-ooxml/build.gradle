@@ -18,12 +18,20 @@
 import java.util.regex.Pattern
 
 configurations {
-	all {
+	runtimeClasspath {
 		exclude group: 'xalan', module: 'xalan'
 		if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 			exclude group: 'xml-apis', module: 'xml-apis'
 		}
 	}
+
+	compileClasspath {
+		exclude group: 'xalan', module: 'xalan'
+		if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+			exclude group: 'xml-apis', module: 'xml-apis'
+		}
+	}
+
 	broken
 	tests
     javadocs
@@ -42,27 +50,80 @@ sourceSets {
     }
 }
 
+java {
+    registerFeature('signing') {
+        usingSourceSet(sourceSets.main)
+    }
+    registerFeature('render') {
+        usingSourceSet(sourceSets.main)
+    }
+    registerFeature('rendersign') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
 dependencies {
     api project(':poi')
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
-    
-    implementation 'org.apache.commons:commons-collections4:4.4'
+
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
-    api 'org.apache.santuario:xmlsec:2.2.2'
-    api "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-    api "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
     api 'com.github.virtuald:curvesapi:1.06'
-    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api 'org.apache.commons:commons-collections4:4.4'
 
-    implementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
-    implementation "org.apache.xmlgraphics:batik-bridge:${batikVersion}"
-    implementation "org.apache.xmlgraphics:batik-codec:${batikVersion}"
-    implementation "org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}"
+    signingImplementation 'org.apache.santuario:xmlsec:2.2.2'
+    signingImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    signingImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
 
-    api 'de.rototor.pdfbox:graphics2d:0.32'
+    rendersignImplementation 'org.apache.santuario:xmlsec:2.2.2'
+    rendersignImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    rendersignImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+
+    renderImplementation 'de.rototor.pdfbox:graphics2d:0.32'
+    renderImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
+    renderImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    renderImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    renderImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+		exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+    rendersignImplementation 'de.rototor.pdfbox:graphics2d:0.32'
+    rendersignImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
+    rendersignImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    rendersignImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+		exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
 
     if (!NO_SCRATCHPAD) {
          testImplementation project(':poi-scratchpad')
@@ -78,10 +139,15 @@ dependencies {
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.32 dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
-    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
 
 
-    broken "org.apache.xmlgraphics:batik-script:${batikVersion}"
+    broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
 
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
@@ -245,19 +311,13 @@ publishing {
             pom {
                 name = 'Apache POI - API based on OPC and OOXML schemas'
                 description = 'Apache POI - Java API To Access Microsoft Format Files'
-
-                withXml {
-                    // Update dependencies with resolved versions
-                    def hasDependencies = !asNode().dependencies.isEmpty()
-                    if (hasDependencies) {
-                        asNode().dependencies.first().each {
-                            String artifactId = it.get("artifactId").first().value().first()
-                            String modifiedName = artifactId.equals("poi-ooxml-full") ? "poi-ooxml-lite" : artifactId
-                            it.get("artifactId").first().value = modifiedName
-                        }
-                    }
-                }
             }
+            suppressPomMetadataWarningsFor('renderApiElements')
+            suppressPomMetadataWarningsFor('renderRuntimeElements')
+            suppressPomMetadataWarningsFor('signingApiElements')
+            suppressPomMetadataWarningsFor('signingRuntimeElements')
+            suppressPomMetadataWarningsFor('rendersignApiElements')
+            suppressPomMetadataWarningsFor('rendersignRuntimeElements')
         }
     }
 }

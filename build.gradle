@@ -15,6 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
+
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/' }
@@ -124,6 +131,15 @@ subprojects {
         NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
     }
 
+    configurations {
+        all {
+            resolutionStrategy {
+                force "commons-io:commons-io:${commonsIoVersion}"
+                force 'org.slf4j:slf4j-api:1.8.0-beta4'
+            }
+        }
+    }
+
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:unchecked'
@@ -191,8 +207,23 @@ subprojects {
     }
 
     jar {
+        from("../legal") {
+            include "NOTICE"
+            include "LICENSE"
+        }
+
+        rename('^(NOTICE|LICENSE)', 'META-INF/$1')
+
         manifest {
-            attributes 'Implementation-Title': 'Apache POI', 'Implementation-Version': project.version
+            attributes(
+                'Specification-Title': 'Apache POI',
+                'Specification-Version': project.version,
+                'Specification-Vendor': 'The Apache Software Foundation',
+                'Implementation-Title': 'Apache POI',
+                'Implementation-Version': project.version,
+                'Implementation-Vendor': 'org.apache.poi',
+                'Implementation-Vendor-Id': 'The Apache Software Foundation'
+            )
         }
     }
 
@@ -384,6 +415,20 @@ subprojects {
                         // adding ASF header before root node is ignored
                         // doc.insertBefore(asl, doc.getDocumentElement())
                         r.insertBefore(asl, r.getFirstChild())
+
+                        // Replace ooxml-full with ooxml-lite
+                        XPath xpath = XPathFactory.newInstance().newXPath()
+                        NodeList res = (NodeList)xpath.evaluate("//dependency/artifactId[text() = 'poi-ooxml-full']", doc, XPathConstants.NODESET)
+                        for (int i=res.getLength()-1; i>=0; i--) {
+                            res.item(i).setTextContent('poi-ooxml-lite')
+                        }
+
+                        // remove duplicate entries
+                        res = (NodeList)xpath.evaluate("//dependency[artifactId = ./preceding-sibling::dependency/artifactId]", doc, XPathConstants.NODESET)
+                        for (int i=res.getLength()-1; i>=0; i--) {
+                            Node n = res.item(i)
+                            n.getParentNode().removeChild(n)
+                        }
                     }
                 }
             }
@@ -392,9 +437,14 @@ subprojects {
 
     generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"
 
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
     signing {
         sign publishing.publications.POI
     }
+    signPOIPublication.dependsOn('generatePomFileForPOIPublication')
 
     spotbugs {
         ignoreFailures = true
@@ -402,9 +452,9 @@ subprojects {
     }
 
     build {
-        // disabled until next release build - only works when you've configured the signing key in your
-        // user gradle.properties file
-        // dependsOn 'signPOIPublication'
+        if (project.hasProperty('signing.keyId')) {
+            dependsOn 'signPOIPublication'
+        }
     }
 }
 
@@ -525,8 +575,8 @@ task replaceVersion() {
 
     var version = subprojects[0].version
     var tokens = [
-        [ 'sonar', '**/pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ],
-        [ 'sonar', '**/pom.xml', '(poi-parent&lt;/artifactId>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\1${version}" ],
+//        [ 'sonar', '**/pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ],
+//        [ 'sonar', '**/pom.xml', '(poi-parent&lt;/artifactId>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\1${version}" ],
         [ 'osgi', 'pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ]
         // [ '.', 'build.gradle', ' version = \'[0-9.]+(?:-SNAPSHOT)?\'', " version = '${version}'" ]
     ]
@@ -582,7 +632,7 @@ distributions {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
             eachFile {
-                var root = "poi-bin-${version}/"
+                String root = "poi-bin-${version}/"
                 if (name.startsWith('poi')) {
                     path = root + name
                 } else if (poiDep.contains(file)) {

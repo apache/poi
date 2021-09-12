@@ -24,6 +24,7 @@ final boolean IBMVM = System.getProperty("java.vendor").contains("IBM")
 
 configurations {
 	tests
+    misc
 }
 
 sourceSets {
@@ -44,7 +45,10 @@ dependencies {
     testImplementation 'org.apache.commons:commons-collections4:4.4'
     testImplementation 'com.google.guava:guava:30.1.1-jre'
 
-    testImplementation(project(':poi-ooxml')) {
+    misc(project(':poi-ooxml')) {
+        capabilities {
+            requireCapability("${project.group}:poi-ooxml-rendersign")
+        }
         if (NO_SCRATCHPAD) {
             exclude group: 'org.apache.poi', module: 'poi-scratchpad'
         }
@@ -73,14 +77,14 @@ dependencies {
         }
     }
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
-    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
 }
 
 final String MODULE_NAME = 'org.apache.poi.stress'
 final Pattern MODULE_NOT_REGEX = ~'((poi|poi-scratchpad|poi-ooxml)[/\\\\][^/\\\\]+$|batik-script)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
-final List MODULE_COMPILE_PATH = sourceSets.test.compileClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
-final List MODULE_RUNTIME_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+final List MODULE_COMPILE_PATH = (sourceSets.test.compileClasspath + configurations.misc.files).findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+final List MODULE_RUNTIME_PATH = (sourceSets.test.runtimeClasspath + configurations.misc.files).findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'

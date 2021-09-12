@@ -46,7 +46,7 @@ dependencies {
         exclude group: 'org.apache.poi', module: 'poi-scratchpad'
     }
     testImplementation 'com.google.guava:guava:30.1.1-jre'
-    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
 }
 
 final String MODULE_NAME = 'org.apache.poi.excelant'

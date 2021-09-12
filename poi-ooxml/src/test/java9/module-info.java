@@ -84,9 +84,10 @@ module org.apache.poi.ooxml {
     /* optional dependencies for xml signatures - you need to add a require entry your module-info
      * or add them via the --add-modules JVM argument */
     requires java.xml.crypto;
-    requires org.apache.santuario.xmlsec;
-    requires org.bouncycastle.provider;
-    requires org.bouncycastle.pkix;
+    requires static org.apache.santuario.xmlsec;
+    requires static org.bouncycastle.provider;
+    requires static org.bouncycastle.pkix;
+    requires static org.codehaus.stax2;
 
 
     /* optional dependencies for slideshow rendering via PPTX2PNG */
@@ -111,9 +112,9 @@ module org.apache.poi.ooxml {
     requires static batik.xml;
     requires static xmlgraphics.commons;
 
-    requires org.apache.pdfbox;
-    requires org.apache.fontbox;
-    requires de.rototor.pdfbox.graphics2d;
+    requires static org.apache.pdfbox;
+    requires static org.apache.fontbox;
+    requires static de.rototor.pdfbox.graphics2d;
 
 
     // test specific exports

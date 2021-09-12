@@ -65,11 +65,11 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
-        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
-          email: 'kiwiwings@apache.org',
-		  // replaced by Gradle-based build now
-		  disabled: true
-        ],
+//        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
+//          email: 'kiwiwings@apache.org',
+//		  // replaced by Gradle-based build now
+//		  disabled: true
+//        ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', gradle: true, sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', gradle: true
@@ -339,46 +339,7 @@ poijobs.each { poijob ->
         def shellcmds = (poijob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', poijob.shell ?: '')
 
         // Create steps and publishers depending on the type of Job that is selected
-        if(poijob.maven) {
-            steps {
-                shellEx(delegate, shellcmds, poijob)
-                maven {
-                    goals('clean')
-                    rootPOM('sonar/pom.xml')
-                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation(defaultMaven)
-                }
-                maven {
-                    if (poijob.sonar) {
-                        goals('clean package sonar:sonar')
-                        property('sonar.login', '${POI_SONAR_TOKEN}')
-                    } else {
-                        goals('package')
-                    }
-                    rootPOM('sonar/pom.xml')
-                    mavenOpts('-Xmx2g')
-                    mavenOpts('-Xms256m')
-                    mavenOpts('-XX:-OmitStackTraceInFastThrow')
-                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation(defaultMaven)
-                }
-            }
-            publishers {
-                if (!poijob.skipcigame) {
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
-                    }
-                }
-                if (!poijob.sonar) {
-                    archiveJunit('sonar/*/target/surefire-reports/TEST-*.xml') {
-                        testDataPublishers {
-                            publishTestStabilityData()
-                        }
-                    }
-                }
-                mailer(email, false, false)
-            }
-        } else if (poijob.javadoc) {
+        if (poijob.javadoc) {
             steps {
                 shellEx(delegate, shellcmds, poijob)
                 ant {

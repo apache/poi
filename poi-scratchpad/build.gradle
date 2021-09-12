@@ -38,9 +38,9 @@ sourceSets {
 dependencies {
     api project(':poi')
     api project(path:':poi', configuration: 'archives')
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    implementation "org.apache.commons:commons-math3:${commonsMathVersion}"
-    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api "org.apache.commons:commons-math3:${commonsMathVersion}"
+    api "commons-codec:commons-codec:${commonsCodecVersion}"
 
     testImplementation project(path: ':poi', configuration: 'tests')
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
