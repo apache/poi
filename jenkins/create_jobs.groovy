@@ -21,24 +21,24 @@ def poijobs = [
           slaves: 'ubuntu',
           skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 10 had EOL in September 2018
-          disabled: true
-        ],
+//        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 10 had EOL in September 2018
+//          disabled: true
+//        ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
-          disabled: true
-        ],
+//        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+//          disabled: true
+//        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         // building with JDK 16 fails currently because of findbugs/spotbugs
@@ -52,17 +52,17 @@ def poijobs = [
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
         ],
-        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true,
-		  // not needed any more now that we use Gradle for SonarQube
-		  disabled: true
-        ],
+//        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true,
+//		  // not needed any more now that we use Gradle for SonarQube
+//		  disabled: true
+//        ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
         // it was impossible to make this run stable in Gradle, thus disabling this for now
         [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
-        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
-        ],
+//        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
+//        ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
 //        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
@@ -74,14 +74,14 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', gradle: true
         ],
-        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
-          disabled: true
-        ],
-        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
-		  // let's only verify the latest two JDKs
-		  disabled: true
-        ],
+//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//		  // let's only verify the latest two JDKs
+//		  disabled: true
+//        ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
 		// building with JDK 16 fails currently because of findbugs/spotbugs
