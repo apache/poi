@@ -363,19 +363,13 @@ poijobs.each { poijob ->
             steps {
                 shellEx(delegate, shellcmds, poijob)
 
-                // this is a workaround until the Gradle build can do this compilation before invoking any
-                // Ant script or when building via Ant is removed completely
-                ant {
-                    targets(['init'] + (poijob.properties ?: []))
-                    antInstallation(antRT)
-                }
-
                 gradle {
                     switches('-PenableSonar')
                     switches('-Dsonar.login=${POI_SONAR_TOKEN}')
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=poi-parent')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
+                    tasks('clean')
                     tasks('check')
                     tasks('jacocoTestReport')
                     tasks('sonarqube')
