@@ -545,7 +545,7 @@ rat {
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd",
 		"osgi/README.md",
         // ignore svn conflict artifacts
-        "**/module-info.class.*"
+        "**/module-info.*"
 	]
 
     /*
