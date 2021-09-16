@@ -696,8 +696,8 @@ distributions {
     }
 }
 
-binDistZip.dependsOn 'zipJavadocs'
-binDistTar.dependsOn 'zipJavadocs'
+binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
+binDistTar.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
 
 var srcDep = [
     ':poi:cacheJava9',
