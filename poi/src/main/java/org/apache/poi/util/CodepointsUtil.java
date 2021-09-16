@@ -17,30 +17,13 @@
 
 package org.apache.poi.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Iterator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-/**
- * Unit test for StringCodepointsIterable
- */
-class TestStringCodepointsIterable {
-
-    @Test
-    void testIterable() {
-        final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
-                + "abcdef123456";
-        StringCodepointsIterable sci = new StringCodepointsIterable(unicodeSurrogates);
-        List<String> codePoints = new ArrayList<>();
-        List<String> codePoints2 = new ArrayList<>();
-        sci.iterator().forEachRemaining(codePoints::add);
-        sci.iterator().forEachRemaining(codePoints2::add);
-        assertEquals(17, codePoints.size());
-        assertEquals(codePoints, codePoints2);
+@Internal
+public class CodepointsUtil {
+    public static Iterator<String> iteratorFor(String text) {
+        return text.codePoints()
+                .mapToObj(codePoint -> new StringBuilder().appendCodePoint(codePoint).toString())
+                .iterator();
     }
-
 }
-

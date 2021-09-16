@@ -39,7 +39,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.StringCodepointsIterable;
+import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -393,7 +393,8 @@ public class SheetDataWriter implements Closeable {
             return;
         }
 
-        for (String codepoint : new StringCodepointsIterable(s)) {
+        for (Iterator<String> iter = CodepointsUtil.iteratorFor(s); iter.hasNext(); ) {
+            String codepoint = iter.next();
             switch (codepoint) {
                 case "<":
                     _out.write("&lt;");
