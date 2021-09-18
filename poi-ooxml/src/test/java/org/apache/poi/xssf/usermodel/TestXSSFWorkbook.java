@@ -53,6 +53,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -164,6 +165,26 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             // Links to the three sheets, shared, styles and themes
             assertTrue(wbPart.hasRelationships());
             assertEquals(6, wbPart.getRelationships().size());
+        }
+    }
+
+    @Test
+    void existingWithZipEntryTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
         }
     }
 

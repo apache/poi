@@ -34,15 +34,40 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
  *  done, to free up that memory!
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
+    private static int thresholdForTempFiles = -1;
     private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 
     private InputStream streamToClose;
+
+    /**
+     * Set the threshold at which it a zip entry is regarded as too large for holding in memory
+     * and the data is put in a temp file instead
+     * @param thresholdBytes number of bytes at which a zip entry is regarded as too large for holding in memory
+     *                       and the data is put in a temp file instead - defaults to -1 meaning temp files are not used
+     *                       and that zip entries with more than 2GB of data after decompressing will fail, 0 means all
+     *                       zip entries are stored in temp files. A threshold like 50000000 (approx 50Mb is recommended)
+     * @since POI 5.1.0
+     */
+    public static void setThresholdBytesForTempFiles(int thresholdBytes) {
+        thresholdForTempFiles = thresholdBytes;
+    }
+
+    /**
+     * Get the threshold at which it a zip entry is regarded as too large for holding in memory
+     * and the data is put in a temp file instead (defaults to -1 meaning temp files are not used)
+     * @return threshold in bytes
+     * @since POI 5.1.0
+     */
+    public static int getThresholdBytesForTempFiles() {
+        return thresholdForTempFiles;
+    }
 
     /**
      * Reads all the entries from the ZipInputStream 
      *  into memory, and don't close (since POI 4.0.1) the source stream.
      * We'll then eat lots of memory, but be able to
      *  work with the entries at-will.
+     * @see #setThresholdBytesForTempFiles
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
         for (;;) {
@@ -69,6 +94,10 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public void close() throws IOException {
+        for (ZipArchiveFakeEntry entry : zipEntries.values()) {
+            entry.close();
+        }
+
         // Free the memory
         zipEntries.clear();
 
