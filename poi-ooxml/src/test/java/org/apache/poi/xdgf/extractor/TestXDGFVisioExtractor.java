@@ -51,9 +51,6 @@ class TestXDGFVisioExtractor {
 
     @Test
     void testGetSimpleText() throws IOException {
-        new XDGFVisioExtractor(xml).close();
-        new XDGFVisioExtractor(pkg).close();
-
         XDGFVisioExtractor extractor = new XDGFVisioExtractor(xml);
         extractor.getText();
 
