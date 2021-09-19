@@ -16,9 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.dsig;
 
-import org.etsi.uri.x01903.v13.DataObjectFormatType;
-import org.etsi.uri.x01903.v13.ObjectIdentifierType;
-import org.etsi.uri.x01903.v13.SignaturePolicyIdType;
+import org.etsi.uri.x01903.v13.*;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.junit.jupiter.api.Test;
 
@@ -31,10 +29,16 @@ public class TestNecessaryClasses {
     void testProblemClasses() {
         DataObjectFormatType dataObjectFormatType = DataObjectFormatType.Factory.newInstance();
         assertNotNull(dataObjectFormatType);
+        IdentifierType identifierType = IdentifierType.Factory.newInstance();
+        assertNotNull(identifierType);
         ObjectIdentifierType objectIdentifierType = ObjectIdentifierType.Factory.newInstance();
         assertNotNull(objectIdentifierType);
+        SignedDataObjectPropertiesType signedDataObjectPropertiesType = SignedDataObjectPropertiesType.Factory.newInstance();
+        assertNotNull(signedDataObjectPropertiesType);
         SignaturePolicyIdType signaturePolicyIdType = SignaturePolicyIdType.Factory.newInstance();
         assertNotNull(signaturePolicyIdType);
+        SigPolicyQualifiersListType sigPolicyQualifiersListType = SigPolicyQualifiersListType.Factory.newInstance();
+        assertNotNull(sigPolicyQualifiersListType);
         ValidationDataType validationDataType = ValidationDataType.Factory.newInstance();
         assertNotNull(validationDataType);
     }
