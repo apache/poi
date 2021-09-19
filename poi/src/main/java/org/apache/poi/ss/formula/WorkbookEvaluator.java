@@ -79,7 +79,7 @@ public final class WorkbookEvaluator {
 
     // special logger for formula evaluation output (because of possibly very large output)
     private final Logger EVAL_LOG = LogManager.getLogger("POI.FormulaEval");
-    // current indent level for evalution; negative value for no output
+    // current indent level for evaluation; negative value for no output
     private int dbgEvaluationOutputIndent = -1;
 
     /**
