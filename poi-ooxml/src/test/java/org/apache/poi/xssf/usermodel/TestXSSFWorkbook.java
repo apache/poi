@@ -189,6 +189,29 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void existingWithZipEntryEncryptedTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        boolean defaultEncryptFlag = ZipInputStreamZipEntrySource.shouldEncryptTempFiles();
+        ZipInputStreamZipEntrySource.setEncryptTempFiles(true);
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
+            ZipInputStreamZipEntrySource.setEncryptTempFiles(defaultEncryptFlag);
+        }
+    }
+
+    @Test
     void getCellStyleAt() throws IOException{
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             short i = 0;

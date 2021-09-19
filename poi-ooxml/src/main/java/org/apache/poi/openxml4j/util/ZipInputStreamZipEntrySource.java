@@ -35,6 +35,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     private static int thresholdForTempFiles = -1;
+    private static boolean encryptTempFiles = false;
     private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 
     private InputStream streamToClose;
@@ -47,6 +48,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      *                       and that zip entries with more than 2GB of data after decompressing will fail, 0 means all
      *                       zip entries are stored in temp files. A threshold like 50000000 (approx 50Mb is recommended)
      * @since POI 5.1.0
+     * @see #setEncryptTempFiles(boolean)
      */
     public static void setThresholdBytesForTempFiles(int thresholdBytes) {
         thresholdForTempFiles = thresholdBytes;
@@ -60,6 +62,24 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      */
     public static int getThresholdBytesForTempFiles() {
         return thresholdForTempFiles;
+    }
+
+    /**
+     * Encrypt temp files when they are used. Only affects temp files related to zip entries.
+     * @param encrypt whether temp files should be encrypted
+     * @since POI 5.1.0
+     * @see #setThresholdBytesForTempFiles(int)
+     */
+    public static void setEncryptTempFiles(boolean encrypt) {
+        encryptTempFiles = encrypt;
+    }
+
+    /**
+     * Whether temp files should be encrypted. Only affects temp files related to zip entries.
+     * @since POI 5.1.0
+     */
+    public static boolean shouldEncryptTempFiles() {
+        return encryptTempFiles;
     }
 
     /**

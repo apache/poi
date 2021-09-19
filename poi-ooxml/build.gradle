@@ -64,6 +64,7 @@ java {
 
 dependencies {
     api project(':poi')
+    //implementation files('/Users/pj.fanning/Downloads/poi-bin-5.1.1-SNAPSHOT/poi-ooxml-lite-5.1.1-SNAPSHOT.jar')
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 

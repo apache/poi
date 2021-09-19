@@ -17,17 +17,13 @@
 
 package org.apache.poi.openxml4j.util;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.IOException;
+import java.io.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
@@ -42,6 +38,7 @@ import org.apache.poi.util.TempFile;
     private static Logger LOG = LogManager.getLogger(ZipArchiveFakeEntry.class);
     private byte[] data;
     private File tempFile;
+    private EncryptedTempData encryptedTempData;
 
     ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
         super(entry.getName());
@@ -50,10 +47,17 @@ import org.apache.poi.util.TempFile;
 
         final int threshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
         if (threshold >= 0 && entrySize >= threshold) {
-            tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-            LOG.atInfo().log("created for temp file {} for zip entry {} of size {} bytes",
-                    () -> tempFile.getAbsolutePath(), () -> entry.getName(), () -> entrySize);
-            IOUtils.copy(inp, tempFile);
+            if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
+                encryptedTempData = new EncryptedTempData();
+                try (OutputStream os = encryptedTempData.getOutputStream()) {
+                    IOUtils.copy(inp, os);
+                }
+            } else {
+                tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+                LOG.atInfo().log("created for temp file {} for zip entry {} of size {} bytes",
+                        () -> tempFile.getAbsolutePath(), () -> entry.getName(), () -> entrySize);
+                IOUtils.copy(inp, tempFile);
+            }
         } else {
             if (entrySize < -1 || entrySize >= Integer.MAX_VALUE) {
                 throw new IOException("ZIP entry size is too large or invalid");
@@ -72,7 +76,13 @@ import org.apache.poi.util.TempFile;
      * @see ZipInputStreamZipEntrySource#setThresholdBytesForTempFiles(int)
      */
     public InputStream getInputStream() {
-        if (tempFile != null) {
+        if (encryptedTempData != null) {
+            try {
+                return encryptedTempData.getInputStream();
+            } catch (IOException e) {
+                throw new RuntimeException("failed to read from encryped temp data", e);
+            }
+        } else if (tempFile != null) {
             try {
                 return new FileInputStream(tempFile);
             } catch (FileNotFoundException e) {
@@ -91,6 +101,9 @@ import org.apache.poi.util.TempFile;
     @Override
     public void close() throws IOException {
         data = null;
+        if (encryptedTempData != null) {
+            encryptedTempData.dispose();
+        }
         if (tempFile != null) {
             tempFile.delete();
         }
