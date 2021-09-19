@@ -136,6 +136,7 @@ dependencies {
     testImplementation 'org.openjdk.jmh:jmh-core:1.32'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.32'
     testImplementation 'com.google.guava:guava:30.1.1-jre'
+    testImplementation 'org.tukaani:xz:1.9'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.32 dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/

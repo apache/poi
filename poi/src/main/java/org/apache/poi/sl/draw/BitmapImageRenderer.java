@@ -27,10 +27,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -39,6 +40,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
@@ -51,23 +53,32 @@ import org.apache.poi.util.IOUtils;
  **/
 public class BitmapImageRenderer implements ImageRenderer {
     private static final Logger LOG = LogManager.getLogger(BitmapImageRenderer.class);
+    private static final ImageLoader[] IMAGE_LOADERS = {
+        BitmapImageRenderer::loadColored,
+        BitmapImageRenderer::loadGrayScaled,
+        BitmapImageRenderer::loadTruncated
+    };
+    private static final String UNSUPPORTED_IMAGE_TYPE = "Unsupported Image Type";
+    private static final PictureType[] ALLOWED_TYPES = {
+        PictureType.JPEG,
+        PictureType.PNG,
+        PictureType.BMP,
+        PictureType.GIF
+    };
 
     protected BufferedImage img;
     private boolean doCache;
     private byte[] cachedImage;
     private String cachedContentType;
 
+    private interface ImageLoader {
+        BufferedImage load(ImageReader reader, ImageInputStream iis, ImageReadParam param) throws IOException;
+    }
+
+
     @Override
     public boolean canRender(String contentType) {
-        PictureType[] pts = {
-            PictureType.JPEG, PictureType.PNG, PictureType.BMP, PictureType.GIF
-        };
-        for (PictureType pt : pts) {
-            if (pt.contentType.equalsIgnoreCase(contentType)) {
-                return true;
-            }
-        }
-        return false;
+        return Stream.of(ALLOWED_TYPES).anyMatch(t -> t.contentType.equalsIgnoreCase(contentType));
     }
 
     @Override
@@ -108,110 +119,36 @@ public class BitmapImageRenderer implements ImageRenderer {
         IOException lastException = null;
         BufferedImage img = null;
 
-        final InputStream bis;
-        if (data instanceof ByteArrayInputStream) {
-            bis = data;
-        } else if (data instanceof UnsynchronizedByteArrayInputStream) {
-            bis = data;
-        } else {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(0x3FFFF);
-            IOUtils.copy(data, bos);
-            bis = bos.toInputStream();
-        }
-
-
         // currently don't use FileCacheImageInputStream,
         // because of the risk of filling the file handles (see #59166)
-        ImageInputStream iis = new MemoryCacheImageInputStream(bis);
-        try {
+        try (ImageInputStream iis = new MemoryCacheImageInputStream(data)) {
+
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
             while (img==null && iter.hasNext()) {
+                lastException = null;
                 ImageReader reader = iter.next();
                 ImageReadParam param = reader.getDefaultReadParam();
-                // 0:default mode, 1:fallback mode
-                for (int mode=0; img==null && mode<3; mode++) {
-                    lastException = null;
-                    if (mode > 0) {
-                        bis.reset();
-                        iis.close();
-                        iis = new MemoryCacheImageInputStream(bis);
-                    }
+                for (ImageLoader il : IMAGE_LOADERS) {
+                    iis.reset();
+                    iis.mark();
 
                     try {
-
-                        switch (mode) {
-                            case 0:
-                                reader.setInput(iis, false, true);
-                                img = reader.read(0, param);
-                                break;
-                            case 1: {
-                                // try to load picture in gray scale mode
-                                // fallback mode for invalid image band metadata
-                                // see http://stackoverflow.com/questions/10416378
-                                Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
-                                while (imageTypes.hasNext()) {
-                                    ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
-                                    int bufferedImageType = imageTypeSpecifier.getBufferedImageType();
-                                    if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                                        param.setDestinationType(imageTypeSpecifier);
-                                        break;
-                                    }
-                                }
-                                reader.setInput(iis, false, true);
-                                img = reader.read(0, param);
-                                break;
-                            }
-                            case 2: {
-                                // try to load truncated pictures by supplying a BufferedImage
-                                // and use the processed data up till the point of error
-                                reader.setInput(iis, false, true);
-                                int height = reader.getHeight(0);
-                                int width = reader.getWidth(0);
-
-                                Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
-                                if (imageTypes.hasNext()) {
-                                    ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
-                                    img = imageTypeSpecifier.createBufferedImage(width, height);
-                                    param.setDestination(img);
-                                } else {
-                                    lastException = new IOException("unable to load even a truncated version of the image.");
-                                    break;
-                                }
-
-                                try {
-                                    reader.read(0, param);
-                                } finally {
-                                    if (img.getType() != BufferedImage.TYPE_INT_ARGB) {
-                                        int y = findTruncatedBlackBox(img, width, height);
-                                        if (y < height) {
-                                            BufferedImage argbImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                                            Graphics2D g = argbImg.createGraphics();
-                                            g.clipRect(0, 0, width, y);
-                                            g.drawImage(img, 0, 0, null);
-                                            g.dispose();
-                                            img.flush();
-                                            img = argbImg;
-                                        }
-                                    }
-                                }
-                                break;
-                            }
+                        img = il.load(reader, iis, param);
+                        if (img != null) {
+                            break;
                         }
-
                     } catch (IOException e) {
-                        if (mode < 2) {
-                            lastException = e;
+                        lastException = e;
+                        if (UNSUPPORTED_IMAGE_TYPE.equals(e.getMessage())) {
+                            // fail early
+                            break;
                         }
                     } catch (RuntimeException e) {
-                        if (mode < 2) {
-                            lastException = new IOException("ImageIO runtime exception - "+(mode==0 ? "normal" : "fallback"), e);
-                        }
+                        lastException = new IOException("ImageIO runtime exception", e);
                     }
                 }
                 reader.dispose();
             }
-        } finally {
-            iis.close();
         }
 
         // If you don't have an image at the end of all readers
@@ -221,20 +158,77 @@ public class BitmapImageRenderer implements ImageRenderer {
                 // multiple locations above ...
                 throw lastException;
             }
-            LOG.atWarn().log("Content-type: {} is not support. Image ignored.", contentType);
+            LOG.atWarn().log("Content-type: {} is not supported. Image ignored.", contentType);
             return null;
         }
 
-        // add alpha channel
-        if (img.getType() != BufferedImage.TYPE_INT_ARGB) {
-            BufferedImage argbImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = argbImg.getGraphics();
-            g.drawImage(img, 0, 0, null);
-            g.dispose();
-            return argbImg;
+        if (img.getColorModel().hasAlpha()) {
+            return img;
         }
 
-        return img;
+        // add alpha channel
+        BufferedImage argbImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = argbImg.getGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+        return argbImg;
+    }
+
+    private static BufferedImage loadColored(ImageReader reader, ImageInputStream iis, ImageReadParam param) throws IOException {
+        reader.setInput(iis, false, true);
+        return reader.read(0, param);
+    }
+
+    private static BufferedImage loadGrayScaled(ImageReader reader, ImageInputStream iis, ImageReadParam param) throws IOException {
+        // try to load picture in gray scale mode
+        // fallback mode for invalid image band metadata
+        Iterable<ImageTypeSpecifier> specs = new IteratorIterable<>(reader.getImageTypes(0));
+        StreamSupport.stream(specs.spliterator(), false).
+            filter(its -> its.getBufferedImageType() == BufferedImage.TYPE_BYTE_GRAY).findFirst().
+            ifPresent(param::setDestinationType);
+
+        reader.setInput(iis, false, true);
+        return reader.read(0, param);
+    }
+
+    private static BufferedImage loadTruncated(ImageReader reader, ImageInputStream iis, ImageReadParam param) throws IOException {
+        // try to load truncated pictures by supplying a BufferedImage
+        // and use the processed data up till the point of error
+        reader.setInput(iis, false, true);
+        int height = reader.getHeight(0);
+        int width = reader.getWidth(0);
+
+        Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
+        if (!imageTypes.hasNext()) {
+            // unable to load even a truncated version of the image
+            // implicitly throwing previous error
+            return null;
+        }
+        ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
+        BufferedImage img = imageTypeSpecifier.createBufferedImage(width, height);
+        param.setDestination(img);
+
+        try {
+            reader.read(0, param);
+        } catch (IOException ignored) {
+        }
+
+        if (img.getColorModel().hasAlpha()) {
+            return img;
+        }
+
+        int y = findTruncatedBlackBox(img, width, height);
+        if (y >= height) {
+            return img;
+        }
+
+        BufferedImage argbImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = argbImg.createGraphics();
+        g.clipRect(0, 0, width, y);
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+        img.flush();
+        return argbImg;
     }
 
     private static int findTruncatedBlackBox(BufferedImage img, int width, int height) {
