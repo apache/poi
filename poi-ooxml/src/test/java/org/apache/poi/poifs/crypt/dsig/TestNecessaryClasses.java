@@ -19,6 +19,7 @@ package org.apache.poi.poifs.crypt.dsig;
 import org.etsi.uri.x01903.v13.*;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.junit.jupiter.api.Test;
+import org.w3.x2000.x09.xmldsig.SignatureValueType;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -41,6 +42,8 @@ public class TestNecessaryClasses {
         assertNotNull(sigPolicyQualifiersListType);
         ValidationDataType validationDataType = ValidationDataType.Factory.newInstance();
         assertNotNull(validationDataType);
+        SignatureValueType signatureValueType = SignatureValueType.Factory.newInstance();
+        assertNotNull(signatureValueType);
     }
 
 }
