@@ -877,4 +877,12 @@ public final class TestBugs {
             assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
         }
     }
+
+    @Test
+    void test501RC1Failure() throws Exception {
+        try (HSLFSlideShow ppt = open("23884_defense_FINAL_OOimport_edit.ppt")) {
+            List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
+            assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
+        }
+    }
 }
