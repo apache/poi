@@ -1173,7 +1173,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testRightToLeft() throws IOException {
-        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")){
+        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")) {
             Sheet sheet = workbook.getSheet("عربى");
 
             Cell A1 = sheet.getRow(0).getCell(0);
@@ -1188,6 +1188,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             Comment a3Comment = sheet.getCellComment(new CellAddress("A3"));
             assertTrue(a3Comment.getString().getString().contains("تعليق الاختبا"));
+        }
+    }
+
+    @Test
+    void test501RC1Failure() throws Exception {
+        String filename = "0-www-crossref-org.lib.rivier.edu_education-files_suffix-generator.xlsm";
+        try(XSSFWorkbook workbook = openSampleWorkbook(filename)) {
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                XSSFSheet sheet = workbook.getSheetAt(i);
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        assertNotNull(cell);
+                    }
+                }
+            }
         }
     }
 
