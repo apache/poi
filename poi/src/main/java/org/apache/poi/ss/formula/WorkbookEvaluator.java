@@ -45,7 +45,7 @@ import org.apache.poi.util.Internal;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
- * Evaluates formula cells.<p>
+ * Evaluates formula cells.
  * <p>
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
  * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
@@ -877,7 +877,7 @@ public final class WorkbookEvaluator {
     /**
      * Adjust formula relative references by the offset between the start of the given region and the given target cell.
      * That is, treat the region top-left cell as "A1" for the purposes of evaluating relative reference components (row and/or column),
-     * and further move references by the position of the target within the region.<p>
+     * and further move references by the position of the target within the region.
      * <p>
      * {@code formula ref + range top-left + current cell range offset}
      * which simplifies to
