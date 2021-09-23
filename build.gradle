@@ -63,7 +63,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.7.2")
+    antLibs("org.junit.jupiter:junit-jupiter:5.8.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.11")
 }
 
@@ -135,7 +135,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:1.8.0-beta4'
+                force 'org.slf4j:slf4j-api:1.7.32'
             }
         }
     }
