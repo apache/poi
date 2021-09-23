@@ -136,11 +136,11 @@ task testJar(type: Jar, dependsOn: testClasses) {
 }
 
 javadoc {
-	doFirst {
-		options {
-			classpath += configurations.javadocs.files
-		}
-	}
+    doFirst {
+        options {
+            classpath += configurations.javadocs.files
+        }
+    }
 }
 
 artifacts {

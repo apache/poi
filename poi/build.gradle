@@ -167,11 +167,11 @@ task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
 javadoc {
     dependsOn configurations.javadocs.dependencies.collect{ ':' + it.dependencyProject.name + ':compileJava' }
 
-	doFirst {
-		options {
-			classpath += files(configurations.javadocs.dependencies.collect{ it.dependencyProject.sourceSets.main.output.classesDirs })
-		}
-	}
+    doFirst {
+        options {
+            classpath += files(configurations.javadocs.dependencies.collect{ it.dependencyProject.sourceSets.main.output.classesDirs })
+        }
+    }
 }
 
 artifacts {

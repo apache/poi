@@ -56,7 +56,7 @@ final class TextJoinFunction implements FreeRefFunction {
          * Must be at least three arguments:
          *  - delimiter    Delimiter for joining text arguments
          *  - ignoreEmpty  If true, empty strings will be ignored in the join
-         *  - text1		   First value to be evaluated as text and joined
+         *  - text1        First value to be evaluated as text and joined
          *  - text2, etc.  Optional additional values to be evaluated and joined
          */
 

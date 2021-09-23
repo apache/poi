@@ -23,7 +23,7 @@ final String VERSIONS9 = 'META-INF/versions/9'
 final boolean IBMVM = System.getProperty("java.vendor").contains("IBM")
 
 configurations {
-	tests
+    tests
     misc
 }
 

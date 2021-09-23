@@ -40,12 +40,12 @@ dependencies {
 
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 
-	testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
+    testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         if (NO_SCRATCHPAD) {
             exclude group: 'org.apache.poi', module: 'poi-scratchpad'
         }
     }
-	testImplementation project(path: ':poi', configuration: 'tests')
+    testImplementation project(path: ':poi', configuration: 'tests')
 }
 
 final String MODULE_NAME = 'org.apache.poi.examples'

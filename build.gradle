@@ -93,7 +93,7 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
  */
 allprojects {
 //    apply plugin: 'eclipse'
-	apply plugin: 'idea'
+    apply plugin: 'idea'
 }
 
 /**
@@ -122,11 +122,11 @@ subprojects {
         xmlbeansVersion = '5.0.1'
         batikVersion = '1.14'
 
-		JAVA9_SRC = 'src/main/java9'
-		JAVA9_OUT = "${buildDir}/classes/java9/main/"
-		TEST9_SRC = 'src/test/java9'
-		TEST9_OUT = "${buildDir}/classes/java9/test/"
-		VERSIONS9 = 'META-INF/versions/9'
+        JAVA9_SRC = 'src/main/java9'
+        JAVA9_OUT = "${buildDir}/classes/java9/main/"
+        TEST9_SRC = 'src/test/java9'
+        TEST9_OUT = "${buildDir}/classes/java9/test/"
+        VERSIONS9 = 'META-INF/versions/9'
 
         NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
     }
@@ -335,11 +335,11 @@ subprojects {
                 // the plugin seems to not detect our non-standard build-layout
                 property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
 
-				// the Gradle run will report an invalid directory for 'ooxml-schema', but it seems to still work fine
-				property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
+                // the Gradle run will report an invalid directory for 'ooxml-schema', but it seems to still work fine
+                property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
 
-				// somehow the version was not use properly
-				property "sonar.projectVersion", version
+                // somehow the version was not use properly
+                property "sonar.projectVersion", version
             }
         }
     }
@@ -461,40 +461,40 @@ subprojects {
 // initial try to provide a combined JavaDoc, grouping is still missing here, though!
 task allJavaDoc(type: Javadoc) {
     var prj = [ project(':poi'), project(':poi-excelant'), project(':poi-ooxml'), project(':poi-scratchpad') ]
-	source prj.collect { it.sourceSets.main.allJava }
+    source prj.collect { it.sourceSets.main.allJava }
 
-	// for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
-	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
-	destinationDir = file("${buildDir}/docs/javadoc")
-	maxMemory="2048M"
+    // for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+    destinationDir = file("${buildDir}/docs/javadoc")
+    maxMemory="2048M"
 
-	// for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
-	options.use = true
-	options.splitIndex = true
+    // for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
+    options.use = true
+    options.splitIndex = true
     options.addBooleanOption('Xdoclint:all,-missing', true)
 
-	title = 'POI API Documentation'
-	options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or its licensors, as applicable.</i>]]>'
+    title = 'POI API Documentation'
+    options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or its licensors, as applicable.</i>]]>'
 
-	options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
-	options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
-	options.group('SS - Common Spreadsheet Format', 'org.apache.poi.ss*')
-	options.group('HSSF - Horrible Spreadsheet Format', 'org.apache.poi.hssf*')
-	options.group('XSSF - Open Office XML Spreadsheet Format', 'org.apache.poi.xssf*')
-	options.group('SL - Common Slideshow Format',  'org.apache.poi.sl*')
-	options.group('HSLF - Horrible Slideshow Format', 'org.apache.poi.hslf*', 'org.apache.poi.hwmf*', 'org.apache.poi.hemf*')
-	options.group('XSLF - Open Office XML Slideshow Format', 'org.apache.poi.xslf*')
-	options.group('HWPF - Horrible Word Processor Format', 'org.apache.poi.hwpf*')
-	options.group('XWPF - Open Office XML Word Processor Format', 'org.apache.poi.xwpf*')
-	options.group('HDGF - Horrible Diagram Format', 'org.apache.poi.hdgf*')
-	options.group('XDGF - Open Office XML Diagram Format', 'org.apache.poi.xdgf*')
-	options.group('HMEF - Transport Neutral Encoding Files (TNEF)', 'org.apache.poi.hmef*')
-	options.group('HSMF Outlook message file format', 'org.apache.poi.hsmf*')
-	options.group('HPBF - Publisher Format Files', 'org.apache.poi.hpbf*')
-	options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
-	options.group('Utilities', 'org.apache.poi.util*')
-	options.group('Excelant', 'org.apache.poi.ss.excelant**')
-//	options.group('Examples', 'org.apache.poi.examples*')
+    options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
+    options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
+    options.group('SS - Common Spreadsheet Format', 'org.apache.poi.ss*')
+    options.group('HSSF - Horrible Spreadsheet Format', 'org.apache.poi.hssf*')
+    options.group('XSSF - Open Office XML Spreadsheet Format', 'org.apache.poi.xssf*')
+    options.group('SL - Common Slideshow Format',  'org.apache.poi.sl*')
+    options.group('HSLF - Horrible Slideshow Format', 'org.apache.poi.hslf*', 'org.apache.poi.hwmf*', 'org.apache.poi.hemf*')
+    options.group('XSLF - Open Office XML Slideshow Format', 'org.apache.poi.xslf*')
+    options.group('HWPF - Horrible Word Processor Format', 'org.apache.poi.hwpf*')
+    options.group('XWPF - Open Office XML Word Processor Format', 'org.apache.poi.xwpf*')
+    options.group('HDGF - Horrible Diagram Format', 'org.apache.poi.hdgf*')
+    options.group('XDGF - Open Office XML Diagram Format', 'org.apache.poi.xdgf*')
+    options.group('HMEF - Transport Neutral Encoding Files (TNEF)', 'org.apache.poi.hmef*')
+    options.group('HSMF Outlook message file format', 'org.apache.poi.hsmf*')
+    options.group('HPBF - Publisher Format Files', 'org.apache.poi.hpbf*')
+    options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
+    options.group('Utilities', 'org.apache.poi.util*')
+    options.group('Excelant', 'org.apache.poi.ss.excelant**')
+//  options.group('Examples', 'org.apache.poi.examples*')
 }
 
 
@@ -509,7 +509,7 @@ rat {
     inputDir.set(file("."))
 
     // include all directories which contain files that are included in releases
-	includes = [
+    includes = [
         "poi-examples/**",
         "poi-excelant/**",
         "poi-integration/**",
@@ -525,12 +525,12 @@ rat {
         "src/**",
     //    "sonar/**",
         "build.*"
-	]
+    ]
 
     // List of Gradle exclude directives, defaults to ['**/.gradle/**']
     //excludes.add("main/java/org/apache/poi/**/*-chart-data.txt")
     excludes = [
-	    "build.javacheck.xml",
+        "build.javacheck.xml",
         "**/build/**",
         "**/out/**",
         "**/*.iml",
@@ -543,10 +543,10 @@ rat {
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/XAdES*.xsd",
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd",
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd",
-		"osgi/README.md",
+        "osgi/README.md",
         // ignore svn conflict artifacts
         "**/module-info.*"
-	]
+    ]
 
     /*
     <exclude name="documentation/*.txt" />

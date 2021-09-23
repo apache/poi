@@ -18,22 +18,22 @@
 import java.util.regex.Pattern
 
 configurations {
-	runtimeClasspath {
-		exclude group: 'xalan', module: 'xalan'
-		if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-			exclude group: 'xml-apis', module: 'xml-apis'
-		}
-	}
+    runtimeClasspath {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
 
-	compileClasspath {
-		exclude group: 'xalan', module: 'xalan'
-		if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-			exclude group: 'xml-apis', module: 'xml-apis'
-		}
-	}
+    compileClasspath {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
 
-	broken
-	tests
+    broken
+    tests
     javadocs
 }
 
@@ -97,7 +97,7 @@ dependencies {
         }
     }
     renderImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
-		exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xalan', module: 'xalan'
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             exclude group: 'xml-apis', module: 'xml-apis'
         }
@@ -118,7 +118,7 @@ dependencies {
         }
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
-		exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xalan', module: 'xalan'
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             exclude group: 'xml-apis', module: 'xml-apis'
         }
