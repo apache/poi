@@ -63,7 +63,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.7.2")
+    antLibs("org.junit.jupiter:junit-jupiter:5.8.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.11")
 }
 
@@ -115,7 +115,7 @@ subprojects {
         commonsCompressVersion = '1.21'
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.7.2'
+        junitVersion = '5.8.1'
         log4jVersion = '2.14.1'
         mockitoVersion = '3.12.4'
         hamcrestVersion = '2.2'
