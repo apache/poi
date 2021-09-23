@@ -41,13 +41,13 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
-        // building with JDK 16 fails currently because of findbugs/spotbugs
-        // therefore we do not set a trigger for now and only run it manually
         [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
+        ],
+        [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
+        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays, skipcigame: true,
           shell: "test -s ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
