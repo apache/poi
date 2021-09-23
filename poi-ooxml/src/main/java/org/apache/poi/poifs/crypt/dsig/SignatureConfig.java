@@ -68,7 +68,7 @@ import org.apache.xml.security.signature.XMLSignature;
 /**
  * This class bundles the configuration options used for the existing
  * signature facets.
- * Apart of the thread local members (e.g. opc-package) most values will probably be constant, so
+ * Apart from the thread local members (e.g. opc-package) most values will probably be constant, so
  * it might be configured centrally (e.g. by spring)
  */
 @SuppressWarnings({"unused","WeakerAccess"})
