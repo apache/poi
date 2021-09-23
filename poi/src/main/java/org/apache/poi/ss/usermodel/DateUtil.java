@@ -83,7 +83,7 @@ public class DateUtil {
             .appendPattern("[M/dd[/yyyy]][[ ]h:m[:s][.SSS] a][[ ]H:m[:s][.SSS]]")
             .appendPattern("[[yyyy/]M/dd][[ ]h:m[:s][.SSS] a][[ ]H:m[:s][.SSS]]")
             .parseDefaulting(ChronoField.YEAR_OF_ERA, LocaleUtil.getLocaleCalendar().get(Calendar.YEAR))
-            .toFormatter();
+            .toFormatter(LocaleUtil.getUserLocale());
 
     /**
      * Convert a Java Date (at UTC) to LocalDateTime.
