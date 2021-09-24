@@ -40,8 +40,6 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         String _center = "";
         String _right = "";
 
-// FIXME: replace outer goto. just eww.
-        outer:
         while (text.length() > 1) {
             if (text.charAt(0) != '&') {
                 // Mimics the behaviour of Excel, which would put it in the center.
@@ -83,7 +81,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
                 default:
                     // Mimics the behaviour of Excel, which would put it in the center.
                     _center = text;
-                    break outer;
+                    break;
             }
         }
         return new String[] { _left, _center, _right, };
