@@ -159,6 +159,26 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
+    void headerFooterWithFormat() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("HeaderFooterComplexFormats.xlsx")) {
+            XSSFOddHeader hdr;
+            XSSFOddFooter ftr;
+
+            XSSFSheet s1 = wb1.getSheetAt(0);
+            assertNotNull(s1.getHeader());
+            assertNotNull(s1.getFooter());
+            hdr = (XSSFOddHeader) s1.getHeader();
+            ftr = (XSSFOddFooter) s1.getFooter();
+
+            // The following is how the header/footer appear in Excel (with formatting removed)
+            hdr.setAreFieldsStripped(true);
+            assertEquals("Header Bold RedUnderlined Bolditalics", hdr.getCenter());
+            ftr.setAreFieldsStripped(true);
+            assertEquals("Footer ArialBlue TahomaBoldGreen", ftr.getCenter());
+        }
+    }
+
+    @Test
     void getAllHeadersFooters() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Sheet 1");
@@ -2015,4 +2035,5 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals("/xl/drawings/vmlDrawing2.vml", vml2.getPackagePart().getPartName().getName());
         }
     }
+
 }
