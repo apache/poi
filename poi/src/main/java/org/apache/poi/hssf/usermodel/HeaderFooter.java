@@ -40,6 +40,10 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         String _center = "";
         String _right = "";
 
+// FIXME: replace outer goto. just eww.
+// no unit tests test the goto loop but poi-integration tests hangs if you remove it
+// (some file has an edge case header or footer)
+        outer:
         while (text.length() > 1) {
             if (text.charAt(0) != '&') {
                 // Mimics the behaviour of Excel, which would put it in the center.
@@ -81,7 +85,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
                 default:
                     // Mimics the behaviour of Excel, which would put it in the center.
                     _center = text;
-                    break;
+                    break outer;
             }
         }
         return new String[] { _left, _center, _right, };
