@@ -40,8 +40,6 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         String _center = "";
         String _right = "";
 
-// FIXME: replace outer goto. just eww.
-outer:
         while (text.length() > 1) {
             if (text.charAt(0) != '&') {
                 // Mimics the behaviour of Excel, which would put it in the center.
@@ -59,7 +57,7 @@ outer:
                 }
                 _left = text.substring(2, pos);
                 text = text.substring(pos);
-                break;
+                return new String[] { _left, _center, _right, };
             case 'C':
                 if (text.contains("&L")) {
                     pos = Math.min(pos, text.indexOf("&L"));
@@ -69,7 +67,7 @@ outer:
                 }
                 _center = text.substring(2, pos);
                 text = text.substring(pos);
-                break;
+                return new String[] { _left, _center, _right, };
             case 'R':
                 if (text.contains("&C")) {
                     pos = Math.min(pos, text.indexOf("&C"));
@@ -79,14 +77,14 @@ outer:
                 }
                 _right = text.substring(2, pos);
                 text = text.substring(pos);
-                break;
+                return new String[] { _left, _center, _right, };
             default:
                 // Mimics the behaviour of Excel, which would put it in the center.
                 _center = text;
-                break outer;
+                break;
             }
         }
-        return new String[] { _left, _center, _right, };
+        return null;
     }
 
     /**
