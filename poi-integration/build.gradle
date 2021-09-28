@@ -43,7 +43,7 @@ sourceSets {
 dependencies {
     testImplementation 'org.apache.ant:ant:1.10.11'
     testImplementation 'org.apache.commons:commons-collections4:4.4'
-    testImplementation 'com.google.guava:guava:30.1.1-jre'
+    testImplementation 'com.google.guava:guava:31.0.1-jre'
     testRuntimeOnly 'org.slf4j:slf4j-api:1.7.32'
 
     misc(project(':poi-ooxml')) {

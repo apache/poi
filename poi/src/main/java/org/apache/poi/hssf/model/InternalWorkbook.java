@@ -74,7 +74,7 @@ import org.apache.poi.util.RecordFormatException;
  * The structures of the highlevel API use references to this to perform most of their
  * operations.  Its probably unwise to use these low level structures directly unless you
  * really know what you're doing.  I recommend you read the Microsoft Excel 97 Developer's
- * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
+ * Kit (Microsoft Press) and the documentation at https://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
  * @see HSSFWorkbook
