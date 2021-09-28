@@ -19,9 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
-import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
+import static org.apache.poi.xssf.XSSFTestDataSamples.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.zip.CRC32;
 
 import org.apache.poi.POIDataSamples;
@@ -66,6 +65,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
@@ -1215,4 +1215,36 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     private static String ref(Cell cell) {
         return new CellReference(cell).formatAsString();
     }
+
+    @Test
+    void testLinkExternalWorkbook() throws Exception {
+        String nameA="link-external-workbook-a.xlsx";
+        String nameB="link-external-workbook-b.xlsx";
+
+        // create file A ;
+        XSSFWorkbook a = new XSSFWorkbook();
+        XSSFRow row1 = a.createSheet().createRow(0);
+        row1.createCell(0).setCellValue(10);
+        row1.createCell(1).setCellValue(20);
+        // create file B
+        XSSFWorkbook b = new XSSFWorkbook();
+        XSSFRow row2 = b.createSheet().createRow(0);
+        XSSFCell cell = row2.createCell(0);
+
+        b.linkExternalWorkbook(nameA,a);
+        String formula = String.format("SUM('[%s]Sheet0'!A1:B1)",nameA);
+        cell.setCellFormula(formula);
+        XSSFFormulaEvaluator evaluator = b.getCreationHelper().createFormulaEvaluator();
+        evaluator.evaluateFormulaCell(cell);
+        double cellValue = cell.getNumericCellValue();
+        System.out.println("cellValue = " + cellValue);
+        assertEquals(cellValue,30.0);
+        try (FileOutputStream out = new FileOutputStream(getSampleFile(nameA))) {
+            a.write(out);
+        }
+        try (FileOutputStream out = new FileOutputStream(getSampleFile(nameB))) {
+            b.write(out);
+        }
+    }
+
 }

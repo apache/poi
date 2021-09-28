@@ -18,14 +18,20 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class XSSFCreationHelper implements CreationHelper {
     private final XSSFWorkbook workbook;
+    private Map<String, Workbook> referencedWorkbooks;
 
     /**
      * Should only be called by {@link XSSFWorkbook#getCreationHelper()}
@@ -35,6 +41,7 @@ public class XSSFCreationHelper implements CreationHelper {
     @Internal
     public XSSFCreationHelper(XSSFWorkbook wb) {
         workbook = wb;
+        referencedWorkbooks = new HashMap<>();
     }
 
     /**
@@ -74,7 +81,12 @@ public class XSSFCreationHelper implements CreationHelper {
      */
     @Override
     public XSSFFormulaEvaluator createFormulaEvaluator() {
-        return new XSSFFormulaEvaluator(workbook);
+        XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(workbook);
+        Map<String, FormulaEvaluator> evaluatorMap = new HashMap<>();
+        evaluatorMap.put("", evaluator);
+        this.referencedWorkbooks.forEach((name,otherWorkbook)->evaluatorMap.put(name,otherWorkbook.getCreationHelper().createFormulaEvaluator()));
+        evaluator.setupReferencedWorkbooks(evaluatorMap);
+        return evaluator;
     }
 
     /**
@@ -103,5 +115,13 @@ public class XSSFCreationHelper implements CreationHelper {
     @Override
     public AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight) {
         return new AreaReference(topLeft, bottomRight, workbook.getSpreadsheetVersion());
+    }
+
+    protected Map<String, Workbook> getReferencedWorkbooks() {
+        return referencedWorkbooks;
+    }
+
+    protected void addExternalWorkbook(String name, Workbook workbook) {
+        this.referencedWorkbooks.put(name,workbook);
     }
 }

@@ -69,14 +69,8 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Date1904Support;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetVisibility;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
@@ -468,6 +462,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
+
+        externalLinks = new ArrayList<>();
     }
 
     private void setBookViewsIfMissing() {
@@ -1972,17 +1968,48 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *  formulas such as "[MyOtherWorkbook.xlsx]Sheet3!$A$5" to be added to the
      *  file, for workbooks not already linked / referenced.
      *
-     *  Note: this is not implemented and thus currently throws an Exception stating this.
+     *see bug #57184
      *
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      *
-     * @throws RuntimeException stating that this method is not implemented yet.
      */
     @Override
-    @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("Not Implemented - see bug #57184");
+        int externalLinkIdx=-1;
+        if (!getCreationHelper().getReferencedWorkbooks().containsKey(name)){
+             externalLinkIdx = this.getNextPartNumber(XSSFRelation.EXTERNAL_LINKS,
+                    this.getPackagePart().getPackage().getPartsByContentType(XSSFRelation.EXTERNAL_LINKS.getContentType()).size());
+            POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, XSSFFactory.getInstance(), externalLinkIdx, false);
+            ExternalLinksTable linksTable = rp.getDocumentPart();
+            linksTable.setLinkedFileName(name);
+            this.getExternalLinksTable().add(linksTable);
+
+            CTExternalReference ctExternalReference = this.getCTWorkbook().addNewExternalReferences().addNewExternalReference();
+            ctExternalReference.setId(rp.getRelationship().getId());
+
+        }else{
+            List<RelationPart> relationParts = getRelationParts();
+            for (RelationPart relationPart : relationParts) {
+                if (relationPart.getDocumentPart() instanceof ExternalLinksTable){
+                    ExternalLinksTable linksTable = relationPart.getDocumentPart();
+                    String linkedFileName = linksTable.getLinkedFileName();
+                    if(linkedFileName.equals(name)){
+                        String s = relationPart.getRelationship().getTargetURI().toString();
+                        String s2 = XSSFRelation.EXTERNAL_LINKS.getDefaultFileName();
+                        String numStr = s.substring(s2.indexOf('#'), s2.indexOf('.'));
+                        externalLinkIdx=Integer.parseInt(numStr);
+                        break;
+                    }
+                }
+            }
+        }
+
+        XSSFCreationHelper creationHelper = getCreationHelper();
+        creationHelper.addExternalWorkbook(name,workbook);
+
+        return externalLinkIdx;
+
     }
 
     /**
