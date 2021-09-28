@@ -45,7 +45,7 @@ dependencies {
     testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         exclude group: 'org.apache.poi', module: 'poi-scratchpad'
     }
-    testImplementation 'com.google.guava:guava:30.1.1-jre'
+    testImplementation 'com.google.guava:guava:31.0.1-jre'
     testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
 }
 
