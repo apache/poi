@@ -1232,7 +1232,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             XSSFCell cell = row2.createCell(0);
 
             b.linkExternalWorkbook(nameA, a);
-            String formula = String.format("SUM('[%s]Sheet0'!A1:B1)", nameA);
+            String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
             cell.setCellFormula(formula);
             XSSFFormulaEvaluator evaluator = b.getCreationHelper().createFormulaEvaluator();
             evaluator.evaluateFormulaCell(cell);
