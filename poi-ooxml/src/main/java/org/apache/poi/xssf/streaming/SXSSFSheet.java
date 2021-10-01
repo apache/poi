@@ -1873,6 +1873,16 @@ public class SXSSFSheet implements Sheet
         this.flushRows(0);
     }
 
+    /**
+     * Flush all the data in the buffered stream to the temp file.
+     *
+     * @throws IOException If an I/O error occurs
+     */
+    public void flushBufferedData() throws IOException
+    {
+        this._writer.flush();
+    }
+
     private void flushOneRow() throws IOException
     {
         Integer firstRowNum = _rows.firstKey();

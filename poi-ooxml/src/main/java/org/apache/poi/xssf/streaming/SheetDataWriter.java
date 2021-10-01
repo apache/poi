@@ -443,6 +443,10 @@ public class SheetDataWriter implements Closeable {
         return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
     }
 
+    void flush() throws IOException {
+        this._out.flush();
+    }
+
     /**
      * Deletes the temporary file that backed this sheet on disk.
      * @return true if the file was deleted, false if it wasn't.
