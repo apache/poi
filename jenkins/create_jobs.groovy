@@ -137,6 +137,7 @@ def jdkMapping = [
         '1.14': 'jdk_14_latest',
         '1.15': 'jdk_15_latest',
         '1.16': 'jdk_16_latest',
+        '1.17': 'jdk_17_latest',
         'OpenJDK 1.8': 'adoptopenjdk_hotspot_8u282',
         'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
@@ -596,6 +597,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_14_latest',
                 'jdk_15_latest',
                 'jdk_16_latest',
+                'jdk_17_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
