@@ -102,9 +102,6 @@ public class HSSFPictureData implements PictureData
         }
     }
 
-    /**
-     * Returns the mime type for the image
-     */
     @Override
     public String getMimeType() {
        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
@@ -130,13 +127,6 @@ public class HSSFPictureData implements PictureData
     /**
      * @return the POI internal image type, 0 if unknown image type (was -1 prior to 5.0.0 but
      * that was inconsistent with other {@link PictureData} implementations)
-     *
-     * @see Workbook#PICTURE_TYPE_DIB
-     * @see Workbook#PICTURE_TYPE_EMF
-     * @see Workbook#PICTURE_TYPE_JPEG
-     * @see Workbook#PICTURE_TYPE_PICT
-     * @see Workbook#PICTURE_TYPE_PNG
-     * @see Workbook#PICTURE_TYPE_WMF
      */
     @Override
     public int getPictureType() {
