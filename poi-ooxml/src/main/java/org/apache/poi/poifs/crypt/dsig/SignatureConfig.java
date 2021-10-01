@@ -1044,7 +1044,7 @@ public class SignatureConfig {
     /**
      * The signature config can be updated if a document is succesful validated.
      * This flag is used for activating this modifications.
-     * Defaults to {@code false}<p>
+     * Defaults to {@code false}
      *
      * @param updateConfigOnValidate if true, update config on validate
      *
