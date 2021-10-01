@@ -1818,7 +1818,7 @@ public class SXSSFSheet implements Sheet
     /**
      * Specifies how many rows can be accessed at most via getRow().
      * When a new node is created via createRow() and the total number
-     * of unflushed records would exeed the specified value, then the
+     * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
      * via getRow() anymore.
      * A value of -1 indicates unlimited access. In this case all
@@ -1850,7 +1850,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Specifies how many rows can be accessed at most via getRow().
-     * The exeeding rows (if any) are flushed to the disk while rows
+     * The excess rows (if any) are flushed to the disk while rows
      * with lower index values are flushed first.
      */
     public void flushRows(int remaining) throws IOException
