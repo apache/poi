@@ -73,7 +73,7 @@ public class HSSFEventFactory {
         }
         // If in doubt, go for the default
         if (name == null) {
-            name = WORKBOOK_DIR_ENTRY_NAMES[0];
+            name = WORKBOOK_DIR_ENTRY_NAMES.get(0);
         }
 
         try (InputStream in = dir.createDocumentInputStream(name)) {

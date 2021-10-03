@@ -1376,7 +1376,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             // Don't write out the old Workbook, we'll be doing our new one
             // If the file had an "incorrect" name for the workbook stream,
             // don't write the old one as we'll use the correct name shortly
-            excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
+            excepts.addAll(WORKBOOK_DIR_ENTRY_NAMES);
 
             // summary information has been already written via writeProperties and might go in a
             // different stream, if the file is cryptoapi encrypted

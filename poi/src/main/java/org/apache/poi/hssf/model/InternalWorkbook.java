@@ -20,10 +20,7 @@ package org.apache.poi.hssf.model;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
@@ -92,12 +89,15 @@ public final class InternalWorkbook {
      *  "Workbook". However, some weird XLS generators use "WORKBOOK"
      *  or "BOOK".
      */
-    public static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
-        "Workbook", // as per BIFF8 spec
-        "WORKBOOK", // Typically from third party programs
-        "BOOK",     // Typically odd Crystal Reports exports
-        "WorkBook", // Another third party program special
-    };
+    public static final List<String> WORKBOOK_DIR_ENTRY_NAMES = Collections.unmodifiableList(
+            Arrays.asList(
+                    "Workbook", // as per BIFF8 spec
+                    "WORKBOOK", // Typically from third party programs
+                    "BOOK",     // Typically odd Crystal Reports exports
+                    "WorkBook"  // Another third party program special
+            )
+    );
+
     /**
      * Name of older (pre-Excel 97) Workbook streams, which
      *  aren't supported by HSSFWorkbook, only by
