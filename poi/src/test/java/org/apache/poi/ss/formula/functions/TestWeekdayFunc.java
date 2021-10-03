@@ -18,13 +18,16 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests WEEKDAY(serial_number[, return_type]) excep function
+ * Tests WEEKDAY(serial_number[, return_type]) excel function
  * https://support.office.com/en-us/article/WEEKDAY-function-60E44483-2ED1-439F-8BD0-E404C190949A
  */
 class TestWeekdayFunc {
@@ -69,6 +72,15 @@ class TestWeekdayFunc {
         assertEvaluateEquals(5.0, 39448.0, 15.0);
         assertEvaluateEquals(4.0, 39448.0, 16.0);
         assertEvaluateEquals(3.0, 39448.0, 17.0);
+    }
+
+
+    @Test
+    void testMicrosoftExamples() {
+        double date = DateUtil.getExcelDate(LocalDate.parse("2008-02-14"));
+        assertEvaluateEquals(5.0, date);
+        assertEvaluateEquals(4.0, date, 2);
+        assertEvaluateEquals(3.0, date, 3);
     }
 
     // for testing invalid invocations
