@@ -17,6 +17,8 @@
 package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
@@ -43,11 +45,14 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  * Helper class to extract text from an OOXML Word file
  */
 public class XWPFWordExtractor implements POIXMLTextExtractor {
-    public static final XWPFRelation[] SUPPORTED_TYPES = {
-            XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
-            XWPFRelation.MACRO_DOCUMENT,
-            XWPFRelation.MACRO_TEMPLATE_DOCUMENT
-    };
+    public static final List<XWPFRelation> SUPPORTED_TYPES = Collections.unmodifiableList(
+            Arrays.asList(
+                    XWPFRelation.DOCUMENT,
+                    XWPFRelation.TEMPLATE,
+                    XWPFRelation.MACRO_DOCUMENT,
+                    XWPFRelation.MACRO_TEMPLATE_DOCUMENT
+            )
+    );
 
     private final XWPFDocument document;
     private boolean fetchHyperlinks;
