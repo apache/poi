@@ -43,7 +43,6 @@ class TestWeekdayFunc {
         assertEquals(expected, result.getNumberValue(), TOLERANCE, formula);
     }
 
-
     @Test
     void testEvaluate() {
         assertEvaluateEquals(2.0,  1.0);

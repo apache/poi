@@ -37,10 +37,31 @@ class TestWeekNumFunc {
 
     @Test
     void testEvaluate() {
-        assertEvaluateEquals(10.0, DateUtil.getExcelDate(LocalDate.parse("2012-03-09")));
-        //next assert returns 10 when it should be 11.0.
-        //assertEvaluateEquals(11.0, DateUtil.getExcelDate(LocalDate.parse("2012-03-09")), 2);
+        double date = DateUtil.getExcelDate(LocalDate.parse("2012-03-09"));
+        assertEvaluateEquals(10.0, date);
+        assertEvaluateEquals(10.0, date, 1);
+        assertEvaluateEquals(11.0, date, 2);
+        assertEvaluateEquals(11.0, date, 11);
+        assertEvaluateEquals(11.0, date, 12);
+        assertEvaluateEquals(11.0, date, 13);
+        assertEvaluateEquals(11.0, date, 14);
+        assertEvaluateEquals(11.0, date, 15);
+        assertEvaluateEquals(10.0, date, 16);
+        assertEvaluateEquals(10.0, date, 17);
+        assertEvaluateEquals(10.0, date, 21);
     }
+
+    @Test
+    void testEvaluateInvalid() {
+        assertEvaluateEquals("no args",       ErrorEval.VALUE_INVALID);
+        assertEvaluateEquals("too many args", ErrorEval.VALUE_INVALID, new NumberEval(1.0), new NumberEval(1.0), new NumberEval(1.0));
+        assertEvaluateEquals("negative date", ErrorEval.NUM_ERROR, new NumberEval(-1.0));
+        assertEvaluateEquals("cannot coerce serial_number to number", ErrorEval.VALUE_INVALID, new StringEval(""));
+        assertEvaluateEquals("cannot coerce return_type to number",   ErrorEval.NUM_ERROR, new NumberEval(1.0), new StringEval(""));
+        assertEvaluateEquals("return_type is blank",   ErrorEval.NUM_ERROR, new StringEval("2"), BlankEval.instance);
+        assertEvaluateEquals("invalid return_type",    ErrorEval.NUM_ERROR, new NumberEval(1.0), new NumberEval(18.0));
+    }
+
 
     private static final OperationEvaluationContext DEFAULT_CONTEXT =
             new OperationEvaluationContext(null, null, 0, 1, 0, null);
