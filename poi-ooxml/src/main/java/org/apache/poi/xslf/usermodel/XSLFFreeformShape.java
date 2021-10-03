@@ -24,21 +24,16 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
-import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.draw.geom.XSLFCustomGeometry;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTAdjPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomRect;
@@ -135,18 +130,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
             return null;
         }
 
-        XmlOptions xop = new XmlOptions(POIXMLTypeLoader.DEFAULT_XML_OPTIONS);
-        xop.setSaveOuter();
-
-        XMLStreamReader staxReader = ((CTShapeProperties)xo).getCustGeom().newXMLStreamReader(xop);
-        CustomGeometry custGeo = PresetGeometries.convertCustomGeometry(staxReader);
-        try {
-            staxReader.close();
-        } catch (XMLStreamException e) {
-            LOG.atWarn().log("An error occurred while closing a Custom Geometry XML Stream Reader: {}", e.getMessage());
-        }
-
-        return custGeo;
+        return XSLFCustomGeometry.convertCustomGeometry(((CTShapeProperties)xo).getCustGeom());
     }
 
     @Override

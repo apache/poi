@@ -39,7 +39,7 @@ import java.awt.geom.Path2D;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_Path2DClose")
-public class ClosePathCommand implements PathCommand {
+public class ClosePathCommand implements ClosePathCommandIf {
 
     @Override
     public void execute(Path2D.Double path, Context ctx){

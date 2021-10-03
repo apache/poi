@@ -43,7 +43,7 @@ import java.util.Objects;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_Path2DCubicBezierTo", propOrder = {"pt"})
-public final class CurveToCommand implements PathCommand {
+public final class CurveToCommand implements CurveToCommandIf {
 
     // @XmlElement(required = true)
     private final AdjustPoint pt1 = new AdjustPoint();
@@ -52,36 +52,43 @@ public final class CurveToCommand implements PathCommand {
     // @XmlElement(required = true)
     private final AdjustPoint pt3 = new AdjustPoint();
 
-    public void setPt1(AdjustPoint pt1) {
+    @Override
+    public AdjustPoint getPt1() {
+        return pt1;
+    }
+
+    @Override
+    public void setPt1(AdjustPointIf pt1) {
         if (pt1 != null) {
             this.pt1.setX(pt1.getX());
             this.pt1.setY(pt1.getY());
         }
     }
 
-    public void setPt2(AdjustPoint pt2) {
+    @Override
+    public AdjustPoint getPt2() {
+        return pt2;
+    }
+
+    @Override
+    public void setPt2(AdjustPointIf pt2) {
         if (pt2 != null) {
             this.pt2.setX(pt2.getX());
             this.pt2.setY(pt2.getY());
         }
     }
 
-    public void setPt3(AdjustPoint pt3) {
+    @Override
+    public AdjustPoint getPt3() {
+        return pt3;
+    }
+
+    @Override
+    public void setPt3(AdjustPointIf pt3) {
         if (pt3 != null) {
             this.pt3.setX(pt3.getX());
             this.pt3.setY(pt3.getY());
         }
-    }
-
-    @Override
-    public void execute(Path2D.Double path, Context ctx){
-        double x1 = ctx.getValue(pt1.getX());
-        double y1 = ctx.getValue(pt1.getY());
-        double x2 = ctx.getValue(pt2.getX());
-        double y2 = ctx.getValue(pt2.getY());
-        double x3 = ctx.getValue(pt3.getX());
-        double y3 = ctx.getValue(pt3.getY());
-        path.curveTo(x1, y1, x2, y2, x3, y3);
     }
 
     @Override

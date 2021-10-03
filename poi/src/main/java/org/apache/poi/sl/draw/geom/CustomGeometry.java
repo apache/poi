@@ -49,19 +49,19 @@ import java.util.Objects;
  * &lt;/complexType&gt;
  * </pre>
  */
-public final class CustomGeometry implements Iterable<Path>{
-    final List<AdjustValue> adjusts = new ArrayList<>();
-    final List<Guide> guides = new ArrayList<>();
-    final List<Path> paths = new ArrayList<>();
+public final class CustomGeometry implements Iterable<PathIf>{
+    final List<AdjustValueIf> adjusts = new ArrayList<>();
+    final List<GuideIf> guides = new ArrayList<>();
+    final List<PathIf> paths = new ArrayList<>();
     final List<AdjustHandle> handles = new ArrayList<>();
-    final List<ConnectionSite> connections = new ArrayList<>();
+    final List<ConnectionSiteIf> connections = new ArrayList<>();
     Path textBounds;
 
-    public void addAdjustGuide(AdjustValue guide) {
+    public void addAdjustGuide(AdjustValueIf guide) {
         adjusts.add(guide);
     }
 
-    public void addGeomGuide(Guide guide) {
+    public void addGeomGuide(GuideIf guide) {
         guides.add(guide);
     }
 
@@ -69,11 +69,11 @@ public final class CustomGeometry implements Iterable<Path>{
         handles.add(handle);
     }
 
-    public void addConnectionSite(ConnectionSite connection) {
+    public void addConnectionSite(ConnectionSiteIf connection) {
         connections.add(connection);
     }
 
-    public void addPath(Path path) {
+    public void addPath(PathIf path) {
         paths.add(path);
     }
 
@@ -106,7 +106,7 @@ public final class CustomGeometry implements Iterable<Path>{
 
 
     @Override
-    public Iterator<Path> iterator() {
+    public Iterator<PathIf> iterator() {
         return paths.iterator();
     }
 

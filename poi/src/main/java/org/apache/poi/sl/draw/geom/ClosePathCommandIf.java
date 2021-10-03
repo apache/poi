@@ -19,22 +19,5 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.awt.Shape;
-
-public class Outline {
-    private final Shape shape;
-    private final PathIf path;
-
-    public Outline(Shape shape, PathIf path){
-        this.shape = shape;
-        this.path = path;
-    }
-
-    public PathIf getPath(){
-        return path;
-    }
-
-    public Shape getOutline(){
-        return shape;
-    }
+public interface ClosePathCommandIf extends PathCommand {
 }

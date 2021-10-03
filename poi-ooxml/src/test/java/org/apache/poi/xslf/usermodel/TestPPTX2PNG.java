@@ -35,6 +35,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.xslf.util.PPTX2PNG;
@@ -126,7 +127,6 @@ class TestPPTX2PNG {
                 "-format", format, // png,gif,jpg,svg,pdf or null for test
                 "-slide", "-1", // -1 for all
                 "-outdir", tmpDir.getCanonicalPath(),
-                "-outpat", "${basename}-${slideno}-${ext}.${format}",
                 // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
                 "-dump", "null",
                 "-quiet",
@@ -157,17 +157,26 @@ class TestPPTX2PNG {
             args.add("GBK");
         }
 
+        final String basename = FilenameUtils.getBaseName(fileName);
+        final String ext = FilenameUtils.getExtension(fileName);
+
         if (fileObj instanceof ZipEntry) {
             ZipEntry ze = (ZipEntry)fileObj;
             ZipFile zf = (ZipFile)fileContainer;
             System.setIn(zf.getInputStream(ze));
+            args.add("-outpat");
+            args.add(basename+"-${slideno}-"+ext+".${format}");
             args.add("stdin");
         } else if (fileObj instanceof SevenZArchiveEntry) {
             SevenZArchiveEntry ze = (SevenZArchiveEntry)fileObj;
             SevenZFile zf = (SevenZFile)fileContainer;
             System.setIn(zf.getInputStream(ze));
+            args.add("-outpat");
+            args.add(basename+"-${slideno}-"+ext+".${format}");
             args.add("stdin");
         } else if (fileObj instanceof File) {
+            args.add("-outpat");
+            args.add("${basename}-${slideno}-${ext}.${format}");
             args.add(((File)fileObj).getAbsolutePath());
         }
 

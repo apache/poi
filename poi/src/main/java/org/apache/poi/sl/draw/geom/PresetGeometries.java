@@ -31,13 +31,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.XMLHelper;
 
 public final class PresetGeometries {
-    private static final Logger LOG = LogManager.getLogger(PresetGeometries.class);
-
     private final Map<String, CustomGeometry> map = new TreeMap<>();
 
     private static class SingletonHelper{
@@ -57,27 +53,13 @@ public final class PresetGeometries {
                 try {
                     PresetParser p = new PresetParser(PresetParser.Mode.FILE);
                     p.parse(sr);
-                    p.getGeom().forEach(map::put);
+                    map.putAll(p.getGeom());
                 } finally {
                     sr.close();
                 }
             }
         } catch (IOException | XMLStreamException e){
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Convert a single CustomGeometry object, i.e. from xmlbeans
-     */
-    public static CustomGeometry convertCustomGeometry(XMLStreamReader staxReader) {
-        try {
-            PresetParser p = new PresetParser(PresetParser.Mode.SHAPE);
-            p.parse(staxReader);
-            return p.getGeom().values().stream().findFirst().orElse(null);
-        } catch (XMLStreamException e) {
-            LOG.atError().withThrowable(e).log("Unable to parse single custom geometry");
-            return null;
         }
     }
 

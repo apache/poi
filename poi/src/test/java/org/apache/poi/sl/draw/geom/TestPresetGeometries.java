@@ -24,10 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URL;
-import java.util.Enumeration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class TestPresetGeometries {
@@ -40,7 +37,7 @@ class TestPresetGeometries {
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
             Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), presetName -> null);
-            for(Path p : geom){
+            for(PathIf p : geom){
                 Path2D path = p.getPath(ctx);
                 assertNotNull(path);
             }
@@ -48,25 +45,5 @@ class TestPresetGeometries {
 
         // we get the same instance on further calls
         assertSame(shapes, PresetGeometries.getInstance());
-    }
-
-    @Disabled("problem solved? Turn back on if this debugging is still in process.")
-    void testCheckXMLParser() throws Exception{
-        // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where
-        // this comes from
-        //
-        Enumeration<URL> resources = this.getClass().getClassLoader().getResources("META-INF/services/javax.xml.stream.XMLEventFactory");
-        printURLs(resources);
-        resources = ClassLoader.getSystemResources("META-INF/services/javax.xml.stream.XMLEventFactory");
-        printURLs(resources);
-        resources = ClassLoader.getSystemResources("org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml");
-        printURLs(resources);
-    }
-
-    private void printURLs(Enumeration<URL> resources) {
-        while(resources.hasMoreElements()) {
-            URL url = resources.nextElement();
-            System.out.println("URL: " + url);
-        }
     }
 }

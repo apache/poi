@@ -72,6 +72,7 @@ module org.apache.poi.ooxml {
     exports org.apache.poi.xssf.streaming;
     exports org.apache.poi.xssf.util;
     exports org.apache.poi.xslf.draw;
+    exports org.apache.poi.xslf.draw.geom;
     exports org.apache.poi.xslf.usermodel;
     exports org.apache.poi.xslf.model;
     exports org.apache.poi.xslf.util;
