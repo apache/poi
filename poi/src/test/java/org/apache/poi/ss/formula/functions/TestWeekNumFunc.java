@@ -24,6 +24,7 @@ import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -49,6 +50,19 @@ class TestWeekNumFunc {
         assertEvaluateEquals(10.0, date, 16);
         assertEvaluateEquals(10.0, date, 17);
         assertEvaluateEquals(10.0, date, 21);
+    }
+
+    @Test
+    void testBug65606() {
+        double date = DateUtil.getExcelDate(LocalDate.parse("2021-09-27"));
+        assertEvaluateEquals(40.0, date);
+        assertEvaluateEquals(39.0, date, 21);
+    }
+
+    @Test
+    void testDateTime() {
+        double date = DateUtil.getExcelDate(LocalDateTime.parse("2021-09-27T09:45:00"));
+        assertEvaluateEquals(40.0, date);
     }
 
     @Test
