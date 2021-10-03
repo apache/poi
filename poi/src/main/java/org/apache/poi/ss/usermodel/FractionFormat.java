@@ -107,7 +107,7 @@ public class FractionFormat extends Format {
     @SuppressWarnings("squid:S2111")
     public String format(Number num) {
 
-        final BigDecimal doubleValue = BigDecimal.valueOf(num.doubleValue());
+        final BigDecimal doubleValue = new BigDecimal(num.doubleValue());
 
         final boolean isNeg = doubleValue.compareTo(BigDecimal.ZERO) < 0;
 
@@ -155,7 +155,7 @@ public class FractionFormat extends Format {
 
         //now format the results
         if (isNeg){
-            sb.append("-");
+            sb.append('-');
         }
 
         //if whole part has to go into the numerator
