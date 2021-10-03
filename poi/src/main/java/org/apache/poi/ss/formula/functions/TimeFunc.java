@@ -58,10 +58,9 @@ public final class TimeFunc extends Fixed3ArgFunction {
     /**
      * Converts the supplied hours, minutes and seconds to an Excel time value.
      *
-     *
-     * @param ds array of 3 doubles containing hours, minutes and seconds.
-     * Non-integer inputs are truncated to an integer before further calculation
-     * of the time value.
+     * @param hours
+     * @param minutes
+     * @param seconds as an integer
      * @return An Excel representation of a time of day.
      * If the time value represents more than a day, the days are removed from
      * the result, leaving only the time of day component.
