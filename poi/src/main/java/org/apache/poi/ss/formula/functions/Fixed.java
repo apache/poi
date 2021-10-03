@@ -75,17 +75,14 @@ public final class Fixed implements Function1Arg, Function2Arg, Function3Arg {
                     OperandResolver.getSingleValue(
                     numberParam, srcRowIndex, srcColumnIndex);
             BigDecimal number =
-                    new BigDecimal(OperandResolver.coerceValueToDouble(numberValueEval));
+                    BigDecimal.valueOf(OperandResolver.coerceValueToDouble(numberValueEval));
             ValueEval placesValueEval =
-                    OperandResolver.getSingleValue(
-                    placesParam, srcRowIndex, srcColumnIndex);
+                    OperandResolver.getSingleValue(placesParam, srcRowIndex, srcColumnIndex);
             int places = OperandResolver.coerceValueToInt(placesValueEval);
             ValueEval skipThousandsSeparatorValueEval =
-                    OperandResolver.getSingleValue(
-                    skipThousandsSeparatorParam, srcRowIndex, srcColumnIndex);
+                    OperandResolver.getSingleValue(skipThousandsSeparatorParam, srcRowIndex, srcColumnIndex);
             Boolean skipThousandsSeparator =
-                    OperandResolver.coerceValueToBoolean(
-                    skipThousandsSeparatorValueEval, false);
+                    OperandResolver.coerceValueToBoolean(skipThousandsSeparatorValueEval, false);
 
             // Round number to respective places.
             number = number.setScale(places, RoundingMode.HALF_UP);

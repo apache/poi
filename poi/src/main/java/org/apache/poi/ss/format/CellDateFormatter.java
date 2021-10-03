@@ -42,7 +42,7 @@ public class CellDateFormatter extends CellFormatter {
     private static final Calendar EXCEL_EPOCH_CAL =
         LocaleUtil.getLocaleCalendar(1904, 0, 1);
 
-    private static final double NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
+    private static final int NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
     private static /* final */ CellDateFormatter SIMPLE_DATE;
 

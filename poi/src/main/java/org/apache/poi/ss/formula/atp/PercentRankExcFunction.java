@@ -134,7 +134,7 @@ final class PercentRankExcFunction implements FreeRefFunction {
             for (Double d : numbers) {
                 if (d < x) lessThanCount++;
             }
-            BigDecimal result = new BigDecimal((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
+            BigDecimal result = BigDecimal.valueOf((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
             return new NumberEval(PercentRank.round(result, significance));
         } else {
             int intermediateSignificance = significance < 5 ? 8 : significance + 3;

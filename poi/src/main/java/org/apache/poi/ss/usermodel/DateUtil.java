@@ -411,7 +411,7 @@ public class DateUtil {
             return null;
         }
 
-        BigDecimal bd = new BigDecimal(date);
+        BigDecimal bd = BigDecimal.valueOf(date);
 
         int wholeDays = bd.intValue();
 

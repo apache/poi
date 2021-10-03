@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -179,15 +180,19 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
     }
 
     private static Ptg readRefPtg(byte[] formulaRawBytes) {
-        LittleEndianInput in = new LittleEndianInputStream(new UnsynchronizedByteArrayInputStream(formulaRawBytes));
-        byte ptgSid = in.readByte();
-        switch(ptgSid) {
-            case AreaPtg.sid:   return new AreaPtg(in);
-            case Area3DPtg.sid: return new Area3DPtg(in);
-            case RefPtg.sid:    return new RefPtg(in);
-            case Ref3DPtg.sid:  return new Ref3DPtg(in);
+        try (LittleEndianInputStream in = new LittleEndianInputStream(
+                new UnsynchronizedByteArrayInputStream(formulaRawBytes))) {
+            byte ptgSid = in.readByte();
+            switch(ptgSid) {
+                case AreaPtg.sid:   return new AreaPtg(in);
+                case Area3DPtg.sid: return new Area3DPtg(in);
+                case RefPtg.sid:    return new RefPtg(in);
+                case Ref3DPtg.sid:  return new Ref3DPtg(in);
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected exception in readRefPtg", e);
         }
-        return null;
     }
 
     private static byte[] readRawData(LittleEndianInput in, int size) {

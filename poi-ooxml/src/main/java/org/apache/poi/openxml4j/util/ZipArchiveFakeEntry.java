@@ -104,8 +104,10 @@ import org.apache.poi.util.TempFile;
         if (encryptedTempData != null) {
             encryptedTempData.dispose();
         }
-        if (tempFile != null) {
-            tempFile.delete();
+        if (tempFile != null && tempFile.exists()) {
+            if (!tempFile.delete()) {
+                LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
+            }
         }
     }
 }
