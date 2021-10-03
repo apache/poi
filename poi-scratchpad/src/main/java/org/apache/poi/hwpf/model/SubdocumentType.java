@@ -18,6 +18,10 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.Internal;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Document text parts that can have text pieces (CPs)
  */
@@ -41,15 +45,12 @@ public enum SubdocumentType {
     HEADER_TEXTBOX();
 
     /**
-     * Array of {@link SubdocumentType}s ordered by document position and FIB
+     * List of {@link SubdocumentType}s ordered by document position and FIB
      * field order
      */
-    public static final SubdocumentType[] ORDERED = new SubdocumentType[] {
-            MAIN, FOOTNOTE, HEADER, MACRO, ANNOTATION, ENDNOTE, TEXTBOX,
-            HEADER_TEXTBOX };
-
-    private SubdocumentType()
-    {
-    }
-
+    public static final List<SubdocumentType> ORDERED = Collections.unmodifiableList(
+            Arrays.asList(
+                    MAIN, FOOTNOTE, HEADER, MACRO, ANNOTATION, ENDNOTE, TEXTBOX, HEADER_TEXTBOX
+            )
+    );
 }
