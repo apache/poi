@@ -44,6 +44,7 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new WeekNum();
+    private static final NumberEval DEFAULT_RETURN_TYPE = new NumberEval(1);
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval serialNumVE, ValueEval returnTypeVE) {
@@ -82,7 +83,9 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-        if (args.length == 2) {
+        if (args.length == 1) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], DEFAULT_RETURN_TYPE);
+        } else if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
         }
         return ErrorEval.VALUE_INVALID;
