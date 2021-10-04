@@ -29,7 +29,7 @@ import java.io.IOException;
 
 /**
  * This sample demonstrates how to use DeferredSXSSFWorkbook to generate workbooks in a streaming way.
- * This approach avoids the use of temporary files and can be used to output to streams like
+ * This approach reduces the use of temporary files and can be used to output to streams like
  * HTTP response streams.
  */
 public class DeferredGeneration {
