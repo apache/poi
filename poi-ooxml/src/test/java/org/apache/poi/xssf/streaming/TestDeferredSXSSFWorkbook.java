@@ -188,6 +188,84 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void inMemoryWrite() throws IOException {
+        try (XSSFWorkbook xssfWb1 = new XSSFWorkbook()) {
+            xssfWb1.createSheet("S1");
+            Sheet sheet = xssfWb1.createSheet("S2");
+            Row row = sheet.createRow(1);
+            Cell cell = row.createCell(1);
+            cell.setCellValue("value 2_1_1");
+
+            try (DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook(xssfWb1);
+                 XSSFWorkbook xssfWb2 = DeferredSXSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {
+                assertTrue(wb1.dispose());
+
+                try (DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook(xssfWb2)) {
+                    // Add a row to the existing empty sheet
+                    DeferredSXSSFSheet ssheet1 = wb2.getStreamingSheetAt(0);
+                    ssheet1.setRowGenerator((ssxSheet) -> {
+                        Row row1_1 = ssxSheet.createRow(1);
+                        Cell cell1_1_1 = row1_1.createCell(1);
+                        cell1_1_1.setCellValue("value 1_1_1");
+                    });
+
+                    // Add a row to the existing non-empty sheet
+                    DeferredSXSSFSheet ssheet2 = wb2.getStreamingSheetAt(1);
+                    ssheet2.setRowGenerator((ssxSheet) -> {
+                        Row row2_2 = ssxSheet.createRow(2);
+                        Cell cell2_2_1 = row2_2.createCell(1);
+                        cell2_2_1.setCellValue("value 2_2_1");
+                    });
+                    // Add a sheet with one row
+                    DeferredSXSSFSheet ssheet3 = wb2.createSheet("S3");
+                    ssheet3.setRowGenerator((ssxSheet) -> {
+                        Row row3_1 = ssxSheet.createRow(1);
+                        Cell cell3_1_1 = row3_1.createCell(1);
+                        cell3_1_1.setCellValue("value 3_1_1");
+                    });
+
+                    try (XSSFWorkbook xssfWb3 = DeferredSXSSFITestDataProvider.instance.inMemoryWriteOutAndReadBack(wb2)) {
+
+                        assertEquals(3, xssfWb3.getNumberOfSheets());
+                        // Verify sheet 1
+                        XSSFSheet sheet1 = xssfWb3.getSheetAt(0);
+                        assertEquals("S1", sheet1.getSheetName());
+                        assertEquals(1, sheet1.getPhysicalNumberOfRows());
+                        XSSFRow row1_1 = sheet1.getRow(1);
+                        assertNotNull(row1_1);
+                        XSSFCell cell1_1_1 = row1_1.getCell(1);
+                        assertNotNull(cell1_1_1);
+                        assertEquals("value 1_1_1", cell1_1_1.getStringCellValue());
+                        // Verify sheet 2
+                        XSSFSheet sheet2 = xssfWb3.getSheetAt(1);
+                        assertEquals("S2", sheet2.getSheetName());
+                        assertEquals(2, sheet2.getPhysicalNumberOfRows());
+                        Row row2_1 = sheet2.getRow(1);
+                        assertNotNull(row2_1);
+                        Cell cell2_1_1 = row2_1.getCell(1);
+                        assertNotNull(cell2_1_1);
+                        assertEquals("value 2_1_1", cell2_1_1.getStringCellValue());
+                        XSSFRow row2_2 = sheet2.getRow(2);
+                        assertNotNull(row2_2);
+                        XSSFCell cell2_2_1 = row2_2.getCell(1);
+                        assertNotNull(cell2_2_1);
+                        assertEquals("value 2_2_1", cell2_2_1.getStringCellValue());
+                        // Verify sheet 3
+                        XSSFSheet sheet3 = xssfWb3.getSheetAt(2);
+                        assertEquals("S3", sheet3.getSheetName());
+                        assertEquals(1, sheet3.getPhysicalNumberOfRows());
+                        XSSFRow row3_1 = sheet3.getRow(1);
+                        assertNotNull(row3_1);
+                        XSSFCell cell3_1_1 = row3_1.getCell(1);
+                        assertNotNull(cell3_1_1);
+                        assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     void sheetdataWriter() throws IOException {
         try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
             SXSSFSheet sh = wb.createSheet();

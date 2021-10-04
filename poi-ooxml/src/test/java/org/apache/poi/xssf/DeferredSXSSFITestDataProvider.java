@@ -78,6 +78,20 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
         }
     }
 
+    /**
+     * Returns an XSSFWorkbook since SXSSFWorkbook is write-only
+     */
+    public XSSFWorkbook inMemoryWriteOutAndReadBack(SXSSFWorkbook wb) {
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            wb.writeAvoidingTempFiles(baos);
+            try (InputStream is = baos.toInputStream()) {
+                return new XSSFWorkbook(is);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public DeferredSXSSFWorkbook createWorkbook() {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();

@@ -17,13 +17,7 @@
 
 package org.apache.poi.xssf.streaming;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,13 +29,16 @@ import java.util.NoSuchElementException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -403,8 +400,8 @@ public class SXSSFWorkbook implements Workbook {
             while (en.hasMoreElements()) {
                 ZipArchiveEntry ze = en.nextElement();
                 ZipArchiveEntry zeOut = new ZipArchiveEntry(ze.getName());
-                zeOut.setSize(ze.getSize());
-                zeOut.setTime(ze.getTime());
+                if (ze.getSize() >= 0) zeOut.setSize(ze.getSize());
+                if (ze.getTime() >= 0) zeOut.setTime(ze.getTime());
                 zos.putArchiveEntry(zeOut);
                 try (final InputStream is = zipEntrySource.getInputStream(ze)) {
                     if (is instanceof ZipArchiveThresholdInputStream) {
@@ -968,8 +965,35 @@ public class SXSSFWorkbook implements Workbook {
         } finally {
             deleted = tmplFile.delete();
         }
-        if(!deleted) {
+        if (!deleted) {
             throw new IOException("Could not delete temporary file after processing: " + tmplFile);
+        }
+    }
+
+    /**
+     * Write out this workbook to an OutputStream. This (experimental) method avoids the temp file that
+     * {@link #write} creates but will use more memory as a result. Other SXSSF code can create temp files,
+     * so using this does not guarantee that there will be no temp file usage.
+     *
+     * @param stream - the java OutputStream you wish to write to
+     * @exception IOException if anything can't be written.
+     */
+    @Beta
+    public void writeAvoidingTempFiles(OutputStream stream) throws IOException {
+        flushSheets();
+
+        //Save the template
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            _wb.write(bos);
+
+            //Substitute the template entries with the generated sheet data files
+            try (
+                    InputStream is = bos.toInputStream();
+                    ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(
+                        new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(is)))
+            ) {
+                injectData(source, stream);
+            }
         }
     }
 
