@@ -977,6 +977,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param stream - the java OutputStream you wish to write to
      * @exception IOException if anything can't be written.
+     * @since POI 5.1.0 (experimental and still liable to change or be removed)
      */
     @Beta
     public void writeAvoidingTempFiles(OutputStream stream) throws IOException {
