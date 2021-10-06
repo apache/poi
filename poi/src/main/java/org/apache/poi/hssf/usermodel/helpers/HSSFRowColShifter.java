@@ -98,9 +98,11 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
-            String shiftedFmla = null;
+            String shiftedFmla;
             if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
                 shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+            } else {
+                shiftedFmla = formula;
             }
             return shiftedFmla;
         } catch (FormulaParseException fpe) {
