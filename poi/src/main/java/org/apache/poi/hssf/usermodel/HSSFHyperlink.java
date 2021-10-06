@@ -287,8 +287,4 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
         return record.hashCode();
     }
 
-    @Override
-    public Duplicatable copy() {
-        return new HSSFHyperlink(this);
-    }
 }
