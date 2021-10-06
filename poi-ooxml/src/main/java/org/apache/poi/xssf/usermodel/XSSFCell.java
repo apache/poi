@@ -142,10 +142,9 @@ public final class XSSFCell extends CellBase {
      * @param srcCell The cell to take value, formula and style from
      * @param policy The policy for copying the information, see {@link CellCopyPolicy}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
-     * @deprecated use {@link CellUtil#copyCell(Cell, Cell, CellCopyPolicy, CellCopyContext)}
+     * @see CellUtil#copyCell(Cell, Cell, CellCopyPolicy, CellCopyContext)
      */
     @Beta
-    @Deprecated
     public void copyCellFrom(Cell srcCell, CellCopyPolicy policy) {
         CellUtil.copyCell(srcCell, this, policy, null);
     }
