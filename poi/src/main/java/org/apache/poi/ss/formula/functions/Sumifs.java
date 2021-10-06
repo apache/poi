@@ -19,6 +19,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+
 /**
  * Implementation for the Excel function SUMIFS<p>
  *
@@ -51,5 +54,22 @@ public final class Sumifs extends Baseifs {
     @Override
     protected boolean hasInitialRange() {
         return true;
+    }
+
+    @Override
+    protected Aggregator createAggregator() {
+        return new Aggregator() {
+            double accumulator = 0.0;
+
+            @Override
+            public void addValue(ValueEval value) {
+                accumulator += (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+            }
+
+            @Override
+            public ValueEval getResult() {
+                return new NumberEval(accumulator);
+            }
+        };
     }
 }

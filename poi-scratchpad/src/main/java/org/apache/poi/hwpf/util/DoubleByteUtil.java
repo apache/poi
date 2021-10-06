@@ -44,13 +44,13 @@ public class DoubleByteUtil
      */
     public static String cp950ToString(byte[] data, int offset, int lengthInBytes) {
         StringBuilder sb = new StringBuilder();
-        LittleEndianCP950Reader reader = new LittleEndianCP950Reader(data, offset, lengthInBytes);
-        int c = reader.read();
-        while (c != -1) {
-            sb.append((char)c);
-            c = reader.read();
+        try (LittleEndianCP950Reader reader = new LittleEndianCP950Reader(data, offset, lengthInBytes)) {
+            int c = reader.read();
+            while (c != -1) {
+                sb.append((char) c);
+                c = reader.read();
+            }
         }
-        reader.close();
         return sb.toString();
     }
 }

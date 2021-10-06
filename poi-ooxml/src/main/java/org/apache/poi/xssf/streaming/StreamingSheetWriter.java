@@ -44,7 +44,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     public StreamingSheetWriter(OutputStream out) throws IOException {
         super(createWriter(out));
-        LOG.atDebug().log("Preparing SSXSSF sheet writer");
+        LOG.atDebug().log("Preparing SXSSF sheet writer");
     }
 
     @Override

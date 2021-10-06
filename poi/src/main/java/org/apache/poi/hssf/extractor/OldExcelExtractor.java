@@ -152,7 +152,7 @@ public class OldExcelExtractor implements POITextExtractor {
             book = (DocumentNode)directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
-            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES[0]);
+            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES.get(0));
         }
 
         if (book == null) {
@@ -169,9 +169,9 @@ public class OldExcelExtractor implements POITextExtractor {
             System.err.println("   OldExcelExtractor <filename>");
             System.exit(1);
         }
-        OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]));
-        System.out.println(extractor.getText());
-        extractor.close();
+        try (OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]))) {
+            System.out.println(extractor.getText());
+        }
     }
 
     private void prepare() {

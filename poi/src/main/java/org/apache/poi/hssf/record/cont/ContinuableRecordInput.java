@@ -31,8 +31,8 @@ import org.apache.poi.util.LittleEndianInput;
  *  Most records construct themselves from {@link RecordInputStream}.
  *  This class assumes that a {@link ContinueRecord} record break always occurs at the type boundary,
  *  however, it is not always so.
- * </p>
- *  Two  attachments to <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=50779">Bugzilla 50779</a>
+ * <p>
+ *  Two attachments to <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=50779">Bugzilla 50779</a>
  *  demonstrate that a CONTINUE break can appear right in between two bytes of a unicode character
  *  or between two bytes of a <code>short</code>. The problematic portion of the data is
  *  in a Asian Phonetic Settings Block (ExtRst) of a UnicodeString.
@@ -40,13 +40,9 @@ import org.apache.poi.util.LittleEndianInput;
  *  {@link RecordInputStream} greedily requests the bytes to be read and stumbles on such files with a
  *  "Not enough data (1) to read requested (2) bytes" exception.  The <code>ContinuableRecordInput</code>
  *   class circumvents this "type boundary" rule and reads data byte-by-byte rolling over CONTINUE if necessary.
- * </p>
- *
  * <p>
  * YK: For now (March 2011) this class is only used to read
  *   @see org.apache.poi.hssf.record.common.ExtRst blocks of a UnicodeString.
- *
- * </p>
  */
 public class ContinuableRecordInput implements LittleEndianInput {
     private final RecordInputStream _in;

@@ -21,6 +21,9 @@ import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.ExtractorProvider;
@@ -65,11 +68,13 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
     private static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
     private static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
 
-    private static final XSLFRelation[] SUPPORTED_XSLF_TYPES = new XSLFRelation[]{
-        XSLFRelation.MAIN, XSLFRelation.MACRO, XSLFRelation.MACRO_TEMPLATE,
-        XSLFRelation.PRESENTATIONML, XSLFRelation.PRESENTATIONML_TEMPLATE,
-        XSLFRelation.PRESENTATION_MACRO
-    };
+    private static final List<XSLFRelation> SUPPORTED_XSLF_TYPES = Collections.unmodifiableList(
+            Arrays.asList(
+                    XSLFRelation.MAIN, XSLFRelation.MACRO, XSLFRelation.MACRO_TEMPLATE,
+                    XSLFRelation.PRESENTATIONML, XSLFRelation.PRESENTATIONML_TEMPLATE,
+                    XSLFRelation.PRESENTATION_MACRO
+            )
+    );
 
     @Override
     public boolean accepts(FileMagic fm) {

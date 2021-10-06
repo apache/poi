@@ -22,25 +22,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.Bin2Dec;
-import org.apache.poi.ss.formula.functions.Complex;
-import org.apache.poi.ss.formula.functions.Countifs;
-import org.apache.poi.ss.formula.functions.Dec2Bin;
-import org.apache.poi.ss.formula.functions.Dec2Hex;
-import org.apache.poi.ss.formula.functions.Delta;
-import org.apache.poi.ss.formula.functions.EDate;
-import org.apache.poi.ss.formula.functions.EOMonth;
-import org.apache.poi.ss.formula.functions.FactDouble;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Hex2Dec;
-import org.apache.poi.ss.formula.functions.ImReal;
-import org.apache.poi.ss.formula.functions.Imaginary;
-import org.apache.poi.ss.formula.functions.Oct2Dec;
-import org.apache.poi.ss.formula.functions.Quotient;
-import org.apache.poi.ss.formula.functions.Single;
-import org.apache.poi.ss.formula.functions.Sumifs;
-import org.apache.poi.ss.formula.functions.TextFunction;
-import org.apache.poi.ss.formula.functions.WeekNum;
+import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 
 /**
@@ -80,14 +62,14 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     private Map<String, FreeRefFunction> createFunctionsMap() {
-        Map<String, FreeRefFunction> m = new HashMap<>(108);
+        Map<String, FreeRefFunction> m = new HashMap<>(127);
 
         r(m, "ACCRINT", null);
         r(m, "ACCRINTM", null);
         r(m, "AMORDEGRC", null);
         r(m, "AMORLINC", null);
         r(m, "AVERAGEIF", null);
-        r(m, "AVERAGEIFS", null);
+        r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
         r(m, "BESSELJ", null);
@@ -136,6 +118,8 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "HEX2DEC", Hex2Dec.instance);
         r(m, "HEX2OCT", null);
         r(m, "IFERROR", IfError.instance);
+        r(m, "IFNA", IfNa.instance);
+        r(m, "IFS", Ifs.instance);
         r(m, "IMABS", null);
         r(m, "IMAGINARY", Imaginary.instance);
         r(m, "IMARGUMENT", null);
@@ -158,7 +142,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ISODD", ParityFunction.IS_ODD);
         r(m, "JIS", null);
         r(m, "LCM", null);
+        r(m, "MAXIFS", Maxifs.instance);
         r(m, "MDURATION", null);
+        r(m, "MINIFS", Minifs.instance);
         r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", NetworkdaysFunction.instance);
@@ -171,6 +157,8 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ODDLPRICE", null);
         r(m, "ODDLYIELD", null);
         r(m, "PRICE", null);
+        r(m, "PERCENTRANK.EXC", PercentRankExcFunction.instance);
+        r(m, "PERCENTRANK.INC", PercentRankIncFunction.instance);
         r(m, "PRICEDISC", null);
         r(m, "PRICEMAT", null);
         r(m, "QUOTIENT", Quotient.instance);
@@ -181,9 +169,11 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "SINGLE", Single.instance);
         r(m, "SQRTPI", null);
         r(m, "SUMIFS", Sumifs.instance);
+        r(m, "SWITCH", Switch.instance);
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
+        r(m, "TEXTJOIN", TextJoinFunction.instance);
         r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
         r(m, "XIRR", null);
@@ -251,13 +241,13 @@ public final class AnalysisToolPak implements UDFFinder {
      * @throws IllegalArgumentException if the function is unknown or already  registered.
      * @since 3.8 beta6
      */
-   public static void registerFunction(String name, FreeRefFunction func){
+    public static void registerFunction(String name, FreeRefFunction func){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         if(!isATPFunction(name)) {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
             if(metaData != null) {
                 throw new IllegalArgumentException(name + " is a built-in Excel function. " +
-                        "Use FunctoinEval.registerFunction(String name, Function func) instead.");
+                        "Use FunctionEval.registerFunction(String name, Function func) instead.");
             }
 
             throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");

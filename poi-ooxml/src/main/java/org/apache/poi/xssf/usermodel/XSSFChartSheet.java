@@ -19,13 +19,13 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -57,7 +57,7 @@ public class XSSFChartSheet extends XSSFSheet  {
     @Override
     protected void read(InputStream is) throws IOException {
         //initialize the supeclass with a blank worksheet
-        super.read(new ByteArrayInputStream(BLANK_WORKSHEET));
+        super.read(new UnsynchronizedByteArrayInputStream(BLANK_WORKSHEET));
 
         try {
             chartsheet = ChartsheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS).getChartsheet();

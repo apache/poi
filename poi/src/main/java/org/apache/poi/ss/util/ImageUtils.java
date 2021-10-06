@@ -20,7 +20,6 @@ import static org.apache.poi.util.Units.EMU_PER_PIXEL;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -151,7 +151,7 @@ public final class ImageUtils {
 
         // in pixel
         final Dimension imgSize = (scaleX == Double.MAX_VALUE || scaleY == Double.MAX_VALUE)
-            ? getImageDimension(new ByteArrayInputStream(data.getData()), data.getPictureType())
+            ? getImageDimension(new UnsynchronizedByteArrayInputStream(data.getData()), data.getPictureType())
             : new Dimension();
 
         // in emus
@@ -191,7 +191,7 @@ public final class ImageUtils {
         Dimension imgSize = null;
         if (anchor.getCol2() < anchor.getCol1() || anchor.getRow2() < anchor.getRow1()) {
             PictureData data = picture.getPictureData();
-            imgSize = getImageDimension(new ByteArrayInputStream(data.getData()), data.getPictureType());
+            imgSize = getImageDimension(new UnsynchronizedByteArrayInputStream(data.getData()), data.getPictureType());
         }
 
         int w = getDimFromCell(imgSize == null ? 0 : imgSize.getWidth(), anchor.getCol1(), anchor.getDx1(), anchor.getCol2(), anchor.getDx2(),

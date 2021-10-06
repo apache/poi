@@ -41,11 +41,22 @@ public class DeferredSXSSFSheet extends SXSSFSheet {
         super(workbook, xSheet, workbook.getRandomAccessWindowSize());
     }
 
+    /**
+     * Unsupported in DeferredSXSSFSheet
+     *
+     * @throws RuntimeException this is unsupported
+     */
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
         throw new RuntimeException("Not supported by DeferredSXSSFSheet");
     }
 
+    /**
+     * Add a function to generate rows for the sheet. This function should only create rows and cells.
+     * Any other settings like creating cell styles should be done in separate calls outside this function.
+     *
+     * @param rowGenerator {@link RowGeneratorFunction}
+     */
     public void setRowGenerator(RowGeneratorFunction rowGenerator) {
         this.rowGenerator = rowGenerator;
     }

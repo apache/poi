@@ -70,9 +70,8 @@ public final class PICT extends Metafile {
     @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
-        try {
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
             byte[] macheader = new byte[512];
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
             out.write(macheader);
             int pos = CHECKSUM_SIZE*getUIDInstanceCount();
             byte[] pict = read(rawdata, pos);
@@ -93,30 +92,33 @@ public final class PICT extends Metafile {
             throw new EOFException();
         }
         byte[] chunk = new byte[4096];
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(header.getWmfSize());
-        try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
-            int count;
-            while ((count = inflater.read(chunk)) >= 0) {
-                out.write(chunk, 0, count);
-                // PICT zip-stream can be erroneous, so we clear the array to determine
-                // the maximum of read bytes, after the inflater crashed
-                bytefill(chunk, (byte) 0);
-            }
-        } catch (Exception e) {
-            int lastLen;
-            for (lastLen = chunk.length - 1; lastLen >= 0 && chunk[lastLen] == 0; lastLen--) ;
-            if (++lastLen > 0) {
-                if (header.getWmfSize() > out.size()) {
-                    // sometimes the wmfsize is smaller than the amount of already successfully read bytes
-                    // in this case we take the lastLen as-is, otherwise we truncate it to the given size
-                    lastLen = Math.min(lastLen, header.getWmfSize() - out.size());
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(header.getWmfSize())) {
+            try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
+                int count;
+                while ((count = inflater.read(chunk)) >= 0) {
+                    out.write(chunk, 0, count);
+                    // PICT zip-stream can be erroneous, so we clear the array to determine
+                    // the maximum of read bytes, after the inflater crashed
+                    bytefill(chunk, (byte) 0);
                 }
-                out.write(chunk, 0, lastLen);
+            } catch (Exception e) {
+                int lastLen = chunk.length - 1;
+                while (lastLen >= 0 && chunk[lastLen] == 0) {
+                    lastLen--;
+                }
+                if (++lastLen > 0) {
+                    if (header.getWmfSize() > out.size()) {
+                        // sometimes the wmfsize is smaller than the amount of already successfully read bytes
+                        // in this case we take the lastLen as-is, otherwise we truncate it to the given size
+                        lastLen = Math.min(lastLen, header.getWmfSize() - out.size());
+                    }
+                    out.write(chunk, 0, lastLen);
+                }
+                // End of picture marker for PICT is 0x00 0xFF
+                LOG.atError().withThrowable(e).log("PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: {} / Read bytes: {}", box(header.getWmfSize()), box(out.size()));
             }
-            // End of picture marker for PICT is 0x00 0xFF
-            LOG.atError().withThrowable(e).log("PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: {} / Read bytes: {}", box(header.getWmfSize()),box(out.size()));
+            return out.toByteArray();
         }
-        return out.toByteArray();
     }
 
     @Override

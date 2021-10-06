@@ -41,64 +41,37 @@ import java.util.Objects;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_ConnectionSite", propOrder = {"pos"})
-public final class ConnectionSite {
+public final class ConnectionSite implements ConnectionSiteIf {
 
     // @XmlElement(required = true)
     private final AdjustPoint pos = new AdjustPoint();
     // @XmlAttribute(name = "ang", required = true)
     private String ang;
 
-    /**
-     * Gets the value of the pos property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AdjustPoint }
-     *
-     */
+    @Override
     public AdjustPoint getPos() {
         return pos;
     }
 
-    /**
-     * Sets the value of the pos property.
-     *
-     * @param pos
-     *     allowed object is
-     *     {@link AdjustPoint }
-     *
-     */
-    public void setPos(AdjustPoint pos) {
+    @Override
+    public void setPos(AdjustPointIf pos) {
         if (pos != null) {
             this.pos.setX(pos.getX());
             this.pos.setY(pos.getY());
         }
     }
 
-    /**
-     * Gets the value of the ang property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
+    @Override
     public String getAng() {
         return ang;
     }
 
-    /**
-     * Sets the value of the ang property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
+    @Override
     public void setAng(String value) {
         this.ang = value;
     }
 
+    @Override
     public boolean isSetAng() {
         return (this.ang!= null);
     }

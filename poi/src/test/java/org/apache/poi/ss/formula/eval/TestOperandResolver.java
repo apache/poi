@@ -94,6 +94,27 @@ final class TestOperandResolver {
     }
 
     @Test
+    void testCoerceDateTimeStringToNumber() throws EvaluationException {
+        Map<String, Double> values = new LinkedHashMap<>();
+        values.put("2019/1/18 12:00", 43483.5);
+        values.put("2019/1/18 6:00 AM", 43483.25);
+        values.put("18-Jan-2019 6:00 PM", 43483.75);
+        values.put("2019/1/18 15:15:15", 43483.63559027778);
+        values.put("18-Jan-2019 6:15:15 PM", 43483.76059027778);
+
+        for (String str : values.keySet()) {
+            try {
+                assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
+            } catch (EvaluationException e) {
+                fail("While handling: " + str + ". "
+                        + "This failure can indicate that the wrong locale is used during test-execution, "
+                        + "ensure you run with english/US via -Duser.language=en -Duser.country=US. "
+                        + "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"), e);
+            }
+        }
+    }
+
+    @Test
     void testCoerceTimeStringToNumber() throws EvaluationException {
         Map<String, Double> values = new LinkedHashMap<>();
         values.put("00:00", 0.0);

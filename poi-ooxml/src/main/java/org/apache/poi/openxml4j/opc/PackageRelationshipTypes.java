@@ -102,6 +102,11 @@ public interface PackageRelationshipTypes {
     String IMAGE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
     /**
+     * hdphoto type.
+     */
+    String HDPHOTO_PART = "http://schemas.microsoft.com/office/2007/relationships/hdphoto";
+
+    /**
      * Hyperlink type.
      */
     String HYPERLINK_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";

@@ -100,7 +100,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -112,6 +111,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -124,6 +124,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -1796,29 +1797,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFCreationHelper creationHelper = wb.getCreationHelper();
-            XSSFHyperlink hyperlink;
 
             // Try with a cell reference
-            hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
-            sheet.addHyperlink(hyperlink);
-            hyperlink.setAddress("http://myurl");
-            hyperlink.setCellReference("B4");
-            assertEquals(3, hyperlink.getFirstRow());
-            assertEquals(1, hyperlink.getFirstColumn());
-            assertEquals(3, hyperlink.getLastRow());
-            assertEquals(1, hyperlink.getLastColumn());
+            XSSFHyperlink hyperlink1 = creationHelper.createHyperlink(HyperlinkType.URL);
+            sheet.addHyperlink(hyperlink1);
+            hyperlink1.setAddress("http://myurl");
+            hyperlink1.setCellReference("B4");
+            assertEquals(3, hyperlink1.getFirstRow());
+            assertEquals(1, hyperlink1.getFirstColumn());
+            assertEquals(3, hyperlink1.getLastRow());
+            assertEquals(1, hyperlink1.getLastColumn());
 
             // Try with explicit rows / columns
-            hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
-            sheet.addHyperlink(hyperlink);
-            hyperlink.setAddress("http://myurl");
-            hyperlink.setFirstRow(5);
-            hyperlink.setFirstColumn(3);
+            XSSFHyperlink hyperlink2 = creationHelper.createHyperlink(HyperlinkType.URL);
+            sheet.addHyperlink(hyperlink2);
+            hyperlink2.setAddress("http://myurl");
+            hyperlink2.setFirstRow(5);
+            hyperlink2.setFirstColumn(3);
 
-            assertEquals(5, hyperlink.getFirstRow());
-            assertEquals(3, hyperlink.getFirstColumn());
-            assertEquals(5, hyperlink.getLastRow());
-            assertEquals(3, hyperlink.getLastColumn());
+            assertEquals(5, hyperlink2.getFirstRow());
+            assertEquals(3, hyperlink2.getFirstColumn());
+            assertEquals(5, hyperlink2.getLastRow());
+            assertEquals(3, hyperlink2.getLastColumn());
+
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink1), "sheet contains hyperlink1");
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink2), "sheet contains hyperlink2");
+
+            sheet.removeHyperlink(hyperlink1);
+            assertFalse(sheet.getHyperlinkList().contains(hyperlink1), "sheet no longer contains hyperlink1");
+            assertTrue(sheet.getHyperlinkList().contains(hyperlink2), "sheet still contains hyperlink2");
         }
     }
 
@@ -1880,7 +1887,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             SAXParseException e = assertThrows(SAXParseException.class,
                 () -> reader.parse(new InputSource(zip.getInputStream(ze))));
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+            assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
         }
     }
 
@@ -2714,6 +2721,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             CellStyle style = wb.createCellStyle();
             style.setRotation((short) -90);
             cell.setCellStyle(style);
+            assertEquals(180, style.getRotation());
 
             XSSFTestDataSamples.writeOut(wb, fileName);
         }
@@ -3432,6 +3440,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
+    @Tag("scratchpad.ignore")
     void testXLSXinPPT() throws Exception {
         assumeFalse(Boolean.getBoolean("scratchpad.ignore"));
 
@@ -3542,6 +3551,27 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             assertEquals(HorizontalAlignment.RIGHT, cellRight.getCellStyle().getAlignment());
             assertEquals(HorizontalAlignment.LEFT, cellLeft.getCellStyle().getAlignment());
+        }
+    }
+
+    @Test
+    void test65464() throws IOException {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug65464.xlsx")) {
+            XSSFSheet sheet = wb.getSheet("SheetWithSharedFormula");
+            XSSFCell v15 = sheet.getRow(14).getCell(21);
+            XSSFCell v16 = sheet.getRow(15).getCell(21);
+            assertEquals("U15/R15", v15.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
+            assertEquals("U16/R16", v16.getCellFormula());
+            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            int calcChainSize = wb.getCalculationChain().getCTCalcChain().sizeOfCArray();
+
+            v15.removeFormula();
+            assertEquals(CellType.NUMERIC, v15.getCellType(), "V15 is no longer a function");
+            assertNull(v15.getCTCell().getF(), "V15 xmlbeans function removed");
+            assertEquals("U16/R16", v16.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v16.getCTCell().getF().getT());
+            assertEquals(calcChainSize - 1, wb.getCalculationChain().getCTCalcChain().sizeOfCArray());
         }
     }
 }

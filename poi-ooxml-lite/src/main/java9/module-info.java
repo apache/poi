@@ -35,6 +35,7 @@ open module org.apache.poi.ooxml.schemas {
     exports org.apache.poi.schemas.ooxml.system.ooxml;
     exports org.apache.poi.schemas.vmldrawing;
     exports org.etsi.uri.x01903.v13;
+    exports org.etsi.uri.x01903.v14;
     exports org.openxmlformats.schemas.drawingml.x2006.chart;
     exports org.openxmlformats.schemas.drawingml.x2006.main;
     exports org.openxmlformats.schemas.drawingml.x2006.picture;

@@ -75,7 +75,7 @@ final class TestAddress {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.STRING);
+        assertEquals(CellType.STRING, result.getCellType());
         assertEquals(expectedResult, result.getStringValue());
     }
 }

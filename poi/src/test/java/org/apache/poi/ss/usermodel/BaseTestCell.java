@@ -1387,6 +1387,26 @@ public abstract class BaseTestCell {
     }
 
     @Test
+    void setCellFormulaWithDateArithmetic() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cellA1 = getInstance(wb);
+            cellA1.setCellFormula("B1+1");
+
+            LocalDate date = LocalDate.parse("2021-07-31");
+            Cell cellB1 = cellA1.getRow().createCell(1);
+            cellB1.setCellValue(date);
+
+            assertEquals(CellType.FORMULA, cellA1.getCellType());
+            assertEquals(CellType.NUMERIC, cellA1.getCachedFormulaResultType());
+
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+            CellValue valueA1 = fe.evaluate(cellA1);
+            assertEquals(CellType.NUMERIC, valueA1.getCellType());
+            assertEquals(DateUtil.getExcelDate(date.plusDays(1)), valueA1.getNumberValue());
+        }
+    }
+
+    @Test
     void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);

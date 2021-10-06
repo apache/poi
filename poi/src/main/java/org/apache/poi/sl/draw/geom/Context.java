@@ -34,14 +34,14 @@ public class Context {
     private final Map<String, Double> _ctx = new HashMap<>();
     private final IAdjustableShape _props;
     private final Rectangle2D _anchor;
-    
+
     public Context(CustomGeometry geom, Rectangle2D anchor, IAdjustableShape props){
         _props = props;
         _anchor = anchor;
-        for(Guide gd : geom.adjusts) {
+        for(GuideIf gd : geom.adjusts) {
             evaluate(gd);
         }
-        for(Guide gd : geom.guides) {
+        for(GuideIf gd : geom.guides) {
             evaluate(gd);
         }
     }
@@ -50,7 +50,7 @@ public class Context {
         return _anchor;
     }
 
-    Guide getAdjustValue(String name){
+    GuideIf getAdjustValue(String name){
         return _props.getAdjustValue(name);
     }
 
@@ -65,8 +65,8 @@ public class Context {
 
     public double evaluate(Formula fmla){
         double result = fmla.evaluate(this);
-        if (fmla instanceof Guide) {
-            String key = ((Guide)fmla).getName();
+        if (fmla instanceof GuideIf) {
+            String key = ((GuideIf)fmla).getName();
             if (key != null) {
                 _ctx.put(key, result);
             }

@@ -107,7 +107,6 @@ abstract class CellCacheEntry implements ICacheEntry {
      * Calls formulaCell.setFormulaResult(null, null) recursively all the way up the tree of
      * dependencies. Calls usedCell.clearConsumingCell(fc) for each child of a cell that is
      * cleared along the way.
-     * @param formulaCells
      */
     protected final void recurseClearCachedFormulaResults() {
         FormulaCellCacheEntry[] formulaCells = getConsumingCells();

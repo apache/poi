@@ -685,7 +685,7 @@ public class DataFormatter {
 
         private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
         private final BigDecimal divider;
-        private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
+        private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
         private static String trimTrailingCommas(String s) {
             return s.replaceAll(",+$", "");

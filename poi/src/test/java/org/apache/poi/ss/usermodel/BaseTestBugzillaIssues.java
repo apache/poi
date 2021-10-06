@@ -1382,6 +1382,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
     void test58896() throws IOException {
         final int nrows = 160;
         final int ncols = 139;
@@ -1493,8 +1494,8 @@ public abstract class BaseTestBugzillaIssues {
 
             // *******************************
             // First cell of array formula, OK
-            int rowId = 0;
-            int cellId = 1;
+            final int rowId = 0;
+            final int cellId = 1;
 
             Row row = sheet.getRow(rowId);
             Cell cell = row.getCell(cellId);
@@ -1507,9 +1508,6 @@ public abstract class BaseTestBugzillaIssues {
 
             // *******************************
             // Second cell of array formula, NOT OK for xlsx files
-            rowId = 1;
-            cellId = 1;
-
             row = sheet.getRow(rowId);
             cell = row.getCell(cellId);
             assertEquals("A1", cell.getCellFormula());

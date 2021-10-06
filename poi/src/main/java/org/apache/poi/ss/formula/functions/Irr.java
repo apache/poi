@@ -74,11 +74,11 @@ public final class Irr implements Function {
      * Starting with the guess, the method cycles through the calculation until the result
      * is accurate within 0.00001 percent. If IRR can't find a result that works
      * after 20 tries, the {@code Double.NaN} is returned.
-     * </p>
+     *
      * <p>
      *   The implementation is inspired by the NewtonSolver from the Apache Commons-Math library,
      *   @see <a href="http://commons.apache.org">http://commons.apache.org</a>
-     * </p>
+     *
      *
      * @param values        the income values.
      * @param guess         the initial guess of irr.

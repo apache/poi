@@ -309,22 +309,20 @@ public final class StyleTextPropAtom extends RecordAtom {
      */
     private void updateRawContents() throws IOException {
         if (initialised) {
-            // Only update the style bytes, if the styles have been potentially
-            // changed
+            // Only update the style bytes, if the styles have been potentially changed
+            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+                // First up, we need to serialise the paragraph properties
+                for (TextPropCollection tpc : paragraphStyles) {
+                    tpc.writeOut(baos);
+                }
 
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+                // Now, we do the character ones
+                for (TextPropCollection tpc : charStyles) {
+                    tpc.writeOut(baos);
+                }
 
-            // First up, we need to serialise the paragraph properties
-            for(TextPropCollection tpc : paragraphStyles) {
-                tpc.writeOut(baos);
+                rawContents = baos.toByteArray();
             }
-
-            // Now, we do the character ones
-            for(TextPropCollection tpc : charStyles) {
-                tpc.writeOut(baos);
-            }
-
-            rawContents = baos.toByteArray();
         }
 
         // Now ensure that the header size is correct

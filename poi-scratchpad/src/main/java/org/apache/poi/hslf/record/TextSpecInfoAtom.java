@@ -130,26 +130,28 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public void setParentSize(int size) {
         assert(size > 0);
-        int covered = 0;
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        TextSpecInfoRun[] runs = getTextSpecInfoRuns();
-        assert(runs.length > 0);
-        for (int i=0; i<runs.length && covered < size; i++) {
-            TextSpecInfoRun run = runs[i];
-            if (covered + run.getLength() > size || i == runs.length-1) {
-                run.setLength(size-covered);
-            }
-            covered += run.getLength();
-            try {
-                run.writeOut(bos);
-            } catch (IOException e) {
-                throw new HSLFException(e);
-            }
-        }
-        _data = bos.toByteArray();
 
-        // Update the size (header bytes 5-8)
-        LittleEndian.putInt(_header, 4, _data.length);
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            TextSpecInfoRun[] runs = getTextSpecInfoRuns();
+            int remaining = size;
+            int idx = 0;
+            for (TextSpecInfoRun run : runs) {
+                int len = run.getLength();
+                if (len > remaining || idx == runs.length - 1) {
+                    run.setLength(len = remaining);
+                }
+                remaining -= len;
+                run.writeOut(bos);
+                idx++;
+            }
+
+            _data = bos.toByteArray();
+
+            // Update the size (header bytes 5-8)
+            LittleEndian.putInt(_header, 4, _data.length);
+        } catch (IOException e) {
+            throw new HSLFException(e);
+        }
     }
 
     /**

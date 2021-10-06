@@ -17,9 +17,8 @@
 package org.apache.poi.ss.format;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.StringCodepointsIterable;
-import org.apache.poi.util.StringUtil;
 
 import javax.swing.*;
 
@@ -335,7 +334,7 @@ public class CellFormatPart {
         boolean seenZero = false;
         while (m.find()) {
             String repl = m.group(0);
-            Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+            Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
             if (codePoints.hasNext()) {
                 String c1 = codePoints.next();
                 String c2 = null;
@@ -403,7 +402,8 @@ public class CellFormatPart {
      */
     static String quoteSpecial(String repl, CellFormatType type) {
         StringBuilder sb = new StringBuilder();
-        Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+        Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
+
         while (codePoints.hasNext()) {
             String ch = codePoints.next();
             if ("\'".equals(ch) && type.isSpecial('\'')) {
@@ -567,7 +567,7 @@ public class CellFormatPart {
      */
     static String expandChar(String part) {
         List<String> codePoints = new ArrayList<>();
-        new StringCodepointsIterable(part).iterator().forEachRemaining(codePoints::add);
+        CodepointsUtil.iteratorFor(part).forEachRemaining(codePoints::add);
         if (codePoints.size() < 2) throw new IllegalArgumentException("Expected part string to have at least 2 chars");
         String ch = codePoints.get(1);
         return ch + ch + ch;

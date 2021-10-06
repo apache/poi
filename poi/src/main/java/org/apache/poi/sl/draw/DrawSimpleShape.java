@@ -37,6 +37,7 @@ import org.apache.poi.sl.draw.geom.Context;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.Outline;
 import org.apache.poi.sl.draw.geom.Path;
+import org.apache.poi.sl.draw.geom.PathIf;
 import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
@@ -85,7 +86,7 @@ public class DrawSimpleShape extends DrawShape {
 
             PaintModifier pm = null;
             for (Outline o : elems) {
-                Path path = o.getPath();
+                PathIf path = o.getPath();
                 if (path.isFilled()) {
                     PaintModifier pmOld = pm;
                     pm = path.getFill();
@@ -169,7 +170,7 @@ public class DrawSimpleShape extends DrawShape {
 
         for(Outline o : lst){
             java.awt.Shape s = o.getOutline();
-            Path p = o.getPath();
+            PathIf p = o.getPath();
             graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
 
             if(p.isFilled()) {
@@ -197,10 +198,12 @@ public class DrawSimpleShape extends DrawShape {
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
 
         Rectangle2D anchor = getAnchor(graphics, getShape());
-        double x2 = anchor.getX() + anchor.getWidth(),
-               y2 = anchor.getY() + anchor.getHeight();
-
-        double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
+        double x2 = 0, y2 = 0, alpha = 0;
+        if (anchor != null) {
+            x2 = anchor.getX() + anchor.getWidth();
+            y2 = anchor.getY() + anchor.getHeight();
+            alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
+        }
 
         AffineTransform at = new AffineTransform();
         java.awt.Shape tailShape = null;
@@ -273,9 +276,12 @@ public class DrawSimpleShape extends DrawShape {
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
 
         Rectangle2D anchor = getAnchor(graphics, getShape());
-        double x1 = anchor.getX(), y1 = anchor.getY();
-
-        double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
+        double x1 = 0, y1 = 0, alpha = 0;
+        if (anchor != null) {
+            x1 = anchor.getX();
+            y1 = anchor.getY();
+            alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
+        }
 
         AffineTransform at = new AffineTransform();
         java.awt.Shape headShape = null;
@@ -362,7 +368,7 @@ public class DrawSimpleShape extends DrawShape {
 
         for (Outline o : outlines) {
             java.awt.Shape s = o.getOutline();
-            Path p = o.getPath();
+            PathIf p = o.getPath();
             graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
             graphics.setPaint(shadowColor);
 
@@ -389,7 +395,7 @@ public class DrawSimpleShape extends DrawShape {
         if(anchor == null) {
             return lst;
         }
-        for (Path p : geom) {
+        for (PathIf p : geom) {
 
             double w = p.getW(), h = p.getH(), scaleX, scaleY;
             if (w == -1) {

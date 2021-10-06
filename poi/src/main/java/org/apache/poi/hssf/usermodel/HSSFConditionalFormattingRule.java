@@ -64,8 +64,8 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
      * Only newer style formatting rules have priorities. For older ones,
      *  we don't know priority for these, other than definition/model order,
      *  which appears to be what Excel uses.
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getPriority()
      */
+    @Override
     public int getPriority() {
         CFRule12Record rule12 = getCFRule12Record(false);
         if (rule12 == null) return 0;
@@ -74,8 +74,8 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     /**
      * Always true for HSSF files, per Microsoft Excel documentation
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getStopIfTrue()
      */
+    @Override
     public boolean getStopIfTrue() {
         return true;
     }
@@ -95,8 +95,8 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     /**
      * Always null for HSSF records, until someone figures out where to find it
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getNumberFormat()
      */
+    @Override
     public ExcelNumberFormat getNumberFormat() {
         return null;
     }
@@ -112,16 +112,18 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return - font formatting object  if defined,  <code>null</code> otherwise
+     * @return - font formatting object  if defined,  {@code null} otherwise
      */
+    @Override
     public HSSFFontFormatting getFontFormatting() {
         return getFontFormatting(false);
     }
     /**
      * create a new font formatting structure if it does not exist,
      * otherwise just return existing object.
-     * @return - font formatting object, never returns <code>null</code>.
+     * @return - font formatting object, never returns {@code null}.
      */
+    @Override
     public HSSFFontFormatting createFontFormatting() {
         return getFontFormatting(true);
     }
@@ -137,16 +139,18 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return - border formatting object  if defined,  <code>null</code> otherwise
+     * @return - border formatting object  if defined,  {@code null} otherwise
      */
+    @Override
     public HSSFBorderFormatting getBorderFormatting() {
         return getBorderFormatting(false);
     }
     /**
      * create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
-     * @return - border formatting object, never returns <code>null</code>.
+     * @return - border formatting object, never returns {@code null}.
      */
+    @Override
     public HSSFBorderFormatting createBorderFormatting() {
         return getBorderFormatting(true);
     }
@@ -162,8 +166,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return - pattern formatting object  if defined, <code>null</code> otherwise
+     * @return - pattern formatting object  if defined, {@code null} otherwise
      */
+    @Override
     public HSSFPatternFormatting getPatternFormatting()
     {
         return getPatternFormatting(false);
@@ -171,8 +176,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     /**
      * create a new pattern formatting structure if it does not exist,
      * otherwise just return existing object.
-     * @return - pattern formatting object, never returns <code>null</code>.
+     * @return - pattern formatting object, never returns {@code null}.
      */
+    @Override
     public HSSFPatternFormatting createPatternFormatting()
     {
         return getPatternFormatting(true);
@@ -192,8 +198,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return databar / data-bar formatting object if defined, <code>null</code> otherwise
+     * @return databar / data-bar formatting object if defined, {@code null} otherwise
      */
+    @Override
     public HSSFDataBarFormatting getDataBarFormatting() {
         return getDataBarFormatting(false);
     }
@@ -218,8 +225,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return icon / multi-state formatting object if defined, <code>null</code> otherwise
+     * @return icon / multi-state formatting object if defined, {@code null} otherwise
      */
+    @Override
     public HSSFIconMultiStateFormatting getMultiStateFormatting() {
         return getMultiStateFormatting(false);
     }
@@ -245,8 +253,9 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * @return color scale / gradient formatting object if defined, <code>null</code> otherwise
+     * @return color scale / gradient formatting object if defined, {@code null} otherwise
      */
+    @Override
     public HSSFColorScaleFormatting getColorScaleFormatting() {
         return getColorScaleFormatting(false);
     }
@@ -270,12 +279,13 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     /**
      * always null (not a filter condition) or {@link ConditionFilterType#FILTER} if it is.
-     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getConditionFilterType()
      */
+    @Override
     public ConditionFilterType getConditionFilterType() {
         return getConditionType() == ConditionType.FILTER ? ConditionFilterType.FILTER : null;
     }
 
+    @Override
     public ConditionFilterData getFilterConfiguration() {
         return null;
     }
@@ -288,11 +298,13 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return cfRuleRecord.getComparisonOperation();
     }
 
+    @Override
     public String getFormula1()
     {
         return toFormulaString(cfRuleRecord.getParsedExpression1());
     }
 
+    @Override
     public String getFormula2() {
         byte conditionType = cfRuleRecord.getConditionType();
         if (conditionType == CELL_COMPARISON) {
@@ -306,6 +318,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return null;
     }
 
+    @Override
     public String getText() {
         return null; // not available here, unless it exists and is unimplemented in cfRuleRecord
     }
@@ -325,6 +338,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
      * Conditional format rules don't define stripes, so always 0
      * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()
      */
+    @Override
     public int getStripeSize() {
         return 0;
     }

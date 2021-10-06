@@ -27,7 +27,6 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CRLException;
@@ -46,6 +45,7 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -191,7 +191,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 X509CRL crl;
                 try {
                     crl = (X509CRL) this.certificateFactory
-                            .generateCRL(new ByteArrayInputStream(encodedCrl));
+                            .generateCRL(new UnsynchronizedByteArrayInputStream(encodedCrl));
                 } catch (CRLException e) {
                     throw new RuntimeException("CRL parse error: "
                             + e.getMessage(), e);
@@ -289,8 +289,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream();
-        try {
+        try (UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream()) {
             for (Node node : nodeList) {
                 /*
                  * Re-initialize the c14n else the namespaces will get cached
@@ -299,12 +298,12 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 Canonicalizer c14n = Canonicalizer.getInstance(c14nAlgoId);
                 c14n.canonicalizeSubtree(node, c14nValue);
             }
+            return c14nValue.toByteArray();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("c14n error: " + e.getMessage(), e);
         }
-        return c14nValue.toByteArray();
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {

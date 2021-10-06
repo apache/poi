@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.poifs.filesystem;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.TempFile;
@@ -30,6 +32,7 @@ import java.io.IOException;
  */
 @Beta
 public class TempFilePOIFSFileSystem extends POIFSFileSystem {
+    private static Logger LOG = LogManager.getLogger(TempFilePOIFSFileSystem.class);
     File tempFile;
 
     @Override
@@ -44,7 +47,11 @@ public class TempFilePOIFSFileSystem extends POIFSFileSystem {
 
     @Override
     public void close() throws IOException {
-        if (tempFile != null && tempFile.exists()) tempFile.delete();
+        if (tempFile != null && tempFile.exists()) {
+            if (!tempFile.delete()) {
+                LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
+            }
+        }
         super.close();
     }
 

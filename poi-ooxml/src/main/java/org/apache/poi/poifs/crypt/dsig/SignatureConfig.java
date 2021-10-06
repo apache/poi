@@ -68,7 +68,7 @@ import org.apache.xml.security.signature.XMLSignature;
 /**
  * This class bundles the configuration options used for the existing
  * signature facets.
- * Apart of the thread local members (e.g. opc-package) most values will probably be constant, so
+ * Apart from the thread local members (e.g. opc-package) most values will probably be constant, so
  * it might be configured centrally (e.g. by spring)
  */
 @SuppressWarnings({"unused","WeakerAccess"})
@@ -1044,7 +1044,7 @@ public class SignatureConfig {
     /**
      * The signature config can be updated if a document is succesful validated.
      * This flag is used for activating this modifications.
-     * Defaults to {@code false}<p>
+     * Defaults to {@code false}
      *
      * @param updateConfigOnValidate if true, update config on validate
      *

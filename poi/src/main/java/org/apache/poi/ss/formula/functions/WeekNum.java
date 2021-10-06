@@ -17,16 +17,22 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Calendar;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.WeekFields;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation for Excel WeekNum() function.
@@ -44,6 +50,9 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new WeekNum();
+    private static final NumberEval DEFAULT_RETURN_TYPE = new NumberEval(1);
+    private static final HashSet<Integer> VALID_RETURN_TYPES = new HashSet<>(
+            Arrays.asList(1, 2, 11, 12, 13, 14, 15, 16, 17, 21));
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval serialNumVE, ValueEval returnTypeVE) {
@@ -53,36 +62,67 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
-        Calendar serialNumCalendar = LocaleUtil.getLocaleCalendar();
-        serialNumCalendar.setTime(DateUtil.getJavaDate(serialNum, false));
-
+        LocalDate localDate;
+        try {
+            Date dateToConvert = DateUtil.getJavaDate(serialNum, false);
+            localDate = dateToConvert.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        } catch (Exception e) {
+            return ErrorEval.NUM_ERROR;
+        }
         int returnType;
         try {
             ValueEval ve = OperandResolver.getSingleValue(returnTypeVE, srcRowIndex, srcColumnIndex);
-            returnType = OperandResolver.coerceValueToInt(ve);
+            if (ve instanceof MissingArgEval) {
+                returnType = (int)DEFAULT_RETURN_TYPE.getNumberValue();
+            } else {
+                returnType = OperandResolver.coerceValueToInt(ve);
+            }
         } catch (EvaluationException e) {
             return ErrorEval.NUM_ERROR;
         }
 
-        if (returnType != 1 && returnType != 2) {
+        if (!VALID_RETURN_TYPES.contains(returnType)) {
             return ErrorEval.NUM_ERROR;
         }
 
-        return new NumberEval(this.getWeekNo(serialNumCalendar, returnType));
+        return new NumberEval(this.getWeekNo(localDate, returnType));
     }
 
-    public int getWeekNo(Calendar cal, int weekStartOn) {
-        if (weekStartOn == 1) {
-            cal.setFirstDayOfWeek(Calendar.SUNDAY);
+    private WeekFields SUNDAY_START = WeekFields.of(DayOfWeek.SUNDAY, 1);
+    private WeekFields MONDAY_START = WeekFields.of(DayOfWeek.MONDAY, 1);
+    private WeekFields TUESDAY_START = WeekFields.of(DayOfWeek.TUESDAY, 1);
+    private WeekFields WEDNESDAY_START = WeekFields.of(DayOfWeek.WEDNESDAY, 1);
+    private WeekFields THURSDAY_START = WeekFields.of(DayOfWeek.THURSDAY, 1);
+    private WeekFields FRIDAY_START = WeekFields.of(DayOfWeek.FRIDAY, 1);
+    private WeekFields SATURDAY_START = WeekFields.of(DayOfWeek.SATURDAY, 1);
+
+    public int getWeekNo(LocalDate date, int weekStartOn) {
+        if (weekStartOn == 1 || weekStartOn == 17) {
+            return date.get(SUNDAY_START.weekOfYear());
+        } else if (weekStartOn == 2 || weekStartOn == 11) {
+            return date.get(MONDAY_START.weekOfYear());
+        } else if (weekStartOn == 12) {
+            return date.get(TUESDAY_START.weekOfYear());
+        } else if (weekStartOn == 13) {
+            return date.get(WEDNESDAY_START.weekOfYear());
+        } else if (weekStartOn == 14) {
+            return date.get(THURSDAY_START.weekOfYear());
+        } else if (weekStartOn == 15) {
+            return date.get(FRIDAY_START.weekOfYear());
+        } else if (weekStartOn == 16) {
+            return date.get(SATURDAY_START.weekOfYear());
         } else {
-            cal.setFirstDayOfWeek(Calendar.MONDAY);
+            return date.get(WeekFields.ISO.weekOfYear());
         }
-        return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-        if (args.length == 2) {
+        if (args.length == 1) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], DEFAULT_RETURN_TYPE);
+        } else if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
         }
         return ErrorEval.VALUE_INVALID;

@@ -19,11 +19,6 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import static org.apache.poi.sl.draw.geom.Formula.OOXML_DEGREE;
-
-import java.awt.geom.Arc2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.util.Objects;
 
 import org.apache.poi.util.Internal;
@@ -57,7 +52,7 @@ import org.apache.poi.util.Internal;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_Path2DArcTo")
-public class ArcToCommand implements PathCommand {
+public class ArcToCommand implements ArcToCommandIf {
 
     // @XmlAttribute(name = "wR", required = true)
     private String wr;
@@ -68,51 +63,51 @@ public class ArcToCommand implements PathCommand {
     // @XmlAttribute(name = "swAng", required = true)
     private String swAng;
 
+    @Override
     public void setHR(String hr) {
         this.hr = hr;
     }
 
+    @Override
+    public String getHR() {
+        return hr;
+    }
+
+    @Override
+    public String getStAng() {
+        return stAng;
+    }
+
+    @Override
+    public String getWR() {
+        return wr;
+    }
+
+    @Override
     public void setWR(String wr) {
         this.wr = wr;
     }
 
+    @Override
     public void setStAng(String stAng) {
         this.stAng = stAng;
     }
 
-    public void setSwAng(String swAng) {
-        this.swAng = swAng;
+    @Override
+    public String getSwAng() {
+        return swAng;
     }
 
     @Override
-    public void execute(Path2D.Double path, Context ctx){
-        double rx = ctx.getValue(wr);
-        double ry = ctx.getValue(hr);
-        double ooStart = ctx.getValue(stAng) / OOXML_DEGREE;
-        double ooExtent = ctx.getValue(swAng) / OOXML_DEGREE;
-
-        // skew the angles for AWT output
-        double awtStart = convertOoxml2AwtAngle(ooStart, rx, ry);
-        double awtSweep = convertOoxml2AwtAngle(ooStart+ooExtent, rx, ry)-awtStart;
-
-        // calculate the inverse angle - taken from the (reversed) preset definition
-        double radStart = Math.toRadians(ooStart);
-        double invStart = Math.atan2(rx * Math.sin(radStart), ry * Math.cos(radStart));
-
-        Point2D pt = path.getCurrentPoint();
-        // calculate top/left corner
-        double x0 = pt.getX() - rx * Math.cos(invStart) - rx;
-        double y0 = pt.getY() - ry * Math.sin(invStart) - ry;
-
-        Arc2D arc = new Arc2D.Double(x0, y0, 2 * rx, 2 * ry, awtStart, awtSweep, Arc2D.OPEN);
-        path.append(arc, true);
+    public void setSwAng(String swAng) {
+        this.swAng = swAng;
     }
 
     /**
      * Arc2D angles are skewed, OOXML aren't ... so we need to unskew them<p>
      *
-     * Furthermore ooxml angle starts at the X-axis and increases clock-wise,
-     * where as Arc2D api states
+     * Furthermore, ooxml angle starts at the X-axis and increases clock-wise,
+     * whereas Arc2D api states
      * "45 degrees always falls on the line from the center of the ellipse to
      * the upper right corner of the framing rectangle"
      * so we need to reverse it

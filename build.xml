@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="5.0.1-SNAPSHOT"/>
+    <property name="version.id" value="5.1.1-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -280,22 +280,22 @@ under the License.
     <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.7.1" usage="main-tests"/>
 
 
-    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.27" usage="main-tests"/>
-    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.27" usage="main-tests"/>
+    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.33" usage="main-tests"/>
+    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.33" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.2" usage="main-tests"/>
     <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.6.28" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.19" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.19" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.11.19" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.11.19" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
-    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
+    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.1" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.2" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.3" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.69" usage="ooxml-provided"/>
@@ -326,18 +326,18 @@ under the License.
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.24" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.24" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.32" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.33" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
-    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.0" usage="ooxml"/>
+    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.1" usage="ooxml"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.21" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
-    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.31" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.32" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -698,6 +698,7 @@ under the License.
                 <include name="batik*.jar"/>
                 <include name="slf4j*-1.7.30.jar"/>
                 <include name="xmlsec*-2.2.1.jar"/>
+                <include name="xmlsec*-2.2.2.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
@@ -1490,6 +1491,7 @@ under the License.
                 <path refid="ooxml.classpath"/>
                 <path refid="test.jar.classpath"/>
                 <pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${ooxml.output.test.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>

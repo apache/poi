@@ -80,9 +80,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
    * by a sprm stored in a tapx.
    *
    * @param newTAP The TableProperties object to perform the operation on.
-   * @param operand The operand that defines this operation.
-   * @param param The parameter for this operation.
-   * @param varParam Variable length parameter for this operation.
+   * @param sprm The operation to perform.
    */
   static void unCompressTAPOperation (TableProperties newTAP, SprmOperation sprm)
   {

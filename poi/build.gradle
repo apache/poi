@@ -27,6 +27,10 @@ sourceSets {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
+        java {
+            // also include the generated Version.java
+            srcDirs += 'build/generated-sources'
+        }
     }
     test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -41,11 +45,11 @@ dependencies {
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.zaxxer:SparseBitSet:1.2'
-    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-    implementation 'javax.activation:activation:1.1.1'
+    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    // implementation 'javax.activation:activation:1.1.1'
 
-    testImplementation 'org.reflections:reflections:0.9.12'
-    testImplementation 'org.apache.ant:ant:1.10.9'
+    testImplementation 'org.reflections:reflections:0.10'
+    testImplementation 'org.apache.ant:ant:1.10.11'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
@@ -54,6 +58,27 @@ dependencies {
     javadocs project(':poi-ooxml')
     javadocs project(':poi-scratchpad')
 }
+
+// generate and compile the file Version.java file
+task generateVersionJava() {
+    //dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
+
+    File fileIn = file("src/main/version/Version.java.template")
+    File fileOut = file("build/generated-sources/org/apache/poi/Version.java")
+
+    inputs.file fileIn
+    outputs.file fileOut
+
+    doLast {
+        String content = fileIn.text
+
+        content = content.replace("@VERSION@", version)
+        content = content.replace("@DSTAMP@", new Date().format('yyyyMMdd'))
+
+        fileOut.write content
+    }
+}
+compileJava.dependsOn 'generateVersionJava'
 
 final String MODULE_NAME = 'org.apache.poi.poi'
 final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
@@ -104,6 +129,8 @@ task cacheTest9(type: Copy) {
 }
 
 jar {
+    dependsOn cacheJava9
+
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
@@ -117,7 +144,7 @@ jar {
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: testClasses) {
+task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
     classifier 'tests'
@@ -140,11 +167,11 @@ task testJar(type: Jar, dependsOn: testClasses) {
 javadoc {
     dependsOn configurations.javadocs.dependencies.collect{ ':' + it.dependencyProject.name + ':compileJava' }
 
-	doFirst {
-		options {
-			classpath += files(configurations.javadocs.dependencies.collect{ it.dependencyProject.sourceSets.main.output.classesDirs })
-		}
-	}
+    doFirst {
+        options {
+            classpath += files(configurations.javadocs.dependencies.collect{ it.dependencyProject.sourceSets.main.output.classesDirs })
+        }
+    }
 }
 
 artifacts {
@@ -154,11 +181,13 @@ artifacts {
 test {
     dependsOn { testJar }
 
+    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+
     doFirst {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs << [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-tests:' + files(MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-tests' + File.pathSeparator + files(MODULE_PATH).asPath,
             ]
         }
     }

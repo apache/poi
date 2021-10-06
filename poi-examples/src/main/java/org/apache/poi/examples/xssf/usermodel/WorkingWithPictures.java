@@ -67,10 +67,7 @@ public final class WorkingWithPictures {
             pict.resize(2);
 
             //save workbook
-            String file = "picture.xls";
-            if (wb instanceof XSSFWorkbook) {
-                file += "x"; // NOSONAR
-            }
+            String file = "picture.xlsx";
             try (OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }

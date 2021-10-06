@@ -43,6 +43,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -305,6 +306,7 @@ final class TestOldExcelExtractor {
     }
 
     @Test
+    @Disabled("Redirecting System.out/err is bad in concurrent test environment")
     void testMainUsage() {
         PrintStream save = System.err;
         SecurityManager sm = System.getSecurityManager();
@@ -320,6 +322,7 @@ final class TestOldExcelExtractor {
     }
 
     @Test
+    @Disabled("Redirecting System.out/err is bad in concurrent test environment")
     void testMain() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         PrintStream save = System.out;

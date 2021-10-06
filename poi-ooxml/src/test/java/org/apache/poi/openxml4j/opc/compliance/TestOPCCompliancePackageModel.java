@@ -35,8 +35,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.TempFile;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -47,18 +45,10 @@ import org.junit.jupiter.api.Test;
  */
 class TestOPCCompliancePackageModel {
 
-    private static File TESTFILE;
-
-    @BeforeAll
-    public static void setup() throws IOException {
-        TESTFILE = TempFile.createTempFile("TODELETEIFEXIST", ".docx");
-    }
-
-    @BeforeEach
-    void tearDown() {
-        if (TESTFILE.exists()) {
-            assertTrue(TESTFILE.delete());
-        }
+    private static File getTempFile() throws IOException {
+        File tf = TempFile.createTempFile("TODELETEIFEXIST", ".docx");
+        assertTrue(tf::delete);
+        return tf;
     }
 
     /**
@@ -68,7 +58,8 @@ class TestOPCCompliancePackageModel {
      */
     @Test
     void testPartNameDerivationAdditionFailure() throws InvalidFormatException, IOException {
-        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+        File tf = getTempFile();
+        try (OPCPackage pkg = OPCPackage.create(tf)) {
             PackagePartName name = PackagingURIHelper.createPartName("/word/document.xml");
             PackagePartName nameDerived = PackagingURIHelper.createPartName("/word/document.xml/image1.gif");
             pkg.createPart(name, ContentTypes.XML);
@@ -77,6 +68,8 @@ class TestOPCCompliancePackageModel {
                     "A package implementer shall neither create nor recognize a part with a part name derived from another " +
                             "part name by appending segments to it. [M1.11]");
             pkg.revert();
+        } finally {
+            assertTrue(tf::delete);
         }
     }
 
@@ -101,8 +94,9 @@ class TestOPCCompliancePackageModel {
      * part names.
      */
     @Test
-    void testAddPackageAlreadyAddFailure() throws Exception {
-        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+    void testAddPackageAlreadyAddFailure() throws IOException, InvalidFormatException {
+        File tf = getTempFile();
+        try (OPCPackage pkg = OPCPackage.create(tf)) {
             PackagePartName name1 = PackagingURIHelper.createPartName("/word/document.xml");
             PackagePartName name2 = PackagingURIHelper.createPartName("/word/document.xml");
 
@@ -112,6 +106,8 @@ class TestOPCCompliancePackageModel {
                             "recognize packages with equivalent part names. [M1.12]"
             );
             pkg.revert();
+        } finally {
+            assertTrue(tf::delete);
         }
     }
 
@@ -121,8 +117,9 @@ class TestOPCCompliancePackageModel {
      * part names.
      */
     @Test
-    void testAddPackageAlreadyAddFailure2() throws Exception {
-        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+    void testAddPackageAlreadyAddFailure2() throws IOException, InvalidFormatException {
+        File tf = getTempFile();
+        try (OPCPackage pkg = OPCPackage.create(tf)) {
             PackagePartName partName = PackagingURIHelper.createPartName("/word/document.xml");
             pkg.createPart(partName, ContentTypes.XML);
             assertThrows(InvalidOperationException.class, () -> pkg.createPart(partName, ContentTypes.XML),
@@ -130,6 +127,8 @@ class TestOPCCompliancePackageModel {
                             "recognize packages with equivalent part names. [M1.12]"
             );
             pkg.revert();
+        } finally {
+            assertTrue(tf::delete);
         }
     }
 
@@ -143,7 +142,8 @@ class TestOPCCompliancePackageModel {
      */
     @Test
     void testAddRelationshipRelationshipsPartFailure() throws IOException, InvalidFormatException {
-        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+        File tf = getTempFile();
+        try (OPCPackage pkg = OPCPackage.create(tf)) {
             PackagePartName name1 = PackagingURIHelper.createPartName("/test/_rels/document.xml.rels");
 
             assertThrows(InvalidOperationException.class,
@@ -151,17 +151,22 @@ class TestOPCCompliancePackageModel {
                     "The Relationships part shall not have relationships to any other part [M1.25]"
             );
             pkg.revert();
+        } finally {
+            assertTrue(tf::delete);
         }
     }
 
     @Test
     void testToString() throws IOException {
-        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+        File tf = getTempFile();
+        try (OPCPackage pkg = OPCPackage.create(tf)) {
             assertEquals("OPCPackage{" +
                         "packageAccess=READ_WRITE, " +
                         "relationships=null, " +
                         "packageProperties=Name: /docProps/core.xml - Content Type: application/vnd.openxmlformats-package.core-properties+xml, " +
                         "isDirty=false}", pkg.toString());
+        } finally {
+            assertTrue(tf::delete);
         }
     }
 }

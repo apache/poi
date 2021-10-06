@@ -45,6 +45,7 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,6 +55,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 /**
  * Test that the extractor factory plays nicely
  */
+@Tag("scratchpad.ignore")
 class TestExtractorFactory {
 
     private static final POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();

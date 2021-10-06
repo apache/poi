@@ -24,41 +24,46 @@ import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 
 /**
- * High level representation for Icon / Multi-State Formatting 
+ * High level representation for Icon / Multi-State Formatting
  *  component of Conditional Formatting settings
  */
 public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.usermodel.IconMultiStateFormatting {
     private final HSSFSheet sheet;
-    private final CFRule12Record cfRule12Record;
     private final IconMultiStateFormatting iconFormatting;
 
-    protected HSSFIconMultiStateFormatting(CFRule12Record cfRule12Record, HSSFSheet sheet) {
+    HSSFIconMultiStateFormatting(CFRule12Record cfRule12Record, HSSFSheet sheet) {
         this.sheet = sheet;
-        this.cfRule12Record = cfRule12Record;
-        this.iconFormatting = this.cfRule12Record.getMultiStateFormatting();
+        this.iconFormatting = cfRule12Record.getMultiStateFormatting();
     }
 
+    @Override
     public IconSet getIconSet() {
         return iconFormatting.getIconSet();
     }
+    @Override
     public void setIconSet(IconSet set) {
         iconFormatting.setIconSet(set);
     }
 
+    @Override
     public boolean isIconOnly() {
         return iconFormatting.isIconOnly();
     }
+    @Override
     public void setIconOnly(boolean only) {
         iconFormatting.setIconOnly(only);
     }
 
+    @Override
     public boolean isReversed() {
         return iconFormatting.isReversed();
     }
+    @Override
     public void setReversed(boolean reversed) {
         iconFormatting.setReversed(reversed);
     }
 
+    @Override
     public HSSFConditionalFormattingThreshold[] getThresholds() {
         Threshold[] t = iconFormatting.getThresholds();
         HSSFConditionalFormattingThreshold[] ht = new HSSFConditionalFormattingThreshold[t.length];
@@ -68,6 +73,7 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
         return ht;
     }
 
+    @Override
     public void setThresholds(ConditionalFormattingThreshold[] thresholds) {
         Threshold[] t = new Threshold[thresholds.length];
         for (int i=0; i<t.length; i++) {
@@ -76,6 +82,7 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
         iconFormatting.setThresholds(t);
     }
 
+    @Override
     public HSSFConditionalFormattingThreshold createThreshold() {
         return new HSSFConditionalFormattingThreshold(new IconMultiStateThreshold(), sheet);
     }

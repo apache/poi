@@ -32,11 +32,13 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.Internal;
 
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
  */
-final class LookupUtils {
+@Internal
+public final class LookupUtils {
 
     /**
      * Represents a single row or column within an {@code AreaEval}.
@@ -303,14 +305,11 @@ final class LookupUtils {
             StringEval se = (StringEval) other;
 
             String stringValue = se.getStringValue();
-            if (_wildCardPattern != null) {
+            if (_wildCardPattern != null && (_isMatchFunction || !_matchExact)) {
                 Matcher matcher = _wildCardPattern.matcher(stringValue);
                 boolean matches = matcher.matches();
 
-                if (_isMatchFunction ||
-                    !_matchExact) {
-                  return CompareResult.valueOf(matches);
-                }
+                return CompareResult.valueOf(matches);
             }
 
             return CompareResult.valueOf(_value.compareToIgnoreCase(stringValue));

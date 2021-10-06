@@ -41,6 +41,7 @@ class XSLFFileHandler extends SlideShowHandler {
             assertNotNull(slideInner.getSlideReferences());
 
             new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
+            POIXMLDocumentHandler.cursorRecursive(slide.getCTPresentation());
 
             handleSlideShow(slide);
         } catch (POIXMLException e) {

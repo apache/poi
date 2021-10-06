@@ -42,11 +42,13 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Tag("scratchpad.ignore")
 class TestHxxFEncryption {
     public static Stream<Arguments> data() throws IOException {
         final String base64 =

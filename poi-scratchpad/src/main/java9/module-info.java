@@ -20,6 +20,7 @@ module org.apache.poi.scratchpad {
     requires java.desktop;
     requires commons.math3;
     requires org.apache.commons.io;
+    requires org.apache.commons.codec;
     requires org.apache.logging.log4j;
 
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;

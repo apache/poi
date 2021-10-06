@@ -262,7 +262,7 @@ public class VariantSupport extends Variant {
 
     /**
      * Writes a variant value to an output stream. This method ensures that
-     * always a multiple of 4 bytes is written.<p>
+     * always a multiple of 4 bytes is written.
      *
      * @param out The stream to write the value to.
      * @param type The variant's type.

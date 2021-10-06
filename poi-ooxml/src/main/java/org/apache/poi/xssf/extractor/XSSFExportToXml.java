@@ -277,7 +277,11 @@ public class XSSFExportToXml implements Comparator<String>{
         case FORMULA:
            if (cell.getCachedFormulaResultType() == CellType.STRING) {
                value = cell.getStringCellValue();
-           } else {
+           } else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
+               value += cell.getBooleanCellValue();
+           } else if (cell.getCachedFormulaResultType() == CellType.ERROR) {
+               value = cell.getErrorCellString();
+           } else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
                if (DateUtil.isCellDateFormatted(cell)) {
                   value = getFormattedDate(cell);
                } else {

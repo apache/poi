@@ -118,7 +118,7 @@ public class SXSSFSheet implements Sheet
      *
      * @param rownum  row number
      * @return high level Row object representing a row in the sheet
-     * @throws IllegalArgumentException If the max. number of rows is exceeded or 
+     * @throws IllegalArgumentException If the max. number of rows is exceeded or
      *      a rownum is provided where the row is already flushed to disk.
      * @see #removeRow(Row)
      */
@@ -986,7 +986,7 @@ public class SXSSFSheet implements Sheet
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
-     * <p>
+     *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -1818,7 +1818,7 @@ public class SXSSFSheet implements Sheet
     /**
      * Specifies how many rows can be accessed at most via getRow().
      * When a new node is created via createRow() and the total number
-     * of unflushed records would exeed the specified value, then the
+     * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
      * via getRow() anymore.
      * A value of -1 indicates unlimited access. In this case all
@@ -1850,7 +1850,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Specifies how many rows can be accessed at most via getRow().
-     * The exeeding rows (if any) are flushed to the disk while rows
+     * The excess rows (if any) are flushed to the disk while rows
      * with lower index values are flushed first.
      */
     public void flushRows(int remaining) throws IOException
@@ -1873,11 +1873,21 @@ public class SXSSFSheet implements Sheet
         this.flushRows(0);
     }
 
+    /**
+     * Flush all the data in the buffered stream to the temp file.
+     *
+     * @throws IOException If an I/O error occurs
+     */
+    public void flushBufferedData() throws IOException
+    {
+        this._writer.flush();
+    }
+
     private void flushOneRow() throws IOException
     {
         Integer firstRowNum = _rows.firstKey();
         if (firstRowNum!=null) {
-            int rowIndex = firstRowNum.intValue();
+            int rowIndex = firstRowNum;
             SXSSFRow row = _rows.get(firstRowNum);
             // Update the best fit column widths for auto-sizing just before the rows are flushed
             _autoSizeColumnTracker.updateColumnWidths(row);

@@ -648,7 +648,13 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @return ID of the created relationship
      */
     String importBlip(String blipId, POIXMLDocumentPart parent) {
-        final XSLFPictureData parData = parent.getRelationPartById(blipId).getDocumentPart();
+        final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
+        XSLFPictureData parData;
+        if (docPart instanceof XSLFPictureData) {
+            parData = (XSLFPictureData)docPart;
+        } else {
+            throw new RuntimeException("cannot import blip " + blipId + " - document part is not XSLFPictureData type");
+        }
         final XSLFPictureData pictureData;
         if (getPackagePart().getPackage() == parent.getPackagePart().getPackage()) {
             // handle ref counter correct, if the parent document is the same as this

@@ -265,6 +265,7 @@ public class GenericRecordJsonWriter implements Closeable {
         return true;
     }
 
+    @SuppressWarnings("java:S3516")
     protected boolean printNumber(String name, Object o) {
         Number n = (Number)o;
         printName(name);

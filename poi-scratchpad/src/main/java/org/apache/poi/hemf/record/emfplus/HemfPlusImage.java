@@ -445,18 +445,17 @@ public class HemfPlusImage {
         }
 
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-            try {
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 bos.write(getImageData());
                 if (continuedObjectData != null) {
                     for (EmfPlusObjectData od : continuedObjectData) {
                         bos.write(((EmfPlusImage)od).getImageData());
                     }
                 }
+                return bos.toByteArray();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return bos.toByteArray();
         }
 
         @Override

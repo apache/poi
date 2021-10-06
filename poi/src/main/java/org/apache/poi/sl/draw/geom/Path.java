@@ -58,7 +58,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_Path2D", propOrder = {"closeOrMoveToOrLnTo"})
-public final class Path {
+public final class Path implements PathIf {
 
     // @XmlElements({
     //     @XmlElement(name = "close", type = CTPath2DClose.class),
@@ -82,6 +82,7 @@ public final class Path {
 
 
 
+    @Override
     public void addCommand(PathCommand cmd){
         commands.add(cmd);
     }
@@ -89,6 +90,7 @@ public final class Path {
     /**
      * Convert the internal represenation to java.awt.geom.Path2D
      */
+    @Override
     public Path2D.Double getPath(Context ctx) {
         Path2D.Double path = new Path2D.Double();
         for(PathCommand cmd : commands) {
@@ -97,46 +99,57 @@ public final class Path {
         return path;
     }
 
+    @Override
     public boolean isStroked(){
         return stroke;
     }
 
+    @Override
     public void setStroke(boolean stroke) {
         this.stroke = stroke;
     }
 
+    @Override
     public boolean isFilled(){
         return fill != PaintModifier.NONE;
     }
 
+    @Override
     public PaintModifier getFill() {
         return fill;
     }
 
+    @Override
     public void setFill(PaintModifier fill) {
         this.fill = fill;
     }
 
+    @Override
     public long getW(){
         return w;
     }
 
+    @Override
     public void setW(long w) {
         this.w = w;
     }
 
+    @Override
     public long getH(){
         return h;
     }
 
+    @Override
     public void setH(long h) {
         this.h = h;
     }
 
+    @Override
     public boolean isExtrusionOk() {
         return extrusionOk;
     }
 
+    @Override
     public void setExtrusionOk(boolean extrusionOk) {
         this.extrusionOk = extrusionOk;
     }

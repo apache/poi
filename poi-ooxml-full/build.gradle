@@ -161,3 +161,8 @@ publishing {
         }
     }
 }
+
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false
