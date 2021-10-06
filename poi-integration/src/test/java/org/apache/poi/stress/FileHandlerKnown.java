@@ -45,7 +45,7 @@ public enum FileHandlerKnown {
         try {
             // Because of no-scratchpad handling, we need to resort to reflection here
             String n = name().replace("NULL", "Null");
-            return (FileHandler)Class.forName("org.apache.poi.stress." + n + "FileHandler").newInstance();
+            return (FileHandler)Class.forName("org.apache.poi.stress." + n + "FileHandler").getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             return new NullFileHandler();
         }

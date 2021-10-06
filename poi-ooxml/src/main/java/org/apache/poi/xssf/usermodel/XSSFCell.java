@@ -229,17 +229,17 @@ public final class XSSFCell extends CellBase {
                 return 0.0;
             case NUMERIC:
                 if(_cell.isSetV()) {
-                   String v = _cell.getV();
-                   if (v.isEmpty()) {
-                       return 0.0;
-                   }
-                   try {
-                      return Double.parseDouble(v);
-                   } catch(NumberFormatException e) {
-                      throw typeMismatch(CellType.NUMERIC, CellType.STRING, false);
-                   }
+                    String v = _cell.getV();
+                    if (v.isEmpty()) {
+                        return 0.0;
+                    }
+                    try {
+                        return Double.parseDouble(v);
+                    } catch(NumberFormatException e) {
+                        throw typeMismatch(CellType.NUMERIC, CellType.STRING, false);
+                    }
                 } else {
-                   return 0.0;
+                    return 0.0;
                 }
             case FORMULA:
                 throw new AssertionError();
@@ -575,7 +575,7 @@ public final class XSSFCell extends CellBase {
      */
     private boolean isFormulaCell() {
         return (_cell.isSetF() && _cell.getF().getT() != STCellFormulaType.DATA_TABLE)
-            || getSheet().isCellInArrayFormulaContext(this);
+                || getSheet().isCellInArrayFormulaContext(this);
     }
 
     /**
@@ -634,7 +634,7 @@ public final class XSSFCell extends CellBase {
             case STCellType.INT_S: // String is in shared strings
             case STCellType.INT_INLINE_STR: // String is inline in cell
             case STCellType.INT_STR:
-                 return CellType.STRING;
+                return CellType.STRING;
             default:
                 throw new IllegalStateException("Illegal cell type: " + this._cell.getT());
         }
@@ -961,7 +961,7 @@ public final class XSSFCell extends CellBase {
 
     /**
      * Removes the comment for this cell, if there is one.
-    */
+     */
     @Override
     public void removeCellComment() {
         XSSFComment comment = getCellComment();
@@ -1114,7 +1114,7 @@ public final class XSSFCell extends CellBase {
                     return FALSE;
                 }
                 throw new IllegalStateException("Unexpected boolean cached formula value '"
-                    + textValue + "'.");
+                        + textValue + "'.");
 
             case STRING:
                 // fall-through
@@ -1163,4 +1163,3 @@ public final class XSSFCell extends CellBase {
     }
 
 }
-
