@@ -31,7 +31,7 @@ public class CellCopyContext {
     private final Map<CellStyle, CellStyle> styleMap = new HashMap<>();
 
     /**
-     * @param srcStyle
+     * @param srcStyle style in source workbook
      * @return style that srcStyle is mapped to or null if no mapping exists
      */
     public CellStyle getMappedStyle(CellStyle srcStyle) {
