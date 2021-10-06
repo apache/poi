@@ -37,6 +37,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
  * types of files/exceptions, e.g. old file formats.
  *
  */
+@SuppressWarnings({"java:S2187", "unused"})
 public class BaseIntegrationTest {
     private final File rootDir;
     private final String file;

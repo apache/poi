@@ -459,17 +459,20 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Deprecated
     public byte[] readAllContinuedRemainder() {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE);
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE)) {
 
-        while (true) {
-            byte[] b = readRemainder();
-            out.write(b, 0, b.length);
-            if (!isContinueNext()) {
-                break;
+            while (true) {
+                byte[] b = readRemainder();
+                out.write(b, 0, b.length);
+                if (!isContinueNext()) {
+                    break;
+                }
+                nextRecord();
             }
-            nextRecord();
+            return out.toByteArray();
+        } catch (IOException ex) {
+            throw new RecordFormatException(ex);
         }
-        return out.toByteArray();
     }
 
     /** The remaining number of bytes in the <i>current</i> record.

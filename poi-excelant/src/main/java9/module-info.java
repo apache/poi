@@ -19,7 +19,6 @@ module org.apache.poi.excelant {
 
     requires ant;
     requires org.apache.poi.ooxml;
-    requires org.apache.poi.scratchpad;
 
     exports org.apache.poi.ss.excelant;
     exports org.apache.poi.ss.excelant.util;

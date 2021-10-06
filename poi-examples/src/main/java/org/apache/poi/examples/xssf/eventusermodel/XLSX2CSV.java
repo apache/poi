@@ -171,7 +171,7 @@ public class XLSX2CSV {
     private final PrintStream output;
 
     /**
-     * Creates a new XLSX -&gt; CSV examples
+     * Creates a new XLSX -&gt; CSV converter
      *
      * @param pkg        The XLSX package to process
      * @param output     The PrintStream to output the CSV to

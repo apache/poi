@@ -33,7 +33,8 @@ import java.time.DateTimeException;
  * <p>
  * The <b>DATEVALUE</b> function converts a date that is stored as text to a serial number that Excel
  * recognizes as a date. For example, the formula <b>=DATEVALUE("1/1/2008")</b> returns 39448, the
- * serial number of the date 1/1/2008. Remember, though, that your computer's system date setting may
+ * serial number of the date 1/1/2008. Any time element is ignored (see {@link TimeValue}).
+ * Remember, though, that your computer's system date setting may
  * cause the results of a <b>DATEVALUE</b> function to vary from this example
  * <p>
  * The <b>DATEVALUE</b> function is helpful in cases where a worksheet contains dates in a text format

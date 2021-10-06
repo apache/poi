@@ -29,7 +29,8 @@ public interface PictureData {
     /**
      * Suggests a file extension for this image.
      *
-     * @return the file extension.
+     * @return the file extension, without a leading {@code .}. Never {@code null}, but will be empty if the extension
+     * is unknown or if the file backing these data does not have an extension.
      */
     String suggestFileExtension();
 
@@ -39,7 +40,7 @@ public interface PictureData {
     String getMimeType();
     
     /**
-     * @return the POI internal image type, 0 if unknown image type
+     * @return the POI internal image type, {@code 0} if unknown image type
      *
      * @see Workbook#PICTURE_TYPE_DIB
      * @see Workbook#PICTURE_TYPE_EMF

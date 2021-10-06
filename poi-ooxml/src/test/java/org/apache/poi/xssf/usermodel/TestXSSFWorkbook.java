@@ -19,9 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
-import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
+import static org.apache.poi.xssf.XSSFTestDataSamples.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.zip.CRC32;
 
 import org.apache.poi.POIDataSamples;
@@ -53,6 +52,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -65,6 +65,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
@@ -164,6 +165,49 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             // Links to the three sheets, shared, styles and themes
             assertTrue(wbPart.hasRelationships());
             assertEquals(6, wbPart.getRelationships().size());
+        }
+    }
+
+    @Test
+    void existingWithZipEntryTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
+        }
+    }
+
+    @Test
+    void existingWithZipEntryEncryptedTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        boolean defaultEncryptFlag = ZipInputStreamZipEntrySource.shouldEncryptTempFiles();
+        ZipInputStreamZipEntrySource.setEncryptTempFiles(true);
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
+            ZipInputStreamZipEntrySource.setEncryptTempFiles(defaultEncryptFlag);
         }
     }
 
@@ -1129,7 +1173,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testRightToLeft() throws IOException {
-        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")){
+        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")) {
             Sheet sheet = workbook.getSheet("عربى");
 
             Cell A1 = sheet.getRow(0).getCell(0);
@@ -1147,6 +1191,22 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void test501RC1Failure() throws Exception {
+        String filename = "0-www-crossref-org.lib.rivier.edu_education-files_suffix-generator.xlsm";
+        try(XSSFWorkbook workbook = openSampleWorkbook(filename)) {
+            assertTrue(workbook.isMacroEnabled());
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                XSSFSheet sheet = workbook.getSheetAt(i);
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        assertNotNull(cell);
+                    }
+                }
+            }
+        }
+    }
+
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");
@@ -1155,4 +1215,39 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     private static String ref(Cell cell) {
         return new CellReference(cell).formatAsString();
     }
+
+    @Test
+    void testLinkExternalWorkbook() throws Exception {
+        String nameA = "link-external-workbook-a.xlsx";
+
+        try (
+                XSSFWorkbook a = new XSSFWorkbook();
+                XSSFWorkbook b = new XSSFWorkbook()
+        ) {
+            XSSFRow row1 = a.createSheet().createRow(0);
+            row1.createCell(0).setCellValue(10);
+            row1.createCell(1).setCellValue(20);
+
+            XSSFRow row2 = b.createSheet().createRow(0);
+            XSSFCell cell = row2.createCell(0);
+
+            b.linkExternalWorkbook(nameA, a);
+            String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
+            cell.setCellFormula(formula);
+            XSSFFormulaEvaluator evaluator = b.getCreationHelper().createFormulaEvaluator();
+            evaluator.evaluateFormulaCell(cell);
+            double cellValue = cell.getNumericCellValue();
+            assertEquals(cellValue,30.0);
+            /*
+            try (FileOutputStream out = new FileOutputStream(getSampleFile(nameA))) {
+                a.write(out);
+            }
+            String nameB = "link-external-workbook-b.xlsx";
+            try (FileOutputStream out = new FileOutputStream(getSampleFile(nameB))) {
+                b.write(out);
+            }
+            */
+        }
+    }
+
 }

@@ -33,17 +33,17 @@ import org.junit.jupiter.api.BeforeEach;
  * IfNa unit tests.
  */
 class TestIfna {
-	
+    
     HSSFWorkbook wb;
     HSSFCell cell;
     HSSFFormulaEvaluator fe;
 
-	@BeforeEach
-	void setup() {
+    @BeforeEach
+    void setup() {
         wb = new HSSFWorkbook();
         cell = wb.createSheet().createRow(0).createCell(0);
         fe = new HSSFFormulaEvaluator(wb);
-	}
+    }
 
     @Test
     void testNumbericArgsWorkCorrectly() {
@@ -54,7 +54,7 @@ class TestIfna {
     @Test
     void testStringArgsWorkCorrectly() {
         confirmResult(fe, cell, "IFNA(\"a1\",\"a2\")", new CellValue("a1"));
-        confirmResult(fe, cell, "IFNA(NA(),\"a2\")", new CellValue("a2"));		
+        confirmResult(fe, cell, "IFNA(NA(),\"a2\")", new CellValue("a2"));      
     }
 
     @Test

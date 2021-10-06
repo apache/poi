@@ -18,6 +18,8 @@
 package org.apache.poi.examples.xssf.streaming;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.DeferredSXSSFSheet;
 import org.apache.poi.xssf.streaming.DeferredSXSSFWorkbook;
@@ -27,7 +29,7 @@ import java.io.IOException;
 
 /**
  * This sample demonstrates how to use DeferredSXSSFWorkbook to generate workbooks in a streaming way.
- * This approach avoids the use of temporary files and can be used to output to streams like
+ * This approach reduces the use of temporary files and can be used to output to streams like
  * HTTP response streams.
  */
 public class DeferredGeneration {
@@ -36,19 +38,27 @@ public class DeferredGeneration {
         try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
             DeferredSXSSFSheet sheet1 = wb.createSheet("new sheet");
 
+            // cell styles should be created outside the row generator function
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+
             sheet1.setRowGenerator((ssxSheet) -> {
                 for (int i = 0; i < 10; i++) {
                     Row row = ssxSheet.createRow(i);
                     Cell cell = row.createCell(1);
+                    cell.setCellStyle(cellStyle);
                     cell.setCellValue("value " + i);
                 }
             });
 
             try (FileOutputStream fileOut = new FileOutputStream("DeferredGeneration.xlsx")) {
                 wb.write(fileOut);
+                //writeAvoidingTempFiles was added as an experimental change in POI 5.1.0
+                //wb.writeAvoidingTempFiles(fileOut);
             } finally {
                 wb.dispose();
             }
+            System.out.println("wrote DeferredGeneration.xlsx");
         }
     }
 }

@@ -57,9 +57,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor {
    * a single sprm.
    *
    * @param newSEP The SectionProperty to perform the operation on.
-   * @param operand The operation to perform.
-   * @param param The operation's parameter.
-   * @param varParam The operation variable length parameter.
+   * @param sprm The operation to perform.
    */
   static void unCompressSEPOperation (SectionProperties newSEP, SprmOperation sprm)
   {

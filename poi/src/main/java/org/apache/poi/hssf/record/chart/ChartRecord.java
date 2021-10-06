@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * The chart record is used to define the location and size of a chart.<p>
  *
  * Chart related records don't seem to be covered in either the
- * <A HREF="http://sc.openoffice.org/excelfileformat.pdf">OOO</A>
+ * <A HREF="https://sc.openoffice.org/excelfileformat.pdf">OOO</A>
  *  or the
  * <A HREF="http://download.microsoft.com/download/0/B/E/0BE8BDD7-E5E8-422A-ABFD-4342ED7AD886/Excel97-2007BinaryFileFormat(xls)Specification.pdf">MS</A>
  *  documentation.

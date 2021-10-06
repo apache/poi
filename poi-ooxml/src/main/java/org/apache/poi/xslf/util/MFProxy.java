@@ -36,14 +36,14 @@ import org.apache.poi.util.Internal;
 @Internal
 abstract class MFProxy implements Closeable {
     boolean ignoreParse;
-    boolean quite;
+    boolean quiet;
 
     void setIgnoreParse(boolean ignoreParse) {
         this.ignoreParse = ignoreParse;
     }
 
-    void setQuite(boolean quite) {
-        this.quite = quite;
+    void setQuiet(boolean quiet) {
+        this.quiet = quiet;
     }
 
     abstract void parse(File file) throws IOException;

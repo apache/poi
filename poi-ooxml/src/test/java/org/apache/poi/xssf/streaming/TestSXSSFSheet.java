@@ -25,10 +25,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.tests.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -118,6 +120,32 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
             Throwable ex = assertThrows(Throwable.class, () -> sheet.createRow(1));
             assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", ex.getMessage());
+        }
+    }
+
+    @Test
+    void flushBufferedDaat() throws IOException {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (SXSSFWorkbook wb = new SXSSFWorkbook(1)) {
+                SXSSFSheet sheet = wb.createSheet("my-sheet");
+
+                sheet.createRow(1).createCell(0).setCellValue(1);
+                sheet.createRow(2).createCell(0).setCellValue(2);
+                sheet.createRow(3).createCell(0).setCellValue(3);
+
+                sheet.flushBufferedData();
+
+                sheet.createRow(4).createCell(0).setCellValue(4);
+                sheet.createRow(5).createCell(0).setCellValue(5);
+                sheet.createRow(6).createCell(0).setCellValue(6);
+
+                wb.write(bos);
+            }
+            try (XSSFWorkbook wb = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet sheet = wb.getSheet("my-sheet");
+                assertEquals(3, sheet.getRow(3).getCell(0).getNumericCellValue());
+                assertEquals(6, sheet.getRow(6).getCell(0).getNumericCellValue());
+            }
         }
     }
 

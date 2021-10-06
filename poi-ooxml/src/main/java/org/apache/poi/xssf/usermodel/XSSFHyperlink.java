@@ -23,7 +23,9 @@ import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
@@ -265,19 +267,31 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
     public void setCellReference(String ref) {
         _ctHyperlink.setRef(ref);
     }
+
     @Internal
     public void setCellReference(CellReference ref) {
         setCellReference(ref.formatAsString());
     }
 
-    private CellReference buildCellReference() {
+    private CellReference buildFirstCellReference() {
+        return buildCellReference(false);
+    }
+
+    private CellReference buildLastCellReference() {
+        return buildCellReference(true);
+    }
+
+    private CellReference buildCellReference(boolean lastCell) {
         String ref = _ctHyperlink.getRef();
         if (ref == null) {
             ref = "A1";
         }
+        if (ref.contains(":")) {
+            AreaReference area = new AreaReference(ref, SpreadsheetVersion.EXCEL2007);
+            return lastCell ? area.getLastCell() : area.getFirstCell();
+        }
         return new CellReference(ref);
     }
-
 
     /**
      * Return the column of the first cell that contains the hyperlink
@@ -286,7 +300,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public int getFirstColumn() {
-        return buildCellReference().getCol();
+        return buildFirstCellReference().getCol();
     }
 
 
@@ -297,7 +311,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public int getLastColumn() {
-        return buildCellReference().getCol();
+        return buildLastCellReference().getCol();
     }
 
     /**
@@ -307,7 +321,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public int getFirstRow() {
-        return buildCellReference().getRow();
+        return buildFirstCellReference().getRow();
     }
 
 
@@ -318,7 +332,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public int getLastRow() {
-        return buildCellReference().getRow();
+        return buildLastCellReference().getRow();
     }
 
     /**
@@ -328,18 +342,25 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public void setFirstColumn(int col) {
-        setCellReference(new CellReference( getFirstRow(), col ));
+        int lastColumn = getLastColumn();
+        if (col > lastColumn) lastColumn = col;
+        String firstCellRef = CellReference.convertNumToColString(col) + (getFirstRow() + 1);
+        String lastCellRef = CellReference.convertNumToColString(lastColumn) + (getLastRow() + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
     }
 
     /**
      * Set the column of the last cell that contains the hyperlink.
-     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
     @Override
     public void setLastColumn(int col) {
-        setFirstColumn(col);
+        int firstColumn = getFirstColumn();
+        if (col < firstColumn) firstColumn = col;
+        String firstCellRef = CellReference.convertNumToColString(firstColumn) + (getFirstRow() + 1);
+        String lastCellRef = CellReference.convertNumToColString(col) + (getLastRow() + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
     }
 
     /**
@@ -349,18 +370,34 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      */
     @Override
     public void setFirstRow(int row) {
-        setCellReference(new CellReference( row, getFirstColumn() ));
+        int lastRow = getLastRow();
+        if (row > lastRow) lastRow = row;
+        String firstCellRef = CellReference.convertNumToColString(getFirstColumn()) + (row + 1);
+        String lastCellRef = CellReference.convertNumToColString(getLastColumn()) + (lastRow + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
     }
 
     /**
      * Set the row of the last cell that contains the hyperlink.
-     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param row the 0-based row of the last cell that contains the hyperlink
      */
     @Override
     public void setLastRow(int row) {
-        setFirstRow(row);
+        int firstRow = getFirstRow();
+        if (row < firstRow) firstRow = row;
+        String firstCellRef = CellReference.convertNumToColString(getFirstColumn()) + (firstRow + 1);
+        String lastCellRef = CellReference.convertNumToColString(getLastColumn()) + (row + 1);
+        setCellRange(firstCellRef + ":" + lastCellRef);
+    }
+
+    private void setCellRange(String range) {
+        AreaReference ref = new AreaReference(range, SpreadsheetVersion.EXCEL2007);
+        if(ref.isSingleCell()) {
+            setCellReference(ref.getFirstCell());
+        } else {
+            setCellReference(ref.formatAsString());
+        }
     }
 
     /**
@@ -377,6 +414,10 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
         _ctHyperlink.setTooltip(text);
     }
 
+    /**
+     * @return a new XSSFHyperlink based on this
+     * @since POI 5.1.0
+     */
     @Override
     public Duplicatable copy() {
         return new XSSFHyperlink(this);

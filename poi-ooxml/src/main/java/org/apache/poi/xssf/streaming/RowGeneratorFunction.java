@@ -28,7 +28,9 @@ import org.apache.poi.util.Beta;
 public interface RowGeneratorFunction {
     
     /**
-     * Generate and add rows to the sheet
+     * Generate and add rows to the sheet. Note that anything that does not relate to creating rows and cells
+     * should not be done inside this function. It is best to create cell styles and sheet level settings in
+     * separate calls outside this function.
      *
      * @param sheet the sheet
      * @throws Exception the exception

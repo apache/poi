@@ -18,19 +18,15 @@
 package org.apache.poi.sl.image;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.RecordFormatException;
+
+import java.util.Arrays;
 
 public final class ImageHeaderPNG {
 
     private static final int MAGIC_OFFSET = 16;
 
-    private byte[] data;
+    private final byte[] data;
 
     /**
      * @param data The raw image data
@@ -46,12 +42,11 @@ public final class ImageHeaderPNG {
     public byte[] extractPNG() {
         //
         //Just cut it off!.
-        try (InputStream is = new ByteArrayInputStream(data)) {
-            if (is.skip(MAGIC_OFFSET) == MAGIC_OFFSET && FileMagic.valueOf(is) == FileMagic.PNG) {
-                return IOUtils.toByteArray(is);
+        if (data.length >= MAGIC_OFFSET) {
+            byte[] newData = Arrays.copyOfRange(data, MAGIC_OFFSET, data.length);
+            if (FileMagic.valueOf(newData) == FileMagic.PNG) {
+                return newData;
             }
-        } catch (IOException e) {
-            throw new RecordFormatException("Unable to parse PNG header", e);
         }
 
         return data;

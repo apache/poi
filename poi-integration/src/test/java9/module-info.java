@@ -24,6 +24,14 @@ module org.apache.poi.stress {
 
     requires org.apache.commons.collections4;
     requires org.apache.poi.examples;
+    requires org.apache.poi.scratchpad;
+
+    requires org.apache.santuario.xmlsec;
+    requires org.bouncycastle.provider;
+    requires org.bouncycastle.pkix;
+    requires org.codehaus.stax2;
+
+
 
     exports org.apache.poi.stress;
 

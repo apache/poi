@@ -21,7 +21,16 @@
 package org.apache.poi.ss.formula.functions;
 
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.Utils;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static org.apache.poi.ss.util.Utils.addRow;
 
 class TestFinanceLib extends BaseTestNumeric {
 
@@ -110,6 +119,42 @@ class TestFinanceLib extends BaseTestNumeric {
         npv = FinanceLib.npv(r, v);
         x = 11342283.4233124;
         assertDouble("npv ", x, npv);
+
+        r = 0.08; v = new double[]{-1000, 500, 300, 800};
+        npv = FinanceLib.npv(r, v);
+        x = 328.9170387681793;
+        assertDouble("npv ", x, npv);
+
+        //https://support.microsoft.com/en-us/office/npv-function-8672cb67-2576-4d07-b67b-ac28acf2a568
+        r = 0.1; v = new double[]{-10000, 3000, 4200, 6800};
+        npv = FinanceLib.npv(r, v);
+        x = 1188.4434123352207;
+        assertDouble("npv ", x, npv);
+
+        r = 0.08; v = new double[]{-40000, 8000, 9200, 10000, 12000, 14500};
+        npv = FinanceLib.npv(r, v);
+        x = 1779.6866249373716;
+        assertDouble("npv ", x, npv);
+    }
+
+    @Test
+    void testMicrosoftNpvExample2() throws IOException {
+        //https://support.microsoft.com/en-us/office/npv-function-8672cb67-2576-4d07-b67b-ac28acf2a568
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            addRow(sheet, 0, "Data");
+            addRow(sheet, 1, 0.08);
+            addRow(sheet, 2, -40000);
+            addRow(sheet, 3, 8000);
+            addRow(sheet, 4, 9200);
+            addRow(sheet, 5, 10000);
+            addRow(sheet, 6, 12000);
+            addRow(sheet, 7, 14500);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8)+A3", 1922.061554932363);
+            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8, -9000)+A3", -3749.4650870155747);
+        }
     }
 
     @Test

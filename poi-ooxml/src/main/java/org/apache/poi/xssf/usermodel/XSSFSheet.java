@@ -55,23 +55,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellCopyPolicy;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.IgnoredErrorType;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Table;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -846,9 +830,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
-        String ref = addr.formatAsString();
-        for(XSSFHyperlink hyperlink : hyperlinks) {
-            if(hyperlink.getCellRef().equals(ref)) {
+        for (XSSFHyperlink hyperlink : getHyperlinkList()) {
+            if (addr.getRow() >= hyperlink.getFirstRow() && addr.getRow() <= hyperlink.getLastRow()
+                    && addr.getColumn() >= hyperlink.getFirstColumn() && addr.getColumn() <= hyperlink.getLastColumn()) {
                 return hyperlink;
             }
         }
@@ -2987,7 +2971,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
-     * <p>
+     *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -3372,13 +3356,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Register a hyperlink in the collection of hyperlinks on this sheet
+     * Register a hyperlink in the collection of hyperlinks on this sheet.
+     * Use {@link XSSFCell#setHyperlink(Hyperlink)} if the hyperlink is just for that one cell.
+     * Use this method if you want to add a Hyperlink that covers a range of sells. If you use
+     * this method, you will need to call {@link XSSFHyperlink#setCellReference(String)} to
+     * explicitly cell the value, eg B2 or B2:C3 (the 4 cells with B2 at top left and C3 at bottom right)
      *
      * @param hyperlink the link to add
      */
-    @Internal
     public void addHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.add(hyperlink);
+    }
+
+    /**
+     * Remove a hyperlink in the collection of hyperlinks on this sheet.
+     * {@link XSSFCell#removeHyperlink()} can be used if the hyperlink is just for that one cell.
+     *
+     * @param hyperlink the link to remove
+     * @since POI 5.1.0
+     */
+    public void removeHyperlink(XSSFHyperlink hyperlink) {
+        hyperlinks.remove(hyperlink);
     }
 
     /**
@@ -3392,12 +3390,56 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // CTHyperlinks is regenerated from scratch when writing out the spreadsheet
         // so don't worry about maintaining hyperlinks and CTHyperlinks in parallel.
         // only maintain hyperlinks
-        String ref = new CellReference(row, column).formatAsString();
-        for (Iterator<XSSFHyperlink> it = hyperlinks.iterator(); it.hasNext();) {
-            XSSFHyperlink hyperlink = it.next();
-            if (hyperlink.getCellRef().equals(ref)) {
-                it.remove();
-                return;
+        XSSFHyperlink hyperlink = getHyperlink(row, column);
+        if (hyperlink != null) {
+            if (hyperlink.getFirstRow() == row && hyperlink.getLastRow() == row
+                && hyperlink.getFirstColumn() == column && hyperlink.getLastColumn() == column) {
+                removeHyperlink(hyperlink);
+            } else {
+                //we have a cellRef that spans multiple cells - we just want to remove the hyperlink from one cell
+                //we delete this hyperlink but add new hyperlinks to cover the other cells that were served
+                //by the old hyperlink
+                boolean leftCreated = false;
+                boolean rightCreated = false;
+                if (hyperlink.getFirstColumn() < column) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    newLink.setFirstColumn(hyperlink.getFirstColumn());
+                    newLink.setLastColumn(column - 1);
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                    leftCreated = true;
+                }
+                if (hyperlink.getLastColumn() > column) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    newLink.setFirstColumn(column + 1);
+                    newLink.setLastColumn(hyperlink.getLastColumn());
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                    rightCreated = true;
+                }
+                if (hyperlink.getFirstRow() < row) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    newLink.setFirstColumn(firstColumn);
+                    newLink.setLastColumn(lastColumn);
+                    newLink.setFirstRow(hyperlink.getFirstRow());
+                    newLink.setLastRow(row - 1);
+                    addHyperlink(newLink);
+                }
+                if (hyperlink.getLastRow() > row) {
+                    XSSFHyperlink newLink = new XSSFHyperlink(hyperlink);
+                    int firstColumn = leftCreated ? row : hyperlink.getFirstColumn();
+                    int lastColumn = rightCreated ? row : hyperlink.getLastColumn();
+                    newLink.setFirstColumn(firstColumn);
+                    newLink.setLastColumn(lastColumn);
+                    newLink.setFirstRow(row + 1);
+                    newLink.setLastRow(hyperlink.getLastRow());
+                    addHyperlink(newLink);
+                }
+                removeHyperlink(hyperlink);
             }
         }
     }
@@ -4625,7 +4667,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                             if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
                                 CTCellFormula nextF = nextCell.getCTCell().getF();
                                 nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                nextF.setT(STCellFormulaType.SHARED); //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
+                                //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
+                                nextF.setT(STCellFormulaType.SHARED);
+                                if (!nextF.isSetSi()) {
+                                    nextF.setSi(f.getSi());
+                                }
                                 CellRangeAddress nextRef = new CellRangeAddress(
                                         nextCell.getRowIndex(), ref.getLastRow(),
                                         nextCell.getColumnIndex(), ref.getLastColumn());

@@ -25,7 +25,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIconSet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STIconSetType;
 
 /**
- * High level representation for Icon / Multi-State Formatting 
+ * High level representation for Icon / Multi-State Formatting
  *  component of Conditional Formatting settings
  */
 public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
@@ -35,42 +35,50 @@ public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
         _iconset = iconset;
     }
 
+    @Override
     public IconSet getIconSet() {
         String set = _iconset.getIconSet().toString();
         return IconSet.byName(set);
     }
+    @Override
     public void setIconSet(IconSet set) {
         STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(set.name);
         _iconset.setIconSet(xIconSet);
     }
 
+    @Override
     public boolean isIconOnly() {
         if (_iconset.isSetShowValue())
             return !_iconset.getShowValue();
         return false;
     }
+    @Override
     public void setIconOnly(boolean only) {
         _iconset.setShowValue(!only);
     }
 
+    @Override
     public boolean isReversed() {
         if (_iconset.isSetReverse())
             return _iconset.getReverse();
         return false;
     }
+    @Override
     public void setReversed(boolean reversed) {
         _iconset.setReverse(reversed);
     }
 
+    @Override
     public XSSFConditionalFormattingThreshold[] getThresholds() {
         CTCfvo[] cfvos = _iconset.getCfvoArray();
-        XSSFConditionalFormattingThreshold[] t = 
+        XSSFConditionalFormattingThreshold[] t =
                 new XSSFConditionalFormattingThreshold[cfvos.length];
         for (int i=0; i<cfvos.length; i++) {
             t[i] = new XSSFConditionalFormattingThreshold(cfvos[i]);
         }
         return t;
     }
+    @Override
     public void setThresholds(ConditionalFormattingThreshold[] thresholds) {
         CTCfvo[] cfvos = new CTCfvo[thresholds.length];
         for (int i=0; i<thresholds.length; i++) {
@@ -78,6 +86,7 @@ public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
         }
         _iconset.setCfvoArray(cfvos);
     }
+    @Override
     public XSSFConditionalFormattingThreshold createThreshold() {
         return new XSSFConditionalFormattingThreshold(_iconset.addNewCfvo());
     }

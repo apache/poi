@@ -19,7 +19,6 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.awt.geom.Path2D;
 import java.util.Objects;
 
 /**
@@ -43,27 +42,22 @@ import java.util.Objects;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_Path2DLineTo", propOrder = {"pt"})
-public final class LineToCommand implements PathCommand {
+public final class LineToCommand implements LineToCommandIf {
 
     // @XmlElement(required = true)
     private final AdjustPoint pt = new AdjustPoint();
 
+    @Override
     public AdjustPoint getPt() {
         return pt;
     }
 
-    public void setPt(AdjustPoint pt) {
+    @Override
+    public void setPt(AdjustPointIf pt) {
         if (pt != null) {
             this.pt.setX(pt.getX());
             this.pt.setY(pt.getY());
         }
-    }
-
-    @Override
-    public void execute(Path2D.Double path, Context ctx){
-        double x = ctx.getValue(pt.getX());
-        double y = ctx.getValue(pt.getY());
-        path.lineTo(x, y);
     }
 
 

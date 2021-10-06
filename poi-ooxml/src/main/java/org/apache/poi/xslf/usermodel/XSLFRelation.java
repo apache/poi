@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.HDPHOTO_PART;
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.IMAGE_PART;
 
 import java.util.HashMap;
@@ -221,7 +222,12 @@ public final class XSLFRelation extends POIXMLRelation {
         "/ppt/media/image#.wdp",
         XSLFPictureData::new, XSLFPictureData::new
     );
-
+    public static final XSLFRelation HDPHOTO_WDP = new XSLFRelation(
+        PictureType.WDP.contentType,
+        HDPHOTO_PART,
+        "/ppt/media/hdphoto#.wdp",
+        XSLFPictureData::new, XSLFPictureData::new
+    );
     public static final XSLFRelation IMAGE_SVG = new XSLFRelation(
         PictureType.SVG.contentType,
         IMAGE_PART,

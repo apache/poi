@@ -155,7 +155,7 @@ public class FractionFormat extends Format {
 
         //now format the results
         if (isNeg){
-            sb.append("-");
+            sb.append('-');
         }
 
         //if whole part has to go into the numerator

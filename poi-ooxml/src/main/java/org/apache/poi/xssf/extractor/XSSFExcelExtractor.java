@@ -17,8 +17,7 @@
 package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
@@ -46,11 +45,13 @@ import org.apache.xmlbeans.XmlException;
  */
 public class XSSFExcelExtractor
        implements POIXMLTextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
-    public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[] {
-        XSSFRelation.WORKBOOK, XSSFRelation.MACRO_TEMPLATE_WORKBOOK,
-        XSSFRelation.MACRO_ADDIN_WORKBOOK, XSSFRelation.TEMPLATE_WORKBOOK,
-        XSSFRelation.MACROS_WORKBOOK
-    };
+    public static final List<XSSFRelation> SUPPORTED_TYPES = Collections.unmodifiableList(
+            Arrays.asList(
+                    XSSFRelation.WORKBOOK, XSSFRelation.MACRO_TEMPLATE_WORKBOOK,
+                    XSSFRelation.MACRO_ADDIN_WORKBOOK, XSSFRelation.TEMPLATE_WORKBOOK,
+                    XSSFRelation.MACROS_WORKBOOK
+            )
+    );
 
     private Locale locale;
     private final XSSFWorkbook workbook;

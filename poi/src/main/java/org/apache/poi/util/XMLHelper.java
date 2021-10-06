@@ -157,6 +157,7 @@ public final class XMLHelper {
             trySet(factory::setFeature, FEATURE_LOAD_DTD_GRAMMAR, false);
             trySet(factory::setFeature, FEATURE_LOAD_EXTERNAL_DTD, false);
             trySet(factory::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
+            trySet(factory::setFeature, FEATURE_DISALLOW_DOCTYPE_DECL, true);
             return factory;
         } catch (RuntimeException | Error re) { // NOSONAR
             // this also catches NoClassDefFoundError, which may be due to a local class path issue

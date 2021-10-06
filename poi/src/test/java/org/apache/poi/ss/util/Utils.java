@@ -55,11 +55,19 @@ public class Utils {
         }
     }
 
+    public static void assertString(FormulaEvaluator fe, Cell cell, String formulaText, String expectedResult) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(CellType.STRING, result.getCellType());
+        assertEquals(expectedResult, result.getStringValue());
+    }
+
     public static void assertDouble(FormulaEvaluator fe, Cell cell, String formulaText, double expectedResult) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
+        assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue());
     }
 
@@ -67,7 +75,7 @@ public class Utils {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.ERROR);
+        assertEquals(CellType.ERROR, result.getCellType());
         assertEquals(expectedError.getCode(), result.getErrorValue());
     }
 }

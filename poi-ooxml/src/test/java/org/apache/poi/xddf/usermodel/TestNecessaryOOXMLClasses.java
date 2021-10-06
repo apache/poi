@@ -188,6 +188,17 @@ class TestNecessaryOOXMLClasses {
         assertNotNull(e11);
         CTErrBars bars = CTErrBars.Factory.newInstance();
         assertNotNull(bars);
+
+        CTThickness ctThickness = CTThickness.Factory.newInstance();
+        assertNotNull(ctThickness);
+        STOverlap overlap = STOverlap.Factory.newInstance();
+        assertNotNull(overlap);
+        STDepthPercent stDepthPercent = STDepthPercent.Factory.newInstance();
+        assertNotNull(stDepthPercent);
+        STHPercent sthPercent = STHPercent.Factory.newInstance();
+        assertNotNull(sthPercent);
+        STHoleSize stHoleSize = STHoleSize.Factory.newInstance();
+        assertNotNull(stHoleSize);
     }
 
 }

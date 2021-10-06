@@ -17,10 +17,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.DocumentProperty;
@@ -105,7 +105,7 @@ public final class DocumentOutputStream extends OutputStream {
         }
 
         // Have an empty one created for now
-        return parent.createDocument(name, new ByteArrayInputStream(new byte[0]));
+        return parent.createDocument(name, new UnsynchronizedByteArrayInputStream(new byte[0]));
     }
 
     private void checkBufferSize() throws IOException {

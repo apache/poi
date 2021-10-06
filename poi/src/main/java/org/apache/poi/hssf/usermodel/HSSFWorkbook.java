@@ -22,7 +22,6 @@ import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +45,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1305,7 +1305,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         DocumentNode workbookNode = (DocumentNode) dir.getEntry(
                 getWorkbookDirEntryName(dir));
         POIFSDocument workbookDoc = new POIFSDocument(workbookNode);
-        workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
+        workbookDoc.replaceContents(new UnsynchronizedByteArrayInputStream(getBytes()));
 
         // Update the properties streams in the file
         writeProperties();
@@ -1367,7 +1367,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         List<String> excepts = new ArrayList<>(1);
 
         // Write out the Workbook stream
-        fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
+        fs.createDocument(new UnsynchronizedByteArrayInputStream(getBytes()), "Workbook");
 
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);
@@ -1376,7 +1376,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             // Don't write out the old Workbook, we'll be doing our new one
             // If the file had an "incorrect" name for the workbook stream,
             // don't write the old one as we'll use the correct name shortly
-            excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
+            excepts.addAll(WORKBOOK_DIR_ENTRY_NAMES);
 
             // summary information has been already written via writeProperties and might go in a
             // different stream, if the file is cryptoapi encrypted

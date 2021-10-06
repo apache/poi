@@ -18,6 +18,8 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,9 +48,9 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
 
     private static final Logger LOGGER = LogManager.getLogger(XSSFBEventBasedExcelExtractor.class);
 
-    public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[]{
+    public static final List<XSSFRelation> SUPPORTED_TYPES = Collections.singletonList(
             XSSFRelation.XLSB_BINARY_WORKBOOK
-    };
+    );
 
     private boolean handleHyperlinksInCells;
 

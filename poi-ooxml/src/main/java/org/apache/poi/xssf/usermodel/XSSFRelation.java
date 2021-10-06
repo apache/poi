@@ -312,7 +312,7 @@ public final class XSSFRelation extends POIXMLRelation {
     public static final XSSFRelation EXTERNAL_LINKS = new XSSFRelation(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink",
-        "/xl/externalLinks/externalLink#.xmll",
+        "/xl/externalLinks/externalLink#.xml",
         ExternalLinksTable::new, ExternalLinksTable::new
     );
 

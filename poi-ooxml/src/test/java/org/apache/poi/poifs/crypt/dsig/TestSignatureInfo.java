@@ -160,6 +160,7 @@ import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -924,6 +925,7 @@ class TestSignatureInfo {
 
     @Test
     @DisabledOnJreEx("1.8.0_292")
+    @Tag("scratchpad.ignore")
     void testSignatureImage() throws Exception {
         initKeyPair();
 

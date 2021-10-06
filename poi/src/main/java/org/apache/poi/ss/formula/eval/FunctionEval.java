@@ -181,7 +181,7 @@ public final class FunctionEval {
         retval[130] = new T();
         // 131: N
         retval[140] = new DateValue();
-        // 141: TIMEVALUE
+        retval[141] = new TimeValue();
         // 142: SLN
         // 143: SYD
         // 144: DDB
@@ -309,7 +309,7 @@ public final class FunctionEval {
         retval[326] = AggregateFunction.SMALL;
         // 327: QUARTILE
         retval[328] = AggregateFunction.PERCENTILE;
-        // 329: PERCENTRANK
+        retval[329] = PercentRank.instance;
         retval[330] = new Mode();
         // 331: TRIMMEAN
         // 332: TINV

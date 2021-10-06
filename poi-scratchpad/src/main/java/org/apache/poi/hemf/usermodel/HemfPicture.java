@@ -50,6 +50,7 @@ import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -71,7 +72,12 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     }
 
     public HemfHeader getHeader() {
-        return (HemfHeader)getRecords().get(0);
+        List<HemfRecord> r = getRecords();
+        if (r.isEmpty()) {
+            throw new RecordFormatException("No records could be parsed - your .emf file is invalid");
+        } else {
+            return (HemfHeader)r.get(0);
+        }
     }
 
     public List<HemfRecord> getRecords() {

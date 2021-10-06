@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.assertError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -51,12 +52,12 @@ final class TestFind {
         confirmResult(fe, cell, "find(5, 87654)", 4);
 
         // Errors
-        confirmError(fe, cell, "find(\"n\", \"haystack\")", FormulaError.VALUE);
-        confirmError(fe, cell, "find(\"k\", \"haystack\",9)", FormulaError.VALUE);
-        confirmError(fe, cell, "find(\"k\", \"haystack\",#REF!)", FormulaError.REF);
-        confirmError(fe, cell, "find(\"k\", \"haystack\",0)", FormulaError.VALUE);
-        confirmError(fe, cell, "find(#DIV/0!, #N/A, #REF!)", FormulaError.DIV0);
-        confirmError(fe, cell, "find(2, #N/A, #REF!)", FormulaError.NA);
+        assertError(fe, cell, "find(\"n\", \"haystack\")", FormulaError.VALUE);
+        assertError(fe, cell, "find(\"k\", \"haystack\",9)", FormulaError.VALUE);
+        assertError(fe, cell, "find(\"k\", \"haystack\",#REF!)", FormulaError.REF);
+        assertError(fe, cell, "find(\"k\", \"haystack\",0)", FormulaError.VALUE);
+        assertError(fe, cell, "find(#DIV/0!, #N/A, #REF!)", FormulaError.DIV0);
+        assertError(fe, cell, "find(2, #N/A, #REF!)", FormulaError.NA);
 
         wb.close();
     }
@@ -66,16 +67,7 @@ final class TestFind {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.NUMERIC);
+        assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue(), 0.0);
-    }
-
-    private static void confirmError(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText,
-            FormulaError expectedErrorCode) {
-        cell.setCellFormula(formulaText);
-        fe.notifyUpdateCell(cell);
-        CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.ERROR);
-        assertEquals(expectedErrorCode.getCode(), result.getErrorValue());
     }
 }

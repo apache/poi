@@ -826,7 +826,7 @@ public final class HemfPlusDraw {
 
     @SuppressWarnings("squid:S2111")
     static double round10(double d) {
-        return new BigDecimal(d).setScale(10, RoundingMode.HALF_UP).doubleValue();
+        return BigDecimal.valueOf(d).setScale(10, RoundingMode.HALF_UP).doubleValue();
     }
 
     static int readRectS(LittleEndianInputStream leis, Rectangle2D bounds) {

@@ -17,12 +17,12 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -224,7 +224,7 @@ public class Ole10Native {
      */
     public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
         if (!parent.hasEntry(OLE_MARKER_NAME)) {
-            parent.createDocument(OLE_MARKER_NAME, new ByteArrayInputStream(OLE_MARKER_BYTES));
+            parent.createDocument(OLE_MARKER_NAME, new UnsynchronizedByteArrayInputStream(OLE_MARKER_BYTES));
         }
     }
 

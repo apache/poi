@@ -18,11 +18,11 @@
  */
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
@@ -278,7 +278,7 @@ public class DConRefRecord extends StandardRecord {
     }
 
     private static RecordInputStream bytesToRIStream(byte[] data) {
-        RecordInputStream ric = new RecordInputStream(new ByteArrayInputStream(data));
+        RecordInputStream ric = new RecordInputStream(new UnsynchronizedByteArrayInputStream(data));
         ric.nextRecord();
         return ric;
     }

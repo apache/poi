@@ -18,12 +18,14 @@ package org.apache.poi.stress;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -40,7 +42,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class StressMap {
     private final MultiValuedMap<String, ExcInfo> exMap = new ArrayListValuedHashMap<>();
     private final Map<String,String> handlerMap = new LinkedHashMap<>();
-
+    private final boolean SCRATCH_IGNORE = Boolean.getBoolean("scratchpad.ignore");
+    private final Pattern SCRATCH_HANDLER = Pattern.compile("(HSLF|HWPF|HSMF|HMEF)");
 
     public void load(File mapFile) throws IOException {
         try (Workbook wb = WorkbookFactory.create(mapFile)) {
@@ -79,7 +82,6 @@ public class StressMap {
 
         handlerMap.clear();
 
-        boolean IGNORE_SCRATCHPAD = Boolean.getBoolean("scratchpad.ignore");
         boolean isFirst = true;
         for (Row row : sh) {
             if (isFirst) {
@@ -87,7 +89,7 @@ public class StressMap {
                 continue;
             }
             Cell cell = row.getCell(2);
-            if (IGNORE_SCRATCHPAD || cell == null || cell.getCellType() != CellType.STRING) {
+            if (SCRATCH_IGNORE || cell == null || cell.getCellType() != CellType.STRING) {
                 cell = row.getCell(1);
             }
             handlerMap.put(row.getCell(0).getStringCellValue(), cell.getStringCellValue());
@@ -103,20 +105,38 @@ public class StressMap {
         exMap.clear();
 
         Iterator<Row> iter = sh.iterator();
-        List<BiConsumer<ExcInfo,String>> cols = initCols(iter.next());
+        List<Map.Entry<String, BiConsumer<ExcInfo,String>>> cols = initCols(iter.next());
+
+        int idx = 0, handlerIdx = -1;
+        for (Map.Entry<String, BiConsumer<ExcInfo, String>> e : cols) {
+            if ("Handler".equals(e.getKey())) {
+                handlerIdx = idx;
+            }
+            idx++;
+        }
 
         while (iter.hasNext()) {
+            Row row = iter.next();
+
+            if (SCRATCH_IGNORE && handlerIdx > -1) {
+                String handler = row.getCell(handlerIdx).getStringCellValue();
+                if (SCRATCH_HANDLER.matcher(handler).find()) {
+                    // ignore exception of ignored files
+                    continue;
+                }
+            }
+
             ExcInfo info = new ExcInfo();
-            for (Cell cell : iter.next()) {
+            for (Cell cell : row) {
                 if (cell.getCellType() == CellType.STRING) {
-                    cols.get(cell.getColumnIndex()).accept(info, cell.getStringCellValue());
+                    cols.get(cell.getColumnIndex()).getValue().accept(info, cell.getStringCellValue());
                 }
             }
             exMap.put(info.getFile(), info);
         }
     }
 
-    private static List<BiConsumer<ExcInfo,String>> initCols(Row row) {
+    private static List<Map.Entry<String, BiConsumer<ExcInfo,String>>> initCols(Row row) {
         Map<String,BiConsumer<ExcInfo,String>> m = new HashMap<>();
         m.put("File", ExcInfo::setFile);
         m.put("Tests", ExcInfo::setTests);
@@ -128,7 +148,7 @@ public class StressMap {
         return StreamSupport
             .stream(row.spliterator(), false)
             .map(Cell::getStringCellValue)
-            .map(v -> m.getOrDefault(v, (e,s) -> {}))
+            .map(v -> new SimpleEntry<>(v, m.getOrDefault(v, (e,s) -> {})))
             .collect(Collectors.toList());
     }
 
