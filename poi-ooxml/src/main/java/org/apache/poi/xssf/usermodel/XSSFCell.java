@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -140,70 +141,11 @@ public final class XSSFCell extends CellBase {
      * @param srcCell The cell to take value, formula and style from
      * @param policy The policy for copying the information, see {@link CellCopyPolicy}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
+     * @see {@link CellUtil#copyCell(Cell, Cell, CellCopyPolicy, CellCopyContext)}
      */
     @Beta
-    @Internal
     public void copyCellFrom(Cell srcCell, CellCopyPolicy policy) {
-        // Copy cell value (cell type is updated implicitly)
-        if (policy.isCopyCellValue()) {
-            if (srcCell != null) {
-                CellType copyCellType = srcCell.getCellType();
-                if (copyCellType == CellType.FORMULA && !policy.isCopyCellFormula()) {
-                    // Copy formula result as value
-                    // FIXME: Cached value may be stale
-                    copyCellType = srcCell.getCachedFormulaResultType();
-                }
-                switch (copyCellType) {
-                    case NUMERIC:
-                        // DataFormat is not copied unless policy.isCopyCellStyle is true
-                        if (DateUtil.isCellDateFormatted(srcCell)) {
-                            setCellValue(srcCell.getDateCellValue());
-                        }
-                        else {
-                            setCellValue(srcCell.getNumericCellValue());
-                        }
-                        break;
-                    case STRING:
-                        setCellValue(srcCell.getStringCellValue());
-                        break;
-                    case FORMULA:
-                        setCellFormula(srcCell.getCellFormula());
-                        break;
-                    case BLANK:
-                        setBlank();
-                        break;
-                    case BOOLEAN:
-                        setCellValue(srcCell.getBooleanCellValue());
-                        break;
-                    case ERROR:
-                        setCellErrorValue(srcCell.getErrorCellValue());
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellType());
-                }
-            } else { //srcCell is null
-                setBlank();
-            }
-        }
-
-        // Copy CellStyle
-        if (policy.isCopyCellStyle()) {
-            setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
-        }
-
-        final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
-
-        if (policy.isMergeHyperlink()) {
-            // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
-            if (srcHyperlink != null) {
-                setHyperlink(new XSSFHyperlink(srcHyperlink));
-            }
-        } else if (policy.isCopyHyperlink()) {
-            // overwrite the hyperlink at dest cell with srcCell's hyperlink
-            // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
-            setHyperlink(srcHyperlink == null ? null : new XSSFHyperlink(srcHyperlink));
-        }
+        CellUtil.copyCell(srcCell, this, policy, null);
     }
 
     /**

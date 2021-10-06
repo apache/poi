@@ -286,4 +286,5 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
     public int hashCode() {
         return record.hashCode();
     }
+
 }
