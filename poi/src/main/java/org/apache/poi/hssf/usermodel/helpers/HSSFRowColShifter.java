@@ -30,7 +30,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * Class for code common to {@link HSSFRowShifter} and {@link HSSFColumnShifter}
  *
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 @Internal
 /*private*/ final class HSSFRowColShifter {

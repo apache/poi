@@ -28,7 +28,13 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyContext;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -803,7 +809,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param srcRow the rows to copy from
      * @param policy the policy to determine what gets copied
      * @param context the context - see {@link CellCopyContext}
-     * @since v5.0.1
+     * @since v5.1.0
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {

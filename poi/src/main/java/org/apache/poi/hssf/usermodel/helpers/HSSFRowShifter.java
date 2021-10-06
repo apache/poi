@@ -69,7 +69,7 @@ public final class HSSFRowShifter extends RowShifter {
      * @param row the row to update the formulas on
      * @param formulaShifter the formula shifting policy
      */
-    @Internal(since="5.0.1")
+    @Internal(since="5.1.0")
     public void updateRowFormulas(HSSFRow row, FormulaShifter formulaShifter) {
         HSSFRowColShifter.updateRowFormulas(row, formulaShifter);
     }
