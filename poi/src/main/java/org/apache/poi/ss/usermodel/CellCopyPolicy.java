@@ -255,17 +255,25 @@ public class CellCopyPolicy {
     }
     
     /**
-     * If condenseRows is true, a discontinuities in srcRows will be removed when copied to destination
+     * If condenseRows is true, a discontinuity in srcRows will be removed when copied to destination
+     * <p>
      * For example:
+     * <p>
      * Sheet.copyRows({Row(1), Row(2), Row(5)}, 11, policy) results in rows 1, 2, and 5
      * being copied to rows 11, 12, and 13 if condenseRows is True, or rows 11, 11, 15 if condenseRows is false
-     * @return the condenseRows
+     * @return the condenseRows setting
      */
     public boolean isCondenseRows() {
         return condenseRows;
     }
 
     /**
+     * If condenseRows is true, a discontinuity in srcRows will be removed when copied to destination
+     * <p>
+     * For example:
+     * <p>
+     * Sheet.copyRows({Row(1), Row(2), Row(5)}, 11, policy) results in rows 1, 2, and 5
+     * being copied to rows 11, 12, and 13 if condenseRows is True, or rows 11, 11, 15 if condenseRows is false
      * @param condenseRows the condenseRows to set
      */
     public void setCondenseRows(boolean condenseRows) {

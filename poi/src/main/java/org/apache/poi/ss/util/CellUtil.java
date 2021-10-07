@@ -186,7 +186,8 @@ public final class CellUtil {
      * Note that if you are copying from a source cell from a different type of then you may need to disable style copying
      * in the {@link CellCopyPolicy} (HSSF styles are not compatible with XSSF styles, for instance).
      *
-     * This does not shift references in formulas.
+     * This does not shift references in formulas. The <code>copyRowFrom</code> method on <code>XSSFRow</code>
+     * and <code>HSSFRow</code> does attempt to shift references in formulas.
      *
      * @param srcCell The cell to take value, formula and style from
      * @param destCell The cell to copy to
