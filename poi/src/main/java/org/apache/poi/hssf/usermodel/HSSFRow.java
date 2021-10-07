@@ -801,11 +801,14 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     }
 
     /**
-     * Copy the cells from srcRow to this row
+     * Copy the cells from srcRow to this row.
      * If this row is not a blank row, this will merge the two rows, overwriting
-     * the cells in this row with the cells in srcRow
-     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy
-     * srcRow may be from a different sheet in the same workbook
+     * the cells in this row with the cells in srcRow.
+     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy.
+     *
+     * Note that if you are copying from a non-HSSF row then you will need to disable style copying
+     * in the {@link CellCopyPolicy} (HSSF styles are not compatible with XSSF styles, for instance).
+     *
      * @param srcRow the rows to copy from
      * @param policy the policy to determine what gets copied
      * @param context the context - see {@link CellCopyContext}
