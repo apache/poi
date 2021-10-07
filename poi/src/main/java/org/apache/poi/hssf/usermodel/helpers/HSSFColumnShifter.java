@@ -32,7 +32,7 @@ import org.apache.poi.util.NotImplemented;
  * @since POI 4.0.0
  */
 // non-Javadoc: When possible, code should be implemented in the ColumnShifter abstract class to avoid duplication with
-// {@link org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter}
+// {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class HSSFColumnShifter extends ColumnShifter {
     private static final Logger LOG = LogManager.getLogger(HSSFColumnShifter.class);

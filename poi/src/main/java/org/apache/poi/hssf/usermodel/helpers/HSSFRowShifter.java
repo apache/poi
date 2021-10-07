@@ -31,7 +31,7 @@ import org.apache.poi.util.NotImplemented;
  * Helper for shifting rows up or down
  */
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
-// {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
+// {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class HSSFRowShifter extends RowShifter {
     private static final Logger LOG = LogManager.getLogger(HSSFRowShifter.class);
 
