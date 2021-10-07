@@ -41,7 +41,7 @@ public class XDGFCell {
     public static Boolean maybeGetBoolean(Map<String, XDGFCell> cells,
             String name) {
         XDGFCell cell = cells.get(name);
-        if (cell == null)
+        if (cell == null || cell.getValue() == null)
             return null;
 
         if (cell.getValue().equals("0"))
@@ -72,7 +72,7 @@ public class XDGFCell {
         XDGFCell cell = cells.get(name);
         if (cell != null) {
             String v = cell._cell.getV();
-            if (v.equals("Themed"))
+            if (v == null || v.equals("Themed"))
                 return null;
             return v;
         }
@@ -80,6 +80,9 @@ public class XDGFCell {
     }
 
     public static Double parseDoubleValue(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Double.parseDouble(cell.getV());
         } catch (NumberFormatException e) {
@@ -91,6 +94,9 @@ public class XDGFCell {
     }
 
     public static Integer parseIntegerValue(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Integer.parseInt(cell.getV());
         } catch (NumberFormatException e) {
@@ -106,6 +112,9 @@ public class XDGFCell {
      * @return A value converted to inches
      */
     public static Double parseVLength(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Double.parseDouble(cell.getV());
         } catch (NumberFormatException e) {
