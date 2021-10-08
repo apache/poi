@@ -80,7 +80,7 @@ public class ZipSecureFile extends ZipFile {
         if (maxEntrySize < 0) {
             throw new IllegalArgumentException("Max entry size must be greater than or equal to zero");
         } else if (maxEntrySize > 0xFFFFFFFFL) {
-            LOG.atWarn().log("setting max entry size greater tahn 4Gb can be risky; set to " + maxEntrySize + " bytes");
+            LOG.atWarn().log("setting max entry size greater than 4Gb can be risky; set to " + maxEntrySize + " bytes");
         }
         MAX_ENTRY_SIZE = maxEntrySize;
     }
@@ -105,10 +105,13 @@ public class ZipSecureFile extends ZipFile {
      * security vulnerabilities when documents are provided by users.
      *
      * @param maxTextSize the max. file size of a single zip entry
+     * @throws IllegalArgumentException for negative maxTextSize
      */
     public static void setMaxTextSize(long maxTextSize) {
-        if (maxTextSize < 0 || maxTextSize > 0xFFFFFFFFL) {     // don't use MAX_ENTRY_SIZE here!
-            throw new IllegalArgumentException("Max text size is bounded [0-4GB], but had " + maxTextSize);
+        if (maxTextSize < 0) {
+            throw new IllegalArgumentException("Max text size must be greater than or equal to zero");
+        }else if (maxTextSize > 0xFFFFFFFFL) {
+            LOG.atWarn().log("setting max text size greater than " + 0xFFFFFFFFL + " can be risky; set to " + maxTextSize + " chars");
         }
         MAX_TEXT_SIZE = maxTextSize;
     }
@@ -116,9 +119,8 @@ public class ZipSecureFile extends ZipFile {
     /**
      * Returns the current maximum allowed text size.
      * 
-     * See setMaxTextSize() for details.
-     *
-     * @return The max accepted text size. 
+     * @return The max accepted text size.
+     * @see #setMaxTextSize(long)
      */
     public static long getMaxTextSize() {
         return MAX_TEXT_SIZE;

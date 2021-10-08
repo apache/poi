@@ -63,4 +63,20 @@ class TestZipSecureFile {
             ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
         }
     }
+
+    @Test
+    void testSettingMaxTextSizeAsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> ZipSecureFile.setMaxTextSize(-1));
+    }
+
+    @Test
+    void testSettingMaxTextSizeAs8GChars() {
+        long approx8G = 0xFFFFFFFFL * 2;
+        try {
+            ZipSecureFile.setMaxTextSize(approx8G);
+            assertEquals(approx8G, ZipSecureFile.getMaxTextSize());
+        } finally {
+            ZipSecureFile.setMaxTextSize(0xFFFFFFFFL);
+        }
+    }
 }
