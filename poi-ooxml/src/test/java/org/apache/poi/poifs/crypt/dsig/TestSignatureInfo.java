@@ -94,6 +94,8 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.Office2010SignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
@@ -116,6 +118,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.DEROctetString;
@@ -156,7 +159,11 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
+import org.etsi.uri.x01903.v13.EncapsulatedPKIDataType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
+import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
+import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
+import org.etsi.uri.x01903.v13.XAdESTimeStampType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -164,6 +171,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -922,6 +930,89 @@ class TestSignatureInfo {
     private interface XmlDocumentPackageInit {
         POIXMLDocument init(SignatureLine line, OPCPackage pkg) throws IOException, XmlException;
     }
+
+    @Test
+    void createXAdES_T_65623() throws Exception {
+        initKeyPair();
+
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("Test");
+            wb.write(bos);
+        }
+
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setDigestAlgo(HashAlgorithm.sha256);
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+
+        // mock tsp
+        // signatureConfig.setTspUrl("http://timestamp.digicert.com");
+        final X509CRL crl = generateCrl(x509, keyPair.getPrivate());
+        TimeStampService tspService = (signatureInfo, data, revocationData) -> {
+            revocationData.addCRL(crl);
+            return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);
+        };
+        signatureConfig.setTspService(tspService);
+
+        signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
+        signatureConfig.setTspOldProtocol(false);
+
+        signatureConfig.setXadesDigestAlgo(HashAlgorithm.sha512);
+        signatureConfig.setXadesRole("Xades Reviewer");
+        signatureConfig.setSignatureDescription("test xades signature");
+
+        signatureConfig.setSignatureFacets(Arrays.asList(
+            new OOXMLSignatureFacet(),
+            new KeyInfoSignatureFacet(),
+            new XAdESSignatureFacet(),
+            new Office2010SignatureFacet(),
+            new XAdESXLSignatureFacet()
+        ));
+
+        // create signature
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            si.confirmSignature();
+
+            bos.reset();
+            pkg.save(bos);
+        } catch (EncryptedDocumentException e) {
+            assumeTrue(e.getMessage().startsWith("Export Restrictions"));
+        }
+
+        // check if timestamp node is filled
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            assertTrue(si.verifySignature());
+            boolean found = false;
+            for (SignaturePart sp : si.getSignatureParts()) {
+                for (ObjectType ot : sp.getSignatureDocument().getSignature().getObjectArray()) {
+                    XmlCursor xc = ot.newCursor();
+                    if (xc.toChild(SignatureFacet.XADES_132_NS, "QualifyingProperties")) {
+                        QualifyingPropertiesType qpt = (QualifyingPropertiesType) xc.getObject();
+                        assertTrue(qpt.isSetUnsignedProperties());
+                        UnsignedPropertiesType up = qpt.getUnsignedProperties();
+                        assertTrue(up.isSetUnsignedSignatureProperties());
+                        UnsignedSignaturePropertiesType ups = up.getUnsignedSignatureProperties();
+                        assertEquals(1, ups.sizeOfSignatureTimeStampArray());
+                        XAdESTimeStampType ts = ups.getSignatureTimeStampArray(0);
+                        assertEquals(1, ts.sizeOfEncapsulatedTimeStampArray());
+                        EncapsulatedPKIDataType ets = ts.getEncapsulatedTimeStampArray(0);
+                        assertFalse(ets.getStringValue().isEmpty());
+                        found = true;
+                    }
+                    xc.dispose();
+                }
+            }
+            assertTrue(found);
+        }
+    }
+
 
     @Test
     @DisabledOnJreEx("1.8.0_292")
