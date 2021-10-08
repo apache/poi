@@ -106,7 +106,6 @@ module org.apache.poi.poi {
     requires net.bytebuddy;
     requires org.junit.jupiter.api;
     requires org.junit.jupiter.params;
-    requires org.apiguardian.api;
 
     exports org.apache.poi.hpsf.basic to org.junit.platform.commons;
     exports org.apache.poi.hssf.record.pivot to org.junit.platform.commons;
