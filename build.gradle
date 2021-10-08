@@ -117,7 +117,7 @@ subprojects {
         commonsMathVersion = '3.6.1'
         junitVersion = '5.7.2'
         log4jVersion = '2.14.1'
-        mockitoVersion = '3.12.4'
+        mockitoVersion = '4.0.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.0.1'
         batikVersion = '1.14'
