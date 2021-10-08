@@ -139,14 +139,4 @@ class TestXWPFBugs {
             zf.close();
         }
     }
-
-    @Test
-    void bug65320() throws Exception {
-        try (
-                OPCPackage pkg = OPCPackage.open(samples.getFile("bug65320.docx"));
-                XWPFDocument document = new XWPFDocument(pkg)
-        ){
-            assertEquals(1, document.getAllPictures().size());
-        }
-    }
 }
