@@ -223,7 +223,7 @@ public final class XMLHelper {
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
         trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
         trySet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
-        trySet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
+        quietSet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
 
@@ -288,6 +288,16 @@ public final class XMLHelper {
         } catch (Error ame) {
             // ignore all top error object - GraalVM in native mode is not coping with java.xml error message resources
             logThrowable(ame, "Cannot set SAX feature because outdated XML parser in classpath", name);
+        }
+        return false;
+    }
+
+    private static boolean quietSet(SecurityProperty property, String name, Object value) {
+        try {
+            property.accept(name, value);
+            return true;
+        } catch (Exception|Error e) {
+            // ok to ignore
         }
         return false;
     }
