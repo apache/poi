@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 import java.util.Enumeration;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestZipSecureFile {
     @Test
@@ -45,6 +45,22 @@ class TestZipSecureFile {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    void testSettingMaxEntrySizeAsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> ZipSecureFile.setMaxEntrySize(-1));
+    }
+
+    @Test
+    void testSettingMaxEntrySizeAs8Gb() {
+        long approx8Gb = 0xFFFFFFFFL * 2;
+        try {
+            ZipSecureFile.setMaxEntrySize(approx8Gb);
+            assertEquals(approx8Gb, ZipSecureFile.getMaxEntrySize());
+        } finally {
+            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
         }
     }
 }

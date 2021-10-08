@@ -22,6 +22,8 @@ import java.io.IOException;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class wraps a {@link ZipFile} in order to check the
@@ -32,6 +34,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
  * and {@link #setMinInflateRatio(double)}.
  */
 public class ZipSecureFile extends ZipFile {
+    private static final Logger LOG = LogManager.getLogger(ZipSecureFile.class);
     /* package */ static double MIN_INFLATE_RATIO = 0.01d;
     /* package */ static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
     
@@ -71,10 +74,13 @@ public class ZipSecureFile extends ZipFile {
      * security vulnerabilities when documents are provided by users.
      *
      * @param maxEntrySize the max. file size of a single zip entry
+     * @throws IllegalArgumentException for negative maxEntrySize
      */
     public static void setMaxEntrySize(long maxEntrySize) {
-        if (maxEntrySize < 0 || maxEntrySize > 0xFFFFFFFFL) {   // don't use MAX_ENTRY_SIZE here!
-            throw new IllegalArgumentException("Max entry size is bounded [0-4GB], but had " + maxEntrySize);
+        if (maxEntrySize < 0) {
+            throw new IllegalArgumentException("Max entry size must be greater than or equal to zero");
+        } else if (maxEntrySize > 0xFFFFFFFFL) {
+            LOG.atWarn().log("setting max entry size greater tahn 4Gb can be risky; set to " + maxEntrySize + " bytes");
         }
         MAX_ENTRY_SIZE = maxEntrySize;
     }
