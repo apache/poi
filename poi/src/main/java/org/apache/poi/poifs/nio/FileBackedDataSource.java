@@ -43,6 +43,7 @@ public class FileBackedDataSource extends DataSource implements Closeable {
     private Long channelSize;
 
     private final boolean writable;
+    private final boolean closeChannelOnClose;
     // remember file base, which needs to be closed too
     private final RandomAccessFile srcFile;
 
@@ -64,18 +65,27 @@ public class FileBackedDataSource extends DataSource implements Closeable {
     }
 
     public FileBackedDataSource(RandomAccessFile srcFile, boolean readOnly) {
-        this(srcFile, srcFile.getChannel(), readOnly);
+        this(srcFile, srcFile.getChannel(), readOnly, false);
     }
 
     public FileBackedDataSource(FileChannel channel, boolean readOnly) {
-        this(null, channel, readOnly);
+        this(channel, readOnly, true);
     }
 
-    private FileBackedDataSource(RandomAccessFile srcFile, FileChannel channel, boolean readOnly) {
+    /**
+     * @since POI 5.1.0
+     */
+    public FileBackedDataSource(FileChannel channel, boolean readOnly, boolean closeChannelOnClose) {
+        this(null, channel, readOnly, closeChannelOnClose);
+    }
+
+    private FileBackedDataSource(RandomAccessFile srcFile, FileChannel channel, boolean readOnly, boolean closeChannelOnClose) {
         this.srcFile = srcFile;
         this.channel = channel;
         this.writable = !readOnly;
+        this.closeChannelOnClose = closeChannelOnClose;
     }
+
 
     public boolean isWriteable() {
         return this.writable;
@@ -170,7 +180,7 @@ public class FileBackedDataSource extends DataSource implements Closeable {
         if (srcFile != null) {
             // see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4796385
             srcFile.close();
-        } else {
+        } else if (closeChannelOnClose) {
             channel.close();
         }
     }

@@ -164,7 +164,7 @@ public class POIFSFileSystem extends BlockStore
      */
     public POIFSFileSystem(File file, boolean readOnly)
             throws IOException {
-        this(null, file, readOnly, true);
+        this(null, file, readOnly, true, true);
     }
 
     /**
@@ -198,12 +198,33 @@ public class POIFSFileSystem extends BlockStore
      */
     public POIFSFileSystem(FileChannel channel, boolean readOnly)
             throws IOException {
-        this(channel, null, readOnly, false);
+        this(channel, null, readOnly, false, true);
+    }
+
+    /**
+     * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses
+     * less memory than creating from an <tt>InputStream</tt>.</p>
+     *
+     * <p>Note that with this constructor, you will need to call {@link #close()}
+     * when you're done to have the underlying resources closed. The <code>closeChannel</code>
+     * parameter controls whether the provided channel is closed.</p>
+     *
+     * @param channel      the FileChannel from which to read or read/write the data
+     * @param readOnly     whether the POIFileSystem will only be used in read-only mode
+     * @param closeChannel whether the provided FileChannel should be closed when
+     *                     {@link #close()} is called, or when this constructor throws
+     *                     an exception
+     * @throws IOException on errors reading, or on invalid data
+     * @since POI 5.1.0
+     */
+    public POIFSFileSystem(FileChannel channel, boolean readOnly, boolean closeChannel)
+            throws IOException {
+        this(channel, null, readOnly, closeChannel, closeChannel);
     }
 
     @SuppressWarnings("java:S2095")
-    private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError)
-            throws IOException {
+    private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError,
+                            boolean closeChannelOnClose) throws IOException {
         this(false);
 
         try {
@@ -216,7 +237,7 @@ public class POIFSFileSystem extends BlockStore
                 channel = d.getChannel();
                 _data = d;
             } else {
-                _data = new FileBackedDataSource(channel, readOnly);
+                _data = new FileBackedDataSource(channel, readOnly, closeChannelOnClose);
             }
 
             // Get the header
