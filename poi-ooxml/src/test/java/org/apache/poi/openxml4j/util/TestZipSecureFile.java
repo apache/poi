@@ -55,12 +55,12 @@ class TestZipSecureFile {
 
     @Test
     void testSettingMaxEntrySizeAs8Gb() {
-        long approx8Gb = 0xFFFFFFFFL * 2;
+        long approx8Gb = ZipSecureFile.MAX_ENTRY_SIZE * 2;
         try {
             ZipSecureFile.setMaxEntrySize(approx8Gb);
             assertEquals(approx8Gb, ZipSecureFile.getMaxEntrySize());
         } finally {
-            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
+            ZipSecureFile.setMaxEntrySize(ZipSecureFile.MAX_ENTRY_SIZE);
         }
     }
 
@@ -71,12 +71,12 @@ class TestZipSecureFile {
 
     @Test
     void testSettingMaxTextSizeAs8GChars() {
-        long approx8G = 0xFFFFFFFFL * 2;
+        long approx8G = ZipSecureFile.MAX_ENTRY_SIZE * 2;
         try {
             ZipSecureFile.setMaxTextSize(approx8G);
             assertEquals(approx8G, ZipSecureFile.getMaxTextSize());
         } finally {
-            ZipSecureFile.setMaxTextSize(0xFFFFFFFFL);
+            ZipSecureFile.setMaxTextSize(ZipSecureFile.DEFAULT_MAX_TEXT_SIZE);
         }
     }
 }

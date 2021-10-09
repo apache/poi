@@ -36,10 +36,12 @@ import org.apache.logging.log4j.Logger;
 public class ZipSecureFile extends ZipFile {
     private static final Logger LOG = LogManager.getLogger(ZipSecureFile.class);
     /* package */ static double MIN_INFLATE_RATIO = 0.01d;
-    /* package */ static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
-    
-    // The default maximum size of extracted text
-    private static long MAX_TEXT_SIZE = 10*1024*1024L;
+    /* package */ static final long DEFAULT_MAX_ENTRY_SIZE = 0xFFFFFFFFL;
+    /* package */ static long MAX_ENTRY_SIZE = DEFAULT_MAX_ENTRY_SIZE;
+
+    // The maximum chars of extracted text
+    /* package */ static final long DEFAULT_MAX_TEXT_SIZE = 10*1024*1024L;
+    private static long MAX_TEXT_SIZE = DEFAULT_MAX_TEXT_SIZE;
 
     private final String fileName;
 
@@ -79,7 +81,7 @@ public class ZipSecureFile extends ZipFile {
     public static void setMaxEntrySize(long maxEntrySize) {
         if (maxEntrySize < 0) {
             throw new IllegalArgumentException("Max entry size must be greater than or equal to zero");
-        } else if (maxEntrySize > 0xFFFFFFFFL) {
+        } else if (maxEntrySize > DEFAULT_MAX_ENTRY_SIZE) {
             LOG.atWarn().log("setting max entry size greater than 4Gb can be risky; set to " + maxEntrySize + " bytes");
         }
         MAX_ENTRY_SIZE = maxEntrySize;
@@ -110,8 +112,8 @@ public class ZipSecureFile extends ZipFile {
     public static void setMaxTextSize(long maxTextSize) {
         if (maxTextSize < 0) {
             throw new IllegalArgumentException("Max text size must be greater than or equal to zero");
-        }else if (maxTextSize > 0xFFFFFFFFL) {
-            LOG.atWarn().log("setting max text size greater than " + 0xFFFFFFFFL + " can be risky; set to " + maxTextSize + " chars");
+        }else if (maxTextSize > DEFAULT_MAX_TEXT_SIZE) {
+            LOG.atWarn().log("setting max text size greater than " + DEFAULT_MAX_TEXT_SIZE + " can be risky; set to " + maxTextSize + " chars");
         }
         MAX_TEXT_SIZE = maxTextSize;
     }
