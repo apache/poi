@@ -18,15 +18,11 @@
 package org.apache.poi.poifs.filesystem;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -46,7 +42,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /**
- * Tests for the older OPOIFS-based POIFSFileSystem
+ * Tests for the POIFSFileSystem
  */
 final class TestPOIFSFileSystem {
    private final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
@@ -302,6 +298,26 @@ final class TestPOIFSFileSystem {
             int count = recurseDir(poiFS.getRoot());
 
             assertEquals(1285, count, "Expecting a fixed number of entries being found in the test-document");
+        }
+    }
+
+    @Test
+    void test64542CloseChannelFalse() throws IOException {
+        File file = _samples.getFile("64322.ole2");
+        try (FileChannel channel = new RandomAccessFile(file, "r").getChannel()) {
+            POIFSFileSystem poiFS = new POIFSFileSystem(channel, true, false);
+            poiFS.close();
+            assertTrue(channel.isOpen(), "channel should still be open");
+        }
+    }
+
+    @Test
+    void test64542CloseChannelTrue() throws IOException {
+        File file = _samples.getFile("64322.ole2");
+        try (FileChannel channel = new RandomAccessFile(file, "r").getChannel()) {
+            POIFSFileSystem poiFS = new POIFSFileSystem(channel, true, true);
+            poiFS.close();
+            assertFalse(channel.isOpen(), "channel should be closed");
         }
     }
 
