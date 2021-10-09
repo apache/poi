@@ -170,13 +170,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * The locator of user-defined functions.
-     * By default includes functions from the Excel Analysis Toolpack
+     * By default, includes functions from the Excel Analysis Toolpack
      */
     private final IndexedUDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
-    /**
-     * TODO
-     */
     private CalculationChain calcChain;
 
     /**
