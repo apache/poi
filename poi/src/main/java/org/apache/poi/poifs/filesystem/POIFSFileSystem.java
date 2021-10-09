@@ -208,8 +208,8 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses
-     * less memory than creating from an <tt>InputStream</tt>.</p>
+     * <p>Creates a POIFSFileSystem from an open {@code FileChannel}. This uses
+     * less memory than creating from an {@code InputStream}.</p>
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying resources closed. The <code>closeChannel</code>
