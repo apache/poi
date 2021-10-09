@@ -35,15 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -3560,18 +3552,50 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFSheet sheet = wb.getSheet("SheetWithSharedFormula");
             XSSFCell v15 = sheet.getRow(14).getCell(21);
             XSSFCell v16 = sheet.getRow(15).getCell(21);
+            XSSFCell v17 = sheet.getRow(16).getCell(21);
             assertEquals("U15/R15", v15.getCellFormula());
             assertEquals(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
             assertEquals("U16/R16", v16.getCellFormula());
             assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            assertEquals("U17/R17", v17.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             int calcChainSize = wb.getCalculationChain().getCTCalcChain().sizeOfCArray();
 
             v15.removeFormula();
             assertEquals(CellType.NUMERIC, v15.getCellType(), "V15 is no longer a function");
             assertNull(v15.getCTCell().getF(), "V15 xmlbeans function removed");
             assertEquals("U16/R16", v16.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v16.getCTCell().getF().getT());
+            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT());
+            assertEquals("U17/R17", v17.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             assertEquals(calcChainSize - 1, wb.getCalculationChain().getCTCalcChain().sizeOfCArray());
+        }
+    }
+
+    @Test
+    void testSetBlankOnNestedSharedFormulas() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasSetBlank.xlsx")) {
+            XSSFSheet s1 = wb1.getSheetAt(0);
+            assertNotNull(s1);
+            Iterator<Row> rowIterator = s1.rowIterator();
+            int count = 0;
+            StringBuilder sb = new StringBuilder();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    // the toString is needed to exhibit the broken state
+                    sb.append(cell.toString()).append(",");
+                    count++;
+
+                    // breaks the sheet state
+                    cell.setBlank();
+                }
+            }
+            assertEquals(10, count);
+            assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
         }
     }
 }

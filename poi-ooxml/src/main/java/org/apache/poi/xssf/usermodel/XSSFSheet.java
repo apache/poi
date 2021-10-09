@@ -4666,25 +4666,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                             XSSFCell nextCell = row.getCell(j);
                             if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
                                 CTCellFormula nextF = nextCell.getCTCell().getF();
-                                nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
-                                nextF.setT(STCellFormulaType.SHARED);
-                                if (!nextF.isSetSi()) {
-                                    nextF.setSi(f.getSi());
-                                }
-                                CellRangeAddress nextRef = new CellRangeAddress(
-                                        nextCell.getRowIndex(), ref.getLastRow(),
-                                        nextCell.getColumnIndex(), ref.getLastColumn());
-                                nextF.setRef(nextRef.formatAsString());
+                                if (nextF.getT() == STCellFormulaType.SHARED && nextF.getSi() == f.getSi()) {
+                                    nextF.setStringValue(nextCell.getCellFormula(evalWb));
+                                    CellRangeAddress nextRef = new CellRangeAddress(
+                                            nextCell.getRowIndex(), ref.getLastRow(),
+                                            nextCell.getColumnIndex(), ref.getLastColumn());
+                                    nextF.setRef(nextRef.formatAsString());
 
-                                sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
-                                break DONE;
+                                    sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
+                                    break DONE;
+                                }
                             }
                         }
                     }
                 }
             }
-
         }
     }
 
