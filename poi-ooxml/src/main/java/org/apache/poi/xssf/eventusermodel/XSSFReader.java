@@ -44,10 +44,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.XMLHelper;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFShape;
@@ -342,7 +339,7 @@ public class XSSFReader {
          * Returns the comments associated with this sheet,
          * or null if there aren't any
          */
-        public CommentsTable getSheetComments() {
+        public Comments getSheetComments() {
             PackagePart sheetPkg = getSheetPart();
 
             // Do we have a comments relationship? (Only ever one if so)
@@ -363,7 +360,7 @@ public class XSSFReader {
         }
 
         //to allow subclassing
-        protected CommentsTable parseComments(PackagePart commentsPart) throws IOException {
+        protected Comments parseComments(PackagePart commentsPart) throws IOException {
             return new CommentsTable(commentsPart);
         }
 
@@ -374,7 +371,7 @@ public class XSSFReader {
         public List<XSSFShape> getShapes() {
             PackagePart sheetPkg = getSheetPart();
             List<XSSFShape> shapes = new LinkedList<>();
-            // Do we have a comments relationship? (Only ever one if so)
+            // Do we have a shapes relationship? (Only ever one if so)
             try {
                 PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
                 for (int i = 0; i < drawingsList.size(); i++) {
@@ -410,7 +407,7 @@ public class XSSFReader {
         }
     }
 
-    protected static final class XSSFSheetRef {
+    public static final class XSSFSheetRef {
         //do we need to store sheetId, too?
         private final String id;
         private final String name;
@@ -430,7 +427,7 @@ public class XSSFReader {
     }
 
     //scrapes sheet reference info and order from workbook.xml
-    private static class XMLSheetRefReader extends DefaultHandler {
+    public static class XMLSheetRefReader extends DefaultHandler {
         private static final String SHEET = "sheet";
         private static final String ID = "id";
         private static final String NAME = "name";
@@ -459,7 +456,7 @@ public class XSSFReader {
             }
         }
 
-        List<XSSFSheetRef> getSheetRefs() {
+        public List<XSSFSheetRef> getSheetRefs() {
             return Collections.unmodifiableList(sheetRefs);
         }
     }

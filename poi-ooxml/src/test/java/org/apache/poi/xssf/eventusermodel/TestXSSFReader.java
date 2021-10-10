@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFShape;
@@ -173,7 +174,7 @@ public final class TestXSSFReader {
 
               if (count == 1) {
                   assertNotNull(it.getSheetComments());
-                  CommentsTable ct = it.getSheetComments();
+                  Comments ct = it.getSheetComments();
                   assertEquals(1, ct.getNumberOfAuthors());
                   assertEquals(3, ct.getNumberOfComments());
               } else {
