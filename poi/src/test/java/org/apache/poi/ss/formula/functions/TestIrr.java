@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -28,6 +30,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * Tests for {@link Irr}
@@ -117,6 +121,26 @@ final class TestIrr {
             }
         }
         assertEquals(0, failures.length(), "IRR assertions failed");
+    }
+
+    @Test
+    void testMicrosoftExample() throws IOException {
+        https://support.microsoft.com/en-us/office/irr-function-64925eaa-9988-495b-b290-3ad0c163c1bc
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            addRow(sheet, 0, "Data", "Description");
+            addRow(sheet, 1, -70000, "Initial cost of a business");
+            addRow(sheet, 2, 12000, "Net income for the first year");
+            addRow(sheet, 3, 15000, "Net income for the second year");
+            addRow(sheet, 4, 18000, "Net income for the third year");
+            addRow(sheet, 5, 21000, "Net income for the fourth year");
+            addRow(sheet, 6, 26000, "Net income for the fifth year");
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "IRR(A2:A6)", -0.02124484827341093);
+            assertDouble(fe, cell, "IRR(A2:A7)", 0.08663094803653162);
+            assertDouble(fe, cell, "IRR(A2:A4,-0.1)", -0.44350694133474067);
+        }
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){
