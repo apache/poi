@@ -71,6 +71,15 @@ public class Utils {
         assertEquals(expectedResult, result.getNumberValue());
     }
 
+    public static void assertDouble(FormulaEvaluator fe, Cell cell, String formulaText,
+                                    double expectedResult, double tolerance) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(CellType.NUMERIC, result.getCellType());
+        assertEquals(expectedResult, result.getNumberValue(), tolerance);
+    }
+
     public static void assertError(FormulaEvaluator fe, Cell cell, String formulaText, FormulaError expectedError) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);

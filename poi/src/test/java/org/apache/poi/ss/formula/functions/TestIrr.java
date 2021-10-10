@@ -137,9 +137,10 @@ final class TestIrr {
             addRow(sheet, 6, 26000, "Net income for the fifth year");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "IRR(A2:A6)", -0.02124484827341093);
-            assertDouble(fe, cell, "IRR(A2:A7)", 0.08663094803653162);
-            assertDouble(fe, cell, "IRR(A2:A4,-0.1)", -0.44350694133474067);
+            final double tolerance = 1E-4;
+            assertDouble(fe, cell, "IRR(A2:A6)", -0.02124484827341093, tolerance);
+            assertDouble(fe, cell, "IRR(A2:A7)", 0.08663094803653162, tolerance);
+            assertDouble(fe, cell, "IRR(A2:A4,-0.1)", -0.44350694133474067, tolerance);
         }
     }
 
@@ -154,7 +155,7 @@ final class TestIrr {
                 1462.8749999999998, 1462.8749999999998, 1462.8749999999998, 1462.8749999999998, 1462.8749999999998,
                 1462.8749999999998, 1462.8749999999998, 1462.8749999999998, 10000.0};
         double result = Irr.irr(incomes);
-        assertEquals(-0.009463562705856032, result);
+        assertEquals(-0.009463562705856032, result, 1E-4); // should agree within 0.01%
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){
