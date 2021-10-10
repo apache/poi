@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -31,8 +33,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * @see <a href="http://office.microsoft.com/en-us/excel-help/irr-HP005209146.aspx">Excel IRR</a>
  */
 public final class Irr implements Function {
-    private static final int MAX_ITERATION_COUNT = 20;
+    private static final int MAX_ITERATION_COUNT = 1000;
     private static final double ABSOLUTE_ACCURACY = 1E-7;
+    private static final Logger LOGGER = LogManager.getLogger(Irr.class);
 
 
     public ValueEval evaluate(final ValueEval[] args, final int srcRowIndex, final int srcColumnIndex) {
@@ -73,7 +76,7 @@ public final class Irr implements Function {
      * <p>
      * Starting with the guess, the method cycles through the calculation until the result
      * is accurate within 0.00001 percent. If IRR can't find a result that works
-     * after 20 tries, the {@code Double.NaN} is returned.
+     * after 1000 tries, the {@code Double.NaN} is returned.
      *
      * <p>
      *   The implementation is inspired by the NewtonSolver from the Apache Commons-Math library,
@@ -96,10 +99,11 @@ public final class Irr implements Function {
 
         for (int i = 0; i < MAX_ITERATION_COUNT; i++) {
 
-            // the value of the function (NPV) and its derivate can be calculated in the same loop
+            // the value of the function (NPV) and its derivation can be calculated in the same loop
             final double factor = 1.0 + x0;
             double denominator = factor;
             if (denominator == 0) {
+                LOGGER.atWarn().log("Returning NaN because IRR has found an denominator of 0");
                 return Double.NaN;
             }
 
@@ -114,6 +118,7 @@ public final class Irr implements Function {
 
             // the essence of the Newton-Raphson Method
             if (fDerivative == 0) {
+                LOGGER.atWarn().log("Returning NaN because IRR has found an fDerivative of 0");
                 return Double.NaN;
             }
             double x1 =  x0 - fValue/fDerivative;
@@ -125,6 +130,7 @@ public final class Irr implements Function {
             x0 = x1;
         }
         // maximum number of iterations is exceeded
+        LOGGER.atWarn().log("Returning NaN because IRR has reached max number of iterations allowed: {}", MAX_ITERATION_COUNT);
         return Double.NaN;
     }
 }
