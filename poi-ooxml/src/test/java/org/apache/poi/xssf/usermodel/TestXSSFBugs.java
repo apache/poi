@@ -3623,4 +3623,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
     }
+
+    @Test
+    void testBug65452() throws IOException {
+        File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            try {
+                Workbook wb = WorkbookFactory.create(fis);
+                if (wb != null) wb.close();
+                fail("WorkbookFactory.create should have failed");
+            } catch (IOException ie) {
+                assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
+            }
+        }
+        try {
+            Workbook wb = WorkbookFactory.create(file);
+            if (wb != null) wb.close();
+            fail("WorkbookFactory.create should have failed");
+        } catch (IOException ie) {
+            assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
+        }
+    }
 }

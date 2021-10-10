@@ -19,11 +19,7 @@ package org.apache.poi.ss.usermodel;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -291,9 +287,9 @@ public final class WorkbookFactory {
                 ooxmlEnc = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
+        } else {
+            throw new IOException("Can't open workbook - unsupported file type: "+fm);
         }
-
-        return null;
     }
 
 
