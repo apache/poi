@@ -16,13 +16,21 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * Tests for {@link Quotient}
@@ -62,5 +70,16 @@ class TestQuotient {
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);
 
         confirmValueError("dividing by zero", "3.14159", "0", ErrorEval.DIV_ZERO);
+    }
+
+    @Test
+    void testWithCellRefs() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            addRow(sheet, 0, 5, 2);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "QUOTIENT(A1, B1)", 2.0);
+        }
     }
 }
