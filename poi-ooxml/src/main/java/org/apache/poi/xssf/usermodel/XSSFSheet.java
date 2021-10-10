@@ -2951,8 +2951,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Calls shiftRows(startRow, endRow, n, false, false);
      *
      * <p>
-     * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted).
+     * Additionally, shifts merged regions that are completely defined in these
+     * rows (i.e. merged 2 cells on a row to be shifted).
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -2968,8 +2968,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Code ensures that rows don't wrap around
      *
      * <p>
-     * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
+     * Additionally, shifts merged regions that are completely defined in these
+     * rows (i.e. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
      *
      * @param startRow the row to start shifting
@@ -3054,6 +3054,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
+                for (Cell c : row) {
+                    c.setBlank();
+                }
                 // remove row from worksheet.getSheetData row array
                 // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
                 //noinspection UnnecessaryBoxing

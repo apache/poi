@@ -3598,4 +3598,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
         }
     }
+
+    @Test
+    void testBug65306() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("bug65306.xlsx")) {
+            XSSFSheet sheet = wb1.getSheetAt(0);
+            assertNotNull(sheet);
+            XSSFCell a1 = sheet.getRow(0).getCell(0);
+            XSSFCell b1 = sheet.getRow(0).getCell(1);
+            XSSFCell a2 = sheet.getRow(1).getCell(0);
+            XSSFCell b2 = sheet.getRow(1).getCell(1);
+            assertEquals(1.0, a1.getNumericCellValue());
+            assertEquals(2.0, a2.getNumericCellValue());
+            assertEquals("$A$1+3*$A$2", b1.getCellFormula());
+            assertEquals("$A$1+3*$A$2", b2.getCellFormula());
+            sheet.shiftRows(1, 1, -1);
+            assertNull(sheet.getRow(1), "row 2 was removed?");
+            a1 = sheet.getRow(0).getCell(0);
+            b1 = sheet.getRow(0).getCell(1);
+            assertEquals(2.0, a1.getNumericCellValue());
+            assertEquals("#REF!+3*$A$1", b1.getCellFormula());
+            try (FileOutputStream fos = new FileOutputStream("abc.xlsx")) {
+                wb1.write(fos);
+            }
+        }
+    }
 }
