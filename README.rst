@@ -84,13 +84,6 @@ Contributing
 
 * More info: `How To Build page`_  at apache.org
 
-Building jar files
-------------------
-
-To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and poi-examples::
-
-https://poi.apache.org/devel/index.html
-
 .. _Mailing lists: https://poi.apache.org/mailinglists.html
 .. _Developers: https://lists.apache.org/list.html?dev@poi.apache.org
 .. _Users: https://lists.apache.org/list.html?user@poi.apache.org
