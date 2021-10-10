@@ -495,7 +495,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             //we cannot set individual formulas for cells included in an array formula
             sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
             IllegalStateException e = assertThrows(IllegalStateException.class, () -> sheet.shiftRows(0, 0, 1));
-            String msg = "Cell Sheet0!C2 is part of a multi-cell array formula. You cannot change part of an array.";
+            String msg = "Row[rownum=0] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
             assertEquals(msg, e.getMessage());
         /*
          TODO: enable shifting the whole array

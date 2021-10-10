@@ -3055,7 +3055,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
                 for (Cell c : row) {
-                    c.setBlank();
+                    if (!c.isPartOfArrayFormulaGroup()) {
+                        //the support for deleting cells that are part of array formulas is not implemented yet
+                        c.setBlank();
+                    }
                 }
                 // remove row from worksheet.getSheetData row array
                 // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
