@@ -72,8 +72,9 @@ public final class ParagraphPropertyFetcher<T> extends PropertyFetcher<T> {
     public T fetchProperty(XSLFShape shape) {
         final XSLFSheet sheet = shape.getSheet();
 
+        fetchParagraphProp();
+
         if (!(sheet instanceof XSLFSlideMaster)) {
-            fetchParagraphProp();
             fetchShapeProp(shape);
             fetchThemeProp(shape);
         }

@@ -71,6 +71,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
@@ -1061,6 +1062,20 @@ class TestXSLFBugs {
             assertEquals(2, targetPresentation.getPictureData().size());
 
             targetPresentation.write(new UnsynchronizedByteArrayOutputStream());
+        }
+    }
+
+    @Test
+    public void bug65551() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("bug65551.pptx")) {
+            XSLFTextShape shape = (XSLFTextShape)ppt.getSlideMasters().get(0).getShapes().get(1);
+            XSLFTextParagraph tp = shape.getTextParagraphs().get(0);
+            assertEquals(TextParagraph.TextAlign.RIGHT, tp.getTextAlign());
+            XSLFTextRun tr = tp.getTextRuns().get(0);
+            PaintStyle fc = tr.getFontColor();
+            assertTrue(fc instanceof SolidPaint);
+            SolidPaint sp = (SolidPaint)fc;
+            assertEquals(Color.RED, sp.getSolidColor().getColor());
         }
     }
 }

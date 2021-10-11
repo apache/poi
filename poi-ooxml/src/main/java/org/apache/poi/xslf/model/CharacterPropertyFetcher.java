@@ -62,9 +62,9 @@ public final class CharacterPropertyFetcher<T> extends PropertyFetcher<T> {
     public T fetchProperty(XSLFShape shape) {
         final XSLFSheet sheet = shape.getSheet();
 
+        fetchRunProp();
 
         if (!(sheet instanceof XSLFSlideMaster)) {
-            fetchRunProp();
             fetchParagraphDefaultRunProp();
             fetchShapeProp(shape);
             fetchThemeProp(shape);
