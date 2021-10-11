@@ -274,4 +274,43 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
     }
+
+    @Test
+    public void test62215() throws IOException {
+        String sheetName = "1";
+        int rowIndex = 0;
+        int colIndex = 0;
+        String formula = "1";
+        String value = "yes";
+        CellType valueType = CellType.STRING;
+
+        try (Workbook wb = new SXSSFWorkbook()) {
+            Sheet sheet = wb.createSheet(sheetName);
+            Row row = sheet.createRow(rowIndex);
+            Cell cell = row.createCell(colIndex);
+
+            // this order ensures that value will not be overwritten by setting the formula
+            cell.setCellFormula(formula);
+            cell.setCellValue(value);
+
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(formula, cell.getCellFormula());
+            assertEquals(valueType, cell.getCachedFormulaResultType());
+            assertEquals(value, cell.getStringCellValue());
+            // so far so good
+
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()){
+                wb.write(bos);
+
+                try (XSSFWorkbook testWb = new XSSFWorkbook(bos.toInputStream())) {
+                    Cell testCell = testWb.getSheet(sheetName).getRow(rowIndex).getCell(colIndex);
+                    assertEquals(CellType.FORMULA, testCell.getCellType());
+                    assertEquals(formula, testCell.getCellFormula());
+
+                    assertEquals(CellType.STRING, testCell.getCachedFormulaResultType());
+                    assertEquals(value, testCell.getStringCellValue());
+                }
+            }
+        }
+    }
 }
