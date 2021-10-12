@@ -23,6 +23,8 @@ import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
+import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -46,7 +49,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
@@ -86,11 +88,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
@@ -1940,7 +1938,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             mod.getCell(1).setCellValue(3);
             mod = sheet.getRow(2);
             mod.createCell(0).setCellValue(10);
-            HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
             assertEquals(256, mod.getCell(2).getNumericCellValue());
         }
     }
@@ -3639,6 +3637,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             fail("WorkbookFactory.create should have failed");
         } catch (IOException ie) {
             assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
+        }
+    }
+
+    @Test
+    void testBug62021() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("testSheet");
+            LocalDateTime ldt = LocalDateTime.parse("2021-10-15T12:00:00");
+            addRow(sheet, 0, ldt);
+            XSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "A1+1", DateUtil.getExcelDate(ldt) + 1);
+            LocalDateTime expected = ldt.plusMinutes(90);
+            assertDouble(fe, cell, "A1+\"1:30\"", DateUtil.getExcelDate(expected));
         }
     }
 }
