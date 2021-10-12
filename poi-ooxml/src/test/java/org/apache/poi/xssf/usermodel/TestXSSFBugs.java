@@ -3618,9 +3618,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             b1 = sheet.getRow(0).getCell(1);
             assertEquals(2.0, a1.getNumericCellValue());
             assertEquals("#REF!+3*$A$1", b1.getCellFormula());
-            try (FileOutputStream fos = new FileOutputStream("abc.xlsx")) {
-                wb1.write(fos);
-            }
         }
     }
 

@@ -91,7 +91,7 @@ public class XSSFSignatureLine extends SignatureLine {
         XSSFVMLDrawing vml = sheet.getVMLDrawing(false);
         POIXMLRelation xtype = mapType(type);
         int idx = wb.getNextPartNumber(xtype, -1);
-        POIXMLDocumentPart.RelationPart rp = vml.createRelationship(xtype, XSSFFactory.getInstance(), idx, false);
+        POIXMLDocumentPart.RelationPart rp = vml.createRelationship(xtype, wb.getXssfFactory(), idx, false);
         POIXMLDocumentPart dp = rp.getDocumentPart();
         try (OutputStream out = dp.getPackagePart().getOutputStream()) {
             out.write(image);

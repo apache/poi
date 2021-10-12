@@ -338,6 +338,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         this(part.getInputStream());
     }
 
+    /**
+     * @return the XSSFFactory
+     * @since POI 5.1.0
+     */
+    public XSSFFactory getXssfFactory() {
+        return xssfFactory;
+    }
+
     protected void beforeDocumentRead() {
         // Ensure it isn't a XLSB file, which we don't support
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
@@ -1987,7 +1995,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if (!getCreationHelper().getReferencedWorkbooks().containsKey(name)){
              externalLinkIdx = this.getNextPartNumber(XSSFRelation.EXTERNAL_LINKS,
                     this.getPackagePart().getPackage().getPartsByContentType(XSSFRelation.EXTERNAL_LINKS.getContentType()).size());
-            POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, XSSFFactory.getInstance(), externalLinkIdx, false);
+            POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, xssfFactory, externalLinkIdx, false);
             ExternalLinksTable linksTable = rp.getDocumentPart();
             linksTable.setLinkedFileName(name);
             this.getExternalLinksTable().add(linksTable);

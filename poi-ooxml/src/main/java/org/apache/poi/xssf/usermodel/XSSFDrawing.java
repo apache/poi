@@ -241,10 +241,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     }
 
     protected RelationPart createChartRelationPart() {
+        XSSFWorkbook wb = getSheet().getWorkbook();
+        XSSFFactory factory = wb == null ? XSSFFactory.getInstance() : wb.getXssfFactory();
         int chartNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.CHART.getContentType())
             .size() + 1;
 
-        return createRelationship(XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber, false);
+        return createRelationship(XSSFRelation.CHART, factory, chartNumber, false);
     }
 
     /**
@@ -286,8 +288,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      *            {@link XSSFWorkbook#getAllPictures()}           .
      */
     protected PackageRelationship addPictureReference(int pictureIndex) {
-        XSSFWorkbook wb = (XSSFWorkbook) getParent().getParent();
-        XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
+        XSSFPictureData data = getSheet().getWorkbook().getAllPictures().get(pictureIndex);
         XSSFPictureData pic = new XSSFPictureData(data.getPackagePart());
         RelationPart rp = addRelation(null, XSSFRelation.IMAGES, pic);
         return rp.getRelationship();

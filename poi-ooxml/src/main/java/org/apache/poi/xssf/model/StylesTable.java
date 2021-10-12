@@ -175,7 +175,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public void ensureThemesTable() {
         if (theme != null) return;
 
-        setTheme((ThemesTable)workbook.createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance()));
+        XSSFFactory factory = workbook == null ? XSSFFactory.getInstance() : workbook.getXssfFactory();
+        setTheme((ThemesTable)workbook.createRelationship(XSSFRelation.THEME, factory));
     }
 
     /**

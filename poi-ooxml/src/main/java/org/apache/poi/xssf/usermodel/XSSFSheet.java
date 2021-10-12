@@ -563,7 +563,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // Default drawingNumber = #drawings.size() + 1
         int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
         drawingNumber = getNextPartNumber(XSSFRelation.DRAWINGS, drawingNumber);
-        RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+        RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
         XSSFDrawing drawing = rp.getDocumentPart();
         String relId = rp.getRelationship().getId();
 
@@ -590,7 +590,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if(autoCreate) {
                 int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
                         getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
-                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
                 drawing = rp.getDocumentPart();
                 String relId = rp.getRelationship().getId();
 
@@ -3531,13 +3531,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             //  the sheet has (i.e. sheet 1 -> comments 1)
             try {
                 sheetComments = (CommentsTable)createRelationship(
-                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), Math.toIntExact(sheet.getSheetId()));
+                        XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), Math.toIntExact(sheet.getSheetId()));
             } catch(PartAlreadyExistsException e) {
                 // Technically a sheet doesn't need the same number as
                 //  it's comments, and clearly someone has already pinched
                 //  our number! Go for the next available one instead
                 sheetComments = (CommentsTable)createRelationship(
-                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), -1);
+                        XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
             }
         }
         return sheetComments;
@@ -4161,7 +4161,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
         }
 
-        RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
+        RelationPart rp = createRelationship(XSSFRelation.TABLE, getWorkbook().getXssfFactory(), tableNumber, false);
         XSSFTable table = rp.getDocumentPart();
         tbl.setId(rp.getRelationship().getId());
         table.getCTTable().setId(tableNumber);
@@ -4419,14 +4419,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         int tableId = getWorkbook().getPivotTables().size()+1;
         //Create relationship between pivotTable and the worksheet
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE,
-                XSSFFactory.getInstance(), tableId);
+                getWorkbook().getXssfFactory(), tableId);
         pivotTable.setParentSheet(this);
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
         //Create relationship between the pivot cache defintion and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
-                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);
         //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
         PackagePart pivotPackagePart = pivotTable.getPackagePart();
@@ -4440,7 +4440,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         //Create relationship between pivotcacherecord and pivotcachedefinition
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
-                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, getWorkbook().getXssfFactory(), tableId);
 
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
