@@ -23,6 +23,7 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,12 +45,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.internal.util.io.IOUtil;
 
 /**
  * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
  */
 @SuppressWarnings("ConstantConditions")
 class TestPPTX2PNG {
+    private static Closeable archive;
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
 
@@ -82,15 +85,21 @@ class TestPPTX2PNG {
     @AfterAll
     public static void resetStdin() {
         System.setIn(defStdin);
+        IOUtil.closeQuietly(archive);
     }
 
     public static Stream<Arguments> data() throws IOException {
+        // Junit closes all closable arguments after the usage
+        // therefore we need to wrap the archive in non-closable arrays
+
         if (basedir != null && basedir.getName().endsWith(".zip")) {
             ZipFile zipFile = new ZipFile(basedir);
-            return zipFile.stream().map(f -> Arguments.of(f.getName(), f, zipFile));
+            archive = zipFile;
+            return zipFile.stream().map(f -> Arguments.of(f.getName(), f, new ZipFile[]{zipFile}));
         } else if (basedir != null && basedir.getName().endsWith(".7z")) {
             SevenZFile sevenZFile = new SevenZFile(basedir);
-            return ((ArrayList<SevenZArchiveEntry>)sevenZFile.getEntries()).stream().filter(f -> !f.isDirectory()).map(f -> Arguments.of(f.getName(), f, sevenZFile));
+            archive = sevenZFile;
+            return ((ArrayList<SevenZArchiveEntry>)sevenZFile.getEntries()).stream().filter(f -> !f.isDirectory()).map(f -> Arguments.of(f.getName(), f, new SevenZFile[]{sevenZFile}));
         } else {
             return Stream.of(files.split(", ?")).
                 map(basedir == null ? samples::getFile : f -> new File(basedir, f)).
@@ -127,7 +136,7 @@ class TestPPTX2PNG {
                 "-format", format, // png,gif,jpg,svg,pdf or null for test
                 "-slide", "-1", // -1 for all
                 "-outdir", tmpDir.getCanonicalPath(),
-                // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
+                // "-dump", new File("build/tmp/", fileName+".json").getCanonicalPath(),
                 "-dump", "null",
                 "-quiet",
                 "-ignoreParse",
@@ -162,14 +171,14 @@ class TestPPTX2PNG {
 
         if (fileObj instanceof ZipEntry) {
             ZipEntry ze = (ZipEntry)fileObj;
-            ZipFile zf = (ZipFile)fileContainer;
+            ZipFile zf = ((ZipFile[])fileContainer)[0];
             System.setIn(zf.getInputStream(ze));
             args.add("-outpat");
             args.add(basename+"-${slideno}-"+ext+".${format}");
             args.add("stdin");
         } else if (fileObj instanceof SevenZArchiveEntry) {
             SevenZArchiveEntry ze = (SevenZArchiveEntry)fileObj;
-            SevenZFile zf = (SevenZFile)fileContainer;
+            SevenZFile zf = ((SevenZFile[])fileContainer)[0];
             System.setIn(zf.getInputStream(ze));
             args.add("-outpat");
             args.add(basename+"-${slideno}-"+ext+".${format}");

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hemf.record.emf;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
@@ -46,8 +49,6 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
-
-import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Contains arbitrary data
@@ -103,7 +104,7 @@ public class HemfComment {
          */
         default void draw(HemfGraphics ctx) {}
 
-        default void calcBounds(Rectangle2D bounds, Rectangle2D viewport, EmfRenderState[] renderState) { }
+        default void calcBounds(RenderBounds holder) { }
 
 
         @Override
@@ -137,8 +138,8 @@ public class HemfComment {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
-            data.calcBounds(window, viewport, renderState);
+        public void calcBounds(RenderBounds holder) {
+            data.calcBounds(holder);
         }
 
         @Override
@@ -343,11 +344,11 @@ public class HemfComment {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
-            renderState[0] = EmfRenderState.EMFPLUS_ONLY;
+        public void calcBounds(RenderBounds holder) {
+            holder.setState(EmfRenderState.EMFPLUS_ONLY);
             for (HemfPlusRecord r : records) {
-                r.calcBounds(window, viewport, renderState);
-                if (!window.isEmpty() && !viewport.isEmpty()) {
+                r.calcBounds(holder);
+                if (!holder.getWindow().isEmpty() && !holder.getViewport().isEmpty()) {
                     break;
                 }
             }

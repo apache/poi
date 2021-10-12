@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -165,8 +166,8 @@ public class HemfPlusMisc {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
-            renderState[0] = HemfGraphics.EmfRenderState.EMF_DCONTEXT;
+        public void calcBounds(RenderBounds holder) {
+            holder.setState(HemfGraphics.EmfRenderState.EMF_DCONTEXT);
         }
     }
 

@@ -59,7 +59,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D window = holder.getWindow();
             double x = window.getX();
             double y = window.getY();
             window.setRect(x,y,size.getWidth(),size.getHeight());
@@ -86,7 +87,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D window = holder.getWindow();
             double w = window.getWidth();
             double h = window.getHeight();
             window.setRect(origin.getX(),origin.getY(),w,h);
@@ -113,7 +115,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D viewport = holder.getViewport();
             double x = viewport.getX();
             double y = viewport.getY();
             viewport.setRect(x,y,extents.getWidth(),extents.getHeight());
@@ -140,7 +143,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D viewport = holder.getViewport();
             double w = viewport.getWidth();
             double h = viewport.getHeight();
             viewport.setRect(origin.getX(), origin.getY(), w, h);
@@ -208,6 +212,16 @@ public class HemfWindowing {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
+        }
     }
 
     /**
@@ -231,7 +245,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D viewport = holder.getViewport();
             double x = viewport.getX();
             double y = viewport.getY();
             double w = viewport.getWidth();
@@ -262,7 +277,8 @@ public class HemfWindowing {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D window = holder.getWindow();
             double x = window.getX();
             double y = window.getY();
             double w = window.getWidth();

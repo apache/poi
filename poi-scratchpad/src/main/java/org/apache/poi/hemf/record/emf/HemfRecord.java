@@ -57,7 +57,16 @@ public interface HemfRecord extends GenericRecord {
         }
     }
 
-    default void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+    interface RenderBounds {
+        HemfGraphics.EmfRenderState getState();
+        void setState(HemfGraphics.EmfRenderState state);
+
+        Rectangle2D getWindow();
+        Rectangle2D getViewport();
+        Rectangle2D getBounds();
+    }
+
+    default void calcBounds(RenderBounds holder) {
     }
 
     /**

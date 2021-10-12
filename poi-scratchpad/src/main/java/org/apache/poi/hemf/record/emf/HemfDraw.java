@@ -222,6 +222,16 @@ public final class HemfDraw {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
+        }
     }
 
     /**
@@ -322,6 +332,16 @@ public final class HemfDraw {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
         }
     }
 
@@ -775,6 +795,16 @@ public final class HemfDraw {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
+        }
     }
 
     /**
@@ -808,6 +838,16 @@ public final class HemfDraw {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
+        }
     }
 
     /**
@@ -833,6 +873,14 @@ public final class HemfDraw {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (!b.isEmpty()) {
+                b.add(point);
+            }
         }
     }
 
@@ -863,6 +911,16 @@ public final class HemfDraw {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
         }
     }
 
@@ -978,6 +1036,16 @@ public final class HemfDraw {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
         }
     }
 
@@ -1200,6 +1268,16 @@ public final class HemfDraw {
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
+        }
+
+        @Override
+        public void calcBounds(RenderBounds holder) {
+            Rectangle2D b = holder.getBounds();
+            if (b.isEmpty()) {
+                b.setRect(bounds);
+            } else {
+                b.add(bounds);
+            }
         }
     }
 

@@ -18,11 +18,11 @@
 package org.apache.poi.hemf.record.emfplus;
 
 
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -56,7 +56,7 @@ public interface HemfPlusRecord extends GenericRecord {
     default void draw(HemfGraphics ctx) {
     }
 
-    default void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+    default void calcBounds(RenderBounds holder) {
     }
 
     @Override

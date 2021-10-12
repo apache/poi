@@ -19,6 +19,7 @@ package org.apache.poi.hemf.usermodel;
 
 
 import static java.lang.Math.abs;
+import static java.util.Comparator.comparingDouble;
 import static org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState.EMFPLUS_ONLY;
 import static org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState.EMF_ONLY;
 
@@ -36,12 +37,14 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
@@ -125,7 +128,7 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         boolean isInvalid = ReluctantRectangle2D.isEmpty(dim);
         if (isInvalid) {
             Rectangle2D lastDim = new ReluctantRectangle2D();
-            getInnerBounds(lastDim, new ReluctantRectangle2D());
+            getInnerBounds(lastDim, new Rectangle2D.Double(), new Rectangle2D.Double());
             if (!lastDim.isEmpty()) {
                 return lastDim;
             }
@@ -133,24 +136,52 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         return dim;
     }
 
-    public void getInnerBounds(Rectangle2D window, Rectangle2D viewport) {
-        HemfGraphics.EmfRenderState[] renderState = { HemfGraphics.EmfRenderState.INITIAL };
+    public void getInnerBounds(Rectangle2D window, Rectangle2D viewport, Rectangle2D bounds) {
+        RenderBounds holder = new RenderBounds() {
+            private HemfGraphics.EmfRenderState state = HemfGraphics.EmfRenderState.INITIAL;
+
+            @Override
+            public HemfGraphics.EmfRenderState getState() {
+                return state;
+            }
+
+            @Override
+            public void setState(HemfGraphics.EmfRenderState state) {
+                this.state = state;
+            }
+
+            @Override
+            public Rectangle2D getWindow() {
+                return window;
+            }
+
+            @Override
+            public Rectangle2D getViewport() {
+                return viewport;
+            }
+
+            @Override
+            public Rectangle2D getBounds() {
+                return bounds;
+            }
+        };
+
         for (HemfRecord r : getRecords()) {
             if (
-                (renderState[0] == EMF_ONLY && r instanceof HemfComment.EmfComment) ||
-                (renderState[0] == EMFPLUS_ONLY && !(r instanceof HemfComment.EmfComment))
+                (holder.getState() == EMF_ONLY && r instanceof HemfComment.EmfComment) ||
+                (holder.getState() == EMFPLUS_ONLY && !(r instanceof HemfComment.EmfComment))
             ) {
                 continue;
             }
 
             try {
-                r.calcBounds(window, viewport, renderState);
+                r.calcBounds(holder);
             } catch (RuntimeException ignored) {
             }
 
-            if (!window.isEmpty() && !viewport.isEmpty()) {
-                break;
-            }
+//            if (!window.isEmpty() && !viewport.isEmpty()) {
+//                break;
+//            }
         }
     }
 
@@ -179,20 +210,30 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
             Rectangle2D emfBounds = getHeader().getBoundsRectangle();
             Rectangle2D winBounds = new ReluctantRectangle2D();
             Rectangle2D viewBounds = new ReluctantRectangle2D();
-            getInnerBounds(winBounds, viewBounds);
+            Rectangle2D recBounds = new Rectangle2D.Double();
+            getInnerBounds(winBounds, viewBounds, recBounds);
 
             Boolean forceHeader = (Boolean)ctx.getRenderingHint(Drawable.EMF_FORCE_HEADER_BOUNDS);
             if (forceHeader == null) {
                 forceHeader = false;
             }
-            // this is a compromise ... sometimes winBounds are totally off :(
-            // but mostly they fit better than the header bounds
-            Rectangle2D b =
-                !viewBounds.isEmpty() && !forceHeader
-                ? viewBounds
-                : !winBounds.isEmpty() && !forceHeader
-                ? winBounds
-                : emfBounds;
+
+            Rectangle2D b;
+            if (forceHeader) {
+                b = emfBounds;
+            } else if (recBounds.isEmpty()) {
+                // this is a compromise ... sometimes winBounds are totally off :(
+                // but mostly they fit better than the header bounds
+                b = !viewBounds.isEmpty()
+                        ? viewBounds
+                        : !winBounds.isEmpty()
+                        ? winBounds
+                        : emfBounds;
+            } else {
+                double recHyp = dia(recBounds);
+                b = Stream.of(emfBounds, winBounds, viewBounds).
+                    min(comparingDouble(r -> abs(dia(r) - recHyp))).get();
+            }
 
             ctx.translate(graphicsBounds.getCenterX(), graphicsBounds.getCenterY());
             ctx.scale(
@@ -215,6 +256,10 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
             ctx.setTransform(at);
             ctx.setClip(clip);
         }
+    }
+
+    private static double dia(Rectangle2D bounds) {
+        return Math.sqrt(bounds.getWidth()*bounds.getWidth() + bounds.getHeight()*bounds.getWidth());
     }
 
     public Iterable<HwmfEmbedded> getEmbeddings() {
