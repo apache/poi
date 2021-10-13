@@ -327,7 +327,7 @@ public final class ZipPackage extends OPCPackage {
 
             if (partList.containsKey(partName)) {
                 throw new InvalidFormatException(
-                    "A part with the name '"+partName+"' already exist : Packages shall not contain equivalent part names " +
+                    "A part with the name '"+partName+"' already exists : Packages shall not contain equivalent part names " +
                     "and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
             }
 
