@@ -27,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -230,9 +232,8 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
                         ? winBounds
                         : emfBounds;
             } else {
-                double recHyp = dia(recBounds);
                 b = Stream.of(emfBounds, winBounds, viewBounds).
-                    min(comparingDouble(r -> abs(dia(r) - recHyp))).get();
+                    min(comparingDouble(r -> diff(r, recBounds))).get();
             }
 
             ctx.translate(graphicsBounds.getCenterX(), graphicsBounds.getCenterY());
@@ -258,8 +259,14 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         }
     }
 
-    private static double dia(Rectangle2D bounds) {
-        return Math.sqrt(bounds.getWidth()*bounds.getWidth() + bounds.getHeight()*bounds.getWidth());
+    private static double diff(Rectangle2D bounds, Rectangle2D target) {
+        double d = 0;
+        for (int i=0; i<4; i++) {
+            Function<Rectangle2D,Double> fx = (i < 2) ? Rectangle2D::getMinX : Rectangle2D::getMaxX;
+            Function<Rectangle2D,Double> fy = (i % 2 == 0) ? Rectangle2D::getMinY : Rectangle2D::getMaxY;
+            d += Point2D.distanceSq(fx.apply(bounds), fy.apply(bounds), fx.apply(target), fy.apply(target));
+        }
+        return d;
     }
 
     public Iterable<HwmfEmbedded> getEmbeddings() {

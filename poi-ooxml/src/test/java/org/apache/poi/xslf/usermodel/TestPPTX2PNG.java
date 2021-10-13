@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -55,6 +56,9 @@ class TestPPTX2PNG {
     private static Closeable archive;
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
+
+    private static final Pattern XSLF_EXT = Pattern.compile("(?i).*\\.pptx$");
+    private static final Pattern ALL_EXT = Pattern.compile("(?i).*\\.(ppt.?|emf|wmf)$");
 
     private static final File basedir = null;
 
@@ -91,27 +95,32 @@ class TestPPTX2PNG {
     public static Stream<Arguments> data() throws IOException {
         // Junit closes all closable arguments after the usage
         // therefore we need to wrap the archive in non-closable arrays
-
+        Stream<Arguments> result;
         if (basedir != null && basedir.getName().endsWith(".zip")) {
             ZipFile zipFile = new ZipFile(basedir);
             archive = zipFile;
-            return zipFile.stream().map(f -> Arguments.of(f.getName(), f, new ZipFile[]{zipFile}));
+            result = zipFile.stream().
+                map(f -> Arguments.of(new File(f.getName()).getName(), f, new ZipFile[]{zipFile}));
         } else if (basedir != null && basedir.getName().endsWith(".7z")) {
             SevenZFile sevenZFile = new SevenZFile(basedir);
             archive = sevenZFile;
-            return ((ArrayList<SevenZArchiveEntry>)sevenZFile.getEntries()).stream().filter(f -> !f.isDirectory()).map(f -> Arguments.of(f.getName(), f, new SevenZFile[]{sevenZFile}));
+            result = ((ArrayList<SevenZArchiveEntry>)sevenZFile.getEntries()).stream().
+                filter(f -> !f.isDirectory()).
+                map(f -> Arguments.of(f.getName(), f, new SevenZFile[]{sevenZFile}));
         } else {
-            return Stream.of(files.split(", ?")).
+            result = Stream.of(files.split(", ?")).
                 map(basedir == null ? samples::getFile : f -> new File(basedir, f)).
                 map(f -> Arguments.of(f.getName(), f, f.getParentFile()));
         }
+
+        return result.filter(args -> (xslfOnly ? XSLF_EXT : ALL_EXT).matcher((String)args.get()[0]).find());
+
     }
 
     // use filename instead of File object to omit full pathname in test name
     @ParameterizedTest(name = "{0} ({index})")
     @MethodSource("data")
     void render(String fileName, Object fileObj, Object fileContainer) throws Exception {
-        assumeFalse(xslfOnly && fileName.matches(".*\\.(ppt|emf|wmf)$"), "ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run");
         PPTX2PNG.main(getArgs(fileName, fileObj, fileContainer, "null"));
         if (svgFiles.contains(fileName)) {
             PPTX2PNG.main(getArgs(fileName, fileObj, fileContainer, "svg"));
