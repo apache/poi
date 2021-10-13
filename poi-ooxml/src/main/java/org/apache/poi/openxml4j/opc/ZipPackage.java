@@ -350,12 +350,14 @@ public final class ZipPackage extends OPCPackage {
     /**
      * Create a new MemoryPackagePart from the specified URI and content type
      *
-     *
-     * aram partName The part URI.
-     *
+     * @param partName
+     *            The part name.
      * @param contentType
      *            The part content type.
+     * @param loadRelationships
+     *            whether to load relationships.
      * @return The newly created zip package part, else <b>null</b>.
+     * @throws IllegalArgumentException if partName or contentType is null
      */
     @Override
     protected PackagePart createPartImpl(PackagePartName partName,
