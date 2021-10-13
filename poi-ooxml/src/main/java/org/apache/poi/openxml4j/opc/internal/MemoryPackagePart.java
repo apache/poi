@@ -32,7 +32,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.util.IOUtils;
 
 /**
- * Memory version of a package part. Use to
+ * Memory version of a package part.
  *
  * @version 1.0
  */
