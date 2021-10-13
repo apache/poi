@@ -17,31 +17,34 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
+import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
+
+import java.io.*;
 
 /**
- * Memory version of a package part.
+ * (Experimental) Encrypted Temp File version of a package part.
  *
- * @version 1.0
+ * @since POI 5.1.0
  */
-public final class MemoryPackagePart extends PackagePart {
+@Beta
+public final class EncryptedTempFilePackagePart extends PackagePart {
+    private static final Logger LOG = LogManager.getLogger(EncryptedTempFilePackagePart.class);
 
     /**
      * Storage for the part data.
      */
-    protected byte[] data;
+    private EncryptedTempData tempFile;
 
     /**
      * Constructor.
@@ -54,10 +57,12 @@ public final class MemoryPackagePart extends PackagePart {
      *            The content type.
      * @throws InvalidFormatException
      *             If the specified URI is not OPC compliant.
+     * @throws IOException
+     *             If temp file cannot be created.
      */
-    public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
-            String contentType) throws InvalidFormatException {
-        super(pack, partName, contentType);
+    public EncryptedTempFilePackagePart(OPCPackage pack, PackagePartName partName,
+                                        String contentType) throws InvalidFormatException, IOException {
+        this(pack, partName, contentType, false);
     }
 
     /**
@@ -73,37 +78,41 @@ public final class MemoryPackagePart extends PackagePart {
      *            Specify if the relationships will be loaded.
      * @throws InvalidFormatException
      *             If the specified URI is not OPC compliant.
+     * @throws IOException
+     *             If temp file cannot be created.
      */
-    public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
-            String contentType, boolean loadRelationships)
-            throws InvalidFormatException {
+    public EncryptedTempFilePackagePart(OPCPackage pack, PackagePartName partName,
+                                        String contentType, boolean loadRelationships)
+            throws InvalidFormatException, IOException {
         super(pack, partName, new ContentType(contentType), loadRelationships);
+        tempFile = new EncryptedTempData();
     }
 
     @Override
-    protected InputStream getInputStreamImpl() {
-        // If this part has been created from scratch and/or the data buffer is
-        // not
-        // initialize, so we do it now.
-        if (data == null) {
-            data = new byte[0];
-        }
-        return new UnsynchronizedByteArrayInputStream(data);
+    protected InputStream getInputStreamImpl() throws IOException {
+        return tempFile.getInputStream();
     }
 
     @Override
-    protected OutputStream getOutputStreamImpl() {
-        return new MemoryPackagePartOutputStream(this);
+    protected OutputStream getOutputStreamImpl() throws IOException {
+        return tempFile.getOutputStream();
     }
 
+    /**
+     * @return EncryptedTempData.getSize() always returns -1
+     */
     @Override
     public long getSize() {
-        return data == null ? 0 : data.length;
+        return -1;
     }
 
     @Override
     public void clear() {
-        data = null;
+        try(OutputStream os = getOutputStreamImpl()) {
+            os.write(new byte[0]);
+        } catch (IOException e) {
+            LOG.atWarn().log("Failed to clear data in temp file", e);
+        }
     }
 
     @Override
@@ -113,22 +122,19 @@ public final class MemoryPackagePart extends PackagePart {
 
     @Override
     public boolean load(InputStream ios) throws InvalidFormatException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
-            // Grab the data
-            IOUtils.copy(ios, baos);
-            // Save it
-            data = baos.toByteArray();
-        } catch (IOException e) {
-            throw new InvalidFormatException(e.getMessage());
-        }
+       try (OutputStream os = getOutputStreamImpl()) {
+            IOUtils.copy(ios, os);
+       } catch(IOException e) {
+            throw new InvalidFormatException(e.getMessage(), e);
+       }
 
-        // All done
-        return true;
+       // All done
+       return true;
     }
 
     @Override
     public void close() {
-        // Do nothing
+        tempFile.dispose();
     }
 
     @Override

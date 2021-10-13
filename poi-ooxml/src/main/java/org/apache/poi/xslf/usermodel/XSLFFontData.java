@@ -57,7 +57,7 @@ public class XSLFFontData extends POIXMLDocumentPart {
         return getPackagePart().getInputStream();
     }
 
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream() throws IOException {
         final PackagePart pp = getPackagePart();
         pp.clear();
         return pp.getOutputStream();

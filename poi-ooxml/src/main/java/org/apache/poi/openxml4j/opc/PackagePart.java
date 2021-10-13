@@ -518,7 +518,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * @return output stream for this part
      * @see org.apache.poi.openxml4j.opc.internal.MemoryPackagePart
      */
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream() throws IOException {
         OutputStream outStream;
         // If this part is a zip package part (read only by design) we convert
         // this part into a MemoryPackagePart instance for write purpose.
@@ -674,9 +674,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * Method that gets the input stream for this part.
      *
      * @return input stream for this part
-     * @exception IOException
-     *                Throws if an IO Exception occur in the implementation
-     *                method.
+     * @throws IOException
+     *                Throws if an IO Exception occur in the implementation method.
      */
     protected abstract InputStream getInputStreamImpl() throws IOException;
 
@@ -684,8 +683,10 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * Method that gets the output stream for this part.
      *
      * @return output stream for this part
+     * @throws IOException
+     *                Throws if an IO Exception occur in the implementation method.
      */
-    protected abstract OutputStream getOutputStreamImpl();
+    protected abstract OutputStream getOutputStreamImpl() throws IOException;
 
     /**
      * Save the content of this part and the associated relationships part (if

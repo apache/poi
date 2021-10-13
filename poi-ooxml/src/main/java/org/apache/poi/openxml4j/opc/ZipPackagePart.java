@@ -86,7 +86,7 @@ public class ZipPackagePart extends PackagePart {
     /**
      * Get the zip entry of this part.
      *
-     * @return The zip entry in the zip structure coresponding to this part.
+     * @return The zip entry in the zip structure corresponding to this part.
      */
     public ZipArchiveEntry getZipArchive() {
         return zipEntry;
