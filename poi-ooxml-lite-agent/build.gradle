@@ -23,6 +23,13 @@ sourceSets {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven {
+      url "https://dist.apache.org/repos/dist/release/poi/xmlbeans/dev/maven"
+    }
+}
+
 dependencies {
     api 'net.bytebuddy:byte-buddy:1.11.20'
     api 'net.bytebuddy:byte-buddy-agent:1.11.20'

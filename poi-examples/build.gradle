@@ -25,6 +25,12 @@ sourceSets {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven {
+      url "https://dist.apache.org/repos/dist/release/poi/xmlbeans/dev/maven"
+    }
+}
 
 dependencies {
     api project(':poi-ooxml')
