@@ -84,7 +84,7 @@ def poijobs = [
 //		  // let's only verify the latest two JDKs
 //		  disabled: true
 //        ],
-        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
 //          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
