@@ -39,7 +39,7 @@ def poijobs = [
 //          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
 //          disabled: true
 //        ],
-        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true,
 //          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
