@@ -1994,7 +1994,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         int externalLinkIdx=-1;
         if (!getCreationHelper().getReferencedWorkbooks().containsKey(name)){
              externalLinkIdx = this.getNextPartNumber(XSSFRelation.EXTERNAL_LINKS,
-                    this.getPackagePart().getPackage().getPartsByContentType(XSSFRelation.EXTERNAL_LINKS.getContentType()).size());
+                    this.getPackagePart().getPackage().getPartsByContentType(XSSFRelation.EXTERNAL_LINKS.getContentType()).size() + 1);
             POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, xssfFactory, externalLinkIdx, false);
             ExternalLinksTable linksTable = rp.getDocumentPart();
             linksTable.setLinkedFileName(name);
