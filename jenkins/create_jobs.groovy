@@ -543,7 +543,7 @@ xmlbeansjobs.each { xjob ->
             }
         }
         publishers {
-            archiveArtifacts('build/*.jar,build/*.zip')
+            archiveArtifacts('build/*.jar,build/*.zip,build/*.tgz')
 
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
