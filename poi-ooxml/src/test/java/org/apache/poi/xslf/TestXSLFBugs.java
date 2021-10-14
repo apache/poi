@@ -27,11 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.text.AttributedCharacterIterator;
@@ -50,6 +53,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -78,6 +82,8 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xslf.util.DummyGraphics2d;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -1078,4 +1084,25 @@ class TestXSLFBugs {
             assertEquals(Color.RED, sp.getSolidColor().getColor());
         }
     }
+
+    @Test
+    void bug65634() throws IOException {
+        File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            IOException ex = assertThrows(IOException.class, () -> SlideShowFactory.create(fis));
+            assertEquals("Can't open slideshow - unsupported file type: XML", ex.getMessage());
+        }
+
+        IOException ie = assertThrows(IOException.class, () -> SlideShowFactory.create(file));
+        assertEquals("Can't open slideshow - unsupported file type: XML", ie.getMessage());
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            IOException ex = assertThrows(IOException.class, () -> ExtractorFactory.createExtractor(fis));
+            assertEquals("Can't create extractor - unsupported file type: XML", ex.getMessage());
+        }
+
+        ie = assertThrows(IOException.class, () -> ExtractorFactory.createExtractor(file));
+        assertEquals("Can't create extractor - unsupported file type: XML", ie.getMessage());
+    }
+
 }
