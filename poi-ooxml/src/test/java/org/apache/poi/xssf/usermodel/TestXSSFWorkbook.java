@@ -37,18 +37,12 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.zip.CRC32;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -1207,13 +1201,54 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    private static void expectFormattedContent(Cell cell, String value) {
-        assertEquals(value, new DataFormatter().formatCellValue(cell),
-                "Cell " + ref(cell) + " has wrong formatted content.");
+    @Test
+    void testNewWorkbookWithTempFilePackageParts() throws Exception {
+        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
+            ZipPackage.setUseTempFilePackageParts(true);
+            assertTrue(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts was modified?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts was not modified?");
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("sheet1");
+                XSSFRow row = sheet.createRow(0);
+                XSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue("");
+                XSSFCell cell1 = row.createCell(1);
+                cell1.setCellErrorValue(FormulaError.DIV0);
+                XSSFCell cell2 = row.createCell(2);
+                cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+                workbook.write(bos);
+            } finally {
+                ZipPackage.setUseTempFilePackageParts(false);
+            }
+        }
     }
 
-    private static String ref(Cell cell) {
-        return new CellReference(cell).formatAsString();
+    @Test
+    void testNewWorkbookWithEncryptedTempFilePackageParts() throws Exception {
+        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
+            ZipPackage.setUseTempFilePackageParts(true);
+            ZipPackage.setEncryptTempFilePackageParts(true);
+            assertTrue(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts was modified?");
+            assertTrue(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts was modified?");
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("sheet1");
+                XSSFRow row = sheet.createRow(0);
+                XSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue("");
+                XSSFCell cell1 = row.createCell(1);
+                cell1.setCellErrorValue(FormulaError.DIV0);
+                XSSFCell cell2 = row.createCell(2);
+                cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+                workbook.write(bos);
+            } finally {
+                ZipPackage.setUseTempFilePackageParts(false);
+                ZipPackage.setEncryptTempFilePackageParts(false);
+            }
+        }
     }
 
     @Test
@@ -1248,6 +1283,15 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             }
             */
         }
+    }
+
+    private static void expectFormattedContent(Cell cell, String value) {
+        assertEquals(value, new DataFormatter().formatCellValue(cell),
+                "Cell " + ref(cell) + " has wrong formatted content.");
+    }
+
+    private static String ref(Cell cell) {
+        return new CellReference(cell).formatAsString();
     }
 
 }

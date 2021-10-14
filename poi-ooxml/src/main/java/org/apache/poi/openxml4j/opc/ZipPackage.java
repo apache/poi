@@ -72,28 +72,28 @@ public final class ZipPackage extends OPCPackage {
     /**
      * @param tempFilePackageParts whether to save package part data in temp files to save memory
      */
-    public void setUseTempFilePackageParts(boolean tempFilePackageParts) {
+    public static void setUseTempFilePackageParts(boolean tempFilePackageParts) {
         useTempFilePackageParts = tempFilePackageParts;
     }
 
     /**
      * @param encryptTempFiles whether to encrypt temp files
      */
-    public void setEncryptTempFilePackageParts(boolean encryptTempFiles) {
+    public static void setEncryptTempFilePackageParts(boolean encryptTempFiles) {
         encryptTempFilePackageParts = encryptTempFiles;
     }
 
     /**
      * @return whether package part data is stored in temp files to save memory
      */
-    public boolean useTempFilePackageParts() {
+    public static boolean useTempFilePackageParts() {
         return useTempFilePackageParts;
     }
 
     /**
      * @return whether package part temp files are encrypted
      */
-    public boolean encryptTempFilePackageParts() {
+    public static boolean encryptTempFilePackageParts() {
         return encryptTempFilePackageParts;
     }
 
