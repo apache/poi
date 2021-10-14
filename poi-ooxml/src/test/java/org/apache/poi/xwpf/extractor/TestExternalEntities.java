@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
@@ -33,15 +34,21 @@ class TestExternalEntities {
      */
     @Test
     void testFile() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+        boolean originalFlag = POIXMLTypeLoader.DEFAULT_XML_OPTIONS.disallowDocTypeDeclaration();
+        try {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false);
+            try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
+                 XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
-            String text = extractor.getText();
+                String text = extractor.getText();
 
-            assertTrue(text.length() > 0);
+                assertTrue(text.length() > 0);
 
-            // Check contents, they should not contain the text from POI web site after colon!
-            assertEquals("Here should not be the POI web site: \"\"", text.trim());
+                // Check contents, they should not contain the text from POI web site after colon!
+                assertEquals("Here should not be the POI web site: \"\"", text.trim());
+            }
+        } finally {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
         }
     }
 

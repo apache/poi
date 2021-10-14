@@ -34,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.zip.CRC32;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -59,7 +58,6 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
