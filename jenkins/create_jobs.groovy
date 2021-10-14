@@ -40,6 +40,8 @@ def poijobs = [
 //          disabled: true
 //        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+          disabled: true
         ],
         [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
@@ -83,10 +85,12 @@ def poijobs = [
 //		  disabled: true
 //        ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+          disabled: true
         ],
-		// building with JDK 16 fails currently because of findbugs/spotbugs
-		// therefore we do not set a trigger for now and only run it manually
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: '', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        ],
+        [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
