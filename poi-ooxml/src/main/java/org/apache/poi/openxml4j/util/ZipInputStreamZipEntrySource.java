@@ -41,7 +41,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     private InputStream streamToClose;
 
     /**
-     * Set the threshold at which it a zip entry is regarded as too large for holding in memory
+     * Set the threshold at which a zip entry is regarded as too large for holding in memory
      * and the data is put in a temp file instead
      * @param thresholdBytes number of bytes at which a zip entry is regarded as too large for holding in memory
      *                       and the data is put in a temp file instead - defaults to -1 meaning temp files are not used
@@ -75,7 +75,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     }
 
     /**
-     * Whether temp files should be encrypted. Only affects temp files related to zip entries.
+     * Whether temp files should be encrypted (default false). Only affects temp files related to zip entries.
      * @since POI 5.1.0
      */
     public static boolean shouldEncryptTempFiles() {

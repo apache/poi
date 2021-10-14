@@ -77,7 +77,7 @@ public final class ZipPackage extends OPCPackage {
     }
 
     /**
-     * @param encryptTempFiles whether to encrypt temp files
+     * @param encryptTempFiles whether to encrypt package part temp files
      */
     public static void setEncryptTempFilePackageParts(boolean encryptTempFiles) {
         encryptTempFilePackageParts = encryptTempFiles;
