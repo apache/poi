@@ -40,7 +40,7 @@ public class POIXMLTypeLoader {
         DEFAULT_XML_OPTIONS.setUseDefaultNamespace();
         DEFAULT_XML_OPTIONS.setSaveAggressiveNamespaces();
         DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
-        //DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(true);
+        DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(true);
         DEFAULT_XML_OPTIONS.setEntityExpansionLimit(1);
         // Piccolo is disabled for POI builts, i.e. JAXP is used for parsing
         // so only user code using XmlObject/XmlToken.Factory.parse
