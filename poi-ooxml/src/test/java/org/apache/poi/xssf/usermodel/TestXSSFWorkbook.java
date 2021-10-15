@@ -1254,32 +1254,38 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         String nameA = "link-external-workbook-a.xlsx";
 
         try (
-                XSSFWorkbook a = new XSSFWorkbook();
-                XSSFWorkbook b = new XSSFWorkbook()
+                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                XSSFWorkbook workbookA = new XSSFWorkbook();
+                XSSFWorkbook workbookB = new XSSFWorkbook()
         ) {
-            XSSFRow row1 = a.createSheet().createRow(0);
+            XSSFRow row1 = workbookA.createSheet().createRow(0);
             row1.createCell(0).setCellValue(10);
             row1.createCell(1).setCellValue(20);
 
-            XSSFRow row2 = b.createSheet().createRow(0);
+            XSSFRow row2 = workbookB.createSheet().createRow(0);
             XSSFCell cell = row2.createCell(0);
 
-            b.linkExternalWorkbook(nameA, a);
+            workbookB.linkExternalWorkbook(nameA, workbookA);
             String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
             cell.setCellFormula(formula);
-            XSSFFormulaEvaluator evaluator = b.getCreationHelper().createFormulaEvaluator();
+            XSSFFormulaEvaluator evaluator = workbookB.getCreationHelper().createFormulaEvaluator();
             evaluator.evaluateFormulaCell(cell);
-            double cellValue = cell.getNumericCellValue();
-            assertEquals(cellValue,30.0);
-            /*
-            try (FileOutputStream out = new FileOutputStream(getSampleFile(nameA))) {
-                a.write(out);
+            assertEquals(30.0, cell.getNumericCellValue());
+
+            workbookA.write(bosA);
+            workbookB.write(bosB);
+
+            try(
+                    XSSFWorkbook workbook1 = new XSSFWorkbook(bosA.toInputStream());
+                    XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
+            ) {
+                workbook2.linkExternalWorkbook(nameA, workbook1);
+                XSSFFormulaEvaluator evaluator2 = workbook2.getCreationHelper().createFormulaEvaluator();
+                XSSFCell cell2 = workbook2.getSheetAt(0).getRow(0).getCell(0);
+                evaluator2.evaluateFormulaCell(cell2);
+                assertEquals(30.0, cell2.getNumericCellValue());
             }
-            String nameB = "link-external-workbook-b.xlsx";
-            try (FileOutputStream out = new FileOutputStream(getSampleFile(nameB))) {
-                b.write(out);
-            }
-            */
         }
     }
 
