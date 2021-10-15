@@ -639,13 +639,6 @@ under the License.
         <delete dir="poi-ooxml/build"/>
         <delete dir="poi-ooxml-full/build"/>
         <delete dir="poi-scratchpad/build"/>
-        <delete includeemptydirs="true">
-            <fileset dir="sonar">
-                <include name="*/target/**"/>
-                <include name="*/build/**"/>
-                <include name="*/src/**"/>
-            </fileset>
-        </delete>
     </target>
 
     <macrodef name="downloadfile">
@@ -2002,6 +1995,7 @@ under the License.
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
             <srcfiles dir="${main.documentation}" />
         </uptodate>
+        <echo message="Had result: ${main.docs.notRequired}"/>
     </target>
 
     <target name="-check-forrest-installed" unless="env.FORREST_HOME">
@@ -2020,6 +2014,8 @@ under the License.
 
     <target name="-forrest-docs" depends="-check-forrest-installed, -check-docs"
             unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
+        <echo message="Using Apache Forrest from ${env.FORREST_HOME}"/>
+
         <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
         <exec executable="cmd" osfamily="windows">
             <arg value="/c"/>
@@ -2389,8 +2385,6 @@ under the License.
                       out/**,
                       tmp/**,
                       gradle/**,
-                      sonar/**/target/**,
-                      sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
                       ooxml-testlib/**,
@@ -3031,26 +3025,16 @@ under the License.
             <param name="version_id" value="${rel_next}"/>
         </antcall>
 
-        <!-- update sonar pom.xmls -->
-        <replaceregexp byline="true">
-            <regexp pattern="&lt;version&gt;.*-SNAPSHOT&lt;/version&gt;"/>
-            <substitution expression="&lt;version&gt;${rel_next}-SNAPSHOT&lt;/version&gt;"/>
-            <fileset dir="sonar">
-              <include name="**/pom.xml"/>
-            </fileset>
-        </replaceregexp>
-
         <!-- unpin documentation and commit next snapshot version -->
         <svn refid="svn.settings">
             <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
             <!--<commit message="prepare for ${rel_next}" recurse="false">
                 <fileset dir="." includes="build.xml"/>
-                <fileset dir="sonar" includes="**/pom.xml"/>
                 <dirset dir="src"/>
             </commit>-->
         </svn>
-        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'prepare for ${rel_next}' build.xml sonar src"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'prepare for ${rel_next}' build.xml src poi*"/>
 
         <mkdir dir="build/release"/>
 
@@ -3123,10 +3107,6 @@ under the License.
         <replaceregexp file="poi-examples/src/main/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
         <replaceregexp file="osgi/pom.xml" match="version>${rel_prev}[^&lt;]+" replace="version>${version.id}"/>
         <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
-
-        <replaceregexp match="(&lt;version&gt;)[^&lt;]+" replace="\1${version.id}">
-            <fileset dir="sonar" includes="**/pom.xml"/>
-        </replaceregexp>
     </target>
 
 
@@ -3288,20 +3268,6 @@ under the License.
     </target>
 
 	<target name="replaceVersion" description="Apply the version from build.xml in all other places">
-		<replaceregexp
-               match="(packaging>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
-               replace="\1${version.id}">
-			<fileset dir="sonar">
-				<include name="**/pom.xml"/>
-			</fileset>
-        </replaceregexp>
-		<replaceregexp
-               match="(poi-parent&lt;/artifactId>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
-               replace="\1${version.id}">
-			<fileset dir="sonar">
-				<include name="**/pom.xml"/>
-			</fileset>
-        </replaceregexp>
 		<replaceregexp
                match=" version = '[0-9.]+(?:-SNAPSHOT)?'"
                replace=" version = '${version.id}'">

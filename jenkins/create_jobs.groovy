@@ -280,7 +280,6 @@ poijobs.each { poijob ->
                 /* remove xmlbeans while 4.0 is not stable */
                 includePattern('**/lib/ooxml/xmlbeans*.jar')
                 includePattern('**/lib/ooxml/ooxml*.jar')
-                includePattern('sonar/*/target/**')
                 /* remove ooxml-schemas while the builds migrate to 5th edition */
                 includePattern('build/xmlbean-*/**')
                 /* remove remaining src debris */
