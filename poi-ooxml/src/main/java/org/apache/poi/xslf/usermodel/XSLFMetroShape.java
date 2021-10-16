@@ -28,7 +28,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.MetroShapeProvider;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
@@ -39,18 +39,21 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
  * This is the helper class for HSLFMetroShape to dive into OOXML classes
  */
 @Internal
-public class XSLFMetroShape {
-    /*
-     * parses the metro bytes to a XSLF shape
-     */
-    public static Shape<?,?> parseShape(byte[] metroBytes)
-    throws InvalidFormatException, IOException, XmlException {
-        PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
+public class XSLFMetroShape implements MetroShapeProvider {
+    /** parses the metro bytes to a XSLF shape */
+    @Override
+    public XSLFShape parseShape(byte[] metroBytes) throws IOException {
         try (OPCPackage pkg = OPCPackage.open(new UnsynchronizedByteArrayInputStream(metroBytes))) {
+            PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
             PackagePart shapePart = pkg.getPart(shapePN);
+            if (shapePart == null) {
+                return null;
+            }
             CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), DEFAULT_XML_OPTIONS);
             XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
             return xgs.getShapes().get(0);
+        } catch (InvalidFormatException | XmlException e) {
+            throw new IOException("can't parse metro shape", e);
         }
     }
 }

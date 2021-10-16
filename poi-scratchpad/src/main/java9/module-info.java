@@ -23,6 +23,8 @@ module org.apache.poi.scratchpad {
     requires org.apache.commons.codec;
     requires org.apache.logging.log4j;
 
+    uses org.apache.poi.sl.usermodel.MetroShapeProvider;
+
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;
     provides org.apache.poi.sl.usermodel.SlideShowProvider with org.apache.poi.hslf.usermodel.HSLFSlideShowFactory;
     provides org.apache.poi.sl.draw.ImageRenderer with org.apache.poi.hwmf.draw.HwmfImageRenderer, org.apache.poi.hemf.draw.HemfImageRenderer;

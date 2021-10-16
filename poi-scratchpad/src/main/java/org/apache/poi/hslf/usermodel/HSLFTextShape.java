@@ -51,6 +51,7 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
@@ -153,7 +154,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
      *
-     * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
+     * @param escherRecord       {@code EscherSpContainer} container which holds information about this shape
      * @param parent    the parent of the shape
      */
     protected HSLFTextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
@@ -192,7 +193,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     /**
      * When a textbox is added to  a sheet we need to tell upper-level
-     * <code>PPDrawing</code> about it.
+     * {@code PPDrawing} about it.
      *
      * @param sh the sheet we are adding to
      */
@@ -403,7 +404,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     /**
      * Sets the type of alignment for the text.
-     * One of the <code>Anchor*</code> constants defined in this class.
+     * One of the {@code Anchor*} constants defined in this class.
      *
      * @param isCentered horizontal centered?
      * @param vAlign vertical alignment
@@ -572,7 +573,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * Returns the value indicating word wrap.
      *
      * @return the value indicating word wrap.
-     *  Must be one of the <code>Wrap*</code> constants defined in this class.
+     *  Must be one of the {@code Wrap*} constants defined in this class.
      *
      * @see <a href="https://msdn.microsoft.com/en-us/library/dd948168(v=office.12).aspx">MSOWRAPMODE</a>
      */
@@ -586,7 +587,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *  Specifies how the text should be wrapped
      *
      * @param wrap  the value indicating how the text should be wrapped.
-     *  Must be one of the <code>Wrap*</code> constants defined in this class.
+     *  Must be one of the {@code Wrap*} constants defined in this class.
      */
     public void setWordWrapEx(int wrap){
         setEscherProperty(EscherPropertyTypes.TEXT__WRAPTEXT, wrap);
@@ -841,7 +842,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
      * Returns the array of all hyperlinks in this text run
      *
-     * @return the array of all hyperlinks in this text run or <code>null</code>
+     * @return the array of all hyperlinks in this text run or {@code null}
      *         if not found.
      */
     public List<HSLFHyperlink> getHyperlinks() {
@@ -904,8 +905,10 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return null, if there's no alternative representation, otherwise the text shape
      */
-    public TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getMetroShape() {
-        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>> mbs = new HSLFMetroShape<>(this);
-        return mbs.getShape();
+    public <
+        S extends Shape<S,P>,
+        P extends TextParagraph<S,P,? extends TextRun>
+    > Shape<S,P> getMetroShape() {
+        return new HSLFMetroShape<S,P>(this).getShape();
     }
 }
