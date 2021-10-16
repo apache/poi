@@ -40,7 +40,7 @@ public class TestTempFilePackagePart {
             PackagePartName name = new PackagePartName("/test.txt", true);
             TempFilePackagePart part = new TempFilePackagePart(p, name, "text/plain");
             try (OutputStream os = part.getOutputStream()) {
-                os.write(text.getBytes(StandardCharsets.UTF_8));
+                os.write(bytes);
             }
             assertEquals(bytes.length, part.getSize());
             try (InputStream is = part.getInputStream()) {

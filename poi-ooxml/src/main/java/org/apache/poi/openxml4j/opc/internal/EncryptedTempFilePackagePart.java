@@ -98,12 +98,9 @@ public final class EncryptedTempFilePackagePart extends PackagePart {
         return tempFile.getOutputStream();
     }
 
-    /**
-     * @return EncryptedTempData.getSize() always returns -1
-     */
     @Override
     public long getSize() {
-        return -1;
+        return tempFile.getByteCount();
     }
 
     @Override

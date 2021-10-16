@@ -32,6 +32,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.ChainingMode;
@@ -52,7 +53,8 @@ public class EncryptedTempData {
     private final SecretKeySpec skeySpec;
     private final byte[] ivBytes;
     private final File tempFile;
-    
+    private CountingOutputStream outputStream;
+
     public EncryptedTempData() throws IOException {
         SecureRandom sr = new SecureRandom();
         ivBytes = new byte[16];
@@ -72,7 +74,8 @@ public class EncryptedTempData {
      */
     public OutputStream getOutputStream() throws IOException {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
-        return new CipherOutputStream(new FileOutputStream(tempFile), ciEnc);
+        outputStream = new CountingOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), ciEnc));
+        return outputStream;
     }
 
     /**
@@ -84,6 +87,13 @@ public class EncryptedTempData {
     public InputStream getInputStream() throws IOException {
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
         return new CipherInputStream(new FileInputStream(tempFile), ciDec);
+    }
+
+    /**
+     * @return number of bytes stored in the temp data file (the number you should expect after you decrypt the data)
+     */
+    public long getByteCount() {
+        return outputStream == null ? 0 : outputStream.getByteCount();
     }
 
     /**

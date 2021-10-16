@@ -33,15 +33,16 @@ public class TestEncryptedTempFilePackagePart {
     @Test
     void testRoundTrip() throws Exception {
         String text = UUID.randomUUID().toString();
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
         try (OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ)) {
             PackagePartName name = new PackagePartName("/test.txt", true);
             EncryptedTempFilePackagePart part = new EncryptedTempFilePackagePart(p, name, "text/plain");
             try (OutputStream os = part.getOutputStream()) {
-                os.write(text.getBytes(StandardCharsets.UTF_8));
+                os.write(bytes);
             }
-            assertEquals(-1, part.getSize());
+            assertEquals(bytes.length, part.getSize());
             try (InputStream is = part.getInputStream()) {
                 assertEquals(text, new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8));
             }
