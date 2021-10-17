@@ -57,7 +57,7 @@ public final class MemoryPackagePart extends PackagePart {
      */
     public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
             String contentType) throws InvalidFormatException {
-        super(pack, partName, contentType);
+        this(pack, partName, contentType, true);
     }
 
     /**

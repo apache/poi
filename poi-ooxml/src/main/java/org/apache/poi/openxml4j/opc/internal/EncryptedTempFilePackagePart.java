@@ -62,7 +62,7 @@ public final class EncryptedTempFilePackagePart extends PackagePart {
      */
     public EncryptedTempFilePackagePart(OPCPackage pack, PackagePartName partName,
                                         String contentType) throws InvalidFormatException, IOException {
-        this(pack, partName, contentType, false);
+        this(pack, partName, contentType, true);
     }
 
     /**

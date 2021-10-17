@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -105,50 +106,73 @@ public final class TestXSSFPicture extends BaseTestPicture {
     }
 
     /**
-     * same image refrerred by mulitple sheets
+     * same image referred to by multiple sheets
      */
     @Test
-    void multiRelationShips() throws IOException {
-        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
-            byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
-            byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);
+    void multiRelationships() throws IOException {
+        multiRelationships(false, false);
+    }
 
-            List<XSSFPictureData> pictures = wb1.getAllPictures();
-            assertEquals(0, pictures.size());
+    @Test
+    void multiRelationshipsWithTempFileParts() throws IOException {
+        multiRelationships(true, false);
+    }
 
-            int pic1 = wb1.addPicture(pic1Data, XSSFWorkbook.PICTURE_TYPE_JPEG);
-            int pic2 = wb1.addPicture(pic2Data, XSSFWorkbook.PICTURE_TYPE_PNG);
+    @Test
+    void multiRelationshipsWithEncryptedTempFileParts() throws IOException {
+        multiRelationships(true, true);
+    }
 
-            XSSFSheet sheet1 = wb1.createSheet();
-            XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
-            XSSFPicture shape1 = drawing1.createPicture(new XSSFClientAnchor(), pic1);
-            XSSFPicture shape2 = drawing1.createPicture(new XSSFClientAnchor(), pic2);
+    private void multiRelationships(boolean tempFileParts, boolean encrypt) throws IOException {
+        final boolean originalTempFileSetting = ZipPackage.useTempFilePackageParts();
+        final boolean originalEncryptSetting = ZipPackage.encryptTempFilePackageParts();
+        try {
+            ZipPackage.setUseTempFilePackageParts(tempFileParts);
+            ZipPackage.setEncryptTempFilePackageParts(encrypt);
+            try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+                byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+                byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);
 
-            XSSFSheet sheet2 = wb1.createSheet();
-            XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
-            XSSFPicture shape3 = drawing2.createPicture(new XSSFClientAnchor(), pic2);
-            XSSFPicture shape4 = drawing2.createPicture(new XSSFClientAnchor(), pic1);
+                List<XSSFPictureData> pictures = wb1.getAllPictures();
+                assertEquals(0, pictures.size());
 
-            assertEquals(2, pictures.size());
+                int pic1 = wb1.addPicture(pic1Data, XSSFWorkbook.PICTURE_TYPE_JPEG);
+                int pic2 = wb1.addPicture(pic2Data, XSSFWorkbook.PICTURE_TYPE_PNG);
 
-            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
-                pictures = wb2.getAllPictures();
+                XSSFSheet sheet1 = wb1.createSheet();
+                XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
+                XSSFPicture shape1 = drawing1.createPicture(new XSSFClientAnchor(), pic1);
+                XSSFPicture shape2 = drawing1.createPicture(new XSSFClientAnchor(), pic2);
+
+                XSSFSheet sheet2 = wb1.createSheet();
+                XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
+                XSSFPicture shape3 = drawing2.createPicture(new XSSFClientAnchor(), pic2);
+                XSSFPicture shape4 = drawing2.createPicture(new XSSFClientAnchor(), pic1);
+
                 assertEquals(2, pictures.size());
 
-                sheet1 = wb2.getSheetAt(0);
-                drawing1 = sheet1.createDrawingPatriarch();
-                XSSFPicture shape11 = (XSSFPicture) drawing1.getShapes().get(0);
-                assertArrayEquals(shape1.getPictureData().getData(), shape11.getPictureData().getData());
-                XSSFPicture shape22 = (XSSFPicture) drawing1.getShapes().get(1);
-                assertArrayEquals(shape2.getPictureData().getData(), shape22.getPictureData().getData());
+                try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                    pictures = wb2.getAllPictures();
+                    assertEquals(2, pictures.size());
 
-                sheet2 = wb2.getSheetAt(1);
-                drawing2 = sheet2.createDrawingPatriarch();
-                XSSFPicture shape33 = (XSSFPicture) drawing2.getShapes().get(0);
-                assertArrayEquals(shape3.getPictureData().getData(), shape33.getPictureData().getData());
-                XSSFPicture shape44 = (XSSFPicture) drawing2.getShapes().get(1);
-                assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
+                    sheet1 = wb2.getSheetAt(0);
+                    drawing1 = sheet1.createDrawingPatriarch();
+                    XSSFPicture shape11 = (XSSFPicture) drawing1.getShapes().get(0);
+                    assertArrayEquals(shape1.getPictureData().getData(), shape11.getPictureData().getData());
+                    XSSFPicture shape22 = (XSSFPicture) drawing1.getShapes().get(1);
+                    assertArrayEquals(shape2.getPictureData().getData(), shape22.getPictureData().getData());
+
+                    sheet2 = wb2.getSheetAt(1);
+                    drawing2 = sheet2.createDrawingPatriarch();
+                    XSSFPicture shape33 = (XSSFPicture) drawing2.getShapes().get(0);
+                    assertArrayEquals(shape3.getPictureData().getData(), shape33.getPictureData().getData());
+                    XSSFPicture shape44 = (XSSFPicture) drawing2.getShapes().get(1);
+                    assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
+                }
             }
+        } finally {
+            ZipPackage.setUseTempFilePackageParts(originalTempFileSetting);
+            ZipPackage.setEncryptTempFilePackageParts(originalEncryptSetting);
         }
     }
 }
