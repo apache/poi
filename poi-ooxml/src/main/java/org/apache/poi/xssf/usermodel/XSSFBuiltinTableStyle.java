@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
@@ -28,13 +29,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.StylesTable;
 import org.w3c.dom.Document;
@@ -391,30 +390,25 @@ public enum XSSFBuiltinTableStyle {
          *   </tableStyles>
          * </styleName>
          */
-        try {
-            final InputStream is = XSSFBuiltinTableStyle.class.getResourceAsStream("presetTableStyles.xml");
-            try {
-                final Document doc = DocumentHelper.readDocument(is);
+        try (InputStream is = XSSFBuiltinTableStyle.class.getResourceAsStream("presetTableStyles.xml")) {
+            final Document doc = DocumentHelper.readDocument(is);
 
-                final NodeList styleNodes = doc.getDocumentElement().getChildNodes();
-                for (int i = 0; i < styleNodes.getLength(); i++) {
-                    final Node node = styleNodes.item(i);
-                    if (node.getNodeType() != Node.ELEMENT_NODE) continue; // only care about elements
-                    final Element tag = (Element) node;
-                    String styleName = tag.getTagName();
-                    XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
+            final NodeList styleNodes = doc.getDocumentElement().getChildNodes();
+            for (int i = 0; i < styleNodes.getLength(); i++) {
+                final Node node = styleNodes.item(i);
+                if (node.getNodeType() != Node.ELEMENT_NODE) continue; // only care about elements
+                final Element tag = (Element) node;
+                String styleName = tag.getTagName();
+                XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
 
-                    Node dxfsNode = tag.getElementsByTagName("dxfs").item(0);
-                    Node tableStyleNode = tag.getElementsByTagName("tableStyles").item(0);
+                Node dxfsNode = tag.getElementsByTagName("dxfs").item(0);
+                Node tableStyleNode = tag.getElementsByTagName("tableStyles").item(0);
 
-                    // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
-                    // - build a fake styles.xml file with just this built-in
-                    StylesTable styles = new StylesTable();
-                    styles.readFrom(new UnsynchronizedByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)));
-                    styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
-                }
-            } finally {
-                IOUtils.closeQuietly(is);
+                // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
+                // - build a fake styles.xml file with just this built-in
+                StylesTable styles = new StylesTable();
+                styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)));
+                styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

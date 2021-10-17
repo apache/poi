@@ -433,7 +433,7 @@ public class DataFormatter {
         if (formatStr.contains("#/") || formatStr.contains("?/")) {
             String[] chunks = formatStr.split(";");
             for (String chunk1 : chunks) {
-                String chunk = chunk1.replaceAll("\\?", "#");
+                String chunk = chunk1.replace("?", "#");
                 Matcher matcher = fractionStripper.matcher(chunk);
                 chunk = matcher.replaceAll(" ");
                 chunk = chunk.replaceAll(" +", " ");

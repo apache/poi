@@ -37,8 +37,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class StyleDescription {
 
     private static final Logger LOG = LogManager.getLogger(StyleDescription.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final int PARAGRAPH_STYLE = 1;
     private static final int CHARACTER_STYLE = 2;
@@ -84,13 +82,14 @@ public final class StyleDescription {
 
         //first byte(s) of variable length section of std is the length of the
         //style name and aliases string
-        int nameLength = 0;
-        int multiplier = 1;
+        int nameLength;
+        int multiplier;
         if (word9) {
             nameLength = LittleEndian.getShort(std, nameStart);
             multiplier = 2;
             nameStart += LittleEndianConsts.SHORT_SIZE;
         } else {
+            multiplier = 1;
             nameLength = std[nameStart];
         }
 
@@ -237,12 +236,10 @@ public final class StyleDescription {
         result.append("[STD]: '");
         result.append(_name);
         result.append("'");
-        result.append(("\nStdfBase:\t" + _stdfBase).replaceAll("\n",
-                "\n    "));
-        result.append(("\nStdfPost2000:\t" + _stdfPost2000).replaceAll(
-                "\n", "\n    "));
+        result.append(("\nStdfBase:\t" + _stdfBase).replace("\n", "\n    "));
+        result.append(("\nStdfPost2000:\t" + _stdfPost2000).replace("\n", "\n    "));
         for (UPX upx : _upxs) {
-            result.append(("\nUPX:\t" + upx).replaceAll("\n", "\n    "));
+            result.append(("\nUPX:\t" + upx).replace("\n", "\n    "));
         }
         return result.toString();
     }

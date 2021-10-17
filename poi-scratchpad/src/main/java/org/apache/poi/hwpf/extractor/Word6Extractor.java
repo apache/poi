@@ -35,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  with HWPF.
  */
 public final class Word6Extractor implements POIOLE2TextExtractor {
-    private HWPFOldDocument doc;
+    private final HWPFOldDocument doc;
     private boolean doCloseFilesystem = true;
 
     /**
@@ -97,14 +97,15 @@ public final class Word6Extractor implements POIOLE2TextExtractor {
                 ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
 
                 // Fix the line endings
-                ret[i] = ret[i].replaceAll("\r", "\ufffe");
-                ret[i] = ret[i].replaceAll("\ufffe","\r\n");
+                ret[i] = ret[i].replace("\r", "\ufffe");
+                ret[i] = ret[i].replace("\ufffe","\r\n");
             }
         }
 
         return ret;
     }
 
+    @Override
     public String getText() {
         try {
             WordToTextConverter wordToTextConverter = new WordToTextConverter();

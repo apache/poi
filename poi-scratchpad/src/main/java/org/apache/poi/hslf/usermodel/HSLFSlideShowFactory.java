@@ -47,6 +47,7 @@ public class HSLFSlideShowFactory implements SlideShowProvider<HSLFShape,HSLFTex
      *
      * @return The created SlideShow
      */
+    @Override
     public HSLFSlideShow create() {
         return new HSLFSlideShow();
     }
@@ -65,6 +66,8 @@ public class HSLFSlideShowFactory implements SlideShowProvider<HSLFShape,HSLFTex
      * Note that in order to properly release resources the
      * SlideShow should be closed after use.
      */
+    @Override
+    @SuppressWarnings("java:S2093")
     public HSLFSlideShow create(final DirectoryNode root, String password) throws IOException {
         boolean passwordSet = false;
         if (password != null) {
@@ -91,6 +94,7 @@ public class HSLFSlideShowFactory implements SlideShowProvider<HSLFShape,HSLFTex
         return create(fs.getRoot(), password);
     }
 
+    @SuppressWarnings("java:S2093")
     @Override
     public HSLFSlideShow create(File file, String password, boolean readOnly) throws IOException {
         boolean passwordSet = false;

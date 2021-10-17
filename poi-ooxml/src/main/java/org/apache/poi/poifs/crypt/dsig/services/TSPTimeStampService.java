@@ -45,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.SimpleMessage;
@@ -125,9 +124,9 @@ public class TSPTimeStampService implements TimeStampService {
             proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
         }
 
-        UnsynchronizedByteArrayOutputStream bos;
         String contentType;
         HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
+        byte[] responseBytes;
         try {
             if (signatureConfig.getTspUser() != null) {
                 String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
@@ -164,9 +163,8 @@ public class TSPTimeStampService implements TimeStampService {
                 throw new RuntimeException("missing Content-Type header");
             }
 
-            bos = new UnsynchronizedByteArrayOutputStream();
-            IOUtils.copy(huc.getInputStream(), bos);
-            LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(bos.toByteArray(), 0, 0)));
+            responseBytes = IOUtils.toByteArray(huc.getInputStream());
+            LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(responseBytes, 0, 0)));
         } finally {
             huc.disconnect();
         }
@@ -177,15 +175,15 @@ public class TSPTimeStampService implements TimeStampService {
         )) {
             throw new RuntimeException("invalid Content-Type: " + contentType +
                     // dump the first few bytes
-                    ": " + HexDump.dump(bos.toByteArray(), 0, 0, 200));
+                    ": " + HexDump.dump(responseBytes, 0, 0, 200));
         }
 
-        if (bos.size() == 0) {
+        if (responseBytes.length == 0) {
             throw new RuntimeException("Content-Length is zero");
         }
 
         // TSP response parsing and validation
-        TimeStampResponse timeStampResponse = new TimeStampResponse(bos.toByteArray());
+        TimeStampResponse timeStampResponse = new TimeStampResponse(responseBytes);
         timeStampResponse.validate(request);
 
         if (0 != timeStampResponse.getStatus()) {

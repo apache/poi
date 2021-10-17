@@ -235,8 +235,7 @@ public final class WorkbookEvaluator {
                                   int rowIndex, int columnIndex, EvaluationTracker tracker) {
 
         // avoid tracking dependencies to cells that have constant definition
-        boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null ? true
-                : !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
+        boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null || !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
         if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
@@ -389,7 +388,7 @@ public final class WorkbookEvaluator {
                 String message = finalDbgIndentStr
                         + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetNameRange()
                         + "'/" + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
-                        + "): " + Arrays.toString(ptgs).replaceAll("\\Qorg.apache.poi.ss.formula.ptg.\\E", "");
+                        + "): " + Arrays.toString(ptgs).replace("\\Qorg.apache.poi.ss.formula.ptg.\\E", "");
                 return new SimpleMessage(message);
             });
             dbgEvaluationOutputIndent++;
@@ -665,7 +664,7 @@ public final class WorkbookEvaluator {
     /**
      * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
      * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
-     * StringPtg, BoolPtg<p>
+     * StringPtg, BoolPtg
      * <p>
      * special Note: OperationPtg subtypes cannot be passed here!
      */
@@ -889,7 +888,7 @@ public final class WorkbookEvaluator {
      * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
      * @throws IllegalArgumentException  if target is not within region.
      */
-    protected boolean adjustRegionRelativeReference(Ptg[] ptgs, CellReference target, CellRangeAddressBase region) {
+    private boolean adjustRegionRelativeReference(Ptg[] ptgs, CellReference target, CellRangeAddressBase region) {
         // region may not be the one that contains the target, if a conditional formatting rule applies to multiple regions
 
         int deltaRow = target.getRow() - region.getFirstRow();

@@ -38,10 +38,6 @@ import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
-import org.apache.poi.hwpf.model.LFO;
-import org.apache.poi.hwpf.model.LFOData;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.PlexOfCps;
@@ -55,7 +51,6 @@ import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -291,7 +286,7 @@ public final class HWPFLister {
             char c = text.charAt( charIndex );
             part.append( c );
             if ( c == 13 || c == 7 || c == 12 ) {
-                paragraphs.put( Integer.valueOf( charIndex ), part.toString() );
+                paragraphs.put(charIndex, part.toString() );
                 part.setLength( 0 );
             }
         }
@@ -398,7 +393,7 @@ public final class HWPFLister {
                 .hasNext(); ) {
             Entry entry = iterator.next();
             String entryToString = "\n" + dumpFileSystem( entry );
-            entryToString = entryToString.replaceAll( "\n", "\n+---" );
+            entryToString = entryToString.replace("\n", "\n+---");
             result.append( entryToString );
         }
         result.append( "\n" );
@@ -530,7 +525,7 @@ public final class HWPFLister {
         }
     }
 
-    protected void dumpSprms( SprmIterator sprmIt, String linePrefix ) {
+    private void dumpSprms(SprmIterator sprmIt, String linePrefix) {
         while ( sprmIt.hasNext() ) {
             SprmOperation sprm = sprmIt.next();
             System.out.println( linePrefix + sprm);
@@ -585,37 +580,6 @@ public final class HWPFLister {
             if ( styleDescription.getCHPX() != null )
                 dumpSprms( new SprmIterator( styleDescription.getCHPX(), 0 ),
                         "Style's CHP SPRM: " );
-        }
-    }
-
-    protected void dumpParagraphLevels( ListTables listTables,
-            ParagraphProperties paragraph ) {
-        if ( paragraph.getIlfo() != 0 ) {
-            final LFO lfo = listTables.getLfo( paragraph.getIlfo() );
-            System.out.println( "PAP's LFO: " + lfo );
-
-            final LFOData lfoData = listTables.getLfoData( paragraph.getIlfo() );
-            System.out.println( "PAP's LFOData: " + lfoData );
-
-            if ( lfo != null ) {
-                final ListLevel listLevel = listTables.getLevel( lfo.getLsid(),
-                        paragraph.getIlvl() );
-
-                System.out.println( "PAP's ListLevel: " + listLevel );
-                if ( listLevel.getGrpprlPapx() != null ) {
-                    System.out.println( "PAP's ListLevel PAPX:" );
-                    dumpSprms(
-                            new SprmIterator( listLevel.getGrpprlPapx(), 0 ),
-                            "* " );
-                }
-
-                if ( listLevel.getGrpprlPapx() != null ) {
-                    System.out.println( "PAP's ListLevel CHPX:" );
-                    dumpSprms(
-                            new SprmIterator( listLevel.getGrpprlChpx(), 0 ),
-                            "* " );
-                }
-            }
         }
     }
 

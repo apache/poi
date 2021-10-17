@@ -78,6 +78,7 @@ public class OldExcelExtractor implements POITextExtractor {
         open(input);
     }
 
+    @SuppressWarnings("java:S2093")
     public OldExcelExtractor(File f) throws IOException {
         POIFSFileSystem poifs = null;
         try {
@@ -120,6 +121,7 @@ public class OldExcelExtractor implements POITextExtractor {
         open(directory);
     }
 
+    @SuppressWarnings("java:S2093")
     private void open(InputStream biffStream) throws IOException {
         BufferedInputStream bis = (biffStream instanceof BufferedInputStream)
             ? (BufferedInputStream)biffStream
@@ -230,6 +232,7 @@ public class OldExcelExtractor implements POITextExtractor {
      *
      * @return the text contents of the file
      */
+    @Override
     public String getText() {
         StringBuilder text = new StringBuilder();
 

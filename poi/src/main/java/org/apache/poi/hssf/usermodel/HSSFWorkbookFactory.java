@@ -67,6 +67,7 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
      * Note that in order to properly release resources the
      * Workbook should be closed after use.
      */
+    @SuppressWarnings("java:S2093")
     @Override
     public HSSFWorkbook create(final DirectoryNode root, String password) throws IOException {
         boolean passwordSet = false;
@@ -95,7 +96,7 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
     }
 
     @Override
-    @SuppressWarnings("java:S2095")
+    @SuppressWarnings({"java:S2095","java:S2093"})
     public Workbook create(File file, String password, boolean readOnly) throws IOException {
         boolean passwordSet = false;
         if (password != null) {

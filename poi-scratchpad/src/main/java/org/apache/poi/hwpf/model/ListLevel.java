@@ -299,7 +299,6 @@ public final class ListLevel
         offset += _grpprlChpx.length;
 
         _xst.serialize( buf, offset );
-        offset += _xst.getSize();
 
         return buf;
     }
@@ -307,7 +306,7 @@ public final class ListLevel
     @Override
     public String toString()
     {
-        return "LVL: " + ( "\n" + _lvlf ).replaceAll( "\n", "\n    " )
+        return "LVL: " + ( "\n" + _lvlf ).replace( "\n", "\n    " )
                 + "\n"
                 + ( "PAPX's grpprl: " + Arrays.toString( _grpprlPapx ) + "\n" )
                 + ( "CHPX's grpprl: " + Arrays.toString( _grpprlChpx ) + "\n" )

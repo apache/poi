@@ -45,14 +45,14 @@ public interface GuideIf extends Formula {
     }
 
     default double evaluateGuide(Context ctx) {
-        Guide.Op op;
+        Op op;
         String[] operands = WHITESPACE.split(getFmla());
         switch (operands[0]) {
-            case "*/": op = Guide.Op.muldiv; break;
-            case "+-": op = Guide.Op.addsub; break;
-            case "+/": op = Guide.Op.adddiv; break;
-            case "?:": op = Guide.Op.ifelse; break;
-            default: op = Guide.Op.valueOf(operands[0]); break;
+            case "*/": op = Op.muldiv; break;
+            case "+-": op = Op.addsub; break;
+            case "+/": op = Op.adddiv; break;
+            case "?:": op = Op.ifelse; break;
+            default: op = Op.valueOf(operands[0]); break;
         }
 
         double x = (operands.length > 1) ? ctx.getValue(operands[1]) : 0;
