@@ -132,7 +132,7 @@ class TestXSSFHeaderFooter {
         assertEquals(simple, XSSFOddHeader.stripFields(withPage));
         assertEquals(simple, XSSFOddHeader.stripFields(withLots));
         assertEquals(simple, XSSFOddHeader.stripFields(withFont));
-        assertEquals(simple + "&&", XSSFOddHeader.stripFields(withOtherAnds));
+        assertEquals(simple + "&", XSSFOddHeader.stripFields(withOtherAnds));
         assertEquals(simple + "&a&b", XSSFOddHeader.stripFields(withOtherAnds2));
 
         // Now test the default strip flag

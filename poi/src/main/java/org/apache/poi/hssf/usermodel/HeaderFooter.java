@@ -298,10 +298,13 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 
         // Now do the tricky, dynamic ones
         // These are things like font sizes, font names and colours
-        text = text.replaceAll("\\&\\d+", "");
-        text = text.replaceAll("\\&\".*?,.*?\"", "");
-        text = text.replaceAll("\\&K[\\dA-F]{6}", "");
-        text = text.replaceAll("\\&K[\\d]{2}[+][\\d]{3}", "");
+        text = text.replaceAll("&\\d+", "");
+        text = text.replaceAll("&\".*?,.*?\"", "");
+        text = text.replaceAll("&K[\\dA-F]{6}", "");
+        text = text.replaceAll("&K[\\d]{2}[+][\\d]{3}", "");
+
+        text = text.replaceAll("&&", "&");
+
 
         // All done
         return text;

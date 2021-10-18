@@ -69,7 +69,7 @@ final class TestHSSFHeaderFooter {
         assertEquals(simple, HSSFHeader.stripFields(withPage));
         assertEquals(simple, HSSFHeader.stripFields(withLots));
         assertEquals(simple, HSSFHeader.stripFields(withFont));
-        assertEquals(simple + "&&", HSSFHeader.stripFields(withOtherAnds));
+        assertEquals(simple + "&", HSSFHeader.stripFields(withOtherAnds));
         assertEquals(simple + "&a&b", HSSFHeader.stripFields(withOtherAnds2));
 
         // Now test the default strip flag
@@ -190,6 +190,20 @@ final class TestHSSFHeaderFooter {
             HSSFFooter footer2 = sheet.getFooter();
             footer.setCenter("bar");
             assertEquals("bar", footer2.getCenter());
+        }
+    }
+
+    @Test
+    void testHeaderWithAmpersand() throws IOException {
+        try (HSSFWorkbook wb = openSampleWorkbook("AmpersandHeader.xls")) {
+            HSSFSheet s = wb.getSheetAt(0);
+            HSSFHeader h = s.getHeader();
+            String header = h.getCenter();
+            assertEquals("one && two &&&&", header);
+
+            // In Excel headers fields start with '&'
+            // For '&' to appear as text it needs to be escaped as '&&'
+            assertEquals("one & two &&", HSSFHeader.stripFields(header));
         }
     }
 }

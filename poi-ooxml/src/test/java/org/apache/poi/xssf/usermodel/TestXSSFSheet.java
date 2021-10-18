@@ -179,6 +179,20 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
+    void testHeaderWithAmpersand() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("AmpersandHeader.xlsx")) {
+            XSSFSheet s = wb.getSheetAt(0);
+            XSSFOddHeader hdr = (XSSFOddHeader) s.getHeader();
+            assertEquals("one && two &&&&", hdr.getCenter());
+            hdr.setAreFieldsStripped(true);
+
+            // In Excel headers fields start with '&'
+            // For '&' to appear as text it needs to be escaped as '&&'
+            assertEquals("one & two &&", hdr.getCenter());
+        }
+    }
+
+    @Test
     void getAllHeadersFooters() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Sheet 1");
