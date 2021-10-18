@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -425,7 +427,7 @@ public class CellNumberFormatter extends CellFormatter {
     @Override
     public void formatValue(StringBuffer toAppendTo, Object valueObject) {
         double value = ((Number) valueObject).doubleValue();
-        value *= scale;
+        value = new BigDecimal(value * scale).round(MathContext.DECIMAL64).doubleValue();
 
         // For negative numbers:
         // - If the cell format has a negative number format, this method
