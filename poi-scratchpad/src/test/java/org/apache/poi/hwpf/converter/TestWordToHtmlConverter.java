@@ -96,8 +96,8 @@ public class TestWordToHtmlConverter {
             "width:3.4125in;height:2.3253334in;",
         "pictures_escher.doc, " +
             "<img src=\"s0.PNG\">|" +
-            "<img src=\"s808.PNG\">"
-
+            "<img src=\"s808.PNG\">",
+        "bug65255.doc, meta content=\"王久君\""
     })
     void testFile(String file, String contains) throws Exception {
         boolean emulatePictureStorage = !file.contains("equation");
