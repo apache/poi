@@ -102,7 +102,7 @@ public class TestExtractEmbeddedMSG {
         expectedMessageDate.set(Calendar.MILLISECOND, 0);
         assertEquals(expectedMessageDate.getTimeInMillis(), messageDate.getTimeInMillis());
         // test variable length property
-        assertEquals(msg.getSubject(), "Test Attachment");
+        assertEquals("Test Attachment", msg.getSubject());
     }
 
     private POIFSFileSystem rebuildFromAttached(MAPIMessage attachedMsg) throws IOException {

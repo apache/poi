@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.ss.usermodel.FontCharset.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -79,7 +80,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 
         xssfFont.setBold(true);
-        assertEquals(ctFont.sizeOfBArray(),1);
+        assertEquals(1,ctFont.sizeOfBArray());
         assertTrue(ctFont.getBArray(0).getVal());
     }
 
@@ -88,27 +89,27 @@ public final class TestXSSFFont extends BaseTestFont{
     void testCharSetWithDeprecatedFontCharset() throws IOException {
         CTFont ctFont=CTFont.Factory.newInstance();
         CTIntProperty prop=ctFont.addNewCharset();
-        prop.setVal(org.apache.poi.ss.usermodel.FontCharset.ANSI.getValue());
+        prop.setVal(ANSI.getValue());
 
         ctFont.setCharsetArray(0,prop);
         XSSFFont xssfFont=new XSSFFont(ctFont);
         assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
 
-        xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.DEFAULT);
-        assertEquals(org.apache.poi.ss.usermodel.FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
+        xssfFont.setCharSet(DEFAULT);
+        assertEquals(DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
 
         // Try with a few less usual ones:
         // Set with the Charset itself
-        xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.RUSSIAN);
-        assertEquals(org.apache.poi.ss.usermodel.FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet(RUSSIAN);
+        assertEquals(RUSSIAN.getValue(), xssfFont.getCharSet());
         // And set with the Charset index
-        xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue());
-        assertEquals(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
-        xssfFont.setCharSet((byte)(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue()));
-        assertEquals(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet(ARABIC.getValue());
+        assertEquals(ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet((byte)(ARABIC.getValue()));
+        assertEquals(ARABIC.getValue(), xssfFont.getCharSet());
 
         // This one isn't allowed
-        assertNull(org.apache.poi.ss.usermodel.FontCharset.valueOf(9999));
+        assertNull(valueOf(9999));
         assertThrows(POIXMLException.class, () -> xssfFont.setCharSet(9999),
             "Shouldn't be able to set an invalid charset");
 
@@ -198,7 +199,7 @@ public final class TestXSSFFont extends BaseTestFont{
         assertFalse(xssfFont.getItalic());
 
         xssfFont.setItalic(true);
-        assertEquals(ctFont.sizeOfIArray(),1);
+        assertEquals(1,ctFont.sizeOfIArray());
         assertTrue(ctFont.getIArray(0).getVal());
         assertTrue(ctFont.getIArray(0).getVal());
     }
@@ -214,7 +215,7 @@ public final class TestXSSFFont extends BaseTestFont{
         assertFalse(xssfFont.getStrikeout());
 
         xssfFont.setStrikeout(true);
-        assertEquals(ctFont.sizeOfStrikeArray(),1);
+        assertEquals(1,ctFont.sizeOfStrikeArray());
         assertTrue(ctFont.getStrikeArray(0).getVal());
         assertTrue(ctFont.getStrikeArray(0).getVal());
     }
@@ -258,11 +259,11 @@ public final class TestXSSFFont extends BaseTestFont{
         assertEquals(Font.U_SINGLE, xssfFont.getUnderline());
 
         xssfFont.setUnderline(Font.U_DOUBLE);
-        assertEquals(ctFont.sizeOfUArray(),1);
+        assertEquals(1, ctFont.sizeOfUArray());
         assertSame(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
 
         xssfFont.setUnderline(FontUnderline.DOUBLE_ACCOUNTING);
-        assertEquals(ctFont.sizeOfUArray(),1);
+        assertEquals(1, ctFont.sizeOfUArray());
         assertSame(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
     }
 

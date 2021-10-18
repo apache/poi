@@ -165,7 +165,7 @@ public final class TestExtractor {
             assertNotNull(nText);
 
             // Notes record were corrupt, so don't expect any
-            assertEquals(nText.length(), 0);
+            assertEquals(0, nText.length());
 
             // Slide records were fine
             assertContains(text, "Using Disease Surveillance and Response");

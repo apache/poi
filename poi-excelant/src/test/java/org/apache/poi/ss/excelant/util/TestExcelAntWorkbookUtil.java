@@ -274,7 +274,7 @@ class TestExcelAntWorkbookUtil {
         List<String> sheets = fixture.getSheets();
 
         assertNotNull(sheets);
-        assertEquals(sheets.size(), 3);
+        assertEquals(3, sheets.size());
     }
 
     @Test

@@ -168,7 +168,7 @@ final class TestBasic {
         final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is);
         final List<Section> sections = si.getSections();
         final Section s = sections.get(0);
-        assertEquals(s.getFormatID(), SummaryInformation.FORMAT_ID);
+        assertEquals(SummaryInformation.FORMAT_ID, s.getFormatID());
         assertNotNull(s.getProperties());
         assertEquals(17, s.getPropertyCount());
         assertEquals("Titel", s.getProperty(PropertyIDMap.PID_TITLE));

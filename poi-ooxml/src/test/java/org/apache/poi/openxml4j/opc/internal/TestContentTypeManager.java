@@ -23,11 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -40,7 +38,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
@@ -88,10 +85,10 @@ public final class TestContentTypeManager {
         ctm.addContentType(name3, "text/xml+rel");
         ctm.addContentType(name4, "text/xml+rel");
 
-        assertEquals(ctm.getContentType(name1), "foo-type1");
-        assertEquals(ctm.getContentType(name2), "foo-type2");
-        assertEquals(ctm.getContentType(name3), "text/xml+rel");
-        assertEquals(ctm.getContentType(name3), "text/xml+rel");
+        assertEquals("foo-type1", ctm.getContentType(name1));
+        assertEquals("foo-type2", ctm.getContentType(name2));
+        assertEquals("text/xml+rel", ctm.getContentType(name3));
+        assertEquals("text/xml+rel", ctm.getContentType(name3));
     }
 
     /**
@@ -114,8 +111,8 @@ public final class TestContentTypeManager {
         ctm.removeContentType(name2);
         ctm.removeContentType(name3);
 
-        assertEquals(ctm.getContentType(name1), "foo-type1");
-        assertEquals(ctm.getContentType(name2), "foo-type1");
+        assertEquals("foo-type1", ctm.getContentType(name1));
+        assertEquals("foo-type1", ctm.getContentType(name2));
         assertNull(ctm.getContentType(name3));
 
         ctm.removeContentType(name1);
@@ -129,15 +126,6 @@ public final class TestContentTypeManager {
     @Disabled
     void testContentTypeRemovalPackage() {
         // TODO
-    }
-
-    protected byte[] toByteArray(Workbook wb) {
-        try (UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream()) {
-            wb.write(os);
-            return os.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("failed to write excel file.");
-        }
     }
 
     @Test

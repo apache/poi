@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -89,19 +90,13 @@ class TestXSSFCellFill {
             XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
             //color RGB will be extracted from theme
             XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
-            byte[] rgb = foregroundColor.getRGB();
-            byte[] rgbWithTint = foregroundColor.getRGBWithTint();
             // Dk2
-            assertEquals(rgb[0], 31);
-            assertEquals(rgb[1], 73);
-            assertEquals(rgb[2], 125);
+            assertArrayEquals(new byte[]{31, 73, 125}, foregroundColor.getRGB());
             // Dk2, lighter 40% (tint is about 0.39998)
             // 31 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 120.59552 => 120 (byte)
             // 73 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 145.79636 => -111 (byte)
             // 125 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 176.99740 => -80 (byte)
-            assertEquals(rgbWithTint[0], 120);
-            assertEquals(rgbWithTint[1], -111);
-            assertEquals(rgbWithTint[2], -80);
+            assertArrayEquals(new byte[]{120, -111, -80}, foregroundColor.getRGBWithTint());
         }
     }
 

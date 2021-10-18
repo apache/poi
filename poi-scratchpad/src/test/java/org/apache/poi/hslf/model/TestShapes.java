@@ -116,7 +116,7 @@ public final class TestShapes {
                 String text = txtbox.getText();
                 assertNotNull(text);
 
-                assertEquals(txtbox.getTextParagraphs().get(0).getTextRuns().size(), 1);
+                assertEquals(1, txtbox.getTextParagraphs().get(0).getTextRuns().size());
                 HSLFTextRun rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
 
                 switch (text) {

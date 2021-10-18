@@ -17,18 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.TempFile;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.junit.jupiter.api.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,11 +31,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 
 public final class TestXSSFTable {
 
@@ -86,34 +85,33 @@ public final class TestXSSFTable {
 
     @Test
     void testCTTableStyleInfo() throws IOException {
-        XSSFWorkbook outputWorkbook = new XSSFWorkbook();
-        XSSFSheet sheet = outputWorkbook.createSheet();
+        try (XSSFWorkbook outputWorkbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = outputWorkbook.createSheet();
 
-        //Create
-        XSSFTable outputTable = sheet.createTable(null);
-        outputTable.setDisplayName("Test");
-        CTTable outputCTTable = outputTable.getCTTable();
+            //Create
+            XSSFTable outputTable = sheet.createTable(null);
+            outputTable.setDisplayName("Test");
+            CTTable outputCTTable = outputTable.getCTTable();
 
-        //Style configurations
-        CTTableStyleInfo outputStyleInfo = outputCTTable.addNewTableStyleInfo();
-        outputStyleInfo.setName("TableStyleLight1");
-        outputStyleInfo.setShowColumnStripes(false);
-        outputStyleInfo.setShowRowStripes(true);
+            //Style configurations
+            CTTableStyleInfo outputStyleInfo = outputCTTable.addNewTableStyleInfo();
+            outputStyleInfo.setName("TableStyleLight1");
+            outputStyleInfo.setShowColumnStripes(false);
+            outputStyleInfo.setShowRowStripes(true);
 
-        XSSFWorkbook inputWorkbook = XSSFTestDataSamples.writeOutAndReadBack(outputWorkbook);
-        List<XSSFTable> tables = inputWorkbook.getSheetAt(0).getTables();
-        assertEquals(1, tables.size(), "Tables number");
+            try (XSSFWorkbook inputWorkbook = XSSFTestDataSamples.writeOutAndReadBack(outputWorkbook)) {
+                List<XSSFTable> tables = inputWorkbook.getSheetAt(0).getTables();
+                assertEquals(1, tables.size(), "Tables number");
 
-        XSSFTable inputTable = tables.get(0);
-        assertEquals(outputTable.getDisplayName(), inputTable.getDisplayName(), "Table display name");
+                XSSFTable inputTable = tables.get(0);
+                assertEquals(outputTable.getDisplayName(), inputTable.getDisplayName(), "Table display name");
 
-        CTTableStyleInfo inputStyleInfo = inputTable.getCTTable().getTableStyleInfo();
-        assertEquals(outputStyleInfo.getName(), inputStyleInfo.getName(), "Style name");
-        assertEquals(outputStyleInfo.getShowColumnStripes(), inputStyleInfo.getShowColumnStripes(), "Show column stripes");
-        assertEquals(outputStyleInfo.getShowRowStripes(), inputStyleInfo.getShowRowStripes(), "Show row stripes");
-
-        inputWorkbook.close();
-        outputWorkbook.close();
+                CTTableStyleInfo inputStyleInfo = inputTable.getCTTable().getTableStyleInfo();
+                assertEquals(outputStyleInfo.getName(), inputStyleInfo.getName(), "Style name");
+                assertEquals(outputStyleInfo.getShowColumnStripes(), inputStyleInfo.getShowColumnStripes(), "Show column stripes");
+                assertEquals(outputStyleInfo.getShowRowStripes(), inputStyleInfo.getShowRowStripes(), "Show row stripes");
+            }
+        }
     }
 
     @Test
@@ -269,8 +267,6 @@ public final class TestXSSFTable {
 
             assertEquals(new CellReference("C1"), table.getStartCellReference());
             assertEquals(new CellReference("M3"), table.getEndCellReference());
-
-            IOUtils.closeQuietly(wb);
         }
     }
 
@@ -292,8 +288,6 @@ public final class TestXSSFTable {
             // update cell references to clear the cache
             table.updateReferences();
             assertEquals(11, table.getRowCount());
-
-            IOUtils.closeQuietly(wb);
         }
     }
 
@@ -311,8 +305,6 @@ public final class TestXSSFTable {
 
             assertEquals(6, table.getRowCount());
             assertEquals(5, table.getDataRowCount());
-
-            IOUtils.closeQuietly(wb);
         }
     }
 
@@ -340,8 +332,6 @@ public final class TestXSSFTable {
             assertEquals(0, table.getTotalsRowCount());
 
             assertEquals("C10:C15", table.getArea().formatAsString());
-
-            IOUtils.closeQuietly(wb);
         }
     }
 
@@ -441,10 +431,10 @@ public final class TestXSSFTable {
             assertTrue  (cB.getId() < cD.getId(), "Column D ID");
             assertTrue  (cD.getId() < cC.getId(), "Column C ID");
             // generated name
-            assertEquals(table.getColumns().get(0).getName(), "Column 1");
-            assertEquals(table.getColumns().get(1).getName(), "Column B");
-            assertEquals(table.getColumns().get(2).getName(), "Column C");
-            assertEquals(table.getColumns().get(3).getName(), "Column D");
+            assertEquals("Column 1", table.getColumns().get(0).getName());
+            assertEquals("Column B", table.getColumns().get(1).getName());
+            assertEquals("Column C", table.getColumns().get(2).getName());
+            assertEquals("Column D", table.getColumns().get(3).getName());
         }
     }
 
@@ -528,23 +518,20 @@ public final class TestXSSFTable {
             ));
 
             // Save and re-load
-            XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            IOUtils.closeQuietly(wb);
-            s = wb2.getSheetAt(0);
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                s = wb2.getSheetAt(0);
 
-            // Check
-            assertEquals(1, s.getTables().size());
-            t = s.getTables().get(0);
-            assertEquals("A1", t.getStartCellReference().formatAsString());
-            assertEquals("C2", t.getEndCellReference().formatAsString());
+                // Check
+                assertEquals(1, s.getTables().size());
+                t = s.getTables().get(0);
+                assertEquals("A1", t.getStartCellReference().formatAsString());
+                assertEquals("C2", t.getEndCellReference().formatAsString());
 
-            // TODO Nicer column fetching
-            assertEquals("12", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
-            assertEquals("34.56", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
-            assertEquals("ABCD", t.getCTTable().getTableColumns().getTableColumnArray(2).getName());
-
-            // Done
-            IOUtils.closeQuietly(wb2);
+                // TODO Nicer column fetching
+                assertEquals("12", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+                assertEquals("34.56", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+                assertEquals("ABCD", t.getCTTable().getTableColumns().getTableColumnArray(2).getName());
+            }
         }
     }
 

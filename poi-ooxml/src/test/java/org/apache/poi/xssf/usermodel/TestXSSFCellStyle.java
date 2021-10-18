@@ -121,7 +121,7 @@ class TestXSSFCellStyle {
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertEquals(STBorderStyle.MEDIUM, ctBorder.getBottom().getStyle());
+        assertSame(STBorderStyle.MEDIUM, ctBorder.getBottom().getStyle());
 
         num = stylesTable.getBorders().size();
         //setting the same border multiple times should not change borderId
@@ -141,7 +141,7 @@ class TestXSSFCellStyle {
         //none is not the same as "not set", therefore the following doesn't work any more
         //assertFalse(ctBorder.isSetBottom());
         //replacement:
-        assertEquals(ctBorder.getBottom().getStyle(), STBorderStyle.NONE);
+        assertSame(STBorderStyle.NONE, ctBorder.getBottom().getStyle());
     }
 
     @Test
@@ -159,7 +159,7 @@ class TestXSSFCellStyle {
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertEquals(STBorderStyle.MEDIUM, ctBorder.getRight().getStyle());
+        assertSame(STBorderStyle.MEDIUM, ctBorder.getRight().getStyle());
 
         num = stylesTable.getBorders().size();
         //setting the same border multiple times should not change borderId
@@ -179,7 +179,7 @@ class TestXSSFCellStyle {
         //none is not the same as "not set", therefore the following doesn't work any more
         //assertFalse(ctBorder.isSetRight());
         //replacement:
-        assertEquals(ctBorder.getRight().getStyle(), STBorderStyle.NONE);
+        assertSame(STBorderStyle.NONE, ctBorder.getRight().getStyle());
     }
 
     @Test
@@ -197,7 +197,7 @@ class TestXSSFCellStyle {
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertEquals(STBorderStyle.MEDIUM, ctBorder.getLeft().getStyle());
+        assertSame(STBorderStyle.MEDIUM, ctBorder.getLeft().getStyle());
 
         num = stylesTable.getBorders().size();
         //setting the same border multiple times should not change borderId
@@ -217,7 +217,7 @@ class TestXSSFCellStyle {
         //none is not the same as "not set", therefore the following doesn't work any more
         //assertFalse(ctBorder.isSetLeft());
         //replacement:
-        assertEquals(ctBorder.getLeft().getStyle(), STBorderStyle.NONE);
+        assertSame(STBorderStyle.NONE, ctBorder.getLeft().getStyle());
     }
 
     @Test
@@ -235,7 +235,7 @@ class TestXSSFCellStyle {
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertEquals(STBorderStyle.MEDIUM, ctBorder.getTop().getStyle());
+        assertSame(STBorderStyle.MEDIUM, ctBorder.getTop().getStyle());
 
         num = stylesTable.getBorders().size();
         //setting the same border multiple times should not change borderId
@@ -255,7 +255,7 @@ class TestXSSFCellStyle {
         //none is not the same as "not set", therefore the following doesn't work any more
         //assertFalse(ctBorder.isSetTop());
         //replacement:
-        assertEquals(ctBorder.getTop().getStyle(), STBorderStyle.NONE);
+        assertSame(STBorderStyle.NONE, ctBorder.getTop().getStyle());
     }
 
     private void testGetSetBorderXMLBean(BorderStyle border, STBorderStyle.Enum expected) {
@@ -265,7 +265,7 @@ class TestXSSFCellStyle {
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertEquals(expected, ctBorder.getTop().getStyle());
+        assertSame(expected, ctBorder.getTop().getStyle());
     }
 
 
@@ -641,7 +641,7 @@ class TestXSSFCellStyle {
         assertTrue(fillId > 0);
         //check changes in the underlying xml bean
         CTFill ctFill2 = stylesTable.getFillAt(fillId).getCTFill();
-        assertEquals(STPatternType.SOLID, ctFill2.getPatternFill().getPatternType());
+        assertSame(STPatternType.SOLID, ctFill2.getPatternFill().getPatternType());
 
         //setting the same fill multiple time does not update the styles table
         for (int i = 0; i < 3; i++) {
@@ -695,15 +695,15 @@ class TestXSSFCellStyle {
 
         cellStyle.setAlignment(HorizontalAlignment.LEFT);
         assertEquals(HorizontalAlignment.LEFT, cellStyle.getAlignment());
-        assertEquals(STHorizontalAlignment.LEFT, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        assertSame(STHorizontalAlignment.LEFT, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 
         cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
         assertEquals(HorizontalAlignment.JUSTIFY, cellStyle.getAlignment());
-        assertEquals(STHorizontalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        assertSame(STHorizontalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         assertEquals(HorizontalAlignment.CENTER, cellStyle.getAlignment());
-        assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
+        assertSame(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
     }
 
     @Test
@@ -728,15 +728,15 @@ class TestXSSFCellStyle {
     void testGetSetVerticalAlignment() {
         assertEquals(VerticalAlignment.BOTTOM, cellStyle.getVerticalAlignment());
         assertFalse(cellStyle.getCellAlignment().getCTCellAlignment().isSetVertical());
-        assertEquals(STVerticalAlignment.BOTTOM, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+        assertSame(STVerticalAlignment.BOTTOM, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
 
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         assertEquals(VerticalAlignment.CENTER, cellStyle.getVerticalAlignment());
-        assertEquals(STVerticalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+        assertSame(STVerticalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
 
         cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
         assertEquals(VerticalAlignment.JUSTIFY, cellStyle.getVerticalAlignment());
-        assertEquals(STVerticalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+        assertSame(STVerticalAlignment.JUSTIFY, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
     }
 
     @Test
@@ -848,8 +848,8 @@ class TestXSSFCellStyle {
         assertEquals("TestingFont", clone.getFont().getFontName());
         assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
         assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
-        assertEquals(clone.getFillPattern(), FillPatternType.SOLID_FOREGROUND);
-        assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
+        assertEquals(FillPatternType.SOLID_FOREGROUND, clone.getFillPattern());
+        assertEquals(IndexedColors.BRIGHT_GREEN.getIndex(), clone.getFillForegroundColor());
 
         // Save it and re-check
         XSSFWorkbook wbReload = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
@@ -862,8 +862,8 @@ class TestXSSFCellStyle {
         assertEquals("TestingFont", reload.getFont().getFontName());
         assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
         assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
-        assertEquals(clone.getFillPattern(), FillPatternType.SOLID_FOREGROUND);
-        assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
+        assertEquals(FillPatternType.SOLID_FOREGROUND, clone.getFillPattern());
+        assertEquals(IndexedColors.BRIGHT_GREEN.getIndex(), clone.getFillForegroundColor());
 
         XSSFWorkbook wbOrig2 = XSSFTestDataSamples.writeOutAndReadBack(wbOrig);
         assertNotNull(wbOrig2);
@@ -1006,8 +1006,6 @@ class TestXSSFCellStyle {
             final CellStyle targetStyle = target.createCellStyle();
             targetStyle.cloneStyleFrom(referenceStyle);
         }
-        /*System.out.println("Reference : "+reference.getNumCellStyles());
-        System.out.println("Target    : "+target.getNumCellStyles());*/
     }
 
     @Test
@@ -1025,9 +1023,6 @@ class TestXSSFCellStyle {
             cell.setCellValue("Coucou"+i);
             cell.setCellStyle(target.getCellStyleAt(i));
         }
-        /*OutputStream out = new FileOutputStream("C:\\temp\\58084.xlsx");
-        target.write(out);
-        out.close();*/
 
         Workbook copy = XSSFTestDataSamples.writeOutAndReadBack(target);
 

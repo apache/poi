@@ -45,29 +45,19 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument {
 
     @Test
     void testContainsMainContentType() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        OPCPackage pack = doc.getPackage();
-
-        boolean found = false;
-        for (PackagePart part : pack.getParts()) {
-            if (part.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
-                found = true;
-            }
-//            if (false) {
-//                // successful tests should be silent
-//                System.out.println(part);
-//            }
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+            OPCPackage pack = doc.getPackage()) {
+            String ct = XWPFRelation.DOCUMENT.getContentType();
+            boolean found = pack.getParts().stream().anyMatch(p -> ct.equals(p.getContentType()));
+            assertTrue(found);
         }
-        assertTrue(found);
-
-        pack.close();
-        doc.close();
     }
 
     @Test
@@ -105,90 +95,92 @@ public final class TestXWPFDocument {
 
     @Test
     void testMetadataComplex() throws IOException {
-        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
-        assertNotNull(xml.getProperties().getCoreProperties());
-        assertNotNull(xml.getProperties().getExtendedProperties());
+        try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx")) {
+            assertNotNull(xml.getProperties().getCoreProperties());
+            assertNotNull(xml.getProperties().getExtendedProperties());
 
-        assertEquals("Microsoft Office Outlook", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-        assertEquals(5184, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
-        assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
+            CTProperties up = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
+            assertEquals("Microsoft Office Outlook", up.getApplication());
+            assertEquals(5184, up.getCharacters());
+            assertEquals(0, up.getLines());
 
-        assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
-        Optional<String> subjectProperty = xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty();
-        assertTrue(subjectProperty.isPresent());
-        assertEquals(" ", subjectProperty.get());
-        xml.close();
+            POIXMLProperties.CoreProperties cp = xml.getProperties().getCoreProperties();
+            assertEquals(" ", cp.getTitle());
+            Optional<String> subjectProperty = cp.getUnderlyingProperties().getSubjectProperty();
+            assertTrue(subjectProperty.isPresent());
+            assertEquals(" ", subjectProperty.get());
+        }
     }
 
     @Test
     void testWorkbookProperties() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
-        POIXMLProperties props = doc.getProperties();
-        assertNotNull(props);
-        assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
-        doc.close();
+        try (XWPFDocument doc = new XWPFDocument()) {
+            POIXMLProperties props = doc.getProperties();
+            assertNotNull(props);
+            assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+        }
     }
 
     @Test
     void testAddParagraph() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        assertEquals(3, doc.getParagraphs().size());
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            assertEquals(3, doc.getParagraphs().size());
 
-        XWPFParagraph p = doc.createParagraph();
-        assertEquals(p, doc.getParagraphs().get(3));
-        assertEquals(4, doc.getParagraphs().size());
+            XWPFParagraph p = doc.createParagraph();
+            assertEquals(p, doc.getParagraphs().get(3));
+            assertEquals(4, doc.getParagraphs().size());
 
-        assertEquals(3, doc.getParagraphPos(3));
-        assertEquals(3, doc.getPosOfParagraph(p));
+            assertEquals(3, doc.getParagraphPos(3));
+            assertEquals(3, doc.getPosOfParagraph(p));
 
-        CTP ctp = p.getCTP();
-        XWPFParagraph newP = doc.getParagraph(ctp);
-        assertSame(p, newP);
-        XmlCursor cursor = doc.getDocument().getBody().getPArray(0).newCursor();
-        XWPFParagraph cP = doc.insertNewParagraph(cursor);
-        assertSame(cP, doc.getParagraphs().get(0));
-        assertEquals(5, doc.getParagraphs().size());
-        doc.close();
+            CTP ctp = p.getCTP();
+            XWPFParagraph newP = doc.getParagraph(ctp);
+            assertSame(p, newP);
+            XmlCursor cursor = doc.getDocument().getBody().getPArray(0).newCursor();
+            XWPFParagraph cP = doc.insertNewParagraph(cursor);
+            assertSame(cP, doc.getParagraphs().get(0));
+            assertEquals(5, doc.getParagraphs().size());
+        }
     }
 
     @Test
     void testAddPicture() throws IOException, InvalidFormatException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
-        String relationId = doc.addPictureData(jpeg, Document.PICTURE_TYPE_JPEG);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
+            String relationId = doc.addPictureData(jpeg, Document.PICTURE_TYPE_JPEG);
 
-        XWPFPictureData relationById = (XWPFPictureData) doc.getRelationById(relationId);
-        assertNotNull(relationById);
-        byte[] newJpeg = relationById.getData();
-        assertEquals(newJpeg.length, jpeg.length);
-        for (int i = 0; i < jpeg.length; i++) {
-            assertEquals(newJpeg[i], jpeg[i]);
+            XWPFPictureData relationById = (XWPFPictureData) doc.getRelationById(relationId);
+            assertNotNull(relationById);
+            byte[] newJpeg = relationById.getData();
+            assertEquals(newJpeg.length, jpeg.length);
+            for (int i = 0; i < jpeg.length; i++) {
+                assertEquals(newJpeg[i], jpeg[i]);
+            }
         }
-        doc.close();
     }
 
     @Test
     void testAllPictureFormats() throws IOException, InvalidFormatException {
-        XWPFDocument doc = new XWPFDocument();
+        try (XWPFDocument doc = new XWPFDocument()) {
 
-        doc.addPictureData(new byte[10], Document.PICTURE_TYPE_EMF);
-        doc.addPictureData(new byte[11], Document.PICTURE_TYPE_WMF);
-        doc.addPictureData(new byte[12], Document.PICTURE_TYPE_PICT);
-        doc.addPictureData(new byte[13], Document.PICTURE_TYPE_JPEG);
-        doc.addPictureData(new byte[14], Document.PICTURE_TYPE_PNG);
-        doc.addPictureData(new byte[15], Document.PICTURE_TYPE_DIB);
-        doc.addPictureData(new byte[16], Document.PICTURE_TYPE_GIF);
-        doc.addPictureData(new byte[17], Document.PICTURE_TYPE_TIFF);
-        doc.addPictureData(new byte[18], Document.PICTURE_TYPE_EPS);
-        doc.addPictureData(new byte[19], Document.PICTURE_TYPE_BMP);
-        doc.addPictureData(new byte[20], Document.PICTURE_TYPE_WPG);
+            doc.addPictureData(new byte[10], Document.PICTURE_TYPE_EMF);
+            doc.addPictureData(new byte[11], Document.PICTURE_TYPE_WMF);
+            doc.addPictureData(new byte[12], Document.PICTURE_TYPE_PICT);
+            doc.addPictureData(new byte[13], Document.PICTURE_TYPE_JPEG);
+            doc.addPictureData(new byte[14], Document.PICTURE_TYPE_PNG);
+            doc.addPictureData(new byte[15], Document.PICTURE_TYPE_DIB);
+            doc.addPictureData(new byte[16], Document.PICTURE_TYPE_GIF);
+            doc.addPictureData(new byte[17], Document.PICTURE_TYPE_TIFF);
+            doc.addPictureData(new byte[18], Document.PICTURE_TYPE_EPS);
+            doc.addPictureData(new byte[19], Document.PICTURE_TYPE_BMP);
+            doc.addPictureData(new byte[20], Document.PICTURE_TYPE_WPG);
 
-        assertEquals(11, doc.getAllPictures().size());
+            assertEquals(11, doc.getAllPictures().size());
 
-        XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        assertEquals(11, doc2.getAllPictures().size());
-        doc2.close();
-        doc.close();
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(11, doc2.getAllPictures().size());
+            }
+        }
     }
 
     @Test
@@ -201,8 +193,8 @@ public final class TestXWPFDocument {
             assertEquals("rId7", h.getHyperlinkId());
 
             assertEquals("https://poi.apache.org/", h.getHyperlink(doc).getURL());
-            assertEquals(p.getRuns().size(), 1);
-            assertEquals(p.getRuns().get(0), h);
+            assertEquals(1, p.getRuns().size());
+            assertEquals(h, p.getRuns().get(0));
 
             h = p.createHyperlinkRun("https://poi.apache.org/");
             h.setText("Apache POI");
@@ -426,32 +418,27 @@ public final class TestXWPFDocument {
         settings.setMirrorMargins(true);
         assertTrue(settings.getMirrorMargins());
 
-        XWPFDocument doc = new XWPFDocument();
-        assertEquals(100, doc.getZoomPercent());
+        try (XWPFDocument doc = new XWPFDocument()) {
+            assertEquals(100, doc.getZoomPercent());
 
-        doc.setZoomPercent(50);
-        assertEquals(50, doc.getZoomPercent());
+            doc.setZoomPercent(50);
+            assertEquals(50, doc.getZoomPercent());
 
-        doc.setZoomPercent(200);
-        assertEquals(200, doc.getZoomPercent());
+            doc.setZoomPercent(200);
+            assertEquals(200, doc.getZoomPercent());
 
-        assertFalse(doc.getEvenAndOddHeadings());
-        doc.setEvenAndOddHeadings(true);
-        assertTrue(doc.getEvenAndOddHeadings());
+            assertFalse(doc.getEvenAndOddHeadings());
+            doc.setEvenAndOddHeadings(true);
+            assertTrue(doc.getEvenAndOddHeadings());
 
-        assertFalse(doc.getMirrorMargins());
-        doc.setMirrorMargins(true);
-        assertTrue(doc.getMirrorMargins());
+            assertFalse(doc.getMirrorMargins());
+            doc.setMirrorMargins(true);
+            assertTrue(doc.getMirrorMargins());
 
-        XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        assertEquals(200, back.getZoomPercent());
-        back.close();
-
-//        OutputStream out = new FileOutputStream("/tmp/testZoom.docx");
-//        doc.write(out);
-//        out.close();
-
-        doc.close();
+            try (XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertEquals(200, back.getZoomPercent());
+            }
+        }
     }
 
     @Test
@@ -464,20 +451,19 @@ public final class TestXWPFDocument {
     @Test
     @Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
     void testWriteFromReadOnlyOPC() throws Exception {
-        OPCPackage opc = OPCPackage.open(
+        try (OPCPackage opc = OPCPackage.open(
                 POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
                 PackageAccess.READ
-        );
-        XWPFDocument doc = new XWPFDocument(opc);
+            );
+            XWPFDocument doc = new XWPFDocument(opc);
+            XWPFWordExtractor ext = new XWPFWordExtractor(doc)
+        ) {
+            final String origText = ext.getText();
 
-        final String origText;
-        try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {
-            origText = ext.getText();
-
-            doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        }
-        try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {
-            assertEquals(origText, ext.getText());
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+                XWPFWordExtractor ext2 = new XWPFWordExtractor(doc2)) {
+                assertEquals(origText, ext2.getText());
+            }
         }
     }
 }
