@@ -139,4 +139,16 @@ class TestXWPFBugs {
             zf.close();
         }
     }
+
+    @Test
+    void missingXsbs() throws IOException, XmlException {
+        String[] files = {"bib-chernigovka.netdo.ru_download_docs_17459.docx"};
+        for (String f : files) {
+            ZipFile zf = new ZipFile(samples.getFile(f));
+            ZipArchiveEntry entry = zf.getEntry("word/document.xml");
+            DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
+            assertNotNull(document);
+            zf.close();
+        }
+    }
 }
