@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import com.microsoft.schemas.vml.CTShape;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
 import org.apache.poi.ss.usermodel.Cell;
@@ -310,5 +311,42 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertNull(comment2); // comment should be null but will fail due to bug
 
         wb.close();
+    }
+
+    @Test
+    void bug59388CommentVisible() throws IOException {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59388.xlsx")) {
+                Sheet sheet = wb.getSheetAt(0);
+                Cell a1 = sheet.getRow(0).getCell(0);
+                Cell d1 = sheet.getRow(0).getCell(3);
+
+                Comment commentA1 = a1.getCellComment();
+                Comment commentD1 = d1.getCellComment();
+
+                // assert original visibility
+                assertTrue(commentA1.isVisible());
+                assertFalse(commentD1.isVisible());
+
+                commentA1.setVisible(false);
+                commentD1.setVisible(true);
+
+                // assert after changing
+                assertFalse(commentA1.isVisible());
+                assertTrue(commentD1.isVisible());
+
+                // check result
+                wb.write(bos);
+
+                try (Workbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    Sheet sheetWb2 = wb2.getSheetAt(0);
+                    Cell a1Wb2 = sheetWb2.getRow(0).getCell(0);
+                    Cell d1Wb2 = sheetWb2.getRow(0).getCell(3);
+
+                    assertFalse(a1Wb2.getCellComment().isVisible());
+                    assertTrue(d1Wb2.getCellComment().isVisible());
+                }
+            }
+        }
     }
 }
