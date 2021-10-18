@@ -50,7 +50,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.extractor.ExtractorFactory;
@@ -79,11 +80,9 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
-import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xslf.util.DummyGraphics2d;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -114,11 +113,11 @@ class TestXSLFBugs {
 
             XSLFSlide slide = ss1.getSlides().get(0);
 
-            assertEquals(slide.getShapes().size(), 1);
+            assertEquals(1,slide.getShapes().size());
 
             XSLFPictureShape picture = (XSLFPictureShape) slide.getShapes().get(0);
 
-            assertEquals(picture.getShapeId(), 662);
+            assertEquals(662, picture.getShapeId());
             assertFalse(picture.isExternalLinkedPicture());
             assertNull(picture.getPictureData());
             assertNull(picture.getPictureLink());
@@ -133,12 +132,12 @@ class TestXSLFBugs {
 
             XSLFSlide slide0 = ss1.getSlides().get(0);
 
-            assertEquals(slide0.getShapes().size(), 4);
+            assertEquals(4, slide0.getShapes().size());
 
             assertRelation(slide0, "/ppt/slides/slide1.xml", null);
             assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
             assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-            assertEquals(slide0.getRelations().size(), 2);
+            assertEquals(2, slide0.getRelations().size());
 
             List<XSLFPictureShape> pictures = new ArrayList<>();
             for (XSLFShape shape : slide0.getShapes()) {
@@ -147,21 +146,21 @@ class TestXSLFBugs {
                 }
             }
 
-            assertEquals(pictures.size(), 2);
-            assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
-            assertEquals(pictures.get(1).getPictureData().getFileName(), "image1.png");
+            assertEquals(2, pictures.size());
+            assertEquals("image1.png", pictures.get(0).getPictureData().getFileName());
+            assertEquals("image1.png", pictures.get(1).getPictureData().getFileName());
             // blipId is rId2 of both pictures
 
             // remove just the first picture
             slide0.removeShape(pictures.get(0));
 
-            assertEquals(slide0.getShapes().size(), 3);
+            assertEquals(3, slide0.getShapes().size());
 
             assertRelation(slide0, "/ppt/slides/slide1.xml", null);
             assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
             // the bug is that the following relation is gone
             assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-            assertEquals(slide0.getRelations().size(), 2);
+            assertEquals(2, slide0.getRelations().size());
 
             // Save and re-load
             try (XMLSlideShow ss2 = writeOutAndReadBack(ss1)) {
@@ -172,7 +171,7 @@ class TestXSLFBugs {
                 assertRelation(slide0, "/ppt/slides/slide1.xml", null);
                 assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
                 assertRelation(slide0, "/ppt/media/image1.png", "rId2");
-                assertEquals(slide0.getRelations().size(), 2);
+                assertEquals(2, slide0.getRelations().size());
 
                 pictures.clear();
                 for (XSLFShape shape : slide0.getShapes()) {
@@ -181,17 +180,17 @@ class TestXSLFBugs {
                     }
                 }
 
-                assertEquals(pictures.size(), 1);
-                assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
+                assertEquals(1, pictures.size());
+                assertEquals("image1.png", pictures.get(0).getPictureData().getFileName());
 
                 slide0.removeShape(pictures.get(0));
 
-                assertEquals(slide0.getShapes().size(), 2);
+                assertEquals(2, slide0.getShapes().size());
 
                 assertRelation(slide0, "/ppt/slides/slide1.xml", null);
                 assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
                 assertNull(slide0.getRelationById("rId2"));
-                assertEquals(slide0.getRelations().size(), 1);
+                assertEquals(1, slide0.getRelations().size());
 
                 // Save and re-load
                 try (XMLSlideShow ss3 = writeOutAndReadBack(ss2)) {
@@ -201,7 +200,7 @@ class TestXSLFBugs {
 
                     assertRelation(slide0, "/ppt/slides/slide1.xml", null);
                     assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
-                    assertEquals(slide0.getShapes().size(), 2);
+                    assertEquals(2, slide0.getShapes().size());
                 }
             }
         }
@@ -919,9 +918,9 @@ class TestXSLFBugs {
 
             XSLFSlide slide = ss1.getSlides().get(0);
 
-            assertEquals(slide.getShapes().size(), 1);
+            assertEquals(1, slide.getShapes().size());
             XSLFGroupShape group = (XSLFGroupShape) slide.getShapes().get(0);
-            assertEquals(group.getShapes().size(), 2);
+            assertEquals(2, group.getShapes().size());
             XSLFAutoShape oval = (XSLFAutoShape) group.getShapes().get(0);
             XSLFAutoShape arrow = (XSLFAutoShape) group.getShapes().get(1);
             assertNull(oval.getFillColor());
@@ -1067,7 +1066,7 @@ class TestXSLFBugs {
             XSLFSlide targetSlide = targetPresentation.getSlides().get(0);
             assertEquals(2, targetPresentation.getPictureData().size());
 
-            targetPresentation.write(new UnsynchronizedByteArrayOutputStream());
+            targetPresentation.write(NullOutputStream.NULL_OUTPUT_STREAM);
         }
     }
 

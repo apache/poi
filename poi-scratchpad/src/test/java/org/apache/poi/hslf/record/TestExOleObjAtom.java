@@ -38,12 +38,13 @@ public final class TestExOleObjAtom {
         ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
         assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
 
-        assertEquals(record.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-        assertEquals(record.getType(), ExOleObjAtom.TYPE_CONTROL);
-        assertEquals(record.getObjID(), 1);
-        assertEquals(record.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
-        assertEquals(record.getObjStgDataRef(), 2);
-        assertEquals(record.getOptions(), 1283584); //ther meaning is unknown
+        assertEquals(ExOleObjAtom.DRAW_ASPECT_VISIBLE, record.getDrawAspect());
+        assertEquals(ExOleObjAtom.TYPE_CONTROL, record.getType());
+        assertEquals(1, record.getObjID());
+        assertEquals(ExOleObjAtom.SUBTYPE_DEFAULT, record.getSubType());
+        assertEquals(2, record.getObjStgDataRef());
+        // the meaning is unknown
+        assertEquals(1283584, record.getOptions());
     }
 
     @Test

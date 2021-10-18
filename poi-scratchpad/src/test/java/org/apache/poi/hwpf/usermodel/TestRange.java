@@ -64,33 +64,31 @@ public final class TestRange {
 
     @Test
     void testBug46817() throws IOException {
-        InputStream is = SAMPLES.openResourceAsStream( "Bug46817.doc" );
-        HWPFDocument hwpfDocument = new HWPFDocument( is );
-        is.close();
+        try (InputStream is = SAMPLES.openResourceAsStream("Bug46817.doc");
+             HWPFDocument hwpfDocument = new HWPFDocument(is)) {
 
-        final List<SEPX> sections = hwpfDocument.getSectionTable()
-                .getSections();
-        assertEquals( sections.size(), 1 );
+            final List<SEPX> sections = hwpfDocument.getSectionTable().getSections();
+            assertEquals( 1, sections.size() );
 
-        // whole document, including additional text from shape
-        SEPX sepx = sections.get( 0 );
-        assertEquals( sepx.getStart(), 0 );
-        assertEquals( sepx.getEnd(), 1428 );
+            // whole document, including additional text from shape
+            SEPX sepx = sections.get( 0 );
+            assertEquals( 0, sepx.getStart() );
+            assertEquals( 1428, sepx.getEnd() );
 
-        // only main range
-        Range range = hwpfDocument.getRange();
-        assertEquals( range.getStartOffset(), 0 );
-        assertEquals( range.getEndOffset(), 766 );
+            // only main range
+            Range range = hwpfDocument.getRange();
+            assertEquals( 0, range.getStartOffset() );
+            assertEquals( 766, range.getEndOffset() );
 
-        Paragraph lastInMainRange = range.getParagraph( range.numParagraphs() - 1);
-        assertTrue( lastInMainRange.getEndOffset() <= 766 );
+            Paragraph lastInMainRange = range.getParagraph( range.numParagraphs() - 1);
+            assertTrue( lastInMainRange.getEndOffset() <= 766 );
 
-        Section section = range.getSection( 0 );
-        assertTrue( section.getEndOffset() <= 766 );
+            Section section = range.getSection( 0 );
+            assertTrue( section.getEndOffset() <= 766 );
 
-        Paragraph lastInMainSection = section.getParagraph( section
+            Paragraph lastInMainSection = section.getParagraph( section
                 .numParagraphs() - 1);
-        assertTrue( lastInMainSection.getEndOffset() <= 766 );
-        hwpfDocument.close();
+            assertTrue( lastInMainSection.getEndOffset() <= 766 );
+        }
     }
 }

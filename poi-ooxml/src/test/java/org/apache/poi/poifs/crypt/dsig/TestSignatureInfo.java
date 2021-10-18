@@ -608,14 +608,14 @@ class TestSignatureInfo {
             String certDigestXQuery = declareNS +
                     "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
             XmlObject[] xoList = sigDoc.selectPath(certDigestXQuery);
-            assertEquals(xoList.length, 1);
+            assertEquals(1, xoList.length);
             DigestAlgAndValueType certDigest = (DigestAlgAndValueType) xoList[0];
             assertNotNull(certDigest.getDigestValue());
 
             String qualPropXQuery = declareNS +
                     "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
             xoList = sigDoc.selectPath(qualPropXQuery);
-            assertEquals(xoList.length, 1);
+            assertEquals(1, xoList.length);
             QualifyingPropertiesType qualProp = (QualifyingPropertiesType) xoList[0];
             boolean qualPropXsdOk = qualProp.validate();
             assertTrue(qualPropXsdOk);

@@ -19,7 +19,9 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -66,19 +68,16 @@ public abstract class BaseTestXSSFPivotTable {
      */
     @Test
     void testAddRowLabelToPivotTable() {
-        int columnIndex = 0;
-
         assertEquals(0, pivotTable.getRowLabelColumns().size());
 
-        pivotTable.addRowLabel(columnIndex);
+        pivotTable.addRowLabel(0);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
-        assertEquals(defintion.getRowFields().getCount(), 1);
+        assertEquals(0, defintion.getRowFields().getFieldArray(0).getX());
+        assertEquals(1, defintion.getRowFields().getCount());
         assertEquals(1, pivotTable.getRowLabelColumns().size());
 
-        columnIndex = 1;
-        pivotTable.addRowLabel(columnIndex);
+        pivotTable.addRowLabel(1);
         assertEquals(2, pivotTable.getRowLabelColumns().size());
 
         assertEquals(0, (int)pivotTable.getRowLabelColumns().get(0));
@@ -120,7 +119,7 @@ public abstract class BaseTestXSSFPivotTable {
         pivotTable.addColumnLabel(DataConsolidateFunction.MIN, columnThree);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
+        assertEquals(3, defintion.getDataFields().getDataFieldList().size());
     }
 
 
@@ -138,7 +137,7 @@ public abstract class BaseTestXSSFPivotTable {
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnThree);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
+        assertEquals(3, defintion.getDataFields().getDataFieldList().size());
     }
 
     /**
@@ -161,15 +160,13 @@ public abstract class BaseTestXSSFPivotTable {
      */
     @Test
     void testColumnLabelCreatesDataField() {
-        int columnIndex = 0;
-
-        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
 
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
-        assertEquals(defintion.getDataFields().getDataFieldArray(0).getSubtotal(),
-                STDataConsolidateFunction.Enum.forInt(DataConsolidateFunction.SUM.getValue()));
+        assertEquals(0, defintion.getDataFields().getDataFieldArray(0).getFld());
+        assertSame(STDataConsolidateFunction.Enum.forInt(DataConsolidateFunction.SUM.getValue()),
+                defintion.getDataFields().getDataFieldArray(0).getSubtotal());
     }
 
     /**
@@ -220,12 +217,9 @@ public abstract class BaseTestXSSFPivotTable {
      */
     @Test
     void testAddDataColumn() {
-        int columnIndex = 0;
-        boolean isDataField = true;
-
-        pivotTable.addDataColumn(columnIndex, isDataField);
+        pivotTable.addDataColumn(0, true);
         CTPivotFields pivotFields = pivotTable.getCTPivotTableDefinition().getPivotFields();
-        assertEquals(pivotFields.getPivotFieldArray(columnIndex).getDataField(), isDataField);
+        assertTrue(pivotFields.getPivotFieldArray(0).getDataField());
     }
 
     /**
@@ -247,8 +241,8 @@ public abstract class BaseTestXSSFPivotTable {
         CTPageFields fields = pivotTable.getCTPivotTableDefinition().getPageFields();
         CTPageField field = fields.getPageFieldArray(0);
         assertEquals(field.getFld(), columnIndex);
-        assertEquals(field.getHier(), -1);
-        assertEquals(fields.getCount(), 1);
+        assertEquals(-1, field.getHier());
+        assertEquals(1, fields.getCount());
     }
 
      /**
@@ -295,19 +289,16 @@ public abstract class BaseTestXSSFPivotTable {
      */
     @Test
     void testAddColLabelToPivotTable() {
-        int columnIndex = 0;
-
         assertEquals(0, pivotTable.getColLabelColumns().size());
 
-        pivotTable.addColLabel(columnIndex);
+        pivotTable.addColLabel(0);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getColFields().getFieldArray(0).getX(), columnIndex);
-        assertEquals(defintion.getColFields().getCount(), 1);
+        assertEquals(0, defintion.getColFields().getFieldArray(0).getX());
+        assertEquals(1, defintion.getColFields().getCount());
         assertEquals(1, pivotTable.getColLabelColumns().size());
 
-        columnIndex = 1;
-        pivotTable.addColLabel(columnIndex);
+        pivotTable.addColLabel(1);
         assertEquals(2, pivotTable.getColLabelColumns().size());
 
         assertEquals(0, (int)pivotTable.getColLabelColumns().get(0));
