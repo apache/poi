@@ -72,9 +72,9 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
-                    if (category.getPtArray().length <= index) {
+                    if (category.sizeOfPtArray() <= index) {
                         throw new IllegalArgumentException("Cannot access 0-based index " + index +
-                                " in point-array with " + category.getPtArray().length + " items");
+                                " in point-array with " + category.sizeOfPtArray() + " items");
                     }
                     return category.getPtArray(index).getV();
                 }
