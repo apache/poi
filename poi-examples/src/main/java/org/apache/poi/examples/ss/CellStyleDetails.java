@@ -47,6 +47,10 @@ public final class CellStyleDetails {
         }
 
         try (Workbook wb = WorkbookFactory.create(new File(args[0]))) {
+            if (wb == null) {
+                System.out.println("Workbook "+args[0]+" can't be loaded.");
+                return;
+            }
             DataFormatter formatter = new DataFormatter();
 
             for (int sn = 0; sn < wb.getNumberOfSheets(); sn++) {

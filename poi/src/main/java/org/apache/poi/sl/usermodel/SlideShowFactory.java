@@ -35,6 +35,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+@SuppressWarnings("java:S1452")
 public final class SlideShowFactory {
 
     private static class Singleton {

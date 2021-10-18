@@ -29,6 +29,7 @@ import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
+@SuppressWarnings("java:S1452")
 public interface SlideShow<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
@@ -58,10 +59,10 @@ public interface SlideShow<
      * @param pgsize page size (in points)
      */
     void setPageSize(Dimension pgsize);
-    
+
     /**
      * Returns all Pictures of this slideshow.
-     * The returned {@link List} is unmodifiable. 
+     * The returned {@link List} is unmodifiable.
      * @return a {@link List} of {@link PictureData}.
      */
     List<? extends PictureData> getPictureData();
@@ -97,10 +98,10 @@ public interface SlideShow<
      * @since 3.15 beta 1
      */
     PictureData addPicture(File pict, PictureType format) throws IOException;
-    
+
     /**
      * check if a picture with this picture data already exists in this presentation
-     * 
+     *
      * @param pictureData The picture data to find in the SlideShow
      * @return {@code null} if picture data is not found in this slideshow
      * @since 3.15 beta 3
@@ -121,7 +122,7 @@ public interface SlideShow<
 
     /**
      * @return an extractor for the slideshow metadata
-     * 
+     *
      * @since POI 4.0.0
      */
     POITextExtractor getMetadataTextExtractor();

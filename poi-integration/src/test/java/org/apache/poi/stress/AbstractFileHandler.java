@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,23 +44,22 @@ import org.apache.poi.util.IOUtils;
  * in the integration tests, mostly text-extraction related at the moment.
  */
 public abstract class AbstractFileHandler implements FileHandler {
-    public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>();
-    static {
+    public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>(Arrays.asList(
         // password protected files without password
         // ... currently none ...
 
         // unsupported file-types, no supported OLE2 parts
-        EXPECTED_EXTRACTOR_FAILURES.add("hmef/quick-winmail.dat");
-        EXPECTED_EXTRACTOR_FAILURES.add("hmef/winmail-sample1.dat");
-        EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-simple.dat");
-        EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-with-attachments.dat");
-        EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug63955-winmail.dat");
-        EXPECTED_EXTRACTOR_FAILURES.add("hpsf/Test0313rur.adm");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/64322.ole2");
+        "hmef/quick-winmail.dat",
+        "hmef/winmail-sample1.dat",
+        "hmef/bug52400-winmail-simple.dat",
+        "hmef/bug52400-winmail-with-attachments.dat",
+        "hmef/bug63955-winmail.dat",
+        "hpsf/Test0313rur.adm",
+        "poifs/Notes.ole2",
+        "poifs/64322.ole2",
         //commons-compress 1.21 no longer supports truncated files
-        EXPECTED_EXTRACTOR_FAILURES.add("document/truncated62886.docx");
-    }
+        "document/truncated62886.docx"
+    ));
 
     @Override
     public void handleExtracting(File file) throws Exception {

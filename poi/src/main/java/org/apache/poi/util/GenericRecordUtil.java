@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("java:S1452")
 @Internal
 public final class GenericRecordUtil {
     private GenericRecordUtil() {}
