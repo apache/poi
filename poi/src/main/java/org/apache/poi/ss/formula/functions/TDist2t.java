@@ -17,18 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel TDIST.RT() function.
+ * Implementation for Excel TDIST.2T() function.
  * <p>
- * <b>Syntax</b>:<br> <b>TDIST.RT </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
+ * <b>Syntax</b>:<br> <b>TDIST.2T </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
  * <p>
- * Returns the right-tailed Student's t-distribution.
+ * Returns the two-tailed Student's t-distribution.
  *
- * The t-distribution is used in the hypothesis testing of small sample data sets.
+ * The Student's t-distribution is used in the hypothesis testing of small sample data sets.
  * Use this function in place of a table of critical values for the t-distribution.
  *
  * <ul>
@@ -37,16 +36,17 @@ import org.apache.poi.ss.formula.eval.*;
  * </ul>
  *
  * <ul>
- *     <li>If any argument is non-numeric, TDIST.RT returns the #VALUE! error value.</li>
- *     <li>If Deg_freedom &lt; 1, TDIST.RT returns the #NUM! error value.</li>
+ *     <li>If any argument is non-numeric, TDIST.2T returns the #VALUE! error value.</li>
+ *     <li>If Deg_freedom &lt; 1, TDIST.2T returns the #NUM! error value.</li>
+ *     <li>If x &lt; 0, then T.DIST.2T returns the #NUM! error value.</li>
  *     <li>The Deg_freedom argument is truncated to an integer.
  * </ul>
  *
- * https://support.microsoft.com/en-us/office/t-dist-rt-function-20a30020-86f9-4b35-af1f-7ef6ae683eda
+ * https://support.microsoft.com/en-us/office/t-dist-2t-function-198e9340-e360-4230-bd21-f52f22ff5c28
  */
-public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction {
+public final class TDist2t extends Fixed2ArgFunction implements FreeRefFunction {
 
-    public static final TDistRt instance = new TDistRt();
+    public static final TDist2t instance = new TDist2t();
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
@@ -54,6 +54,8 @@ public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction 
             Double number1 = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
             if (number1 == null) {
                 return ErrorEval.VALUE_INVALID;
+            } else if (number1 < 0) {
+                return ErrorEval.NUM_ERROR;
             }
             Double number2 = evaluateValue(arg2, srcRowIndex, srcColumnIndex);
             if (number2 == null) {
@@ -63,7 +65,7 @@ public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction 
             if (degreesOfFreedom < 1) {
                 return ErrorEval.NUM_ERROR;
             }
-            return new NumberEval(TDist.tdistOneTail(Math.abs(number1), degreesOfFreedom));
+            return new NumberEval(TDist.tdistTwoTails(Math.abs(number1), degreesOfFreedom));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

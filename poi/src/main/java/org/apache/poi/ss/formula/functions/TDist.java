@@ -45,6 +45,8 @@ import org.apache.poi.ss.formula.eval.*;
  *     <li>If Tails is any value other than 1 or 2, TDIST returns the #NUM! error value.</li>
  *     <li>If x &lt; 0, then TDIST returns the #NUM! error value.</li>
  * </ul>
+ *
+ * https://support.microsoft.com/en-us/office/tdist-function-630a7695-4021-4853-9468-4a1f9dcdd192
  */
 public final class TDist extends Fixed3ArgFunction implements FreeRefFunction {
 
