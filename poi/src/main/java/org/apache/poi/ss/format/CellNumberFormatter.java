@@ -724,15 +724,22 @@ public class CellNumberFormatter extends CellFormatter {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
 
-    private static boolean hasChar(char ch, List<Special>... numSpecials) {
-        for (List<Special> specials : numSpecials) {
-            for (Special s : specials) {
-                if (s.ch == ch) {
-                    return true;
-                }
+    private static boolean hasChar(char ch, List<Special> numSpecials) {
+        for (Special s : numSpecials) {
+            if (s.ch == ch) {
+                return true;
             }
         }
         return false;
+    }
+
+    private static boolean hasChar(char ch, List<Special> numSpecials1, List<Special> numSpecials2) {
+        return hasChar(ch, numSpecials1) || hasChar(ch, numSpecials2);
+    }
+
+    private static boolean hasChar(char ch, List<Special> numSpecials1, List<Special> numSpecials2,
+                                   List<Special> numSpecials3) {
+        return hasChar(ch, numSpecials1) || hasChar(ch, numSpecials2) || hasChar(ch, numSpecials3);
     }
 
     private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
