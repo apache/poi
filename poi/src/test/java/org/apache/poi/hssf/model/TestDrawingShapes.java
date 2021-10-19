@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.apache.poi.hssf.usermodel.HSSFTestHelper.getEscherAggregate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ddf.EscherBoolProperty;
@@ -59,7 +61,6 @@ import org.apache.poi.hssf.usermodel.HSSFTextbox;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.HexDump;
 import org.junit.jupiter.api.Test;
 
 
@@ -85,17 +86,17 @@ class TestDrawingShapes {
      */
     @Test
     void testDrawingGroups() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("groups");
-        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
-        assertEquals(patriarch.getChildren().size(), 2);
-        HSSFShapeGroup group = (HSSFShapeGroup) patriarch.getChildren().get(1);
-        assertEquals(3, group.getChildren().size());
-        HSSFShapeGroup group1 = (HSSFShapeGroup) group.getChildren().get(0);
-        assertEquals(2, group1.getChildren().size());
-        group1 = (HSSFShapeGroup) group.getChildren().get(2);
-        assertEquals(2, group1.getChildren().size());
-        wb.close();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("groups");
+            HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+            assertEquals(2, patriarch.getChildren().size());
+            HSSFShapeGroup group = (HSSFShapeGroup) patriarch.getChildren().get(1);
+            assertEquals(3, group.getChildren().size());
+            HSSFShapeGroup group1 = (HSSFShapeGroup) group.getChildren().get(0);
+            assertEquals(2, group1.getChildren().size());
+            group1 = (HSSFShapeGroup) group.getChildren().get(2);
+            assertEquals(2, group1.getChildren().size());
+        }
     }
 
     @Test
@@ -111,7 +112,7 @@ class TestDrawingShapes {
         EscherOptRecord opt = shape.getOptRecord();
 
         assertEquals(7, opt.getEscherProperties().size());
-        assertNotEquals(((EscherSimpleProperty) opt.lookup(EscherPropertyTypes.GROUPSHAPE__FLAGS)).getPropertyValue(), 0);
+        assertNotEquals(0, ((EscherSimpleProperty) opt.lookup(EscherPropertyTypes.GROUPSHAPE__FLAGS)).getPropertyValue());
         assertTrue(((EscherBoolProperty) opt.lookup(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH)).isTrue());
         assertEquals(0x00000004, ((EscherSimpleProperty) opt.lookup(EscherPropertyTypes.GEOMETRY__SHAPEPATH)).getPropertyValue());
         assertNull(opt.lookup(EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE));
@@ -120,12 +121,13 @@ class TestDrawingShapes {
     @Test
     void testDefaultPictureSettings() {
         HSSFPicture picture = new HSSFPicture(null, new HSSFClientAnchor());
-        assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
-        assertEquals(picture.getFillColor(), HSSFShape.FILL__FILLCOLOR_DEFAULT);
-        assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_NONE);
-        assertEquals(picture.getLineStyleColor(), HSSFShape.LINESTYLE__COLOR_DEFAULT);
+        assertEquals(HSSFShape.LINEWIDTH_DEFAULT, picture.getLineWidth());
+        assertEquals(HSSFShape.FILL__FILLCOLOR_DEFAULT, picture.getFillColor());
+        assertEquals(HSSFShape.LINESTYLE_NONE, picture.getLineStyle());
+        assertEquals(HSSFShape.LINESTYLE__COLOR_DEFAULT, picture.getLineStyleColor());
         assertFalse(picture.isNoFill());
-        assertEquals(picture.getPictureIndex(), -1);//not set yet
+        // not set yet
+        assertEquals(-1, picture.getPictureIndex());
     }
 
     /**
@@ -143,12 +145,13 @@ class TestDrawingShapes {
         obj.addSubRecord(cod);
         HSSFPicture picture = new HSSFPicture(container, obj);
 
-        assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
-        assertEquals(picture.getFillColor(), HSSFShape.FILL__FILLCOLOR_DEFAULT);
-        assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_DEFAULT);
-        assertEquals(picture.getLineStyleColor(), HSSFShape.LINESTYLE__COLOR_DEFAULT);
-        assertEquals(picture.isNoFill(), HSSFShape.NO_FILL_DEFAULT);
-        assertEquals(picture.getPictureIndex(), -1);//not set yet
+        assertEquals(HSSFShape.LINEWIDTH_DEFAULT, picture.getLineWidth());
+        assertEquals(HSSFShape.FILL__FILLCOLOR_DEFAULT, picture.getFillColor());
+        assertEquals(HSSFShape.LINESTYLE_DEFAULT, picture.getLineStyle());
+        assertEquals(HSSFShape.LINESTYLE__COLOR_DEFAULT, picture.getLineStyleColor());
+        assertEquals(HSSFShape.NO_FILL_DEFAULT, picture.isNoFill());
+        //not set yet
+        assertEquals(-1, picture.getPictureIndex());
     }
 
     /**
@@ -156,182 +159,179 @@ class TestDrawingShapes {
      */
     @Test
     void testReadWriteRectangle() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
 
-        HSSFPatriarch drawing = sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
-        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-        assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
-        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-        assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
+            HSSFPatriarch drawing = sheet.createDrawingPatriarch();
+            HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
+            anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+            assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
+            anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+            assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
 
-        HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
-        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
-        rectangle.setLineWidth(10000);
-        rectangle.setFillColor(777);
-        assertEquals(rectangle.getFillColor(), 777);
-        assertEquals(10000, rectangle.getLineWidth());
-        rectangle.setLineStyle(10);
-        assertEquals(10, rectangle.getLineStyle());
-        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_SQUARE);
-        rectangle.setLineStyleColor(1111);
-        rectangle.setNoFill(true);
-        rectangle.setWrapText(HSSFSimpleShape.WRAP_NONE);
-        rectangle.setString(new HSSFRichTextString("teeeest"));
-        assertEquals(rectangle.getLineStyleColor(), 1111);
-        EscherContainerRecord escherContainer = HSSFTestHelper.getEscherContainer(rectangle);
-        assertNotNull(escherContainer);
-        EscherRecord childById = escherContainer.getChildById(EscherOptRecord.RECORD_ID);
-        assertNotNull(childById);
-        EscherProperty lookup = ((EscherOptRecord) childById).lookup(EscherPropertyTypes.TEXT__TEXTID);
-        assertNotNull(lookup);
-        assertEquals(((EscherSimpleProperty) lookup).getPropertyValue(), "teeeest".hashCode());
-        assertTrue(rectangle.isNoFill());
-        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
-        assertEquals(rectangle.getString().getString(), "teeeest");
+            HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
+            rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+            rectangle.setLineWidth(10000);
+            rectangle.setFillColor(777);
+            assertEquals(777, rectangle.getFillColor());
+            assertEquals(10000, rectangle.getLineWidth());
+            rectangle.setLineStyle(10);
+            assertEquals(10, rectangle.getLineStyle());
+            assertEquals(HSSFSimpleShape.WRAP_SQUARE, rectangle.getWrapText());
+            rectangle.setLineStyleColor(1111);
+            rectangle.setNoFill(true);
+            rectangle.setWrapText(HSSFSimpleShape.WRAP_NONE);
+            rectangle.setString(new HSSFRichTextString("teeeest"));
+            assertEquals(1111, rectangle.getLineStyleColor());
+            EscherContainerRecord escherContainer = HSSFTestHelper.getEscherContainer(rectangle);
+            assertNotNull(escherContainer);
+            EscherRecord childById = escherContainer.getChildById(EscherOptRecord.RECORD_ID);
+            assertNotNull(childById);
+            EscherProperty lookup = ((EscherOptRecord) childById).lookup(EscherPropertyTypes.TEXT__TEXTID);
+            assertNotNull(lookup);
+            assertEquals("teeeest".hashCode(), ((EscherSimpleProperty) lookup).getPropertyValue());
+            assertTrue(rectangle.isNoFill());
+            assertEquals(HSSFSimpleShape.WRAP_NONE, rectangle.getWrapText());
+            assertEquals("teeeest", rectangle.getString().getString());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                drawing = sheet.getDrawingPatriarch();
+                assertEquals(1, drawing.getChildren().size());
 
-        HSSFSimpleShape rectangle2 =
-                (HSSFSimpleShape) drawing.getChildren().get(0);
-        assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE,
-                rectangle2.getShapeType());
-        assertEquals(10000, rectangle2.getLineWidth());
-        assertEquals(10, rectangle2.getLineStyle());
-        assertEquals(anchor, rectangle2.getAnchor());
-        assertEquals(rectangle2.getLineStyleColor(), 1111);
-        assertEquals(rectangle2.getFillColor(), 777);
-        assertTrue(rectangle2.isNoFill());
-        assertEquals(rectangle2.getString().getString(), "teeeest");
-        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
+                HSSFSimpleShape rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
+                assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
+                assertEquals(10000, rectangle2.getLineWidth());
+                assertEquals(10, rectangle2.getLineStyle());
+                assertEquals(anchor, rectangle2.getAnchor());
+                assertEquals(1111, rectangle2.getLineStyleColor());
+                assertEquals(777, rectangle2.getFillColor());
+                assertTrue(rectangle2.isNoFill());
+                assertEquals("teeeest", rectangle2.getString().getString());
+                assertEquals(HSSFSimpleShape.WRAP_NONE, rectangle.getWrapText());
 
-        rectangle2.setFillColor(3333);
-        rectangle2.setLineStyle(9);
-        rectangle2.setLineStyleColor(4444);
-        rectangle2.setNoFill(false);
-        rectangle2.setLineWidth(77);
-        rectangle2.getAnchor().setDx1(2);
-        rectangle2.getAnchor().setDx2(3);
-        rectangle2.getAnchor().setDy1(4);
-        rectangle2.getAnchor().setDy2(5);
-        rectangle.setWrapText(HSSFSimpleShape.WRAP_BY_POINTS);
-        rectangle2.setString(new HSSFRichTextString("test22"));
+                rectangle2.setFillColor(3333);
+                rectangle2.setLineStyle(9);
+                rectangle2.setLineStyleColor(4444);
+                rectangle2.setNoFill(false);
+                rectangle2.setLineWidth(77);
+                rectangle2.getAnchor().setDx1(2);
+                rectangle2.getAnchor().setDx2(3);
+                rectangle2.getAnchor().setDy1(4);
+                rectangle2.getAnchor().setDy2(5);
+                rectangle.setWrapText(HSSFSimpleShape.WRAP_BY_POINTS);
+                rectangle2.setString(new HSSFRichTextString("test22"));
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
-        sheet = wb3.getSheetAt(0);
-        drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
-        rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
-        assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
-        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_BY_POINTS);
-        assertEquals(77, rectangle2.getLineWidth());
-        assertEquals(9, rectangle2.getLineStyle());
-        assertEquals(rectangle2.getLineStyleColor(), 4444);
-        assertEquals(rectangle2.getFillColor(), 3333);
-        assertEquals(rectangle2.getAnchor().getDx1(), 2);
-        assertEquals(rectangle2.getAnchor().getDx2(), 3);
-        assertEquals(rectangle2.getAnchor().getDy1(), 4);
-        assertEquals(rectangle2.getAnchor().getDy2(), 5);
-        assertFalse(rectangle2.isNoFill());
-        assertEquals(rectangle2.getString().getString(), "test22");
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    sheet = wb3.getSheetAt(0);
+                    drawing = sheet.getDrawingPatriarch();
+                    assertEquals(1, drawing.getChildren().size());
+                    rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
+                    assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
+                    assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_BY_POINTS);
+                    assertEquals(77, rectangle2.getLineWidth());
+                    assertEquals(9, rectangle2.getLineStyle());
+                    assertEquals(4444, rectangle2.getLineStyleColor());
+                    assertEquals(3333, rectangle2.getFillColor());
+                    assertEquals(2, rectangle2.getAnchor().getDx1());
+                    assertEquals(3, rectangle2.getAnchor().getDx2());
+                    assertEquals(4, rectangle2.getAnchor().getDy1());
+                    assertEquals(5, rectangle2.getAnchor().getDy2());
+                    assertFalse(rectangle2.isNoFill());
+                    assertEquals("test22", rectangle2.getString().getString());
 
-        HSSFSimpleShape rect3 = drawing.createSimpleShape(new HSSFClientAnchor());
-        rect3.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
-        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
-        wb3.close();
-
-        drawing = wb4.getSheetAt(0).getDrawingPatriarch();
-        assertEquals(drawing.getChildren().size(), 2);
-        wb4.close();
+                    HSSFSimpleShape rect3 = drawing.createSimpleShape(new HSSFClientAnchor());
+                    rect3.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+                    try (HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3)) {
+                        drawing = wb4.getSheetAt(0).getDrawingPatriarch();
+                        assertEquals(2, drawing.getChildren().size());
+                    }
+                }
+            }
+        }
     }
 
     @Test
     void testReadExistingImage() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("pictures");
-        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
-        HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("pictures");
+            HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+            assertEquals(1, drawing.getChildren().size());
+            HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
 
-        assertEquals(picture.getPictureIndex(), 2);
-        assertEquals(picture.getLineStyleColor(), HSSFShape.LINESTYLE__COLOR_DEFAULT);
-        assertEquals(picture.getFillColor(), 0x5DC943);
-        assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
-        assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_DEFAULT);
-        assertFalse(picture.isNoFill());
+            assertEquals(2, picture.getPictureIndex());
+            assertEquals(HSSFShape.LINESTYLE__COLOR_DEFAULT, picture.getLineStyleColor());
+            assertEquals(0x5DC943, picture.getFillColor());
+            assertEquals(HSSFShape.LINEWIDTH_DEFAULT, picture.getLineWidth());
+            assertEquals(HSSFShape.LINESTYLE_DEFAULT, picture.getLineStyle());
+            assertFalse(picture.isNoFill());
 
-        picture.setPictureIndex(2);
-        assertEquals(picture.getPictureIndex(), 2);
-        wb.close();
+            picture.setPictureIndex(2);
+            assertEquals(2, picture.getPictureIndex());
+        }
     }
 
 
     /* assert shape properties when reading shapes from a existing workbook */
     @Test
     void testReadExistingRectangle() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("rectangles");
-        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("rectangles");
+            HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+            assertEquals(1, drawing.getChildren().size());
 
-        HSSFSimpleShape shape = (HSSFSimpleShape) drawing.getChildren().get(0);
-        assertFalse(shape.isNoFill());
-        assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
-        assertEquals(shape.getLineStyleColor(), 0x616161);
-        assertEquals(shape.getFillColor(), 0x2CE03D, HexDump.toHex(shape.getFillColor()));
-        assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT * 2);
-        assertEquals(shape.getString().getString(), "POItest");
-        assertEquals(shape.getRotationDegree(), 27);
-        wb.close();
+            HSSFSimpleShape shape = (HSSFSimpleShape) drawing.getChildren().get(0);
+            assertFalse(shape.isNoFill());
+            assertEquals(HSSFShape.LINESTYLE_DASHDOTGEL, shape.getLineStyle());
+            assertEquals(0x616161, shape.getLineStyleColor());
+            assertEquals(0x2CE03D, shape.getFillColor());
+            assertEquals(HSSFShape.LINEWIDTH_ONE_PT * 2, shape.getLineWidth());
+            assertEquals("POItest", shape.getString().getString());
+            assertEquals(27, shape.getRotationDegree());
+        }
     }
 
     @Test
     void testShapeIds() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb1.createSheet();
-        HSSFPatriarch patriarch1 = sheet1.createDrawingPatriarch();
-        for (int i = 0; i < 2; i++) {
-            patriarch1.createSimpleShape(new HSSFClientAnchor());
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb1.createSheet();
+            HSSFPatriarch patriarch1 = sheet1.createDrawingPatriarch();
+            for (int i = 0; i < 2; i++) {
+                patriarch1.createSimpleShape(new HSSFClientAnchor());
+            }
+
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet1 = wb2.getSheetAt(0);
+                patriarch1 = sheet1.getDrawingPatriarch();
+
+                EscherAggregate agg1 = getEscherAggregate(patriarch1);
+                // last shape ID cached in EscherDgRecord
+                EscherDgRecord dg1 = agg1.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+                assertNotNull(dg1);
+                assertEquals(1026, dg1.getLastMSOSPID());
+
+                // iterate over shapes and check shapeId
+                EscherContainerRecord spgrContainer =
+                    agg1.getEscherContainer().getChildContainers().get(0);
+                // root spContainer + 2 spContainers for shapes
+                assertEquals(3, spgrContainer.getChildCount());
+
+                EscherSpRecord sp0 =
+                    ((EscherContainerRecord) spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);
+                assertNotNull(sp0);
+                assertEquals(1024, sp0.getShapeId());
+
+                EscherSpRecord sp1 =
+                    ((EscherContainerRecord) spgrContainer.getChild(1)).getChildById(EscherSpRecord.RECORD_ID);
+                assertNotNull(sp1);
+                assertEquals(1025, sp1.getShapeId());
+
+                EscherSpRecord sp2 =
+                    ((EscherContainerRecord) spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
+                assertNotNull(sp2);
+                assertEquals(1026, sp2.getShapeId());
+            }
         }
-
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet1 = wb2.getSheetAt(0);
-        patriarch1 = sheet1.getDrawingPatriarch();
-
-        EscherAggregate agg1 = HSSFTestHelper.getEscherAggregate(patriarch1);
-        // last shape ID cached in EscherDgRecord
-        EscherDgRecord dg1 = agg1.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
-        assertNotNull(dg1);
-        assertEquals(1026, dg1.getLastMSOSPID());
-
-        // iterate over shapes and check shapeId
-        EscherContainerRecord spgrContainer =
-                agg1.getEscherContainer().getChildContainers().get(0);
-        // root spContainer + 2 spContainers for shapes
-        assertEquals(3, spgrContainer.getChildCount());
-
-        EscherSpRecord sp0 =
-                ((EscherContainerRecord) spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);
-        assertNotNull(sp0);
-        assertEquals(1024, sp0.getShapeId());
-
-        EscherSpRecord sp1 =
-                ((EscherContainerRecord) spgrContainer.getChild(1)).getChildById(EscherSpRecord.RECORD_ID);
-        assertNotNull(sp1);
-        assertEquals(1025, sp1.getShapeId());
-
-        EscherSpRecord sp2 =
-                ((EscherContainerRecord) spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
-        assertNotNull(sp2);
-        assertEquals(1026, sp2.getShapeId());
-        wb2.close();
     }
 
     /**
@@ -340,131 +340,128 @@ class TestDrawingShapes {
      */
     @Test
     void testAllocateNewIds() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("empty.xls");
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("empty.xls")) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
 
-        // 2048 - main SpContainer id
-        // 2049 - existing shape id
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2050);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2051);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2052);
+            // 2048 - main SpContainer id
+            // 2049 - existing shape id
+            assertEquals(2050, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(2051, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(2052, HSSFTestHelper.allocateNewShapeId(patriarch));
 
-        sheet = wb.getSheetAt(1);
-        patriarch = sheet.getDrawingPatriarch();
+            sheet = wb.getSheetAt(1);
+            patriarch = sheet.getDrawingPatriarch();
 
-        // 3072 - main SpContainer id
-        // 3073 - existing shape id
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3074);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3075);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3076);
+            // 3072 - main SpContainer id
+            // 3073 - existing shape id
+            assertEquals(3074, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(3075, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(3076, HSSFTestHelper.allocateNewShapeId(patriarch));
 
 
-        sheet = wb.getSheetAt(2);
-        patriarch = sheet.getDrawingPatriarch();
+            sheet = wb.getSheetAt(2);
+            patriarch = sheet.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1026);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1027);
-        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1028);
-        wb.close();
+            assertEquals(1026, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(1027, HSSFTestHelper.allocateNewShapeId(patriarch));
+            assertEquals(1028, HSSFTestHelper.allocateNewShapeId(patriarch));
+        }
     }
 
     @Test
     void testOpt() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
-        // create a sheet with a text box
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            // create a sheet with a text box
+            HSSFSheet sheet = wb.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        EscherOptRecord opt1 = HSSFTestHelper.getOptRecord(textbox);
-        EscherOptRecord opt2 = HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID);
-        assertSame(opt1, opt2);
-        wb.close();
+            HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+            EscherOptRecord opt1 = HSSFTestHelper.getOptRecord(textbox);
+            EscherOptRecord opt2 = HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID);
+            assertSame(opt1, opt2);
+        }
     }
 
     @Test
     void testCorrectOrderInOptRecord() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            HSSFSheet sheet = wb.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        EscherOptRecord opt = HSSFTestHelper.getOptRecord(textbox);
+            HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+            EscherOptRecord opt = HSSFTestHelper.getOptRecord(textbox);
 
-        String opt1Str = opt.toXml();
+            String opt1Str = opt.toXml();
 
-        textbox.setFillColor(textbox.getFillColor());
-        EscherContainerRecord container = HSSFTestHelper.getEscherContainer(textbox);
-        EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
-        assertNotNull(optRecord);
-        assertEquals(opt1Str, optRecord.toXml());
-        textbox.setLineStyle(textbox.getLineStyle());
-        assertEquals(opt1Str, optRecord.toXml());
-        textbox.setLineWidth(textbox.getLineWidth());
-        assertEquals(opt1Str, optRecord.toXml());
-        textbox.setLineStyleColor(textbox.getLineStyleColor());
-        assertEquals(opt1Str, optRecord.toXml());
-        wb.close();
+            textbox.setFillColor(textbox.getFillColor());
+            EscherContainerRecord container = HSSFTestHelper.getEscherContainer(textbox);
+            EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
+            assertNotNull(optRecord);
+            assertEquals(opt1Str, optRecord.toXml());
+            textbox.setLineStyle(textbox.getLineStyle());
+            assertEquals(opt1Str, optRecord.toXml());
+            textbox.setLineWidth(textbox.getLineWidth());
+            assertEquals(opt1Str, optRecord.toXml());
+            textbox.setLineStyleColor(textbox.getLineStyleColor());
+            assertEquals(opt1Str, optRecord.toXml());
+        }
     }
 
     @Test
     void testDgRecordNumShapes() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        EscherAggregate aggregate = HSSFTestHelper.getEscherAggregate(patriarch);
-        EscherDgRecord dgRecord = (EscherDgRecord) aggregate.getEscherRecord(0).getChild(0);
-        assertEquals(dgRecord.getNumShapes(), 1);
-        wb.close();
+            EscherAggregate aggregate = getEscherAggregate(patriarch);
+            EscherDgRecord dgRecord = (EscherDgRecord) aggregate.getEscherRecord(0).getChild(0);
+            assertEquals(1, dgRecord.getNumShapes());
+        }
     }
 
     @Test
     void testTextForSimpleShape() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
-        shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+            HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
+            shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
-        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
-        assertEquals(agg.getShapeToObjMapping().size(), 2);
+            EscherAggregate agg = getEscherAggregate(patriarch);
+            assertEquals(2, agg.getShapeToObjMapping().size());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                patriarch = sheet.getDrawingPatriarch();
 
-        shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
+                shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        agg = HSSFTestHelper.getEscherAggregate(patriarch);
-        assertEquals(agg.getShapeToObjMapping().size(), 2);
+                agg = getEscherAggregate(patriarch);
+                assertEquals(2, agg.getShapeToObjMapping().size());
 
-        shape.setString(new HSSFRichTextString("string1"));
-        assertEquals(shape.getString().getString(), "string1");
+                shape.setString(new HSSFRichTextString("string1"));
+                assertEquals("string1", shape.getString().getString());
 
-        assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
-        assertEquals(agg.getShapeToObjMapping().size(), 2);
+                assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
+                assertEquals(2, agg.getShapeToObjMapping().size());
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+                    HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3)) {
+                    sheet = wb4.getSheetAt(0);
+                    patriarch = sheet.getDrawingPatriarch();
+                    shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
+                    assertNotNull(HSSFTestHelper.getTextObjRecord(shape));
+                    assertEquals("string1", shape.getString().getString());
+                    assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
+                    assertEquals(2, agg.getShapeToObjMapping().size());
+                }
+            }
 
-        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
-        wb3.close();
-        sheet = wb4.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
-
-        shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
-
-        assertNotNull(HSSFTestHelper.getTextObjRecord(shape));
-        assertEquals(shape.getString().getString(), "string1");
-        assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
-        assertEquals(agg.getShapeToObjMapping().size(), 2);
-        wb4.close();
+        }
     }
 
     @Test
@@ -490,122 +487,122 @@ class TestDrawingShapes {
             group1.createTextbox(new HSSFChildAnchor());
             group1.createPicture(new HSSFChildAnchor(), idx);
 
-            assertEquals(patriarch1.getChildren().size(), 6);
-            assertEquals(group1.getChildren().size(), 2);
+            assertEquals(6, patriarch1.getChildren().size());
+            assertEquals(2, group1.getChildren().size());
 
-            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch1).getShapeToObjMapping().size(), 12);
-            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch1).getTailRecords().size(), 1);
+            assertEquals(12, getEscherAggregate(patriarch1).getShapeToObjMapping().size());
+            assertEquals(1, getEscherAggregate(patriarch1).getTailRecords().size());
 
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
                 HSSFSheet sheet2 = wb2.getSheetAt(0);
                 HSSFPatriarch patriarch2 = sheet2.getDrawingPatriarch();
 
-                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getShapeToObjMapping().size(), 12);
-                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getTailRecords().size(), 1);
+                assertEquals(12, getEscherAggregate(patriarch2).getShapeToObjMapping().size());
+                assertEquals(1, getEscherAggregate(patriarch2).getTailRecords().size());
 
-                assertEquals(patriarch2.getChildren().size(), 6);
+                assertEquals(6, patriarch2.getChildren().size());
 
                 HSSFShapeGroup group2 = (HSSFShapeGroup) patriarch2.getChildren().get(5);
                 group2.removeShape(group2.getChildren().get(0));
 
-                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getShapeToObjMapping().size(), 10);
-                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch2).getTailRecords().size(), 1);
+                assertEquals(10, getEscherAggregate(patriarch2).getShapeToObjMapping().size());
+                assertEquals(1, getEscherAggregate(patriarch2).getTailRecords().size());
 
                 try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
                     HSSFSheet sheet3 = wb3.getSheetAt(0);
                     HSSFPatriarch patriarch3 = sheet3.getDrawingPatriarch();
 
-                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getShapeToObjMapping().size(), 10);
-                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getTailRecords().size(), 1);
+                    assertEquals(10, getEscherAggregate(patriarch3).getShapeToObjMapping().size());
+                    assertEquals(1, getEscherAggregate(patriarch3).getTailRecords().size());
 
                     HSSFShapeGroup group3 = (HSSFShapeGroup) patriarch3.getChildren().get(5);
                     patriarch3.removeShape(group3);
 
-                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getShapeToObjMapping().size(), 8);
-                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch3).getTailRecords().size(), 1);
+                    assertEquals(8, getEscherAggregate(patriarch3).getShapeToObjMapping().size());
+                    assertEquals(1, getEscherAggregate(patriarch3).getTailRecords().size());
 
                     try (HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3)) {
                         HSSFSheet sheet4 = wb4.getSheetAt(0);
                         HSSFPatriarch patriarch4 = sheet4.getDrawingPatriarch();
 
-                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getShapeToObjMapping().size(), 8);
-                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getTailRecords().size(), 1);
-                        assertEquals(patriarch4.getChildren().size(), 5);
+                        assertEquals(8, getEscherAggregate(patriarch4).getShapeToObjMapping().size());
+                        assertEquals(1, getEscherAggregate(patriarch4).getTailRecords().size());
+                        assertEquals(5, patriarch4.getChildren().size());
 
                         HSSFShape shape4 = patriarch4.getChildren().get(0);
                         patriarch4.removeShape(shape4);
 
-                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getShapeToObjMapping().size(), 6);
-                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch4).getTailRecords().size(), 1);
-                        assertEquals(patriarch4.getChildren().size(), 4);
+                        assertEquals(6, getEscherAggregate(patriarch4).getShapeToObjMapping().size());
+                        assertEquals(1, getEscherAggregate(patriarch4).getTailRecords().size());
+                        assertEquals(4, patriarch4.getChildren().size());
 
                         try (HSSFWorkbook wb5 = HSSFTestDataSamples.writeOutAndReadBack(wb4)) {
                             HSSFSheet sheet5 = wb5.getSheetAt(0);
                             HSSFPatriarch patriarch5 = sheet5.getDrawingPatriarch();
 
-                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getShapeToObjMapping().size(), 6);
-                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getTailRecords().size(), 1);
-                            assertEquals(patriarch5.getChildren().size(), 4);
+                            assertEquals(6, getEscherAggregate(patriarch5).getShapeToObjMapping().size());
+                            assertEquals(1, getEscherAggregate(patriarch5).getTailRecords().size());
+                            assertEquals(4, patriarch5.getChildren().size());
 
                             HSSFPicture picture5 = (HSSFPicture) patriarch5.getChildren().get(0);
                             patriarch5.removeShape(picture5);
 
-                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getShapeToObjMapping().size(), 5);
-                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch5).getTailRecords().size(), 1);
-                            assertEquals(patriarch5.getChildren().size(), 3);
+                            assertEquals(5, getEscherAggregate(patriarch5).getShapeToObjMapping().size());
+                            assertEquals(1, getEscherAggregate(patriarch5).getTailRecords().size());
+                            assertEquals(3, patriarch5.getChildren().size());
 
                             try (HSSFWorkbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5)) {
                                 HSSFSheet sheet6 = wb6.getSheetAt(0);
                                 HSSFPatriarch patriarch6 = sheet6.getDrawingPatriarch();
 
-                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getShapeToObjMapping().size(), 5);
-                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getTailRecords().size(), 1);
-                                assertEquals(patriarch6.getChildren().size(), 3);
+                                assertEquals(5, getEscherAggregate(patriarch6).getShapeToObjMapping().size());
+                                assertEquals(1, getEscherAggregate(patriarch6).getTailRecords().size());
+                                assertEquals(3, patriarch6.getChildren().size());
 
                                 HSSFComment comment6 = (HSSFComment) patriarch6.getChildren().get(0);
                                 patriarch6.removeShape(comment6);
 
-                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getShapeToObjMapping().size(), 3);
-                                assertEquals(HSSFTestHelper.getEscherAggregate(patriarch6).getTailRecords().size(), 0);
-                                assertEquals(patriarch6.getChildren().size(), 2);
+                                assertEquals(3, getEscherAggregate(patriarch6).getShapeToObjMapping().size());
+                                assertEquals(0, getEscherAggregate(patriarch6).getTailRecords().size());
+                                assertEquals(2, patriarch6.getChildren().size());
 
                                 try (HSSFWorkbook wb7 = HSSFTestDataSamples.writeOutAndReadBack(wb6)) {
                                     HSSFSheet sheet7 = wb7.getSheetAt(0);
                                     HSSFPatriarch patriarch7 = sheet7.getDrawingPatriarch();
 
-                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getShapeToObjMapping().size(), 3);
-                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getTailRecords().size(), 0);
-                                    assertEquals(patriarch7.getChildren().size(), 2);
+                                    assertEquals(3, getEscherAggregate(patriarch7).getShapeToObjMapping().size());
+                                    assertEquals(0, getEscherAggregate(patriarch7).getTailRecords().size());
+                                    assertEquals(2, patriarch7.getChildren().size());
 
                                     HSSFPolygon polygon7 = (HSSFPolygon) patriarch7.getChildren().get(0);
                                     patriarch7.removeShape(polygon7);
 
-                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getShapeToObjMapping().size(), 2);
-                                    assertEquals(HSSFTestHelper.getEscherAggregate(patriarch7).getTailRecords().size(), 0);
-                                    assertEquals(patriarch7.getChildren().size(), 1);
+                                    assertEquals(2, getEscherAggregate(patriarch7).getShapeToObjMapping().size());
+                                    assertEquals(0, getEscherAggregate(patriarch7).getTailRecords().size());
+                                    assertEquals(1, patriarch7.getChildren().size());
 
                                     try (HSSFWorkbook wb8 = HSSFTestDataSamples.writeOutAndReadBack(wb7)) {
                                         HSSFSheet sheet8 = wb8.getSheetAt(0);
                                         HSSFPatriarch patriarch8 = sheet8.getDrawingPatriarch();
 
-                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getShapeToObjMapping().size(), 2);
-                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getTailRecords().size(), 0);
-                                        assertEquals(patriarch8.getChildren().size(), 1);
+                                        assertEquals(2, getEscherAggregate(patriarch8).getShapeToObjMapping().size());
+                                        assertEquals(0, getEscherAggregate(patriarch8).getTailRecords().size());
+                                        assertEquals(1, patriarch8.getChildren().size());
 
                                         HSSFTextbox textbox8 = (HSSFTextbox) patriarch8.getChildren().get(0);
                                         patriarch8.removeShape(textbox8);
 
-                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getShapeToObjMapping().size(), 0);
-                                        assertEquals(HSSFTestHelper.getEscherAggregate(patriarch8).getTailRecords().size(), 0);
-                                        assertEquals(patriarch8.getChildren().size(), 0);
+                                        assertEquals(0, getEscherAggregate(patriarch8).getShapeToObjMapping().size());
+                                        assertEquals(0, getEscherAggregate(patriarch8).getTailRecords().size());
+                                        assertEquals(0, patriarch8.getChildren().size());
 
                                         try (HSSFWorkbook wb9 = HSSFTestDataSamples.writeOutAndReadBack(wb8)) {
                                             HSSFSheet sheet9 = wb9.getSheetAt(0);
                                             HSSFPatriarch patriarch9 = sheet9.getDrawingPatriarch();
 
-                                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch9).getShapeToObjMapping().size(), 0);
-                                            assertEquals(HSSFTestHelper.getEscherAggregate(patriarch9).getTailRecords().size(), 0);
-                                            assertEquals(patriarch9.getChildren().size(), 0);
+                                            assertEquals(0, getEscherAggregate(patriarch9).getShapeToObjMapping().size());
+                                            assertEquals(0, getEscherAggregate(patriarch9).getTailRecords().size());
+                                            assertEquals(0, patriarch9.getChildren().size());
                                         }
                                     }
                                 }
@@ -619,127 +616,124 @@ class TestDrawingShapes {
 
     @Test
     void testShapeFlip() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor());
-        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+            HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor());
+            rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
-        assertFalse(rectangle.isFlipVertical());
-        assertFalse(rectangle.isFlipHorizontal());
+            assertFalse(rectangle.isFlipVertical());
+            assertFalse(rectangle.isFlipHorizontal());
 
-        rectangle.setFlipVertical(true);
-        assertTrue(rectangle.isFlipVertical());
-        rectangle.setFlipHorizontal(true);
-        assertTrue(rectangle.isFlipHorizontal());
+            rectangle.setFlipVertical(true);
+            assertTrue(rectangle.isFlipVertical());
+            rectangle.setFlipHorizontal(true);
+            assertTrue(rectangle.isFlipHorizontal());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                patriarch = sheet.getDrawingPatriarch();
 
-        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+                rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        assertTrue(rectangle.isFlipHorizontal());
-        rectangle.setFlipHorizontal(false);
-        assertFalse(rectangle.isFlipHorizontal());
+                assertTrue(rectangle.isFlipHorizontal());
+                rectangle.setFlipHorizontal(false);
+                assertFalse(rectangle.isFlipHorizontal());
 
-        assertTrue(rectangle.isFlipVertical());
-        rectangle.setFlipVertical(false);
-        assertFalse(rectangle.isFlipVertical());
+                assertTrue(rectangle.isFlipVertical());
+                rectangle.setFlipVertical(false);
+                assertFalse(rectangle.isFlipVertical());
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
-        sheet = wb3.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    sheet = wb3.getSheetAt(0);
+                    patriarch = sheet.getDrawingPatriarch();
 
-        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+                    rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        assertFalse(rectangle.isFlipVertical());
-        assertFalse(rectangle.isFlipHorizontal());
-        wb3.close();
+                    assertFalse(rectangle.isFlipVertical());
+                    assertFalse(rectangle.isFlipHorizontal());
+                }
+            }
+        }
     }
 
     @Test
     void testRotation() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor(0,0,100,100, (short) 0,0,(short)5,5));
-        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+            HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor(0, 0, 100, 100, (short) 0, 0, (short) 5, 5));
+            rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
-        assertEquals(rectangle.getRotationDegree(), 0);
-        rectangle.setRotationDegree((short) 45);
-        assertEquals(rectangle.getRotationDegree(), 45);
-        rectangle.setFlipHorizontal(true);
+            assertEquals(0, rectangle.getRotationDegree());
+            rectangle.setRotationDegree((short) 45);
+            assertEquals(45, rectangle.getRotationDegree());
+            rectangle.setFlipHorizontal(true);
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
-        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
-        assertEquals(rectangle.getRotationDegree(), 45);
-        rectangle.setRotationDegree((short) 30);
-        assertEquals(rectangle.getRotationDegree(), 30);
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                patriarch = sheet.getDrawingPatriarch();
+                rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+                assertEquals(45, rectangle.getRotationDegree());
+                rectangle.setRotationDegree((short) 30);
+                assertEquals(30, rectangle.getRotationDegree());
 
-        patriarch.setCoordinates(0, 0, 10, 10);
-        rectangle.setString(new HSSFRichTextString("1234"));
-        wb2.close();
+                patriarch.setCoordinates(0, 0, 10, 10);
+                rectangle.setString(new HSSFRichTextString("1234"));
+            }
+        }
     }
 
     @SuppressWarnings("unused")
     @Test
     void testShapeContainerImplementsIterable() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            HSSFSimpleShape s1 = patriarch.createSimpleShape(new HSSFClientAnchor());
+            HSSFSimpleShape s2 = patriarch.createSimpleShape(new HSSFClientAnchor());
 
-        patriarch.createSimpleShape(new HSSFClientAnchor());
-        patriarch.createSimpleShape(new HSSFClientAnchor());
-
-        int i=2;
-
-        for (HSSFShape shape: patriarch){
-            i--;
+            Iterator<HSSFShape> iter = patriarch.iterator();
+            assertEquals(s1, iter.next());
+            assertEquals(s2, iter.next());
+            assertFalse(iter.hasNext());
         }
-        assertEquals(i, 0);
-        wb.close();
     }
 
     @Test
     void testClearShapesForPatriarch() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sheet = wb1.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb1.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        patriarch.createSimpleShape(new HSSFClientAnchor());
-        patriarch.createSimpleShape(new HSSFClientAnchor());
-        patriarch.createCellComment(new HSSFClientAnchor());
+            patriarch.createSimpleShape(new HSSFClientAnchor());
+            patriarch.createSimpleShape(new HSSFClientAnchor());
+            patriarch.createCellComment(new HSSFClientAnchor());
 
-        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+            EscherAggregate agg = getEscherAggregate(patriarch);
 
-        assertEquals(agg.getShapeToObjMapping().size(), 6);
-        assertEquals(agg.getTailRecords().size(), 1);
-        assertEquals(patriarch.getChildren().size(), 3);
+            assertEquals(6, agg.getShapeToObjMapping().size());
+            assertEquals(1, agg.getTailRecords().size());
+            assertEquals(3, patriarch.getChildren().size());
 
-        patriarch.clear();
+            patriarch.clear();
 
-        assertEquals(agg.getShapeToObjMapping().size(), 0);
-        assertEquals(agg.getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 0);
+            assertEquals(0, agg.getShapeToObjMapping().size());
+            assertEquals(0, agg.getTailRecords().size());
+            assertEquals(0, patriarch.getChildren().size());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sheet = wb2.getSheetAt(0);
-        patriarch = sheet.getDrawingPatriarch();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                patriarch = sheet.getDrawingPatriarch();
 
-        assertEquals(agg.getShapeToObjMapping().size(), 0);
-        assertEquals(agg.getTailRecords().size(), 0);
-        assertEquals(patriarch.getChildren().size(), 0);
-        wb2.close();
+                assertEquals(0, agg.getShapeToObjMapping().size());
+                assertEquals(0, agg.getTailRecords().size());
+                assertEquals(0, patriarch.getChildren().size());
+            }
+        }
     }
 
     @Test
@@ -748,106 +742,99 @@ class TestDrawingShapes {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-            {
-                HSSFClientAnchor a1 = new HSSFClientAnchor();
-                a1.setAnchor( (short)1, 1, 0, 0, (short) 1, 1, 512, 100);
-                HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
-                shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-            }
-            {
-                HSSFClientAnchor a1 = new HSSFClientAnchor();
-                a1.setAnchor( (short)1, 1, 512, 0, (short) 1, 1, 1024, 100);
-                HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
-                shape1.setFlipVertical(true);
-                shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-            }
+            HSSFClientAnchor a1 = new HSSFClientAnchor();
+            a1.setAnchor( (short)1, 1, 0, 0, (short) 1, 1, 512, 100);
+            HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
+            shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
 
-            {
-                HSSFClientAnchor a1 = new HSSFClientAnchor();
-                a1.setAnchor( (short)2, 2, 0, 0, (short) 2, 2, 512, 100);
-                HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
-                shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-            }
-            {
-                HSSFClientAnchor a1 = new HSSFClientAnchor();
-                a1.setAnchor( (short)2, 2, 0, 100, (short) 2, 2, 512, 200);
-                HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
-                shape1.setFlipHorizontal(true);
-                shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-            }
+            HSSFClientAnchor a2 = new HSSFClientAnchor();
+            a2.setAnchor( (short)1, 1, 512, 0, (short) 1, 1, 1024, 100);
+            HSSFSimpleShape shape2 = patriarch.createSimpleShape(a2);
+            shape2.setFlipVertical(true);
+            shape2.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+
+            HSSFClientAnchor a3 = new HSSFClientAnchor();
+            a3.setAnchor( (short)2, 2, 0, 0, (short) 2, 2, 512, 100);
+            HSSFSimpleShape shape3 = patriarch.createSimpleShape(a3);
+            shape3.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+
+            HSSFClientAnchor a4 = new HSSFClientAnchor();
+            a4.setAnchor( (short)2, 2, 0, 100, (short) 2, 2, 512, 200);
+            HSSFSimpleShape shape4 = patriarch.createSimpleShape(a4);
+            shape4.setFlipHorizontal(true);
+            shape4.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
 
             checkWorkbookBack(wb);
         }
     }
 
     private void checkWorkbookBack(HSSFWorkbook wb) throws IOException {
-        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
+        try (HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+            assertNotNull(wbBack);
 
-        HSSFSheet sheetBack = wbBack.getSheetAt(0);
-        assertNotNull(sheetBack);
+            HSSFSheet sheetBack = wbBack.getSheetAt(0);
+            assertNotNull(sheetBack);
 
-        HSSFPatriarch patriarchBack = sheetBack.getDrawingPatriarch();
-        assertNotNull(patriarchBack);
+            HSSFPatriarch patriarchBack = sheetBack.getDrawingPatriarch();
+            assertNotNull(patriarchBack);
 
-        List<HSSFShape> children = patriarchBack.getChildren();
-        assertEquals(4, children.size());
-        HSSFShape hssfShape = children.get(0);
-        assertTrue(hssfShape instanceof HSSFSimpleShape);
-        HSSFAnchor anchor = hssfShape.getAnchor();
-        assertTrue(anchor instanceof HSSFClientAnchor);
-        assertEquals(0, anchor.getDx1());
-        assertEquals(512, anchor.getDx2());
-        assertEquals(0, anchor.getDy1());
-        assertEquals(100, anchor.getDy2());
-        HSSFClientAnchor cAnchor = (HSSFClientAnchor) anchor;
-        assertEquals(1, cAnchor.getCol1());
-        assertEquals(1, cAnchor.getCol2());
-        assertEquals(1, cAnchor.getRow1());
-        assertEquals(1, cAnchor.getRow2());
+            List<HSSFShape> children = patriarchBack.getChildren();
+            assertEquals(4, children.size());
+            HSSFShape hssfShape = children.get(0);
+            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            HSSFAnchor anchor = hssfShape.getAnchor();
+            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertEquals(0, anchor.getDx1());
+            assertEquals(512, anchor.getDx2());
+            assertEquals(0, anchor.getDy1());
+            assertEquals(100, anchor.getDy2());
+            HSSFClientAnchor cAnchor = (HSSFClientAnchor) anchor;
+            assertEquals(1, cAnchor.getCol1());
+            assertEquals(1, cAnchor.getCol2());
+            assertEquals(1, cAnchor.getRow1());
+            assertEquals(1, cAnchor.getRow2());
 
-        hssfShape = children.get(1);
-        assertTrue(hssfShape instanceof HSSFSimpleShape);
-        anchor = hssfShape.getAnchor();
-        assertTrue(anchor instanceof HSSFClientAnchor);
-        assertEquals(512, anchor.getDx1());
-        assertEquals(1024, anchor.getDx2());
-        assertEquals(0, anchor.getDy1());
-        assertEquals(100, anchor.getDy2());
-        cAnchor = (HSSFClientAnchor) anchor;
-        assertEquals(1, cAnchor.getCol1());
-        assertEquals(1, cAnchor.getCol2());
-        assertEquals(1, cAnchor.getRow1());
-        assertEquals(1, cAnchor.getRow2());
+            hssfShape = children.get(1);
+            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            anchor = hssfShape.getAnchor();
+            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertEquals(512, anchor.getDx1());
+            assertEquals(1024, anchor.getDx2());
+            assertEquals(0, anchor.getDy1());
+            assertEquals(100, anchor.getDy2());
+            cAnchor = (HSSFClientAnchor) anchor;
+            assertEquals(1, cAnchor.getCol1());
+            assertEquals(1, cAnchor.getCol2());
+            assertEquals(1, cAnchor.getRow1());
+            assertEquals(1, cAnchor.getRow2());
 
-        hssfShape = children.get(2);
-        assertTrue(hssfShape instanceof HSSFSimpleShape);
-        anchor = hssfShape.getAnchor();
-        assertTrue(anchor instanceof HSSFClientAnchor);
-        assertEquals(0, anchor.getDx1());
-        assertEquals(512, anchor.getDx2());
-        assertEquals(0, anchor.getDy1());
-        assertEquals(100, anchor.getDy2());
-        cAnchor = (HSSFClientAnchor) anchor;
-        assertEquals(2, cAnchor.getCol1());
-        assertEquals(2, cAnchor.getCol2());
-        assertEquals(2, cAnchor.getRow1());
-        assertEquals(2, cAnchor.getRow2());
+            hssfShape = children.get(2);
+            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            anchor = hssfShape.getAnchor();
+            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertEquals(0, anchor.getDx1());
+            assertEquals(512, anchor.getDx2());
+            assertEquals(0, anchor.getDy1());
+            assertEquals(100, anchor.getDy2());
+            cAnchor = (HSSFClientAnchor) anchor;
+            assertEquals(2, cAnchor.getCol1());
+            assertEquals(2, cAnchor.getCol2());
+            assertEquals(2, cAnchor.getRow1());
+            assertEquals(2, cAnchor.getRow2());
 
-        hssfShape = children.get(3);
-        assertTrue(hssfShape instanceof HSSFSimpleShape);
-        anchor = hssfShape.getAnchor();
-        assertTrue(anchor instanceof HSSFClientAnchor);
-        assertEquals(0, anchor.getDx1());
-        assertEquals(512, anchor.getDx2());
-        assertEquals(100, anchor.getDy1());
-        assertEquals(200, anchor.getDy2());
-        cAnchor = (HSSFClientAnchor) anchor;
-        assertEquals(2, cAnchor.getCol1());
-        assertEquals(2, cAnchor.getCol2());
-        assertEquals(2, cAnchor.getRow1());
-        assertEquals(2, cAnchor.getRow2());
-
-        wbBack.close();
+            hssfShape = children.get(3);
+            assertTrue(hssfShape instanceof HSSFSimpleShape);
+            anchor = hssfShape.getAnchor();
+            assertTrue(anchor instanceof HSSFClientAnchor);
+            assertEquals(0, anchor.getDx1());
+            assertEquals(512, anchor.getDx2());
+            assertEquals(100, anchor.getDy1());
+            assertEquals(200, anchor.getDy2());
+            cAnchor = (HSSFClientAnchor) anchor;
+            assertEquals(2, cAnchor.getCol1());
+            assertEquals(2, cAnchor.getCol2());
+            assertEquals(2, cAnchor.getRow1());
+            assertEquals(2, cAnchor.getRow2());
+        }
     }
 }

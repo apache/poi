@@ -1945,16 +1945,16 @@ final class TestBugs extends BaseTestBugzillaIssues {
     void bug53432() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             wb1.addPicture(new byte[]{123, 22}, Workbook.PICTURE_TYPE_JPEG);
-            assertEquals(wb1.getAllPictures().size(), 1);
+            assertEquals(1, wb1.getAllPictures().size());
         }
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
-                assertEquals(wb2.getAllPictures().size(), 0);
+                assertEquals(0, wb2.getAllPictures().size());
                 wb2.addPicture(new byte[]{123, 22}, Workbook.PICTURE_TYPE_JPEG);
-                assertEquals(wb2.getAllPictures().size(), 1);
+                assertEquals(1, wb2.getAllPictures().size());
 
                 try (HSSFWorkbook wb3 = writeOutAndReadBack(wb2)) {
-                    assertEquals(wb3.getAllPictures().size(), 1);
+                    assertEquals(1, wb3.getAllPictures().size());
                 }
             }
         }

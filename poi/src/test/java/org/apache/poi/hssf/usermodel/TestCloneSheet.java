@@ -44,91 +44,91 @@ final class TestCloneSheet extends BaseTestCloneSheet {
     }
 
     @Test
-    void testCloneSheetWithoutDrawings(){
-        HSSFWorkbook b = new HSSFWorkbook();
-        HSSFSheet s = b.createSheet("Test");
-        HSSFSheet s2 = s.cloneSheet(b);
-
-        assertNull(s.getDrawingPatriarch());
-        assertNull(s2.getDrawingPatriarch());
-        assertEquals(HSSFTestHelper.getSheetForTest(s).getRecords().size(), HSSFTestHelper.getSheetForTest(s2).getRecords().size());
+    void testCloneSheetWithoutDrawings() throws IOException {
+        try (HSSFWorkbook b = new HSSFWorkbook()) {
+            HSSFSheet s = b.createSheet("Test");
+            HSSFSheet s2 = s.cloneSheet(b);
+            assertNull(s.getDrawingPatriarch());
+            assertNull(s2.getDrawingPatriarch());
+            assertEquals(HSSFTestHelper.getSheetForTest(s).getRecords().size(), HSSFTestHelper.getSheetForTest(s2).getRecords().size());
+        }
     }
 
     @Test
-    void testCloneSheetWithEmptyDrawingAggregate(){
-        HSSFWorkbook b = new HSSFWorkbook();
-        HSSFSheet s = b.createSheet("Test");
-        HSSFPatriarch patriarch = s.createDrawingPatriarch();
+    void testCloneSheetWithEmptyDrawingAggregate() throws IOException {
+        try (HSSFWorkbook b = new HSSFWorkbook()) {
+            HSSFSheet s = b.createSheet("Test");
+            HSSFPatriarch patriarch = s.createDrawingPatriarch();
 
-        EscherAggregate agg1 = patriarch.getBoundAggregate();
+            EscherAggregate agg1 = patriarch.getBoundAggregate();
 
-        HSSFSheet s2 = s.cloneSheet(b);
+            HSSFSheet s2 = s.cloneSheet(b);
 
-        patriarch = s2.getDrawingPatriarch();
+            patriarch = s2.getDrawingPatriarch();
 
-        EscherAggregate agg2 = patriarch.getBoundAggregate();
+            EscherAggregate agg2 = patriarch.getBoundAggregate();
 
-        EscherSpRecord sp1 = (EscherSpRecord) agg1.getEscherContainer().getChild(1).getChild(0).getChild(1);
-        EscherSpRecord sp2 = (EscherSpRecord) agg2.getEscherContainer().getChild(1).getChild(0).getChild(1);
+            EscherSpRecord sp1 = (EscherSpRecord) agg1.getEscherContainer().getChild(1).getChild(0).getChild(1);
+            EscherSpRecord sp2 = (EscherSpRecord) agg2.getEscherContainer().getChild(1).getChild(0).getChild(1);
 
-        assertEquals(sp1.getShapeId(), 1024);
-        assertEquals(sp2.getShapeId(), 2048);
+            assertEquals(1024, sp1.getShapeId());
+            assertEquals(2048, sp2.getShapeId());
 
-        EscherDgRecord dg = (EscherDgRecord) agg2.getEscherContainer().getChild(0);
+            EscherDgRecord dg = (EscherDgRecord) agg2.getEscherContainer().getChild(0);
 
-        assertEquals(dg.getLastMSOSPID(), 2048);
-        assertEquals(dg.getInstance(), 0x2);
+            assertEquals(2048, dg.getLastMSOSPID());
+            assertEquals(0x2, dg.getInstance());
 
-        //everything except id and DgRecord.lastMSOSPID and DgRecord.Instance must be the same
+            //everything except id and DgRecord.lastMSOSPID and DgRecord.Instance must be the same
 
-        sp2.setShapeId(1024);
-        dg.setLastMSOSPID(1024);
-        dg.setInstance((short) 0x1);
+            sp2.setShapeId(1024);
+            dg.setLastMSOSPID(1024);
+            dg.setInstance((short) 0x1);
 
-        assertEquals(agg1.serialize().length, agg2.serialize().length);
-        assertEquals(agg1.toXml(""), agg2.toXml(""));
-        assertArrayEquals(agg1.serialize(), agg2.serialize());
+            assertEquals(agg1.serialize().length, agg2.serialize().length);
+            assertEquals(agg1.toXml(""), agg2.toXml(""));
+            assertArrayEquals(agg1.serialize(), agg2.serialize());
+        }
     }
 
     @Test
     void testCloneComment() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch p = sh.createDrawingPatriarch();
-        HSSFComment c = p.createComment(new HSSFClientAnchor(0,0,100,100, (short) 0,0,(short)5,5));
-        c.setColumn(1);
-        c.setRow(2);
-        c.setString(new HSSFRichTextString("qwertyuio"));
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch p = sh.createDrawingPatriarch();
+            HSSFComment c = p.createComment(new HSSFClientAnchor(0, 0, 100, 100, (short) 0, 0, (short) 5, 5));
+            c.setColumn(1);
+            c.setRow(2);
+            c.setString(new HSSFRichTextString("qwertyuio"));
 
-        HSSFSheet sh2 = wb.cloneSheet(0);
-        HSSFPatriarch p2 = sh2.getDrawingPatriarch();
-        HSSFComment c2 = (HSSFComment) p2.getChildren().get(0);
+            HSSFSheet sh2 = wb.cloneSheet(0);
+            HSSFPatriarch p2 = sh2.getDrawingPatriarch();
+            HSSFComment c2 = (HSSFComment) p2.getChildren().get(0);
 
-        assertEquals(c.getString(), c2.getString());
-        assertEquals(c.getRow(), c2.getRow());
-        assertEquals(c.getColumn(), c2.getColumn());
+            assertEquals(c.getString(), c2.getString());
+            assertEquals(c.getRow(), c2.getRow());
+            assertEquals(c.getColumn(), c2.getColumn());
 
-        // The ShapeId is not equal?
-        // assertEquals(c.getNoteRecord().getShapeId(), c2.getNoteRecord().getShapeId());
+            // The ShapeId is not equal?
+            // assertEquals(c.getNoteRecord().getShapeId(), c2.getNoteRecord().getShapeId());
 
-        assertArrayEquals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize());
+            assertArrayEquals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize());
 
-        // ShapeId is different
-        CommonObjectDataSubRecord subRecord = (CommonObjectDataSubRecord) c2.getObjRecord().getSubRecords().get(0);
-        subRecord.setObjectId(1025);
+            // ShapeId is different
+            CommonObjectDataSubRecord subRecord = (CommonObjectDataSubRecord) c2.getObjRecord().getSubRecords().get(0);
+            subRecord.setObjectId(1025);
 
-        assertArrayEquals(c2.getObjRecord().serialize(), c.getObjRecord().serialize());
+            assertArrayEquals(c2.getObjRecord().serialize(), c.getObjRecord().serialize());
 
-        // ShapeId is different
-        c2.getNoteRecord().setShapeId(1025);
-        assertArrayEquals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize());
+            // ShapeId is different
+            c2.getNoteRecord().setShapeId(1025);
+            assertArrayEquals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize());
 
-        //everything except spRecord.shapeId must be the same
-        assertFalse(Arrays.equals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize()));
-        EscherSpRecord sp = (EscherSpRecord) c2.getEscherContainer().getChild(0);
-        sp.setShapeId(1025);
-        assertArrayEquals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize());
-
-        wb.close();
+            //everything except spRecord.shapeId must be the same
+            assertFalse(Arrays.equals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize()));
+            EscherSpRecord sp = (EscherSpRecord) c2.getEscherContainer().getChild(0);
+            sp.setShapeId(1025);
+            assertArrayEquals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize());
+        }
     }
 }

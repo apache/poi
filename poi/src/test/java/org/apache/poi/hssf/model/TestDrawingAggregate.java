@@ -266,16 +266,16 @@ class TestDrawingAggregate {
             sh.getDrawingPatriarch();
             EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
             assertNotNull(agg);
-            assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
-            assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+            assertEquals(3, agg.getEscherRecords().get(0).getChildRecords().size());
+            assertEquals(EscherContainerRecord.SOLVER_CONTAINER, agg.getEscherRecords().get(0).getChild(2).getRecordId());
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
                 sh = wb2.getSheetAt(0);
                 sh.getDrawingPatriarch();
                 ish = HSSFTestHelper.getSheetForTest(sh);
                 agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
                 assertNotNull(agg);
-                assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
-                assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+                assertEquals(3, agg.getEscherRecords().get(0).getChildRecords().size());
+                assertEquals(EscherContainerRecord.SOLVER_CONTAINER, agg.getEscherRecords().get(0).getChild(2).getRecordId());
 
 
                 // collect drawing records into a byte buffer.

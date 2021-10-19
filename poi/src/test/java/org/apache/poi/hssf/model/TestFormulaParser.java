@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -60,7 +61,7 @@ import org.junit.jupiter.api.Test;
 final class TestFormulaParser {
 
     /**
-     * @return parsed token array already confirmed not <code>null</code>
+     * @return parsed token array already confirmed not {@code null}
      */
     /* package */ static Ptg[] parseFormula(String formula) {
         Ptg[] result = HSSFFormulaParser.parse(formula, null);
@@ -289,11 +290,11 @@ final class TestFormulaParser {
     void testLookupAndMatchFunctionArgs() {
         Ptg[] ptgs = parseFormula("lookup(A1, A3:A52, B3:B52)");
         confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, AreaPtg.class, FuncVarPtg.class);
-        assertEquals(ptgs[0].getPtgClass(), Ptg.CLASS_VALUE, "ptg0 has Value class");
+        assertEquals(Ptg.CLASS_VALUE, ptgs[0].getPtgClass(), "ptg0 has Value class");
 
         ptgs = parseFormula("match(A1, A3:A52)");
         confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, FuncVarPtg.class);
-        assertEquals(ptgs[0].getPtgClass(), Ptg.CLASS_VALUE, "ptg0 has Value class");
+        assertEquals(Ptg.CLASS_VALUE, ptgs[0].getPtgClass(), "ptg0 has Value class");
     }
 
     /** bug 33160*/
@@ -656,7 +657,7 @@ final class TestFormulaParser {
     private static void confirmTokenClasses(Ptg[] ptgs, Class<?>...expectedClasses) {
         assertEquals(expectedClasses.length, ptgs.length);
         for (int i = 0; i < expectedClasses.length; i++) {
-            assertEquals(expectedClasses[i], ptgs[i].getClass(),
+            assertSame(expectedClasses[i], ptgs[i].getClass(),
                 "difference at token[" + i + "]: expected ("
                 + expectedClasses[i].getName() + ") but got ("
                 + ptgs[i].getClass().getName() + ")");
@@ -672,7 +673,7 @@ final class TestFormulaParser {
         Ptg[] ptgs = parseFormula(formula);
         assertEquals(1, ptgs.length);
         Ptg result = ptgs[0];
-        assertEquals(ptgClass, result.getClass());
+        assertSame(ptgClass, result.getClass());
         return result;
     }
 
@@ -1017,7 +1018,7 @@ final class TestFormulaParser {
         Object element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
         // this would cause ClassCastException below
         assertFalse(element instanceof UnicodeString, "Wrong encoding of array element value");
-        assertEquals(String.class, element.getClass());
+        assertSame(String.class, element.getClass());
 
         // make sure the formula encodes OK
         int encSize = Ptg.getEncodedSize(ptgs);

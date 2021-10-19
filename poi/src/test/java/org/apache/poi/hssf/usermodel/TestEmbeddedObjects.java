@@ -34,7 +34,7 @@ class TestEmbeddedObjects {
     void testReadExistingObject() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
-            assertEquals(list.size(), 1);
+            assertEquals(1, list.size());
             HSSFObjectData obj = list.get(0);
             assertNotNull(obj.getObjectData());
             assertNotNull(obj.getDirectory());
@@ -50,7 +50,7 @@ class TestEmbeddedObjects {
     void testReadNestedObject() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithCheckBoxes.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
-            assertEquals(list.size(), 1);
+            assertEquals(1, list.size());
             HSSFObjectData obj = list.get(0);
             assertNotNull(obj.getObjectData());
             assertNotNull(obj.getOLE2ClassName());
@@ -65,7 +65,7 @@ class TestEmbeddedObjects {
     void testReadManyNestedObjects() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45538_form_Header.xls")) {
             List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
-            assertEquals(list.size(), 40);
+            assertEquals(40, list.size());
         }
     }
 }

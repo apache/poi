@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -33,35 +32,13 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.util.CodePageUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests whether Unicode string can be read from a DocumentSummaryInformation.
  */
 class TestUnicode {
-
-    static final String POI_FS = "TestUnicode.xls";
-    static final String[] POI_FILES =  {
-        DocumentSummaryInformation.DEFAULT_STREAM_NAME,
-    };
-    File data;
-    POIFile[] poiFiles;
-
-
-    /**
-     * Read a the test file from the "data" directory.
-     *
-     * @exception FileNotFoundException if the file to be read does not exist.
-     * @exception IOException if any other I/O exception occurs
-     */
-    @BeforeEach
-    void setUp() {
-        POIDataSamples samples = POIDataSamples.getHPSFInstance();
-        data = samples.getFile(POI_FS);
-    }
-
-
+    private static final POIDataSamples samples = POIDataSamples.getHPSFInstance();
 
     /**
      * Tests the {@link PropertySet} methods. The test file has two
@@ -73,16 +50,21 @@ class TestUnicode {
      */
     @Test
     void testPropertySetMethods() throws IOException, HPSFException {
+        final String POI_FS = "TestUnicode.xls";
+        final String[] POI_FILES = { DocumentSummaryInformation.DEFAULT_STREAM_NAME };
+
+        File data = samples.getFile(POI_FS);
+
         POIFile poiFile = Util.readPOIFiles(data, POI_FILES).get(0);
         byte[] b = poiFile.getBytes();
         PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
         assertTrue(ps.isDocumentSummaryInformation());
-        assertEquals(ps.getSectionCount(), 2);
+        assertEquals(2, ps.getSectionCount());
         Section s = ps.getSections().get(1);
-        assertEquals(s.getProperty(1), CodePageUtil.CP_UTF16);
-        assertEquals(s.getProperty(2), -96070278);
-        assertEquals(s.getProperty(3), "MCon_Info zu Office bei Schreiner");
-        assertEquals(s.getProperty(4), "petrovitsch@schreiner-online.de");
-        assertEquals(s.getProperty(5), "Petrovitsch, Wilhelm");
+        assertEquals(CodePageUtil.CP_UTF16, s.getProperty(1));
+        assertEquals(-96070278, s.getProperty(2));
+        assertEquals("MCon_Info zu Office bei Schreiner", s.getProperty(3));
+        assertEquals("petrovitsch@schreiner-online.de", s.getProperty(4));
+        assertEquals("Petrovitsch, Wilhelm", s.getProperty(5));
     }
 }

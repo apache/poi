@@ -19,7 +19,6 @@
 package org.apache.poi.hpsf.basic;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,13 +64,14 @@ final class Util {
     static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles) throws IOException {
         final List<POIFile> files = new ArrayList<>();
         POIFSReader r = new POIFSReader();
+
         POIFSReaderListener pfl = event -> assertDoesNotThrow(() -> {
             final POIFile f = new POIFile();
             f.setName(event.getName());
             f.setPath(event.getPath());
-            final InputStream in = event.getStream();
-            f.setBytes(IOUtils.toByteArray(in));
-            in.close();
+            try (final InputStream in = event.getStream()) {
+                f.setBytes(IOUtils.toByteArray(in));
+            }
             files.add(f);
         });
         if (poiFiles.length == 0) {
@@ -88,8 +88,6 @@ final class Util {
 
         return files;
     }
-
-
 
     /**
      * <p>Read all files from a POI filesystem which are property set streams

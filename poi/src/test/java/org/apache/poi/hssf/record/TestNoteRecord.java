@@ -103,7 +103,7 @@ final class TestNoteRecord {
                 );
         RecordInputStream in = TestcaseRecordInputStream.create(NoteRecord.sid, data);
         NoteRecord nr = new NoteRecord(in);
-        assertNotEquals("Identified bug in reading note with unicode author","\u00A2\u0030\u00D1\u0030\u00C3", nr.getAuthor());
+        assertNotEquals("\u00A2\u0030\u00D1\u0030\u00C3",nr.getAuthor(), "Identified bug in reading note with unicode author");
         assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
         assertTrue(nr.authorIsMultibyte());
 

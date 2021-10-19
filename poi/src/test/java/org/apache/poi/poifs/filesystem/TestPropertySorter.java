@@ -76,7 +76,7 @@ final class TestPropertySorter {
             String exp = String.join("", _entries);
             String actOld = Stream.of(props).map(Property::getName).collect(Collectors.joining());
 
-            assertNotEquals("expected old case-sensitive property comparator to return properties in wrong order", exp, actOld);
+            assertNotEquals(exp, actOld, "expected old case-sensitive property comparator to return properties in wrong order");
 
             // (2) Verify that the fixed property comparator works right
             Arrays.sort(props, new DirectoryProperty.PropertyComparator());

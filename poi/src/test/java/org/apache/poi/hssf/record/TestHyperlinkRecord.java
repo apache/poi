@@ -467,7 +467,7 @@ final class TestHyperlinkRecord {
         HyperlinkRecord hr = new HyperlinkRecord(in);
         byte[] ser = hr.serialize();
         confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
-        assertNotEquals("Identified bug in reading workbook link", "YEARFR~1.XLS", hr.getAddress());
+        assertNotEquals("YEARFR~1.XLS", hr.getAddress(), "Identified bug in reading workbook link");
         assertEquals("yearfracExamples.xls", hr.getAddress());
     }
 

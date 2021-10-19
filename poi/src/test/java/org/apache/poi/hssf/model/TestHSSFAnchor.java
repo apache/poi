@@ -17,17 +17,23 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.apache.poi.hssf.usermodel.HSSFTestHelper.getEscherContainer;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFAnchor;
@@ -46,59 +52,61 @@ class TestHSSFAnchor {
     @Test
     void testDefaultValues(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor();
-        assertEquals(clientAnchor.getAnchorType(), AnchorType.MOVE_AND_RESIZE);
-        assertEquals(clientAnchor.getCol1(), 0);
-        assertEquals(clientAnchor.getCol2(), 0);
-        assertEquals(clientAnchor.getDx1(), 0);
-        assertEquals(clientAnchor.getDx2(), 0);
-        assertEquals(clientAnchor.getDy1(), 0);
-        assertEquals(clientAnchor.getDy2(), 0);
-        assertEquals(clientAnchor.getRow1(), 0);
-        assertEquals(clientAnchor.getRow2(), 0);
+        assertEquals(AnchorType.MOVE_AND_RESIZE, clientAnchor.getAnchorType());
+        assertEquals(0, clientAnchor.getCol1());
+        assertEquals(0, clientAnchor.getCol2());
+        assertEquals(0, clientAnchor.getDx1());
+        assertEquals(0, clientAnchor.getDx2());
+        assertEquals(0, clientAnchor.getDy1());
+        assertEquals(0, clientAnchor.getDy2());
+        assertEquals(0, clientAnchor.getRow1());
+        assertEquals(0, clientAnchor.getRow2());
 
         clientAnchor = new HSSFClientAnchor(new EscherClientAnchorRecord());
-        assertEquals(clientAnchor.getAnchorType(), AnchorType.MOVE_AND_RESIZE);
-        assertEquals(clientAnchor.getCol1(), 0);
-        assertEquals(clientAnchor.getCol2(), 0);
-        assertEquals(clientAnchor.getDx1(), 0);
-        assertEquals(clientAnchor.getDx2(), 0);
-        assertEquals(clientAnchor.getDy1(), 0);
-        assertEquals(clientAnchor.getDy2(), 0);
-        assertEquals(clientAnchor.getRow1(), 0);
-        assertEquals(clientAnchor.getRow2(), 0);
+        assertEquals(AnchorType.MOVE_AND_RESIZE, clientAnchor.getAnchorType());
+        assertEquals(0, clientAnchor.getCol1());
+        assertEquals(0, clientAnchor.getCol2());
+        assertEquals(0, clientAnchor.getDx1());
+        assertEquals(0, clientAnchor.getDx2());
+        assertEquals(0, clientAnchor.getDy1());
+        assertEquals(0, clientAnchor.getDy2());
+        assertEquals(0, clientAnchor.getRow1());
+        assertEquals(0, clientAnchor.getRow2());
 
         HSSFChildAnchor childAnchor = new HSSFChildAnchor();
-        assertEquals(childAnchor.getDx1(), 0);
-        assertEquals(childAnchor.getDx2(), 0);
-        assertEquals(childAnchor.getDy1(), 0);
-        assertEquals(childAnchor.getDy2(), 0);
+        assertEquals(0, childAnchor.getDx1());
+        assertEquals(0, childAnchor.getDx2());
+        assertEquals(0, childAnchor.getDy1());
+        assertEquals(0, childAnchor.getDy2());
 
         childAnchor = new HSSFChildAnchor(new EscherChildAnchorRecord());
-        assertEquals(childAnchor.getDx1(), 0);
-        assertEquals(childAnchor.getDx2(), 0);
-        assertEquals(childAnchor.getDy1(), 0);
-        assertEquals(childAnchor.getDy2(), 0);
+        assertEquals(0, childAnchor.getDx1());
+        assertEquals(0, childAnchor.getDx2());
+        assertEquals(0, childAnchor.getDy1());
+        assertEquals(0, childAnchor.getDy2());
     }
 
     @Test
-    void testCorrectOrderInSpContainer(){
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("pictures");
-        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+    void testCorrectOrderInSpContainer() throws IOException {
+        int[] expIds = {
+            EscherSpRecord.RECORD_ID,
+            EscherOptRecord.RECORD_ID,
+            EscherClientAnchorRecord.RECORD_ID,
+            EscherClientDataRecord.RECORD_ID
+        };
 
-        HSSFSimpleShape rectangle = (HSSFSimpleShape) drawing.getChildren().get(0);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("pictures");
+            HSSFPatriarch drawing = sheet.getDrawingPatriarch();
 
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(0).getRecordId(), EscherSpRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(1).getRecordId(), EscherOptRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(2).getRecordId(), EscherClientAnchorRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(3).getRecordId(), EscherClientDataRecord.RECORD_ID);
+            HSSFSimpleShape rectangle = (HSSFSimpleShape) drawing.getChildren().get(0);
+            int[] act1Ids = getEscherContainer(rectangle).getChildRecords().stream().mapToInt(EscherRecord::getRecordId).toArray();
+            assertArrayEquals(expIds, act1Ids);
 
-        rectangle.setAnchor(new HSSFClientAnchor());
-
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(0).getRecordId(), EscherSpRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(1).getRecordId(), EscherOptRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(2).getRecordId(), EscherClientAnchorRecord.RECORD_ID);
-        assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(3).getRecordId(), EscherClientDataRecord.RECORD_ID);
+            rectangle.setAnchor(new HSSFClientAnchor());
+            int[] act2Ids = getEscherContainer(rectangle).getChildRecords().stream().mapToInt(EscherRecord::getRecordId).toArray();
+            assertArrayEquals(expIds, act2Ids);
+        }
     }
 
     @Test
@@ -118,22 +126,22 @@ class TestHSSFAnchor {
 
         HSSFClientAnchor anchor = (HSSFClientAnchor) HSSFAnchor.createAnchorFromEscher(container);
         assertNotNull(anchor);
-        assertEquals(anchor.getCol1(), 11);
-        assertEquals(escher.getCol1(), 11);
-        assertEquals(anchor.getCol2(), 12);
-        assertEquals(escher.getCol2(), 12);
-        assertEquals(anchor.getRow1(), 13);
-        assertEquals(escher.getRow1(), 13);
-        assertEquals(anchor.getRow2(), 14);
-        assertEquals(escher.getRow2(), 14);
-        assertEquals(anchor.getDx1(), 15);
-        assertEquals(escher.getDx1(), 15);
-        assertEquals(anchor.getDx2(), 16);
-        assertEquals(escher.getDx2(), 16);
-        assertEquals(anchor.getDy1(), 17);
-        assertEquals(escher.getDy1(), 17);
-        assertEquals(anchor.getDy2(), 18);
-        assertEquals(escher.getDy2(), 18);
+        assertEquals(11, anchor.getCol1());
+        assertEquals(11, escher.getCol1());
+        assertEquals(12, anchor.getCol2());
+        assertEquals(12, escher.getCol2());
+        assertEquals(13, anchor.getRow1());
+        assertEquals(13, escher.getRow1());
+        assertEquals(14, anchor.getRow2());
+        assertEquals(14, escher.getRow2());
+        assertEquals(15, anchor.getDx1());
+        assertEquals(15, escher.getDx1());
+        assertEquals(16, anchor.getDx2());
+        assertEquals(16, escher.getDx2());
+        assertEquals(17, anchor.getDy1());
+        assertEquals(17, escher.getDy1());
+        assertEquals(18, anchor.getDy2());
+        assertEquals(18, escher.getDy2());
     }
 
     @Test
@@ -148,14 +156,14 @@ class TestHSSFAnchor {
 
         HSSFChildAnchor anchor = (HSSFChildAnchor) HSSFAnchor.createAnchorFromEscher(container);
         assertNotNull(anchor);
-        assertEquals(anchor.getDx1(), 15);
-        assertEquals(escher.getDx1(), 15);
-        assertEquals(anchor.getDx2(), 16);
-        assertEquals(escher.getDx2(), 16);
-        assertEquals(anchor.getDy1(), 17);
-        assertEquals(escher.getDy1(), 17);
-        assertEquals(anchor.getDy2(), 18);
-        assertEquals(escher.getDy2(), 18);
+        assertEquals(15, anchor.getDx1());
+        assertEquals(15, escher.getDx1());
+        assertEquals(16, anchor.getDx2());
+        assertEquals(16, escher.getDx2());
+        assertEquals(17, anchor.getDy1());
+        assertEquals(17, escher.getDy1());
+        assertEquals(18, anchor.getDy2());
+        assertEquals(18, escher.getDy2());
     }
 
     @Test
@@ -173,8 +181,8 @@ class TestHSSFAnchor {
         rectangle.setAnchor(anchor);
 
         assertNotNull(HSSFTestHelper.getEscherAnchor(anchor));
-        assertNotNull(HSSFTestHelper.getEscherContainer(rectangle));
-        assertEquals(HSSFTestHelper.getEscherAnchor(anchor), HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID));
+        assertNotNull(getEscherContainer(rectangle));
+        assertEquals(HSSFTestHelper.getEscherAnchor(anchor), getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID));
     }
 
     @Test
@@ -190,22 +198,22 @@ class TestHSSFAnchor {
         escher.setDy2((short) 18);
 
         HSSFClientAnchor anchor = new HSSFClientAnchor(escher);
-        assertEquals(anchor.getCol1(), 11);
-        assertEquals(escher.getCol1(), 11);
-        assertEquals(anchor.getCol2(), 12);
-        assertEquals(escher.getCol2(), 12);
-        assertEquals(anchor.getRow1(), 13);
-        assertEquals(escher.getRow1(), 13);
-        assertEquals(anchor.getRow2(), 14);
-        assertEquals(escher.getRow2(), 14);
-        assertEquals(anchor.getDx1(), 15);
-        assertEquals(escher.getDx1(), 15);
-        assertEquals(anchor.getDx2(), 16);
-        assertEquals(escher.getDx2(), 16);
-        assertEquals(anchor.getDy1(), 17);
-        assertEquals(escher.getDy1(), 17);
-        assertEquals(anchor.getDy2(), 18);
-        assertEquals(escher.getDy2(), 18);
+        assertEquals(11, anchor.getCol1());
+        assertEquals(11, escher.getCol1());
+        assertEquals(12, anchor.getCol2());
+        assertEquals(12, escher.getCol2());
+        assertEquals(13, anchor.getRow1());
+        assertEquals(13, escher.getRow1());
+        assertEquals(14, anchor.getRow2());
+        assertEquals(14, escher.getRow2());
+        assertEquals(15, anchor.getDx1());
+        assertEquals(15, escher.getDx1());
+        assertEquals(16, anchor.getDx2());
+        assertEquals(16, escher.getDx2());
+        assertEquals(17, anchor.getDy1());
+        assertEquals(17, escher.getDy1());
+        assertEquals(18, anchor.getDy2());
+        assertEquals(18, escher.getDy2());
     }
 
     @Test
@@ -214,47 +222,47 @@ class TestHSSFAnchor {
         EscherClientAnchorRecord escher = (EscherClientAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
         anchor.setAnchor((short)11, 12, 13, 14, (short)15, 16, 17, 18);
 
-        assertEquals(anchor.getCol1(), 11);
-        assertEquals(escher.getCol1(), 11);
-        assertEquals(anchor.getCol2(), 15);
-        assertEquals(escher.getCol2(), 15);
-        assertEquals(anchor.getRow1(), 12);
-        assertEquals(escher.getRow1(), 12);
-        assertEquals(anchor.getRow2(), 16);
-        assertEquals(escher.getRow2(), 16);
-        assertEquals(anchor.getDx1(), 13);
-        assertEquals(escher.getDx1(), 13);
-        assertEquals(anchor.getDx2(), 17);
-        assertEquals(escher.getDx2(), 17);
-        assertEquals(anchor.getDy1(), 14);
-        assertEquals(escher.getDy1(), 14);
-        assertEquals(anchor.getDy2(), 18);
-        assertEquals(escher.getDy2(), 18);
+        assertEquals(11, anchor.getCol1());
+        assertEquals(11, escher.getCol1());
+        assertEquals(15, anchor.getCol2());
+        assertEquals(15, escher.getCol2());
+        assertEquals(12, anchor.getRow1());
+        assertEquals(12, escher.getRow1());
+        assertEquals(16, anchor.getRow2());
+        assertEquals(16, escher.getRow2());
+        assertEquals(13, anchor.getDx1());
+        assertEquals(13, escher.getDx1());
+        assertEquals(17, anchor.getDx2());
+        assertEquals(17, escher.getDx2());
+        assertEquals(14, anchor.getDy1());
+        assertEquals(14, escher.getDy1());
+        assertEquals(18, anchor.getDy2());
+        assertEquals(18, escher.getDy2());
 
         anchor.setCol1(111);
-        assertEquals(anchor.getCol1(), 111);
-        assertEquals(escher.getCol1(), 111);
+        assertEquals(111, anchor.getCol1());
+        assertEquals(111, escher.getCol1());
         anchor.setCol2(112);
-        assertEquals(anchor.getCol2(), 112);
-        assertEquals(escher.getCol2(), 112);
+        assertEquals(112, anchor.getCol2());
+        assertEquals(112, escher.getCol2());
         anchor.setRow1(113);
-        assertEquals(anchor.getRow1(), 113);
-        assertEquals(escher.getRow1(), 113);
+        assertEquals(113, anchor.getRow1());
+        assertEquals(113, escher.getRow1());
         anchor.setRow2(114);
-        assertEquals(anchor.getRow2(), 114);
-        assertEquals(escher.getRow2(), 114);
+        assertEquals(114, anchor.getRow2());
+        assertEquals(114, escher.getRow2());
         anchor.setDx1(115);
-        assertEquals(anchor.getDx1(), 115);
-        assertEquals(escher.getDx1(), 115);
+        assertEquals(115, anchor.getDx1());
+        assertEquals(115, escher.getDx1());
         anchor.setDx2(116);
-        assertEquals(anchor.getDx2(), 116);
-        assertEquals(escher.getDx2(), 116);
+        assertEquals(116, anchor.getDx2());
+        assertEquals(116, escher.getDx2());
         anchor.setDy1(117);
-        assertEquals(anchor.getDy1(), 117);
-        assertEquals(escher.getDy1(), 117);
+        assertEquals(117, anchor.getDy1());
+        assertEquals(117, escher.getDy1());
         anchor.setDy2(118);
-        assertEquals(anchor.getDy2(), 118);
-        assertEquals(escher.getDy2(), 118);
+        assertEquals(118, anchor.getDy2());
+        assertEquals(118, escher.getDy2());
     }
 
     @Test
@@ -266,14 +274,14 @@ class TestHSSFAnchor {
         escher.setDy2((short) 18);
 
         HSSFChildAnchor anchor = new HSSFChildAnchor(escher);
-        assertEquals(anchor.getDx1(), 15);
-        assertEquals(escher.getDx1(), 15);
-        assertEquals(anchor.getDx2(), 16);
-        assertEquals(escher.getDx2(), 16);
-        assertEquals(anchor.getDy1(), 17);
-        assertEquals(escher.getDy1(), 17);
-        assertEquals(anchor.getDy2(), 18);
-        assertEquals(escher.getDy2(), 18);
+        assertEquals(15, anchor.getDx1());
+        assertEquals(15, escher.getDx1());
+        assertEquals(16, anchor.getDx2());
+        assertEquals(16, escher.getDx2());
+        assertEquals(17, anchor.getDy1());
+        assertEquals(17, escher.getDy1());
+        assertEquals(18, anchor.getDy2());
+        assertEquals(18, escher.getDy2());
     }
 
     @Test
@@ -282,27 +290,27 @@ class TestHSSFAnchor {
         EscherChildAnchorRecord escher = (EscherChildAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
         anchor.setAnchor(11, 12, 13, 14);
 
-        assertEquals(anchor.getDx1(), 11);
-        assertEquals(escher.getDx1(), 11);
-        assertEquals(anchor.getDx2(), 13);
-        assertEquals(escher.getDx2(), 13);
-        assertEquals(anchor.getDy1(), 12);
-        assertEquals(escher.getDy1(), 12);
-        assertEquals(anchor.getDy2(), 14);
-        assertEquals(escher.getDy2(), 14);
+        assertEquals(11, anchor.getDx1());
+        assertEquals(11, escher.getDx1());
+        assertEquals(13, anchor.getDx2());
+        assertEquals(13, escher.getDx2());
+        assertEquals(12, anchor.getDy1());
+        assertEquals(12, escher.getDy1());
+        assertEquals(14, anchor.getDy2());
+        assertEquals(14, escher.getDy2());
 
         anchor.setDx1(115);
-        assertEquals(anchor.getDx1(), 115);
-        assertEquals(escher.getDx1(), 115);
+        assertEquals(115, anchor.getDx1());
+        assertEquals(115, escher.getDx1());
         anchor.setDx2(116);
-        assertEquals(anchor.getDx2(), 116);
-        assertEquals(escher.getDx2(), 116);
+        assertEquals(116, anchor.getDx2());
+        assertEquals(116, escher.getDx2());
         anchor.setDy1(117);
-        assertEquals(anchor.getDy1(), 117);
-        assertEquals(escher.getDy1(), 117);
+        assertEquals(117, anchor.getDy1());
+        assertEquals(117, escher.getDy1());
         anchor.setDy2(118);
-        assertEquals(anchor.getDy2(), 118);
-        assertEquals(escher.getDy2(), 118);
+        assertEquals(118, anchor.getDy2());
+        assertEquals(118, escher.getDy2());
     }
 
     @Test
@@ -317,10 +325,8 @@ class TestHSSFAnchor {
     @Test
     void testPassIncompatibleTypeIsFalse(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
-        assertNotSame(clientAnchor, "wrongType");
-
         HSSFChildAnchor childAnchor = new HSSFChildAnchor(0, 1, 2, 3);
-        assertNotSame(childAnchor, "wrongType");
+        assertNotEquals(clientAnchor, childAnchor);
     }
 
     @Test
@@ -427,33 +433,33 @@ class TestHSSFAnchor {
         HSSFChildAnchor child = new HSSFChildAnchor(2,2,1,1);
         assertTrue(child.isHorizontallyFlipped());
         assertTrue(child.isVerticallyFlipped());
-        assertEquals(child.getDx1(), 1);
-        assertEquals(child.getDx2(), 2);
-        assertEquals(child.getDy1(), 1);
-        assertEquals(child.getDy2(), 2);
+        assertEquals(1, child.getDx1());
+        assertEquals(2, child.getDx2());
+        assertEquals(1, child.getDy1());
+        assertEquals(2, child.getDy2());
 
         child = new HSSFChildAnchor(3,3,4,4);
         assertFalse(child.isHorizontallyFlipped());
         assertFalse(child.isVerticallyFlipped());
-        assertEquals(child.getDx1(), 3);
-        assertEquals(child.getDx2(), 4);
-        assertEquals(child.getDy1(), 3);
-        assertEquals(child.getDy2(), 4);
+        assertEquals(3, child.getDx1());
+        assertEquals(4, child.getDx2());
+        assertEquals(3, child.getDy1());
+        assertEquals(4, child.getDy2());
 
         HSSFClientAnchor client = new HSSFClientAnchor(1,1,1,1, (short)4,4,(short)3,3);
         assertTrue(client.isVerticallyFlipped());
         assertTrue(client.isHorizontallyFlipped());
-        assertEquals(client.getCol1(), 3);
-        assertEquals(client.getCol2(), 4);
-        assertEquals(client.getRow1(), 3);
-        assertEquals(client.getRow2(), 4);
+        assertEquals(3, client.getCol1());
+        assertEquals(4, client.getCol2());
+        assertEquals(3, client.getRow1());
+        assertEquals(4, client.getRow2());
 
         client = new HSSFClientAnchor(1,1,1,1, (short)5,5,(short)6,6);
         assertFalse(client.isVerticallyFlipped());
         assertFalse(client.isHorizontallyFlipped());
-        assertEquals(client.getCol1(), 5);
-        assertEquals(client.getCol2(), 6);
-        assertEquals(client.getRow1(), 5);
-        assertEquals(client.getRow2(), 6);
+        assertEquals(5, client.getCol1());
+        assertEquals(6, client.getCol2());
+        assertEquals(5, client.getRow1());
+        assertEquals(6, client.getRow2());
     }
 }
