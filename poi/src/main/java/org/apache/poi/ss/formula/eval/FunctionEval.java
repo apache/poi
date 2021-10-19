@@ -281,7 +281,7 @@ public final class FunctionEval {
         retval[298] = NumericFunction.ODD;
         // 299: PERMUT
         retval[300] = NumericFunction.POISSON;
-        // 301: TDIST
+        retval[301] = TDist.instance;
         // 302: WEIBULL
         retval[303] = new Sumxmy2();
         retval[304] = new Sumx2my2();
