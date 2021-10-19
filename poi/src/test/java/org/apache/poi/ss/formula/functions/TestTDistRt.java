@@ -35,36 +35,33 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link TDist}
+ * Tests for {@link TDistRt}
  */
-final class TestTDist {
+final class TestTDistRt {
 
     private static final OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
     @Test
     void testBasic() {
-        confirmValue("5.968191467", "8", "1", 0.00016754180265310392);
-        confirmValue("5.968191467", "8", "2", 0.00033508360530620784);
-        confirmValue("5.968191467", "8.2", "2.2", 0.00033508360530620784);
-        confirmValue("5.968191467", "8.9", "2.9", 0.00033508360530620784);
+        confirmValue("5.968191467", "8", 0.00016754180265310392);
+        confirmValue("5.968191467", "8.2", 0.00016754180265310392);
+        confirmValue("5.968191467", "8.9", 0.00016754180265310392);
+        confirmValue("-5.968191467", "8", 0.00016754180265310392);
     }
 
     @Test
     void testInvalid() {
-        confirmInvalidError("A1","B2","C2");
-        confirmInvalidError("5.968191467","8","C2");
-        confirmInvalidError("5.968191467","B2","2");
-        confirmInvalidError("A1","8","2");
+        confirmInvalidError("A1","B2");
+        confirmInvalidError("5.968191467","B2");
+        confirmInvalidError("A1","8");
     }
 
     @Test
     void testNumError() {
-        confirmNumError("5.968191467", "8", "0");
-        confirmNumError("-5.968191467", "8", "2");
-        confirmNumError("5.968191467", "-8", "2");
+        confirmNumError("-5.968191467", "-8");
     }
 
-    //https://support.microsoft.com/en-us/office/tdist-function-630a7695-4021-4853-9468-4a1f9dcdd192
+    //https://support.microsoft.com/en-us/office/t-dist-rt-function-20a30020-86f9-4b35-af1f-7ef6ae683eda
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -74,30 +71,30 @@ final class TestTDist {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "TDIST(A2,A3,2)", 0.054644930, 0.01);
-            assertDouble(fe, cell, "TDIST(A2,A3,1)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "TDIST.RT(A2,A3)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "TDIST.RT(-A2,A3)", 0.027322465, 0.01);
         }
     }
 
-    private static ValueEval invokeValue(String number1, String number2, String number3) {
-        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), new StringEval(number3)};
-        return TDist.instance.evaluate(args, ec);
+    private static ValueEval invokeValue(String number1, String number2) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2) };
+        return TDistRt.instance.evaluate(args, ec);
     }
 
-    private static void confirmValue(String number1, String number2, String number3, double expected) {
-        ValueEval result = invokeValue(number1, number2, number3);
+    private static void confirmValue(String number1, String number2, double expected) {
+        ValueEval result = invokeValue(number1, number2);
         assertEquals(NumberEval.class, result.getClass());
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0);
     }
 
-    private static void confirmInvalidError(String number1, String number2, String number3) {
-        ValueEval result = invokeValue(number1, number2, number3);
+    private static void confirmInvalidError(String number1, String number2) {
+        ValueEval result = invokeValue(number1, number2);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
-    private static void confirmNumError(String number1, String number2, String number3) {
-        ValueEval result = invokeValue(number1, number2, number3);
+    private static void confirmNumError(String number1, String number2) {
+        ValueEval result = invokeValue(number1, number2);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.NUM_ERROR, result);
     }
