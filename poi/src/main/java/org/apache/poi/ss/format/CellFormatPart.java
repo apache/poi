@@ -108,7 +108,7 @@ public class CellFormatPart {
                 "  \\s*(-?[0-9]+(?:\\.[0-9]*)?)\\s*  # The constant to test against\n";
 
         // A currency symbol / string, in a specific locale
-        String currency = "(\\[\\$.{0,3}-[0-9a-f]{3}\\])";
+        String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?\\])";
 
         String color =
                 "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)\\]";
@@ -307,6 +307,9 @@ public class CellFormatPart {
             if (currencyPart.startsWith("[$-")) {
                 // Default $ in a different locale
                 currencyRepl = "$";
+            } else if (!currencyPart.contains("-")) {
+                // Accounting formats such as USD [$USD]
+                currencyRepl = currencyPart.substring(2, currencyPart.indexOf("]"));
             } else {
                 currencyRepl = currencyPart.substring(2, currencyPart.lastIndexOf('-'));
             }

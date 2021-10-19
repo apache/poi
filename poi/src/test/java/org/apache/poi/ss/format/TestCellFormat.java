@@ -940,11 +940,19 @@ class TestCellFormat {
         // French style accounting, euro sign comes after not before
         String formatFR  = "_-#,##0* [$"+euro+"-40C]_-;\\-#,##0* [$"+euro+"-40C]_-;_-\"-\"??* [$"+euro+"-40C] _-;_-@_-";
 
+        // R English (South Africa) style accounting, R currency symbol and 4-digit locale specifier
+        String formatSA = "_-[$R-1C09]* #,##0_-;\\-[$R-1C09]* #,##0_-;_-[$R-1C09]* \"-\"??_-;_-@_-";
+        // USD style accounting, USD currency symbol without -xxx or -xxxx locale specifier
+        String formatUSD = "_([$USD]\\ * #,##0_);_([$USD]\\ * \\(#,##0\\);_([$USD]\\ * \"-\"??_);_(@_)";
+
         // Has +ve, -ve and zero rules
         CellFormat cfDft = CellFormat.getInstance(formatDft);
         CellFormat cfUS  = CellFormat.getInstance(formatUS);
         CellFormat cfUK  = CellFormat.getInstance(formatUK);
         CellFormat cfFR  = CellFormat.getInstance(formatFR);
+
+        CellFormat cfSA  = CellFormat.getInstance(formatSA);
+        CellFormat cfUSD = CellFormat.getInstance(formatUSD);
 
         // For +ve numbers, should be Space + currency symbol + spaces + whole number with commas + space
         // (Except French, which is mostly reversed...)
@@ -953,10 +961,16 @@ class TestCellFormat {
         assertEquals(" "+pound+"   12 ", cfUK.apply(12.33).text);
         assertEquals(" 12   "+euro+" ", cfFR.apply(12.33).text);
 
+        assertEquals(" R   12 ", cfSA.apply(Double.valueOf(12.33)).text);
+        assertEquals(" USD    12 ", cfUSD.apply(Double.valueOf(12.33)).text);
+
         assertEquals(" $   16,789 ", cfDft.apply(16789.2).text);
         assertEquals(" $   16,789 ",  cfUS.apply(16789.2).text);
         assertEquals(" "+pound+"   16,789 ", cfUK.apply(16789.2).text);
         assertEquals(" 16,789   "+euro+" ", cfFR.apply(16789.2).text);
+
+        assertEquals(" R   16,789 ", cfSA.apply(Double.valueOf(16789.2)).text);
+        assertEquals(" USD    16,789 ", cfUSD.apply(Double.valueOf(16789.2)).text);
 
         // For -ve numbers, gets a bit more complicated...
         assertEquals("-$   12 ", cfDft.apply(-12.33).text);
@@ -964,10 +978,16 @@ class TestCellFormat {
         assertEquals("-"+pound+"   12 ", cfUK.apply(-12.33).text);
         assertEquals("-12   "+euro+" ", cfFR.apply(-12.33).text);
 
+        assertEquals("-R   12 ", cfSA.apply(Double.valueOf(-12.33)).text);
+        assertEquals(" USD    (12)", cfUSD.apply(Double.valueOf(-12.33)).text);
+
         assertEquals("-$   16,789 ", cfDft.apply(-16789.2).text);
         assertEquals(" $   -16,789 ",  cfUS.apply(-16789.2).text);
         assertEquals("-"+pound+"   16,789 ", cfUK.apply(-16789.2).text);
         assertEquals("-16,789   "+euro+" ", cfFR.apply(-16789.2).text);
+
+        assertEquals("-R   16,789 ", cfSA.apply(Double.valueOf(-16789.2)).text);
+        assertEquals(" USD    (16,789)", cfUSD.apply(Double.valueOf(-16789.2)).text);
 
         // For zero, should be Space + currency symbol + spaces + Minus + spaces
         assertEquals(" $   - ", cfDft.apply((double) 0).text);
