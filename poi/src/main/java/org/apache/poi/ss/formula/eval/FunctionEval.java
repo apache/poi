@@ -242,7 +242,6 @@ public final class FunctionEval {
         // 244: INFO
 
         // 247: DB
-        // 252: FEQUENCY
         retval[252] = Frequency.instance;
 
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
@@ -258,7 +257,7 @@ public final class FunctionEval {
         // 275: CHIINV
         retval[276] = NumericFunction.COMBIN;
         // 277: CONFIDENCE
-        // 278:CRITBINOM
+        // 278: CRITBINOM
         retval[279] = NumericFunction.EVEN;
         // 280: EXPONDIST
         // 281: FDIST
