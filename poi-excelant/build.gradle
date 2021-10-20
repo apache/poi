@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.11'
+    api 'org.apache.ant:ant:1.10.12'
 
     api project(':poi-ooxml')
     compileOnly project(path: ':poi-ooxml', configuration: 'archives')
