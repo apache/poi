@@ -304,6 +304,7 @@ test {
     doFirst {
         jvmArgs += [
             "-Xverify:all",
+            "-XX:ErrorFile=../build/hs_err_pid%p.log",
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}"
         ]
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
