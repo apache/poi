@@ -35,13 +35,6 @@ sourceSets {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven {
-      url "https://dist.apache.org/repos/dist/release/poi/xmlbeans/dev/maven"
-    }
-}
-
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 //    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
