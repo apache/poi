@@ -185,13 +185,13 @@ final class TestHSSFPicture extends BaseTestPicture {
 
             EscherBSERecord bse = wb.getWorkbook().getBSERecord(idx1);
 
-            assertEquals(bse.getRef(), 1);
+            assertEquals(1, bse.getRef());
             dr.createPicture(new HSSFClientAnchor(), idx1);
-            assertEquals(bse.getRef(), 2);
+            assertEquals(2, bse.getRef());
 
             HSSFShapeGroup gr = dr.createGroup(new HSSFClientAnchor());
             gr.createPicture(new HSSFChildAnchor(), idx1);
-            assertEquals(bse.getRef(), 3);
+            assertEquals(3, bse.getRef());
         }
     }
 
@@ -203,7 +203,7 @@ final class TestHSSFPicture extends BaseTestPicture {
             assertEquals(1, drawing.getChildren().size());
 
             HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
-            assertEquals(picture.getFileName(), "test");
+            assertEquals("test", picture.getFileName());
         }
     }
 
@@ -221,16 +221,16 @@ final class TestHSSFPicture extends BaseTestPicture {
             int idx1 = wb1.addPicture(data1, Workbook.PICTURE_TYPE_JPEG);
             HSSFPicture p1 = dr.createPicture(anchor, idx1);
 
-            assertEquals(p1.getFileName(), "");
+            assertEquals("", p1.getFileName());
             p1.setFileName("aaa");
-            assertEquals(p1.getFileName(), "aaa");
+            assertEquals("aaa", p1.getFileName());
 
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
                 sh = wb2.getSheet("Pictures");
                 dr = sh.getDrawingPatriarch();
 
                 p1 = (HSSFPicture) dr.getChildren().get(0);
-                assertEquals(p1.getFileName(), "aaa");
+                assertEquals("aaa", p1.getFileName());
             }
         }
     }

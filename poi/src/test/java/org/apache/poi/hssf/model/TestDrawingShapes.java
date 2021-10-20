@@ -228,7 +228,7 @@ class TestDrawingShapes {
                     assertEquals(1, drawing.getChildren().size());
                     rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
                     assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
-                    assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_BY_POINTS);
+                    assertEquals(HSSFSimpleShape.WRAP_BY_POINTS, rectangle.getWrapText());
                     assertEquals(77, rectangle2.getLineWidth());
                     assertEquals(9, rectangle2.getLineStyle());
                     assertEquals(4444, rectangle2.getLineStyleColor());

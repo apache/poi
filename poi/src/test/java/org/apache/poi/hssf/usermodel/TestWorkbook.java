@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -66,7 +67,7 @@ final class TestWorkbook {
      * SUCCESS:    HSSF creates a sheet.  Filesize matches a known good.  HSSFSheet objects
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
-     *             HSSFSheet last row or first row is incorrect.             <P>
+     *             HSSFSheet last row or first row is incorrect.
      */
     @Test
     void testWriteSheetSimple() throws IOException {
@@ -95,7 +96,7 @@ final class TestWorkbook {
      * SUCCESS:    HSSF creates a sheet.  Filesize matches a known good.  HSSFSheet objects
      *             Last row, first row is tested against the correct values (74,25).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
-     *             HSSFSheet last row or first row is incorrect.             <P>
+     *             HSSFSheet last row or first row is incorrect.
      */
     @Test
     void testWriteModifySheetSimple() throws IOException {
@@ -133,7 +134,7 @@ final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet (Simple.xls).<P>
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions.<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
-     *             in the sheet in their known positions.<P>
+     *             in the sheet in their known positions.
      */
     @Test
     void testReadSimple() throws IOException {
@@ -150,7 +151,7 @@ final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet (SimpleWithDataFormat.xls).<P>
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
-     *             in the sheet in their known positions.<P>
+     *             in the sheet in their known positions.
      */
     @Test
     void testReadSimpleWithDataFormat() throws IOException {
@@ -161,7 +162,7 @@ final class TestWorkbook {
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
-        assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
+        assertEquals("0.0", format.getFormat(cell.getCellStyle().getDataFormat()));
 
         wb.close();
     }
@@ -171,7 +172,7 @@ final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can write a sheet with custom data formats and then read it and get the proper formats.<P>
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
-     *             in the sheet in their known positions.<P>
+     *             in the sheet in their known positions.
      */
     @Test
     void testWriteDataFormat() throws IOException {
@@ -196,9 +197,9 @@ final class TestWorkbook {
 
         assertEquals(1.25, c2.getNumericCellValue(), 1e-10);
 
-        assertEquals(format.getFormat(df), "0.0");
+        assertEquals("0.0", format.getFormat(df));
 
-        assertEquals(format, wb2.createDataFormat());
+        assertSame(format, wb2.createDataFormat());
 
         wb2.close();
         wb1.close();
@@ -209,7 +210,7 @@ final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet (Employee.xls).<P>
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions.<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
-     *             in the sheet in their known positions.<P>
+     *             in the sheet in their known positions.
      *
      */
     @Test
@@ -234,7 +235,7 @@ final class TestWorkbook {
      *             has been properly replaced.    <P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
-     *             is incorrect or has not been replaced. <P>
+     *             is incorrect or has not been replaced.
      */
     @Test
     void testModifySimple() throws IOException {
@@ -263,7 +264,7 @@ final class TestWorkbook {
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced or the incorrect cell has its value replaced
-     *             or is incorrect. <P>
+     *             or is incorrect.
      */
     @Test
     void testModifySimpleWithSkip() throws IOException {
@@ -301,7 +302,7 @@ final class TestWorkbook {
      *             has been properly replaced.    <P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
-     *             is incorrect or has not been replaced. <P>
+     *             is incorrect or has not been replaced.
      */
     @Test
     void testModifySimpleWithStyling() throws IOException {
@@ -334,7 +335,7 @@ final class TestWorkbook {
      *             has been properly replaced.    <P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
-     *             is incorrect or has not been replaced. <P>
+     *             is incorrect or has not been replaced.
      */
     @Test
     void testModifyEmployee() throws IOException {
@@ -364,7 +365,7 @@ final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet with and RKRecord and correctly
      *             identify the cell as numeric and convert it to a NumberRecord.  <P>
      * SUCCESS:    HSSF reads a sheet.  HSSF returns that the cell is a numeric type cell.    <P>
-     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly identifies the cell<P>
+     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly identifies the cell
      */
     @Test
     void testReadSheetWithRK() throws IOException {
@@ -384,7 +385,7 @@ final class TestWorkbook {
      * SUCCESS:    HSSF creates a sheet.  Filesize matches a known good.  HSSFSheet objects
      *             Last row, first row is tested against the correct values (74,25).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
-     *             HSSFSheet last row or first row is incorrect.             <P>
+     *             HSSFSheet last row or first row is incorrect.
      */
     @Test
     void testWriteModifySheetMerged() throws IOException {

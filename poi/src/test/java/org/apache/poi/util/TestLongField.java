@@ -19,7 +19,6 @@ package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -96,16 +95,12 @@ final class TestLongField {
 
     @Test
     void testReadFromBytes() {
-        LongField field = new LongField(1);
+        LongField field1 = new LongField(1);
         byte[]    array = new byte[ 8 ];
 
-        try {
-            field.readFromBytes(array);
-            fail("should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        field = new LongField(0);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> field1.readFromBytes(array));
+
+        LongField field2 = new LongField(0);
         for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = ( byte ) (_test_array[ j ] % 256);
             array[ 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
@@ -115,8 +110,8 @@ final class TestLongField {
             array[ 5 ] = ( byte ) ((_test_array[ j ] >> 40) % 256);
             array[ 6 ] = ( byte ) ((_test_array[ j ] >> 48) % 256);
             array[ 7 ] = ( byte ) ((_test_array[ j ] >> 56) % 256);
-            field.readFromBytes(array);
-            assertEquals(_test_array[ j ], field.get(), "testing " + j);
+            field2.readFromBytes(array);
+            assertEquals(_test_array[ j ], field2.get(), "testing " + j);
         }
     }
 

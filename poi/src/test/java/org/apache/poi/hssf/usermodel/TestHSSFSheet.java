@@ -523,8 +523,8 @@ final class TestHSSFSheet extends BaseTestSheet {
     void dbcsName () throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DBCSSheetName.xls")) {
             wb.getSheetAt(1);
-            assertEquals(wb.getSheetName(1), "\u090f\u0915", "DBCS Sheet Name 2");
-            assertEquals(wb.getSheetName(0), "\u091c\u093e", "DBCS Sheet Name 1");
+            assertEquals("\u090f\u0915", wb.getSheetName(1), "DBCS Sheet Name 2");
+            assertEquals("\u091c\u093e", wb.getSheetName(0), "DBCS Sheet Name 1");
         }
     }
 
@@ -781,7 +781,7 @@ final class TestHSSFSheet extends BaseTestSheet {
 
             assertNotEquals((short) 0, row.getHeight(), "Identified bug 41187 b");
 
-            assertEquals(row.getCell(0).getRichStringCellValue().getString(), "Hi Excel!");
+            assertEquals("Hi Excel!", row.getCell(0).getRichStringCellValue().getString());
             // check row height for 'default' flag
             assertEquals((short) 0xFF, row.getHeight());
 
@@ -936,7 +936,7 @@ final class TestHSSFSheet extends BaseTestSheet {
             HSSFPatriarch dr = sh.getDrawingPatriarch();
             assertNotNull(dr);
             HSSFSimpleShape comboBoxShape = (HSSFSimpleShape) dr.getChildren().get(0);
-            assertEquals(comboBoxShape.getShapeType(), HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
+            assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX, comboBoxShape.getShapeType());
 
             assertNull(ish.findFirstRecordBySid(ObjRecord.sid)); // ObjRecord will appear after serializetion
 

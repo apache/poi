@@ -19,7 +19,7 @@
 package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,41 +37,24 @@ final class TestByteField {
 
     @Test
     void testConstructors() {
-        try {
-            new ByteField(-1);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new ByteField(-1));
         ByteField field = new ByteField(2);
 
         assertEquals(( byte ) 0, field.get());
-        try {
-            new ByteField(-1, ( byte ) 1);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new ByteField(-1, (byte)1));
+
         field = new ByteField(2, ( byte ) 3);
         assertEquals(( byte ) 3, field.get());
-        byte[] array = new byte[ 3 ];
 
-        try {
-            new ByteField(-1, ( byte ) 1, array);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new ByteField(-1, (byte)1, new byte[3]));
+
+        byte[] array = new byte[ 3 ];
         field = new ByteField(2, ( byte ) 4, array);
         assertEquals(( byte ) 4, field.get());
         assertEquals(( byte ) 4, array[ 2 ]);
-        array = new byte[ 2 ];
-        try {
-            new ByteField(2, ( byte ) 5, array);
-            fail("should have gotten ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new ByteField(2, (byte)5, new byte[2]));
+
         for (byte b : _test_array) {
             array = new byte[ 1 ];
             new ByteField(0, b, array);
@@ -96,20 +79,16 @@ final class TestByteField {
 
     @Test
     void testReadFromBytes() {
-        ByteField field = new ByteField(1);
+        ByteField field1 = new ByteField(1);
         byte[]    array = new byte[ 1 ];
 
-        try {
-            field.readFromBytes(array);
-            fail("should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        field = new ByteField(0);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> field1.readFromBytes(array));
+
+        ByteField field2 = new ByteField(0);
         for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = _test_array[ j ];
-            field.readFromBytes(array);
-            assertEquals(_test_array[ j ], field.get(), "testing " + j);
+            field2.readFromBytes(array);
+            assertEquals(_test_array[ j ], field2.get(), "testing " + j);
         }
     }
 

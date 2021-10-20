@@ -70,11 +70,11 @@ public abstract class BaseTestSheetShiftRows {
                 // row (in original file each row was unique)
                 s = wb2.getSheetAt(0);
 
-                assertEquals(s.getRow(0).getPhysicalNumberOfCells(), 1);
+                assertEquals(1, s.getRow(0).getPhysicalNumberOfCells());
                 confirmEmptyRow(s, 1);
-                assertEquals(s.getRow(2).getPhysicalNumberOfCells(), 2);
-                assertEquals(s.getRow(3).getPhysicalNumberOfCells(), 4);
-                assertEquals(s.getRow(4).getPhysicalNumberOfCells(), 5);
+                assertEquals(2, s.getRow(2).getPhysicalNumberOfCells());
+                assertEquals(4, s.getRow(3).getPhysicalNumberOfCells());
+                assertEquals(5, s.getRow(4).getPhysicalNumberOfCells());
 
                 // Shift rows 1-3 down 3 in the current one.  This tests when
                 // 1 row is blank.  Write to a another temp file
@@ -85,9 +85,9 @@ public abstract class BaseTestSheetShiftRows {
                     confirmEmptyRow(s, 0);
                     confirmEmptyRow(s, 1);
                     confirmEmptyRow(s, 2);
-                    assertEquals(s.getRow(3).getPhysicalNumberOfCells(), 1);
+                    assertEquals(1, s.getRow(3).getPhysicalNumberOfCells());
                     confirmEmptyRow(s, 4);
-                    assertEquals(s.getRow(5).getPhysicalNumberOfCells(), 2);
+                    assertEquals(2, s.getRow(5).getPhysicalNumberOfCells());
                 }
             }
         }
@@ -100,11 +100,11 @@ public abstract class BaseTestSheetShiftRows {
             s.shiftRows(2, 3, -2);
             try (Workbook wb5 = _testDataProvider.writeOutAndReadBack(wb4)) {
                 s = wb5.getSheetAt(0);
-                assertEquals(s.getRow(0).getPhysicalNumberOfCells(), 3);
-                assertEquals(s.getRow(1).getPhysicalNumberOfCells(), 4);
+                assertEquals(3, s.getRow(0).getPhysicalNumberOfCells());
+                assertEquals(4, s.getRow(1).getPhysicalNumberOfCells());
                 confirmEmptyRow(s, 2);
                 confirmEmptyRow(s, 3);
-                assertEquals(s.getRow(4).getPhysicalNumberOfCells(), 5);
+                assertEquals(5, s.getRow(4).getPhysicalNumberOfCells());
             }
         }
     }
@@ -157,11 +157,11 @@ public abstract class BaseTestSheetShiftRows {
             assertNotNull(sheet.getCellComment(new CellAddress(3, 0)));
 
             String comment1 = sheet.getCellComment(new CellAddress(0, 0)).getString().getString();
-            assertEquals(comment1, "comment top row1 (index0)\n");
+            assertEquals("comment top row1 (index0)\n", comment1);
             String comment3 = sheet.getCellComment(new CellAddress(2, 0)).getString().getString();
-            assertEquals(comment3, "comment top row3 (index2)\n");
+            assertEquals("comment top row3 (index2)\n", comment3);
             String comment4 = sheet.getCellComment(new CellAddress(3, 0)).getString().getString();
-            assertEquals(comment4, "comment top row4 (index3)\n");
+            assertEquals("comment top row4 (index3)\n", comment4);
 
             //Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
 
@@ -220,9 +220,9 @@ public abstract class BaseTestSheetShiftRows {
                 }
 
                 comment1 = sheet.getCellComment(new CellAddress(1, 0)).getString().getString();
-                assertEquals(comment1, "comment top row3 (index2)\n");
+                assertEquals("comment top row3 (index2)\n", comment1);
                 String comment2 = sheet.getCellComment(new CellAddress(2, 0)).getString().getString();
-                assertEquals(comment2, "comment top row4 (index3)\n");
+                assertEquals("comment top row4 (index3)\n", comment2);
             }
         }
     }

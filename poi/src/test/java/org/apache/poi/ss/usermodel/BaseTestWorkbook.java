@@ -571,15 +571,15 @@ public abstract class BaseTestWorkbook {
 
                 //Test the header
                 h = s.getHeader();
-                assertEquals(h.getCenter(), "\u20ac");
-                assertEquals(h.getLeft(), "\u20ac");
-                assertEquals(h.getRight(), "\u20ac");
+                assertEquals("\u20ac", h.getCenter());
+                assertEquals("\u20ac", h.getLeft());
+                assertEquals("\u20ac", h.getRight());
 
                 //Test the footer
                 f = s.getFooter();
-                assertEquals(f.getCenter(), "\u20ac");
-                assertEquals(f.getLeft(), "\u20ac");
-                assertEquals(f.getRight(), "\u20ac");
+                assertEquals("\u20ac", f.getCenter());
+                assertEquals("\u20ac", f.getLeft());
+                assertEquals("\u20ac", f.getRight());
 
                 //Test the dataformat
                 r = s.getRow(0);
@@ -590,7 +590,7 @@ public abstract class BaseTestWorkbook {
                 //Test the cell string value
                 /*c2 =*/
                 r.getCell(2);
-                assertEquals(c.getRichStringCellValue().getString(), "\u20ac");
+                assertEquals("\u20ac", c.getRichStringCellValue().getString());
 
                 //Test the cell formula
                 c3 = r.getCell(3);
@@ -782,8 +782,8 @@ public abstract class BaseTestWorkbook {
     @Test
     void windowOneDefaults() throws IOException {
         try (Workbook b = _testDataProvider.createWorkbook()) {
-            assertEquals(b.getActiveSheetIndex(), 0);
-            assertEquals(b.getFirstVisibleTab(), 0);
+            assertEquals(0, b.getActiveSheetIndex());
+            assertEquals(0, b.getFirstVisibleTab());
             // throws NullPointerException when WindowOneRecord in Workbook is not probably initialized
         }
     }

@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  */
 final class TestSheetBuilder {
 
-    private static Object[][] testData = new Object[][]{
+    private static final Object[][] testData = {
             {1, 2, 3},
             {new Date(), null, null},
             {"one", "two", "=A1+B2"}
@@ -50,12 +50,12 @@ final class TestSheetBuilder {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = new SheetBuilder(wb, testData).build();
 
-            assertEquals(sheet.getPhysicalNumberOfRows(), 3);
+            assertEquals(3, sheet.getPhysicalNumberOfRows());
 
             Row firstRow = sheet.getRow(0);
             Cell firstCell = firstRow.getCell(0);
 
-            assertEquals(firstCell.getCellType(), CellType.NUMERIC);
+            assertEquals(CellType.NUMERIC, firstCell.getCellType());
             assertEquals(1.0, firstCell.getNumericCellValue(), 0.00001);
 
 

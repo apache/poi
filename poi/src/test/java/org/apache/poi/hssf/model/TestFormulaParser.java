@@ -17,15 +17,8 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.apache.poi.hssf.model.HSSFFormulaParser.parse;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -64,7 +57,7 @@ final class TestFormulaParser {
      * @return parsed token array already confirmed not {@code null}
      */
     /* package */ static Ptg[] parseFormula(String formula) {
-        Ptg[] result = HSSFFormulaParser.parse(formula, null);
+        Ptg[] result = parse(formula, null);
         assertNotNull(result, "Ptg array should not be null");
         return result;
     }
@@ -172,17 +165,6 @@ final class TestFormulaParser {
                 HSSFName yourFunc = wb2.getName("yourFunc");
                 assertNotNull(yourFunc);
                 assertEqualsIgnoreCase("yourFunc", yourFunc.getNameName());
-
-                // Manually check to make sure file isn't corrupted
-                // TODO: develop a process for occasionally manually reviewing workbooks
-                // to verify workbooks are not corrupted
-                /*
-                final File fileIn = HSSFTestDataSamples.getSampleFile(testFile);
-                final File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
-                FileOutputStream fos = new FileOutputStream(reSavedFile);
-                wb2.write(fos);
-                fos.close();
-                */
             }
         }
     }
@@ -910,7 +892,7 @@ final class TestFormulaParser {
 
     private static void confirmArgCountMsg(String formula, String expectedMessage) throws IOException {
         try (HSSFWorkbook book = new HSSFWorkbook()) {
-            FormulaParseException e = assertThrows(FormulaParseException.class, () -> HSSFFormulaParser.parse(formula, book));
+            FormulaParseException e = assertThrows(FormulaParseException.class, () -> parse(formula, book));
             confirmParseException(e, expectedMessage);
         }
     }
@@ -954,7 +936,7 @@ final class TestFormulaParser {
 
             Ptg[] ptgs;
             try {
-                ptgs = HSSFFormulaParser.parse("count(pfy1)", wb);
+                ptgs = parse("count(pfy1)", wb);
             } catch (IllegalArgumentException e) {
                 if (e.getMessage().equals("Specified colIx (1012) is out of range")) {
                     fail("Identified bug 45354");
@@ -980,12 +962,12 @@ final class TestFormulaParser {
         HSSFWorkbook book = new HSSFWorkbook();
         book.createSheet("Sheet1");
 
-        ptgs = HSSFFormulaParser.parse("Sheet1!A10:A40000", book);
+        ptgs = parse("Sheet1!A10:A40000", book);
         aptg = (AreaI) ptgs[0];
         assertNotEquals(-25537, aptg.getLastRow(), "Identified bug 45358");
         assertEquals(39999, aptg.getLastRow());
 
-        ptgs = HSSFFormulaParser.parse("Sheet1!A10:A65536", book);
+        ptgs = parse("Sheet1!A10:A65536", book);
         aptg = (AreaI) ptgs[0];
         assertEquals(65535, aptg.getLastRow());
 
@@ -1108,11 +1090,11 @@ final class TestFormulaParser {
         confirmSingle3DRef(expectedPtgs, 1);
 
         // now try (re-)parsing the formula
-        Ptg[] actualPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]BSheet1!B1", wbA);
+        Ptg[] actualPtgs = parse("[multibookFormulaB.xls]BSheet1!B1", wbA);
         confirmSingle3DRef(actualPtgs, 1); // externalSheetIndex 1 -> BSheet1
 
         // try parsing a formula pointing to a different external sheet
-        Ptg[] otherPtgs = HSSFFormulaParser.parse("[multibookFormulaB.xls]AnotherSheet!B1", wbA);
+        Ptg[] otherPtgs = parse("[multibookFormulaB.xls]AnotherSheet!B1", wbA);
         confirmSingle3DRef(otherPtgs, 0); // externalSheetIndex 0 -> AnotherSheet
 
         // try setting the same formula in a cell
@@ -1303,17 +1285,12 @@ final class TestFormulaParser {
      */
     @Test
     void testParseAbnormalSheetNamesAndRanges_bug42448() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        wb.createSheet("A");
-        try {
-            HSSFFormulaParser.parse("SUM(A!C7:A!C67)", wb);
-        } catch (StringIndexOutOfBoundsException e) {
-            fail("Identified bug 42448");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("A");
+            assertDoesNotThrow(() -> parse("SUM(A!C7:A!C67)", wb), "Identified bug 42448");
+            // the exact example from the bugzilla description:
+            parse("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69", wb);
         }
-        // the exact example from the bugzilla description:
-        HSSFFormulaParser.parse("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69", wb);
-
-        wb.close();
     }
 
     @Test
@@ -1321,7 +1298,7 @@ final class TestFormulaParser {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Ptg[] ptgs;
             try {
-                ptgs = HSSFFormulaParser.parse("SUM(C1:OFFSET(C1,0,B1))", wb);
+                ptgs = parse("SUM(C1:OFFSET(C1,0,B1))", wb);
             } catch (RuntimeException e) {
                 if (e.getMessage().equals("Specified named range 'OFFSET' does not exist in the current workbook.")) {
                     fail("Identified bug 46951");
@@ -1360,14 +1337,14 @@ final class TestFormulaParser {
 
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
-        ptgs = HSSFFormulaParser.parse("Sheet1!$A:$A,Sheet1!$1:$4", wb);
+        ptgs = parse("Sheet1!$A:$A,Sheet1!$1:$4", wb);
         confirmTokenClasses(ptgs, MemFuncPtg.class,
                 Area3DPtg.class,
                 Area3DPtg.class,
                 UnionPtg.class
         );
 
-        ptgs = HSSFFormulaParser.parse("'Sheet1'!$A:$A,'Sheet1'!$1:$4", wb);
+        ptgs = parse("'Sheet1'!$A:$A,'Sheet1'!$1:$4", wb);
         confirmTokenClasses(ptgs,
                 MemFuncPtg.class,
                 Area3DPtg.class,
@@ -1382,7 +1359,7 @@ final class TestFormulaParser {
     void testExplicitRangeWithTwoSheetNames() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
-        Ptg[] ptgs = HSSFFormulaParser.parse("Sheet1!F1:Sheet1!G2", wb);
+        Ptg[] ptgs = parse("Sheet1!F1:Sheet1!G2", wb);
         confirmTokenClasses(ptgs,
                 MemFuncPtg.class,
                 Ref3DPtg.class,
@@ -1470,7 +1447,7 @@ final class TestFormulaParser {
     }
 
     private static void confirmParseError(HSSFWorkbook wb, String formula, String expectedMessage) {
-        FormulaParseException e = assertThrows(FormulaParseException.class, () -> HSSFFormulaParser.parse(formula, wb));
+        FormulaParseException e = assertThrows(FormulaParseException.class, () -> parse(formula, wb));
         confirmParseException(e, expectedMessage);
     }
 
@@ -1494,7 +1471,7 @@ final class TestFormulaParser {
 
             Ptg[] result;
             try {
-                result = HSSFFormulaParser.parse("1+foo", wb);
+                result = parse("1+foo", wb);
             } catch (FormulaParseException e) {
                 if (e.getMessage().equals("Specified name 'foo' is not a range as expected.")) {
                     fail("Identified bug 47078c");
@@ -1518,13 +1495,13 @@ final class TestFormulaParser {
         String leadingZeroCellRef = "B000001"; // this should get parsed as "B1"
         HSSFWorkbook wb = new HSSFWorkbook();
 
-        FormulaParseException e = assertThrows(FormulaParseException.class, () -> HSSFFormulaParser.parse(badCellRef, wb),
+        FormulaParseException e = assertThrows(FormulaParseException.class, () -> parse(badCellRef, wb),
             "Identified bug 47312b - Shouldn't be able to parse cell ref '" + badCellRef + "'.");
         confirmParseException(e, "Specified named range '" + badCellRef + "' does not exist in the current workbook.");
 
         Ptg[] ptgs;
         try {
-            ptgs = HSSFFormulaParser.parse(leadingZeroCellRef, wb);
+            ptgs = parse(leadingZeroCellRef, wb);
             assertEquals("B1", ptgs[0].toFormulaString());
         } catch (FormulaParseException e2) {
             confirmParseException(e2, "Specified named range '" + leadingZeroCellRef + "' does not exist in the current workbook.");
@@ -1536,7 +1513,7 @@ final class TestFormulaParser {
         Name n = wb.createName();
         n.setNameName("B0");
         n.setRefersToFormula("1+1");
-        ptgs = HSSFFormulaParser.parse("B0", wb);
+        ptgs = parse("B0", wb);
         confirmTokenClasses(ptgs, NamePtg.class);
 
         wb.close();
@@ -1549,7 +1526,7 @@ final class TestFormulaParser {
     @Test
     void test57196_Formula() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        Ptg[] ptgs = HSSFFormulaParser.parse("DEC2HEX(HEX2DEC(O8)-O2+D2)", wb, FormulaType.CELL, -1);
+        Ptg[] ptgs = parse("DEC2HEX(HEX2DEC(O8)-O2+D2)", wb, FormulaType.CELL, -1);
         assertNotNull(ptgs, "Ptg array should not be null");
 
         confirmTokenClasses(ptgs,

@@ -1539,13 +1539,13 @@ public abstract class BaseTestBugzillaIssues {
 
             // Verify that the changes were made
             assertNull(wb.getPrintArea(0), "Sheet0 before write");
-            assertEquals(wb.getPrintArea(1), "Sheet1 before write", "Sheet1!$A$1:$A$1");
+            assertEquals("Sheet1!$A$1:$A$1", wb.getPrintArea(1), "Sheet1 before write");
 
             // Verify that the changes are non-volatile
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
                 // CURRENTLY FAILS with "Sheet0!$A$1:$C$6"
                 assertNull(wb2.getPrintArea(0), "Sheet0 after write");
-                assertEquals(wb2.getPrintArea(1), "Sheet1 after write", "Sheet1!$A$1:$A$1");
+                assertEquals("Sheet1!$A$1:$A$1", wb2.getPrintArea(1), "Sheet1 after write");
             }
         }
     }

@@ -19,8 +19,8 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,15 +43,7 @@ final class TestDocumentOutputStream {
 
         POIFSWriterListener l = (event) -> {
             DocumentOutputStream dstream = event.getStream();
-
-            try {
-                for (byte b : expected) {
-                    dstream.write(b);
-                }
-            } catch (IOException ignored) {
-                fail("stream exhausted too early");
-            }
-
+            assertDoesNotThrow(() -> { for (byte b : expected) dstream.write(b); }, "stream exhausted too early");
             assertThrows(IOException.class, () -> dstream.write(0));
         };
 
@@ -67,13 +59,7 @@ final class TestDocumentOutputStream {
 
         POIFSWriterListener l = (event) -> {
             DocumentOutputStream dstream = event.getStream();
-
-            try {
-                dstream.write(expected);
-            } catch (IOException ignored) {
-                fail("stream exhausted too early");
-            }
-
+            assertDoesNotThrow(() -> dstream.write(expected), "stream exhausted too early");
             assertThrows(IOException.class, () -> dstream.write(new byte[]{'7','7','7','7'}));
         };
 
@@ -90,11 +76,7 @@ final class TestDocumentOutputStream {
 
         POIFSWriterListener l = (event) -> {
             DocumentOutputStream dstream = event.getStream();
-            try {
-                dstream.write(input, 1, 25);
-            } catch (IOException ignored) {
-                fail("stream exhausted too early");
-            }
+            assertDoesNotThrow(() -> dstream.write(input, 1, 25), "stream exhausted too early");
             assertThrows(IOException.class, () -> dstream.write(input, 0, 1));
         };
 

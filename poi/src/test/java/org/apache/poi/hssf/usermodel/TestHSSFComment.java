@@ -288,13 +288,13 @@ final class TestHSSFComment extends BaseTestCellComment {
                 comment = patriarch.createCellComment(new HSSFClientAnchor());
                 comment.setString(new HSSFRichTextString("comment3"));
 
-                assertEquals(patriarch.getChildren().size(), 3);
+                assertEquals(3, patriarch.getChildren().size());
                 try (HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack)) {
                     sh = wbBack2.getSheetAt(0);
                     patriarch = sh.getDrawingPatriarch();
                     comment = (HSSFComment) patriarch.getChildren().get(1);
-                    assertEquals(comment.getBackgroundImageId(), 0);
-                    assertEquals(patriarch.getChildren().size(), 3);
+                    assertEquals(0, comment.getBackgroundImageId());
+                    assertEquals(3, patriarch.getChildren().size());
                     assertEquals("comment1", ((HSSFComment) patriarch.getChildren().get(0)).getString().getString());
                     assertEquals("comment2", ((HSSFComment) patriarch.getChildren().get(1)).getString().getString());
                     assertEquals("comment3", ((HSSFComment) patriarch.getChildren().get(2)).getString().getString());

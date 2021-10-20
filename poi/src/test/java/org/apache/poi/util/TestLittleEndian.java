@@ -17,6 +17,7 @@
 
 package org.apache.poi.util;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,9 +77,9 @@ final class TestLittleEndian {
         byte[] testdata3 = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
         LittleEndian.putUShort(testdata3, 0, expected2);
         LittleEndian.putUShort(testdata3, 1, expected3);
-        assertEquals(testdata3[0], 0x0D);
-        assertEquals(testdata3[1], (byte)0x93);
-        assertEquals(testdata3[2], (byte)0xFF);
+        assertEquals(0x0D, testdata3[0]);
+        assertEquals((byte)0x93, testdata3[1]);
+        assertEquals((byte)0xFF, testdata3[2]);
         assertEquals(expected2, LittleEndian.getUShort(testdata3));
         assertEquals(expected3, LittleEndian.getUShort(testdata3, 1));
 
@@ -107,9 +108,7 @@ final class TestLittleEndian {
         double nan = LittleEndian.getDouble(_nan_double_array, 0);
         byte[] data = new byte[8];
         LittleEndian.putDouble(data, 0, nan);
-        for ( int i = 0; i < data.length; i++ ) {
-            assertEquals(data[i], _nan_double_array[i]);
-        }
+        assertArrayEquals(data, _nan_double_array);
     }
 
     /**

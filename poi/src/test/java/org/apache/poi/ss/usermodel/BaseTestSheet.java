@@ -184,7 +184,7 @@ public abstract class BaseTestSheet {
             Row clonedRow = clonedSheet.getRow(0);
 
             //Check for a good clone
-            assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
+            assertEquals("clone_test", clonedRow.getCell(0).getRichStringCellValue().getString());
 
             //Check that the cells are not somehow linked
             cell.setCellValue(factory.createRichTextString("Difference Check"));
@@ -195,8 +195,8 @@ public abstract class BaseTestSheet {
 
             assertNotEquals("COS(2)", clonedRow.getCell(1).getCellFormula(), "formula cell not properly cloned");
 
-            assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
-            assertEquals(clonedRow.getCell(1).getCellFormula(), "SIN(1)");
+            assertEquals("clone_test", clonedRow.getCell(0).getRichStringCellValue().getString());
+            assertEquals("SIN(1)", clonedRow.getCell(1).getCellFormula());
         }
     }
 
@@ -641,9 +641,9 @@ public abstract class BaseTestSheet {
             Sheet s1 = wb.cloneSheet(0);
             r = s1.getRow(0);
             // sanity check
-            assertEquals(r.getCell(0).getNumericCellValue(), 1, 0, "double");
+            assertEquals(1, r.getCell(0).getNumericCellValue(), 0, "double");
             assertNotNull(r.getCell(1));
-            assertEquals(r.getCell(1).getCellFormula(), "A1*2", "formula");
+            assertEquals("A1*2", r.getCell(1).getCellFormula(), "formula");
         }
     }
 

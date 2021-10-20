@@ -241,7 +241,7 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.555"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertNotEquals(fmtval, "555.555");
+            assertNotEquals("555.555", fmtval);
 
             String fmt = cell.getCellStyle().getDataFormatString();
 
@@ -271,7 +271,7 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.47431"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertNotEquals(fmtval, "555.47431");
+            assertNotEquals("555.47431", fmtval);
 
             // check we found the time properly
             assertTrue(fmtval.contains("11:23"),
@@ -325,10 +325,10 @@ public final class TestHSSFDataFormatter {
         assertEquals("444-55-1234", formatter.formatCellValue(cell));
 
         // null test-- null cell should result in empty String
-        assertEquals(formatter.formatCellValue(null), "");
+        assertEquals("", formatter.formatCellValue(null));
 
         // null test-- null cell should result in empty String
-        assertEquals(formatter.formatCellValue(null), "");
+        assertEquals("", formatter.formatCellValue(null));
     }
 
     @Test

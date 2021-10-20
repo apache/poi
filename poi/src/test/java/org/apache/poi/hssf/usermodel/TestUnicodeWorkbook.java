@@ -44,7 +44,7 @@ final class TestUnicodeWorkbook {
             c.setCellValue(new HSSFRichTextString("\u00e4"));
 
             //Confirm that the sring will be compressed
-            assertEquals(c.getRichStringCellValue().getUnicodeString().getOptionFlags(), 0);
+            assertEquals(0, c.getRichStringCellValue().getUnicodeString().getOptionFlags());
 
             try (HSSFWorkbook wb = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
 
@@ -53,7 +53,7 @@ final class TestUnicodeWorkbook {
                 assertNotNull(s);
 
                 c = r.getCell(1);
-                assertEquals(c.getRichStringCellValue().getString(), "\u00e4");
+                assertEquals("\u00e4", c.getRichStringCellValue().getString());
             }
         }
     }

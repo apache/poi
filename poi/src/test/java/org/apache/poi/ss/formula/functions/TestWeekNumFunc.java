@@ -17,17 +17,21 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.StringUtil;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.StringUtil;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests WEEKNUM(date[, return_type]) excel function
@@ -91,21 +95,15 @@ class TestWeekNumFunc {
         String formula = "WEEKNUM(" + dateValue + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(dateValue) };
         ValueEval result = WeekNum.instance.evaluate(args, DEFAULT_CONTEXT);
-        if (result instanceof NumberEval) {
-            assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
-        } else {
-            fail("unexpected eval result " + result);
-        }
+        assertTrue(result instanceof NumberEval);
+        assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
     }
 
     private void assertEvaluateEquals(double expected, double dateValue, double return_type) {
         String formula = "WEEKNUM(" + dateValue + ", " + return_type + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(dateValue), new NumberEval(return_type) };
         ValueEval result = WeekNum.instance.evaluate(args, DEFAULT_CONTEXT);
-        if (result instanceof NumberEval) {
-            assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
-        } else {
-            fail("unexpected eval result " + result);
-        }
+        assertTrue(result instanceof NumberEval);
+        assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
     }
 }

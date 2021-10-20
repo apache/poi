@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,17 +98,6 @@ final class TestFormulaBugs {
         cell = row.createCell(3); // D5
         cell.setCellFormula("IF(ISNUMBER(b1),b1,b2)");
 
-//      if (false) { // set true to check excel file manually
-//          // bug report mentions 'Editing the formula in excel "fixes" the problem.'
-//          try {
-//              FileOutputStream fileOut = new FileOutputStream("27405output.xls");
-//              wb.write(fileOut);
-//              fileOut.close();
-//          } catch (IOException e) {
-//              throw new RuntimeException(e);
-//          }
-//      }
-
         // use POI's evaluator as an extra sanity check
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         CellValue cv;
@@ -124,7 +113,7 @@ final class TestFormulaBugs {
     }
 
     /**
-     * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p>
+     * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
      */
     @Test
     void test42448() throws IOException {
@@ -142,11 +131,7 @@ final class TestFormulaBugs {
             // re-entered
 
             String inputFormula = "SUMPRODUCT(A!C7:A!C67, B8:B68) / B69"; // as per bug report
-            try {
-                cell.setCellFormula(inputFormula);
-            } catch (StringIndexOutOfBoundsException e) {
-                fail("Identified bug 42448");
-            }
+            assertDoesNotThrow(() -> cell.setCellFormula(inputFormula), "Identified bug 42448");
 
             assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
 

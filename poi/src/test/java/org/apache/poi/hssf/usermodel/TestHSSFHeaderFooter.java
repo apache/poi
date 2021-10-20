@@ -122,9 +122,9 @@ final class TestHSSFHeaderFooter {
             try (HSSFWorkbook b2 = HSSFTestDataSamples.writeOutAndReadBack(b)) {
                 HSSFHeader h2 = b2.getSheet("Test").getHeader();
 
-                assertEquals(h2.getLeft(), "\u0391");
-                assertEquals(h2.getCenter(), "\u0392");
-                assertEquals(h2.getRight(), "\u0393");
+                assertEquals("\u0391", h2.getLeft());
+                assertEquals("\u0392", h2.getCenter());
+                assertEquals("\u0393", h2.getRight());
             }
         }
     }
@@ -144,9 +144,9 @@ final class TestHSSFHeaderFooter {
             try (HSSFWorkbook b2 = HSSFTestDataSamples.writeOutAndReadBack(b)) {
                 HSSFFooter f2 = b2.getSheet("Test").getFooter();
 
-                assertEquals(f2.getLeft(), "\u0391");
-                assertEquals(f2.getCenter(), "\u0392");
-                assertEquals(f2.getRight(), "\u0393");
+                assertEquals("\u0391", f2.getLeft());
+                assertEquals("\u0392", f2.getCenter());
+                assertEquals("\u0393", f2.getRight());
             }
         }
     }
@@ -156,14 +156,14 @@ final class TestHSSFHeaderFooter {
         try (HSSFWorkbook wb = openSampleWorkbook("DBCSHeader.xls")) {
             HSSFSheet s = wb.getSheetAt(0);
             HSSFHeader h = s.getHeader();
-            assertEquals(h.getLeft(), "\u090f\u0915", "Header Left");
-            assertEquals(h.getCenter(), "\u0939\u094b\u0917\u093e", "Header Center");
-            assertEquals(h.getRight(), "\u091c\u093e", "Header Right");
+            assertEquals("\u090f\u0915", h.getLeft(), "Header Left");
+            assertEquals("\u0939\u094b\u0917\u093e", h.getCenter(), "Header Center");
+            assertEquals("\u091c\u093e", h.getRight(), "Header Right");
 
             HSSFFooter f = s.getFooter();
-            assertEquals(f.getLeft(), "\u091c\u093e", "Footer Left");
-            assertEquals(f.getCenter(), "\u091c\u093e", "Footer Center");
-            assertEquals(f.getRight(), "\u091c\u093e", "Footer Right");
+            assertEquals("\u091c\u093e", f.getLeft(), "Footer Left");
+            assertEquals("\u091c\u093e", f.getCenter(), "Footer Center");
+            assertEquals("\u091c\u093e", f.getRight(), "Footer Right");
         }
     }
 

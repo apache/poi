@@ -2035,9 +2035,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // Try to write-out and read again, should only work
             //  in read-write mode, not read-only mode
             try (XSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
-                if (access == PackageAccess.READ) {
-                    fail("Shouln't be able to write from read-only mode");
-                }
+                assertNotEquals(PackageAccess.READ, access, "Shouln't be able to write from read-only mode");
 
                 // Check again
                 s = wb2.getSheetAt(0);
@@ -3552,20 +3550,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFCell v16 = sheet.getRow(15).getCell(21);
             XSSFCell v17 = sheet.getRow(16).getCell(21);
             assertEquals("U15/R15", v15.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
             assertEquals("U16/R16", v16.getCellFormula());
-            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            assertSame(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
             assertEquals("U17/R17", v17.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             int calcChainSize = wb.getCalculationChain().getCTCalcChain().sizeOfCArray();
 
             v15.removeFormula();
             assertEquals(CellType.NUMERIC, v15.getCellType(), "V15 is no longer a function");
             assertNull(v15.getCTCell().getF(), "V15 xmlbeans function removed");
             assertEquals("U16/R16", v16.getCellFormula());
-            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT());
             assertEquals("U17/R17", v17.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             assertEquals(calcChainSize - 1, wb.getCalculationChain().getCTCalcChain().sizeOfCArray());
         }
     }
@@ -3623,21 +3621,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     void testBug65452() throws IOException {
         File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
         try (FileInputStream fis = new FileInputStream(file)) {
-            try {
-                Workbook wb = WorkbookFactory.create(fis);
-                if (wb != null) wb.close();
-                fail("WorkbookFactory.create should have failed");
-            } catch (IOException ie) {
-                assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
-            }
-        }
-        try {
-            Workbook wb = WorkbookFactory.create(file);
-            if (wb != null) wb.close();
-            fail("WorkbookFactory.create should have failed");
-        } catch (IOException ie) {
+            IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(fis));
             assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
         }
+        IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(file));
+        assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
     }
 
     @Test
