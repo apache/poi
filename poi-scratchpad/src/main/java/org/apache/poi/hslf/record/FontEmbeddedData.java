@@ -32,7 +32,8 @@ import org.apache.poi.util.LittleEndian;
 @SuppressWarnings("WeakerAccess")
 public class FontEmbeddedData extends RecordAtom implements FontFacet {
     //arbitrarily selected; may need to increase (increased due to https://bz.apache.org/bugzilla/show_bug.cgi?id=65639)
-    private static final int MAX_RECORD_LENGTH = 5_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 5_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
      * Record header.
@@ -48,6 +49,20 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
      * A cached FontHeader so that we don't keep creating new FontHeader instances
      */
     private FontHeader fontHeader;
+
+    /**
+     * @param length the max length allowed for FontEmbeddedData
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max length allowed for FontEmbeddedData
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Constructs a brand new font embedded record.

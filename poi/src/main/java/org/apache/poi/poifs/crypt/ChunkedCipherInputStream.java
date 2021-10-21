@@ -32,7 +32,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private final int chunkSize;
     private final int chunkBits;
@@ -44,6 +45,20 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     private int lastIndex;
     private long pos;
     private boolean chunkIsValid;
+
+    /**
+     * @param length the max length allowed for ChunkedCipherInputStream
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max length allowed for ChunkedCipherInputStream
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public ChunkedCipherInputStream(InputStream stream, long size, int chunkSize)
     throws GeneralSecurityException {

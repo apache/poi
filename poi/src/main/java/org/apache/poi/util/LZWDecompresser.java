@@ -40,7 +40,8 @@ public abstract class LZWDecompresser {
     public static final int DICT_MASK = 0xFFF;
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
      * Does the mask bit mean it's compressed or uncompressed?
@@ -58,6 +59,20 @@ public abstract class LZWDecompresser {
      * becomes a position of 0x123 or 0x312
      */
     private final boolean positionIsBigEndian;
+
+    /**
+     * @param length the max length allowed for LZWDecompresser
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max length allowed for LZWDecompresser
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     protected LZWDecompresser(boolean maskMeansCompressed,
                               int codeLengthIncrease, boolean positionIsBigEndian) {

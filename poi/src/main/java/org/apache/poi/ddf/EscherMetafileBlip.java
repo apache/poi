@@ -41,7 +41,8 @@ import org.apache.poi.util.Removal;
 public final class EscherMetafileBlip extends EscherBlipRecord {
     private static final Logger LOGGER = LogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /** @deprecated use EscherRecordTypes.BLIP_EMF.typeID */
     @Deprecated
@@ -76,6 +77,20 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     private byte[] raw_pictureData;
     private byte[] remainingData;
+
+    /**
+     * @param length the max length allowed for EscherMetafileBlip
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max length allowed for EscherMetafileBlip
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherMetafileBlip() {}
 

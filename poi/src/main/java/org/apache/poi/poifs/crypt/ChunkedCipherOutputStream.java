@@ -44,7 +44,8 @@ import org.apache.poi.util.TempFile;
 public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private static final Logger LOG = LogManager.getLogger(ChunkedCipherOutputStream.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final int STREAMING = -1;
 
@@ -64,6 +65,20 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     // and therefore need to change the cipher too
     private Cipher cipher;
     private boolean isClosed;
+
+    /**
+     * @param length the max length allowed for ChunkedCipherOutputStream
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max length allowed for ChunkedCipherOutputStream
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
         super(null);
