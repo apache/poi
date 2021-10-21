@@ -138,7 +138,7 @@ public class TestAllFiles {
         return allfiles("extract");
     }
 
-    @ParameterizedTest(name = "#{index} {0} {1}")
+    @ParameterizedTest(name = "Extracting - #{index} {0} {1}")
     @MethodSource("extractFiles")
     void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
         if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES)) return;
@@ -170,7 +170,7 @@ public class TestAllFiles {
         return allfiles("additional");
     }
 
-    @ParameterizedTest(name = "#{index} {0} {1}")
+    @ParameterizedTest(name = "Additional - #{index} {0} {1}")
     @MethodSource("handleAdditionals")
     void handleAdditional(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) {
         System.out.println("Running additionals on "+file);
