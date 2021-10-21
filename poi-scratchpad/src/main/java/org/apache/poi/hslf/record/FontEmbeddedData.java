@@ -31,8 +31,8 @@ import org.apache.poi.util.LittleEndian;
 
 @SuppressWarnings("WeakerAccess")
 public class FontEmbeddedData extends RecordAtom implements FontFacet {
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    //arbitrarily selected; may need to increase (increased due to https://bz.apache.org/bugzilla/show_bug.cgi?id=65639)
+    private static final int MAX_RECORD_LENGTH = 5_000_000;
 
     /**
      * Record header.
@@ -43,6 +43,11 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
      * Record data - An EOT Font
      */
     private byte[] _data;
+
+    /**
+     * A cached FontHeader so that we don't keep creating new FontHeader instances
+     */
+    private FontHeader fontHeader;
 
     /**
      * Constructs a brand new font embedded record.
@@ -87,14 +92,18 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
     }
 
     public void setFontData(byte[] fontData) {
+        fontHeader = null;
         _data = fontData.clone();
         LittleEndian.putInt(_header, 4, _data.length);
     }
 
     public FontHeader getFontHeader() {
-        FontHeader h = new FontHeader();
-        h.init(_data, 0, _data.length);
-        return h;
+        if (fontHeader == null) {
+            FontHeader h = new FontHeader();
+            h.init(_data, 0, _data.length);
+            fontHeader = h;
+        }
+        return fontHeader;
     }
 
     @Override
