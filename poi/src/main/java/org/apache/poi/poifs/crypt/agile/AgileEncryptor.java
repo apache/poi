@@ -67,26 +67,8 @@ import org.w3c.dom.Document;
 
 public class AgileEncryptor extends Encryptor {
 
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
-    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
-
     private byte[] integritySalt;
     private byte[] pwHash;
-
-    /**
-     * @param length the max record length allowed for AgileEncryptor
-     */
-    public static void setMaxRecordLength(int length) {
-        MAX_RECORD_LENGTH = length;
-    }
-
-    /**
-     * @return the max record length allowed for AgileEncryptor
-     */
-    public static int getMaxRecordLength() {
-        return MAX_RECORD_LENGTH;
-    }
 
     protected AgileEncryptor() {}
 
@@ -105,11 +87,12 @@ public class AgileEncryptor extends Encryptor {
         int keySize = header.getKeySize()/8;
         int hashSize = header.getHashAlgorithm().hashSize;
 
-        byte[] newVerifierSalt = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
-             , newVerifier = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
-             , newKeySalt = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
-             , newKeySpec = IOUtils.safelyAllocate(keySize, MAX_RECORD_LENGTH)
-             , newIntegritySalt = IOUtils.safelyAllocate(hashSize, MAX_RECORD_LENGTH);
+        int maxLen = CryptoFunctions.getMaxRecordLength();
+        byte[] newVerifierSalt = IOUtils.safelyAllocate(blockSize, maxLen)
+             , newVerifier = IOUtils.safelyAllocate(blockSize, maxLen)
+             , newKeySalt = IOUtils.safelyAllocate(blockSize, maxLen)
+             , newKeySpec = IOUtils.safelyAllocate(keySize, maxLen)
+             , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
         r.nextBytes(newVerifierSalt); // blocksize
         r.nextBytes(newVerifier); // blocksize
         r.nextBytes(newKeySalt); // blocksize

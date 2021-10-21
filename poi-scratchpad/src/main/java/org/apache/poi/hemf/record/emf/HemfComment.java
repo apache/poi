@@ -56,7 +56,6 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfComment {
     private static final Logger LOG = LogManager.getLogger(HemfComment.class);
-    private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -281,7 +280,7 @@ public class HemfComment {
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
-            privateData = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
+            privateData = IOUtils.safelyAllocate(dataSize, HwmfPicture.getMaxRecordLength());
             leis.readFully(privateData);
             return privateData.length;
         }
@@ -383,7 +382,7 @@ public class HemfComment {
             // The number of Unicode characters in the optional description string that follows.
             int nDescription = (int)leis.readUInt();
 
-            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, HwmfPicture.getMaxRecordLength());
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE);
 
@@ -458,7 +457,7 @@ public class HemfComment {
             for (EmfCommentDataFormat fmt : formats) {
                 int skip = fmt.offData-(leis.getReadIndex()-startIdx);
                 leis.skipFully(skip);
-                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, MAX_RECORD_LENGTH);
+                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, HwmfPicture.getMaxRecordLength());
                 int readBytes = leis.read(fmt.rawData);
                 if (readBytes < fmt.sizeData) {
                     // EOF
@@ -600,7 +599,7 @@ public class HemfComment {
             // WMF metafile in the WinMetafile field.
             int winMetafileSize = (int)leis.readUInt();
 
-            wmfData = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
+            wmfData = IOUtils.safelyAllocate(winMetafileSize, HwmfPicture.getMaxRecordLength());
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {
