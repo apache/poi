@@ -38,11 +38,26 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
     public static final int RC4_REKEYING_INTERVAL = 1024;
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private final ChunkedCipherInputStream ccis;
     private final byte[] buffer = new byte[LittleEndianConsts.LONG_SIZE];
     private boolean shouldSkipEncryptionOnCurrentRecord;
+
+    /**
+     * @param length the max record length allowed for Biff8DecryptingStream
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for Biff8DecryptingStream
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {

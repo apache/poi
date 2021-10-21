@@ -51,14 +51,14 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
     private FontHeader fontHeader;
 
     /**
-     * @param length the max length allowed for FontEmbeddedData
+     * @param length the max record length allowed for FontEmbeddedData
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for FontEmbeddedData
+     * @return the max record length allowed for FontEmbeddedData
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

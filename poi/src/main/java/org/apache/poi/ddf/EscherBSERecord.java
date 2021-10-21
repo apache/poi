@@ -57,14 +57,14 @@ public final class EscherBSERecord extends EscherRecord {
     private byte[] _remainingData = new byte[0];
 
     /**
-     * @param length the max length allowed for EscherBSERecord
+     * @param length the max record length allowed for EscherBSERecord
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for EscherBSERecord
+     * @return the max record length allowed for EscherBSERecord
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

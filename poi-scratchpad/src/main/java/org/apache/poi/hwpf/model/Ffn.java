@@ -32,175 +32,172 @@ import org.apache.poi.util.LittleEndianConsts;
  * that stores info about the whole structure and the fonts
  */
 @Internal
-public final class Ffn
-{
+public final class Ffn {
 
-  //arbitrarily selected; may need to increase
-  private static final int MAX_RECORD_LENGTH = 100_000;
+    //arbitrarily selected; may need to increase
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
-  private int _cbFfnM1;//total length of FFN - 1.
-  private byte _info;
+    private int _cbFfnM1;//total length of FFN - 1.
+    private byte _info;
     private static BitField _prq = BitFieldFactory.getInstance(0x0003);// pitch request
     private static BitField _fTrueType = BitFieldFactory.getInstance(0x0004);// when 1, font is a TrueType font
     private static BitField _ff = BitFieldFactory.getInstance(0x0070);
-  private short _wWeight;// base weight of font
-  private byte _chs;// character set identifier
-  private byte _ixchSzAlt;  // index into ffn.szFfn to the name of
-                                  // the alternate font
-  private byte [] _panose = new byte[10];//????
-  private byte [] _fontSig = new byte[24];//????
+    private short _wWeight;// base weight of font
+    private byte _chs;// character set identifier
+    private byte _ixchSzAlt;  // index into ffn.szFfn to the name of
+    // the alternate font
+    private byte[] _panose = new byte[10];//????
+    private byte[] _fontSig = new byte[24];//????
 
-  // zero terminated string that records name of font, cuurently not
-  // supporting Extended chars
-  private char [] _xszFfn;
+    // zero terminated string that records name of font, cuurently not
+    // supporting Extended chars
+    private char[] _xszFfn;
 
-  // extra facilitator members
-  private int _xszFfnLength;
+    // extra facilitator members
+    private int _xszFfnLength;
 
-  public Ffn(byte[] buf, int offset)
-  {
-    int offsetTmp = offset;
-
-    _cbFfnM1 = LittleEndian.getUByte(buf,offset);
-    offset += LittleEndianConsts.BYTE_SIZE;
-    _info = buf[offset];
-    offset += LittleEndianConsts.BYTE_SIZE;
-    _wWeight = LittleEndian.getShort(buf, offset);
-    offset += LittleEndianConsts.SHORT_SIZE;
-    _chs = buf[offset];
-    offset += LittleEndianConsts.BYTE_SIZE;
-    _ixchSzAlt = buf[offset];
-    offset += LittleEndianConsts.BYTE_SIZE;
-
-    // read panose and fs so we can write them back out.
-    System.arraycopy(buf, offset, _panose, 0, _panose.length);
-    offset += _panose.length;
-    System.arraycopy(buf, offset, _fontSig, 0, _fontSig.length);
-    offset += _fontSig.length;
-
-    offsetTmp = offset - offsetTmp;
-    _xszFfnLength = (this.getSize() - offsetTmp)/2;
-    _xszFfn = new char[_xszFfnLength];
-
-    for(int i = 0; i < _xszFfnLength; i++)
-    {
-      _xszFfn[i] = (char)LittleEndian.getShort(buf, offset);
-      offset += LittleEndianConsts.SHORT_SIZE;
+    /**
+     * @param length the max record length allowed for Ffn
+     */
+    public static void setMaxRecordLength(int length) {
+      MAX_RECORD_LENGTH = length;
+    }
+  
+    /**
+     * @return the max record length allowed for Ffn
+     */
+    public static int getMaxRecordLength() {
+      return MAX_RECORD_LENGTH;
     }
 
+    public Ffn(byte[] buf, int offset) {
+        int offsetTmp = offset;
 
-  }
+        _cbFfnM1 = LittleEndian.getUByte(buf, offset);
+        offset += LittleEndianConsts.BYTE_SIZE;
+        _info = buf[offset];
+        offset += LittleEndianConsts.BYTE_SIZE;
+        _wWeight = LittleEndian.getShort(buf, offset);
+        offset += LittleEndianConsts.SHORT_SIZE;
+        _chs = buf[offset];
+        offset += LittleEndianConsts.BYTE_SIZE;
+        _ixchSzAlt = buf[offset];
+        offset += LittleEndianConsts.BYTE_SIZE;
 
-  public int get_cbFfnM1()
-  {
-    return  _cbFfnM1;
-  }
+        // read panose and fs so we can write them back out.
+        System.arraycopy(buf, offset, _panose, 0, _panose.length);
+        offset += _panose.length;
+        System.arraycopy(buf, offset, _fontSig, 0, _fontSig.length);
+        offset += _fontSig.length;
 
-  public short getWeight()
-  {
-      return  _wWeight;
-  }
+        offsetTmp = offset - offsetTmp;
+        _xszFfnLength = (this.getSize() - offsetTmp) / 2;
+        _xszFfn = new char[_xszFfnLength];
 
-  public byte getChs()
-  {
-      return  _chs;
-  }
+        for (int i = 0; i < _xszFfnLength; i++) {
+            _xszFfn[i] = (char) LittleEndian.getShort(buf, offset);
+            offset += LittleEndianConsts.SHORT_SIZE;
+        }
 
-  public byte [] getPanose()
-  {
-      return  _panose;
-  }
 
-  public byte [] getFontSig()
-  {
-      return  _fontSig;
-  }
-
-  public int getSize()
-  {
-    return (_cbFfnM1 + 1);
-  }
-
-  public String getMainFontName()
-  {
-    int index = 0;
-    for (;index < _xszFfnLength; index++)
-    {
-      if (_xszFfn[index] == '\0')
-      {
-        break;
-      }
-    }
-    return new String(_xszFfn, 0, index);
-  }
-
-  public String getAltFontName()
-  {
-    int index = _ixchSzAlt;
-    for (;index < _xszFfnLength; index++)
-    {
-      if (_xszFfn[index] == '\0')
-      {
-        break;
-      }
-    }
-    return new String(_xszFfn, _ixchSzAlt, index);
-
-  }
-
-  public void set_cbFfnM1(int _cbFfnM1)
-  {
-    this._cbFfnM1 = _cbFfnM1;
-  }
-
-  // changed protected to public
-  public byte[] toByteArray()
-  {
-    int offset = 0;
-    byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
-
-    buf[offset] = (byte)_cbFfnM1;
-    offset += LittleEndianConsts.BYTE_SIZE;
-    buf[offset] = _info;
-    offset += LittleEndianConsts.BYTE_SIZE;
-    LittleEndian.putShort(buf, offset, _wWeight);
-    offset += LittleEndianConsts.SHORT_SIZE;
-    buf[offset] = _chs;
-    offset += LittleEndianConsts.BYTE_SIZE;
-    buf[offset] = _ixchSzAlt;
-    offset += LittleEndianConsts.BYTE_SIZE;
-
-    System.arraycopy(_panose,0,buf, offset,_panose.length);
-    offset += _panose.length;
-    System.arraycopy(_fontSig,0,buf, offset, _fontSig.length);
-    offset += _fontSig.length;
-
-    for(int i = 0; i < _xszFfn.length; i++)
-    {
-      LittleEndian.putShort(buf, offset, (short)_xszFfn[i]);
-      offset += LittleEndianConsts.SHORT_SIZE;
     }
 
-    return buf;
+    public int get_cbFfnM1() {
+        return _cbFfnM1;
+    }
 
-  }
+    public short getWeight() {
+        return _wWeight;
+    }
 
-  @Override
-  public boolean equals(Object other) {
-      if (!(other instanceof Ffn)) return false;
-      Ffn o = (Ffn)other;
+    public byte getChs() {
+        return _chs;
+    }
 
-      return (
-             o._cbFfnM1 == this._cbFfnM1
-          && o._info == this._info
-          && o._wWeight == _wWeight
-          && o._chs == _chs
-          && o._ixchSzAlt == _ixchSzAlt
-          && Arrays.equals(o._panose,_panose)
-          && Arrays.equals(o._fontSig,_fontSig)
-          && Arrays.equals(o._xszFfn,_xszFfn)
-      );
-  }
+    public byte[] getPanose() {
+        return _panose;
+    }
+
+    public byte[] getFontSig() {
+        return _fontSig;
+    }
+
+    public int getSize() {
+        return (_cbFfnM1 + 1);
+    }
+
+    public String getMainFontName() {
+        int index = 0;
+        for (; index < _xszFfnLength; index++) {
+            if (_xszFfn[index] == '\0') {
+                break;
+            }
+        }
+        return new String(_xszFfn, 0, index);
+    }
+
+    public String getAltFontName() {
+        int index = _ixchSzAlt;
+        for (; index < _xszFfnLength; index++) {
+            if (_xszFfn[index] == '\0') {
+                break;
+            }
+        }
+        return new String(_xszFfn, _ixchSzAlt, index);
+
+    }
+
+    public void set_cbFfnM1(int _cbFfnM1) {
+        this._cbFfnM1 = _cbFfnM1;
+    }
+
+    // changed protected to public
+    public byte[] toByteArray() {
+        int offset = 0;
+        byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
+
+        buf[offset] = (byte) _cbFfnM1;
+        offset += LittleEndianConsts.BYTE_SIZE;
+        buf[offset] = _info;
+        offset += LittleEndianConsts.BYTE_SIZE;
+        LittleEndian.putShort(buf, offset, _wWeight);
+        offset += LittleEndianConsts.SHORT_SIZE;
+        buf[offset] = _chs;
+        offset += LittleEndianConsts.BYTE_SIZE;
+        buf[offset] = _ixchSzAlt;
+        offset += LittleEndianConsts.BYTE_SIZE;
+
+        System.arraycopy(_panose, 0, buf, offset, _panose.length);
+        offset += _panose.length;
+        System.arraycopy(_fontSig, 0, buf, offset, _fontSig.length);
+        offset += _fontSig.length;
+
+        for (int i = 0; i < _xszFfn.length; i++) {
+            LittleEndian.putShort(buf, offset, (short) _xszFfn[i]);
+            offset += LittleEndianConsts.SHORT_SIZE;
+        }
+
+        return buf;
+
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Ffn)) return false;
+        Ffn o = (Ffn) other;
+
+        return (
+                o._cbFfnM1 == this._cbFfnM1
+                        && o._info == this._info
+                        && o._wWeight == _wWeight
+                        && o._chs == _chs
+                        && o._ixchSzAlt == _ixchSzAlt
+                        && Arrays.equals(o._panose, _panose)
+                        && Arrays.equals(o._fontSig, _fontSig)
+                        && Arrays.equals(o._xszFfn, _xszFfn)
+        );
+    }
 
 
     @Override

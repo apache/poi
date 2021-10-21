@@ -61,14 +61,14 @@ public abstract class LZWDecompresser {
     private final boolean positionIsBigEndian;
 
     /**
-     * @param length the max length allowed for LZWDecompresser
+     * @param length the max record length allowed for LZWDecompresser
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for LZWDecompresser
+     * @return the max record length allowed for LZWDecompresser
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

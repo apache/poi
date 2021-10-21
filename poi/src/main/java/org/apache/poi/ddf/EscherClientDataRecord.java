@@ -41,14 +41,14 @@ public class EscherClientDataRecord extends EscherRecord {
     private byte[] remainingData;
 
     /**
-     * @param length the max length allowed for EscherClientDataRecord
+     * @param length the max record length allowed for EscherClientDataRecord
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for EscherClientDataRecord
+     * @return the max record length allowed for EscherClientDataRecord
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

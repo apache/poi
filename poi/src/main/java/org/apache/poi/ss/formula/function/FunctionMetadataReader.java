@@ -57,14 +57,14 @@ final class FunctionMetadataReader {
     private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
 
     /**
-     * @param length the max length allowed for FunctionMetadataReader
+     * @param length the max record length allowed for FunctionMetadataReader
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for FunctionMetadataReader
+     * @return the max record length allowed for FunctionMetadataReader
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

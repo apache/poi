@@ -61,7 +61,8 @@ import org.apache.poi.util.Internal;
 public class POIFSFileSystem extends BlockStore
         implements POIFSViewable, Closeable {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
 
@@ -93,6 +94,20 @@ public class POIFSFileSystem extends BlockStore
      */
     private POIFSBigBlockSize bigBlockSize =
             POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
+
+    /**
+     * @param length the max record length allowed for POIFSFileSystem
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for POIFSFileSystem
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private POIFSFileSystem(boolean newFS) {
         _header = new HeaderBlock(bigBlockSize);

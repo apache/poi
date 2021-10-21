@@ -37,14 +37,14 @@ public final class StringUtil {
     public static final Charset WIN_1252 = Charset.forName("cp1252");
 
     /**
-     * @param length the max length allowed for StringUtil
+     * @param length the max record length allowed for StringUtil
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for StringUtil
+     * @return the max record length allowed for StringUtil
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

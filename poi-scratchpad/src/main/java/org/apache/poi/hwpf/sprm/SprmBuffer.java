@@ -28,9 +28,6 @@ import org.apache.poi.util.LittleEndianConsts;
 @Internal
 public final class SprmBuffer implements Duplicatable {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     byte[] _buf;
     boolean _istd;
     int _offset;
@@ -56,7 +53,7 @@ public final class SprmBuffer implements Duplicatable {
     }
 
     public SprmBuffer(int sprmsStartOffset) {
-        _buf = IOUtils.safelyAllocate(sprmsStartOffset + 4L, MAX_RECORD_LENGTH);
+        _buf = IOUtils.safelyAllocate(sprmsStartOffset + 4L, SprmUtils.MAX_RECORD_LENGTH);
         _offset = sprmsStartOffset;
         _sprmsStartOffset = sprmsStartOffset;
     }
@@ -118,7 +115,7 @@ public final class SprmBuffer implements Duplicatable {
             // commented - buffer shall not contain any additional bytes --
             // sergey
             // byte[] newBuf = new byte[_offset + addition + 6];
-            IOUtils.safelyAllocateCheck(_offset + (long)addition, MAX_RECORD_LENGTH);
+            IOUtils.safelyAllocateCheck(_offset + (long)addition, SprmUtils.MAX_RECORD_LENGTH);
             _buf = Arrays.copyOf(_buf, _offset + addition);
         }
     }

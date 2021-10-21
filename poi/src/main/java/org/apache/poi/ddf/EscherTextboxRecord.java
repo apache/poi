@@ -45,14 +45,14 @@ public final class EscherTextboxRecord extends EscherRecord {
     private byte[] thedata = NO_BYTES;
 
     /**
-     * @param length the max length allowed for EscherTextboxRecord
+     * @param length the max record length allowed for EscherTextboxRecord
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for EscherTextboxRecord
+     * @return the max record length allowed for EscherTextboxRecord
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

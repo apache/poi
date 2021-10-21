@@ -62,14 +62,14 @@ public class EscherClientAnchorRecord extends EscherRecord {
     private boolean shortRecord;
 
     /**
-     * @param length the max length allowed for EscherClientAnchorRecord
+     * @param length the max record length allowed for EscherClientAnchorRecord
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for EscherClientAnchorRecord
+     * @return the max record length allowed for EscherClientAnchorRecord
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

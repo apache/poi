@@ -37,7 +37,8 @@ import org.apache.poi.util.Removal;
 public final class EscherArrayProperty extends EscherComplexProperty implements Iterable<byte[]> {
 
     // arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
      * The size of the header that goes at the start of the array, before the data
@@ -54,6 +55,20 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
      */
     private final boolean emptyComplexPart;
 
+    /**
+     * @param length the max record length allowed for EscherArrayProperty
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherArrayProperty
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+    
     /**
      * Create an instance of an escher array property.
      * This constructor can be used to create emptyComplexParts with a complexSize = 0.

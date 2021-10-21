@@ -36,10 +36,25 @@ import org.apache.poi.util.LittleEndianInputStream;
 public abstract class XSSFBParser {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private final LittleEndianInputStream is;
     private final SparseBitSet records;
+
+    /**
+     * @param length the max record length allowed for XSSFBParser
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for XSSFBParser
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public XSSFBParser(InputStream is) {
         this.is = new LittleEndianInputStream(is);

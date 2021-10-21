@@ -40,139 +40,133 @@ import org.apache.poi.util.IOUtils;
  */
 public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     private DocumentProperty _property;
 
-   private POIFSFileSystem _filesystem;
-   private POIFSStream _stream;
-   private int _block_size;
-    
-   /**
-    * Constructor for an existing Document 
-    */
-   public POIFSDocument(DocumentNode document) {
-       this((DocumentProperty)document.getProperty(), 
-            ((DirectoryNode)document.getParent()).getFileSystem());
-   }
-   
-   /**
-    * Constructor for an existing Document 
-    */
-   public POIFSDocument(DocumentProperty property, POIFSFileSystem filesystem) {
-      this._property = property;
-      this._filesystem = filesystem;
+    private POIFSFileSystem _filesystem;
+    private POIFSStream _stream;
+    private int _block_size;
 
-      if(property.getSize() < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
-         _stream = new POIFSStream(_filesystem.getMiniStore(), property.getStartBlock());
-         _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
-      } else {
-         _stream = new POIFSStream(_filesystem, property.getStartBlock());
-         _block_size = _filesystem.getBlockStoreBlockSize();
-      }
-   }
+    /**
+     * Constructor for an existing Document
+     */
+    public POIFSDocument(DocumentNode document) {
+        this((DocumentProperty) document.getProperty(),
+                ((DirectoryNode) document.getParent()).getFileSystem());
+    }
 
-   /**
-    * Constructor for a new Document
-    *
-    * @param name the name of the POIFSDocument
-    * @param stream the InputStream we read data from
-    */
-   public POIFSDocument(String name, POIFSFileSystem filesystem, InputStream stream)
-      throws IOException 
-   {
-      this._filesystem = filesystem;
+    /**
+     * Constructor for an existing Document
+     */
+    public POIFSDocument(DocumentProperty property, POIFSFileSystem filesystem) {
+        this._property = property;
+        this._filesystem = filesystem;
 
-      // Store it
-      int length = store(stream);
+        if (property.getSize() < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
+            _stream = new POIFSStream(_filesystem.getMiniStore(), property.getStartBlock());
+            _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
+        } else {
+            _stream = new POIFSStream(_filesystem, property.getStartBlock());
+            _block_size = _filesystem.getBlockStoreBlockSize();
+        }
+    }
 
-      // Build the property for it
-      this._property = new DocumentProperty(name, length);
-      _property.setStartBlock(_stream.getStartBlock());
-      _property.setDocument(this);
-   }
-   
-   public POIFSDocument(String name, final int size, POIFSFileSystem filesystem, POIFSWriterListener writer)
-      throws IOException 
-   {
-       this._filesystem = filesystem;
+    /**
+     * Constructor for a new Document
+     *
+     * @param name   the name of the POIFSDocument
+     * @param stream the InputStream we read data from
+     */
+    public POIFSDocument(String name, POIFSFileSystem filesystem, InputStream stream)
+            throws IOException {
+        this._filesystem = filesystem;
 
-       if (size < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
-           _stream = new POIFSStream(filesystem.getMiniStore());
-           _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
-       } else {
-           _stream = new POIFSStream(filesystem);
-           _block_size = _filesystem.getBlockStoreBlockSize();
-       }
-       
-       this._property = new DocumentProperty(name, size);
-       _property.setStartBlock(_stream.getStartBlock());
-       _property.setDocument(this);
+        // Store it
+        int length = store(stream);
 
-       try (DocumentOutputStream os = new DocumentOutputStream(this, size)) {
-           POIFSDocumentPath path = new POIFSDocumentPath(name.split("\\\\"));
-           String docName = path.getComponent(path.length() - 1);
-           POIFSWriterEvent event = new POIFSWriterEvent(os, path, docName, size);
-           writer.processPOIFSWriterEvent(event);
-       }
-   }
-   
-   /**
-    * Stores the given data for this Document
-    */
-   private int store(InputStream stream) throws IOException {
-       final int bigBlockSize = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
-       BufferedInputStream bis = new BufferedInputStream(stream, bigBlockSize+1);
-       bis.mark(bigBlockSize);
+        // Build the property for it
+        this._property = new DocumentProperty(name, length);
+        _property.setStartBlock(_stream.getStartBlock());
+        _property.setDocument(this);
+    }
 
-       // Do we need to store as a mini stream or a full one?
-       long streamBlockSize = IOUtils.skipFully(bis, bigBlockSize);
-       if (streamBlockSize < bigBlockSize) {
-          _stream = new POIFSStream(_filesystem.getMiniStore());
-          _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
-       } else {
-          _stream = new POIFSStream(_filesystem);
-          _block_size = _filesystem.getBlockStoreBlockSize();
-       }
+    public POIFSDocument(String name, final int size, POIFSFileSystem filesystem, POIFSWriterListener writer)
+            throws IOException {
+        this._filesystem = filesystem;
 
-       // start from the beginning 
-       bis.reset();
-       
-       // Store it
-       final long length;
-       try (OutputStream os = _stream.getOutputStream()) {
-           length = IOUtils.copy(bis, os);
+        if (size < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
+            _stream = new POIFSStream(filesystem.getMiniStore());
+            _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
+        } else {
+            _stream = new POIFSStream(filesystem);
+            _block_size = _filesystem.getBlockStoreBlockSize();
+        }
 
-           // Pad to the end of the block with -1s
-           int usedInBlock = (int) (length % _block_size);
-           if (usedInBlock != 0 && usedInBlock != _block_size) {
-               int toBlockEnd = _block_size - usedInBlock;
-               byte[] padding = IOUtils.safelyAllocate(toBlockEnd, MAX_RECORD_LENGTH);
-               Arrays.fill(padding, (byte) 0xFF);
-               os.write(padding);
-           }
-       }
+        this._property = new DocumentProperty(name, size);
+        _property.setStartBlock(_stream.getStartBlock());
+        _property.setDocument(this);
 
-       return Math.toIntExact(length);
-   }
-   
-   /**
-    * Frees the underlying stream and property
-    */
-   void free() throws IOException {
-       _stream.free();
-       _property.setStartBlock(POIFSConstants.END_OF_CHAIN);
-   }
-   
-   POIFSFileSystem getFileSystem()
-   {
-       return _filesystem;
-   }
-   
-   int getDocumentBlockSize() {
-      return _block_size;
-   }
+        try (DocumentOutputStream os = new DocumentOutputStream(this, size)) {
+            POIFSDocumentPath path = new POIFSDocumentPath(name.split("\\\\"));
+            String docName = path.getComponent(path.length() - 1);
+            POIFSWriterEvent event = new POIFSWriterEvent(os, path, docName, size);
+            writer.processPOIFSWriterEvent(event);
+        }
+    }
+
+    /**
+     * Stores the given data for this Document
+     */
+    private int store(InputStream stream) throws IOException {
+        final int bigBlockSize = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
+        BufferedInputStream bis = new BufferedInputStream(stream, bigBlockSize + 1);
+        bis.mark(bigBlockSize);
+
+        // Do we need to store as a mini stream or a full one?
+        long streamBlockSize = IOUtils.skipFully(bis, bigBlockSize);
+        if (streamBlockSize < bigBlockSize) {
+            _stream = new POIFSStream(_filesystem.getMiniStore());
+            _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
+        } else {
+            _stream = new POIFSStream(_filesystem);
+            _block_size = _filesystem.getBlockStoreBlockSize();
+        }
+
+        // start from the beginning
+        bis.reset();
+
+        // Store it
+        final long length;
+        try (OutputStream os = _stream.getOutputStream()) {
+            length = IOUtils.copy(bis, os);
+
+            // Pad to the end of the block with -1s
+            int usedInBlock = (int) (length % _block_size);
+            if (usedInBlock != 0 && usedInBlock != _block_size) {
+                int toBlockEnd = _block_size - usedInBlock;
+                byte[] padding = IOUtils.safelyAllocate(toBlockEnd, POIFSFileSystem.MAX_RECORD_LENGTH);
+                Arrays.fill(padding, (byte) 0xFF);
+                os.write(padding);
+            }
+        }
+
+        return Math.toIntExact(length);
+    }
+
+    /**
+     * Frees the underlying stream and property
+     */
+    void free() throws IOException {
+        _stream.free();
+        _property.setStartBlock(POIFSConstants.END_OF_CHAIN);
+    }
+
+    POIFSFileSystem getFileSystem() {
+        return _filesystem;
+    }
+
+    int getDocumentBlockSize() {
+        return _block_size;
+    }
 
     @Override
     public Iterator<ByteBuffer> iterator() {
@@ -180,83 +174,83 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     }
 
     Iterator<ByteBuffer> getBlockIterator() {
-       return (getSize() > 0 ? _stream : Collections.<ByteBuffer>emptyList()).iterator();
+        return (getSize() > 0 ? _stream : Collections.<ByteBuffer>emptyList()).iterator();
     }
 
-   /**
-    * @return size of the document
-    */
-   public int getSize() {
-      return _property.getSize();
-   }
-   
-   public void replaceContents(InputStream stream) throws IOException {
-       free();
-       int size = store(stream);
-       _property.setStartBlock(_stream.getStartBlock()); 
-       _property.updateSize(size);
-   }
+    /**
+     * @return size of the document
+     */
+    public int getSize() {
+        return _property.getSize();
+    }
 
-   /**
-    * @return the instance's DocumentProperty
-    */
-   DocumentProperty getDocumentProperty() {
-      return _property;
-   }
+    public void replaceContents(InputStream stream) throws IOException {
+        free();
+        int size = store(stream);
+        _property.setStartBlock(_stream.getStartBlock());
+        _property.updateSize(size);
+    }
 
-   /**
-    * Get an array of objects, some of which may implement POIFSViewable
-    *
-    * @return an array of Object; may not be null, but may be empty
-    */
-   public Object[] getViewableArray() {
-      String result = "<NO DATA>";
+    /**
+     * @return the instance's DocumentProperty
+     */
+    DocumentProperty getDocumentProperty() {
+        return _property;
+    }
 
-      if(getSize() > 0) {
-         // Get all the data into a single array
-         byte[] data = IOUtils.safelyAllocate(getSize(), MAX_RECORD_LENGTH);
-         int offset = 0;
-         for(ByteBuffer buffer : _stream) {
-            int length = Math.min(_block_size, data.length-offset); 
-            buffer.get(data, offset, length);
-            offset += length;
-         }
- 
-         result = HexDump.dump(data, 0, 0);
-      }
-      
-      return new String[]{ result };
-   }
+    /**
+     * Get an array of objects, some of which may implement POIFSViewable
+     *
+     * @return an array of Object; may not be null, but may be empty
+     */
+    public Object[] getViewableArray() {
+        String result = "<NO DATA>";
 
-   /**
-    * Get an Iterator of objects, some of which may implement POIFSViewable
-    *
-    * @return an Iterator; may not be null, but may have an empty back end
-    *        store
-    */
-   public Iterator<Object> getViewableIterator() {
-      return emptyIterator();
-   }
+        if (getSize() > 0) {
+            // Get all the data into a single array
+            byte[] data = IOUtils.safelyAllocate(getSize(), POIFSFileSystem.MAX_RECORD_LENGTH);
+            int offset = 0;
+            for (ByteBuffer buffer : _stream) {
+                int length = Math.min(_block_size, data.length - offset);
+                buffer.get(data, offset, length);
+                offset += length;
+            }
 
-   /**
-    * Give viewers a hint as to whether to call getViewableArray or
-    * getViewableIterator
-    *
-    * @return <code>true</code> if a viewer should call getViewableArray,
-    *        <code>false</code> if a viewer should call getViewableIterator
-    */
-   public boolean preferArray() {
-      return true;
-   }
+            result = HexDump.dump(data, 0, 0);
+        }
 
-   /**
-    * Provides a short description of the object, to be used when a
-    * POIFSViewable object has not provided its contents.
-    *
-    * @return short description
-    */
-   public String getShortDescription() {
+        return new String[]{result};
+    }
 
-       return "Document: \"" + _property.getName() + "\" size = " + getSize();
-   }
+    /**
+     * Get an Iterator of objects, some of which may implement POIFSViewable
+     *
+     * @return an Iterator; may not be null, but may have an empty back end
+     * store
+     */
+    public Iterator<Object> getViewableIterator() {
+        return emptyIterator();
+    }
+
+    /**
+     * Give viewers a hint as to whether to call getViewableArray or
+     * getViewableIterator
+     *
+     * @return <code>true</code> if a viewer should call getViewableArray,
+     * <code>false</code> if a viewer should call getViewableIterator
+     */
+    public boolean preferArray() {
+        return true;
+    }
+
+    /**
+     * Provides a short description of the object, to be used when a
+     * POIFSViewable object has not provided its contents.
+     *
+     * @return short description
+     */
+    public String getShortDescription() {
+
+        return "Document: \"" + _property.getName() + "\" size = " + getSize();
+    }
 }

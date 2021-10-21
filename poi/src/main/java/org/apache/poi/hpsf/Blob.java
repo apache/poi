@@ -30,14 +30,14 @@ public class Blob {
     private byte[] _value;
 
     /**
-     * @param length the max length allowed for Blob
+     * @param length the max record length allowed for Blob
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for Blob
+     * @return the max record length allowed for Blob
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

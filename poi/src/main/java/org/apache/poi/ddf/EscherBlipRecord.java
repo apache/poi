@@ -38,14 +38,14 @@ public class EscherBlipRecord extends EscherRecord {
     private byte[] field_pictureData;
 
     /**
-     * @param length the max length allowed for EscherBlipRecord
+     * @param length the max record length allowed for EscherBlipRecord
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max length allowed for EscherBlipRecord
+     * @return the max record length allowed for EscherBlipRecord
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

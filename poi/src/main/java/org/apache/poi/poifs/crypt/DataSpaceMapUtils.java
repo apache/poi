@@ -35,24 +35,6 @@ import org.apache.poi.util.StringUtil;
 
 public class DataSpaceMapUtils {
 
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
-
-    /**
-     * @param length the max length allowed for EscherTextboxRecord
-     */
-    public static void setMaxRecordLength(int length) {
-        MAX_RECORD_LENGTH = length;
-    }
-
-    /**
-     * @return the max length allowed for EscherTextboxRecord
-     */
-    public static int getMaxRecordLength() {
-        return MAX_RECORD_LENGTH;
-    }
-
     public static void addDefaultDataSpace(DirectoryEntry dir) throws IOException {
         DataSpaceMapEntry dsme = new DataSpaceMapEntry(
                 new int[]{ 0 }
@@ -352,7 +334,7 @@ public class DataSpaceMapUtils {
             return length == 0 ? null : "";
         }
 
-        byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(length, CryptoFunctions.MAX_RECORD_LENGTH);
         is.readFully(data);
 
         // Padding (variable): A set of bytes that MUST be of correct size such that the size of the UTF-8-LP-P4

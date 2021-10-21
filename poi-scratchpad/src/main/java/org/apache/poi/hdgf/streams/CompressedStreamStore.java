@@ -30,7 +30,8 @@ import org.apache.poi.util.IOUtils;
 public final class CompressedStreamStore extends StreamStore {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 64_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 64_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /** The raw, compressed contents */
     private byte[] compressedContents;
@@ -44,6 +45,20 @@ public final class CompressedStreamStore extends StreamStore {
     byte[] _getCompressedContents() { return compressedContents; }
     byte[] _getBlockHeader() { return blockHeader; }
 
+    /**
+     * @param length the max record length allowed for CompressedStreamStore
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for CompressedStreamStore
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+    
     /**
      * Creates a new compressed StreamStore, which will handle
      *  the decompression.
