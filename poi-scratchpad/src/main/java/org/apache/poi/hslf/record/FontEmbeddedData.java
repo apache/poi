@@ -91,12 +91,22 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
         out.write(_data);
     }
 
+    /**
+     * Overwrite the font data. Reading values from this FontEmbeddedData instance while calling setFontData
+     * is not thread safe.
+     * @param fontData new font data
+     */
     public void setFontData(byte[] fontData) {
         fontHeader = null;
         _data = fontData.clone();
         LittleEndian.putInt(_header, 4, _data.length);
     }
 
+    /**
+     * Read the font data. Reading values from this FontEmbeddedData instance while calling {@link #setFontData(byte[])}
+     * is not thread safe.
+     * @return font data
+     */
     public FontHeader getFontHeader() {
         if (fontHeader == null) {
             FontHeader h = new FontHeader();
