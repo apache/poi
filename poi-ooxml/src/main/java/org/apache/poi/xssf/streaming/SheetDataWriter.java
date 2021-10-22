@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.CodepointsUtil;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -82,6 +83,7 @@ public class SheetDataWriter implements Closeable {
         this();
         this._sharedStringSource = sharedStringsTable;
     }
+
     /**
      * Create a temp file to write sheet data.
      * By default, temp files are created in the default temporary-file directory
@@ -89,7 +91,10 @@ public class SheetDataWriter implements Closeable {
      * it and specify a different temp directory or filename or suffix, e.g. <code>.gz</code>
      *
      * @return temp file to write sheet data
+     * @deprecated use {@link TempFile#createTempFile(String, String)} directly
      */
+    @Removal(version = "6.0.0")
+    //make this protected or private in POI 6.0.0 - no need for this to be public
     public File createTempFile() throws IOException {
         return TempFile.createTempFile("poi-sxssf-sheet", ".xml");
     }
