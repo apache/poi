@@ -237,11 +237,11 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     /**
-     * Register a ATP function in runtime.
+     * Register an ATP function in runtime.
      *
      * @param name  the function name
-     * @param func  the functoin to register
-     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @param func  the function to register
+     * @throws IllegalArgumentException if the function is unknown or already registered.
      * @since 3.8 beta6
      */
     public static void registerFunction(String name, FreeRefFunction func){

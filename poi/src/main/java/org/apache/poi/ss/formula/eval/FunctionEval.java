@@ -374,7 +374,7 @@ public final class FunctionEval {
      * Register a new function in runtime.
      *
      * @param name  the function name
-     * @param func  the functoin to register
+     * @param func  the function to register
      * @throws IllegalArgumentException if the function is unknown or already  registered.
      * @since 3.8 beta6
      */
