@@ -61,7 +61,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-class XSSFFileHandler extends SpreadsheetHandler {
+public class XSSFFileHandler extends SpreadsheetHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files if password is unknown

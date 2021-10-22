@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
-class HSSFFileHandler extends SpreadsheetHandler {
+public class HSSFFileHandler extends SpreadsheetHandler {
     private final POIFSFileHandler delegate = new POIFSFileHandler();
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {

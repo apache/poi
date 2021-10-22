@@ -29,7 +29,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.junit.jupiter.api.Test;
 
-class HSLFFileHandler extends SlideShowHandler {
+public class HSLFFileHandler extends SlideShowHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(HSLFFileHandler.class);
 

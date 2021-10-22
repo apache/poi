@@ -31,7 +31,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Test;
 
-class OPCFileHandler extends AbstractFileHandler {
+public class OPCFileHandler extends AbstractFileHandler {
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx"
     );

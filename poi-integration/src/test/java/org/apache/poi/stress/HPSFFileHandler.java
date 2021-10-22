@@ -45,7 +45,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-class HPSFFileHandler extends POIFSFileHandler {
+public class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
 
     private static final ThreadLocal<File> copyOutput = ThreadLocal.withInitial(HPSFFileHandler::getTempFile);
