@@ -42,9 +42,6 @@ import org.apache.poi.util.StringUtil;
 
 public final class FontEntityAtom extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
     private static final int[] FLAGS_MASKS = {
         0x0001, 0x0100, 0x0200, 0x0400, 0x0800
     };
@@ -75,7 +72,7 @@ public final class FontEntityAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the record data
-        _recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _recdata = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
 
     /**

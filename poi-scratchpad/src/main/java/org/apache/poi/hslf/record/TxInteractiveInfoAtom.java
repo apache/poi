@@ -32,9 +32,6 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class TxInteractiveInfoAtom extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
     /**
      * Record header.
      */
@@ -69,7 +66,7 @@ public final class TxInteractiveInfoAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
 
     /**
