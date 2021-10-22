@@ -21,11 +21,11 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel T.DIST.RT() function.
+ * Implementation for Excel T.DIST() function.
  * <p>
- * <b>Syntax</b>:<br> <b>T.DIST.RT </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
+ * <b>Syntax</b>:<br> <b>T.DIST </b>(<b>X</b>,<b>Deg_freedom</b>,<b>Cumulative</b>)<br>
  * <p>
- * Returns the right-tailed Student's t-distribution.
+ * Returns the Student's left-tailed t-distribution.
  *
  * The t-distribution is used in the hypothesis testing of small sample data sets.
  * Use this function in place of a table of critical values for the t-distribution.
@@ -33,22 +33,24 @@ import org.apache.poi.ss.formula.eval.*;
  * <ul>
  *     <li>X     Required. The numeric value at which to evaluate the distribution.</li>
  *     <li>Deg_freedom     Required. An integer indicating the number of degrees of freedom.</li>
+ *     <li>Cumulative      Required. A logical value that determines the form of the function. If cumulative is TRUE,
+ *     T.DIST returns the cumulative distribution function; if FALSE, it returns the probability density function.</li>
  * </ul>
  *
  * <ul>
- *     <li>If any argument is non-numeric, T.DIST.RT returns the #VALUE! error value.</li>
- *     <li>If Deg_freedom &lt; 1, T.DIST.RT returns the #NUM! error value.</li>
+ *     <li>If any argument is non-numeric, T.DIST returns the #VALUE! error value.</li>
+ *     <li>If Deg_freedom &lt; 1, T.DIST returns the #NUM! error value.</li>
  *     <li>The Deg_freedom argument is truncated to an integer.
  * </ul>
  *
  * https://support.microsoft.com/en-us/office/t-dist-rt-function-20a30020-86f9-4b35-af1f-7ef6ae683eda
  */
-public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction {
+public final class TDistLt extends Fixed3ArgFunction implements FreeRefFunction {
 
-    public static final TDistRt instance = new TDistRt();
+    public static final TDistLt instance = new TDistLt();
 
     @Override
-    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2, ValueEval arg3) {
         try {
             Double number1 = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
             if (number1 == null) {
@@ -62,7 +64,7 @@ public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction 
             if (degreesOfFreedom < 1) {
                 return ErrorEval.NUM_ERROR;
             }
-            return new NumberEval(TDist.tdistOneTail(number1, degreesOfFreedom));
+            return new NumberEval(TDist.tdistOneTail(Math.abs(number1), degreesOfFreedom));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -70,8 +72,8 @@ public final class TDistRt extends Fixed2ArgFunction implements FreeRefFunction 
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-         if (args.length == 2) {
-            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+         if (args.length == 3) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1], args[2]);
         }
 
         return ErrorEval.VALUE_INVALID;

@@ -173,6 +173,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
+        r(m, "T.DIST", TDistLt.instance);
         r(m, "T.DIST.2T", TDist2t.instance);
         r(m, "T.DIST.RT", TDistRt.instance);
         r(m, "TEXTJOIN", TextJoinFunction.instance);
