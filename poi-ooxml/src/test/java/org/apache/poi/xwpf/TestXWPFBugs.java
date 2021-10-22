@@ -151,4 +151,11 @@ class TestXWPFBugs {
             zf.close();
         }
     }
+
+    @Test
+    void bug65649() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug65649.docx"))) {
+            assertEquals(731, document.getParagraphs().size());
+        }
+    }
 }
