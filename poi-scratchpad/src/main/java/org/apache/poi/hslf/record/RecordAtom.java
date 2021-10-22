@@ -28,14 +28,14 @@ public abstract class RecordAtom extends Record {
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
-     * @param length the max record length allowed for CString
+     * @param length the max record length allowed for RecordAtom
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
     }
 
     /**
-     * @return the max record length allowed for CString
+     * @return the max record length allowed for RecordAtom
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;

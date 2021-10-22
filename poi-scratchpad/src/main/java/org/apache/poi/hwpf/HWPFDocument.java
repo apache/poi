@@ -83,7 +83,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
     /*package*/ static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final String STREAM_DATA = "Data";
 
@@ -192,6 +193,20 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * Holds the fields
      */
     private Fields _fields;
+
+    /**
+     * @param length the max record length allowed for HWPFDocument
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPFDocument
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * This constructor loads a Word document from an InputStream.

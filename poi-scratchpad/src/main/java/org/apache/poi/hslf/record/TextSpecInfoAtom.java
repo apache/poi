@@ -38,9 +38,6 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
  */
 public final class TextSpecInfoAtom extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     private static final long _type = RecordTypes.TextSpecInfoAtom.typeID;
 
     /**
@@ -75,7 +72,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
     /**
      * Gets the record type.

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -31,11 +32,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 @Internal
-public class SectionTable
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+public class SectionTable {
 
     private static final Logger LOG = LogManager.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
@@ -82,7 +79,7 @@ public class SectionTable
                 // The first short at the offset is the size of the grpprl.
                 int sepxSize = LittleEndian.getShort(documentStream, fileOffset);
                 fileOffset += LittleEndianConsts.SHORT_SIZE;
-                byte[] buf = IOUtils.safelyClone(documentStream, fileOffset, sepxSize, MAX_RECORD_LENGTH);
+                byte[] buf = IOUtils.safelyClone(documentStream, fileOffset, sepxSize, HWPFDocument.getMaxRecordLength());
                 _sections.add(new SEPX(sed, startAt, endAt, buf));
             }
         }

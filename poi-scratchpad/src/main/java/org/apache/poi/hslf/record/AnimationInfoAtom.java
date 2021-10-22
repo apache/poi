@@ -34,9 +34,6 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class AnimationInfoAtom extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     /**
      * whether the animation plays in the reverse direction
      */
@@ -127,7 +124,7 @@ public final class AnimationInfoAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the record data
-        _recdata = IOUtils.safelyClone(source,start+8, len-8, MAX_RECORD_LENGTH);
+        _recdata = IOUtils.safelyClone(source,start+8, len-8, getMaxRecordLength());
     }
 
     /**

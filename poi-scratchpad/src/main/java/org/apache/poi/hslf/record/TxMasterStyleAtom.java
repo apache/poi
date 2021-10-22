@@ -54,8 +54,6 @@ import org.apache.poi.util.LittleEndianOutputStream;
  */
 public final class TxMasterStyleAtom extends RecordAtom {
     private static final Logger LOG = LogManager.getLogger(TxMasterStyleAtom.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     /**
      * Maximum number of indentation levels allowed in PowerPoint documents
@@ -73,7 +71,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
     protected TxMasterStyleAtom(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
 
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
 
         //read available styles
         try {

@@ -20,33 +20,15 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
 @Internal
-public final class DocumentProperties extends DOPAbstractType
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+public final class DocumentProperties extends DOPAbstractType {
 
     private byte[] _preserved;
-
-    /**
-     * @param length the max record length allowed for DocumentProperties
-     */
-    public static void setMaxRecordLength(int length) {
-        MAX_RECORD_LENGTH = length;
-    }
-
-    /**
-     * @return the max record length allowed for DocumentProperties
-     */
-    public static int getMaxRecordLength() {
-        return MAX_RECORD_LENGTH;
-    }
 
     /**
      * @deprecated Use {@link #DocumentProperties(byte[],int,int)} instead
@@ -63,7 +45,8 @@ public final class DocumentProperties extends DOPAbstractType
         final int supportedSize = DOPAbstractType.getSize();
         if ( length != supportedSize )
         {
-            this._preserved = IOUtils.safelyClone( tableStream, offset + supportedSize, length - supportedSize, MAX_RECORD_LENGTH );
+            this._preserved = IOUtils.safelyClone( tableStream, offset + supportedSize,
+                    length - supportedSize, HWPFDocument.getMaxRecordLength());
         }
         else
         {

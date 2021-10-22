@@ -25,17 +25,14 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.types.PICFAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 @Internal
-public class PICFAndOfficeArtData
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+public class PICFAndOfficeArtData {
 
     /**
      * Can contain either a {@link EscherBlipRecord} or a {@link EscherBSERecord}.
@@ -65,7 +62,7 @@ public class PICFAndOfficeArtData
             short _cchPicName = LittleEndian.getUByte(dataStream, offset);
             offset += 1;
 
-            _stPicName = IOUtils.safelyClone(dataStream, offset, _cchPicName, MAX_RECORD_LENGTH);
+            _stPicName = IOUtils.safelyClone(dataStream, offset, _cchPicName, HWPFDocument.getMaxRecordLength());
             offset += _cchPicName;
         }
 
