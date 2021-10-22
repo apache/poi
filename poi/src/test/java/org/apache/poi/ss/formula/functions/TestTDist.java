@@ -74,8 +74,8 @@ final class TestTDist {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "TDIST(A2,A3,2)", 0.054644930, 0.01);
-            assertDouble(fe, cell, "TDIST(A2,A3,1)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "TDIST(A2,A3,2)", 0.054644930, 0.000001);
+            assertDouble(fe, cell, "TDIST(A2,A3,1)", 0.027322465, 0.000001);
         }
     }
 

@@ -46,7 +46,7 @@ final class TestTDistRt {
         confirmValue("5.968191467", "8", 0.00016754180265310392);
         confirmValue("5.968191467", "8.2", 0.00016754180265310392);
         confirmValue("5.968191467", "8.9", 0.00016754180265310392);
-        confirmValue("-5.968191467", "8", 0.999832458, 0.01);
+        confirmValue("-5.968191467", "8", 0.999832458, 0.000001);
     }
 
     @Test
@@ -71,8 +71,8 @@ final class TestTDistRt {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "T.DIST.RT(A2,A3)", 0.027322465, 0.01);
-            assertDouble(fe, cell, "T.DIST.RT(-A2,A3)", 0.972677535, 0.01);
+            assertDouble(fe, cell, "T.DIST.RT(A2,A3)", 0.027322465, 0.000001);
+            assertDouble(fe, cell, "T.DIST.RT(-A2,A3)", 0.972677535, 0.000001);
         }
     }
 

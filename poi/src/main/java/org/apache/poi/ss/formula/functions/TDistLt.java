@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
@@ -49,6 +50,16 @@ public final class TDistLt extends Fixed3ArgFunction implements FreeRefFunction 
 
     public static final TDistLt instance = new TDistLt();
 
+    private static double tdistCumulative(double x, int degreesOfFreedom) {
+        TDistribution tdist = new TDistribution(degreesOfFreedom);
+        return tdist.cumulativeProbability(x);
+    }
+
+    private static double tdistDensity(double x, int degreesOfFreedom) {
+        TDistribution tdist = new TDistribution(degreesOfFreedom);
+        return tdist.density(x);
+    }
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2, ValueEval arg3) {
         try {
@@ -64,7 +75,15 @@ public final class TDistLt extends Fixed3ArgFunction implements FreeRefFunction 
             if (degreesOfFreedom < 1) {
                 return ErrorEval.NUM_ERROR;
             }
-            return new NumberEval(TDist.tdistOneTail(Math.abs(number1), degreesOfFreedom));
+            Boolean cumulativeFlag = evaluateBoolean(arg3, srcRowIndex, srcColumnIndex);
+            if (cumulativeFlag == null) {
+                return ErrorEval.VALUE_INVALID;
+            }
+            if (cumulativeFlag.booleanValue()) {
+                return new NumberEval(tdistCumulative(number1, degreesOfFreedom));
+            } else {
+                return new NumberEval(tdistDensity(number1, degreesOfFreedom));
+            }
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -83,5 +102,10 @@ public final class TDistLt extends Fixed3ArgFunction implements FreeRefFunction 
         ValueEval veText = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
         String strText1 = OperandResolver.coerceValueToString(veText);
         return OperandResolver.parseDouble(strText1);
+    }
+
+    private static Boolean evaluateBoolean(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
+        ValueEval veText = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
+        return OperandResolver.coerceValueToBoolean(veText, false);
     }
 }
