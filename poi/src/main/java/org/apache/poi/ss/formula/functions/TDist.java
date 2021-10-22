@@ -53,7 +53,7 @@ public final class TDist extends Fixed3ArgFunction implements FreeRefFunction {
     public static final TDist instance = new TDist();
 
     static double tdistOneTail(double x, int degreesOfFreedom) {
-        TDistribution tdist = new TDistribution(degreesOfFreedom);
+        TDistribution tdist = new TDistribution(null, degreesOfFreedom);
         return 1.0 - tdist.cumulativeProbability(x);
     }
 
