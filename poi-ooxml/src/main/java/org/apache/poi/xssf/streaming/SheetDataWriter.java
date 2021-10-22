@@ -152,6 +152,9 @@ public class SheetDataWriter implements Closeable {
      */
     public InputStream getWorksheetXMLInputStream() throws IOException {
         File fd = getTempFile();
+        if (fd == null) {
+            throw new IOException("getWorksheetXMLInputStream only works when a temp file is used");
+        }
         FileInputStream fis = new FileInputStream(fd);
         try {
             return decorateInputStream(fis);

@@ -80,6 +80,7 @@ public final class SavePasswordProtectedXlsx {
             }
         } finally {
             wb.close();
+            //the dispose call is necessary to ensure temp files are removed
             wb.dispose();
         }
         TempFileUtils.checkTempFiles();

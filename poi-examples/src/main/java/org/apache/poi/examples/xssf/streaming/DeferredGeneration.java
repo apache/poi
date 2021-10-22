@@ -56,6 +56,7 @@ public class DeferredGeneration {
                 //writeAvoidingTempFiles was added as an experimental change in POI 5.1.0
                 //wb.writeAvoidingTempFiles(fileOut);
             } finally {
+                //the dispose call is necessary to ensure temp files are removed
                 wb.dispose();
             }
             System.out.println("wrote DeferredGeneration.xlsx");
