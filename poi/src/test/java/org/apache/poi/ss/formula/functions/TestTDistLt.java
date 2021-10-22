@@ -38,7 +38,10 @@ final class TestTDistLt {
         //https://support.microsoft.com/en-us/office/t-dist-rt-function-20a30020-86f9-4b35-af1f-7ef6ae683eda
         confirmValue("60", "1", "TRUE", 0.99469533, 0.000001);
         confirmValue("-60", "1", "TRUE", 0.005304674, 0.000001);
-        //confirmValue("60", "1", "FALSE", 0.00073691, 0.000001);
+        confirmValue("-60", "1.9", "TRUE", 0.005304674, 0.000001);
+        confirmValue("8", "3", "FALSE", 0.00073691, 0.000001);
+        confirmValue("-8", "3", "FALSE", 0.00073691, 0.000001);
+        confirmValue("-8", "3.9", "FALSE", 0.00073691, 0.000001);
     }
 
     @Test
