@@ -71,8 +71,8 @@ final class TestTDistRt {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "TDIST.RT(A2,A3)", 0.027322465, 0.01);
-            assertDouble(fe, cell, "TDIST.RT(-A2,A3)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "T.DIST.RT(A2,A3)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "T.DIST.RT(-A2,A3)", 0.027322465, 0.01);
         }
     }
 

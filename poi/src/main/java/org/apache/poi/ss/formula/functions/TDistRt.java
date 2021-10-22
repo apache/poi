@@ -22,9 +22,9 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel TDIST.RT() function.
+ * Implementation for Excel T.DIST.RT() function.
  * <p>
- * <b>Syntax</b>:<br> <b>TDIST.RT </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
+ * <b>Syntax</b>:<br> <b>T.DIST.RT </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
  * <p>
  * Returns the right-tailed Student's t-distribution.
  *
@@ -37,8 +37,8 @@ import org.apache.poi.ss.formula.eval.*;
  * </ul>
  *
  * <ul>
- *     <li>If any argument is non-numeric, TDIST.RT returns the #VALUE! error value.</li>
- *     <li>If Deg_freedom &lt; 1, TDIST.RT returns the #NUM! error value.</li>
+ *     <li>If any argument is non-numeric, T.DIST.RT returns the #VALUE! error value.</li>
+ *     <li>If Deg_freedom &lt; 1, T.DIST.RT returns the #NUM! error value.</li>
  *     <li>The Deg_freedom argument is truncated to an integer.
  * </ul>
  *

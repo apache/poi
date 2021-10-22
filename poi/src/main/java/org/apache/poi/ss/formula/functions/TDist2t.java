@@ -21,9 +21,9 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel TDIST.2T() function.
+ * Implementation for Excel T.DIST.2T() function.
  * <p>
- * <b>Syntax</b>:<br> <b>TDIST.2T </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
+ * <b>Syntax</b>:<br> <b>T.DIST.2T </b>(<b>X</b>,<b>Deg_freedom</b>)<br>
  * <p>
  * Returns the two-tailed Student's t-distribution.
  *
@@ -36,8 +36,8 @@ import org.apache.poi.ss.formula.eval.*;
  * </ul>
  *
  * <ul>
- *     <li>If any argument is non-numeric, TDIST.2T returns the #VALUE! error value.</li>
- *     <li>If Deg_freedom &lt; 1, TDIST.2T returns the #NUM! error value.</li>
+ *     <li>If any argument is non-numeric, T.DIST.2T returns the #VALUE! error value.</li>
+ *     <li>If Deg_freedom &lt; 1, T.DIST.2T returns the #NUM! error value.</li>
  *     <li>If x &lt; 0, then T.DIST.2T returns the #NUM! error value.</li>
  *     <li>The Deg_freedom argument is truncated to an integer.
  * </ul>

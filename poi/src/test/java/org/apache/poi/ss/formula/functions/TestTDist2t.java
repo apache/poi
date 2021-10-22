@@ -71,7 +71,7 @@ final class TestTDist2t {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "TDIST.2T(A2,A3)", 0.054644930, 0.01);
+            assertDouble(fe, cell, "T.DIST.2T(A2,A3)", 0.054644930, 0.01);
         }
     }
 
