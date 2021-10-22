@@ -103,7 +103,10 @@ public class SheetDataWriter implements Closeable {
      * Create a writer for the sheet data.
      *
      * @param  fd the file to write to
+     * @deprecated this method is due to be made non-public, probably protected
      */
+    @Removal(version = "6.0.0")
+    //make this protected or private in POI 6.0.0 - no need for this to be public
     public Writer createWriter(File fd) throws IOException {
         FileOutputStream fos = new FileOutputStream(fd);
         OutputStream decorated;
@@ -186,13 +189,6 @@ public class SheetDataWriter implements Closeable {
 
     public int getLastFlushedRow() {
         return _numberLastFlushedRow;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (_fd.exists() && !_fd.delete()) {
-            LOG.atError().log("Can't delete temporary encryption file: {}", _fd);
-        }
     }
 
     /**
