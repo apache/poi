@@ -273,6 +273,29 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return getSvgImage();
     }
 
+    /**
+     * @return picture name, can be null
+     * @since POI 5.1.0
+     */
+    public String getName() {
+        String name = null;
+        XmlObject xmlObject = getXmlObject();
+        if (xmlObject instanceof CTPicture) {
+            CTPicture ctPicture = (CTPicture)xmlObject;
+            CTPictureNonVisual nvSpPr = ctPicture.getNvPicPr();
+            if (nvSpPr != null) {
+                CTNonVisualDrawingProps cnv = nvSpPr.getCNvPr();
+                if (cnv != null) {
+                    name = cnv.getName();
+                }
+            }
+        }
+        return name;
+    }
+
+    /**
+     * @return SVG image data -- can return null if no SVG image is found
+     */
     public XSLFPictureData getSvgImage() {
         CTBlip blip = getBlip();
         if (blip == null) {
@@ -299,7 +322,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     /**
-     * Convienence method for adding SVG images, which generates the preview image
+     * Convenience method for adding SVG images, which generates the preview image
      * @param sheet the sheet to add
      * @param svgPic the svg picture to add
      * @param previewType the preview picture type or null (defaults to PNG) - currently only JPEG,GIF,PNG are allowed
@@ -351,7 +374,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
 
     @Override
-    void copy(XSLFShape sh){
+    void copy(XSLFShape sh) {
         super.copy(sh);
 
         XSLFPictureShape p = (XSLFPictureShape)sh;

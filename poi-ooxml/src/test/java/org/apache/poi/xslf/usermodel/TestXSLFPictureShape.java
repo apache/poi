@@ -83,8 +83,13 @@ class TestXSLFPictureShape {
                 assertArrayEquals(data2, pics.get(1).getData());
 
                 List<XSLFShape> shapes = ppt2.getSlides().get(0).getShapes();
-                assertArrayEquals(data1, ((XSLFPictureShape) shapes.get(0)).getPictureData().getData());
-                assertArrayEquals(data2, ((XSLFPictureShape) shapes.get(1)).getPictureData().getData());
+                assertEquals(2, shapes.size());
+                XSLFPictureShape xlsfShape0 = (XSLFPictureShape) shapes.get(0);
+                XSLFPictureShape xlsfShape1 = (XSLFPictureShape) shapes.get(1);
+                assertArrayEquals(data1, xlsfShape0.getPictureData().getData());
+                assertArrayEquals(data2, xlsfShape1.getPictureData().getData());
+                assertEquals("Picture 2", xlsfShape0.getName());
+                assertEquals("Picture 3", xlsfShape1.getName());
             }
         }
     }
