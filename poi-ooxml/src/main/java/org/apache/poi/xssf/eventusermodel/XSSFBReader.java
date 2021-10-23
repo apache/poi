@@ -127,12 +127,12 @@ public class XSSFBReader extends XSSFReader {
         }
 
         @Override
-        Set<String> getSheetRelationships() {
+        protected Set<String> getSheetRelationships() {
             return WORKSHEET_RELS;
         }
 
         @Override
-        Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
+        protected Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
             SheetRefLoader sheetRefLoader = new SheetRefLoader(wb.getInputStream());
             sheetRefLoader.parse();
             return sheetRefLoader.getSheets().iterator();

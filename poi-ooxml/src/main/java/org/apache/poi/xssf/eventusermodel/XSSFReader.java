@@ -215,26 +215,26 @@ public class XSSFReader {
         /**
          * Maps relId and the corresponding PackagePart
          */
-        private final Map<String, PackagePart> sheetMap;
+        protected final Map<String, PackagePart> sheetMap;
 
         /**
          * Current sheet reference
          */
-        XSSFSheetRef xssfSheetRef;
+        protected XSSFSheetRef xssfSheetRef;
 
         /**
          * Iterator over CTSheet objects, returns sheets in {@code logical} order.
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
          * i.e. as they are stored in the underlying package
          */
-        final Iterator<XSSFSheetRef> sheetIterator;
+        protected final Iterator<XSSFSheetRef> sheetIterator;
 
         /**
          * Construct a new SheetIterator
          *
          * @param wb package part holding workbook.xml
          */
-        SheetIterator(PackagePart wb) throws IOException {
+        protected SheetIterator(PackagePart wb) throws IOException {
 
             /*
              * The order of sheets is defined by the order of CTSheet elements in workbook.xml
@@ -259,7 +259,7 @@ public class XSSFReader {
             }
         }
 
-        Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
+        protected Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
 
             XMLSheetRefReader xmlSheetRefReader = new XMLSheetRefReader();
             XMLReader xmlReader;
@@ -294,7 +294,7 @@ public class XSSFReader {
          *
          * @return all relationships that are sheet-like
          */
-        Set<String> getSheetRelationships() {
+        protected Set<String> getSheetRelationships() {
             return WORKSHEET_RELS;
         }
 
