@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.IMAGE_PART;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -316,7 +317,7 @@ class TestRelationships {
         assertEquals(6, drawingRels.size());
 
         // expected one image
-        assertEquals(1, drawingPart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/image").size());
+        assertEquals(1, drawingPart.getRelationshipsByType(IMAGE_PART).size());
         // and three hyperlinks
         assertEquals(5, drawingPart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink").size());
 
