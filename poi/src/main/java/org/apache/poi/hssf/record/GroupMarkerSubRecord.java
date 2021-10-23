@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
@@ -31,9 +32,6 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class GroupMarkerSubRecord extends SubRecord {
     public static final short sid = 0x0006;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
 
     private static final byte[] EMPTY_BYTE_ARRAY = { };
 
@@ -54,7 +52,7 @@ public final class GroupMarkerSubRecord extends SubRecord {
     }
 
     GroupMarkerSubRecord(LittleEndianInput in, int size, int cmoOt) {
-        byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
         in.readFully(buf);
         reserved = buf;
     }

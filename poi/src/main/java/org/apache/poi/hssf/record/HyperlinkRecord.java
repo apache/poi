@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexRead;
@@ -48,9 +49,6 @@ import org.apache.poi.util.StringUtil;
 public final class HyperlinkRecord extends StandardRecord {
     public static final short sid = 0x01B8;
     private static final Logger LOG = LogManager.getLogger(HyperlinkRecord.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
 
     /*
      * Link flags
@@ -391,7 +389,7 @@ public final class HyperlinkRecord extends StandardRecord {
 
                 int len = in.readInt();
 
-                byte[] path_bytes = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+                byte[] path_bytes = IOUtils.safelyAllocate(len, HSSFWorkbook.getMaxRecordLength());
                 in.readFully(path_bytes);
 
                 _address = new String(path_bytes, StringUtil.UTF8);

@@ -143,7 +143,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
             int usedInBlock = (int) (length % _block_size);
             if (usedInBlock != 0 && usedInBlock != _block_size) {
                 int toBlockEnd = _block_size - usedInBlock;
-                byte[] padding = IOUtils.safelyAllocate(toBlockEnd, POIFSFileSystem.MAX_RECORD_LENGTH);
+                byte[] padding = IOUtils.safelyAllocate(toBlockEnd, POIFSFileSystem.getMaxRecordLength());
                 Arrays.fill(padding, (byte) 0xFF);
                 os.write(padding);
             }
@@ -208,7 +208,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
 
         if (getSize() > 0) {
             // Get all the data into a single array
-            byte[] data = IOUtils.safelyAllocate(getSize(), POIFSFileSystem.MAX_RECORD_LENGTH);
+            byte[] data = IOUtils.safelyAllocate(getSize(), POIFSFileSystem.getMaxRecordLength());
             int offset = 0;
             for (ByteBuffer buffer : _stream) {
                 int length = Math.min(_block_size, data.length - offset);
