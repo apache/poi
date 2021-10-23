@@ -282,15 +282,42 @@ public class XSLFPictureShape extends XSLFSimpleShape
         XmlObject xmlObject = getXmlObject();
         if (xmlObject instanceof CTPicture) {
             CTPicture ctPicture = (CTPicture)xmlObject;
-            CTPictureNonVisual nvSpPr = ctPicture.getNvPicPr();
-            if (nvSpPr != null) {
-                CTNonVisualDrawingProps cnv = nvSpPr.getCNvPr();
-                if (cnv != null) {
-                    name = cnv.getName();
+            CTPictureNonVisual nvPicPr = ctPicture.getNvPicPr();
+            if (nvPicPr != null) {
+                CTNonVisualDrawingProps cnvdProps = nvPicPr.getCNvPr();
+                if (cnvdProps != null) {
+                    name = cnvdProps.getName();
                 }
             }
         }
         return name;
+    }
+
+    /**
+     * @param name picture name
+     * @return returns true if the name was set
+     * @since POI 5.1.0
+     */
+    public boolean setName(String name) {
+        XmlObject xmlObject = getXmlObject();
+        if (xmlObject instanceof CTPicture) {
+            CTPicture ctPicture = (CTPicture)xmlObject;
+            CTPictureNonVisual nvPicPr = ctPicture.getNvPicPr();
+            if (nvPicPr == null) {
+                nvPicPr = ctPicture.addNewNvPicPr();
+            }
+            if (nvPicPr != null) {
+                CTNonVisualDrawingProps cnvdProps = nvPicPr.getCNvPr();
+                if (cnvdProps == null) {
+                    cnvdProps = nvPicPr.addNewCNvPr();
+                }
+                if (cnvdProps != null) {
+                    cnvdProps.setName(name);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
