@@ -499,11 +499,11 @@ public abstract class BaseTestWorkbook {
 
 
     /**
-     * Test to validate that replacement for removed setRepeatingRowsAnsColumns() methods
+     * Test to validate that replacement for removed setRepeatingRowsAndColumns() methods
      * is still working correctly
      */
     @Test
-    void setRepeatingRowsAnsColumns() throws IOException {
+    void setRepeatingRowsAndColumns() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellRangeAddress cra = new CellRangeAddress(0, 3, 0, 0);
             String expRows = "1:4", expCols = "A:A";

@@ -149,6 +149,13 @@ jar {
     }
 }
 
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
 publishing {
     publications {
         POI(MavenPublication) {
