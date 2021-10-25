@@ -19,25 +19,37 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.List;
 
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.*;
 
 
 @Internal
-public final class SprmUtils
-{
+public final class SprmUtils {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
-    public SprmUtils()
-    {
+    /**
+     * @param length the max record length allowed for SPRM data
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
     }
 
-    public static byte[] shortArrayToByteArray(short[] convert)
-    {
+    /**
+     * @return the max record length allowed for SPRM data
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    public SprmUtils() {}
+
+    /**
+     * @deprecated unused by POI internally
+     */
+    @Removal(version= "6.0.0")
+    public static byte[] shortArrayToByteArray(short[] convert) {
         byte[] buf = IOUtils.safelyAllocate(convert.length * (long)LittleEndianConsts.SHORT_SIZE, MAX_RECORD_LENGTH);
 
         for (int x = 0; x < convert.length; x++)

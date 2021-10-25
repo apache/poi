@@ -29,11 +29,26 @@ import java.util.Locale;
 @Internal
 public final class StringUtil {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10000000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10000000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     public static final Charset UTF16LE = StandardCharsets.UTF_16LE;
     public static final Charset UTF8 = StandardCharsets.UTF_8;
     public static final Charset WIN_1252 = Charset.forName("cp1252");
+
+    /**
+     * @param length the max record length allowed for StringUtil
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for StringUtil
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private StringUtil() {
         // no instances of this class

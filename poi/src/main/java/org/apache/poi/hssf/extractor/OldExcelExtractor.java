@@ -63,8 +63,8 @@ public class OldExcelExtractor implements POITextExtractor {
 
     private static final int FILE_PASS_RECORD_SID = 0x2f;
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private RecordInputStream ris;
 
@@ -73,6 +73,20 @@ public class OldExcelExtractor implements POITextExtractor {
 
     private int biffVersion;
     private int fileType;
+
+    /**
+     * @param length the max record length allowed for OldExcelExtractor
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for OldExcelExtractor
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public OldExcelExtractor(InputStream input) throws IOException {
         open(input);

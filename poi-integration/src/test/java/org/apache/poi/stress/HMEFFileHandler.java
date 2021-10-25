@@ -32,7 +32,7 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 
-class HMEFFileHandler extends AbstractFileHandler {
+public class HMEFFileHandler extends AbstractFileHandler {
 
     @Override
     public void handleExtracting(File file) throws Exception {

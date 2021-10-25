@@ -34,12 +34,26 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public class CodePageString {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = LogManager.getLogger(CodePageString.class);
 
     private byte[] _value;
 
+    /**
+     * @param length the max record length allowed for CodePageString
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for CodePageString
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();

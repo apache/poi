@@ -138,8 +138,10 @@ import org.apache.poi.util.Removal;
 public final class HSSFWorkbook extends POIDocument implements Workbook {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-    private static final int MAX_IMAGE_LENGTH = 50_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int DEFAULT_MAX_IMAGE_LENGTH = 50_000_000;
+    private static int MAX_IMAGE_LENGTH = DEFAULT_MAX_IMAGE_LENGTH;
 
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
@@ -218,6 +220,34 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return new HSSFWorkbook(book);
     }
 
+    /**
+     * @param length the max record length allowed for HSSFWorkbook
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HSSFWorkbook
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    /**
+     * @param length the max image length allowed for HSSFWorkbook
+     */
+    public static void setMaxImageLength(int length) {
+        MAX_IMAGE_LENGTH = length;
+    }
+
+    /**
+     * @return the max image length allowed for HSSFWorkbook
+     */
+    public static int getMaxImageLength() {
+        return MAX_IMAGE_LENGTH;
+    }
+    
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
      */

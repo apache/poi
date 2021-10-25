@@ -26,7 +26,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
-class XWPFFileHandler extends AbstractFileHandler {
+public class XWPFFileHandler extends AbstractFileHandler {
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx", "document/ExternalEntityInText.docx"
     );

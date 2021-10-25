@@ -31,13 +31,14 @@ import org.apache.poi.util.StringUtil;
 /**
  * A CString (type 4026). Holds a unicode string, and the first two bytes
  *  of the record header normally encode the count. Typically attached to
- *  some complex sequence of records, eg Commetns.
+ *  some complex sequence of records, eg Comments.
  */
 
 public final class CString extends RecordAtom {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = 1_000_000;
 
     private byte[] _header;
 
@@ -47,6 +48,20 @@ public final class CString extends RecordAtom {
     /** Grabs the text. Never <code>null</code> */
     public String getText() {
         return StringUtil.getFromUnicodeLE(_text);
+    }
+
+    /**
+     * @param length the max record length allowed for CString
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for CString
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
     }
 
     /** Updates the text in the Atom. */

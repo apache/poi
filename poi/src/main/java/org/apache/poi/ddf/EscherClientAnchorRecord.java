@@ -36,7 +36,8 @@ import org.apache.poi.util.LittleEndian;
  */
 public class EscherClientAnchorRecord extends EscherRecord {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     public static final short RECORD_ID = EscherRecordTypes.CLIENT_ANCHOR.typeID;
 
@@ -59,6 +60,20 @@ public class EscherClientAnchorRecord extends EscherRecord {
     private short field_9_dy2;
     private byte[] remainingData = new byte[0];
     private boolean shortRecord;
+
+    /**
+     * @param length the max record length allowed for EscherClientAnchorRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherClientAnchorRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherClientAnchorRecord() {}
 

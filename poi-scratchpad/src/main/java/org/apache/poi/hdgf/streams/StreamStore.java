@@ -26,9 +26,24 @@ import org.apache.poi.util.IOUtils;
  */
 public class StreamStore { // TODO - instantiable superclass
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private byte[] contents;
+
+    /**
+     * @param length the max record length allowed for StreamStore
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for StreamStore
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Creates a new, non compressed Stream Store

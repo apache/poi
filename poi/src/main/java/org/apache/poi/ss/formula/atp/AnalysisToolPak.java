@@ -173,8 +173,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
-        r(m, "TDIST.2T", TDist2t.instance);
-        r(m, "TDIST.RT", TDistRt.instance);
+        r(m, "T.DIST", TDistLt.instance);
+        r(m, "T.DIST.2T", TDist2t.instance);
+        r(m, "T.DIST.RT", TDistRt.instance);
         r(m, "TEXTJOIN", TextJoinFunction.instance);
         r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
@@ -236,11 +237,11 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     /**
-     * Register a ATP function in runtime.
+     * Register an ATP function in runtime.
      *
      * @param name  the function name
-     * @param func  the functoin to register
-     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @param func  the function to register
+     * @throws IllegalArgumentException if the function is unknown or already registered.
      * @since 3.8 beta6
      */
     public static void registerFunction(String name, FreeRefFunction func){

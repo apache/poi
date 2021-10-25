@@ -30,7 +30,7 @@ import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
-class XSSFBFileHandler extends AbstractFileHandler {
+public class XSSFBFileHandler extends AbstractFileHandler {
 
     static {
         //add expected failures here:

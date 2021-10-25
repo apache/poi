@@ -222,7 +222,8 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 SAXParseException ex = assertThrows(SAXParseException.class, () -> exporter.exportToXML(os, true));
-                assertTrue(p.matcher(ex.getMessage()).find());
+                assertTrue(p.matcher(ex.getMessage()).find(),
+						"Did not find pattern " + p + " in " + ex.getMessage());
             }
         }
     }

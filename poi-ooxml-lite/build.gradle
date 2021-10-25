@@ -63,7 +63,7 @@ task generateModuleInfo() {
             collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
             findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
 
-        String content = header + '\n' + exports + '\n}\n'
+        String content = header + '\n' + exports + '\n}'
         if (fileOut.text != content) {
             fileOut.write content
         }

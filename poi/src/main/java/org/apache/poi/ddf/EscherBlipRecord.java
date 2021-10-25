@@ -27,7 +27,8 @@ import org.apache.poi.util.LittleEndian;
 public class EscherBlipRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 104_857_600;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 104_857_600;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     public static final short  RECORD_ID_START    = EscherRecordTypes.BLIP_START.typeID;
     public static final short  RECORD_ID_END      = EscherRecordTypes.BLIP_END.typeID;
@@ -35,6 +36,20 @@ public class EscherBlipRecord extends EscherRecord {
     private static final int   HEADER_SIZE               = 8;
 
     private byte[] field_pictureData;
+
+    /**
+     * @param length the max record length allowed for EscherBlipRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherBlipRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherBlipRecord() {
     }

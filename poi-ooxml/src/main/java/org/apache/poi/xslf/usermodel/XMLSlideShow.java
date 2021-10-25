@@ -64,7 +64,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 
 /**
- * High level representation of a ooxml slideshow.
+ * High level representation of an ooxml slideshow.
  * This is the first object most users will construct whether
  * they are reading or writing a slideshow. It is also the
  * top level object for creating new slides/etc.
@@ -75,7 +75,8 @@ public class XMLSlideShow extends POIXMLDocument
         implements SlideShow<XSLFShape, XSLFTextParagraph> {
     private static final Logger LOG = LogManager.getLogger(XMLSlideShow.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private CTPresentation _presentation;
     private final List<XSLFSlide> _slides = new ArrayList<>();
@@ -85,6 +86,20 @@ public class XMLSlideShow extends POIXMLDocument
     private XSLFTableStyles _tableStyles;
     private XSLFNotesMaster _notesMaster;
     private XSLFCommentAuthors _commentAuthors;
+
+    /**
+     * @param length the max record length allowed for XMLSlideShow
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for XMLSlideShow
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public XMLSlideShow() {
         this(empty());

@@ -34,14 +34,29 @@ import org.apache.poi.util.RecordFormatException;
 public final class EscherTextboxRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     public static final short RECORD_ID = EscherRecordTypes.CLIENT_TEXTBOX.typeID;
 
     private static final byte[] NO_BYTES = new byte[0];
 
-    /** The data for this record not including the the 8 byte header */
+    /** The data for this record not including the 8 byte header */
     private byte[] thedata = NO_BYTES;
+
+    /**
+     * @param length the max record length allowed for EscherTextboxRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherTextboxRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherTextboxRecord() {}
 

@@ -31,14 +31,10 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 @Internal
-public final class TableSprmCompressor
-{
-  //arbitrarily selected; may need to increase
-  private static final int MAX_RECORD_LENGTH = 100_000;
+public final class TableSprmCompressor {
 
-  public TableSprmCompressor()
-  {
-  }
+  public TableSprmCompressor() {}
+
   public static byte[] compressTableProperty(TableProperties newTAP)
   {
     int size = 0;
@@ -85,7 +81,7 @@ public final class TableSprmCompressor
               1
                 + (LittleEndianConsts.SHORT_SIZE*((long)itcMac + 1))
                 + (TableCellDescriptor.SIZE*(long)itcMac),
-              MAX_RECORD_LENGTH);
+              SprmUtils.MAX_RECORD_LENGTH);
       buf[0] = (byte)itcMac;
 
       short[] dxaCenters = newTAP.getRgdxaCenter();

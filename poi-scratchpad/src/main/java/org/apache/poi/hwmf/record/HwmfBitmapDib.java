@@ -54,7 +54,6 @@ public class HwmfBitmapDib implements GenericRecord {
 
     private static final Logger LOG = LogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
-    private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum BitCount {
         /**
@@ -258,14 +257,14 @@ public class HwmfBitmapDib implements GenericRecord {
             headerCompression == Compression.BI_BITFIELDS ||
             headerCompression == Compression.BI_CMYK) {
             int fileSize = Math.min(introSize+bodySize,recordSize);
-            imageData = IOUtils.safelyAllocate(fileSize, MAX_RECORD_LENGTH);
+            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength());
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
             // emfs are sometimes truncated, read as much as possible
             int readBytes = leis.read(imageData, introSize, fileSize-introSize);
             return introSize+(recordSize-fileSize)+readBytes;
         } else {
-            imageData = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
+            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength());
             leis.readFully(imageData);
             return recordSize;
         }
@@ -453,7 +452,7 @@ public class HwmfBitmapDib implements GenericRecord {
         int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
 
         // create the image data and leave the parsing to the ImageIO api
-        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, HwmfPicture.getMaxRecordLength());
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';

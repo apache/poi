@@ -46,7 +46,7 @@ final class TestTDistRt {
         confirmValue("5.968191467", "8", 0.00016754180265310392);
         confirmValue("5.968191467", "8.2", 0.00016754180265310392);
         confirmValue("5.968191467", "8.9", 0.00016754180265310392);
-        confirmValue("-5.968191467", "8", 0.00016754180265310392);
+        confirmValue("-5.968191467", "8", 0.999832458, 0.000001);
     }
 
     @Test
@@ -71,8 +71,8 @@ final class TestTDistRt {
             addRow(sheet, 2, 60, "Degrees of freedom");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "TDIST.RT(A2,A3)", 0.027322465, 0.01);
-            assertDouble(fe, cell, "TDIST.RT(-A2,A3)", 0.027322465, 0.01);
+            assertDouble(fe, cell, "T.DIST.RT(A2,A3)", 0.027322465, 0.000001);
+            assertDouble(fe, cell, "T.DIST.RT(-A2,A3)", 0.972677535, 0.000001);
         }
     }
 
@@ -82,9 +82,13 @@ final class TestTDistRt {
     }
 
     private static void confirmValue(String number1, String number2, double expected) {
+        confirmValue(number1, number2, expected, 0.0);
+    }
+
+    private static void confirmValue(String number1, String number2, double expected, double tolerance) {
         ValueEval result = invokeValue(number1, number2);
         assertEquals(NumberEval.class, result.getClass());
-        assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0);
+        assertEquals(expected, ((NumberEval) result).getNumberValue(), tolerance);
     }
 
     private static void confirmInvalidError(String number1, String number2) {

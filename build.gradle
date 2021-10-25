@@ -31,7 +31,7 @@ buildscript {
     dependencies {
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
         classpath 'de.thetaphi:forbiddenapis:3.2'
-        classpath 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.5'
+        classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.9'
     }
 }
 
@@ -578,7 +578,7 @@ task replaceVersion() {
     var tokens = [
 //        [ 'sonar', '**/pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ],
 //        [ 'sonar', '**/pom.xml', '(poi-parent&lt;/artifactId>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\1${version}" ],
-        [ 'osgi', 'pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ]
+        [ 'osgi', 'pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT|-RC\\d+)?', "\\1${version}" ]
         // [ '.', 'build.gradle', ' version = \'[0-9.]+(?:-SNAPSHOT)?\'', " version = '${version}'" ]
     ]
 

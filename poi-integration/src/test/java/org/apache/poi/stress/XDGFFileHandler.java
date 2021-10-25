@@ -23,7 +23,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.junit.jupiter.api.Test;
 
-class XDGFFileHandler extends AbstractFileHandler {
+public class XDGFFileHandler extends AbstractFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files

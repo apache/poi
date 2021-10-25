@@ -30,7 +30,7 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.junit.jupiter.api.Test;
 
-class HWPFFileHandler extends POIFSFileHandler {
+public class HWPFFileHandler extends POIFSFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         HWPFDocument doc = new HWPFDocument(stream);

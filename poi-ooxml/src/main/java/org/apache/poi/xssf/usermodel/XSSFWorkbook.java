@@ -677,19 +677,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             clonedDg.getCTDrawing().set(dg.getCTDrawing().copy());
 
             // Clone drawing relations
-            List<RelationPart> srcRels = srcSheet.getDrawingPatriarch().getRelationParts();
-            for (RelationPart rp : srcRels) {
-                POIXMLDocumentPart r = rp.getDocumentPart();
-                if (r instanceof XSSFChart) {
-                    // Replace chart relation part with new relationship, cloning the chart's content
-                    RelationPart chartPart = clonedDg.createChartRelationPart();
-                    XSSFChart chart = chartPart.getDocumentPart();
-                    chart.importContent((XSSFChart)r);
-                    chart.replaceReferences(clonedSheet);
-                } else {
-                    addRelation(rp, clonedDg);
-                }
-            }
+			XSSFDrawing drawingPatriarch = srcSheet.getDrawingPatriarch();
+			if (drawingPatriarch != null) {
+				List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
+				for (RelationPart rp : srcRels) {
+					POIXMLDocumentPart r = rp.getDocumentPart();
+					if (r instanceof XSSFChart) {
+						// Replace chart relation part with new relationship, cloning the chart's content
+						RelationPart chartPart = clonedDg.createChartRelationPart();
+						XSSFChart chart = chartPart.getDocumentPart();
+						chart.importContent((XSSFChart) r);
+						chart.replaceReferences(clonedSheet);
+					} else {
+						addRelation(rp, clonedDg);
+					}
+				}
+			}
         }
         return clonedSheet;
     }

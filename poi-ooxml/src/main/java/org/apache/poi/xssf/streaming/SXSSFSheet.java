@@ -98,8 +98,7 @@ public class SXSSFSheet implements Sheet
     }
 
     /* Gets "<sheetData>" document fragment*/
-    public InputStream getWorksheetXMLInputStream() throws IOException
-    {
+    public InputStream getWorksheetXMLInputStream() throws IOException {
         // flush all remaining data and close the temp file writer
         flushRows(0);
         _writer.close();
@@ -108,8 +107,7 @@ public class SXSSFSheet implements Sheet
 
     //start of interface implementation
     @Override
-    public Iterator<Row> iterator()
-    {
+    public Iterator<Row> iterator() {
         return rowIterator();
     }
 
@@ -123,8 +121,7 @@ public class SXSSFSheet implements Sheet
      * @see #removeRow(Row)
      */
     @Override
-    public SXSSFRow createRow(int rownum)
-    {
+    public SXSSFRow createRow(int rownum) {
         int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         if (rownum < 0 || rownum > maxrow) {
             throw new IllegalArgumentException("Invalid row number (" + rownum
@@ -165,8 +162,7 @@ public class SXSSFSheet implements Sheet
      * @param row   representing a row to remove.
      */
     @Override
-    public void removeRow(Row row)
-    {
+    public void removeRow(Row row) {
         if (row.getSheet() != this) {
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
@@ -188,8 +184,7 @@ public class SXSSFSheet implements Sheet
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
     @Override
-    public SXSSFRow getRow(int rownum)
-    {
+    public SXSSFRow getRow(int rownum) {
         return _rows.get(rownum);
     }
 
@@ -199,8 +194,7 @@ public class SXSSFSheet implements Sheet
      * @return the number of physically defined rows in this sheet
      */
     @Override
-    public int getPhysicalNumberOfRows()
-    {
+    public int getPhysicalNumberOfRows() {
         return _rows.size() + _writer.getNumberOfFlushedRows();
     }
 
@@ -223,8 +217,7 @@ public class SXSSFSheet implements Sheet
      * @return last row contained n this sheet (0-based)
      */
     @Override
-    public int getLastRowNum()
-    {
+    public int getLastRowNum() {
         return _rows.size() == 0 ? -1 : _rows.lastKey();
     }
 
@@ -235,8 +228,7 @@ public class SXSSFSheet implements Sheet
      * @param hidden - the visiblity state of the column
      */
     @Override
-    public void setColumnHidden(int columnIndex, boolean hidden)
-    {
+    public void setColumnHidden(int columnIndex, boolean hidden) {
         _sh.setColumnHidden(columnIndex,hidden);
     }
 
@@ -247,8 +239,7 @@ public class SXSSFSheet implements Sheet
      * @return hidden - <code>false</code> if the column is visible
      */
     @Override
-    public boolean isColumnHidden(int columnIndex)
-    {
+    public boolean isColumnHidden(int columnIndex) {
         return _sh.isColumnHidden(columnIndex);
     }
 
@@ -264,8 +255,7 @@ public class SXSSFSheet implements Sheet
      * @param width - the width in units of 1/256th of a character width
      */
     @Override
-    public void setColumnWidth(int columnIndex, int width)
-    {
+    public void setColumnWidth(int columnIndex, int width) {
         _sh.setColumnWidth(columnIndex,width);
     }
 
@@ -275,8 +265,7 @@ public class SXSSFSheet implements Sheet
      * @return width - the width in units of 1/256th of a character width
      */
     @Override
-    public int getColumnWidth(int columnIndex)
-    {
+    public int getColumnWidth(int columnIndex) {
         return _sh.getColumnWidth(columnIndex);
     }
 
@@ -300,8 +289,7 @@ public class SXSSFSheet implements Sheet
      * @param width default column width measured in characters
      */
     @Override
-    public void setDefaultColumnWidth(int width)
-    {
+    public void setDefaultColumnWidth(int width) {
         _sh.setDefaultColumnWidth(width);
     }
 
@@ -312,8 +300,7 @@ public class SXSSFSheet implements Sheet
      * @return default column width measured in characters
      */
     @Override
-    public int getDefaultColumnWidth()
-    {
+    public int getDefaultColumnWidth() {
         return _sh.getDefaultColumnWidth();
     }
 
@@ -325,8 +312,7 @@ public class SXSSFSheet implements Sheet
      * @return  default row height measured in twips (1/20 of  a point)
      */
     @Override
-    public short getDefaultRowHeight()
-    {
+    public short getDefaultRowHeight() {
         return _sh.getDefaultRowHeight();
     }
 
@@ -337,8 +323,7 @@ public class SXSSFSheet implements Sheet
      * @return  default row height in points
      */
     @Override
-    public float getDefaultRowHeightInPoints()
-    {
+    public float getDefaultRowHeightInPoints() {
         return _sh.getDefaultRowHeightInPoints();
     }
 
@@ -349,8 +334,7 @@ public class SXSSFSheet implements Sheet
      * @param  height default row height measured in twips (1/20 of  a point)
      */
     @Override
-    public void setDefaultRowHeight(short height)
-    {
+    public void setDefaultRowHeight(short height) {
         _sh.setDefaultRowHeight(height);
     }
 
@@ -360,8 +344,7 @@ public class SXSSFSheet implements Sheet
      * @param height default row height
      */
     @Override
-    public void setDefaultRowHeightInPoints(float height)
-    {
+    public void setDefaultRowHeightInPoints(float height) {
         _sh.setDefaultRowHeightInPoints(height);
     }
 
@@ -372,8 +355,7 @@ public class SXSSFSheet implements Sheet
      *  set for that column
      */
     @Override
-    public CellStyle getColumnStyle(int column)
-    {
+    public CellStyle getColumnStyle(int column) {
         return _sh.getColumnStyle(column);
     }
 
@@ -390,8 +372,7 @@ public class SXSSFSheet implements Sheet
      * @return index of this region
      */
     @Override
-    public int addMergedRegion(CellRangeAddress region)
-    {
+    public int addMergedRegion(CellRangeAddress region) {
         return _sh.addMergedRegion(region);
     }
 
@@ -402,8 +383,7 @@ public class SXSSFSheet implements Sheet
      * @return index of this region
      */
     @Override
-    public int addMergedRegionUnsafe(CellRangeAddress region)
-    {
+    public int addMergedRegionUnsafe(CellRangeAddress region) {
         return _sh.addMergedRegionUnsafe(region);
     }
 
@@ -425,8 +405,7 @@ public class SXSSFSheet implements Sheet
      * @param value true to vertically center, false otherwise.
      */
     @Override
-    public void setVerticallyCenter(boolean value)
-    {
+    public void setVerticallyCenter(boolean value) {
         _sh.setVerticallyCenter(value);
     }
 
@@ -436,8 +415,7 @@ public class SXSSFSheet implements Sheet
      * @param value true to horizontally center, false otherwise.
      */
     @Override
-    public void setHorizontallyCenter(boolean value)
-    {
+    public void setHorizontallyCenter(boolean value) {
         _sh.setHorizontallyCenter(value);
     }
 
@@ -445,8 +423,7 @@ public class SXSSFSheet implements Sheet
      * Determine whether printed output for this sheet will be horizontally centered.
      */
     @Override
-    public boolean getHorizontallyCenter()
-    {
+    public boolean getHorizontallyCenter() {
         return _sh.getHorizontallyCenter();
     }
 
@@ -454,8 +431,7 @@ public class SXSSFSheet implements Sheet
      * Determine whether printed output for this sheet will be vertically centered.
      */
     @Override
-    public boolean getVerticallyCenter()
-    {
+    public boolean getVerticallyCenter() {
         return _sh.getVerticallyCenter();
     }
 
@@ -465,8 +441,7 @@ public class SXSSFSheet implements Sheet
      * @param index of the region to unmerge
      */
     @Override
-    public void removeMergedRegion(int index)
-    {
+    public void removeMergedRegion(int index) {
         _sh.removeMergedRegion(index);
     }
 
@@ -476,8 +451,7 @@ public class SXSSFSheet implements Sheet
      * @param indices of the regions to unmerge
      */
     @Override
-    public void removeMergedRegions(Collection<Integer> indices)
-    {
+    public void removeMergedRegions(Collection<Integer> indices) {
         _sh.removeMergedRegions(indices);
     }
 
@@ -487,8 +461,7 @@ public class SXSSFSheet implements Sheet
      * @return number of merged regions
      */
     @Override
-    public int getNumMergedRegions()
-    {
+    public int getNumMergedRegions() {
         return _sh.getNumMergedRegions();
     }
 
@@ -500,8 +473,7 @@ public class SXSSFSheet implements Sheet
      * @return the merged region at the specified index
      */
     @Override
-    public CellRangeAddress getMergedRegion(int index)
-    {
+    public CellRangeAddress getMergedRegion(int index) {
         return _sh.getMergedRegion(index);
     }
 
@@ -523,8 +495,7 @@ public class SXSSFSheet implements Sheet
      * be the third row if say for instance the second row is undefined.
      */
     @Override
-    public Iterator<Row> rowIterator()
-    {
+    public Iterator<Row> rowIterator() {
         @SuppressWarnings("unchecked")
         Iterator<Row> result = (Iterator<Row>)(Iterator<? extends Row>)_rows.values().iterator();
         return result;
@@ -536,8 +507,7 @@ public class SXSSFSheet implements Sheet
      * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
      */
     @Override
-    public void setAutobreaks(boolean value)
-    {
+    public void setAutobreaks(boolean value) {
         _sh.setAutobreaks(value);
     }
 
@@ -547,8 +517,7 @@ public class SXSSFSheet implements Sheet
      * @param value - guts or no guts
      */
     @Override
-    public void setDisplayGuts(boolean value)
-    {
+    public void setDisplayGuts(boolean value) {
         _sh.setDisplayGuts(value);
     }
 
@@ -559,8 +528,7 @@ public class SXSSFSheet implements Sheet
      * @param value whether to display or hide all zero values on the worksheet
      */
     @Override
-    public void setDisplayZeros(boolean value)
-    {
+    public void setDisplayZeros(boolean value) {
         _sh.setDisplayZeros(value);
     }
 
@@ -572,8 +540,7 @@ public class SXSSFSheet implements Sheet
      * @return whether all zero values on the worksheet are displayed
      */
     @Override
-    public boolean isDisplayZeros()
-    {
+    public boolean isDisplayZeros() {
         return _sh.isDisplayZeros();
     }
 
@@ -583,8 +550,7 @@ public class SXSSFSheet implements Sheet
      * @param value true for right to left, false otherwise.
      */
     @Override
-    public void setRightToLeft(boolean value)
-    {
+    public void setRightToLeft(boolean value) {
         _sh.setRightToLeft(value);
     }
 
@@ -594,8 +560,7 @@ public class SXSSFSheet implements Sheet
      * @return whether the text is displayed in right-to-left mode in the window
      */
     @Override
-    public boolean isRightToLeft()
-    {
+    public boolean isRightToLeft() {
         return _sh.isRightToLeft();
     }
 
@@ -605,8 +570,7 @@ public class SXSSFSheet implements Sheet
      * @param value <code>true</code> if the Fit to Page print option is enabled.
      */
     @Override
-    public void setFitToPage(boolean value)
-    {
+    public void setFitToPage(boolean value) {
         _sh.setFitToPage(value);
     }
 
@@ -624,8 +588,7 @@ public class SXSSFSheet implements Sheet
      * @param value <code>true</code> if row summaries appear below detail in the outline
      */
     @Override
-    public void setRowSumsBelow(boolean value)
-    {
+    public void setRowSumsBelow(boolean value) {
         _sh.setRowSumsBelow(value);
     }
 
@@ -643,8 +606,7 @@ public class SXSSFSheet implements Sheet
      * @param value <code>true</code> if col summaries appear right of the detail in the outline
      */
     @Override
-    public void setRowSumsRight(boolean value)
-    {
+    public void setRowSumsRight(boolean value) {
         _sh.setRowSumsRight(value);
     }
 
@@ -654,8 +616,7 @@ public class SXSSFSheet implements Sheet
      * @return <code>true</code> if the sheet displays Automatic Page Breaks.
      */
     @Override
-    public boolean getAutobreaks()
-    {
+    public boolean getAutobreaks() {
         return _sh.getAutobreaks();
     }
 
@@ -666,8 +627,7 @@ public class SXSSFSheet implements Sheet
      * @return boolean - guts or no guts
      */
     @Override
-    public boolean getDisplayGuts()
-    {
+    public boolean getDisplayGuts() {
         return _sh.getDisplayGuts();
     }
 
@@ -677,8 +637,7 @@ public class SXSSFSheet implements Sheet
      * @return <code>true</code> if the Fit to Page print option is enabled.
      */
     @Override
-    public boolean getFitToPage()
-    {
+    public boolean getFitToPage() {
         return _sh.getFitToPage();
     }
 
@@ -696,8 +655,7 @@ public class SXSSFSheet implements Sheet
      * @return <code>true</code> if row summaries appear below detail in the outline
      */
     @Override
-    public boolean getRowSumsBelow()
-    {
+    public boolean getRowSumsBelow() {
         return _sh.getRowSumsBelow();
     }
 
@@ -715,8 +673,7 @@ public class SXSSFSheet implements Sheet
      * @return <code>true</code> if col summaries appear right of the detail in the outline
      */
     @Override
-    public boolean getRowSumsRight()
-    {
+    public boolean getRowSumsRight() {
         return _sh.getRowSumsRight();
     }
 
@@ -726,8 +683,7 @@ public class SXSSFSheet implements Sheet
      * @return whether gridlines are printed
      */
     @Override
-    public boolean isPrintGridlines()
-    {
+    public boolean isPrintGridlines() {
         return _sh.isPrintGridlines();
     }
 
@@ -737,8 +693,7 @@ public class SXSSFSheet implements Sheet
      * @param show boolean to turn on or off the printing of gridlines
      */
     @Override
-    public void setPrintGridlines(boolean show)
-    {
+    public void setPrintGridlines(boolean show) {
         _sh.setPrintGridlines(show);
     }
 
@@ -748,8 +703,7 @@ public class SXSSFSheet implements Sheet
      * @return whether row and column headings are printed
      */
     @Override
-    public boolean isPrintRowAndColumnHeadings()
-    {
+    public boolean isPrintRowAndColumnHeadings() {
         return _sh.isPrintRowAndColumnHeadings();
     }
 
@@ -759,8 +713,7 @@ public class SXSSFSheet implements Sheet
      * @param show boolean to turn on or off the printing of row and column headings
      */
     @Override
-    public void setPrintRowAndColumnHeadings(boolean show)
-    {
+    public void setPrintRowAndColumnHeadings(boolean show) {
         _sh.setPrintRowAndColumnHeadings(show);
     }
 
@@ -770,8 +723,7 @@ public class SXSSFSheet implements Sheet
      * @return The user model for the print setup object.
      */
     @Override
-    public PrintSetup getPrintSetup()
-    {
+    public PrintSetup getPrintSetup() {
         return _sh.getPrintSetup();
     }
 
@@ -783,8 +735,7 @@ public class SXSSFSheet implements Sheet
      * @return the document header. Never <code>null</code>
      */
     @Override
-    public Header getHeader()
-    {
+    public Header getHeader() {
         return _sh.getHeader();
     }
 
@@ -796,8 +747,7 @@ public class SXSSFSheet implements Sheet
      * @return the document footer. Never <code>null</code>
      */
     @Override
-    public Footer getFooter()
-    {
+    public Footer getFooter() {
         return _sh.getFooter();
     }
 
@@ -810,8 +760,7 @@ public class SXSSFSheet implements Sheet
      * @see Workbook#setActiveSheet(int)
      */
     @Override
-    public void setSelected(boolean value)
-    {
+    public void setSelected(boolean value) {
         _sh.setSelected(value);
     }
 
@@ -822,8 +771,7 @@ public class SXSSFSheet implements Sheet
      * @return the size of the margin
      */
     @Override
-    public double getMargin(short margin)
-    {
+    public double getMargin(short margin) {
         return _sh.getMargin(margin);
     }
 
@@ -834,8 +782,7 @@ public class SXSSFSheet implements Sheet
      * @param size the size of the margin
      */
     @Override
-    public void setMargin(short margin, double size)
-    {
+    public void setMargin(short margin, double size) {
         _sh.setMargin(margin,size);
     }
 
@@ -845,8 +792,7 @@ public class SXSSFSheet implements Sheet
      * @return true means protection enabled; false means protection disabled
      */
     @Override
-    public boolean getProtect()
-    {
+    public boolean getProtect() {
         return _sh.getProtect();
     }
 
@@ -855,8 +801,7 @@ public class SXSSFSheet implements Sheet
      * @param password to set for protection. Pass <code>null</code> to remove protection
      */
     @Override
-    public void protectSheet(String password)
-    {
+    public void protectSheet(String password) {
         _sh.protectSheet(password);
     }
 
@@ -866,8 +811,7 @@ public class SXSSFSheet implements Sheet
      * @return true means protection enabled; false means protection disabled
      */
     @Override
-    public boolean getScenarioProtect()
-    {
+    public boolean getScenarioProtect() {
         return _sh.getScenarioProtect();
     }
 
@@ -902,8 +846,7 @@ public class SXSSFSheet implements Sheet
      * @return short indicating the rownum (0 based) of the top row
      */
     @Override
-    public short getTopRow()
-    {
+    public short getTopRow() {
         return _sh.getTopRow();
     }
 
@@ -914,8 +857,7 @@ public class SXSSFSheet implements Sheet
      * @return short indicating the rownum (0 based) of the top row
      */
     @Override
-    public short getLeftCol()
-    {
+    public short getLeftCol() {
         return _sh.getLeftCol();
     }
 
@@ -927,8 +869,7 @@ public class SXSSFSheet implements Sheet
      * @param leftCol the left column to show in desktop window pane
      */
     @Override
-    public void showInPane(int topRow, int leftCol)
-    {
+    public void showInPane(int topRow, int leftCol) {
         _sh.showInPane(topRow, leftCol);
     }
 
@@ -995,8 +936,7 @@ public class SXSSFSheet implements Sheet
      */
     @NotImplemented
     @Override
-    public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
-    {
+    public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         throw new RuntimeException("Not Implemented");
     }
 
@@ -1008,8 +948,7 @@ public class SXSSFSheet implements Sheet
      * @param topRow        Top row visible in bottom pane
      */
     @Override
-    public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow)
-    {
+    public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
         _sh.createFreezePane(colSplit, rowSplit, leftmostColumn, topRow);
     }
 
@@ -1019,8 +958,7 @@ public class SXSSFSheet implements Sheet
      * @param rowSplit      Vertical position of split.
      */
     @Override
-    public void createFreezePane(int colSplit, int rowSplit)
-    {
+    public void createFreezePane(int colSplit, int rowSplit) {
         _sh.createFreezePane(colSplit,rowSplit);
     }
 
@@ -1038,8 +976,7 @@ public class SXSSFSheet implements Sheet
      * @see #PANE_UPPER_RIGHT
      */
     @Override
-    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane)
-    {
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         _sh.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
     }
 
@@ -1049,8 +986,7 @@ public class SXSSFSheet implements Sheet
      * @return null if no pane configured, or the pane information.
      */
     @Override
-    public PaneInformation getPaneInformation()
-    {
+    public PaneInformation getPaneInformation() {
         return _sh.getPaneInformation();
     }
 
@@ -1060,8 +996,7 @@ public class SXSSFSheet implements Sheet
      * @param show whether to show gridlines or not
      */
     @Override
-    public void setDisplayGridlines(boolean show)
-    {
+    public void setDisplayGridlines(boolean show) {
         _sh.setDisplayGridlines(show);
     }
 
@@ -1071,8 +1006,7 @@ public class SXSSFSheet implements Sheet
      * @return whether gridlines are displayed
      */
     @Override
-    public boolean isDisplayGridlines()
-    {
+    public boolean isDisplayGridlines() {
         return _sh.isDisplayGridlines();
     }
 
@@ -1082,8 +1016,7 @@ public class SXSSFSheet implements Sheet
      * @param show whether to show formulas or not
      */
     @Override
-    public void setDisplayFormulas(boolean show)
-    {
+    public void setDisplayFormulas(boolean show) {
         _sh.setDisplayFormulas(show);
     }
 
@@ -1093,8 +1026,7 @@ public class SXSSFSheet implements Sheet
      * @return whether formulas are displayed
      */
     @Override
-    public boolean isDisplayFormulas()
-    {
+    public boolean isDisplayFormulas() {
         return _sh.isDisplayFormulas();
     }
 
@@ -1104,8 +1036,7 @@ public class SXSSFSheet implements Sheet
      * @param show whether to show RowColHeadings or not
      */
     @Override
-    public void setDisplayRowColHeadings(boolean show)
-    {
+    public void setDisplayRowColHeadings(boolean show) {
         _sh.setDisplayRowColHeadings(show);
     }
 
@@ -1114,8 +1045,7 @@ public class SXSSFSheet implements Sheet
      * @return whether RowColHeadings are displayed
      */
     @Override
-    public boolean isDisplayRowColHeadings()
-    {
+    public boolean isDisplayRowColHeadings() {
         return _sh.isDisplayRowColHeadings();
     }
 
@@ -1124,8 +1054,7 @@ public class SXSSFSheet implements Sheet
      * @param row FIXME: Document this!
      */
     @Override
-    public void setRowBreak(int row)
-    {
+    public void setRowBreak(int row) {
         _sh.setRowBreak(row);
     }
 
@@ -1135,8 +1064,7 @@ public class SXSSFSheet implements Sheet
      * @return true if there is a page-break at the given row, false otherwise
      */
     @Override
-    public boolean isRowBroken(int row)
-    {
+    public boolean isRowBroken(int row) {
         return _sh.isRowBroken(row);
     }
 
@@ -1145,8 +1073,7 @@ public class SXSSFSheet implements Sheet
      * @param row The row to remove page breaks from
      */
     @Override
-    public void removeRowBreak(int row)
-    {
+    public void removeRowBreak(int row) {
         _sh.removeRowBreak(row);
     }
 
@@ -1155,8 +1082,7 @@ public class SXSSFSheet implements Sheet
      * @return all the horizontal page breaks, or null if there are no row page breaks
      */
     @Override
-    public int[] getRowBreaks()
-    {
+    public int[] getRowBreaks() {
         return _sh.getRowBreaks();
     }
 
@@ -1165,8 +1091,7 @@ public class SXSSFSheet implements Sheet
      * @return all the vertical page breaks, or null if there are no column page breaks
      */
     @Override
-    public int[] getColumnBreaks()
-    {
+    public int[] getColumnBreaks() {
         return _sh.getColumnBreaks();
     }
 
@@ -1175,8 +1100,7 @@ public class SXSSFSheet implements Sheet
      * @param column The column to work on
      */
     @Override
-    public void setColumnBreak(int column)
-    {
+    public void setColumnBreak(int column) {
         _sh.setColumnBreak(column);
     }
 
@@ -1186,8 +1110,7 @@ public class SXSSFSheet implements Sheet
      * @return true if there is a page break at the given column, false otherwise
      */
     @Override
-    public boolean isColumnBroken(int column)
-    {
+    public boolean isColumnBroken(int column) {
         return _sh.isColumnBroken(column);
     }
 
@@ -1196,8 +1119,7 @@ public class SXSSFSheet implements Sheet
      * @param column The column to remove a page break from
      */
     @Override
-    public void removeColumnBreak(int column)
-    {
+    public void removeColumnBreak(int column) {
         _sh.removeColumnBreak(column);
     }
 
@@ -1208,8 +1130,7 @@ public class SXSSFSheet implements Sheet
      * @param collapsed         true = collapse group, false = expand group.
      */
     @Override
-    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed)
-    {
+    public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
         _sh.setColumnGroupCollapsed(columnNumber, collapsed);
     }
 
@@ -1220,8 +1141,7 @@ public class SXSSFSheet implements Sheet
      * @param toColumn          end of the column range.
      */
     @Override
-    public void groupColumn(int fromColumn, int toColumn)
-    {
+    public void groupColumn(int fromColumn, int toColumn) {
         _sh.groupColumn(fromColumn,toColumn);
     }
 
@@ -1232,8 +1152,7 @@ public class SXSSFSheet implements Sheet
      * @param toColumn     end column (0-based)
      */
     @Override
-    public void ungroupColumn(int fromColumn, int toColumn)
-    {
+    public void ungroupColumn(int fromColumn, int toColumn) {
         _sh.ungroupColumn(fromColumn, toColumn);
     }
 
@@ -1275,8 +1194,7 @@ public class SXSSFSheet implements Sheet
      * @param toRow     end row (0-based)
      */
     @Override
-    public void groupRow(int fromRow, int toRow)
-    {
+    public void groupRow(int fromRow, int toRow) {
         for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
             int level = row.getOutlineLevel() + 1;
             row.setOutlineLevel(level);
@@ -1303,8 +1221,7 @@ public class SXSSFSheet implements Sheet
      * @param rownum    index of row to update (0-based)
      * @param level     outline level (greater than 0)
      */
-    public void setRowOutlineLevel(int rownum, int level)
-    {
+    public void setRowOutlineLevel(int rownum, int level) {
         SXSSFRow row = _rows.get(rownum);
         row.setOutlineLevel(level);
         if(level > 0 && level > outlineLevelRow) {
@@ -1330,8 +1247,7 @@ public class SXSSFSheet implements Sheet
      * @param toRow     end row (0-based)
      */
     @Override
-    public void ungroupRow(int fromRow, int toRow)
-    {
+    public void ungroupRow(int fromRow, int toRow) {
         _sh.ungroupRow(fromRow, toRow);
     }
 
@@ -1345,8 +1261,7 @@ public class SXSSFSheet implements Sheet
      * @throws RuntimeException if collapse is false as this is not implemented for SXSSF.
      */
     @Override
-    public void setRowGroupCollapsed(int row, boolean collapse)
-    {
+    public void setRowGroupCollapsed(int row, boolean collapse) {
         if (collapse) {
             collapseRow(row);
         } else {
@@ -1416,8 +1331,7 @@ public class SXSSFSheet implements Sheet
      * @param style the style to set
      */
     @Override
-    public void setDefaultColumnStyle(int column, CellStyle style)
-    {
+    public void setDefaultColumnStyle(int column, CellStyle style) {
         _sh.setDefaultColumnStyle(column, style);
     }
 
@@ -1432,8 +1346,7 @@ public class SXSSFSheet implements Sheet
      * @see #trackColumnsForAutoSizing(Collection)
      * @see #trackAllColumnsForAutoSizing()
      */
-    public void trackColumnForAutoSizing(int column)
-    {
+    public void trackColumnForAutoSizing(int column) {
         _autoSizeColumnTracker.trackColumn(column);
     }
 
@@ -1445,8 +1358,7 @@ public class SXSSFSheet implements Sheet
      * @param columns the columns to track for auto-sizing
      * @since 3.14beta1
      */
-    public void trackColumnsForAutoSizing(Collection<Integer> columns)
-    {
+    public void trackColumnsForAutoSizing(Collection<Integer> columns) {
         _autoSizeColumnTracker.trackColumns(columns);
     }
 
@@ -1455,8 +1367,7 @@ public class SXSSFSheet implements Sheet
      * Because determining the best-fit width for a cell is expensive, this may affect the performance.
      * @since 3.14beta1
      */
-    public void trackAllColumnsForAutoSizing()
-    {
+    public void trackAllColumnsForAutoSizing() {
         _autoSizeColumnTracker.trackAllColumns();
     }
 
@@ -1471,8 +1382,7 @@ public class SXSSFSheet implements Sheet
      * @see #untrackColumnsForAutoSizing(Collection)
      * @see #untrackAllColumnsForAutoSizing()
      */
-    public boolean untrackColumnForAutoSizing(int column)
-    {
+    public boolean untrackColumnForAutoSizing(int column) {
         return _autoSizeColumnTracker.untrackColumn(column);
     }
 
@@ -1485,8 +1395,7 @@ public class SXSSFSheet implements Sheet
      * @return true if one or more columns were untracked as a result of this call
      * @since 3.14beta1
      */
-    public boolean untrackColumnsForAutoSizing(Collection<Integer> columns)
-    {
+    public boolean untrackColumnsForAutoSizing(Collection<Integer> columns) {
         return _autoSizeColumnTracker.untrackColumns(columns);
     }
 
@@ -1495,8 +1404,7 @@ public class SXSSFSheet implements Sheet
      * If this is called, individual columns do not need to be untracked.
      * @since 3.14beta1
      */
-    public void untrackAllColumnsForAutoSizing()
-    {
+    public void untrackAllColumnsForAutoSizing() {
         _autoSizeColumnTracker.untrackAllColumns();
     }
 
@@ -1507,8 +1415,7 @@ public class SXSSFSheet implements Sheet
      * @return true if column is tracked
      * @since 3.14beta1
      */
-    public boolean isColumnTrackedForAutoSizing(int column)
-    {
+    public boolean isColumnTrackedForAutoSizing(int column) {
         return _autoSizeColumnTracker.isColumnTracked(column);
     }
 
@@ -1520,8 +1427,7 @@ public class SXSSFSheet implements Sheet
      * @return a set of the indices of all tracked columns
      * @since 3.14beta1
      */
-    public Set<Integer> getTrackedColumnsForAutoSizing()
-    {
+    public Set<Integer> getTrackedColumnsForAutoSizing() {
         return _autoSizeColumnTracker.getTrackedColumns();
     }
 
@@ -1548,8 +1454,7 @@ public class SXSSFSheet implements Sheet
      * @param column the column index to auto-size
      */
     @Override
-    public void autoSizeColumn(int column)
-    {
+    public void autoSizeColumn(int column) {
         autoSizeColumn(column, false);
     }
 
@@ -1576,8 +1481,7 @@ public class SXSSFSheet implements Sheet
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
     @Override
-    public void autoSizeColumn(int column, boolean useMergedCells)
-    {
+    public void autoSizeColumn(int column, boolean useMergedCells) {
         // Multiple calls to autoSizeColumn need to look up the best-fit width
         // of rows already flushed to disk plus re-calculate the best-fit width
         // of rows in the current window. It isn't safe to update the column
@@ -1619,8 +1523,7 @@ public class SXSSFSheet implements Sheet
      * @return cell comment or <code>null</code> if not found
      */
     @Override
-    public XSSFComment getCellComment(CellAddress ref)
-    {
+    public XSSFComment getCellComment(CellAddress ref) {
         return _sh.getCellComment(ref);
     }
 
@@ -1672,8 +1575,7 @@ public class SXSSFSheet implements Sheet
      * {@inheritDoc}
      */
     @Override
-    public XSSFDrawing getDrawingPatriarch()
-    {
+    public XSSFDrawing getDrawingPatriarch() {
         return _sh.getDrawingPatriarch();
     }
 
@@ -1683,8 +1585,7 @@ public class SXSSFSheet implements Sheet
      * @return  The new drawing patriarch.
      */
     @Override
-    public SXSSFDrawing createDrawingPatriarch()
-    {
+    public SXSSFDrawing createDrawingPatriarch() {
         return new SXSSFDrawing(getWorkbook(), _sh.createDrawingPatriarch());
     }
 
@@ -1695,8 +1596,7 @@ public class SXSSFSheet implements Sheet
      * @return the parent workbook
      */
     @Override
-    public SXSSFWorkbook getWorkbook()
-    {
+    public SXSSFWorkbook getWorkbook() {
         return _workbook;
     }
 
@@ -1706,8 +1606,7 @@ public class SXSSFSheet implements Sheet
      * @return the name of this sheet
      */
     @Override
-    public String getSheetName()
-    {
+    public String getSheetName() {
         return _sh.getSheetName();
     }
 
@@ -1716,8 +1615,7 @@ public class SXSSFSheet implements Sheet
      * @return <code>true</code> if this sheet is currently selected
      */
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return _sh.isSelected();
     }
 
@@ -1754,14 +1652,12 @@ public class SXSSFSheet implements Sheet
     }
 
     @Override
-    public DataValidationHelper getDataValidationHelper()
-    {
+    public DataValidationHelper getDataValidationHelper() {
         return _sh.getDataValidationHelper();
     }
 
     @Override
-    public List<XSSFDataValidation> getDataValidations()
-    {
+    public List<XSSFDataValidation> getDataValidations() {
         return _sh.getDataValidations();
     }
 
@@ -1770,8 +1666,7 @@ public class SXSSFSheet implements Sheet
      * @param dataValidation The Data validation object settings
      */
     @Override
-    public void addValidationData(DataValidation dataValidation)
-    {
+    public void addValidationData(DataValidation dataValidation) {
         _sh.addValidationData(dataValidation);
     }
 
@@ -1781,8 +1676,7 @@ public class SXSSFSheet implements Sheet
      * @param range the range of cells to filter
      */
     @Override
-    public AutoFilter setAutoFilter(CellRangeAddress range)
-    {
+    public AutoFilter setAutoFilter(CellRangeAddress range) {
         return _sh.setAutoFilter(range);
     }
 
@@ -1827,8 +1721,7 @@ public class SXSSFSheet implements Sheet
      * A value of 0 is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      */
-    public void setRandomAccessWindowSize(int value)
-    {
+    public void setRandomAccessWindowSize(int value) {
         if(value == 0 || value < -1) {
             throw new IllegalArgumentException("RandomAccessWindowSize must be either -1 or a positive integer");
         }
@@ -1853,8 +1746,7 @@ public class SXSSFSheet implements Sheet
      * The excess rows (if any) are flushed to the disk while rows
      * with lower index values are flushed first.
      */
-    public void flushRows(int remaining) throws IOException
-    {
+    public void flushRows(int remaining) throws IOException {
         while(_rows.size() > remaining) {
             flushOneRow();
         }
@@ -1868,8 +1760,7 @@ public class SXSSFSheet implements Sheet
      *
      * @throws IOException If an I/O error occurs
      */
-    public void flushRows() throws IOException
-    {
+    public void flushRows() throws IOException {
         this.flushRows(0);
     }
 
@@ -1878,13 +1769,11 @@ public class SXSSFSheet implements Sheet
      *
      * @throws IOException If an I/O error occurs
      */
-    public void flushBufferedData() throws IOException
-    {
+    public void flushBufferedData() throws IOException {
         this._writer.flush();
     }
 
-    private void flushOneRow() throws IOException
-    {
+    private void flushOneRow() throws IOException {
         Integer firstRowNum = _rows.firstKey();
         if (firstRowNum!=null) {
             int rowIndex = firstRowNum;
@@ -1897,15 +1786,13 @@ public class SXSSFSheet implements Sheet
         }
     }
 
-    public void changeRowNum(SXSSFRow row, int newRowNum)
-    {
+    public void changeRowNum(SXSSFRow row, int newRowNum) {
         removeRow(row);
         row.setRowNumWithoutUpdatingSheet(newRowNum);
         _rows.put(newRowNum, row);
     }
 
-    public int getRowNum(SXSSFRow row)
-    {
+    public int getRowNum(SXSSFRow row) {
         return row.getRowNum();
     }
 

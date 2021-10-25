@@ -60,7 +60,8 @@ public abstract class PropertiesChunk extends Chunk {
     public static final String NAME = "__properties_version1.0";
 
     // arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     // standard prefix, defined in the spec
     public static final String VARIABLE_LENGTH_PROPERTY_PREFIX = "__substg1.0_";
@@ -83,6 +84,20 @@ public abstract class PropertiesChunk extends Chunk {
      * to variable sized and multi-valued properties
      */
     private final ChunkGroup parentGroup;
+
+    /**
+     * @param length the max record length allowed for PropertiesChunk
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for PropertiesChunk
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Creates a Properties Chunk.
