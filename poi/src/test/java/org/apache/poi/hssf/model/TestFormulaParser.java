@@ -535,9 +535,9 @@ final class TestFormulaParser {
         assertEquals("'Test Sheet'!A1", formula);
 
         // Now both
-        cell.setCellFormula("Cash_Flow:'Test Sheet'!A1");
+        cell.setCellFormula("'Cash_Flow:Test Sheet'!A1");
         formula = cell.getCellFormula();
-        assertEquals("Cash_Flow:'Test Sheet'!A1", formula);
+        assertEquals("'Cash_Flow:Test Sheet'!A1", formula);
 
 
         // References to a range (area) of cells:
