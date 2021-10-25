@@ -182,6 +182,13 @@ javadocJar {
     }
 }
 
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
 artifacts {
     tests testJar
 }

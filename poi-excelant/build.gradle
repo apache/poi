@@ -127,6 +127,13 @@ javadocJar {
     }
 }
 
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
 task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ] ) {
