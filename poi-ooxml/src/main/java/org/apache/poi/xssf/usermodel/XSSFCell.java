@@ -474,7 +474,10 @@ public final class XSSFCell extends CellBase {
         if (wb.getCellFormulaValidation()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
-            FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            // Make its format consistent with Excel.
+            // eg: "SUM('Sheet1:Sheet2'!A1:B1)" will be trans to "SUM(Sheet1:Sheet2!A1:B1)"
+            formula = FormulaRenderer.toFormulaString(fpb, ptgs);
         }
 
         CTCellFormula f;
