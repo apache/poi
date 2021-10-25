@@ -36,8 +36,6 @@ import org.apache.poi.util.StringUtil;
 
 public final class TextCharsAtom extends RecordAtom {
     public static final long _type = RecordTypes.TextCharsAtom.typeID;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private byte[] _header;
 
@@ -52,7 +50,7 @@ public final class TextCharsAtom extends RecordAtom {
     /** Updates the text in the Atom. */
     public void setText(String text) {
         // Convert to little endian unicode
-        _text = IOUtils.safelyAllocate(text.length() * 2L, MAX_RECORD_LENGTH);
+        _text = IOUtils.safelyAllocate(text.length() * 2L, getMaxRecordLength());
         StringUtil.putUnicodeLE(text,_text,0);
 
         // Update the size (header bytes 5-8)
@@ -72,7 +70,7 @@ public final class TextCharsAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the text
-        _text = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _text = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
     /**
      * Create an empty TextCharsAtom

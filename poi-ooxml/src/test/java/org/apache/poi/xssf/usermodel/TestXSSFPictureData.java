@@ -112,6 +112,37 @@ public final class TestXSSFPictureData {
         wb.close();
     }
 
+    @Test
+    void testNewPictFormat() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+            byte[] pictData = "test pict data".getBytes(LocaleUtil.CHARSET_1252);
+
+            List<XSSFPictureData> pictures = wb.getAllPictures();
+            assertEquals(0, pictures.size());
+
+            int pictIdx = wb.addPicture(pictData, XSSFWorkbook.PICTURE_TYPE_PICT);
+            assertEquals(1, pictures.size());
+            assertEquals("pict", pictures.get(pictIdx).suggestFileExtension());
+            assertArrayEquals(pictData, pictures.get(pictIdx).getData());
+
+            //TODO finish usermodel API for XSSFPicture
+            XSSFPicture p1 = drawing.createPicture(new XSSFClientAnchor(), pictIdx);
+            assertNotNull(p1);
+
+            //check that the added pictures are accessible after write
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                List<XSSFPictureData> pictures2 = wbBack.getAllPictures();
+                assertEquals(1, pictures2.size());
+
+                assertEquals("pict", pictures2.get(pictIdx).suggestFileExtension());
+                assertArrayEquals(pictData, pictures2.get(pictIdx).getData());
+            }
+        }
+    }
+
     /**
      * Bug 53568:  XSSFPicture.getPictureData() can return null.
      */

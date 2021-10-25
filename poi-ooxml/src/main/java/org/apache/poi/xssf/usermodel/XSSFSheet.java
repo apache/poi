@@ -98,14 +98,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final double DEFAULT_MARGIN_BOTTOM = 0.75;
     private static final double DEFAULT_MARGIN_LEFT = 0.7;
     private static final double DEFAULT_MARGIN_RIGHT = 0.7;
-
-    /**
-     * Kept for backwards-compatibility, use {@link Font#TWIPS_PER_POINT} instead.
-     * @deprecated POI 5.0.0
-     */
-    @Deprecated
-    public static final int TWIPS_PER_POINT = Font.TWIPS_PER_POINT;
-
+    
     //TODO make the two variable below private!
     protected CTSheet sheet;
     protected CTWorksheet worksheet;

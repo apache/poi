@@ -42,6 +42,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 
 import static org.apache.logging.log4j.util.Unbox.box;
+import static org.apache.poi.hssf.usermodel.HSSFWorkbook.getMaxRecordLength;
 
 /**
  * Conditional Formatting v12 Rule Record (0x087A).
@@ -54,9 +55,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  this is only used for the other types
  */
 public final class CFRule12Record extends CFRuleBase implements FutureRecord {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short sid = 0x087A;
 
@@ -123,7 +121,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         priority = 0;
         template_type = getConditionType();
         template_param_length = 16;
-        template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
+        template_params = IOUtils.safelyAllocate(template_param_length, getMaxRecordLength());
     }
 
     /**
@@ -267,7 +265,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         } else {
             long len = readFormatOptions(in);
             if (len < ext_formatting_length) {
-                ext_formatting_data = IOUtils.safelyAllocate(ext_formatting_length-len, MAX_RECORD_LENGTH);
+                ext_formatting_data = IOUtils.safelyAllocate(ext_formatting_length-len, getMaxRecordLength());
                 in.readFully(ext_formatting_data);
             }
         }
@@ -283,7 +281,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         template_type = in.readUShort();
         template_param_length = in.readByte();
         if (template_param_length == 0 || template_param_length == 16) {
-            template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
+            template_params = IOUtils.safelyAllocate(template_param_length, getMaxRecordLength());
             in.readFully(template_params);
         } else {
             LOG.atWarn().log("CF Rule v12 template params length should be 0 or 16, found {}", box(template_param_length));

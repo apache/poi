@@ -19,6 +19,7 @@ package org.apache.poi.hpsf;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+
 /**
  * <p>Class to manipulate data in the Clipboard Variant ({@link
  * Variant#VT_CF VT_CF}) format.</p>
@@ -121,7 +122,8 @@ public final class Thumbnail {
     public static final int CF_BITMAP = 2;
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link
@@ -129,7 +131,19 @@ public final class Thumbnail {
      */
     private byte[] _thumbnailData;
 
+    /**
+     * @param length the max record length allowed for SubRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
 
+    /**
+     * @return the max record length allowed for SubRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * <p>Default Constructor. If you use it then one you'll have to add

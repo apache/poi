@@ -33,10 +33,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * An atom record that specifies information about external audio or video data.
  */
-public final class ExMediaAtom extends RecordAtom
-{
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+public final class ExMediaAtom extends RecordAtom {
 
     /**
      * A bit that specifies whether the audio or video data is repeated continuously during playback.
@@ -91,7 +88,7 @@ public final class ExMediaAtom extends RecordAtom
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the record data
-        _recdata = IOUtils.safelyClone(source,start+8, len-8, MAX_RECORD_LENGTH);
+        _recdata = IOUtils.safelyClone(source,start+8, len-8, getMaxRecordLength());
     }
 
     /**

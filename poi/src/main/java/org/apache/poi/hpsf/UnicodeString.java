@@ -33,15 +33,13 @@ import org.apache.poi.util.StringUtil;
 @Internal
 public class UnicodeString {
     private static final Logger LOG = LogManager.getLogger(UnicodeString.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private byte[] _value;
 
     public void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
         final int unicodeBytes = length*2;
-        _value = IOUtils.safelyAllocate(unicodeBytes, MAX_RECORD_LENGTH);
+        _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength());
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is
         // nonzero, this field MUST be a null-terminated array of 16-bit Unicode characters, followed by

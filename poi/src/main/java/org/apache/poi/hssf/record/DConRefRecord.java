@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
@@ -71,9 +72,6 @@ import org.apache.poi.util.StringUtil;
  * At the moment this class is read-only.
  */
 public class DConRefRecord extends StandardRecord {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     /**
      * The id of the record type,
@@ -158,7 +156,7 @@ public class DConRefRecord extends StandardRecord {
         // single-byte, 1 if double-byte.
         final int byteLength = charCount * (charType + 1);
 
-        path = IOUtils.safelyAllocate(byteLength, MAX_RECORD_LENGTH);
+        path = IOUtils.safelyAllocate(byteLength, HSSFWorkbook.getMaxRecordLength());
         inStream.readFully(path);
 
         // If it's a self reference, the last one or two bytes (depending on char type) are the

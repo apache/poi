@@ -45,9 +45,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class PropertyTable implements BATManaged {
     private static final Logger LOG = LogManager.getLogger(PropertyTable.class);
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     private final HeaderBlock    _header_block;
     private final List<Property> _properties = new ArrayList<>();
     private final POIFSBigBlockSize _bigBigBlockSize;
@@ -91,7 +88,7 @@ public final class PropertyTable implements BATManaged {
                     bb.array().length == _bigBigBlockSize.getBigBlockSize()) {
                 data = bb.array();
             } else {
-                data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(), MAX_RECORD_LENGTH);
+                data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());
 
                 int toRead = data.length;
                 if (bb.remaining() < _bigBigBlockSize.getBigBlockSize()) {

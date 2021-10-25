@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
@@ -33,10 +34,6 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 @Internal
 public final class Ffn {
-
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private int _cbFfnM1;//total length of FFN - 1.
     private byte _info;
@@ -56,20 +53,6 @@ public final class Ffn {
 
     // extra facilitator members
     private int _xszFfnLength;
-
-    /**
-     * @param length the max record length allowed for Ffn
-     */
-    public static void setMaxRecordLength(int length) {
-      MAX_RECORD_LENGTH = length;
-    }
-  
-    /**
-     * @return the max record length allowed for Ffn
-     */
-    public static int getMaxRecordLength() {
-      return MAX_RECORD_LENGTH;
-    }
 
     public Ffn(byte[] buf, int offset) {
         int offsetTmp = offset;
@@ -155,7 +138,7 @@ public final class Ffn {
     // changed protected to public
     public byte[] toByteArray() {
         int offset = 0;
-        byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(this.getSize(), HWPFDocument.getMaxRecordLength());
 
         buf[offset] = (byte) _cbFfnM1;
         offset += LittleEndianConsts.BYTE_SIZE;

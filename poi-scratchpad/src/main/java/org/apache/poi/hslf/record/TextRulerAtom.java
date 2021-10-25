@@ -42,9 +42,6 @@ import org.apache.poi.util.LittleEndianOutputStream;
  */
 public final class TextRulerAtom extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     private static final BitField DEFAULT_TAB_SIZE = getInstance(0x0001);
     private static final BitField C_LEVELS = getInstance(0x0002);
     private static final BitField TAB_STOPS = getInstance(0x0004);
@@ -87,7 +84,7 @@ public final class TextRulerAtom extends RecordAtom {
      * @param len the length of the slice in the byte array.
      */
     TextRulerAtom(final byte[] source, final int start, final int len) {
-        final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(source, start, Math.min(len, MAX_RECORD_LENGTH));
+        final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(source, start, Math.min(len, getMaxRecordLength()));
 
 
         try {

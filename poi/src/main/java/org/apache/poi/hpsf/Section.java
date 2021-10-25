@@ -45,8 +45,6 @@ import org.apache.poi.util.LittleEndianOutputStream;
  * Represents a section in a {@link PropertySet}.
  */
 public class Section {
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final Logger LOG = LogManager.getLogger(Section.class);
 
@@ -830,7 +828,7 @@ public class Section {
             }
 
             try {
-                byte[] buf = IOUtils.safelyAllocate(nrBytes, MAX_RECORD_LENGTH);
+                byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength());
                 leis.readFully(buf, 0, nrBytes);
                 final String str = CodePageUtil.getStringFromCodePage(buf, 0, nrBytes, cp);
 

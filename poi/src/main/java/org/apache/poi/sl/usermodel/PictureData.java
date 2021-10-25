@@ -28,7 +28,7 @@ public interface PictureData {
         /** Windows Meta File */
         WMF(3,3,"image/x-wmf",".wmf"),
         /** Mac PICT format */
-        PICT(4,4,"image/pict",".pict"), // or image/x-pict (for HSLF) ???
+        PICT(4,4,"image/x-pict",".pict"),
         /** JPEG format */
         JPEG(5,5,"image/jpeg",".jpg"),
         /** PNG format */
@@ -60,7 +60,7 @@ public interface PictureData {
         ;
         
         public final int nativeId, ooxmlId;
-        public final String contentType,extension;
+        public final String contentType, extension;
 
         PictureType(int nativeId, int ooxmlId,String contentType,String extension) {
             this.nativeId = nativeId;

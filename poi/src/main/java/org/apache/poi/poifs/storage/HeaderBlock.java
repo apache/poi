@@ -29,6 +29,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IntegerField;
@@ -41,9 +42,6 @@ import org.apache.poi.util.ShortField;
  * The block containing the archive header
  */
 public final class HeaderBlock implements HeaderBlockConstants {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final byte _default_value = ( byte ) 0xFF;
 
@@ -108,7 +106,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
         // Fetch the rest of the block if needed
         if(bigBlockSize.getBigBlockSize() != 512) {
            int rest = bigBlockSize.getBigBlockSize() - 512;
-           byte[] tmp = IOUtils.safelyAllocate(rest, MAX_RECORD_LENGTH);
+           byte[] tmp = IOUtils.safelyAllocate(rest, POIFSFileSystem.getMaxRecordLength());
            IOUtils.readFully(stream, tmp);
         }
     }

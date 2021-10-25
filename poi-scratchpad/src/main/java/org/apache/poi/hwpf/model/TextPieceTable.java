@@ -36,13 +36,28 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * The piece table for matching up character positions to bits of text. This
  * mostly works in bytes, but the TextPieces themselves work in characters. This
- * does the icky convertion.
+ * does the icky conversion.
  */
 @Internal
 public class TextPieceTable implements CharIndexTranslator {
     private static final Logger LOG = LogManager.getLogger(TextPieceTable.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for TextPieceTable
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for TextPieceTable
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
 
     // int _multiple;

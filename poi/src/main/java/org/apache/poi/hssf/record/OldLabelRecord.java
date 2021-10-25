@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
@@ -36,8 +37,6 @@ import static org.apache.poi.util.HexDump.toHex;
  */
 public final class OldLabelRecord extends OldCellRecord {
     private static final Logger LOG = LogManager.getLogger(OldLabelRecord.class);
-    //arbitrarily set, may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short biff2_sid = 0x0004;
     public static final short biff345_sid = 0x0204;
@@ -60,7 +59,7 @@ public final class OldLabelRecord extends OldCellRecord {
         }
 
         // Can only decode properly later when you know the codepage
-        field_5_bytes = IOUtils.safelyAllocate(field_4_string_len, MAX_RECORD_LENGTH);
+        field_5_bytes = IOUtils.safelyAllocate(field_4_string_len, HSSFWorkbook.getMaxRecordLength());
         in.read(field_5_bytes, 0, field_4_string_len);
 
         if (in.remaining() > 0) {

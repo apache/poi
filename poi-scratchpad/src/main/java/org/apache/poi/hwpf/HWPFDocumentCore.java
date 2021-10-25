@@ -67,7 +67,22 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected static final String STREAM_TABLE_1 = "1Table";
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 500_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 500_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPFDocumentCore
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPFDocumentCore
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Size of the not encrypted part of the FIB

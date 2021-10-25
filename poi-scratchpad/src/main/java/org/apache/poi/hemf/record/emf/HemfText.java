@@ -52,7 +52,22 @@ import org.apache.poi.util.RecordFormatException;
 @SuppressWarnings("WeakerAccess")
 public class HemfText {
 
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HemfText
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HemfText
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public enum EmfGraphicsMode {
         GM_COMPATIBLE, GM_ADVANCED

@@ -62,7 +62,7 @@ public class POIFSFileSystem extends BlockStore
         implements POIFSViewable, Closeable {
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
 

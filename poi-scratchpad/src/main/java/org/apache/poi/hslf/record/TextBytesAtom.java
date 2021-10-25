@@ -38,8 +38,6 @@ import org.apache.poi.util.StringUtil;
 
 public final class TextBytesAtom extends RecordAtom {
     public static final long _type = RecordTypes.TextBytesAtom.typeID;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private byte[] _header;
 
@@ -73,7 +71,7 @@ public final class TextBytesAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the text
-        _text = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _text = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
 
     /**
