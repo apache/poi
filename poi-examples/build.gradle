@@ -87,3 +87,10 @@ jar {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
     }
 }
+
+javadocJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
