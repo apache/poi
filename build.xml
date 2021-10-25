@@ -334,7 +334,7 @@ under the License.
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.21" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
-    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.1" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.32" usage="ooxml-tests"/>
