@@ -133,7 +133,7 @@ dependencies {
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
     testImplementation 'org.xmlunit:xmlunit-core:2.8.3'
-    testImplementation 'org.reflections:reflections:0.10.1'
+    testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.33'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
     testImplementation 'com.google.guava:guava:31.0.1-jre'
