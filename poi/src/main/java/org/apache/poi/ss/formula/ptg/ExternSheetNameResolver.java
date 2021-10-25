@@ -44,16 +44,7 @@ final class ExternSheetNameResolver {
                 ExternalSheetRange r = (ExternalSheetRange)externalSheet;
                 if (! r.getFirstSheetName().equals(r.getLastSheetName())) {
                     sb.append(':');
-                    // quote should appear at the beginning and end.
-                    StringBuilder innerBuilder = new StringBuilder();
-                    SheetNameFormatter.appendFormat(innerBuilder, r.getLastSheetName());
-                    char quote = '\'';
-                    if (innerBuilder.charAt(0) == quote){
-                        sb.insert(0 , quote);
-                        sb.append(innerBuilder.substring(1));
-                    } else {
-                        sb.append(innerBuilder);
-                    }
+                    SheetNameFormatter.appendFormat(sb, r.getLastSheetName());
                 }
             }
         } else {

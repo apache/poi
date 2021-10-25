@@ -1171,11 +1171,10 @@ public final class FormulaParser {
             while(!done) {
                 sb.appendCodePoint(look);
                 GetChar();
-                switch (look){
-                    case '\'' :
-                        GetChar();
-                    case ':' :
-                        done = true;
+                if(look == '\'')
+                {
+                    Match('\'');
+                    done = look != '\'';
                 }
             }
 
@@ -1199,9 +1198,6 @@ public final class FormulaParser {
             // can concatenate idens with dots
             while (isUnquotedSheetNameChar(look)) {
                 sb.appendCodePoint(look);
-                GetChar();
-            }
-            if (look == '\'') {
                 GetChar();
             }
             NameIdentifier iden = new NameIdentifier(sb.toString(), false);
@@ -1253,7 +1249,6 @@ public final class FormulaParser {
         switch(ch) {
             case '.': // dot is OK
             case '_': // underscore is OK
-            case ' ': // space is OK
                 return true;
         }
         return false;
