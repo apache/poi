@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -34,9 +35,6 @@ import org.apache.poi.util.RecordFormatException;
  *               file.
  */
 public final class OldSheetRecord implements GenericRecord {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short sid = 0x0085;
 
@@ -64,7 +62,7 @@ public final class OldSheetRecord implements GenericRecord {
                 }
             }
         }
-        field_5_sheetname = IOUtils.safelyAllocate(field_4_sheetname_length, MAX_RECORD_LENGTH);
+        field_5_sheetname = IOUtils.safelyAllocate(field_4_sheetname_length, HSSFWorkbook.getMaxRecordLength());
         in.read(field_5_sheetname, 0, field_4_sheetname_length);
     }
 

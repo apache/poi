@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
 import org.apache.poi.hwpf.model.types.FibRgLw97AbstractType;
 import org.apache.poi.hwpf.model.types.FibRgW97AbstractType;
@@ -49,9 +50,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @Internal
 public final class FileInformationBlock {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final Logger LOG = LogManager.getLogger(FileInformationBlock.class);
 
@@ -124,7 +122,7 @@ public final class FileInformationBlock {
 
             // first short is already read as _nFibNew
             final int fibRgCswNewLength = ( _cswNew - 1 ) * LittleEndianConsts.SHORT_SIZE;
-            _fibRgCswNew = IOUtils.safelyClone(mainDocument, offset, fibRgCswNewLength, MAX_RECORD_LENGTH);
+            _fibRgCswNew = IOUtils.safelyClone(mainDocument, offset, fibRgCswNewLength, HWPFDocument.getMaxRecordLength());
         }
         else
         {

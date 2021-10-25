@@ -26,8 +26,6 @@ import org.apache.poi.util.Internal;
 
 @Internal
 public class OldTextPieceTable extends TextPieceTable {
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
 
     public OldTextPieceTable() {
         super();
@@ -82,7 +80,7 @@ public class OldTextPieceTable extends TextPieceTable {
             int textSizeBytes = textSizeChars * multiple;
 
             // Grab the data that makes up the piece
-            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, getMaxRecordLength());
 
             // And now build the piece
             final TextPiece newTextPiece = newTextPiece(nodeStartChars, nodeEndChars, buf, pieces[x]);

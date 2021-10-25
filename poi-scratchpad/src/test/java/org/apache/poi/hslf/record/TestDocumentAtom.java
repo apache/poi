@@ -66,7 +66,7 @@ public final class TestDocumentAtom {
     void testSlideDetails() {
         DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
         assertEquals(1, da.getFirstSlideNum());
-        assertEquals(DocumentAtom.SlideSize.ON_SCREEN, da.getSlideSizeTypeEnum());
+        assertEquals(DocumentAtom.SlideSize.ON_SCREEN, da.getSlideSizeType());
     }
 
     @Test

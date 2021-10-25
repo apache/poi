@@ -45,11 +45,7 @@ import org.apache.poi.util.LittleEndianConsts;
  *  (via CurrentUserAtom and UserEditAtom) pointing to the new slide location
  */
 
-public final class PersistPtrHolder extends PositionDependentRecordAtom
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+public final class PersistPtrHolder extends PositionDependentRecordAtom {
 
     private final byte[] _header;
     private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
@@ -113,7 +109,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
         //   count * 32 bit offsets
         // Repeat as many times as you have data
         _slideLocations = new HashMap<>();
-        _ptrData = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _ptrData = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength());
 
         int pos = 0;
         while(pos < _ptrData.length) {

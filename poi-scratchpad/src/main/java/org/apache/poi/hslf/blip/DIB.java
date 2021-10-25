@@ -19,6 +19,7 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -29,9 +30,6 @@ import org.apache.poi.util.Removal;
  * Represents a DIB picture data in a PPT file
  */
 public final class DIB extends Bitmap {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
@@ -118,7 +116,7 @@ public final class DIB extends Bitmap {
         LittleEndian.putInt(header, 10, offset);
 
         //DIB data is the header + dib bytes
-        byte[] dib = IOUtils.safelyAllocate(header.length + (long)data.length, MAX_RECORD_LENGTH);
+        byte[] dib = IOUtils.safelyAllocate(header.length + (long)data.length, RecordAtom.getMaxRecordLength());
         System.arraycopy(header, 0, dib, 0, header.length);
         System.arraycopy(data, 0, dib, header.length, data.length);
 

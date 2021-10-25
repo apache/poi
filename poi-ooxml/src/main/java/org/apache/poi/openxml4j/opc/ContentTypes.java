@@ -97,7 +97,7 @@ public final class ContentTypes {
      * @see <a href="http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html">
      * http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-2.html</a>
      */
-    public static final String IMAGE_PICT = "image/pict";
+    public static final String IMAGE_PICT = "image/x-pict";
 
     public static final String EXTENSION_PICT = "pict";
 

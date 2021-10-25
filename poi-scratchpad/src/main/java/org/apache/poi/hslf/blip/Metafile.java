@@ -43,17 +43,6 @@ import org.apache.poi.util.Units;
 public abstract class Metafile extends HSLFPictureData {
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
-     *             Metafile. This API led to detached Metafile instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public Metafile() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-    }
-
-    /**
      * Creates a new instance.
      *
      * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is

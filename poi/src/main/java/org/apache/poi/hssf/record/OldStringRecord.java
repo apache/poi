@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hpsf.Property;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -34,9 +35,6 @@ import org.apache.poi.util.IOUtils;
  *  formula string results.
  */
 public final class OldStringRecord implements GenericRecord {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short biff2_sid = 0x0007;
     public static final short biff345_sid = 0x0207;
@@ -59,7 +57,7 @@ public final class OldStringRecord implements GenericRecord {
         }
 
         // Can only decode properly later when you know the codepage
-        field_2_bytes = IOUtils.safelyAllocate(field_1_string_len, MAX_RECORD_LENGTH);
+        field_2_bytes = IOUtils.safelyAllocate(field_1_string_len, HSSFWorkbook.getMaxRecordLength());
         in.read(field_2_bytes, 0, field_1_string_len);
     }
 

@@ -36,10 +36,6 @@ import org.apache.poi.util.StringUtil;
 
 public final class CString extends RecordAtom {
 
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
-    private static int MAX_RECORD_LENGTH = 1_000_000;
-
     private byte[] _header;
 
     /** The bytes that make up the text */
@@ -48,20 +44,6 @@ public final class CString extends RecordAtom {
     /** Grabs the text. Never <code>null</code> */
     public String getText() {
         return StringUtil.getFromUnicodeLE(_text);
-    }
-
-    /**
-     * @param length the max record length allowed for CString
-     */
-    public static void setMaxRecordLength(int length) {
-        MAX_RECORD_LENGTH = length;
-    }
-
-    /**
-     * @return the max record length allowed for CString
-     */
-    public static int getMaxRecordLength() {
-        return MAX_RECORD_LENGTH;
     }
 
     /** Updates the text in the Atom. */
@@ -103,7 +85,7 @@ public final class CString extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the text
-        _text = IOUtils.safelyClone(source,start+8, len-8, MAX_RECORD_LENGTH);
+        _text = IOUtils.safelyClone(source,start+8, len-8, getMaxRecordLength());
     }
     /**
      * Create an empty CString

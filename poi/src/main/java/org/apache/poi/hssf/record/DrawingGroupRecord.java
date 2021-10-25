@@ -38,8 +38,26 @@ import org.apache.poi.util.Removal;
 public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     public static final short sid = 0xEB;
 
-    static final int MAX_RECORD_SIZE = 8228;
-    private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
+    private static final int DEFAULT_MAX_RECORD_SIZE = 8228;
+    private static int MAX_RECORD_SIZE = DEFAULT_MAX_RECORD_SIZE;
+
+    /**
+     * @param size the max record size allowed for DrawingGroupRecord
+     */
+    public static void setMaxRecordSize(int size) {
+        MAX_RECORD_SIZE = size;
+    }
+
+    /**
+     * @return the max record size allowed for DrawingGroupRecord
+     */
+    public static int getMaxRecordSize() {
+        return MAX_RECORD_SIZE;
+    }
+
+    private static int getMaxDataSize() {
+        return MAX_RECORD_SIZE - 4;
+    }
 
     public DrawingGroupRecord() {}
 
@@ -112,7 +130,7 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
 
     static int grossSizeFromDataSize(int dataSize)
     {
-        return dataSize + ( (dataSize - 1) / MAX_DATA_SIZE + 1 ) * 4;
+        return dataSize + ( (dataSize - 1) / getMaxDataSize() + 1 ) * 4;
     }
 
     private int writeData( int offset, byte[] data, byte[] rawData )
@@ -121,8 +139,9 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         int writtenRawData = 0;
         while (writtenRawData < rawData.length)
         {
-            int segmentLength = Math.min( rawData.length - writtenRawData, MAX_DATA_SIZE);
-            if (writtenRawData / MAX_DATA_SIZE >= 2)
+            final int maxDataSize = getMaxDataSize();
+            int segmentLength = Math.min( rawData.length - writtenRawData, maxDataSize);
+            if (writtenRawData / maxDataSize >= 2)
                 writeContinueHeader( data, offset, segmentLength );
             else
                 writeHeader( data, offset, segmentLength );

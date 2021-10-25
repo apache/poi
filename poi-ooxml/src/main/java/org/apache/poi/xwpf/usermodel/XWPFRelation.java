@@ -23,7 +23,10 @@ import java.util.Map;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.IMAGE_PART;
 
 public final class XWPFRelation extends POIXMLRelation {
 
@@ -155,76 +158,76 @@ public final class XWPFRelation extends POIXMLRelation {
      * Supported image formats
      */
     public static final XWPFRelation IMAGE_EMF = new XWPFRelation(
-        "image/x-emf",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.emf",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.EMF.contentType,
+            IMAGE_PART,
+            "/word/media/image#.emf",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_WMF = new XWPFRelation(
-        "image/x-wmf",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.wmf",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.WMF.contentType,
+            IMAGE_PART,
+            "/word/media/image#.wmf",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_PICT = new XWPFRelation(
-        "image/pict",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.pict",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.PICT.contentType,
+            IMAGE_PART,
+            "/word/media/image#.pict",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_JPEG = new XWPFRelation(
-        "image/jpeg",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.jpeg",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.JPEG.contentType,
+            IMAGE_PART,
+            "/word/media/image#.jpeg",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_PNG = new XWPFRelation(
-        "image/png",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.png",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.PNG.contentType,
+            IMAGE_PART,
+            "/word/media/image#.png",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_DIB = new XWPFRelation(
-        "image/dib",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.dib",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.DIB.contentType,
+            IMAGE_PART,
+            "/word/media/image#.dib",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_GIF = new XWPFRelation(
-        "image/gif",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.gif",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.GIF.contentType,
+            IMAGE_PART,
+            "/word/media/image#.gif",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_TIFF = new XWPFRelation(
-        "image/tiff",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.tiff",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.TIFF.contentType,
+            IMAGE_PART,
+            "/word/media/image#.tiff",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_EPS = new XWPFRelation(
-        "image/x-eps",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.eps",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.EPS.contentType,
+            IMAGE_PART,
+            "/word/media/image#.eps",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_BMP = new XWPFRelation(
-        "image/x-ms-bmp",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.bmp",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.BMP.contentType,
+            IMAGE_PART,
+            "/word/media/image#.bmp",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_WPG = new XWPFRelation(
-        "image/x-wpg",
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        "/word/media/image#.wpg",
-        XWPFPictureData::new, XWPFPictureData::new
+            PictureData.PictureType.WPG.contentType,
+            IMAGE_PART,
+            "/word/media/image#.wpg",
+            XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGES = new XWPFRelation(
-        null,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-        null,
-        XWPFPictureData::new, XWPFPictureData::new
+            null,
+            IMAGE_PART,
+            null,
+            XWPFPictureData::new, XWPFPictureData::new
     );
 
     private XWPFRelation(String type, String rel, String defaultName) {

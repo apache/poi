@@ -47,6 +47,7 @@ public class Outlining {
             try (FileOutputStream fileOut = new FileOutputStream("outlining_collapsed.xlsx")) {
                 wb2.write(fileOut);
             } finally {
+                //the dispose call is necessary to ensure temp files are removed
                 wb2.dispose();
             }
         }

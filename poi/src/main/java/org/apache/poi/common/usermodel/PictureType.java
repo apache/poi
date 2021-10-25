@@ -30,7 +30,7 @@ public enum PictureType {
     /** Windows Meta File */
     WMF("image/x-wmf",".wmf"),
     /** Mac PICT format */
-    PICT("image/pict",".pict"), // or image/x-pict (for HSLF) ???
+    PICT("image/x-pict",".pict"),
     /** JPEG format */
     JPEG("image/jpeg",".jpg"),
     /** PNG format */

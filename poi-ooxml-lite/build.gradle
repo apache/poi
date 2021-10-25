@@ -126,7 +126,10 @@ jar {
             List clazz = clazzFile.collect { "${it}.class" }
             List clazzInner = clazzFile.collect { "${it}\$*.class" }
             List xsbs = xsbsFile.collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it}.xsb" }
-            includes = clazz + clazzInner + xsbs + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
+            File missingXsbsFile = file("missing-xsbs.txt")
+            List xsbs2 = missingXsbsFile.findAll { !it.empty && !it.startsWith("#") }
+              .collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it.trim()}.xsb" }
+            includes = clazz + clazzInner + xsbs + xsbs2 + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
         }
     }
 

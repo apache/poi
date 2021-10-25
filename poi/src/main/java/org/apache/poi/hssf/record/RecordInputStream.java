@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -39,12 +40,10 @@ import org.apache.poi.util.RecordFormatException;
  */
 public final class RecordInputStream implements LittleEndianInput {
 
-
     /** Maximum size of a single record (minus the 4 byte header) without a continue*/
     public static final short MAX_RECORD_DATA_SIZE = 8224;
     private static final int INVALID_SID_VALUE = -1;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+
     /**
      * When {@link #_currentDataLength} has this value, it means that the previous BIFF record is
      * finished, the next sid has been properly read, but the data size field has not been read yet.
@@ -442,7 +441,7 @@ public final class RecordInputStream implements LittleEndianInput {
         if (size ==0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
         readFully(result);
         return result;
     }

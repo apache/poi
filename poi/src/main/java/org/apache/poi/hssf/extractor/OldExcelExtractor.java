@@ -41,6 +41,7 @@ import org.apache.poi.hssf.record.OldSheetRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
@@ -62,9 +63,6 @@ import org.apache.poi.util.IOUtils;
 public class OldExcelExtractor implements POITextExtractor {
 
     private static final int FILE_PASS_RECORD_SID = 0x2f;
-    //arbitrarily selected; may need to increase
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
-    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private RecordInputStream ris;
 
@@ -73,20 +71,6 @@ public class OldExcelExtractor implements POITextExtractor {
 
     private int biffVersion;
     private int fileType;
-
-    /**
-     * @param length the max record length allowed for OldExcelExtractor
-     */
-    public static void setMaxRecordLength(int length) {
-        MAX_RECORD_LENGTH = length;
-    }
-
-    /**
-     * @return the max record length allowed for OldExcelExtractor
-     */
-    public static int getMaxRecordLength() {
-        return MAX_RECORD_LENGTH;
-    }
 
     public OldExcelExtractor(InputStream input) throws IOException {
         open(input);
@@ -316,7 +300,7 @@ public class OldExcelExtractor implements POITextExtractor {
                     break;
 
                 default:
-                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), MAX_RECORD_LENGTH));
+                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), HSSFWorkbook.getMaxRecordLength()));
             }
         }
 
