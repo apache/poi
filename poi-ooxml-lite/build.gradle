@@ -129,8 +129,7 @@ jar {
             File missingXsbsFile = file("missing-xsbs.txt")
             List xsbs2 = missingXsbsFile.findAll { !it.empty && !it.startsWith("#") }
               .collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it.trim()}.xsb" }
-            includes = clazz + clazzInner + xsbs + xsbs2 +
-                ['META-INF/versions/**', 'META-INF/LICENSE', 'META-INF/NOTICE', 'org/apache/poi/schemas/ooxml/element/**']
+            includes = clazz + clazzInner + xsbs + xsbs2 + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
         }
     }
 
@@ -146,6 +145,13 @@ jar {
 
     manifest {
         attributes('Automatic-Module-Name' : MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
     }
 }
 
