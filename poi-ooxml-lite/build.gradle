@@ -148,6 +148,13 @@ jar {
     }
 }
 
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
 spotbugsTest.enabled = false
 spotbugsMain.enabled = false
 javadoc.enabled = false
