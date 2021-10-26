@@ -26,6 +26,7 @@ import java.util.Date;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.*;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellBase;
@@ -474,7 +475,16 @@ public final class XSSFCell extends CellBase {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
             // Make its format consistent with Excel.
             // eg: "SUM('Sheet1:Sheet2'!A1:B1)" will be trans to "SUM(Sheet1:Sheet2!A1:B1)"
-            formula = FormulaRenderer.toFormulaString(fpb, ptgs);
+            boolean hasError = false;
+            for (Ptg ptg : ptgs) {
+                if (ptg instanceof ErrPtg) {
+                    hasError = true;
+                    break;
+                }
+            }
+            if (!hasError) {
+                formula = FormulaRenderer.toFormulaString(fpb, ptgs);
+            }
         }
 
         CTCellFormula f;

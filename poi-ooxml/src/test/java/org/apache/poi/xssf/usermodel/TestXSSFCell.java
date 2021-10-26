@@ -563,14 +563,14 @@ public final class TestXSSFCell extends BaseTestXCell {
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_formulaWithUnregisteredUDF() {
         setUp_testCopyCellFrom_CellCopyPolicy();
-
+        // this will format the formula string,
         srcCell.setCellFormula("MYFUNC2(123, $A5, Sheet1!$B7)");
 
         // Copy formula verbatim (no shifting). This is okay because copyCellFrom is Internal.
         // Users should use higher-level copying functions to row- or column-shift formulas.
         final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(true).build();
         destCell.copyCellFrom(srcCell, policy);
-        assertEquals("MYFUNC2(123, $A5, Sheet1!$B7)", destCell.getCellFormula());
+        assertEquals("MYFUNC2(123,$A5,Sheet1!$B7)", destCell.getCellFormula());
     }
 
     @Test
