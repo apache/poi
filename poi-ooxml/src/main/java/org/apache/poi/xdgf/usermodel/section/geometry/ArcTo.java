@@ -122,4 +122,9 @@ public class ArcTo implements GeometryRow {
         // Add an elliptical arc with rx / ry = 1 to the path because it's a circle.
         EllipticalArcTo.createEllipticalArc(x, y, x1, y1, 0.0, 1.0, path);
     }
+
+    @Override
+    public String toString() {
+        return String.format("ArcTo: x=%f; y=%f; a=%f", x, y, a);
+    }
 }
