@@ -41,7 +41,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * Unicode String - just standard fields that are in several records.
- * It is considered more desirable then repeating it in all of them.<p>
+ * It is considered more desirable than repeating it in all of them.<p>
  * This is often called a XLUnicodeRichExtendedString in MS documentation.
  */
 public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
@@ -73,7 +73,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
 
     /**
      * construct a unicode string record and fill its fields, ID is ignored
-     * @param in the RecordInputstream to read the record from
+     * @param in the RecordInputStream to read the record from
      */
     public UnicodeString(RecordInputStream in) {
         field_1_charCount   = in.readShort();
@@ -127,7 +127,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         }
         UnicodeString other = (UnicodeString) o;
 
-        //OK lets do this in stages to return a quickly, first check the actual string
+        //OK lets do this in stages to return quickly, first check the actual string
         if (field_1_charCount != other.field_1_charCount
                 || field_2_optionflags != other.field_2_optionflags
                 || !field_3_string.equals(other.field_3_string)) {
