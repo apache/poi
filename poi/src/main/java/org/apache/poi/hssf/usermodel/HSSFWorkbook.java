@@ -878,10 +878,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             // Try and find the next sheet name that is unique
             String index = Integer.toString(uniqueIndex++);
             String name;
-            if (baseName.length() + index.length() + 2 < 31) {
+            if (baseName.length() + index.length() + 2 < MAX_SENSITIVE_SHEET_NAME_LEN) {
                 name = baseName + " (" + index + ")";
             } else {
-                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+                name = baseName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
@@ -941,16 +941,19 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
         // not accessible due to the trimming while we are not even aware of the reason and continue to use
         // the long name in generated formulas
-        if(sheetname.length() > 31) {
-            String trimmedSheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             if (workbook.doesContainsSheetName(trimmedSheetname, _sheets.size())) {
-                throw new IllegalArgumentException("The sheetname '" + sheetname + "' exceeds the allowed 31 characters and the trimmed sheetName '" + trimmedSheetname
+                throw new IllegalArgumentException("The sheetname '" + sheetname + "' exceeds the allowed "
+                                                   + MAX_SENSITIVE_SHEET_NAME_LEN
+                                                   + " characters and the trimmed sheetName '" + trimmedSheetname
                                                    + "' would collide with an already existing sheet.");
             } else {
                 // we still need to warn about the trimming as the original sheet name won't be available
                 // e.g. when referenced by formulas
-                LOGGER.log(Level.WARN, "Sheet '" + sheetname + "' will be added with a trimmed name '" + trimmedSheetname
-                                    + "' for MS Excel compliance.");
+                LOGGER.log(Level.WARN, "Sheet '" + sheetname + "' will be added with a trimmed name '"
+                                        + trimmedSheetname
+                                        + "' for MS Excel compliance.");
                 sheetname = trimmedSheetname;
             }
         }
