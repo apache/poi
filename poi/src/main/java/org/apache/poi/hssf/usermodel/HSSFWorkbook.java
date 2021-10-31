@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
@@ -934,6 +935,24 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public HSSFSheet createSheet(String sheetname) {
         if (sheetname == null) {
             throw new IllegalArgumentException("sheetName must not be null");
+        }
+
+        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
+        // not accessible due to the trimming while we are not even aware of the reason and continue to use
+        // the long name in generated formulas
+        if(sheetname.length() > 31) {
+            String trimmedSheetname = sheetname.substring(0, 31);
+            if (workbook.doesContainsSheetName(trimmedSheetname, _sheets.size())) {
+                throw new IllegalArgumentException("The sheetname '" + sheetname + "' exceeds the allowed 31 characters and the trimmed sheetName '" + trimmedSheetname
+                                                   + "' would collide with an already existing sheet.");
+            } else {
+                // we still need to warn about the trimming as the original sheet name won't be available
+                // e.g. when referenced by formulas
+                LOGGER.log(Level.WARN, "Sheet '" + sheetname + "' will be added with a trimmed name '" + trimmedSheetname
+                                    + "' for MS Excel compliance.");
+                sheetname = trimmedSheetname;
+            }
         }
 
         if (workbook.doesContainsSheetName(sheetname, _sheets.size())) {

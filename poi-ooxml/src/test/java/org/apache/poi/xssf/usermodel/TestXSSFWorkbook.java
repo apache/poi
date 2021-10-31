@@ -60,6 +60,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -1296,6 +1297,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     private static String ref(Cell cell) {
         return new CellReference(cell).formatAsString();
+    }
+
+    @Test
+    void testSheetNameTrimming() throws IOException {
+        Workbook workbook = WorkbookFactory.create(true);
+        Sheet sheet = workbook.createSheet("MyVeryLongSheetName_9999999999999999");
+        assertNotNull(sheet);
+        assertEquals("MyVeryLongSheetName_99999999999", workbook.getSheetName(0));
+
+        assertThrows(IllegalArgumentException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                workbook.createSheet("MyVeryLongSheetName_9999999999999998");
+            }
+        });
     }
 
 }
