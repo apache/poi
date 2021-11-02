@@ -21,11 +21,15 @@ under the License.
 
     <description>Test-Ant file which verifies that the Apache POI distribution build sources can be compiled successfully.
 
-Before running this, you should execute the "assemble" target in the main build.xml to have the packaged files created correctly.
+Before running this, you should execute the "jar" target in the main build.gradle to have the packaged files created correctly.
     </description>
 
     <property name="dist" value="../build/dist"/>
     <property name="build" value="../build/distsourcebuild"/>
+
+    <condition property="gradle.executable" value="../gradlew.bat" else="../gradlew">
+        <os family="windows" />
+    </condition>
 
     <target name="init" depends="">
     </target>
@@ -69,7 +73,10 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <!-- finally call Ant on the extracted source to check if we can build the packages -->
         <echo message="Building in temporary dir ${dirversion}/"/>
-        <ant dir="${dirversion}" target="assemble" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
+        <!--ant dir="${dirversion}" target="assemble" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/-->
+        <exec executable="${gradle.executable}" dir="." failonerror="true">
+            <arg value="assemble" />
+        </exec>
     </target>
 
     <target name="runCompileTest" depends="init" description="Verify that we can compile most examples without including excelant or scratchpad jars">
