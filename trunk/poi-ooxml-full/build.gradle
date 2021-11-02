@@ -1,0 +1,168 @@
+import java.util.regex.Pattern
+
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+final String MODULE_NAME = 'org.apache.poi.ooxml.schemas'
+final String BEANS_SRC = "${buildDir}/generated-sources"
+final String BEANS_RES = "${buildDir}/generated-resources"
+
+sourceSets {
+    main {
+        // TypeSystemHolder.class is in the resources
+        output.dir(BEANS_RES, builtBy: 'generate_beans')
+        compileClasspath += files(BEANS_RES)
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
+        }
+        java {
+            srcDirs = [BEANS_SRC]
+        }
+    }
+}
+
+dependencies {
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+//    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+}
+
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file(BEANS_SRC)
+        resourceDirs += file(BEANS_RES)
+    }
+}
+
+final Pattern MODULE_REGEX = ~'\\.jar$'
+final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
+
+compileJava {
+    dependsOn 'generate_beans'
+}
+
+task compileJava9(type: JavaCompile) {
+    dependsOn 'compileJava'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
+    source = file(JAVA9_SRC)
+    classpath = files()
+    options.compilerArgs = [
+        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.asPath}",
+        '--module-path', files(MAIN_MODULE_PATH).asPath
+    ]
+}
+
+task cacheJava9(type: Copy) {
+    dependsOn 'compileJava9'
+
+    from(file(JAVA9_OUT + VERSIONS9))
+    into(JAVA9_SRC)
+}
+
+task copy_xsds(type: Copy) {
+    from ('src/main/xmlschema/org/apache/poi/xdgf')
+    from ('src/main/xmlschema/org/apache/poi/schemas') {
+        include 'XAdES*.xsd', '*.xsdconfig', 'xmldsig*.xsd', 'ooxmlSchemas.xsdconfig', 'markup-compatibility.xsd', 'vmlDrawing.xsd'
+        exclude '*.zip'
+    }
+    from ('src/main/xmlschema/org/apache/poi/poifs/crypt') {
+        include 'signatureInfo.xsd'
+    }
+    from (zipTree('src/main/xmlschema/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip'))
+    from (zipTree('src/main/xmlschema/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip')) {
+        include 'opc-digSig.xsd', 'opc-relationships.xsd'
+    }
+    into 'build/xsds'
+}
+
+task generate_beans(dependsOn: copy_xsds) {
+    inputs.dir 'build/xsds'
+    outputs.dir 'build/generated-resources'
+
+    doLast {
+        ant.uptodate(
+            property: 'xmlbeans_uptodate',
+            targetfile: 'build/generated-resources/org/apache/poi/schemas/ooxml/system/ooxml/TypeSystemHolder.class'
+        ) {
+            srcFiles(dir: 'build/xsds', includes: '*.xsd')
+        }
+
+        ant.taskdef(
+            name: 'xmlbean',
+            classname: 'org.apache.xmlbeans.impl.tool.XMLBean',
+            classpath: sourceSets.main.runtimeClasspath.asPath
+        )
+
+        if (!ant.properties.xmlbeans_uptodate) {
+            ant.xmlbean(
+                schema: 'build/xsds',
+                srcgendir: BEANS_SRC,
+                classgendir: BEANS_RES,
+                destfile: 'build/xsds.jar',
+                srconly: true,
+                failonerror: true,
+                fork: true,
+                memoryMaximumSize: '1536m',
+                typesystemname: 'ooxml',
+                repackage: 'org.apache.xmlbeans.metadata:org.apache.poi.schemas.ooxml'
+            ) {
+                classpath = sourceSets.main.runtimeClasspath.asPath
+            }
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
+jar {
+    dependsOn 'sourceJar'
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from JAVA9_SRC include '*.class'
+        }
+    }
+
+    manifest {
+        attributes ('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+publishing {
+    publications {
+        POI(MavenPublication) {
+            pom {
+                name = 'Apache POI - OOXML schemas (full)'
+                description =
+                    'XmlBeans generated from the Ecma supplied xsds (since POI 5.0.0, the 5th edition is used):\n' +
+                    '    https://www.ecma-international.org/publications/standards/Ecma-376.htm'
+            }
+        }
+    }
+}
+
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false

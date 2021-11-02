@@ -1,0 +1,327 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+import java.util.regex.Pattern
+
+configurations {
+    runtimeClasspath {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+    compileClasspath {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+    broken
+    tests
+    javadocs
+}
+
+sourceSets {
+    main {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
+        }
+    }
+    test {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
+        }
+    }
+}
+
+java {
+    registerFeature('signing') {
+        usingSourceSet(sourceSets.main)
+    }
+    registerFeature('render') {
+        usingSourceSet(sourceSets.main)
+    }
+    registerFeature('rendersign') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
+dependencies {
+    api project(':poi')
+    api project(':poi-ooxml-full')
+    api project(path: ':poi-ooxml-full', configuration: 'archives')
+
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+    api "org.apache.commons:commons-compress:${commonsCompressVersion}"
+    api "commons-io:commons-io:${commonsIoVersion}"
+    api 'com.github.virtuald:curvesapi:1.06'
+    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api 'org.apache.commons:commons-collections4:4.4'
+
+    signingImplementation 'org.apache.santuario:xmlsec:2.2.3'
+    signingImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    signingImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+
+    rendersignImplementation 'org.apache.santuario:xmlsec:2.2.3'
+    rendersignImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+    rendersignImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+
+    renderImplementation 'de.rototor.pdfbox:graphics2d:0.33'
+    renderImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
+    renderImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    renderImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    renderImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+    rendersignImplementation 'de.rototor.pdfbox:graphics2d:0.33'
+    rendersignImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
+    rendersignImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    rendersignImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+    rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+
+    if (!NO_SCRATCHPAD) {
+         testImplementation project(':poi-scratchpad')
+         testImplementation project(path:':poi-scratchpad', configuration:'tests')
+    }
+    testImplementation project(path:':poi', configuration:'tests')
+    testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
+    testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
+    testImplementation 'org.xmlunit:xmlunit-core:2.8.3'
+    testImplementation 'org.reflections:reflections:0.10.1'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.33'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
+    testImplementation 'com.google.guava:guava:31.0.1-jre'
+    testImplementation 'org.tukaani:xz:1.9'
+
+    // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.32 dependency
+    // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
+
+
+    broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
+        exclude group: 'xalan', module: 'xalan'
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
+    }
+
+    javadocs project(':poi')
+    javadocs project(':poi-scratchpad')
+}
+
+final String MODULE_NAME = 'org.apache.poi.ooxml'
+final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
+final Pattern MODULE_REGEX = ~'\\.jar$'
+final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
+final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique() + files("build/brokenJars")
+
+final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
+final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
+final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
+
+compileJava {
+    dependsOn 'fixBatik'
+}
+
+task compileJava9(type: JavaCompile) {
+    dependsOn 'compileJava', ':poi:jar'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
+    source = file(JAVA9_SRC)
+    classpath = files()
+    options.compilerArgs = [
+        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+        '--module-path', files(MAIN_MODULE_PATH).asPath
+    ]
+}
+
+task cacheJava9(type: Copy) {
+    dependsOn 'compileJava9'
+
+    from(file(JAVA9_OUT + VERSIONS9))
+    into(JAVA9_SRC)
+}
+
+task compileTest9(type: JavaCompile) {
+    dependsOn 'compileTestJava', ':poi:testJar'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(TEST9_OUT + VERSIONS9)
+    source = file(TEST9_SRC)
+    options.compilerArgs = [
+        '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
+        '--module-path', files(TEST_MODULE_PATH).asPath
+    ]
+    classpath = files()
+}
+
+
+task cacheTest9(type: Copy) {
+    dependsOn 'compileTest9'
+
+    from(file(TEST9_OUT + VERSIONS9))
+    into(TEST9_SRC)
+}
+
+jar {
+    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from JAVA9_SRC include '*.class'
+        }
+    }
+
+    manifest {
+        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+// Create a separate jar for test-code to depend on it in other projects
+// See http://stackoverflow.com/questions/5144325/gradle-test-dependency
+task testJar(type: Jar, dependsOn: testClasses) {
+    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
+
+    classifier 'tests'
+    // ignore second module-info.class from main
+    duplicatesStrategy = 'exclude'
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from TEST9_SRC include '*.class'
+        }
+    }
+
+    from sourceSets.test.output + sourceSets.main.output
+
+    manifest {
+        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+// based on https://github.com/moditect/moditect-gradle-plugin/issues/12
+task fixBatik(type: Zip) {
+    ant.mkdir(dir: "${buildDir}/brokenJars")
+    archiveFileName = "batik-script-${batikVersion}.jar"
+    destinationDirectory = file("${buildDir}/brokenJars")
+    from zipTree(configurations.broken.files.find{ f -> f.name.startsWith("batik-script") })
+    filesMatching("**/org.apache.batik.script.InterpreterFactory") {
+        it.filter{ it2 -> it2.contains("Rhino") ? "#" + it2 : it2 }
+    }
+}
+
+javadoc {
+    failOnError = true
+    doFirst {
+        options {
+            if (JavaVersion.current().isJava9Compatible()) {
+                addBooleanOption('html5', true)
+            }
+            links 'https://poi.apache.org/apidocs/dev/'
+            links 'https://docs.oracle.com/javase/8/docs/api/'
+            use = true
+            splitIndex = true
+            source = "1.8"
+            classpath += configurations.javadocs.files
+        }
+    }
+}
+
+artifacts {
+    tests testJar
+}
+
+test {
+    // for some reason catching the OOM does not work when run from Gradle
+    exclude '**/MemoryUsage.class'
+
+    dependsOn { testJar }
+
+    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+
+    if (NO_SCRATCHPAD) {
+        useJUnitPlatform {
+            excludeTags 'scratchpad.ignore'
+        }
+    }
+
+    doFirst {
+        jvmArgs += [
+            "-Xverify:all",
+            "-XX:ErrorFile=../build/hs_err_pid%p.log",
+            "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}"
+        ]
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            jvmArgs += [
+                '--add-modules', MODULE_NAME,
+                '--module-path', '../build/dist/maven/poi-ooxml-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
+            ]
+        }
+    }
+}
+
+publishing {
+    publications {
+        POI(MavenPublication) {
+            pom {
+                name = 'Apache POI - API based on OPC and OOXML schemas'
+                description = 'Apache POI - Java API To Access Microsoft Format Files'
+            }
+            suppressPomMetadataWarningsFor('renderApiElements')
+            suppressPomMetadataWarningsFor('renderRuntimeElements')
+            suppressPomMetadataWarningsFor('signingApiElements')
+            suppressPomMetadataWarningsFor('signingRuntimeElements')
+            suppressPomMetadataWarningsFor('rendersignApiElements')
+            suppressPomMetadataWarningsFor('rendersignRuntimeElements')
+        }
+    }
+}

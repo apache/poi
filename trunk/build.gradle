@@ -1,0 +1,736 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
+
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
+        classpath 'de.thetaphi:forbiddenapis:3.2'
+        classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.9'
+    }
+}
+
+plugins {
+    id 'base'
+    id('org.nosphere.apache.rat') version '0.7.0'
+    id 'distribution'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Only add the plugin for Sonar if enabled
+if (project.hasProperty('enableSonar')) {
+    println 'Enabling Sonar support'
+    apply plugin: 'org.sonarqube'
+}
+
+// For help converting an Ant build to a Gradle build, see
+// https://docs.gradle.org/current/userguide/ant.html
+
+configurations {
+    antLibs {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+}
+
+dependencies {
+    antLibs("org.junit.jupiter:junit-jupiter:5.8.1")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
+}
+
+ant.taskdef(name: "junit",
+        classname: "org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask",
+        classpath: configurations.antLibs.asPath)
+
+
+wrapper {
+    // https://stackoverflow.com/a/54741656/2066598
+    gradleVersion = '7.2'
+}
+
+task adjustWrapperPropertiesFile {
+    doLast {
+        ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
+            fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
+        }
+        new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+        ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
+    }
+}
+wrapper.finalizedBy adjustWrapperPropertiesFile
+
+/**
+ Define properties for all projects, including this one
+ */
+allprojects {
+//    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+}
+
+/**
+ Define things that are only necessary in sub-projects, but not in the master-project itself
+ */
+subprojects {
+    //Put instructions for each sub project, but not the master
+    apply plugin: 'java-library'
+    apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'de.thetaphi.forbiddenapis'
+    apply plugin: 'com.github.spotbugs'
+
+    version = '5.1.0'
+    ext {
+        bouncyCastleVersion = '1.69'
+        commonsCodecVersion = '1.15'
+        commonsCompressVersion = '1.21'
+        commonsIoVersion = '2.11.0'
+        commonsMathVersion = '3.6.1'
+        junitVersion = '5.8.1'
+        log4jVersion = '2.14.1'
+        mockitoVersion = '4.0.0'
+        hamcrestVersion = '2.2'
+        xmlbeansVersion = '5.0.2'
+        batikVersion = '1.14'
+
+        JAVA9_SRC = 'src/main/java9'
+        JAVA9_OUT = "${buildDir}/classes/java9/main/"
+        TEST9_SRC = 'src/test/java9'
+        TEST9_OUT = "${buildDir}/classes/java9/test/"
+        VERSIONS9 = 'META-INF/versions/9'
+
+        NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
+    }
+
+    configurations {
+        all {
+            resolutionStrategy {
+                force "commons-io:commons-io:${commonsIoVersion}"
+                force 'org.slf4j:slf4j-api:1.7.32'
+                force 'com.fasterxml.woodstox:woodstox-core:6.2.6'
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << '-Xlint:unchecked'
+        options.deprecation = true
+
+        onlyIf {
+            (name != "compileJava9" && name != "compileTest9") || JavaVersion.current() != JavaVersion.VERSION_1_8
+        }
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://repository.apache.org/content/repositories/releases'
+        }
+    }
+
+    dependencies {
+        testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
+        testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    }
+
+    task wrapper(type: Wrapper){
+        // https://stackoverflow.com/a/65701523/2066598
+        gradleVersion = '7.2'
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    javadoc {
+        failOnError = true
+        maxMemory = "1024M"
+        doFirst {
+            options {
+                if (JavaVersion.current().isJava9Compatible()) {
+                    addBooleanOption('html5', true)
+                }
+                addBooleanOption('Xdoclint:all,-missing', true)
+                links 'https://poi.apache.org/apidocs/dev/'
+                links 'https://docs.oracle.com/javase/8/docs/api/'
+                links 'https://xmlbeans.apache.org/docs/5.0.0/'
+                use = true
+                splitIndex = true
+                source = "1.8"
+            }
+        }
+    }
+
+    tasks.withType(Jar) {
+        duplicatesStrategy = 'fail'
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+        doLast {
+            ant.checksum(file: it.archivePath, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
+            ant.checksum(file: it.archivePath, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
+        }
+    }
+
+    jar {
+        from("../legal") {
+            include "NOTICE"
+            include "LICENSE"
+        }
+
+        rename('^(NOTICE|LICENSE)', 'META-INF/$1')
+
+        manifest {
+            attributes(
+                'Specification-Title': 'Apache POI',
+                'Specification-Version': project.version,
+                'Specification-Vendor': 'The Apache Software Foundation',
+                'Implementation-Title': 'Apache POI',
+                'Implementation-Version': project.version,
+                'Implementation-Vendor': 'org.apache.poi',
+                'Implementation-Vendor-Id': 'The Apache Software Foundation'
+            )
+        }
+    }
+
+    javadocJar {
+        // if javadocs and binaries are in the same directory, JPMS complaints about duplicated modules
+        // in the module-path
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-javadoc")
+    }
+
+    sourcesJar {
+        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        exclude 'META-INF/services/**'
+    }
+
+    test {
+        // make XML test-results available for Jenkins CI
+        useJUnitPlatform()
+        reports {
+            junitXml.required = true
+        }
+
+        // Exclude some tests that are not actually tests or do not run cleanly on purpose
+        exclude '**/BaseTestBorderStyle.class'
+        exclude '**/BaseTestCellUtil.class'
+        exclude '**/TestUnfixedBugs.class'
+        exclude '**/TestOneFile.class'
+
+        // Exclude Test Suites
+        exclude '**/All*Tests.class'
+        exclude '**/HSSFTests.class'
+
+        // set heap size for the test JVM(s)
+        minHeapSize = "128m"
+        maxHeapSize = "1512m"
+
+        // Specifying the local via system properties did not work, so we set them this way
+        jvmArgs << [
+            '-Djava.io.tmpdir=build',
+            '-DPOI.testdata.path=../test-data',
+            '-Djava.awt.headless=true',
+            '-Djava.locale.providers=JRE,CLDR',
+            '-Duser.language=en',
+            '-Duser.country=US',
+            '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
+            "-Dversion.id=${project.version}",
+            '-ea',
+            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
+            // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
+        ]
+
+        // show standard out and standard error of the test JVM(s) on the console
+        //testLogging.showStandardStreams = true
+
+        // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
+        systemProperties['user.dir'] = workingDir
+
+        systemProperties['POI.testdata.path'] = '../test-data'
+
+        // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
+        systemProperties['java.locale.providers'] = 'JRE,CLDR'
+
+        doFirst {
+            if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+                jvmArgs += [
+                    '-Dsun.reflect.debugModuleAccessChecks=true',
+                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+                    '--illegal-access=warn',
+
+                    // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
+                    // opposed to the recommendation there, it doesn't work to add ... to the dependencies
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
+                    // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
+                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
+                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
+                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
+                ]
+            }
+        }
+    }
+
+    jacoco {
+        toolVersion = '0.8.7'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.required = true
+        }
+    }
+
+    // ensure the build-dir exists
+    projectDir.mkdirs()
+
+    if (project.hasProperty('enableSonar')) {
+        // See https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/ and
+        // https://docs.sonarqube.org/display/SONARQUBE52/Analyzing+with+SonarQube+Scanner+for+Gradle
+        // for documentation of properties.
+        //
+        // Some additional properties are currently set in the Jenkins-DSL, see jenksin/create_jobs.groovy
+        //
+        sonarqube {
+            properties {
+                // as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
+                // the root-folder as "basedir" for the projects
+                property "sonar.projectBaseDir", "$projectDir"
+                // currently supported providers on Jenkins: "hg,git": property "sonar.scm.provider", "svn"
+
+                // the plugin seems to not detect our non-standard build-layout
+                property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
+
+                // the Gradle run will report an invalid directory for 'ooxml-schema', but it seems to still work fine
+                property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/reports/jacoco/test/jacocoTestReport.xml"
+
+                // somehow the version was not use properly
+                property "sonar.projectVersion", version
+            }
+        }
+    }
+
+    forbiddenApis {
+        bundledSignatures = [ 'jdk-unsafe', 'jdk-deprecated', 'jdk-internal', 'jdk-non-portable', 'jdk-reflection' ]
+        signaturesFiles = files('../src/resources/devtools/forbidden-signatures.txt')
+        ignoreFailures = false
+        suppressAnnotations = [ 'org.apache.poi.util.SuppressForbidden' ]
+        // forbiddenapis bundled signatures max supported version is 14
+        targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
+    }
+
+    forbiddenApisMain {
+        signaturesFiles = files('../src/resources/devtools/forbidden-signatures-prod.txt')
+    }
+
+    task jenkins
+    jenkins.dependsOn build
+    jenkins.dependsOn check
+    jenkins.dependsOn javadoc
+    jenkins.dependsOn jacocoTestReport
+    jenkins.dependsOn rat
+
+    publishing {
+        publications {
+            POI(MavenPublication) {
+                groupId 'org.apache.poi'
+                artifactId project.archivesBaseName
+
+                from components.java
+
+                pom {
+                    packaging = 'jar'
+                    url = 'https://poi.apache.org/'
+                    name = 'Apache POI'
+                    description = 'Apache POI - Java API To Access Microsoft Format Files'
+
+                    mailingLists {
+                        mailingList {
+                            name = 'POI Users List'
+                            subscribe = 'user-subscribe@poi.apache.org'
+                            unsubscribe = 'user-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-user/'
+                        }
+                        mailingList {
+                            name = 'POI Developer List'
+                            subscribe = 'dev-subscribe@poi.apache.org'
+                            unsubscribe = 'dev-unsubscribe@poi.apache.org'
+                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-dev/'
+                        }
+                    }
+
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    organization {
+                        name = 'Apache Software Foundation'
+                        url = 'http://www.apache.org/'
+                    }
+
+                    withXml {
+                        def r = asElement()
+                        def doc = r.getOwnerDocument()
+                        def hdr = new File('../legal/HEADER')
+                        if (!hdr.exists()) hdr = new File('legal/HEADER')
+                        def asl = doc.createComment(hdr.text)
+                        // adding ASF header before root node is ignored
+                        // doc.insertBefore(asl, doc.getDocumentElement())
+                        r.insertBefore(asl, r.getFirstChild())
+
+                        // Replace ooxml-full with ooxml-lite
+                        XPath xpath = XPathFactory.newInstance().newXPath()
+                        NodeList res = (NodeList)xpath.evaluate("//dependency/artifactId[text() = 'poi-ooxml-full']", doc, XPathConstants.NODESET)
+                        for (int i=res.getLength()-1; i>=0; i--) {
+                            res.item(i).setTextContent('poi-ooxml-lite')
+                        }
+
+                        // remove duplicate entries
+                        res = (NodeList)xpath.evaluate("//dependency[artifactId = ./preceding-sibling::dependency/artifactId]", doc, XPathConstants.NODESET)
+                        for (int i=res.getLength()-1; i>=0; i--) {
+                            Node n = res.item(i)
+                            n.getParentNode().removeChild(n)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
+    signing {
+        sign publishing.publications.POI
+    }
+    signPOIPublication.dependsOn('generatePomFileForPOIPublication')
+
+    spotbugs {
+        ignoreFailures = true
+        showStackTraces = false
+    }
+
+    build {
+        if (project.hasProperty('signing.keyId')) {
+            dependsOn 'signPOIPublication'
+        }
+    }
+}
+
+// initial try to provide a combined JavaDoc, grouping is still missing here, though!
+task allJavaDoc(type: Javadoc) {
+    var prj = [ project(':poi'), project(':poi-excelant'), project(':poi-ooxml'), project(':poi-scratchpad') ]
+    source prj.collect { it.sourceSets.main.allJava }
+
+    // for possible settings see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+    destinationDir = file("${buildDir}/docs/javadoc")
+    maxMemory="2048M"
+
+    // for possible options see https://docs.gradle.org/current/javadoc/org/gradle/external/javadoc/StandardJavadocDocletOptions.html
+    options.use = true
+    options.splitIndex = true
+    options.addBooleanOption('Xdoclint:all,-missing', true)
+
+    title = 'POI API Documentation'
+    options.bottom = '<![CDATA[<i>Copyright ' + new Date().format('yyyy') + ' The Apache Software Foundation or its licensors, as applicable.</i>]]>'
+
+    options.group('DDF - Dreadful Drawing Format', 'org.apache.poi.ddf*')
+    options.group('HPSF - Horrible Property Set Format', 'org.apache.poi.hpsf*')
+    options.group('SS - Common Spreadsheet Format', 'org.apache.poi.ss*')
+    options.group('HSSF - Horrible Spreadsheet Format', 'org.apache.poi.hssf*')
+    options.group('XSSF - Open Office XML Spreadsheet Format', 'org.apache.poi.xssf*')
+    options.group('SL - Common Slideshow Format',  'org.apache.poi.sl*')
+    options.group('HSLF - Horrible Slideshow Format', 'org.apache.poi.hslf*', 'org.apache.poi.hwmf*', 'org.apache.poi.hemf*')
+    options.group('XSLF - Open Office XML Slideshow Format', 'org.apache.poi.xslf*')
+    options.group('HWPF - Horrible Word Processor Format', 'org.apache.poi.hwpf*')
+    options.group('XWPF - Open Office XML Word Processor Format', 'org.apache.poi.xwpf*')
+    options.group('HDGF - Horrible Diagram Format', 'org.apache.poi.hdgf*')
+    options.group('XDGF - Open Office XML Diagram Format', 'org.apache.poi.xdgf*')
+    options.group('HMEF - Transport Neutral Encoding Files (TNEF)', 'org.apache.poi.hmef*')
+    options.group('HSMF Outlook message file format', 'org.apache.poi.hsmf*')
+    options.group('HPBF - Publisher Format Files', 'org.apache.poi.hpbf*')
+    options.group('POIFS - POI File System', 'org.apache.poi.poifs*')
+    options.group('Utilities', 'org.apache.poi.util*')
+    options.group('Excelant', 'org.apache.poi.ss.excelant**')
+//  options.group('Examples', 'org.apache.poi.examples*')
+}
+
+
+task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'binDistZip','binDistTar','srcDistZip','srcDistTar']) {}
+
+clean {
+    delete "${rootDir}/build/dist"
+}
+
+rat {
+    // Input directory, defaults to '.'
+    inputDir.set(file("."))
+
+    // include all directories which contain files that are included in releases
+    includes = [
+        "poi-examples/**",
+        "poi-excelant/**",
+        "poi-integration/**",
+        "legal/**",
+        "poi/**",
+        "maven/**",
+        "poi-ooxml/**",
+        "poi-ooxml-full/**",
+        "poi-ooxml-lite/**",
+        "poi-ooxml-lite-agent/**",
+        "osgi/**",
+        "poi-scratchpad/**",
+        "src/**",
+    //    "sonar/**",
+        "build.*"
+    ]
+
+    // List of Gradle exclude directives, defaults to ['**/.gradle/**']
+    //excludes.add("main/java/org/apache/poi/**/*-chart-data.txt")
+    excludes = [
+        "build.javacheck.xml",
+        "**/build/**",
+        "**/out/**",
+        "**/*.iml",
+        "**/*.log",
+        "**/gradle-wrapper.properties",
+        "**/main/java/org/apache/poi/**/*-chart-data.txt",
+        "poi/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml",
+        "poi-ooxml/src/main/resources/org/apache/poi/xslf/usermodel/notesMaster.xml",
+        "poi-ooxml/src/main/resources/org/apache/poi/xssf/usermodel/presetTableStyles.xml",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/XAdES*.xsd",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd",
+        "poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd",
+        "osgi/README.md",
+        // ignore svn conflict artifacts
+        "**/module-info.*"
+    ]
+
+    /*
+    <exclude name="documentation/*.txt" />
+    <exclude name="documentation/content/xdocs/dtd/" />
+    <exclude name="documentation/content/xdocs/entity/" />
+    <exclude name="documentation/resources/images/pb-poi.cdr"/>
+    */
+
+    // Prints the list of files with unapproved licences to the console, defaults to false
+    verbose.set(true)
+}
+
+/*task downloadJarsToLibs() {
+    def f = new File("$projectDir/../lib/ooxml/xmlbeans-5.0.0.jar")
+    if (!f.exists()) {
+    println 'writing file ' + f.getAbsolutePath()
+    f.getParentFile().mkdirs()
+    new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+}*/
+
+//compileJava.dependsOn 'downloadJarsToLibs'
+
+task replaceVersion() {
+    outputs.upToDateWhen { false }
+
+    var version = subprojects[0].version
+    var tokens = [
+//        [ 'sonar', '**/pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\\1${version}" ],
+//        [ 'sonar', '**/pom.xml', '(poi-parent&lt;/artifactId>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT)?', "\1${version}" ],
+        [ 'osgi', 'pom.xml', '(packaging>\\n\\s*<version>)[0-9.]+(?:-SNAPSHOT|-RC\\d+)?', "\\1${version}" ]
+        // [ '.', 'build.gradle', ' version = \'[0-9.]+(?:-SNAPSHOT)?\'', " version = '${version}'" ]
+    ]
+
+    doLast {
+        tokens.forEach {
+            var dir = it[0], name = it[1], match = it[2], replace = it[3]
+            ant.replaceregexp(match: match, replace: replace) {
+                fileset(dir: dir) {
+                    include(name: name)
+                }
+            }
+        }
+    }
+}
+
+task zipJavadocs(type: Zip, dependsOn: allJavaDoc) {
+    from('build/docs/javadoc/')
+    destinationDirectory = file('build/dist')
+    archiveBaseName = 'poi'
+    archiveVersion = subprojects[0].version
+    archiveAppendix = 'javadoc'
+    archiveExtension = 'jar'
+}
+
+tasks.withType(Tar) {
+    compression = Compression.GZIP
+    archiveExtension = 'tgz'
+}
+
+distributions {
+    var version = subprojects[0].version
+    var date = new Date().format('yyyyMMdd')
+
+    var poiDep = project(':poi').configurations.getAt('compileClasspath')
+    var ooxmlImp = project(':poi-ooxml').configurations.getAt('compileClasspath')
+
+    bin {
+        distributionBaseName = "poi-bin-${version}-${date}"
+        contents {
+            from('build/dist/maven') {
+                include "**/*${version}.jar"
+                exclude "**/*lite-agent*.jar"
+                exclude "**/*integration*.jar"
+            }
+
+            from('build/dist') { include 'poi-javadoc*.jar'}
+            from('legal') { exclude 'HEADER' }
+            from(poiDep) { include "**/*.jar" }
+            from(ooxmlImp) { include "**/*.jar" }
+
+            includeEmptyDirs = false
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+            eachFile {
+                String root = "poi-bin-${version}/"
+                if (name.startsWith('poi')) {
+                    path = root + name
+                } else if (poiDep.contains(file)) {
+                    path = root + 'lib/' + name
+                } else if (name =~ /^(batik|bc|fontbox|graphics|pdfbox|xml-apis|xmlgraphics|xmlsec)/) {
+                    path = root + 'auxiliary/' + name
+                } else if (ooxmlImp.contains(file)) {
+                    path = root + 'ooxml-lib/' + name
+                } else {
+                    path = root + name
+                }
+            }
+        }
+    }
+
+    src {
+        distributionBaseName = "poi-src-${version}-${date}"
+        contents {
+            from('.') {
+                exclude '*/build/**'
+                exclude 'build/**'
+                exclude 'dist*/**'
+                exclude 'lib/**'
+                exclude 'lib.stored/**'
+                exclude 'bin/**'
+                exclude 'out/**'
+                exclude 'tmp/**'
+                exclude 'gradle/**'
+                exclude 'sonar/**/target/**'
+                exclude 'sonar/*/src/**'
+                exclude 'compile-lib/**'
+                exclude 'ooxml-lib/**'
+                exclude 'ooxml-testlib/**'
+                exclude 'scripts/**'
+                exclude '.gradle/**'
+                exclude '.idea/**'
+                exclude '.classpath'
+                exclude '.settings/**'
+                exclude '.project'
+                exclude 'TEST*'
+                exclude 'gradlew'
+                exclude 'gradlew.bat'
+                exclude '**/*.iml'
+                exclude '*.ipr'
+                exclude '*.iws'
+                exclude '*.rdf'
+                exclude '*.png'
+                exclude '*.gif'
+                exclude '*.jpg'
+                exclude '*.jpeg'
+                exclude '*.swp'
+                exclude '*.lnk'
+                exclude '*.log'
+                exclude '*.launch'
+                exclude '*.docx'
+                exclude '*.pptx'
+                exclude '*.xlsx'
+            }
+            from('legal') { exclude 'HEADER' }
+        }
+    }
+}
+
+binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
+binDistTar.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
+
+var srcDep = [
+    ':poi:cacheJava9',
+    ':poi:cacheTest9',
+    ':poi-ooxml-full:cacheJava9',
+    ':poi-ooxml-lite-agent:cacheJava9',
+    ':poi-ooxml:cacheJava9',
+    ':poi-ooxml:cacheTest9',
+    ':poi-scratchpad:cacheJava9',
+    ':poi-scratchpad:cacheTest9',
+    ':poi-excelant:cacheJava9',
+    ':poi-excelant:cacheTest9',
+    ':poi-examples:cacheJava9',
+    ':poi-integration:cacheTest9',
+    ':poi-ooxml-lite:cacheJava9',
+    ':poi-ooxml-lite:generateModuleInfo'
+]
+
+srcDistTar.dependsOn srcDep
+srcDistZip.dependsOn srcDep
+rat.dependsOn srcDep
+
+task fixDistDir {
+    doLast {
+        ant.mkdir(dir: 'build/dist')
+        ant.move(todir: 'build/dist') {
+            fileset(dir: 'build/distributions', includes: '*')
+        }
+    }
+}
+
+binDistZip.finalizedBy fixDistDir
+binDistTar.finalizedBy fixDistDir
+srcDistZip.finalizedBy fixDistDir
+srcDistTar.finalizedBy fixDistDir

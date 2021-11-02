@@ -1,0 +1,154 @@
+import java.util.regex.Pattern
+
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+final String BEANS_SRC = "${buildDir}/generated-sources"
+final String BEANS_RES = "${buildDir}/generated-resources"
+
+sourceSets {
+    main {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
+        }
+        compileClasspath += files(BEANS_RES)
+        java {
+            srcDirs += BEANS_SRC
+        }
+        resources {
+            srcDirs += BEANS_RES
+        }
+    }
+}
+
+dependencies {
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+    compileOnly project(':poi-ooxml-full')
+    compileOnly project(path:':poi-integration', configuration:'tests')
+}
+
+final MODULE_NAME = 'org.apache.poi.ooxml.schemas'
+final Pattern MODULE_REGEX = ~'\\.jar$'
+final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
+final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
+
+task generateModuleInfo() {
+    dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
+
+    File fileIn = file("${OOXML_LITE_REPORT}.clazz")
+    File fileOut = file("src/main/java9/module-info.java")
+
+    inputs.file fileIn
+    outputs.file fileOut
+
+    doLast {
+        String header = fileOut.collect().findAll { !(it =~ /exports|}/) }.join('\n')
+
+        // generate module-info based on exported classes
+        String exports = fileIn.
+            collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
+            findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
+
+        String content = header + '\n' + exports + '\n}'
+        if (fileOut.text != content) {
+            fileOut.write content
+        }
+    }
+}
+
+task compileOoxmlLite(type: Copy) {
+    dependsOn 'generateModuleInfo'
+
+    // This task is currently always executed, because gradle thinks files with two dollar signs
+    // (as in AlternateContentDocument$AlternateContent$Choice.class) are always stale
+
+    // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
+    from(project(':poi-ooxml-full').buildDir) {
+        include 'generated-sources/**'
+        include 'generated-resources/**'
+        include 'classes/java/main/**'
+    }
+    into(buildDir)
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+processResources.dependsOn 'compileOoxmlLite'
+compileJava.dependsOn 'compileOoxmlLite'
+sourcesJar.dependsOn 'compileOoxmlLite'
+
+task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
+    source = file(JAVA9_SRC)
+    classpath = files()
+    doFirst {
+        options.compilerArgs = [
+            '--patch-module', "${MODULE_NAME}=${project(':poi-ooxml-full').sourceSets.main.output.asPath}",
+            '--module-path', files(MAIN_MODULE_PATH).asPath
+        ]
+    }
+}
+
+task cacheJava9(type: Copy, dependsOn: 'compileJava9') {
+    from(file(JAVA9_OUT + VERSIONS9))
+    into(JAVA9_SRC)
+}
+
+jar {
+    dependsOn ':poi-ooxml:test', ':poi-integration:test'
+
+    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+    doFirst {
+        File clazzFile = file("${OOXML_LITE_REPORT}.clazz")
+        File xsbsFile = file("${OOXML_LITE_REPORT}.xsb")
+        if (clazzFile.exists() && xsbsFile.exists()) {
+            List clazz = clazzFile.collect { "${it}.class" }
+            List clazzInner = clazzFile.collect { "${it}\$*.class" }
+            List xsbs = xsbsFile.collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it}.xsb" }
+            File missingXsbsFile = file("missing-xsbs.txt")
+            List xsbs2 = missingXsbsFile.findAll { !it.empty && !it.startsWith("#") }
+              .collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it.trim()}.xsb" }
+            includes = clazz + clazzInner + xsbs + xsbs2 + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
+        }
+    }
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from JAVA9_SRC include '*.class'
+        }
+    }
+
+    // ignore second module-info.class from poi-ooxml-full
+    // duplicatesStrategy = 'exclude'
+    includeEmptyDirs = false
+
+    manifest {
+        attributes('Automatic-Module-Name' : MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false

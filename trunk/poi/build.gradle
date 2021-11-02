@@ -1,0 +1,206 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+import java.util.regex.Pattern
+
+configurations {
+    tests
+    javadocs
+}
+
+sourceSets {
+    main {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
+        }
+        java {
+            // also include the generated Version.java
+            srcDirs += 'build/generated-sources'
+        }
+    }
+    test {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
+        }
+    }
+}
+
+dependencies {
+    api "commons-codec:commons-codec:${commonsCodecVersion}"
+    api 'org.apache.commons:commons-collections4:4.4'
+    api "org.apache.commons:commons-math3:${commonsMathVersion}"
+    api "commons-io:commons-io:${commonsIoVersion}"
+    api 'com.zaxxer:SparseBitSet:1.2'
+    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    // implementation 'javax.activation:activation:1.1.1'
+
+    testImplementation 'org.reflections:reflections:0.10.1'
+    testImplementation 'org.apache.ant:ant:1.10.12'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
+
+    // needed for locating the external references
+    javadocs project(':poi-ooxml')
+    javadocs project(':poi-scratchpad')
+}
+
+// generate and compile the file Version.java file
+task generateVersionJava() {
+    //dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
+
+    File fileIn = file("src/main/version/Version.java.template")
+    File fileOut = file("build/generated-sources/org/apache/poi/Version.java")
+
+    inputs.file fileIn
+    outputs.file fileOut
+
+    doLast {
+        String content = fileIn.text
+
+        content = content.replace("@VERSION@", version)
+        content = content.replace("@DSTAMP@", new Date().format('yyyyMMdd'))
+
+        fileOut.write content
+    }
+}
+compileJava.dependsOn 'generateVersionJava'
+
+final String MODULE_NAME = 'org.apache.poi.poi'
+final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
+final Pattern MODULE_REGEX = ~'\\.jar$'
+final List MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+
+task compileJava9(type: JavaCompile) {
+    dependsOn 'compileJava'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
+    source = file(JAVA9_SRC)
+    classpath = files()
+    options.compilerArgs = [
+        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+        '--module-path', sourceSets.main.compileClasspath.asPath
+    ]
+}
+
+task cacheJava9(type: Copy) {
+    dependsOn 'compileJava9'
+
+    from(file(JAVA9_OUT + VERSIONS9))
+    into(JAVA9_SRC)
+}
+
+task compileTest9(type: JavaCompile) {
+    dependsOn 'compileTestJava'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(TEST9_OUT + VERSIONS9)
+    source = file(TEST9_SRC)
+    options.compilerArgs = [
+        '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
+        '--module-path', files(MODULE_PATH).asPath
+    ]
+    classpath = files()
+}
+
+
+task cacheTest9(type: Copy) {
+    dependsOn 'compileTest9'
+
+    from(file(TEST9_OUT + VERSIONS9))
+    into(TEST9_SRC)
+}
+
+jar {
+    dependsOn cacheJava9
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from JAVA9_SRC include '*.class'
+        }
+    }
+
+    manifest {
+        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+// Create a separate jar for test-code to depend on it in other projects
+// See http://stackoverflow.com/questions/5144325/gradle-test-dependency
+task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
+    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
+
+    classifier 'tests'
+    // ignore second module-info.class from main
+    duplicatesStrategy = 'exclude'
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from TEST9_SRC include '*.class'
+        }
+    }
+
+    from sourceSets.test.output + sourceSets.main.output
+
+    manifest {
+        attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
+    }
+}
+
+javadoc {
+    dependsOn configurations.javadocs.dependencies.collect{ ':' + it.dependencyProject.name + ':compileJava' }
+
+    doFirst {
+        options {
+            classpath += files(configurations.javadocs.dependencies.collect{ it.dependencyProject.sourceSets.main.output.classesDirs })
+        }
+    }
+}
+
+artifacts {
+    tests testJar
+}
+
+test {
+    dependsOn { testJar }
+
+    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+
+    doFirst {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            jvmArgs << [
+                '--add-modules', MODULE_NAME,
+                '--module-path', '../build/dist/maven/poi-tests' + File.pathSeparator + files(MODULE_PATH).asPath,
+            ]
+        }
+    }
+}
+
+publishing {
+    publications {
+        POI(MavenPublication) {
+            pom {
+                name = 'Apache POI - Common'
+                description = 'Apache POI - Java API To Access Microsoft Format Files'
+            }
+        }
+    }
+}

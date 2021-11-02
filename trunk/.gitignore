@@ -1,0 +1,39 @@
+classes
+workbook.xls
+bak
+build.number
+*.el
+scripts
+untitled1.jpx
+*.log
+
+forrest.properties
+compile-lib/
+ooxml-lib/
+ooxml-testlib/
+
+# Eclipse
+/bin
+.settings
+
+# Tests
+junit*.properties
+TEST-org.apache.poi*.xml
+
+# IntelliJ
+/out/
+/*/out/
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Gradle
+.gradle
+
+# Ant
+.ant-targets-build.xml
+/build/
+/*/build/
+dist
+lib/

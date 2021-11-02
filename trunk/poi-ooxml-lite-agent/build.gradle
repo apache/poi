@@ -1,0 +1,83 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+sourceSets {
+    main {
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
+        }
+    }
+}
+
+dependencies {
+    api 'net.bytebuddy:byte-buddy:1.11.21'
+    api 'net.bytebuddy:byte-buddy-agent:1.11.21'
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+}
+
+final MODULE_NAME = 'org.apache.poi.ooxml_lite'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+task compileJava9(type: JavaCompile) {
+    dependsOn 'compileJava'
+
+    sourceCompatibility = 9
+    targetCompatibility = 9
+    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
+    source = file(JAVA9_SRC)
+    classpath = files()
+    doFirst {
+        options.compilerArgs = [
+            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+            '--module-path', sourceSets.main.compileClasspath.asPath
+        ]
+    }
+}
+
+task cacheJava9(type: Copy) {
+    dependsOn 'compileJava9'
+
+    from(file(JAVA9_OUT + VERSIONS9))
+    into(JAVA9_SRC)
+}
+
+jar {
+    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        into('META-INF/versions/9') {
+            from JAVA9_SRC include '*.class'
+        }
+    }
+
+    manifest {
+        attributes (
+            'Automatic-Module-Name' : MODULE_NAME,
+            'Multi-Release': 'true',
+            'Premain-Class' : 'org.apache.poi.ooxml.lite.OOXMLLiteAgent'
+        )
+    }
+}
+
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false
+

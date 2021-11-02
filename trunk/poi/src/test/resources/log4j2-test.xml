@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<Configuration status="WARN" name="console">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+    </Console>
+  </Appenders>
+  <Loggers>
+
+    <!-- Mute notoriously noisy loggers -->
+    <Logger name="org.apache.poi.poifs.nio.FileBackedDataSource" level="ERROR" />
+    <Logger name="org.apache.poi.hdgf.chunks.Chunk" level="FATAL" />
+    <Logger name="org.apache.poi.hpsf.CodePageString" level="ERROR" />
+    <Logger name="org.apache.poi.hdgf.chunks.ChunkFactory" level="ERROR" />
+    <Logger name="org.apache.poi.hslf.model.textproperties.BitMaskTextProp" level="ERROR" />
+    <Logger name="org.apache.poi.hslf.usermodel.HSLFTextParagraph" level="ERROR" />
+    <Logger name="org.apache.poi.openxml4j.opc.ZipPackage" level="FATAL" />
+    <Logger name="org.apache.poi.POIDocument" level="FATAL" />
+    <Logger name="org.apache.poi.openxml4j.opc.OPCPackage" level="ERROR" />
+    <Logger name="org.apache.poi.xssf.usermodel.XSSFWorkbook" level="ERROR" />
+    <Logger name="org.apache.poi.hslf.usermodel.HSLFGroupShape" level="WARN" />
+    <Logger name="org.apache.poi.hslf.record.Record" level="ERROR" />
+
+    <!-- Change to DEBUG or another level to get log output -->
+    <Root level="OFF">
+      <AppenderRef ref="Console" />
+    </Root>
+  </Loggers>
+</Configuration>
