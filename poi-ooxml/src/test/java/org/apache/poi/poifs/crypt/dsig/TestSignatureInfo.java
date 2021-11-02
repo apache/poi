@@ -1177,7 +1177,9 @@ class TestSignatureInfo {
         } else if (file.exists()) {
             try (InputStream fis = new FileInputStream(file)) {
                 keystore.load(fis, password);
-            }
+            } catch (IOException e) {
+				throw new IOException("Failed when reading file " + file, e);
+			}
         } else {
             keystore.load(null, password);
         }
