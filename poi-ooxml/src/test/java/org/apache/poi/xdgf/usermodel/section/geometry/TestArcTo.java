@@ -175,7 +175,9 @@ public class TestArcTo {
             double a = actual[i];
 
             if (Math.abs(e - a) > EPS) {
-                Assertions.fail(String.format("expected <%f> but found <%f>", e, a));
+                Assertions.fail(String.format(
+                        LocaleUtil.getUserLocale(),
+                        "expected <%f> but found <%f>", e, a));
             }
         }
     }
