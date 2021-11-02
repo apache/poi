@@ -19,6 +19,7 @@ package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
 import com.microsoft.schemas.office.visio.x2012.main.RowType;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -164,7 +165,9 @@ public class TestArcTo {
 
     private static void assertCoordinates(double[] expected, double[] actual) {
         if (expected.length != actual.length) {
-            Assertions.fail(String.format("Given coordinates arrays have different length: expected=%s, actual=%s",
+            Assertions.fail(String.format(
+                    LocaleUtil.getUserLocale(),
+                    "Given coordinates arrays have different length: expected=%s, actual=%s",
                     Arrays.toString(expected), Arrays.toString(actual)));
         }
         for (int i = 0; i < expected.length; i++) {
