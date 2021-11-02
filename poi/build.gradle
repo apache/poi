@@ -183,6 +183,7 @@ javadocJar {
 }
 
 sourcesJar {
+    dependsOn generateVersionJava
     metaInf {
         from("$projectDir/../legal/LICENSE")
         from("$projectDir/../legal/NOTICE")

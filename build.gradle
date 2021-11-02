@@ -37,6 +37,7 @@ buildscript {
 
 plugins {
     id 'base'
+    id "com.dorongold.task-tree" version "2.1.0"
     id('org.nosphere.apache.rat') version '0.7.0'
     id 'distribution'
 }
@@ -145,6 +146,7 @@ subprojects {
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:unchecked'
         options.deprecation = true
+        //options.incremental = true
 
         onlyIf {
             (name != "compileJava9" && name != "compileTest9") || JavaVersion.current() != JavaVersion.VERSION_1_8
@@ -258,7 +260,12 @@ subprojects {
 
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
-        maxHeapSize = "1512m"
+        maxHeapSize = "1G"
+        
+        // Setting the maxParallelForks was always slower than not setting item
+        //maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1 
+        //maxParallelForks = Math.max( Runtime.runtime.availableProcessors() - 1, 1 )
+
 
         // Specifying the local via system properties did not work, so we set them this way
         jvmArgs << [
@@ -271,8 +278,10 @@ subprojects {
             '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
             "-Dversion.id=${project.version}",
             '-ea',
-            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
+            '-Djunit.jupiter.execution.parallel.enabled=true',
+            '-Djunit.jupiter.execution.parallel..mode.default=concurrent'
+            // '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+            // '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
             // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
 

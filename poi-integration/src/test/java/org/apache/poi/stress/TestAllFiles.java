@@ -36,6 +36,8 @@ import java.util.stream.Stream;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -66,7 +68,7 @@ import org.opentest4j.AssertionFailedError;
  *  that we do not remove expected sanity checks.
  */
 // also need to set JVM parameter: -Djunit.jupiter.execution.parallel.enabled=true
-//@Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.CONCURRENT)
 public class TestAllFiles {
     private static final String DEFAULT_TEST_DATA_PATH = "test-data";
     public static final File ROOT_DIR = new File(System.getProperty("POI.testdata.path", DEFAULT_TEST_DATA_PATH));
