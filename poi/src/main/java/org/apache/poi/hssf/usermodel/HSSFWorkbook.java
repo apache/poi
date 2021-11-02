@@ -247,7 +247,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public static int getMaxImageLength() {
         return MAX_IMAGE_LENGTH;
     }
-    
+
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
      */
@@ -789,7 +789,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Returns the index of the sheet by his name
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based)
+     * @return index of the sheet (0 based) or -1 if it was not found.
      */
     @Override
     public int getSheetIndex(String name) {
