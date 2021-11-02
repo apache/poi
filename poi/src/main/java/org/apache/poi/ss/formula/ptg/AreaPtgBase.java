@@ -290,6 +290,9 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         if(AreaReference.isWholeColumnReference(SpreadsheetVersion.EXCEL97, topLeft, botRight)) {
             return (new AreaReference(topLeft, botRight, SpreadsheetVersion.EXCEL97)).formatAsString();
         }
+        if (AreaReference.isWholeColumnReference(SpreadsheetVersion.EXCEL2007, topLeft, botRight)){
+            return new AreaReference(topLeft, botRight,SpreadsheetVersion.EXCEL2007).formatAsString();
+        }
         return topLeft.formatAsString() + ":" + botRight.formatAsString();
     }
 

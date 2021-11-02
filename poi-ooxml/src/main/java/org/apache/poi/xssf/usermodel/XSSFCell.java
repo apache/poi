@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellBase;
@@ -474,7 +475,19 @@ public final class XSSFCell extends CellBase {
         if (wb.getCellFormulaValidation()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
-            FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            // Make its format consistent with Excel.
+            // eg: "SUM('Sheet1:Sheet2'!A1:B1)" will be trans to "SUM(Sheet1:Sheet2!A1:B1)"
+            boolean hasError = false;
+            for (Ptg ptg : ptgs) {
+                if (ptg instanceof ErrPtg) {
+                    hasError = true;
+                    break;
+                }
+            }
+            if (!hasError) {
+                formula = FormulaRenderer.toFormulaString(fpb, ptgs);
+            }
         }
 
         CTCellFormula f;
