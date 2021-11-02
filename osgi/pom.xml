@@ -29,7 +29,7 @@
     <name>Apache POI OSGi bundle</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <poi.version>5.1.0</poi.version>
+        <poi.version>5.1.1-SNAPSHOT</poi.version>
         <pax.exam.version>4.12.0</pax.exam.version>
     </properties>
 

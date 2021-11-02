@@ -3281,10 +3281,10 @@ under the License.
 			</fileset>
         </replaceregexp>
 		<replaceregexp
-               match="version.id&quot; value=&quot;[0-9.]+(?:-SNAPSHOT)?&quot;/>"
-               replace="version.id&quot; value=&quot;${version.id}&quot;/>">
+               match="&lt;poi.version>[0-9.]+(?:-SNAPSHOT)?&lt;/poi.version>"
+               replace="&lt;poi.version>${version.id}&lt;/poi.version>">
 			<fileset dir=".">
-				<include name="osgi/build.xml"/>
+				<include name="osgi/pom.xml"/>
 			</fileset>
         </replaceregexp>
 	</target>
