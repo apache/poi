@@ -21,6 +21,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 
@@ -125,6 +126,7 @@ public class ArcTo implements GeometryRow {
 
     @Override
     public String toString() {
-        return String.format("ArcTo: x=%f; y=%f; a=%f", x, y, a);
+        return String.format(LocaleUtil.getUserLocale(),
+                "ArcTo: x=%f; y=%f; a=%f", x, y, a);
     }
 }
