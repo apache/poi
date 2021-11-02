@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 final class SheetRangeEvaluator implements SheetRange {
     private final int _firstSheetIndex;
     private final int _lastSheetIndex;
-    private SheetRefEvaluator[] _sheetEvaluators;
+    private final SheetRefEvaluator[] _sheetEvaluators;
 
     public SheetRangeEvaluator(int firstSheetIndex, int lastSheetIndex, SheetRefEvaluator[] sheetEvaluators) {
         if (firstSheetIndex < 0) {
@@ -41,7 +41,7 @@ final class SheetRangeEvaluator implements SheetRange {
     public SheetRangeEvaluator(int onlySheetIndex, SheetRefEvaluator sheetEvaluator) {
         this(onlySheetIndex, onlySheetIndex, new SheetRefEvaluator[] {sheetEvaluator});
     }
-    
+
     public SheetRefEvaluator getSheetEvaluator(int sheetIndex) {
         if (sheetIndex < _firstSheetIndex || sheetIndex > _lastSheetIndex) {
             throw new IllegalArgumentException("Invalid SheetIndex: " + sheetIndex +
@@ -49,7 +49,7 @@ final class SheetRangeEvaluator implements SheetRange {
         }
         return _sheetEvaluators[sheetIndex-_firstSheetIndex];
     }
-    
+
     public int getFirstSheetIndex() {
         return _firstSheetIndex;
     }
@@ -73,4 +73,26 @@ final class SheetRangeEvaluator implements SheetRange {
     public ValueEval getEvalForCell(int sheetIndex, int rowIndex, int columnIndex) {
         return getSheetEvaluator(sheetIndex).getEvalForCell(rowIndex, columnIndex);
     }
+
+	/**
+	 * This method returns a lower row-number if it would lie outside the row-boundaries of
+	 * any sheet.
+	 *
+	 * This is used to optimize cases where very high number of rows would be checked otherwise
+	 * without any benefit as no such row exists anyway.
+	 *
+	 * @param rowIndex The 0-based row-index to check
+	 * @return If the given index lies withing the max row number across all sheets, it is returned.
+	 * 		Otherwise, the highest used row number across all sheets is returned.
+	 */
+	public int adjustRowNumber(int rowIndex) {
+		int maxRowNum = rowIndex;
+
+		for (int i = _firstSheetIndex; i < _lastSheetIndex; i++) {
+			maxRowNum = Math.max(maxRowNum, _sheetEvaluators[i].getLastRowNum());
+		}
+
+		// do not try to evaluate further than there are rows in any sheet
+		return Math.min(rowIndex, maxRowNum);
+	}
 }
