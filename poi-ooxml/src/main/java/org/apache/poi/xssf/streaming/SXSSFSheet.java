@@ -1051,7 +1051,14 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Sets a page break at the indicated row
-     * @param row FIXME: Document this!
+     * Breaks occur above the specified row and left of the specified column inclusive.
+     *
+     * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+     * and rows starting with rownum=4 in the second.
+     *
+     * @param row the row to break, inclusive
      */
     @Override
     public void setRowBreak(int row) {
