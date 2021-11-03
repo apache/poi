@@ -293,12 +293,14 @@ subprojects {
 				'-Djunit.jupiter.execution.parallel.config.strategy=fixed',
 				'-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
 			]
-			maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 2 
+			maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 		} else {
 			jvmArgs += [
 			    '-Djunit.jupiter.execution.parallel.enabled=true',
 			    '-Djunit.jupiter.execution.parallel.config.strategy=dynamic',
-				'-Djunit.jupiter.execution.parallel.mode.default=concurrent'
+
+                // this setting breaks the test builds, do not use it!
+				//'-Djunit.jupiter.execution.parallel.mode.default=concurrent'
 			]
 			
 			 // Explicitly defining the maxParallelForks was always slower than not setting it
