@@ -170,6 +170,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
@@ -344,21 +345,22 @@ class TestSignatureInfo {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "hyperlink-example-signed.docx",
-        "hello-world-signed.docx",
-        "hello-world-signed.pptx",
-        "hello-world-signed.xlsx",
-        "hello-world-office-2010-technical-preview.docx",
-        "ms-office-2010-signed.docx",
-        "ms-office-2010-signed.pptx",
-        "ms-office-2010-signed.xlsx",
-        "Office2010-SP1-XAdES-X-L.docx",
-        "signed.docx"
+    @CsvSource(value = {
+        "hyperlink-example-signed.docx, true",
+        "hello-world-signed.docx, true",
+        "hello-world-signed.pptx, false",
+        "hello-world-signed.xlsx, true",
+        "hello-world-office-2010-technical-preview.docx, true",
+        "ms-office-2010-signed.docx, true",
+        "ms-office-2010-signed.pptx, false",
+        "ms-office-2010-signed.xlsx, true",
+        "Office2010-SP1-XAdES-X-L.docx, true",
+        "signed.docx, true"
     })
-    void getSigner(String testFile) throws Exception {
+    void getSigner(String testFile, boolean secureValidation) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
+            sic.setSecureValidation(secureValidation);
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(sic);
@@ -909,6 +911,10 @@ class TestSignatureInfo {
     @Test
     void testRetrieveCertificate() throws InvalidFormatException, IOException {
         SignatureConfig sic = new SignatureConfig();
+        // starting with xmlsec 2.3.0 disabling secure validation was necessary because of limitations
+        // on the amount of processed internal references (max. 30)
+        sic.setSecureValidation(false);
+
         final File file = testdata.getFile("PPT2016withComment.pptx");
         try (final OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
             sic.setUpdateConfigOnValidate(true);
