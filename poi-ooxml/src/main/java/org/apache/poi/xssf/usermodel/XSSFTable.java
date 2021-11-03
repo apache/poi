@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -60,7 +61,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     private CTTable ctTable;
     private transient List<XSSFXmlColumnPr> xmlColumnPrs;
     private transient List<XSSFTableColumn> tableColumns;
-    private transient HashMap<String, Integer> columnMap;
+    private transient CaseInsensitiveMap<String, Integer> columnMap;
     private transient CellReference startCellReference;
     private transient CellReference endCellReference;
     private transient String commonXPath;
@@ -836,9 +837,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public int findColumnIndex(String columnHeader) {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
-            // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
             final int count = getColumnCount();
-            columnMap = new HashMap<>(count * 3 / 2);
+            columnMap = new CaseInsensitiveMap<>(count * 3 / 2);
 
             int i = 0;
             for (XSSFTableColumn column : getColumns()) {
@@ -849,7 +849,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         // Table column names with special characters need a single quote escape
         // but the escape is not present in the column definition
-        Integer idx = columnMap.get(caseInsensitive(columnHeader.replace("'", "")));
+        String unescapedString = columnHeader
+                .replace("''", "'")
+                .replace("'#", "#");
+        Integer idx = columnMap.get(unescapedString);
         return idx == null ? -1 : idx;
     }
 

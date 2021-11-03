@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.AreaReference;
@@ -589,6 +590,49 @@ public final class TestXSSFTable {
             // final String procName = "testXSSFTableGetName";
             // final String name = table.getName();
             // System.out.printf(Locale.ROOT, "%s: table.getName=%s%n", procName, name);
+        }
+    }
+
+    @Test
+    void testBug65669() throws IOException {
+        String[] testValues = new String[] {"C'olumn", "Column"};
+        for (String testValue : testValues) {
+            try (XSSFWorkbook wb = new XSSFWorkbook()) {
+                XSSFSheet sheet = wb.createSheet();
+
+                final String column = testValue;
+
+                // Set the values for the table
+                XSSFRow row;
+                XSSFCell cell;
+                for (int i = 0; i < 3; i++) {
+                    // Create row
+                    row = sheet.createRow(i);
+                    for (int j = 0; j < 3; j++) {
+                        // Create cell
+                        cell = row.createCell(j);
+                        if (i == 0) {
+                            final String columnName = column + (j + 1);
+                            cell.setCellValue(columnName);
+                        } else {
+                            if (j != 2) {
+                                cell.setCellValue((i + 1.0) * (j + 1.0));
+                            }
+                        }
+                    }
+                }
+
+                // Create Table
+                AreaReference reference = wb.getCreationHelper().createAreaReference(
+                        new CellReference(0, 0), new CellReference(2, 2));
+                XSSFTable table = sheet.createTable(reference);
+                table.setName("Table1");
+                table.setDisplayName("Table1");
+                for (int i = 1; i < 3; i++) {
+                    cell = sheet.getRow(i).getCell(2);
+                    cell.setCellFormula("Table1[[#This Row],[" + column + "1]]");
+                }
+            }
         }
     }
 
