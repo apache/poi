@@ -295,7 +295,7 @@ under the License.
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.3" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.3.0" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.69" usage="ooxml-provided"/>
@@ -694,9 +694,7 @@ under the License.
                 <include name="bc*-1.68.jar"/>
                 <include name="batik*.jar"/>
                 <include name="slf4j*-1.7.30.jar"/>
-                <include name="xmlsec-2.2.0.jar"/>
-                <include name="xmlsec-2.2.1.jar"/>
-                <include name="xmlsec-2.2.2.jar"/>
+                <include name="xmlsec-2.2*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
