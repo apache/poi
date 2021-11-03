@@ -25,9 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -817,10 +815,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         commonXPath = null;
     }
 
-    private static String caseInsensitive(String s) {
-        return s.toUpperCase(Locale.ROOT);
-    }
-
     /**
      * Gets the relative column index of a column in this table having the header name {@code column}.
      * The column index is relative to the left-most column in the table, 0-indexed.
@@ -843,7 +837,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             int i = 0;
             for (XSSFTableColumn column : getColumns()) {
                 String columnName = column.getName();
-                columnMap.put(caseInsensitive(columnName), i);
+                columnMap.put(columnName, i);
                 i++;
             }
         }
