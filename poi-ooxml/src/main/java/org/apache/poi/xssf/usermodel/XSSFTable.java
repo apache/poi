@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -59,7 +59,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     private CTTable ctTable;
     private transient List<XSSFXmlColumnPr> xmlColumnPrs;
     private transient List<XSSFTableColumn> tableColumns;
-    private transient CaseInsensitiveMap<String, Integer> columnMap;
+    private transient ConcurrentSkipListMap<String, Integer> columnMap;
     private transient CellReference startCellReference;
     private transient CellReference endCellReference;
     private transient String commonXPath;
@@ -831,8 +831,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public int findColumnIndex(String columnHeader) {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
-            final int count = getColumnCount();
-            columnMap = new CaseInsensitiveMap<>(count * 3 / 2);
+            columnMap = new ConcurrentSkipListMap<>(String.CASE_INSENSITIVE_ORDER);
 
             int i = 0;
             for (XSSFTableColumn column : getColumns()) {

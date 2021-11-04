@@ -19,8 +19,8 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -364,7 +364,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if ( _tableCache != null ) {
             return _tableCache;
         }
-        _tableCache = new CaseInsensitiveMap<>();
+        _tableCache = new ConcurrentSkipListMap<>(String.CASE_INSENSITIVE_ORDER);
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
