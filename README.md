@@ -1,6 +1,4 @@
-
-Apache POI
-======================
+# Apache POI
 
 A Java library for reading and writing Microsoft Office binary and OOXML file formats.
 
@@ -32,11 +30,11 @@ And lower-level, supporting components:
 * TNEF (HMEF) for Outlook winmail.dat files
 * OpenXML4J (OOXML)
 
-| Components named H??F are for reading or writing OLE2 binary formats.
-| Components named X??F are for reading or writing OpenOffice XML (OOXML) formats.
+Components named H??F are for reading or writing OLE2 binary formats.
 
-Getting started
-------------------
+Components named X??F are for reading or writing OpenOffice XML (OOXML) formats.
+
+# Getting started
 
 Website: https://poi.apache.org/
 
@@ -59,8 +57,7 @@ Source code:
 
 Requires Java 1.8 or later.
 
-Contributing
-------------------
+# Contributing
 
 * Download and install svn or git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
 
