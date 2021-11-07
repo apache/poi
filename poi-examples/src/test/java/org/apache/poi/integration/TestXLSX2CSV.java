@@ -33,7 +33,10 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import net.bytebuddy.utility.RandomString;
 
 public class TestXLSX2CSV {
     private PrintStream err;
@@ -130,7 +133,68 @@ public class TestXLSX2CSV {
         assertEquals("", errorOutput);
 
         String output = outputBytes.toString(StandardCharsets.UTF_8);
-        assertTrue(output.contains("\"Lorem\",111,,,"), "Had: " + output);
-        assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\","), "Had: " + output);
+		assertTrue(output.contains("\"Lorem\",111,,,"), "Had: " + output);
+		assertTrue(output.contains(",\"hello, xssf\",,\"hello, xssf\","), "Had: " + output);
     }
+
+	@Disabled("Used for local micro-benchmarking")
+	@Test
+	public void microBenchmark() {
+		checkReplace("str");
+		checkReplace("str.123");
+		checkReplace("str.123,");
+		checkReplace("str,,,.123,,,,");
+		for (int i = 0; i < 1000;i++) {
+			checkReplace(RandomString.make(20));
+		}
+
+		for (int i = 0;i < 10;i++) {
+			long start = System.currentTimeMillis();
+			String str = RandomString.make(100) + "\"\"" + RandomString.make(100) + "\"\"" + RandomString.make(100);
+			String expected = str.replace("\"", "\"\"");
+			for (int j = 0;j < 300000;j++) {
+				//assertEquals(expected, replaceString(str, "\"", "\"\""));
+				assertEquals(expected, replaceDirect(str, "\"", "\"\""));
+			}
+
+			System.out.println(" , " + (System.currentTimeMillis() - start));
+		}
+
+		// Java 8: replaceString: 1001, 921, 1264, 1019, 1258, 990, 1089, 1430, 1153, 907
+		// Java 8: replaceDirect: 375, 282, 240, 246, 264, 271, 258, 250, 263, 259
+		// Java 11: replaceString: 510, 218, 202, 205, 202, 198, 202, 198, 208, 201
+		// Java 11: replaceDirect: 384, 228, 204, 201, 201, 200, 206, 196, 200, 200
+		//
+		// => On Java 8, a custom implementation would make sense, however on Java 9
+		// 		String.replace() was optimized so that it does not make any difference
+		// 		anymore!
+	}
+
+	private void checkReplace(String orig) {
+		assertEquals(replaceString(orig, ",", "."), replaceDirect(orig, ",", "."),
+				"Did have a difference with " + orig);
+	}
+
+	public static String replaceString(String originalStr, String oldStr, String newStr) {
+		return originalStr.replace(oldStr, newStr);
+	}
+
+	public static String replaceDirect(String originalStr, String oldStr, String newStr) {
+		int p = originalStr.indexOf(oldStr);
+		if (p == -1) {
+			return originalStr;
+		} else {
+			StringBuilder result = new StringBuilder();
+			result.append(originalStr, 0, p);
+			result.append(newStr);
+			int q = p + oldStr.length();
+			while ((p = originalStr.indexOf(oldStr, q)) != -1) {
+				result.append(originalStr, q, p);
+				result.append(newStr);
+				q = p + oldStr.length();
+			}
+			result.append(originalStr, q, originalStr.length());
+			return result.toString();
+		}
+	}
 }
