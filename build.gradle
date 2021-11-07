@@ -37,6 +37,7 @@ buildscript {
 
 plugins {
     id 'base'
+    id "com.dorongold.task-tree" version "2.1.0"
     id('org.nosphere.apache.rat') version '0.7.0'
     id 'distribution'
 }
@@ -50,6 +51,8 @@ if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
     apply plugin: 'org.sonarqube'
 }
+
+boolean isCIBuild = false;
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
@@ -145,6 +148,7 @@ subprojects {
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:unchecked'
         options.deprecation = true
+        options.incremental = true
 
         onlyIf {
             (name != "compileJava9" && name != "compileTest9") || JavaVersion.current() != JavaVersion.VERSION_1_8
@@ -258,7 +262,8 @@ subprojects {
 
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
-        maxHeapSize = "1512m"
+        maxHeapSize = "1G"
+
 
         // Specifying the local via system properties did not work, so we set them this way
         jvmArgs << [
@@ -271,10 +276,37 @@ subprojects {
             '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
             "-Dversion.id=${project.version}",
             '-ea',
-            '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-            '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
             // -Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}   ... if ${isIBMVM}
         ]
+
+        // detect if running on Jenkins/CI
+        isCIBuild |= Boolean.valueOf(System.getenv("CI_BUILD"));
+
+        if (isCIBuild) {
+        	jvmArgs += [
+        	    // Strictly serial
+        	    // '-Djunit.jupiter.execution.parallel.enabled=false',
+
+        	    // OR parallel on 2 threads
+				'-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+				'-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
+			]
+			maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+		} else {
+			jvmArgs += [
+			    '-Djunit.jupiter.execution.parallel.enabled=true',
+			    '-Djunit.jupiter.execution.parallel.config.strategy=dynamic',
+
+                // this setting breaks the test builds, do not use it!
+				//'-Djunit.jupiter.execution.parallel.mode.default=concurrent'
+			]
+
+			 // Explicitly defining the maxParallelForks was always slower than not setting it
+			 // So we leave this to Gradle itself, which seems to be very smart
+			 // maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+			 // maxParallelForks = Math.max( Runtime.runtime.availableProcessors() - 1, 1 )
+
+        }
 
         // show standard out and standard error of the test JVM(s) on the console
         //testLogging.showStandardStreams = true

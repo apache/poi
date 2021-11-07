@@ -262,6 +262,7 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
+            env('CI_BUILD', 'TRUE')
             if(jdkKey == '1.10') {
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
