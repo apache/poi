@@ -86,7 +86,8 @@ public class TestAllFiles {
         "**/.svn/**",
         "lost+found",
         "**/.git/**",
-        "**/right-to-left.xlsx",
+        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
+        "**/right-to-left.xlsx", //the threaded comments in this file cause XSSF clone to fail
         "document/word2.doc",
         "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
         "hpsf/Test0313rur.adm",
