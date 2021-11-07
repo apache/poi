@@ -123,12 +123,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
-     * Excel silently truncates long sheet names to 31 chars.
-     * This constant is used to ensure uniqueness in the first 31 chars
-     */
-    private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
-
-    /**
      * Images formats supported by XSSF but not by HSSF
      */
     public static final int PICTURE_TYPE_GIF = 8;
@@ -744,10 +738,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             // Try and find the next sheet name that is unique
             String index = Integer.toString(uniqueIndex++);
             String name;
-            if (baseName.length() + index.length() + 2 < 31) {
+            if (baseName.length() + index.length() + 2 < MAX_SENSITIVE_SHEET_NAME_LEN) {
                 name = baseName + " (" + index + ")";
             } else {
-                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+                name = baseName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
@@ -875,8 +869,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         validateSheetName(sheetname);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) {
-            sheetname = sheetname.substring(0, 31);
+        // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
+        // not accessible due to the trimming while we are not even aware of the reason and continue to use
+        // the long name in generated formulas
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+
+			// we still need to warn about the trimming as the original sheet name won't be available
+			// e.g. when referenced by formulas
+			LOG.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+					sheetname, trimmedSheetname);
+			sheetname = trimmedSheetname;
         }
         WorkbookUtil.validateSheetName(sheetname);
 
@@ -1581,8 +1584,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         String oldSheetName = getSheetName(sheetIndex);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) {
-            sheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            sheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
         }
         WorkbookUtil.validateSheetName(sheetname);
 

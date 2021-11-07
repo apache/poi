@@ -525,7 +525,7 @@ public abstract class BaseTestWorkbook {
     }
 
     /**
-     * Tests that all of the unicode capable string fields can be set, written and then read back
+     * Tests that all the unicode capable string fields can be set, written and then read back
      */
     @Test
     protected void unicodeInAll() throws IOException {
@@ -905,4 +905,17 @@ public abstract class BaseTestWorkbook {
             assertEquals(1114425, anchor.getDx2()); //HSSF: 171
         }
     }
+
+	@Test
+	void testSheetNameTrimming() throws IOException {
+		try (Workbook workbook = _testDataProvider.createWorkbook()) {
+			Sheet sheet = workbook.createSheet("MyVeryLongSheetName_9999999999999999");
+			assertNotNull(sheet);
+			assertEquals("MyVeryLongSheetName_99999999999", workbook.getSheetName(0));
+
+			assertThrows(IllegalArgumentException.class,
+					() -> workbook.createSheet("MyVeryLongSheetName_9999999999999998")
+			);
+		}
+	}
 }

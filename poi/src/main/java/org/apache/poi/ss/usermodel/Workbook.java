@@ -55,6 +55,12 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     int PICTURE_TYPE_DIB = 7;
 
     /**
+     * Excel silently truncates long sheet names to 31 chars.
+     * This constant is used to ensure uniqueness in the first 31 chars
+     */
+    int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
+
+    /**
      * Convenience method to get the active sheet.  The active sheet is is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
