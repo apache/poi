@@ -247,9 +247,9 @@ final class NormalisedDecimal {
         sb.append(ws.substring(1));
         sb.append(' ');
         sb.append(getFractionalDigits());
-        sb.append("E");
+        sb.append('E');
         sb.append(getDecimalExponent());
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 }

@@ -93,7 +93,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
         StringBuilder sb = new StringBuilder();
         if (sheetName != null) {
             sb.append(SheetNameFormatter.format(sheetName));
-            sb.append("!");
+            sb.append('!');
         }
         CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn(),
                 useAbsoluteAddress, useAbsoluteAddress);

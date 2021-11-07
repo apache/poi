@@ -551,7 +551,7 @@ final class TestMetaDataIPI {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append(s);
-            sb.append(" ");
+            sb.append(' ');
         }
         return sb.toString();
     }
@@ -586,14 +586,14 @@ final class TestMetaDataIPI {
         Random rand = new Random(0); // TODO - no Random - tests should be completely deterministic
         for (int i = 0; i < 5; i++) {
             sb.append(s);
-            sb.append(" ");
+            sb.append(' ');
             char j = (char) rand.nextInt(220);
             j += 33;
-            sb.append(">");
+            sb.append('>');
             sb.append(Character.valueOf(j));
-            sb.append("=");
+            sb.append('=');
             sb.append(umlaute[rand.nextInt(umlaute.length)]);
-            sb.append("<");
+            sb.append('<');
         }
         return sb;
     }

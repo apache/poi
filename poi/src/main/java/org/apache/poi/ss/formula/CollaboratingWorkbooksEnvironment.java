@@ -187,9 +187,9 @@ public final class CollaboratingWorkbooksEnvironment {
                     if (count++>0) {
                         sb.append(", ");
                     }
-                    sb.append("'").append(i.next()).append("'");
+                    sb.append('\'').append(i.next()).append("'");
                 }
-                sb.append(")");
+                sb.append(')');
             }
             throw new WorkbookNotFoundException(sb.toString());
         }

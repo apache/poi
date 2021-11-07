@@ -129,7 +129,7 @@ public class TestHemfPicture {
                         lastX = -1;
                     }
                     if (lastX > -1 && reference.getX() - lastX > fudgeFactorX) {
-                        sb.append(" ");
+                        sb.append(' ');
                     }
                     sb.append(extTextOutW.getText());
                     lastY = reference.getY();
@@ -192,7 +192,7 @@ public class TestHemfPicture {
                         lastX = -1;
                     }
                     if (lastX > -1 && reference.getX() - lastX > fudgeFactorX) {
-                        sb.append(" ");
+                        sb.append(' ');
                     }
                     String txt = extTextOutW.getText();
                     if (expectedParts.contains(txt)) {

@@ -415,10 +415,10 @@ public class CellFormatPart {
 
 			boolean special = type.isSpecial(ch.charAt(0));
 			if (special)
-				sb.append("'");
+				sb.append('\'');
 			sb.append(ch);
 			if (special)
-				sb.append("'");
+				sb.append('\'');
 		}
         return sb.toString();
     }

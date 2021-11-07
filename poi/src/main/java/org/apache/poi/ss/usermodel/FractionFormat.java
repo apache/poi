@@ -132,7 +132,7 @@ public class FractionFormat extends Format {
 
             StringBuilder sb = new StringBuilder();
             if (isNeg){
-                sb.append("-");
+                sb.append('-');
             }
             sb.append(wholePart);
             return sb.toString();

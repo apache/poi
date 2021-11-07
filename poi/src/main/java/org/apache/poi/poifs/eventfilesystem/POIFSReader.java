@@ -203,10 +203,10 @@ public class POIFSReader
             sb.setLength(0);
             int pathLength = path.length();
             for (int k = 0; k < pathLength; k++) {
-                sb.append("/").append(path.getComponent(k));
+                sb.append('/').append(path.getComponent(k));
             }
             byte[] data = IOUtils.toByteArray(istream);
-            sb.append("/").append(event.getName()).append(": ").append(data.length).append(" bytes read");
+            sb.append('/').append(event.getName()).append(": ").append(data.length).append(" bytes read");
             System.out.println(sb);
         } catch (IOException ignored) {
         }

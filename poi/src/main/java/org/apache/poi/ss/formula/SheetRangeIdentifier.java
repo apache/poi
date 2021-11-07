@@ -34,7 +34,7 @@ public class SheetRangeIdentifier extends SheetIdentifier {
         super.asFormulaString(sb);
         sb.append(':');
         if (_lastSheetIdentifier.isQuoted()) {
-            sb.append("'").append(_lastSheetIdentifier.getName()).append("'");
+            sb.append('\'').append(_lastSheetIdentifier.getName()).append("'");
         } else {
             sb.append(_lastSheetIdentifier.getName());
         }

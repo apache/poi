@@ -70,7 +70,7 @@ public class XSSFConditionalFormatting implements ConditionalFormatting {
         boolean first = true;
         for (CellRangeAddress range : ranges) {
             if (!first) {
-                sb.append(" ");
+                sb.append(' ');
             } else {
                 first = false;
             }
