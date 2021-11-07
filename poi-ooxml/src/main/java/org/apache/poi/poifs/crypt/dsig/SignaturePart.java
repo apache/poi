@@ -180,6 +180,7 @@ public class SignaturePart {
         m.put("//dsss:SignatureComments", signatureConfig::setSignatureDescription);
         m.put("//xd:QualifyingProperties//xd:SignedSignatureProperties//ds:DigestMethod/@Algorithm", signatureConfig::setXadesDigestAlgo);
         m.put("//ds:CanonicalizationMethod", signatureConfig::setCanonicalizationMethod);
+        m.put("//xd:CommitmentTypeId/xd:Description", signatureConfig::setCommitmentType);
 
         for (Map.Entry<String,Consumer<String>> me : m.entrySet()) {
             String val = (String)xpath.compile(me.getKey()).evaluate(doc, XPathConstants.STRING);

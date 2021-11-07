@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,7 +44,7 @@ import org.w3c.dom.traversal.NodeIterator;
  */
 public class SignatureMarshalDefaultListener implements SignatureMarshalListener {
     private static final String OBJECT_TAG = "Object";
-    private final Set<String> IGNORE_NS = new HashSet<>(Arrays.asList(null, XML_NS, XML_DIGSIG_NS));
+    private static final Set<String> IGNORE_NS = new HashSet<>(Arrays.asList(null, XML_NS, XML_DIGSIG_NS));
 
     @Override
     public void handleElement(SignatureInfo signatureInfo, Document doc, EventTarget target, EventListener parentListener) {
@@ -52,15 +53,23 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
 
         final DocumentTraversal traversal = (DocumentTraversal) doc;
         final Map<String, String> prefixCfg = signatureInfo.getSignatureConfig().getNamespacePrefixes();
-
         final Map<String, String> prefixUsed = new HashMap<>();
 
-        NodeList nl = doc.getElementsByTagName(OBJECT_TAG);
-        final int objLen = nl.getLength();
-        for (int i=0; i<objLen; i++) {
-            final Element objNode = (Element)nl.item(i);
-            getAllNamespaces(traversal, objNode, prefixCfg, prefixUsed);
-            prefixUsed.forEach((ns, prefix) -> objNode.setAttributeNS(XML_NS, "xmlns:"+prefix, ns));
+        forEachElement(doc.getElementsByTagName(OBJECT_TAG), (o) -> {
+           forEachElement(o.getChildNodes(), (c) -> {
+               getAllNamespaces(traversal, c, prefixCfg, prefixUsed);
+               prefixUsed.forEach((ns, prefix) -> c.setAttributeNS(XML_NS, "xmlns:"+prefix, ns));
+           });
+        });
+    }
+
+    private static void forEachElement(NodeList nl, Consumer<Element> consumer) {
+        int len = nl.getLength();
+        for(int i=0; i<len; i++) {
+            Node n = nl.item(i);
+            if (n instanceof Element) {
+                consumer.accept((Element)n);
+            }
         }
     }
 

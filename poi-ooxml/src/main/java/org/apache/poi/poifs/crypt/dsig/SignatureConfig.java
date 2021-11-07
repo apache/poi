@@ -219,6 +219,8 @@ public class SignatureConfig {
      */
     private boolean secureValidation = true;
 
+    private String commitmentType = "Created and approved this document";
+
 
     public SignatureConfig() {
         // OOo doesn't like ds namespaces so per default prefixing is off.
@@ -1116,5 +1118,22 @@ public class SignatureConfig {
      */
     public void setSecureValidation(boolean secureValidation) {
         this.secureValidation = secureValidation;
+    }
+
+    public String getCommitmentType() {
+        return commitmentType;
+    }
+
+    /**
+     * Set the commitmentType, which is usually one of ...
+     * <ul>
+     *     <li>"Created and approved this document"
+     *     <li>"Approved this document"
+     *     <li>"Created this document"
+     *     <li>... or any other important sounding statement
+     * </ul>
+     */
+    public void setCommitmentType(String commitmentType) {
+        this.commitmentType = commitmentType;
     }
 }

@@ -30,7 +30,6 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newTra
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
@@ -260,25 +259,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         List<XMLStructure> objectContent = new ArrayList<>();
 
-        SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
-        CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        if (signatureConfig.getDigestAlgo() != HashAlgorithm.sha1) {
-            ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
-        }
-
-        String desc = signatureConfig.getSignatureDescription();
-        if (desc != null) {
-            ctSigV1.setSignatureComments(desc);
-        }
-
-        byte[] image = signatureConfig.getSignatureImage();
-        if (image != null) {
-            ctSigV1.setSetupID(signatureConfig.getSignatureImageSetupId().toString());
-            ctSigV1.setSignatureImage(image);
-            ctSigV1.setSignatureType(2);
-        }
-
-        Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
+        SignatureInfoV1Document sigV1 = createSignatureInfoV1(signatureInfo);
+        Element n = (Element)document.importNode(sigV1.getSignatureInfoV1().getDomNode(), true);
         n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
 
         List<XMLStructure> signatureInfoContent = new ArrayList<>();
@@ -319,6 +301,35 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object");
             references.add(reference);
         }
+    }
+
+    /**
+     * Create SignatureInfoV1 element. This method can be easily extended by subclasses, to fill its other elements.
+     */
+    protected SignatureInfoV1Document createSignatureInfoV1(SignatureInfo signatureInfo) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
+
+        SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
+        CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
+        if (signatureConfig.getDigestAlgo() != HashAlgorithm.sha1) {
+            ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+        }
+
+        String desc = signatureConfig.getSignatureDescription();
+        if (desc != null) {
+            ctSigV1.setSignatureComments(desc);
+        }
+
+        byte[] image = signatureConfig.getSignatureImage();
+        if (image == null) {
+            ctSigV1.setSignatureType(1);
+        } else {
+            ctSigV1.setSetupID(signatureConfig.getSignatureImageSetupId().toString());
+            ctSigV1.setSignatureImage(image);
+            ctSigV1.setSignatureType(2);
+        }
+
+        return sigV1;
     }
 
     protected static String getRelationshipReferenceURI(String zipEntryName) {
