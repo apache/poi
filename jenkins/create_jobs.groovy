@@ -383,7 +383,21 @@ poijobs.each { poijob ->
                 }
             }
             publishers {
-                if (!poijob.skipcigame) {
+				// in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
+				archiveArtifacts('build/dist/*.tar.gz,*/build/reports/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
+				archiveJunit('*/build/test-results/**/TEST-*.xml') {
+					testDataPublishers {
+						publishTestStabilityData()
+					}
+				}
+				jacocoCodeCoverage {
+					classPattern('*/build/classes')
+					execPattern('*/build/*.exec,*/build/jacoco/*.exec')
+					sourcePattern('*/src/main/java')
+					exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
+				}
+
+				if (!poijob.skipcigame) {
                     configure { project ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
                     }
