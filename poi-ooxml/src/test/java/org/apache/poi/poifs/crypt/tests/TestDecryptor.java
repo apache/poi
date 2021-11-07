@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -166,7 +166,7 @@ class TestDecryptor {
             try (InputStream is2 = dec.getDataStream(pfs)) {
                 md.update(IOUtils.toByteArray(is2));
             }
-            assertEquals("L1vDQq2EuMSfU/FBfVQfM2zfOY5Jx9ZyVgIQhXPPVgs=", Base64.encodeBase64String(md.digest()));
+            assertEquals("L1vDQq2EuMSfU/FBfVQfM2zfOY5Jx9ZyVgIQhXPPVgs=", Base64.getEncoder().encodeToString(md.digest()));
         }
     }
 

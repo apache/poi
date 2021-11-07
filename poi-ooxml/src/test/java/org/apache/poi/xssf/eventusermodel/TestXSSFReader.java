@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -370,6 +370,6 @@ public final class TestXSSFReader {
             md.update(IOUtils.toByteArray(is));
         }
 
-        return Base64.encodeBase64String(md.digest());
+        return Base64.getEncoder().encodeToString(md.digest());
     }
 }

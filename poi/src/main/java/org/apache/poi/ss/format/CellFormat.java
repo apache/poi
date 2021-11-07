@@ -23,13 +23,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
@@ -93,7 +94,7 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class CellFormat {
     /** The logger to use in the formatting code. */
-    private static final Logger LOG = Logger.getLogger(CellFormat.class.getName());
+	private static final Logger LOG = LogManager.getLogger(CellFormat.class);
 
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
@@ -191,7 +192,7 @@ public class CellFormat {
 
                 parts.add(new CellFormatPart(locale, valueDesc));
             } catch (RuntimeException e) {
-                LOG.log(Level.WARNING, "Invalid format: " + CellFormatter.quote(m.group()), e);
+                LOG.log(Level.WARN, "Invalid format: " + CellFormatter.quote(m.group()), e);
                 parts.add(null);
             }
         }

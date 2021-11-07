@@ -29,11 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.BitSet;
 import java.util.List;
 
 import com.zaxxer.sparsebits.SparseBitSet;
-import org.apache.commons.codec.binary.Base64;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -241,7 +242,7 @@ public final class TestExtractor {
                 sha2.update(IOUtils.toByteArray(is));
             }
             String exp = "lIRRfGMin6B4++WR4XvA82usdQ3ijeHBHU85j523sKY=";
-            String act = Base64.encodeBase64String(sha2.digest());
+            String act = Base64.getEncoder().encodeToString(sha2.digest());
             assertEquals(exp, act);
         }
     }
