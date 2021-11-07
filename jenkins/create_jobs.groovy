@@ -627,39 +627,39 @@ Unfortunately we often see builds break because of changes/new machines...''')
     steps {
         conditionalSteps {
             condition {
-                fileExists('/usr', BaseDir.WORKSPACE)
-                runner('DontRun')
-                steps {
-                    shell(
-                            '''which svn || true
+				fileExists('/usr', BaseDir.WORKSPACE)
+			}
+			runner('DontRun')
+			steps {
+				shell(
+						'''which svn || true
 which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
 ''')
-                    ant {
-                        antInstallation(defaultAnt)
-                    }
+				ant {
+					antInstallation(defaultAnt)
+				}
 
-                    shell(
-                            '''which mvn || true
+				shell(
+						'''which mvn || true
 mvn -version || true
 echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project>' > pom.xml
 ''')
-                    maven {
-                        goals('package')
-                        mavenInstallation(defaultMaven)
-                    }
-                }
-            }
+				maven {
+					goals('package')
+					mavenInstallation(defaultMaven)
+				}
+			}
         }
         conditionalSteps {
             condition {
-                fileExists('c:\\windows', BaseDir.WORKSPACE)
-                runner('DontRun')
-                steps {
-                    batchFile {
-                        command(
-                                '''@echo off
+				fileExists('c:\\windows', BaseDir.WORKSPACE)
+			}
+			runner('DontRun')
+			steps {
+				batchFile(
+							'''@echo off
 echo .
 where javac.exe
 echo .
@@ -667,12 +667,10 @@ javac -version
 echo .
 echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}, ant detected Java ${ant.java.version} (may be different than actual Java sometimes...), using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}^</echo^>^</target^>^</project^> > build.xml
 ''')
-                    }
-                    ant {
-                        antInstallation(defaultAntWindows)
-                    }
-                }
-            }
+				ant {
+					antInstallation(defaultAntWindows)
+				}
+			}
         }
     }
 }
