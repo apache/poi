@@ -80,7 +80,7 @@ import org.apache.poi.util.TempFile;
             try {
                 return encryptedTempData.getInputStream();
             } catch (IOException e) {
-                throw new RuntimeException("failed to read from encryped temp data", e);
+                throw new RuntimeException("failed to read from encrypted temp data", e);
             }
         } else if (tempFile != null) {
             try {
