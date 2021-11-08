@@ -107,7 +107,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     }
 
     @Override
-    public InputStream getInputStream(ZipArchiveEntry zipEntry) {
+    public InputStream getInputStream(ZipArchiveEntry zipEntry) throws IOException {
         assert (zipEntry instanceof ZipArchiveFakeEntry);
         return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
     }

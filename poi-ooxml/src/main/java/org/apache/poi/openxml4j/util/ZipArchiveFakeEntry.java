@@ -71,27 +71,27 @@ import org.apache.poi.util.TempFile;
     /**
      * Returns zip entry.
      * @return input stream
-     * @throws RuntimeException since POI 5.1.0,
-     * a RuntimeException can occur if the optional temp file has been removed
+     * @throws IOException since POI 5.2.0,
+     * an IOException can occur if the optional temp file has been removed (was a RuntimeException in POI 5.1.0)
      * @see ZipInputStreamZipEntrySource#setThresholdBytesForTempFiles(int)
      */
-    public InputStream getInputStream() {
+    public InputStream getInputStream() throws IOException {
         if (encryptedTempData != null) {
             try {
                 return encryptedTempData.getInputStream();
             } catch (IOException e) {
-                throw new RuntimeException("failed to read from encrypted temp data", e);
+                throw new IOException("failed to read from encrypted temp data", e);
             }
         } else if (tempFile != null) {
             try {
                 return new FileInputStream(tempFile);
             } catch (FileNotFoundException e) {
-                throw new RuntimeException("temp file " + tempFile.getAbsolutePath() + " is missing");
+                throw new IOException("temp file " + tempFile.getAbsolutePath() + " is missing");
             }
         } else if (data != null) {
             return new UnsynchronizedByteArrayInputStream(data);
         } else {
-            throw new RuntimeException("Cannot retrieve data from Zip Entry, probably because the Zip Entry was closed before the data was requested.");
+            throw new IOException("Cannot retrieve data from Zip Entry, probably because the Zip Entry was closed before the data was requested.");
         }
     }
 
