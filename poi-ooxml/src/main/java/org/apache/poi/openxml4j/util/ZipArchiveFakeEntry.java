@@ -88,8 +88,10 @@ import org.apache.poi.util.TempFile;
             } catch (FileNotFoundException e) {
                 throw new RuntimeException("temp file " + tempFile.getAbsolutePath() + " is missing");
             }
-        } else {
+        } else if (data != null) {
             return new UnsynchronizedByteArrayInputStream(data);
+        } else {
+            throw new RuntimeException("Cannot retrieve data from Zip Entry, probably because the Zip Entry was closed before the data was requested.");
         }
     }
 
