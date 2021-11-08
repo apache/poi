@@ -1104,4 +1104,13 @@ class TestXSLFBugs {
         assertEquals("Can't create extractor - unsupported file type: XML", ie.getMessage());
     }
 
+    @Test
+    void bug65673() throws IOException {
+        try (XMLSlideShow slideShowModel = openSampleDocument("bug65673.pptx")) {
+            final XSLFSlide modelSlide = slideShowModel.getSlides().get(0);
+            try (XMLSlideShow newSlideShow = new XMLSlideShow()) {
+                newSlideShow.createSlide().importContent(modelSlide);
+            }
+        }
+    }
 }
