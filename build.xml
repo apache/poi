@@ -285,8 +285,8 @@ under the License.
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.3" usage="main-tests"/>
     <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.0.0" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.11.22" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.11.22" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.0" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.0" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.1" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
