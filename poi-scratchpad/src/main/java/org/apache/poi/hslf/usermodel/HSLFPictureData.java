@@ -110,7 +110,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     final EscherBSERecord bse;
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
      *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
@@ -252,7 +252,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      *
      * @param type type of picture.
      * @return concrete instance of {@link HSLFPictureData}.
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
      *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
