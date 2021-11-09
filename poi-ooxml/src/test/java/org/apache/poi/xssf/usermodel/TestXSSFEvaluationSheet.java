@@ -16,22 +16,22 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Map;
 
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
     @Test
-    void test() throws Exception {
+    void testSheetEval() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("test");
         XSSFRow row = sheet.createRow(0);
@@ -59,6 +59,26 @@ class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
         // other things
         assertEquals(sheet, evalsheet.getXSSFSheet());
+    }
+
+    @Test
+    void testBug65675() throws IOException  {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            evaluator.setIgnoreMissingWorkbooks(true);
+
+            XSSFSheet sheet = workbook.createSheet("sheet");
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell = row.createCell(0, CellType.FORMULA);
+
+            try {
+                cell.setCellFormula("[some-workbook-that-does-not-yet-exist.xlsx]main!B:D");
+                //it might be better if this succeeded but just adding this regression test for now
+                fail("expected exception");
+            } catch (RuntimeException re) {
+                assertEquals("Book not linked for filename some-workbook-that-does-not-yet-exist.xlsx", re.getMessage());
+            }
+        }
     }
 
     @Override

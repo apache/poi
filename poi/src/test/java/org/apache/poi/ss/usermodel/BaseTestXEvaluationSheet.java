@@ -46,4 +46,5 @@ public abstract class BaseTestXEvaluationSheet {
         underlyingSheet.removeRow(underlyingSheet.getRow(2));
         assertEquals(1, instance.getLastRowNum());
     }
+
 }
