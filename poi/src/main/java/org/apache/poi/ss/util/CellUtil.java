@@ -244,7 +244,7 @@ public final class CellUtil {
         // Copy CellStyle
         if (policy.isCopyCellStyle()) {
             if (destCell.getSheet().getWorkbook() == srcCell.getSheet().getWorkbook()) {
-                destCell.setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
+                destCell.setCellStyle(srcCell.getCellStyle());
             } else {
                 CellStyle srcStyle = srcCell.getCellStyle();
                 CellStyle destStyle = context == null ? null : context.getMappedStyle(srcStyle);
