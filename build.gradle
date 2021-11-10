@@ -479,7 +479,23 @@ subprojects {
     }
     signPOIPublication.dependsOn('generatePomFileForPOIPublication')
 
+    spotbugsMain {
+        reports {
+            xml {
+                enabled = true
+            }
+            html {
+                enabled = true
+                destination = file("build/reports/spotbugs/main/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
+        }
+    }
+
     spotbugs {
+        // fail only on P1 and without the net.sf.jsqlparser.parser.*
+        excludeFilter = file("${rootDir}/config/spotBugsExcludeFilter.xml")
+
         ignoreFailures = true
         showStackTraces = false
     }
