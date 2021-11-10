@@ -19,12 +19,7 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,23 +30,31 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 /**
  * Tests for {@link XSSFReader}
@@ -354,6 +357,51 @@ public final class TestXSSFReader {
             XSSFReader reader = new XSSFReader(pkg, true);
             assertNotNull(reader.pkg);
         }
+    }
+
+    @Test
+    void testBug65676() throws Exception {
+        try (UnsynchronizedByteArrayOutputStream output = new UnsynchronizedByteArrayOutputStream()) {
+            try(Workbook wb = new SXSSFWorkbook()) {
+                Row r = wb.createSheet("Sheet").createRow(0);
+                r.createCell(0).setCellValue(1.2); /* A1: Number 1.2 */
+                r.createCell(1).setCellValue("ABC"); /* B1: Inline string "ABC" */
+                wb.write(output);
+            }
+            /* Minimal stream reader processor */
+            XSSFSheetXMLHandler.SheetContentsHandler reader = new XSSFSheetXMLHandler.SheetContentsHandler() {
+                @Override public void startRow(int rowNum) {}
+                @Override public void endRow(int rowNum) {}
+                @Override public void cell(String cellReference,
+                                           String formattedValue, XSSFComment comment) {
+                    if (cellReference.equals("A1")) {
+                        assertEquals("1.2", formattedValue);
+                    } else if (cellReference.equals("B1")) {
+                        assertEquals("ABC", formattedValue);
+                    } else {
+                        fail("Unexpected cell " + cellReference);
+                    }
+                }
+            };
+
+            /* Stream reading workbook from byte array */
+            try (OPCPackage xlsxPackage = OPCPackage.open(output.toInputStream())) {
+                XSSFReader xssfReader = new XSSFReader(xlsxPackage);
+                try (InputStream stream = xssfReader.getSheetsData().next()) {
+                    XMLReader sheetParser = XMLHelper.newXMLReader();
+                    sheetParser.setContentHandler(new XSSFSheetXMLHandler(
+                            xssfReader.getStylesTable(),
+                            null,
+                            new ReadOnlySharedStringsTable(xlsxPackage),
+                            reader,
+                            new DataFormatter(),
+                            false
+                    ));
+                    sheetParser.parse(new InputSource(stream));
+                }
+            }
+        }
+
     }
 
     private static String hash(XSSFReader reader) throws IOException {
