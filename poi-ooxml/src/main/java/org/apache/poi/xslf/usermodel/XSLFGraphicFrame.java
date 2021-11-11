@@ -51,6 +51,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 @Beta
 public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
     private static final String DRAWINGML_CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
+    private static final String DRAWINGML_DIAGRAM_URI = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
     private static final Logger LOG = LogManager.getLogger(XSLFGraphicFrame.class);
 
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
@@ -169,6 +170,14 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         return uri.equals(DRAWINGML_CHART_URI);
     }
 
+    /**
+     * @since POI 5.2.0
+     */
+    public boolean hasDiagram() {
+        String uri = getGraphicalData().getUri();
+        return uri.equals(DRAWINGML_DIAGRAM_URI);
+    }
+
     private CTGraphicalObjectData getGraphicalData() {
         return ((CTGraphicalObjectFrame)getXmlObject()).getGraphic().getGraphicData();
     }
@@ -200,7 +209,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
         CTGraphicalObjectData data = getGraphicalData();
         String uri = data.getUri();
-        if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/diagram")){
+        if(uri.equals(DRAWINGML_DIAGRAM_URI)){
             copyDiagram(data, (XSLFGraphicFrame)sh);
         } if(uri.equals(DRAWINGML_CHART_URI)){
             copyChart(data, (XSLFGraphicFrame)sh);
@@ -235,9 +244,9 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
     // TODO should be moved to a sub-class
     private void copyDiagram(CTGraphicalObjectData objData, XSLFGraphicFrame srcShape){
-        String xpath = "declare namespace dgm='http://schemas.openxmlformats.org/drawingml/2006/diagram' $this//dgm:relIds";
+        String xpath = "declare namespace dgm='" + DRAWINGML_DIAGRAM_URI + "' $this//dgm:relIds";
         XmlObject[] obj = objData.selectPath(xpath);
-        if(obj != null && obj.length == 1){
+        if(obj != null && obj.length == 1) {
             XmlCursor c = obj[0].newCursor();
 
             XSLFSheet sheet = srcShape.getSheet();
