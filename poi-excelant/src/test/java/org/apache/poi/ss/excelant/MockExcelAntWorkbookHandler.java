@@ -22,18 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.apache.poi.ss.usermodel.Workbook;
 
 public class MockExcelAntWorkbookHandler implements IExcelAntWorkbookHandler {
-    public static boolean executed;
-    public static Workbook workbook;
+    public boolean executed = false;
+    public Workbook workbook = null;
 
+    public final static MockExcelAntWorkbookHandler instance = new MockExcelAntWorkbookHandler();
 
     @Override
     public void setWorkbook(Workbook workbook) {
-        MockExcelAntWorkbookHandler.workbook = workbook;
+        instance.workbook = workbook;
     }
 
     @Override
     public void execute() {
-        executed = true;
-        assertNotNull(workbook);
+        instance.executed = true;
+        assertNotNull(instance.workbook);
     }
 }

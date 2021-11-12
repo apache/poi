@@ -312,8 +312,8 @@ public class TestBuildFile {
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
 
-        assertNotNull(MockExcelAntWorkbookHandler.workbook, "The workbook should have been passed to the handler");
-        assertTrue(MockExcelAntWorkbookHandler.executed, "The handler should have been executed");
+        assertNotNull(MockExcelAntWorkbookHandler.instance.workbook, "The workbook should have been passed to the handler");
+        assertTrue(MockExcelAntWorkbookHandler.instance.executed, "The handler should have been executed");
     }
 
     @Test
