@@ -339,4 +339,24 @@ class TestXSLFPictureShape {
             }
         }
     }
+
+    @Test
+    void testIsSetVideoFile() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedVideo.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertTrue(ps.isVideoFile());
+        }
+    }
+
+    @Test
+    void testGetVideoLink() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedVideo.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertEquals(ps.getVideoFileLink(), "rId2");
+        }
+    }
 }

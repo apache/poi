@@ -14,37 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.xslf.usermodel;
 
-package org.apache.poi.ss.usermodel;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Map;
-
-import org.apache.poi.ss.formula.EvaluationSheet;
 import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-public abstract class BaseTestXEvaluationSheet {
-    /**
-     * Get a pair of underlying sheet and evaluation sheet.
-     */
-    protected abstract Map.Entry<Sheet, EvaluationSheet> getInstance();
+import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
+
+class TestXSLFGraphicFrame {
 
     @Test
-    void lastRowNumIsUpdatedFromUnderlyingSheet_bug62993() {
-        Map.Entry<Sheet, EvaluationSheet> sheetPair = getInstance();
-        Sheet underlyingSheet = sheetPair.getKey();
-        EvaluationSheet instance = sheetPair.getValue();
+    void testHasDiagram() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("SmartArt.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFGraphicFrame gf = (XSLFGraphicFrame) slide.getShapes().get(0);
 
-        assertEquals(-1, instance.getLastRowNum());
-
-        underlyingSheet.createRow(0);
-        underlyingSheet.createRow(1);
-        underlyingSheet.createRow(2);
-        assertEquals(2, instance.getLastRowNum());
-
-        underlyingSheet.removeRow(underlyingSheet.getRow(2));
-        assertEquals(1, instance.getLastRowNum());
+            assertTrue(gf.hasDiagram());
+        }
     }
-
 }

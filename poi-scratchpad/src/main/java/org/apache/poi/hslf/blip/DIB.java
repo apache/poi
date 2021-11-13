@@ -37,7 +37,7 @@ public final class DIB extends Bitmap {
     private static final int HEADER_SIZE = 14;
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
      *             {@link DIB}. This API led to detached {@link DIB} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */

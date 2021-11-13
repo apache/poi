@@ -926,7 +926,7 @@ public final class WorkbookEvaluator {
      * Whether to ignore missing references to external workbooks and
      * use cached formula results in the main workbook instead.
      * <p>
-     * In some cases exetrnal workbooks referenced by formulas in the main workbook are not avaiable.
+     * In some cases external workbooks referenced by formulas in the main workbook are not available.
      * With this method you can control how POI handles such missing references:
      * <ul>
      *     <li>by default ignoreMissingWorkbooks=false and POI throws {@link WorkbookNotFoundException}

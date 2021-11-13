@@ -30,7 +30,7 @@ import org.apache.poi.util.Removal;
 public final class PNG extends Bitmap {
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
      *             {@link PNG}. This API led to detached {@link PNG} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */

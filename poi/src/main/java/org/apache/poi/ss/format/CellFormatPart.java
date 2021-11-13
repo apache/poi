@@ -409,17 +409,17 @@ public class CellFormatPart {
         while (codePoints.hasNext()) {
             String ch = codePoints.next();
             if ("\'".equals(ch) && type.isSpecial('\'')) {
-				sb.append('\u0000');
-				continue;
-			}
+                sb.append('\u0000');
+                continue;
+            }
 
-			boolean special = type.isSpecial(ch.charAt(0));
-			if (special)
-				sb.append('\'');
-			sb.append(ch);
-			if (special)
-				sb.append('\'');
-		}
+            boolean special = type.isSpecial(ch.charAt(0));
+            if (special)
+                sb.append('\'');
+            sb.append(ch);
+            if (special)
+                sb.append('\'');
+        }
         return sb.toString();
     }
 

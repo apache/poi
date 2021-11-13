@@ -315,6 +315,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
            if (!isIsOpen) {
                outputCell();
+               value.setLength(0);
            }
        } else if ("f".equals(localName)) {
           fIsOpen = false;

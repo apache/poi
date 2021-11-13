@@ -41,7 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * A  monthly calendar created using Apache POI. Each month is on a separate sheet.
  * This is a version of org.apache.poi.ss.examples.CalendarDemo that demonstrates
- * some XSSF features not avaiable when using common HSSF-XSSF interfaces.
+ * some XSSF features not available when using common HSSF-XSSF interfaces.
  *
  * <pre>
  * Usage:
