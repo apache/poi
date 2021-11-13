@@ -144,7 +144,7 @@ public class XDDFScatterChartData extends XDDFChartData {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
             } else {
-                return null;
+                return false;
             }
         }
 

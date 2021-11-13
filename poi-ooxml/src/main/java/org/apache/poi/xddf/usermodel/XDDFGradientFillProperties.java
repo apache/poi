@@ -46,7 +46,7 @@ public class XDDFGradientFillProperties implements XDDFFillProperties {
         if (props.isSetRotWithShape()) {
             return props.getRotWithShape();
         } else {
-            return null;
+            return false;
         }
     }
 

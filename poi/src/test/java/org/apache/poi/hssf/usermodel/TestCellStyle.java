@@ -32,9 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 import java.util.stream.Stream;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -414,9 +414,8 @@ final class TestCellStyle {
     @Test
     void test56563() {
         Stream.of("56563a.xls", "56563b.xls").parallel().forEach(fileName -> assertDoesNotThrow(() -> {
-            Random rand = new Random();
             for(int i=0; i<10; i++) {
-                Thread.sleep(rand.nextInt(300));
+                Thread.sleep(POITestCase.RANDOM.nextInt(300));
                 try (Workbook wb = openSample(fileName)) {
                     for (Row row : wb.getSheetAt(0)) {
                         for (Cell cell : row) {

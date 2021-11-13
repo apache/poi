@@ -37,8 +37,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -81,7 +79,6 @@ public class AgileEncryptor extends Encryptor {
     @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
-        Random r = new SecureRandom();
         AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
         int blockSize = header.getBlockSize();
         int keySize = header.getKeySize()/8;
@@ -93,11 +90,13 @@ public class AgileEncryptor extends Encryptor {
              , newKeySalt = IOUtils.safelyAllocate(blockSize, maxLen)
              , newKeySpec = IOUtils.safelyAllocate(keySize, maxLen)
              , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
-        r.nextBytes(newVerifierSalt); // blocksize
-        r.nextBytes(newVerifier); // blocksize
-        r.nextBytes(newKeySalt); // blocksize
-        r.nextBytes(newKeySpec); // keysize
-        r.nextBytes(newIntegritySalt); // hashsize
+
+        // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
+        Encryptor.RANDOM.nextBytes(newVerifierSalt); // blocksize
+        Encryptor.RANDOM.nextBytes(newVerifier); // blocksize
+        Encryptor.RANDOM.nextBytes(newKeySalt); // blocksize
+        Encryptor.RANDOM.nextBytes(newKeySpec); // keysize
+        Encryptor.RANDOM.nextBytes(newIntegritySalt); // hashsize
 
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }

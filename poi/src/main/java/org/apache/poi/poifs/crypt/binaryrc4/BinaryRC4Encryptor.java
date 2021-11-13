@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -52,11 +50,12 @@ public class BinaryRC4Encryptor extends Encryptor {
 
     @Override
     public void confirmPassword(String password) {
-        Random r = new SecureRandom();
         byte[] salt = new byte[16];
         byte[] verifier = new byte[16];
-        r.nextBytes(salt);
-        r.nextBytes(verifier);
+
+        // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
+        Encryptor.RANDOM.nextBytes(salt);
+        Encryptor.RANDOM.nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);
     }
 

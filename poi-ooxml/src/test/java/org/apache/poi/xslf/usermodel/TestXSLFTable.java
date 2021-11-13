@@ -31,11 +31,10 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -52,6 +51,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 class TestXSLFTable {
+    final static SecureRandom r = new SecureRandom();
 
     @Test
     void testResize() throws Exception {
@@ -143,7 +143,7 @@ class TestXSLFTable {
         String[] names = { "car", "rubber duckie", "phone", "gadget" };
         String[] desc = { "new", "used", "untouched" };
 
-        Random r = new Random();
+
 
         for (int row=1; row<=rows; row++) {
             String[] line = new String[header.length];
@@ -311,7 +311,7 @@ class TestXSLFTable {
         tc0.setText("bla bla bla bla");
         tab.setColumnWidth(0, 50);
 
-        // usually text height == 88, but font rendering is plattform dependent
+        // usually text height == 88, but font rendering is platform dependent
         // so we use something more reliable
         assertTrue(tc0.getTextHeight() > 50);
         assertEquals(0, tc0.getLineWidth(), 0);

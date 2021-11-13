@@ -33,9 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Random;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
@@ -165,12 +165,10 @@ class TestFileMagic {
 
     @Test
     void testRandomPatterns() {
-        Random random = new Random();
-
         // just try to trash the functionality with some byte-patterns
         for(int i = 0; i < 1000;i++) {
             final byte[] data = new byte[12];
-            random.nextBytes(data);
+            POITestCase.RANDOM.nextBytes(data);
 
             // we cannot check for UNKNOWN as we might hit valid byte-patterns here as well
             try {

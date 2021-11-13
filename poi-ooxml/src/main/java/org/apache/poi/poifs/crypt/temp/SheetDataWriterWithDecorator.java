@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -49,11 +48,10 @@ public class SheetDataWriterWithDecorator extends SheetDataWriter {
 
     void init() {
         if(skeySpec == null) {
-            SecureRandom sr = new SecureRandom();
             ivBytes = new byte[16];
             byte[] keyBytes = new byte[16];
-            sr.nextBytes(ivBytes);
-            sr.nextBytes(keyBytes);
+            EncryptedTempData.RANDOM.nextBytes(ivBytes);
+            EncryptedTempData.RANDOM.nextBytes(keyBytes);
             skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         }
     }

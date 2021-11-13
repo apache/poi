@@ -46,8 +46,9 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public class EncryptedTempData {
-    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
+    public static final SecureRandom RANDOM = new SecureRandom();
 
+    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
@@ -56,11 +57,10 @@ public class EncryptedTempData {
     private CountingOutputStream outputStream;
 
     public EncryptedTempData() throws IOException {
-        SecureRandom sr = new SecureRandom();
         ivBytes = new byte[16];
         byte[] keyBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        sr.nextBytes(keyBytes);
+        RANDOM.nextBytes(ivBytes);
+        RANDOM.nextBytes(keyBytes);
         skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
     }

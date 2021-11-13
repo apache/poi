@@ -36,10 +36,10 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
+import org.apache.poi.POITestCase;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 @Isolated   // this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 final class TestIOUtils {
     private static File TMP;
-    private static final long LENGTH = 300 + new Random().nextInt(9000);
+    private static final long LENGTH = 300 + POITestCase.RANDOM.nextInt(9000);
 
     @BeforeAll
     public static void setUp() throws IOException {

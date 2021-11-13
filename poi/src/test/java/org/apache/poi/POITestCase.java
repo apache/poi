@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 @Internal
 @SuppressWarnings("java:S2187")
 public final class POITestCase {
+    public final static SecureRandom RANDOM = new SecureRandom();
 
     private POITestCase() {
     }

@@ -46,6 +46,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.SettingsDocument;
 
 public class XWPFSettings extends POIXMLDocumentPart {
+    private final static  SecureRandom RANDOM = new SecureRandom();
 
     private CTSettings ctSettings;
 
@@ -258,8 +259,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
             }
 
 
-            SecureRandom random = new SecureRandom();
-            byte[] salt = random.generateSeed(16);
+            byte[] salt = RANDOM.generateSeed(16);
 
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).

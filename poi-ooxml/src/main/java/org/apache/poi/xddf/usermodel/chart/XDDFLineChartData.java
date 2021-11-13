@@ -174,7 +174,7 @@ public class XDDFLineChartData extends XDDFChartData {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
             } else {
-                return null;
+                return false;
             }
         }
 

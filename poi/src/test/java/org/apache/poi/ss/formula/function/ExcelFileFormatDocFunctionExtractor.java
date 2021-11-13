@@ -31,14 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 import java.util.zip.ZipFile;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -304,7 +297,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
         @Override
         public void endElement(String namespaceURI, String localName, String name) {
             String expectedName = _elemNameStack.peek();
-            if(expectedName != name) {
+            if(!Objects.equals(name, expectedName)) {
                 throw new RuntimeException("close tag mismatch");
             }
             if(matchesPath(0, HEADING_PATH_NAMES)) {

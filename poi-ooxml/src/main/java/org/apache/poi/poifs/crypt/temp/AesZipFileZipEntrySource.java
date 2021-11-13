@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.SecureRandom;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
@@ -106,10 +105,9 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     public static AesZipFileZipEntrySource createZipEntrySource(InputStream is) throws IOException {
         // generate session key
-        SecureRandom sr = new SecureRandom();
         byte[] ivBytes = new byte[16], keyBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        sr.nextBytes(keyBytes);
+        EncryptedTempData.RANDOM.nextBytes(ivBytes);
+        EncryptedTempData.RANDOM.nextBytes(keyBytes);
         final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
         copyToFile(is, tmpFile, keyBytes, ivBytes);
         IOUtils.closeQuietly(is);

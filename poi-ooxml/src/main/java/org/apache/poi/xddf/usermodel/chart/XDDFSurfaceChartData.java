@@ -82,7 +82,7 @@ public class XDDFSurfaceChartData extends XDDFChartData {
        if (chart.isSetWireframe()) {
            return chart.getWireframe().getVal();
        } else {
-           return null;
+           return false;
        }
    }
 
