@@ -34,6 +34,7 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 
 @Beta
@@ -50,8 +51,8 @@ public class SheetDataWriterWithDecorator extends SheetDataWriter {
         if(skeySpec == null) {
             ivBytes = new byte[16];
             byte[] keyBytes = new byte[16];
-            EncryptedTempData.RANDOM.nextBytes(ivBytes);
-            EncryptedTempData.RANDOM.nextBytes(keyBytes);
+            RandomSingleton.getInstance().nextBytes(ivBytes);
+            RandomSingleton.getInstance().nextBytes(keyBytes);
             skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         }
     }

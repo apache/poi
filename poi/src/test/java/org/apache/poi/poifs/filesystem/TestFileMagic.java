@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
@@ -168,7 +168,7 @@ class TestFileMagic {
         // just try to trash the functionality with some byte-patterns
         for(int i = 0; i < 1000;i++) {
             final byte[] data = new byte[12];
-            POITestCase.RANDOM.nextBytes(data);
+            RandomSingleton.getInstance().nextBytes(data);
 
             // we cannot check for UNKNOWN as we might hit valid byte-patterns here as well
             try {

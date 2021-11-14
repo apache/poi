@@ -43,6 +43,7 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -106,8 +107,8 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     public static AesZipFileZipEntrySource createZipEntrySource(InputStream is) throws IOException {
         // generate session key
         byte[] ivBytes = new byte[16], keyBytes = new byte[16];
-        EncryptedTempData.RANDOM.nextBytes(ivBytes);
-        EncryptedTempData.RANDOM.nextBytes(keyBytes);
+        RandomSingleton.getInstance().nextBytes(ivBytes);
+        RandomSingleton.getInstance().nextBytes(keyBytes);
         final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
         copyToFile(is, tmpFile, keyBytes, ivBytes);
         IOUtils.closeQuietly(is);

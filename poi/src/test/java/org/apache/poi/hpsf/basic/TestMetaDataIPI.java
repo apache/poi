@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.poi.POITestCase;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
@@ -36,6 +35,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.RandomSingleton;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -588,14 +588,14 @@ final class TestMetaDataIPI {
             sb.append(' ');
 
             // TODO - no Random - tests should be completely deterministic
-            char j = (char) POITestCase.RANDOM.nextInt(220);
+            char j = (char) RandomSingleton.getInstance().nextInt(220);
             j += 33;
             sb.append('>');
             sb.append(Character.valueOf(j));
             sb.append('=');
 
             // TODO - no Random - tests should be completely deterministic
-            sb.append(umlaute[POITestCase.RANDOM.nextInt(umlaute.length)]);
+            sb.append(umlaute[RandomSingleton.getInstance().nextInt(umlaute.length)]);
             sb.append('<');
         }
         return sb;

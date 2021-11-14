@@ -34,7 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -48,6 +47,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
@@ -415,7 +415,7 @@ final class TestCellStyle {
     void test56563() {
         Stream.of("56563a.xls", "56563b.xls").parallel().forEach(fileName -> assertDoesNotThrow(() -> {
             for(int i=0; i<10; i++) {
-                Thread.sleep(POITestCase.RANDOM.nextInt(300));
+                Thread.sleep(RandomSingleton.getInstance().nextInt(300));
                 try (Workbook wb = openSample(fileName)) {
                     for (Row row : wb.getSheetAt(0)) {
                         for (Cell cell : row) {

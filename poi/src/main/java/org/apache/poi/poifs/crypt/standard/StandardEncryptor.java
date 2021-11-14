@@ -49,6 +49,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 public class StandardEncryptor extends Encryptor {
@@ -66,8 +67,8 @@ public class StandardEncryptor extends Encryptor {
         byte[] salt = new byte[16], verifier = new byte[16];
 
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        Encryptor.RANDOM.nextBytes(salt);
-        Encryptor.RANDOM.nextBytes(verifier);
+        RandomSingleton.getInstance().nextBytes(salt);
+        RandomSingleton.getInstance().nextBytes(verifier);
 
         confirmPassword(password, null, null, salt, verifier, null);
     }
