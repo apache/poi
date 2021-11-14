@@ -34,7 +34,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -53,6 +52,7 @@ import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.Units;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -497,10 +497,9 @@ public final class TestPictures {
             originalOffsets = ppt1.getPictureData().stream().mapToInt(HSLFPictureData::getOffset).toArray();
             originalNumberOfRecords = ppt1.getPictureData().get(0).bStore.getChildCount();
 
-            Random random = new Random();
             for (HSLFPictureData picture : ppt1.getPictureData()) {
                 // Bound is arbitrary and irrelevant to the test.
-                picture.bse.setOffset(random.nextInt(500_000));
+                picture.bse.setOffset(RandomSingleton.getInstance().nextInt(500_000));
             }
 
             try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {

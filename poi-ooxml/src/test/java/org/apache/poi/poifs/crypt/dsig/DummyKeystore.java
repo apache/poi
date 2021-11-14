@@ -40,7 +40,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -57,6 +56,7 @@ import java.util.stream.Stream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RandomSingleton;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -119,7 +119,6 @@ public class DummyKeystore {
         }
     }
 
-    private static final SecureRandom RANDOM = new SecureRandom();
     private static final String DUMMY_ALIAS = "Test";
     private static final String DUMMY_PASS = "test";
 
@@ -187,7 +186,7 @@ public class DummyKeystore {
     public KeyCertPair addEntry(String keyAlias, String keyPass, int keySize, int expiryInMonths) throws GeneralSecurityException, IOException, OperatorCreationException {
         if (!keystore.isKeyEntry(keyAlias)) {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize, RSAKeyGenParameterSpec.F4), RANDOM);
+            keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize, RSAKeyGenParameterSpec.F4), RandomSingleton.getInstance());
             KeyPair pair = keyPairGenerator.generateKeyPair();
 
             Date notBefore = new Date();
@@ -262,7 +261,7 @@ public class DummyKeystore {
 
         X509v3CertificateBuilder certificateGenerator = new X509v3CertificateBuilder(
             issuerName
-            , new BigInteger(128, new SecureRandom())
+            , new BigInteger(128, RandomSingleton.getInstance())
             , notBefore
             , notAfter
             , new X500Name(subjectDn)

@@ -366,9 +366,19 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 if (i == 0) {
                     populateWorkbook(wb);
                 } else {
-                    System.gc();
-                    System.gc();
-                    System.gc();
+                    /*
+                        Code explicitly invokes garbage collection. Except for specific use in benchmarking,
+                        this is very dubious.
+
+                        In the past, situations where people have explicitly invoked the garbage collector in
+                        routines such as close or finalize methods has led to huge performance black holes.
+                        Garbage collection can be expensive. Any situation that forces hundreds or thousands
+                        of garbage collections will bring the machine to a crawl.
+                     */
+
+                    //System.gc();
+                    //System.gc();
+                    //System.gc();
                 }
 
                     wb.write(outSteam);

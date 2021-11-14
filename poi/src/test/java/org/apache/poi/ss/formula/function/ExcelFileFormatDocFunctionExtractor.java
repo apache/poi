@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.zip.ZipFile;
@@ -304,7 +305,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
         @Override
         public void endElement(String namespaceURI, String localName, String name) {
             String expectedName = _elemNameStack.peek();
-            if(expectedName != name) {
+            if(!Objects.equals(name, expectedName)) {
                 throw new RuntimeException("close tag mismatch");
             }
             if(matchesPath(0, HEADING_PATH_NAMES)) {

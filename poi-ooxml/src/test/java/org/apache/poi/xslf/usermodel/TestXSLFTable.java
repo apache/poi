@@ -31,11 +31,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -44,6 +42,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.apache.poi.xslf.util.PPTX2PNG;
@@ -143,17 +142,17 @@ class TestXSLFTable {
         String[] names = { "car", "rubber duckie", "phone", "gadget" };
         String[] desc = { "new", "used", "untouched" };
 
-        Random r = new Random();
+
 
         for (int row=1; row<=rows; row++) {
             String[] line = new String[header.length];
             line[0] = Integer.toString(row);
-            line[1] = Integer.toString(r.nextInt(1000));
-            line[2] = names[r.nextInt(names.length)];
-            line[3] = "The "+desc[r.nextInt(desc.length)]+" "+line[2]+" in "+(2017+row);
-            line[4] = "$"+r.nextInt(50000);
-            line[5] = r.nextInt(100)+"%";
-            line[6] = "$"+r.nextInt(50000);
+            line[1] = Integer.toString(RandomSingleton.getInstance().nextInt(1000));
+            line[2] = names[RandomSingleton.getInstance().nextInt(names.length)];
+            line[3] = "The "+desc[RandomSingleton.getInstance().nextInt(desc.length)]+" "+line[2]+" in "+(2017+row);
+            line[4] = "$"+RandomSingleton.getInstance().nextInt(50000);
+            line[5] = RandomSingleton.getInstance().nextInt(100)+"%";
+            line[6] = "$"+RandomSingleton.getInstance().nextInt(50000);
             System.arraycopy(line, 0, data[row], 0, header.length);
         }
 
@@ -311,7 +310,7 @@ class TestXSLFTable {
         tc0.setText("bla bla bla bla");
         tab.setColumnWidth(0, 50);
 
-        // usually text height == 88, but font rendering is plattform dependent
+        // usually text height == 88, but font rendering is platform dependent
         // so we use something more reliable
         assertTrue(tc0.getTextHeight() > 50);
         assertEquals(0, tc0.getLineWidth(), 0);

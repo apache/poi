@@ -19,7 +19,6 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
@@ -28,7 +27,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -65,8 +66,7 @@ public final class XSSFPasswordHelper {
             cur.insertAttributeWithValue(getAttrName(prefix, "password"),
                                          String.format(Locale.ROOT, "%04X", hash).toUpperCase(Locale.ROOT));
         } else {
-            SecureRandom random = new SecureRandom();
-            byte[] salt = random.generateSeed(16);
+            byte[] salt = RandomSingleton.getInstance().generateSeed(16);
     
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).

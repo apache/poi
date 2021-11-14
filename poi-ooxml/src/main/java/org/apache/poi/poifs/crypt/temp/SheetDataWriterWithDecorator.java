@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -35,6 +34,7 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 
 @Beta
@@ -49,11 +49,10 @@ public class SheetDataWriterWithDecorator extends SheetDataWriter {
 
     void init() {
         if(skeySpec == null) {
-            SecureRandom sr = new SecureRandom();
             ivBytes = new byte[16];
             byte[] keyBytes = new byte[16];
-            sr.nextBytes(ivBytes);
-            sr.nextBytes(keyBytes);
+            RandomSingleton.getInstance().nextBytes(ivBytes);
+            RandomSingleton.getInstance().nextBytes(keyBytes);
             skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         }
     }

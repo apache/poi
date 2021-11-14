@@ -37,8 +37,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -62,6 +60,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
@@ -81,7 +80,6 @@ public class AgileEncryptor extends Encryptor {
     @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
-        Random r = new SecureRandom();
         AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
         int blockSize = header.getBlockSize();
         int keySize = header.getKeySize()/8;
@@ -93,11 +91,13 @@ public class AgileEncryptor extends Encryptor {
              , newKeySalt = IOUtils.safelyAllocate(blockSize, maxLen)
              , newKeySpec = IOUtils.safelyAllocate(keySize, maxLen)
              , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
-        r.nextBytes(newVerifierSalt); // blocksize
-        r.nextBytes(newVerifier); // blocksize
-        r.nextBytes(newKeySalt); // blocksize
-        r.nextBytes(newKeySpec); // keysize
-        r.nextBytes(newIntegritySalt); // hashsize
+
+        // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
+        RandomSingleton.getInstance().nextBytes(newVerifierSalt); // blocksize
+        RandomSingleton.getInstance().nextBytes(newVerifier); // blocksize
+        RandomSingleton.getInstance().nextBytes(newKeySalt); // blocksize
+        RandomSingleton.getInstance().nextBytes(newKeySpec); // keysize
+        RandomSingleton.getInstance().nextBytes(newIntegritySalt); // hashsize
 
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }

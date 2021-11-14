@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -39,6 +38,7 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -46,8 +46,8 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public class EncryptedTempData {
-    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
 
+    private static final Logger LOG = LogManager.getLogger(EncryptedTempData.class);
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
@@ -56,11 +56,10 @@ public class EncryptedTempData {
     private CountingOutputStream outputStream;
 
     public EncryptedTempData() throws IOException {
-        SecureRandom sr = new SecureRandom();
         ivBytes = new byte[16];
         byte[] keyBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        sr.nextBytes(keyBytes);
+        RandomSingleton.getInstance().nextBytes(ivBytes);
+        RandomSingleton.getInstance().nextBytes(keyBytes);
         skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
     }
