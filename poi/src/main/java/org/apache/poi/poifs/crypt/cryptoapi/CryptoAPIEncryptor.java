@@ -41,6 +41,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIEncryptor extends Encryptor {
@@ -59,8 +60,8 @@ public class CryptoAPIEncryptor extends Encryptor {
         byte[] salt = new byte[16];
         byte[] verifier = new byte[16];
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        Encryptor.RANDOM.nextBytes(salt);
-        Encryptor.RANDOM.nextBytes(verifier);
+        RandomSingleton.getInstance().nextBytes(salt);
+        RandomSingleton.getInstance().nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);
     }
 

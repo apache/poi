@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +52,7 @@ import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.Units;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,6 @@ import org.junit.jupiter.params.provider.CsvSource;
  */
 public final class TestPictures {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-    public final static SecureRandom RANDOM = new SecureRandom();
 
     /**
      * Test add/read/write images
@@ -500,7 +499,7 @@ public final class TestPictures {
 
             for (HSLFPictureData picture : ppt1.getPictureData()) {
                 // Bound is arbitrary and irrelevant to the test.
-                picture.bse.setOffset(RANDOM.nextInt(500_000));
+                picture.bse.setOffset(RandomSingleton.getInstance().nextInt(500_000));
             }
 
             try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt1)) {

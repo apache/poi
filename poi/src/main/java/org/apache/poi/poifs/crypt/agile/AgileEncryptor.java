@@ -56,11 +56,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.XMLHelper;
+import org.apache.poi.util.*;
 import org.w3c.dom.Document;
 
 public class AgileEncryptor extends Encryptor {
@@ -92,11 +88,11 @@ public class AgileEncryptor extends Encryptor {
              , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
 
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        Encryptor.RANDOM.nextBytes(newVerifierSalt); // blocksize
-        Encryptor.RANDOM.nextBytes(newVerifier); // blocksize
-        Encryptor.RANDOM.nextBytes(newKeySalt); // blocksize
-        Encryptor.RANDOM.nextBytes(newKeySpec); // keysize
-        Encryptor.RANDOM.nextBytes(newIntegritySalt); // hashsize
+        RandomSingleton.getInstance().nextBytes(newVerifierSalt); // blocksize
+        RandomSingleton.getInstance().nextBytes(newVerifier); // blocksize
+        RandomSingleton.getInstance().nextBytes(newKeySalt); // blocksize
+        RandomSingleton.getInstance().nextBytes(newKeySpec); // keysize
+        RandomSingleton.getInstance().nextBytes(newIntegritySalt); // hashsize
 
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }

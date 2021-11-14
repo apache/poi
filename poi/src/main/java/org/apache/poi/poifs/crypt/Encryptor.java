@@ -19,10 +19,8 @@ package org.apache.poi.poifs.crypt;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.Random;
 
 import javax.crypto.SecretKey;
 
@@ -33,14 +31,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.GenericRecordUtil;
 
 public abstract class Encryptor implements GenericRecord {
-    /*
-       If it is important that the generated Random numbers not be guessable,
-       you must not create a new Random for each random number; the values are too easily guessable.
-
-       You should strongly consider using a java.security.SecureRandom instead
-       (and avoid allocating a new SecureRandom for each random number needed).
-     */
-    public final static Random RANDOM =  new SecureRandom();
 
     protected static final String DEFAULT_POIFS_ENTRY = Decryptor.DEFAULT_POIFS_ENTRY;
     private EncryptionInfo encryptionInfo;
