@@ -172,7 +172,7 @@ public class DummyKeystore {
             throw new IOException("Please add private key and certificate in the PEM file.");
         }
 
-        String alias = x509.getSubjectDN().getName();
+        String alias = x509.getSubjectX500Principal().getName();
         keystore.setKeyEntry(alias, key, keyPass.toCharArray(), new Certificate[]{x509});
 
         return new KeyCertPair(key, new Certificate[]{x509});

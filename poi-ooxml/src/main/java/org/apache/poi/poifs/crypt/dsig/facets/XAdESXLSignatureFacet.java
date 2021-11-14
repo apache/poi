@@ -214,7 +214,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 }
 
                 CRLIdentifierType crlIdentifier = crlRef.addNewCRLIdentifier();
-                String issuerName = crl.getIssuerDN().getName().replace(",", ", ");
+                String issuerName = crl.getIssuerX500Principal().getName().replace(",", ", ");
                 crlIdentifier.setIssuer(issuerName);
                 Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
                 cal.setTime(crl.getThisUpdate());

@@ -23,6 +23,7 @@
    ================================================================= */
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
@@ -807,14 +809,9 @@ class TestSignatureInfo {
 
             assertNotNull(result);
 
-            if (multi) {
-                assertEquals(2, result.size());
-                assertEquals("CN=Muj Klic", result.get(0).getSubjectDN().toString());
-                assertEquals("CN=My Second key", result.get(1).getSubjectDN().toString());
-            } else {
-                assertEquals(1, result.size());
-                assertEquals("CN=My Second key", result.get(0).getSubjectDN().toString());
-            }
+            String[] act = result.stream().map(X509Certificate::getSubjectX500Principal).map(X500Principal::getName).toArray(String[]::new);
+            String[] exp = multi ? new String[]{ "CN=Muj Klic", "CN=My Second key" } : new String[]{ "CN=My Second key" };
+            assertArrayEquals(exp, act);
 
             assertTrue(si.verifySignature());
             pkg.revert();
@@ -859,7 +856,7 @@ class TestSignatureInfo {
 
         final List<X509Certificate> certs = sic.getSigningCertificateChain();
         assertEquals(1, certs.size());
-        assertEquals("CN=Test", certs.get(0).getSubjectDN().getName());
+        assertEquals("CN=Test", certs.get(0).getSubjectX500Principal().getName());
         assertEquals("SuperDuper-Reviewer", sic.getXadesRole());
         assertEquals("Purpose for signing", sic.getSignatureDescription());
         assertEquals("2018-06-10T09:00:54Z", sic.formatExecutionTime());
