@@ -56,7 +56,12 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.util.*;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.RandomSingleton;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
 public class AgileEncryptor extends Encryptor {
