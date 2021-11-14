@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -93,11 +94,12 @@ public class AgileEncryptor extends Encryptor {
              , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
 
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        RandomSingleton.getInstance().nextBytes(newVerifierSalt); // blocksize
-        RandomSingleton.getInstance().nextBytes(newVerifier); // blocksize
-        RandomSingleton.getInstance().nextBytes(newKeySalt); // blocksize
-        RandomSingleton.getInstance().nextBytes(newKeySpec); // keysize
-        RandomSingleton.getInstance().nextBytes(newIntegritySalt); // hashsize
+        SecureRandom r = RandomSingleton.getInstance();
+        r.nextBytes(newVerifierSalt); // blocksize
+        r.nextBytes(newVerifier); // blocksize
+        r.nextBytes(newKeySalt); // blocksize
+        r.nextBytes(newKeySpec); // keysize
+        r.nextBytes(newIntegritySalt); // hashsize
 
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -64,11 +65,12 @@ public class StandardEncryptor extends Encryptor {
     @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
+        SecureRandom r = RandomSingleton.getInstance();
         byte[] salt = new byte[16], verifier = new byte[16];
 
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        RandomSingleton.getInstance().nextBytes(salt);
-        RandomSingleton.getInstance().nextBytes(verifier);
+        r.nextBytes(salt);
+        r.nextBytes(verifier);
 
         confirmPassword(password, null, null, salt, verifier, null);
     }

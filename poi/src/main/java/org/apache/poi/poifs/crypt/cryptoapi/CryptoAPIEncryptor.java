@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +58,12 @@ public class CryptoAPIEncryptor extends Encryptor {
 
     @Override
     public void confirmPassword(String password) {
+        SecureRandom r = RandomSingleton.getInstance();
         byte[] salt = new byte[16];
         byte[] verifier = new byte[16];
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
-        RandomSingleton.getInstance().nextBytes(salt);
-        RandomSingleton.getInstance().nextBytes(verifier);
+        r.nextBytes(salt);
+        r.nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);
     }
 
