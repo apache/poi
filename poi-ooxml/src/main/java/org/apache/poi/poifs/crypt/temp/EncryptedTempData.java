@@ -47,7 +47,7 @@ import org.apache.poi.util.TempFile;
 @Beta
 public class EncryptedTempData {
 
-    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
+    private static final Logger LOG = LogManager.getLogger(EncryptedTempData.class);
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
