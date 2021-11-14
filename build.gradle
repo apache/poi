@@ -506,7 +506,7 @@ subprojects {
     }
 
     spotbugs {
-        // fail only on P1 and without the net.sf.jsqlparser.parser.*
+        // fail only on P1 and without deprecated classes
         excludeFilter = file("${rootDir}/config/spotBugsExcludeFilter.xml")
 
         ignoreFailures = false
