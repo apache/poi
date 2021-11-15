@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -52,7 +51,7 @@ public final class RecordInputStream implements LittleEndianInput {
     private static final byte[] EMPTY_BYTE_ARRAY = { };
 
     /**
-     * For use in {@link BiffViewer} which may construct {@link Record}s that don't completely
+     * For use in BiffViewer which may construct {@link Record}s that don't completely
      * read all available data.  This exception should never be thrown otherwise.
      */
     public static final class LeftoverDataException extends RuntimeException {
@@ -139,15 +138,6 @@ public final class RecordInputStream implements LittleEndianInput {
             _bhi = bds;
         }
         _nextSid = readNextSid();
-    }
-
-    static LittleEndianInput getLEI(InputStream is) {
-        if (is instanceof LittleEndianInput) {
-            // accessing directly is an optimisation
-            return (LittleEndianInput) is;
-        }
-        // less optimal, but should work OK just the same. Often occurs in junit tests.
-        return new LittleEndianInputStream(is);
     }
 
     /**

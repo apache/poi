@@ -33,7 +33,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.commons.io.output.NullPrintStream;
 import org.junit.jupiter.api.Test;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
@@ -88,10 +87,8 @@ public class HSSFFileHandler extends SpreadsheetHandler {
         PrintStream oldOut = System.out;
         String fileWithParent = file.getParentFile().getName() + "/" + file.getName();
         try {
-            System.setOut(new NullPrintStream());
-
-            BiffViewer.main(new String[]{file.getAbsolutePath()});
-
+            BiffViewer bv = new BiffViewer();
+            bv.parse(file, null);
             assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
         } catch (OldExcelFormatException e) {
             // old excel formats are not supported here

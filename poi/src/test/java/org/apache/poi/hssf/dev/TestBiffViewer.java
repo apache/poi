@@ -16,17 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Map;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 
 class TestBiffViewer extends BaseTestIteratingXLS {
@@ -52,19 +45,10 @@ class TestBiffViewer extends BaseTestIteratingXLS {
 
     @Override
     void runOneFile(File fileIn) throws IOException {
-        try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
-             InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
-            // use a NullOutputStream to not write the bytes anywhere for best runtime
-            PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
-            BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
-        }
+        BiffViewer bv = new BiffViewer();
+        bv.setInterpretRecords(true);
+        bv.setDumpBiffHex(true);
+        bv.parse(fileIn, null);
     }
 
-//    @Test
-//    @Disabled("only used for manual tests")
-//    @SuppressWarnings("java:S2699")
-//    void testOneFile() throws Exception {
-//        POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
-//        runOneFile(samples.getFile("43493.xls"));
-//    }
 }

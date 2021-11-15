@@ -20,11 +20,25 @@ import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.StringUtil;
 
 class TestBiffDrawingToXml extends BaseTestIteratingXLS {
 
@@ -42,10 +56,69 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         return excludes;
     }
 
+    // output sheets with specified name
+    private static final String[] SHEET_NAMES = {};
+
+    // output sheets with specified indexes
+    private static final int[] SHEET_IDX = {};
+
+    // exclude workbook-level records
+    private static final boolean EXCLUDE_WORKBOOK = false;
+
+
     @Override
     void runOneFile(File pFile) throws Exception {
-        try (InputStream wb = new FileInputStream(pFile)) {
-            BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[0]);
+        try (InputStream inp = new FileInputStream(pFile);
+             OutputStream outputStream = NULL_OUTPUT_STREAM) {
+            writeToFile(outputStream, inp);
         }
+    }
+
+    public static void writeToFile(OutputStream fos, InputStream xlsWorkbook) throws IOException {
+        try (HSSFWorkbook workbook = new HSSFWorkbook(xlsWorkbook)) {
+            InternalWorkbook internalWorkbook = workbook.getInternalWorkbook();
+            DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("<workbook>\n");
+            String tab = "\t";
+            if (!EXCLUDE_WORKBOOK && r != null) {
+                r.decode();
+                List<EscherRecord> escherRecords = r.getEscherRecords();
+                for (EscherRecord record : escherRecords) {
+                    builder.append(record.toXml(tab));
+                }
+            }
+            int i = 0;
+            for (HSSFSheet sheet : getSheets(workbook)) {
+                HSSFPatriarch p = sheet.getDrawingPatriarch();
+                if (p != null) {
+                    builder.append(tab).append("<sheet").append(i).append(">\n");
+                    builder.append(p.getBoundAggregate().toXml(tab + "\t"));
+                    builder.append(tab).append("</sheet").append(i).append(">\n");
+                    i++;
+                }
+            }
+            builder.append("</workbook>\n");
+            fos.write(builder.toString().getBytes(StringUtil.UTF8));
+        }
+    }
+
+    private static List<HSSFSheet> getSheets(HSSFWorkbook workbook) {
+        List<Integer> sheetIdx = Arrays.stream(SHEET_IDX).boxed().collect(Collectors.toList());
+        List<String> sheetNms = Arrays.stream(SHEET_NAMES).collect(Collectors.toList());
+
+        List<HSSFSheet> list = new ArrayList<>();
+
+        for (Sheet sheet : workbook) {
+            if ((sheetIdx.isEmpty() && sheetNms.isEmpty()) ||
+                sheetIdx.contains(workbook.getSheetIndex(sheet)) ||
+                sheetNms.contains(sheet.getSheetName())
+            ) {
+                list.add((HSSFSheet)sheet);
+            }
+        }
+
+        return list;
     }
 }

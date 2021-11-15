@@ -21,7 +21,6 @@ package org.apache.poi.poifs.crypt.temp;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -35,6 +34,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
@@ -47,7 +47,7 @@ import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 /**
- * An example <code>ZipEntrySource</code> that has encrypted temp files to ensure that
+ * An example {@code ZipEntrySource} that has encrypted temp files to ensure that
  * sensitive data is not stored in raw format on disk.
  */
 @Beta
@@ -60,14 +60,14 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     private final ZipFile zipFile;
     private final Cipher ci;
     private boolean closed;
-    
+
     private AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
         this.tmpFile = tmpFile;
         this.zipFile = new ZipFile(tmpFile);
         this.ci = ci;
         this.closed = false;
     }
-    
+
     /**
      * Note: the file sizes are rounded up to the next cipher block size,
      * so don't rely on file sizes of these custom encrypted zip file entries!
@@ -87,7 +87,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         InputStream is = zipFile.getInputStream(entry);
         return new CipherInputStream(is, ci);
     }
-    
+
     @Override
     public void close() throws IOException {
         if(!closed) {
@@ -118,7 +118,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     private static void copyToFile(InputStream is, File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
-        
+
         try (ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
             FileOutputStream fos = new FileOutputStream(tmpFile);
             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
@@ -133,16 +133,11 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
                 zeNew.setTime(ze.getTime());
                 // zeNew.setMethod(ze.getMethod());
                 zos.putArchiveEntry(zeNew);
-                FilterOutputStream fos2 = new FilterOutputStream(zos) {
-                    // don't close underlying ZipOutputStream
-                    @Override
-                    public void close() {
-                    }
-                };
-                CipherOutputStream cos = new CipherOutputStream(fos2, ciEnc);
-                IOUtils.copy(zis, cos);
-                cos.close();
-                fos2.close();
+
+                // don't close underlying ZipOutputStream
+                try (CipherOutputStream cos = new CipherOutputStream(CloseShieldOutputStream.wrap(zos), ciEnc)) {
+                    IOUtils.copy(zis, cos);
+                }
                 zos.closeArchiveEntry();
             }
         }
@@ -153,5 +148,5 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
         return new AesZipFileZipEntrySource(tmpFile, ciDec);
     }
-    
+
 }
