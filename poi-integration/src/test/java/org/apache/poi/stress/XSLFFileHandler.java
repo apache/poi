@@ -30,7 +30,7 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.junit.jupiter.api.Test;
 
-class XSLFFileHandler extends SlideShowHandler {
+public class XSLFFileHandler extends SlideShowHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         try (XMLSlideShow slide = new XMLSlideShow(stream);
@@ -41,6 +41,7 @@ class XSLFFileHandler extends SlideShowHandler {
             assertNotNull(slideInner.getSlideReferences());
 
             new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
+            POIXMLDocumentHandler.cursorRecursive(slide.getCTPresentation());
 
             handleSlideShow(slide);
         } catch (POIXMLException e) {

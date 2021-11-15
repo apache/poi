@@ -17,9 +17,8 @@
 package org.apache.poi.ss.format;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.StringCodepointsIterable;
-import org.apache.poi.util.StringUtil;
 
 import javax.swing.*;
 
@@ -51,9 +50,8 @@ public class CellFormatPart {
 
     static final Map<String, Color> NAMED_COLORS;
 
-
     private final Color color;
-    private CellFormatCondition condition;
+    private final CellFormatCondition condition;
     private final CellFormatter format;
     private final CellFormatType type;
 
@@ -109,7 +107,7 @@ public class CellFormatPart {
                 "  \\s*(-?[0-9]+(?:\\.[0-9]*)?)\\s*  # The constant to test against\n";
 
         // A currency symbol / string, in a specific locale
-        String currency = "(\\[\\$.{0,3}-[0-9a-f]{3}\\])";
+        String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?\\])";
 
         String color =
                 "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)\\]";
@@ -308,6 +306,9 @@ public class CellFormatPart {
             if (currencyPart.startsWith("[$-")) {
                 // Default $ in a different locale
                 currencyRepl = "$";
+            } else if (!currencyPart.contains("-")) {
+                // Accounting formats such as USD [$USD]
+                currencyRepl = currencyPart.substring(2, currencyPart.indexOf("]"));
             } else {
                 currencyRepl = currencyPart.substring(2, currencyPart.lastIndexOf('-'));
             }
@@ -335,7 +336,7 @@ public class CellFormatPart {
         boolean seenZero = false;
         while (m.find()) {
             String repl = m.group(0);
-            Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+            Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
             if (codePoints.hasNext()) {
                 String c1 = codePoints.next();
                 String c2 = null;
@@ -403,7 +404,8 @@ public class CellFormatPart {
      */
     static String quoteSpecial(String repl, CellFormatType type) {
         StringBuilder sb = new StringBuilder();
-        Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+        Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
+
         while (codePoints.hasNext()) {
             String ch = codePoints.next();
             if ("\'".equals(ch) && type.isSpecial('\'')) {
@@ -413,10 +415,10 @@ public class CellFormatPart {
 
             boolean special = type.isSpecial(ch.charAt(0));
             if (special)
-                sb.append("\'");
+                sb.append('\'');
             sb.append(ch);
             if (special)
-                sb.append("\'");
+                sb.append('\'');
         }
         return sb.toString();
     }
@@ -567,7 +569,7 @@ public class CellFormatPart {
      */
     static String expandChar(String part) {
         List<String> codePoints = new ArrayList<>();
-        new StringCodepointsIterable(part).iterator().forEachRemaining(codePoints::add);
+        CodepointsUtil.iteratorFor(part).forEachRemaining(codePoints::add);
         if (codePoints.size() < 2) throw new IllegalArgumentException("Expected part string to have at least 2 chars");
         String ch = codePoints.get(1);
         return ch + ch + ch;

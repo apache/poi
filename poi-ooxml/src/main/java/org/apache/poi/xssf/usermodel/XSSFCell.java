@@ -29,9 +29,11 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellBase;
+import org.apache.poi.ss.usermodel.CellCopyContext;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -46,6 +48,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -140,70 +143,11 @@ public final class XSSFCell extends CellBase {
      * @param srcCell The cell to take value, formula and style from
      * @param policy The policy for copying the information, see {@link CellCopyPolicy}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
+     * @see CellUtil#copyCell(Cell, Cell, CellCopyPolicy, CellCopyContext)
      */
     @Beta
-    @Internal
     public void copyCellFrom(Cell srcCell, CellCopyPolicy policy) {
-        // Copy cell value (cell type is updated implicitly)
-        if (policy.isCopyCellValue()) {
-            if (srcCell != null) {
-                CellType copyCellType = srcCell.getCellType();
-                if (copyCellType == CellType.FORMULA && !policy.isCopyCellFormula()) {
-                    // Copy formula result as value
-                    // FIXME: Cached value may be stale
-                    copyCellType = srcCell.getCachedFormulaResultType();
-                }
-                switch (copyCellType) {
-                    case NUMERIC:
-                        // DataFormat is not copied unless policy.isCopyCellStyle is true
-                        if (DateUtil.isCellDateFormatted(srcCell)) {
-                            setCellValue(srcCell.getDateCellValue());
-                        }
-                        else {
-                            setCellValue(srcCell.getNumericCellValue());
-                        }
-                        break;
-                    case STRING:
-                        setCellValue(srcCell.getStringCellValue());
-                        break;
-                    case FORMULA:
-                        setCellFormula(srcCell.getCellFormula());
-                        break;
-                    case BLANK:
-                        setBlank();
-                        break;
-                    case BOOLEAN:
-                        setCellValue(srcCell.getBooleanCellValue());
-                        break;
-                    case ERROR:
-                        setCellErrorValue(srcCell.getErrorCellValue());
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellType());
-                }
-            } else { //srcCell is null
-                setBlank();
-            }
-        }
-
-        // Copy CellStyle
-        if (policy.isCopyCellStyle()) {
-            setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
-        }
-
-        final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
-
-        if (policy.isMergeHyperlink()) {
-            // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
-            if (srcHyperlink != null) {
-                setHyperlink(new XSSFHyperlink(srcHyperlink));
-            }
-        } else if (policy.isCopyHyperlink()) {
-            // overwrite the hyperlink at dest cell with srcCell's hyperlink
-            // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
-            setHyperlink(srcHyperlink == null ? null : new XSSFHyperlink(srcHyperlink));
-        }
+        CellUtil.copyCell(srcCell, this, policy, null);
     }
 
     /**
@@ -297,17 +241,17 @@ public final class XSSFCell extends CellBase {
                 return 0.0;
             case NUMERIC:
                 if(_cell.isSetV()) {
-                   String v = _cell.getV();
-                   if (v.isEmpty()) {
-                       return 0.0;
-                   }
-                   try {
-                      return Double.parseDouble(v);
-                   } catch(NumberFormatException e) {
-                      throw typeMismatch(CellType.NUMERIC, CellType.STRING, false);
-                   }
+                    String v = _cell.getV();
+                    if (v.isEmpty()) {
+                        return 0.0;
+                    }
+                    try {
+                        return Double.parseDouble(v);
+                    } catch(NumberFormatException e) {
+                        throw typeMismatch(CellType.NUMERIC, CellType.STRING, false);
+                    }
                 } else {
-                   return 0.0;
+                    return 0.0;
                 }
             case FORMULA:
                 throw new AssertionError();
@@ -531,7 +475,19 @@ public final class XSSFCell extends CellBase {
         if (wb.getCellFormulaValidation()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
-            FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+            // Make its format consistent with Excel.
+            // eg: "SUM('Sheet1:Sheet2'!A1:B1)" will be trans to "SUM(Sheet1:Sheet2!A1:B1)"
+            boolean hasError = false;
+            for (Ptg ptg : ptgs) {
+                if (ptg instanceof ErrPtg) {
+                    hasError = true;
+                    break;
+                }
+            }
+            if (!hasError) {
+                formula = FormulaRenderer.toFormulaString(fpb, ptgs);
+            }
         }
 
         CTCellFormula f;
@@ -643,7 +599,7 @@ public final class XSSFCell extends CellBase {
      */
     private boolean isFormulaCell() {
         return (_cell.isSetF() && _cell.getF().getT() != STCellFormulaType.DATA_TABLE)
-            || getSheet().isCellInArrayFormulaContext(this);
+                || getSheet().isCellInArrayFormulaContext(this);
     }
 
     /**
@@ -702,7 +658,7 @@ public final class XSSFCell extends CellBase {
             case STCellType.INT_S: // String is in shared strings
             case STCellType.INT_INLINE_STR: // String is inline in cell
             case STCellType.INT_STR:
-                 return CellType.STRING;
+                return CellType.STRING;
             default:
                 throw new IllegalStateException("Illegal cell type: " + this._cell.getT());
         }
@@ -1029,7 +985,7 @@ public final class XSSFCell extends CellBase {
 
     /**
      * Removes the comment for this cell, if there is one.
-    */
+     */
     @Override
     public void removeCellComment() {
         XSSFComment comment = getCellComment();
@@ -1182,7 +1138,7 @@ public final class XSSFCell extends CellBase {
                     return FALSE;
                 }
                 throw new IllegalStateException("Unexpected boolean cached formula value '"
-                    + textValue + "'.");
+                        + textValue + "'.");
 
             case STRING:
                 // fall-through
@@ -1231,4 +1187,3 @@ public final class XSSFCell extends CellBase {
     }
 
 }
-

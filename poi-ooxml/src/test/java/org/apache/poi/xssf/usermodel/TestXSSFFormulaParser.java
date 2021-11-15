@@ -399,6 +399,51 @@ public final class TestXSSFFormulaParser {
         }
     }
 
+    @Test
+    void testQuotedSheetNamesReference() {
+        // quoted sheet names bug fix
+        Workbook[] wbs = new Workbook[]{new HSSFWorkbook(), new XSSFWorkbook()};
+        for (Workbook wb : wbs) {
+            Sheet sheet1 = wb.createSheet("Sheet1");
+            Sheet sheet2 = wb.createSheet("Sheet2");
+            Sheet sheet3 = wb.createSheet("Sheet 3");
+
+            Row tempRow = sheet1.createRow(0);
+            tempRow.createCell(0).setCellValue(1);
+            tempRow.createCell(1).setCellValue(2);
+
+            tempRow = sheet2.createRow(0);
+            tempRow.createCell(0).setCellValue(3);
+            tempRow.createCell(1).setCellValue(4);
+
+            tempRow = sheet3.createRow(0);
+            tempRow.createCell(0).setCellValue(5);
+            tempRow.createCell(1).setCellValue(6);
+
+            Cell cell = tempRow.createCell(2);
+
+            // unquoted sheet names
+            String formula = "SUM(Sheet1:Sheet2!A1:B1)";
+            cell.setCellFormula(formula);
+            String cellFormula = cell.getCellFormula();
+            assertEquals(formula, cellFormula);
+
+            // quoted sheet names with no space
+            cell = tempRow.createCell(3);
+            formula = "SUM('Sheet1:Sheet2'!A1:B1)";
+            cell.setCellFormula(formula);
+            cellFormula = cell.getCellFormula();
+            assertEquals("SUM(Sheet1:Sheet2!A1:B1)", cellFormula);
+
+            // quoted sheet names with space
+            cell = tempRow.createCell(4);
+            formula = "SUM('Sheet1:Sheet 3'!A1:B1)";
+            cell.setCellFormula(formula);
+            cellFormula = cell.getCellFormula();
+            assertEquals(formula, cellFormula);
+        }
+    }
+
     private static String toFormulaString(Ptg ptg, FormulaParsingWorkbook wb) {
         if (ptg instanceof WorkbookDependentFormula) {
             return ((WorkbookDependentFormula)ptg).toFormulaString((FormulaRenderingWorkbook)wb);

@@ -79,7 +79,7 @@ public class ExcelGeneralNumberFormat extends Format {
         // numeric characters, with the decimal point counting as a numeric
         // character". We know there is a decimal point, so limit to 10 digits.
         // https://support.microsoft.com/en-us/kb/65903
-        final double rounded = new BigDecimal(value).round(TO_10_SF).doubleValue();
+        final double rounded = BigDecimal.valueOf(value).round(TO_10_SF).doubleValue();
         return decimalFormat.format(rounded, toAppendTo, pos);
     }
 

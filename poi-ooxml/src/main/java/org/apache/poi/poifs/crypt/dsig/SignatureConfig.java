@@ -68,7 +68,7 @@ import org.apache.xml.security.signature.XMLSignature;
 /**
  * This class bundles the configuration options used for the existing
  * signature facets.
- * Apart of the thread local members (e.g. opc-package) most values will probably be constant, so
+ * Apart from the thread local members (e.g. opc-package) most values will probably be constant, so
  * it might be configured centrally (e.g. by spring)
  */
 @SuppressWarnings({"unused","WeakerAccess"})
@@ -211,6 +211,16 @@ public class SignatureConfig {
      * @since POI 4.1.0
      */
     private boolean allowMultipleSignatures = false;
+
+    /**
+     * Switch to enable/disable secure validation - see setter for more information
+     *
+     * @since POI 5.2.0
+     */
+    private boolean secureValidation = true;
+
+    private String commitmentType = "Created and approved this document";
+
 
     public SignatureConfig() {
         // OOo doesn't like ds namespaces so per default prefixing is off.
@@ -1044,7 +1054,7 @@ public class SignatureConfig {
     /**
      * The signature config can be updated if a document is succesful validated.
      * This flag is used for activating this modifications.
-     * Defaults to {@code false}<p>
+     * Defaults to {@code false}
      *
      * @param updateConfigOnValidate if true, update config on validate
      *
@@ -1073,5 +1083,57 @@ public class SignatureConfig {
      */
     public void setAllowMultipleSignatures(boolean allowMultipleSignatures) {
         this.allowMultipleSignatures = allowMultipleSignatures;
+    }
+
+    /**
+     * @return is secure validation enabled?
+     *
+     * @since POI 5.2.0
+     */
+    public boolean isSecureValidation() {
+        return secureValidation;
+    }
+
+    /**
+     * Enable or disable secure validation - default is enabled.
+     * <p>
+     * Starting with xmlsec 2.3.0 larger documents with a lot of document parts started to fail,
+     * because a maximum of 30 references were hard-coded allowed for secure validation to succeed.
+     * <p>
+     * Secure validation has the following features:
+     * <ul>
+     * <li>Limits the number of Transforms per Reference to a maximum of 5.
+     * <li>Does not allow XSLT transforms.
+     * <li>Does not allow a RetrievalMethod to reference another RetrievalMethod.
+     * <li>Does not allow a Reference to call the ResolverLocalFilesystem or the ResolverDirectHTTP (references to local files and HTTP resources are forbidden).
+     * <li>Limits the number of references per Manifest (SignedInfo) to a maximum of 30.
+     * <li>MD5 is not allowed as a SignatureAlgorithm or DigestAlgorithm.
+     * <li>Guarantees that the Dereferenced Element returned via Document.getElementById is unique by performing a tree-search.
+     * <li>Does not allow DTDs
+     * </ul>
+     *
+     * @see <a href="https://santuario.apache.org/faq.html#faq-4.SecureValidation">XmlSec SecureValidation</a>
+     *
+     * @since POI 5.2.0
+     */
+    public void setSecureValidation(boolean secureValidation) {
+        this.secureValidation = secureValidation;
+    }
+
+    public String getCommitmentType() {
+        return commitmentType;
+    }
+
+    /**
+     * Set the commitmentType, which is usually one of ...
+     * <ul>
+     *     <li>"Created and approved this document"
+     *     <li>"Approved this document"
+     *     <li>"Created this document"
+     *     <li>... or any other important sounding statement
+     * </ul>
+     */
+    public void setCommitmentType(String commitmentType) {
+        this.commitmentType = commitmentType;
     }
 }

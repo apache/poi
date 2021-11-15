@@ -24,6 +24,8 @@ module org.apache.poi.poi {
     requires java.logging;
     requires java.desktop;
 
+    uses org.apache.poi.sl.usermodel.MetroShapeProvider;
+
     /* needed for CleanerUtil */
     requires jdk.unsupported;
 

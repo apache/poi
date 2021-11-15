@@ -75,9 +75,9 @@ class TestIdentifierManager {
     @Test
     void testReserveNew() {
         IdentifierManager manager = new IdentifierManager(10L,12L);
-        assertSame(10L,manager.reserveNew());
-        assertSame(11L,manager.reserveNew());
-        assertSame(12L,manager.reserveNew());
+        assertEquals(10L,manager.reserveNew());
+        assertEquals(11L,manager.reserveNew());
+        assertEquals(12L,manager.reserveNew());
         assertThrows(IllegalStateException.class, manager::reserveNew);
     }
 

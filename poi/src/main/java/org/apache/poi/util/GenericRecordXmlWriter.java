@@ -234,6 +234,7 @@ public class GenericRecordXmlWriter implements Closeable {
         printObject("error", errorMsg);
     }
 
+    @SuppressWarnings("java:S1452")
     protected Stream<Map.Entry<String,Supplier<?>>> writeProp(Map.Entry<String,Supplier<?>> me) {
         Object obj = me.getValue().get();
         if (obj == null) {

@@ -102,7 +102,7 @@ import org.apache.poi.util.Internal;
          */
         public void setMaxColumnWidths(double unmergedWidth, double mergedWidth) {
             withUseMergedCells = Math.max(withUseMergedCells, mergedWidth);
-            withSkipMergedCells = Math.max(withUseMergedCells, unmergedWidth);
+            withSkipMergedCells = Math.max(withSkipMergedCells, unmergedWidth);
         }
     }
     

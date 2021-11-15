@@ -29,7 +29,7 @@ import java.io.IOException;
 
 /**
  * This sample demonstrates how to use DeferredSXSSFWorkbook to generate workbooks in a streaming way.
- * This approach avoids the use of temporary files and can be used to output to streams like
+ * This approach reduces the use of temporary files and can be used to output to streams like
  * HTTP response streams.
  */
 public class DeferredGeneration {
@@ -53,9 +53,13 @@ public class DeferredGeneration {
 
             try (FileOutputStream fileOut = new FileOutputStream("DeferredGeneration.xlsx")) {
                 wb.write(fileOut);
+                //writeAvoidingTempFiles was added as an experimental change in POI 5.1.0
+                //wb.writeAvoidingTempFiles(fileOut);
             } finally {
+                //the dispose call is necessary to ensure temp files are removed
                 wb.dispose();
             }
+            System.out.println("wrote DeferredGeneration.xlsx");
         }
     }
 }

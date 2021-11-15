@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -67,6 +66,7 @@ import org.apache.poi.POITestCase;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -747,22 +747,34 @@ public final class TestPackage {
 
     @Test
     void testZipEntityExpansionExceedsMemory() {
-        IOException ex = assertThrows(
-            IOException.class,
-            () -> openXmlBombFile("poc-xmlbomb.xlsx")
-        );
-        assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
-        assertTrue(matchSAXEx(ex));
+        boolean originalFlag = POIXMLTypeLoader.DEFAULT_XML_OPTIONS.disallowDocTypeDeclaration();
+        try {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false);
+            IOException ex = assertThrows(
+                    IOException.class,
+                    () -> openXmlBombFile("poc-xmlbomb.xlsx")
+            );
+            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertTrue(matchSAXEx(ex));
+        } finally {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
+        }
     }
 
     @Test
     void testZipEntityExpansionExceedsMemory2() {
-        IOException ex = assertThrows(
-            IOException.class,
-            () -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
-        );
-        assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
-        assertTrue(matchSAXEx(ex));
+        boolean originalFlag = POIXMLTypeLoader.DEFAULT_XML_OPTIONS.disallowDocTypeDeclaration();
+        try {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false);
+            IOException ex = assertThrows(
+                IOException.class,
+                () -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
+            );
+            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertTrue(matchSAXEx(ex));
+        } finally {
+            POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
+        }
     }
 
     private static boolean matchSAXEx(Exception root) {

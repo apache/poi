@@ -56,6 +56,7 @@ import org.xml.sax.SAXException;
 public class SignaturePart {
     private static final Logger LOG = LogManager.getLogger(SignaturePart.class);
     private static final String XMLSEC_VALIDATE_MANIFEST = "org.jcp.xml.dsig.validateManifests";
+    private static final String XMLSEC_VALIDATE_SECURE = "org.apache.jcp.xml.dsig.secureValidation";
 
 
     private final PackagePart signaturePart;
@@ -121,6 +122,7 @@ public class SignaturePart {
 
             DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
             domValidateContext.setProperty(XMLSEC_VALIDATE_MANIFEST, Boolean.TRUE);
+            domValidateContext.setProperty(XMLSEC_VALIDATE_SECURE, signatureInfo.getSignatureConfig().isSecureValidation());
 
             URIDereferencer uriDereferencer = signatureInfo.getUriDereferencer();
             domValidateContext.setURIDereferencer(uriDereferencer);
@@ -178,6 +180,7 @@ public class SignaturePart {
         m.put("//dsss:SignatureComments", signatureConfig::setSignatureDescription);
         m.put("//xd:QualifyingProperties//xd:SignedSignatureProperties//ds:DigestMethod/@Algorithm", signatureConfig::setXadesDigestAlgo);
         m.put("//ds:CanonicalizationMethod", signatureConfig::setCanonicalizationMethod);
+        m.put("//xd:CommitmentTypeId/xd:Description", signatureConfig::setCommitmentType);
 
         for (Map.Entry<String,Consumer<String>> me : m.entrySet()) {
             String val = (String)xpath.compile(me.getKey()).evaluate(doc, XPathConstants.STRING);

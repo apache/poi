@@ -90,7 +90,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     static final int UNSET_OFFSET = -1;
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 200_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 200_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
@@ -106,6 +107,20 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
+
+    /**
+     * @param length the max record length allowed for HSLFSlideShowImpl
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HSLFSlideShowImpl
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Constructs a Powerpoint document from fileName. Parses the document

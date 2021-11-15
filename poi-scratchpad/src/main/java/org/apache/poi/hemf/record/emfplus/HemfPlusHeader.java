@@ -20,7 +20,6 @@ package org.apache.poi.hemf.record.emfplus;
 
 import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
 
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -28,6 +27,7 @@ import java.util.function.Supplier;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -136,8 +136,8 @@ public class HemfPlusHeader implements HemfPlusRecord {
     }
 
     @Override
-    public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
-        renderState[0] = EmfRenderState.EMF_DCONTEXT;
+    public void calcBounds(RenderBounds holder) {
+        holder.setState(EmfRenderState.EMF_DCONTEXT);
     }
 
     @Override

@@ -46,15 +46,29 @@ import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Provides very simple support for old (Word 6 / Word 95)
- *  files.
+ * Provides very simple support for old (Word 6 / Word 95) files.
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
 
     private static final Logger LOG = LogManager.getLogger(HWPFOldDocument.class);
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPFOldDocument
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPFOldDocument
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private static final Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 

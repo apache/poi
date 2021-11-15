@@ -35,6 +35,7 @@ import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataMultiformats;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataPlus;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataWMF;
 import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hemf.record.emfplus.HemfPlusImage;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusBitmapDataType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
@@ -48,10 +49,25 @@ import org.apache.poi.util.IOUtils;
 
 public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private final Deque<Iterator<?>> iterStack = new ArrayDeque<>();
     private Object current;
+
+    /**
+     * @param length the max record length allowed for HemfEmbeddedIterator
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HemfEmbeddedIterator
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public HemfEmbeddedIterator(HemfPicture emf) {
         this(emf.getRecords().iterator());
@@ -63,6 +79,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
     @Override
     public boolean hasNext() {
+        return moveNext();
+    }
+
+    private boolean moveNext() {
         if (iterStack.isEmpty()) {
             return false;
         }
@@ -290,36 +310,33 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
         final int objectId = epo.getObjectId();
 
-        HwmfEmbedded emb = new HwmfEmbedded();
+        final HwmfEmbedded emb = new HwmfEmbedded();
 
-        EmfPlusImage img = epo.getObjectData();
-        assert(img.getImageDataType() != null);
-
-        int totalSize = epo.getTotalObjectSize();
+        // totalSize is only set, if there are multiple chunks
+        final int totalSize = epo.getTotalObjectSize() == 0
+            ? ((EmfPlusImage)epo.getObjectData()).getImageData().length
+            : epo.getTotalObjectSize();
         IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(epo.getTotalObjectSize());
-        try {
-            for (;;) {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(totalSize)) {
+            boolean hasNext = false;
+            do {
+                EmfPlusImage img = epo.getObjectData();
+                assert(img.getImageDataType() != null);
+                assert(!hasNext || img.getImageDataType() == HemfPlusImage.EmfPlusImageDataType.CONTINUED);
                 bos.write(img.getImageData());
-
                 current = null;
-                //noinspection ConstantConditions
-                if (hasNext() &&
+                hasNext = moveNext() &&
                     (current instanceof EmfPlusObject) &&
                     ((epo = (EmfPlusObject) current).getObjectId() == objectId) &&
-                    bos.size() < totalSize-16
-                ) {
-                    img = epo.getObjectData();
-                } else {
-                    return emb;
-                }
-            }
+                    bos.size() < totalSize-16;
+            } while (hasNext);
+
+            emb.setData(bos.toByteArray());
+            return emb;
         } catch (IOException ignored) {
             // UnsynchronizedByteArrayOutputStream doesn't throw IOException
             return null;
-        } finally {
-            emb.setData(bos.toByteArray());
         }
     }
 }

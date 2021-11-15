@@ -499,11 +499,11 @@ public abstract class BaseTestWorkbook {
 
 
     /**
-     * Test to validate that replacement for removed setRepeatingRowsAnsColumns() methods
+     * Test to validate that replacement for removed setRepeatingRowsAndColumns() methods
      * is still working correctly
      */
     @Test
-    void setRepeatingRowsAnsColumns() throws IOException {
+    void setRepeatingRowsAndColumns() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             CellRangeAddress cra = new CellRangeAddress(0, 3, 0, 0);
             String expRows = "1:4", expCols = "A:A";
@@ -525,7 +525,7 @@ public abstract class BaseTestWorkbook {
     }
 
     /**
-     * Tests that all of the unicode capable string fields can be set, written and then read back
+     * Tests that all the unicode capable string fields can be set, written and then read back
      */
     @Test
     protected void unicodeInAll() throws IOException {
@@ -571,15 +571,15 @@ public abstract class BaseTestWorkbook {
 
                 //Test the header
                 h = s.getHeader();
-                assertEquals(h.getCenter(), "\u20ac");
-                assertEquals(h.getLeft(), "\u20ac");
-                assertEquals(h.getRight(), "\u20ac");
+                assertEquals("\u20ac", h.getCenter());
+                assertEquals("\u20ac", h.getLeft());
+                assertEquals("\u20ac", h.getRight());
 
                 //Test the footer
                 f = s.getFooter();
-                assertEquals(f.getCenter(), "\u20ac");
-                assertEquals(f.getLeft(), "\u20ac");
-                assertEquals(f.getRight(), "\u20ac");
+                assertEquals("\u20ac", f.getCenter());
+                assertEquals("\u20ac", f.getLeft());
+                assertEquals("\u20ac", f.getRight());
 
                 //Test the dataformat
                 r = s.getRow(0);
@@ -590,7 +590,7 @@ public abstract class BaseTestWorkbook {
                 //Test the cell string value
                 /*c2 =*/
                 r.getCell(2);
-                assertEquals(c.getRichStringCellValue().getString(), "\u20ac");
+                assertEquals("\u20ac", c.getRichStringCellValue().getString());
 
                 //Test the cell formula
                 c3 = r.getCell(3);
@@ -724,7 +724,7 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    void changeSheetNameWithSharedFormulas() throws IOException {
+    protected void changeSheetNameWithSharedFormulas() throws IOException {
         String sampleFile = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
 
         try (Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile)) {
@@ -782,8 +782,8 @@ public abstract class BaseTestWorkbook {
     @Test
     void windowOneDefaults() throws IOException {
         try (Workbook b = _testDataProvider.createWorkbook()) {
-            assertEquals(b.getActiveSheetIndex(), 0);
-            assertEquals(b.getFirstVisibleTab(), 0);
+            assertEquals(0, b.getActiveSheetIndex());
+            assertEquals(0, b.getFirstVisibleTab());
             // throws NullPointerException when WindowOneRecord in Workbook is not probably initialized
         }
     }
@@ -905,4 +905,17 @@ public abstract class BaseTestWorkbook {
             assertEquals(1114425, anchor.getDx2()); //HSSF: 171
         }
     }
+
+	@Test
+	void testSheetNameTrimming() throws IOException {
+		try (Workbook workbook = _testDataProvider.createWorkbook()) {
+			Sheet sheet = workbook.createSheet("MyVeryLongSheetName_9999999999999999");
+			assertNotNull(sheet);
+			assertEquals("MyVeryLongSheetName_99999999999", workbook.getSheetName(0));
+
+			assertThrows(IllegalArgumentException.class,
+					() -> workbook.createSheet("MyVeryLongSheetName_9999999999999998")
+			);
+		}
+	}
 }

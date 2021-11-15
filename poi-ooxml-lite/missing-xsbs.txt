@@ -1,0 +1,124 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+backgroundelement
+ctaccd5bbtype
+ctaltchunkpr3382type
+ctbareee9type
+ctbileveleffectc7dftype
+ctboolean0559type
+ctborderc15dtype
+ctbox7a31type
+ctcallouta029type
+ctcamerac340type
+ctchar0d9ctype
+ctclippath6d78type
+ctcolorchangeeffect12d5type
+ctcolumn1f12type
+ctcontrol7455type
+ctcustomerdata407dtype
+ctcustomshowlist3419type
+ctdatarefsb753type
+ctdiagramc1cctype
+cteastasianlayout0841type
+ctednposd4a3type
+cteqarr9667type
+ctextrusion7112type
+ctfaff6type
+ctffddlist3acatype
+ctffhelptextbf1atype
+ctffstatustexta9c9type
+ctfftexttype07c1type
+ctfill63e6type
+ctfiltercolumn0fb7type
+ctfunc816etype
+ctfunctiongroupbce6type
+ctgammatransform06a0type
+ctgloweffectc659type
+ctgrayscaleeffect3b69type
+ctgroupchra6c4type
+ctinnershadoweffect4678type
+ctkinsoku0179type
+ctlimlowd6cetype
+ctlimuppd44dtype
+ctlinenumber99ebtype
+ctluminanceeffectb41atype
+ctmacroname363btype
+ctmodifyverifier3bb5type
+ctnarye738type
+ctomathparapr8d43type
+ctonoff3c8ctype
+ctpatternfillproperties3637type
+ctphotoalbum4368type
+ctpivotselectiond5f3type
+ctpolylinef75etype
+ctpprchange29b0type
+ctpresetshadoweffecta9abtype
+ctradc9a7type
+ctreflectioneffect9c37type
+ctrel4519type
+ctrprd468type
+ctscenariosacc2type
+ctsdtrow2f71type
+ctsectprchangee2d3type
+ctsmarttagpr0ebctype
+ctsmarttagsf2cdtype
+ctsoftedgeseffect096etype
+ctspre2f82type
+ctssubsup117btype
+ctssup1cf7type
+ctstrokechilde83dtype
+cttblgridchange3c5etype
+cttblprchangef5e2type
+cttextboxtightwrap2e7etype
+cttexteffect5ccatype
+cttextunderlinefillgroupwrapper64e7type
+cttrackchangenumberinge6catype
+ctwebpublishitemsdc84type
+ctwebpublishobjects30d8type
+ctwrapthrough8b4etype
+ctwraptightae95type
+ctwraptopbottom5e13type
+lockedcanvaselement
+polylineelement
+relidselement
+stalignh768ctype
+stalignv5abetype
+stbwmode77abtype
+stchaptersep27e7type
+stcommentsdbcdtype
+stdatavalidationimemodef990type
+stdiagramlayout8286type
+stdropcap8d1ftype
+steffectcontainertyped26btype
+stfixedangle53eatype
+sthorizontalanchora13atype
+stimageaspectf0d7type
+stpageborderoffset518atype
+stpageborderzordereec9type
+stpageorientation8781type
+stphoneticalignment0632type
+stptabrelativeto37cctype
+stsortbyca6etype
+stsortmethodbcf8type
+ststrokearrowlength82fbtype
+ststrokearrowwidth1563type
+ststrokeendcap681dtype
+ststrokelinestylea509type
+sttargetscreensize4357type
+stverticalanchor22cctype
+stwrapside6d02type

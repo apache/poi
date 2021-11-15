@@ -23,6 +23,8 @@ import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
+import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,15 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -54,7 +49,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
@@ -94,13 +88,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -112,12 +101,20 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -1880,7 +1877,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             SAXParseException e = assertThrows(SAXParseException.class,
                 () -> reader.parse(new InputSource(zip.getInputStream(ze))));
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+            assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
         }
     }
 
@@ -1941,7 +1938,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             mod.getCell(1).setCellValue(3);
             mod = sheet.getRow(2);
             mod.createCell(0).setCellValue(10);
-            HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
             assertEquals(256, mod.getCell(2).getNumericCellValue());
         }
     }
@@ -2038,9 +2035,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // Try to write-out and read again, should only work
             //  in read-write mode, not read-only mode
             try (XSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
-                if (access == PackageAccess.READ) {
-                    fail("Shouln't be able to write from read-only mode");
-                }
+                assertNotEquals(PackageAccess.READ, access, "Shouln't be able to write from read-only mode");
 
                 // Check again
                 s = wb2.getSheetAt(0);
@@ -2714,6 +2709,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             CellStyle style = wb.createCellStyle();
             style.setRotation((short) -90);
             cell.setCellStyle(style);
+            assertEquals(180, style.getRotation());
 
             XSSFTestDataSamples.writeOut(wb, fileName);
         }
@@ -3432,6 +3428,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
+    @Tag("scratchpad.ignore")
     void testXLSXinPPT() throws Exception {
         assumeFalse(Boolean.getBoolean("scratchpad.ignore"));
 
@@ -3551,18 +3548,97 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFSheet sheet = wb.getSheet("SheetWithSharedFormula");
             XSSFCell v15 = sheet.getRow(14).getCell(21);
             XSSFCell v16 = sheet.getRow(15).getCell(21);
+            XSSFCell v17 = sheet.getRow(16).getCell(21);
             assertEquals("U15/R15", v15.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.SHARED, v15.getCTCell().getF().getT());
             assertEquals("U16/R16", v16.getCellFormula());
-            assertEquals(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            assertSame(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT()); //anomaly in original file
+            assertEquals("U17/R17", v17.getCellFormula());
+            assertSame(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             int calcChainSize = wb.getCalculationChain().getCTCalcChain().sizeOfCArray();
 
             v15.removeFormula();
             assertEquals(CellType.NUMERIC, v15.getCellType(), "V15 is no longer a function");
             assertNull(v15.getCTCell().getF(), "V15 xmlbeans function removed");
             assertEquals("U16/R16", v16.getCellFormula());
-            assertEquals(STCellFormulaType.SHARED, v16.getCTCell().getF().getT());
+            assertSame(STCellFormulaType.NORMAL, v16.getCTCell().getF().getT());
+            assertEquals("U17/R17", v17.getCellFormula());
+            assertSame(STCellFormulaType.SHARED, v17.getCTCell().getF().getT());
             assertEquals(calcChainSize - 1, wb.getCalculationChain().getCTCalcChain().sizeOfCArray());
+        }
+    }
+
+    @Test
+    void testSetBlankOnNestedSharedFormulas() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasSetBlank.xlsx")) {
+            XSSFSheet s1 = wb1.getSheetAt(0);
+            assertNotNull(s1);
+            Iterator<Row> rowIterator = s1.rowIterator();
+            int count = 0;
+            StringBuilder sb = new StringBuilder();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    // the toString is needed to exhibit the broken state
+                    sb.append(cell.toString()).append(",");
+                    count++;
+
+                    // breaks the sheet state
+                    cell.setBlank();
+                }
+            }
+            assertEquals(10, count);
+            assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
+        }
+    }
+
+    @Test
+    void testBug65306() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("bug65306.xlsx")) {
+            XSSFSheet sheet = wb1.getSheetAt(0);
+            assertNotNull(sheet);
+            XSSFCell a1 = sheet.getRow(0).getCell(0);
+            XSSFCell b1 = sheet.getRow(0).getCell(1);
+            XSSFCell a2 = sheet.getRow(1).getCell(0);
+            XSSFCell b2 = sheet.getRow(1).getCell(1);
+            assertEquals(1.0, a1.getNumericCellValue());
+            assertEquals(2.0, a2.getNumericCellValue());
+            assertEquals("$A$1+3*$A$2", b1.getCellFormula());
+            assertEquals("$A$1+3*$A$2", b2.getCellFormula());
+            sheet.shiftRows(1, 1, -1);
+            assertNull(sheet.getRow(1), "row 2 was removed?");
+            a1 = sheet.getRow(0).getCell(0);
+            b1 = sheet.getRow(0).getCell(1);
+            assertEquals(2.0, a1.getNumericCellValue());
+            assertEquals("#REF!+3*$A$1", b1.getCellFormula());
+        }
+    }
+
+    @Test
+    void testBug65452() throws IOException {
+        File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(fis));
+            assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
+        }
+        IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(file));
+        assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
+    }
+
+    @Test
+    void testBug62021() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("testSheet");
+            LocalDateTime ldt = LocalDateTime.parse("2021-10-15T12:00:00");
+            addRow(sheet, 0, ldt);
+            XSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "A1+1", DateUtil.getExcelDate(ldt) + 1);
+            LocalDateTime expected = ldt.plusMinutes(90);
+            assertDouble(fe, cell, "A1+\"1:30\"", DateUtil.getExcelDate(expected));
         }
     }
 }

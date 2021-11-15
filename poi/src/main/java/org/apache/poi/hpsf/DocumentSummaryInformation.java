@@ -502,7 +502,7 @@ public class DocumentSummaryInformation extends PropertySet {
 
 
     /**
-     * Returns {@code true} if the custom links are dirty. <p>
+     * Returns {@code true} if the custom links are dirty.
      *
      * @return The links dirty value
      */

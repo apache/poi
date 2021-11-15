@@ -19,9 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
-import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
-import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
+import static org.apache.poi.xssf.XSSFTestDataSamples.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,21 +36,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -164,6 +157,49 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             // Links to the three sheets, shared, styles and themes
             assertTrue(wbPart.hasRelationships());
             assertEquals(6, wbPart.getRelationships().size());
+        }
+    }
+
+    @Test
+    void existingWithZipEntryTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
+        }
+    }
+
+    @Test
+    void existingWithZipEntryEncryptedTempFiles() throws Exception {
+        int defaultThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+        boolean defaultEncryptFlag = ZipInputStreamZipEntrySource.shouldEncryptTempFiles();
+        ZipInputStreamZipEntrySource.setEncryptTempFiles(true);
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(100);
+        try (XSSFWorkbook workbook = openSampleWorkbook("Formatting.xlsx");
+             OPCPackage pkg = OPCPackage.open(openSampleFileStream("Formatting.xlsx"))) {
+            assertNotNull(workbook.getSharedStringSource());
+            assertNotNull(workbook.getStylesSource());
+
+            // And check a few low level bits too
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+
+            // Links to the three sheets, shared, styles and themes
+            assertTrue(wbPart.hasRelationships());
+            assertEquals(6, wbPart.getRelationships().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(defaultThreshold);
+            ZipInputStreamZipEntrySource.setEncryptTempFiles(defaultEncryptFlag);
         }
     }
 
@@ -1129,7 +1165,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testRightToLeft() throws IOException {
-        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")){
+        try(XSSFWorkbook workbook = openSampleWorkbook("right-to-left.xlsx")) {
             Sheet sheet = workbook.getSheet("عربى");
 
             Cell A1 = sheet.getRow(0).getCell(0);
@@ -1147,6 +1183,112 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void test501RC1Failure() throws Exception {
+        String filename = "0-www-crossref-org.lib.rivier.edu_education-files_suffix-generator.xlsm";
+        try(XSSFWorkbook workbook = openSampleWorkbook(filename)) {
+            assertTrue(workbook.isMacroEnabled());
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                XSSFSheet sheet = workbook.getSheetAt(i);
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        assertNotNull(cell);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testNewWorkbookWithTempFilePackageParts() throws Exception {
+        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
+            ZipPackage.setUseTempFilePackageParts(true);
+            assertTrue(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts was modified?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts was not modified?");
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("sheet1");
+                XSSFRow row = sheet.createRow(0);
+                XSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue("");
+                XSSFCell cell1 = row.createCell(1);
+                cell1.setCellErrorValue(FormulaError.DIV0);
+                XSSFCell cell2 = row.createCell(2);
+                cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+                workbook.write(bos);
+            } finally {
+                ZipPackage.setUseTempFilePackageParts(false);
+            }
+        }
+    }
+
+    @Test
+    void testNewWorkbookWithEncryptedTempFilePackageParts() throws Exception {
+        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
+            assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
+            ZipPackage.setUseTempFilePackageParts(true);
+            ZipPackage.setEncryptTempFilePackageParts(true);
+            assertTrue(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts was modified?");
+            assertTrue(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts was modified?");
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("sheet1");
+                XSSFRow row = sheet.createRow(0);
+                XSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue("");
+                XSSFCell cell1 = row.createCell(1);
+                cell1.setCellErrorValue(FormulaError.DIV0);
+                XSSFCell cell2 = row.createCell(2);
+                cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+                workbook.write(bos);
+            } finally {
+                ZipPackage.setUseTempFilePackageParts(false);
+                ZipPackage.setEncryptTempFilePackageParts(false);
+            }
+        }
+    }
+
+    @Test
+    void testLinkExternalWorkbook() throws Exception {
+        String nameA = "link-external-workbook-a.xlsx";
+
+        try (
+                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                XSSFWorkbook workbookA = new XSSFWorkbook();
+                XSSFWorkbook workbookB = new XSSFWorkbook()
+        ) {
+            XSSFRow row1 = workbookA.createSheet().createRow(0);
+            row1.createCell(0).setCellValue(10);
+            row1.createCell(1).setCellValue(20);
+
+            XSSFRow row2 = workbookB.createSheet().createRow(0);
+            XSSFCell cell = row2.createCell(0);
+
+            workbookB.linkExternalWorkbook(nameA, workbookA);
+            String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
+            cell.setCellFormula(formula);
+            XSSFFormulaEvaluator evaluator = workbookB.getCreationHelper().createFormulaEvaluator();
+            evaluator.evaluateFormulaCell(cell);
+            assertEquals(30.0, cell.getNumericCellValue());
+
+            workbookA.write(bosA);
+            workbookB.write(bosB);
+
+            try(
+                    XSSFWorkbook workbook1 = new XSSFWorkbook(bosA.toInputStream());
+                    XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
+            ) {
+                workbook2.linkExternalWorkbook(nameA, workbook1);
+                XSSFFormulaEvaluator evaluator2 = workbook2.getCreationHelper().createFormulaEvaluator();
+                XSSFCell cell2 = workbook2.getSheetAt(0).getRow(0).getCell(0);
+                evaluator2.evaluateFormulaCell(cell2);
+                assertEquals(30.0, cell2.getNumericCellValue());
+            }
+        }
+    }
+
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");
@@ -1155,4 +1297,5 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     private static String ref(Cell cell) {
         return new CellReference(cell).formatAsString();
     }
+
 }

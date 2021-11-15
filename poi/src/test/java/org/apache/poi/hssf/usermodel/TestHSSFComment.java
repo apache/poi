@@ -116,14 +116,6 @@ final class TestHSSFComment extends BaseTestCellComment {
         // assert that the comments are created properly before writing
         checkComments(sheet, noOfRows, comment);
 
-        /*// store in temp-file
-        OutputStream fs = new FileOutputStream("/tmp/56380.xls");
-        try {
-            sheet.getWorkbook().write(fs);
-        } finally {
-            fs.close();
-        }*/
-
         // save and recreate the workbook from the saved file
         HSSFWorkbook workbookBack = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet = workbookBack.getSheetAt(0);
@@ -211,7 +203,7 @@ final class TestHSSFComment extends BaseTestCellComment {
         HSSFCell cell = row.createCell(0);
         cell.setCellComment(comment);
 
-        assertEquals(comment.getEscherContainer().getChildCount(), 5);
+        assertEquals(5, comment.getEscherContainer().getChildCount());
 
         //sp record
         byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");
@@ -267,184 +259,179 @@ final class TestHSSFComment extends BaseTestCellComment {
 
     @Test
     void addToExistingFile() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
-        int idx = wb.addPicture(new byte[]{1,2,3}, Workbook.PICTURE_TYPE_PNG);
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+            int idx = wb.addPicture(new byte[]{1, 2, 3}, Workbook.PICTURE_TYPE_PNG);
 
-        HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
-        comment.setColumn(5);
-        comment.setString(new HSSFRichTextString("comment1"));
-        comment = patriarch.createCellComment(new HSSFClientAnchor(0,0,100,100,(short)0,0,(short)10,10));
-        comment.setRow(5);
-        comment.setString(new HSSFRichTextString("comment2"));
-        comment.setBackgroundImage(idx);
-        assertEquals(comment.getBackgroundImageId(), idx);
+            HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+            comment.setColumn(5);
+            comment.setString(new HSSFRichTextString("comment1"));
+            comment = patriarch.createCellComment(new HSSFClientAnchor(0, 0, 100, 100, (short) 0, 0, (short) 10, 10));
+            comment.setRow(5);
+            comment.setString(new HSSFRichTextString("comment2"));
+            comment.setBackgroundImage(idx);
+            assertEquals(idx, comment.getBackgroundImageId());
 
-        assertEquals(patriarch.getChildren().size(), 2);
+            assertEquals(2, patriarch.getChildren().size());
 
-        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wbBack.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
+            try (HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                sh = wbBack.getSheetAt(0);
+                patriarch = sh.getDrawingPatriarch();
 
-        comment = (HSSFComment) patriarch.getChildren().get(1);
-        assertEquals(comment.getBackgroundImageId(), idx);
-        comment.resetBackgroundImage();
-        assertEquals(comment.getBackgroundImageId(), 0);
+                comment = (HSSFComment) patriarch.getChildren().get(1);
+                assertEquals(idx, comment.getBackgroundImageId());
+                comment.resetBackgroundImage();
+                assertEquals(0, comment.getBackgroundImageId());
 
-        assertEquals(patriarch.getChildren().size(), 2);
-        comment = patriarch.createCellComment(new HSSFClientAnchor());
-        comment.setString(new HSSFRichTextString("comment3"));
+                assertEquals(2, patriarch.getChildren().size());
+                comment = patriarch.createCellComment(new HSSFClientAnchor());
+                comment.setString(new HSSFRichTextString("comment3"));
 
-        assertEquals(patriarch.getChildren().size(), 3);
-        HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack);
-        sh = wbBack2.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
-        comment = (HSSFComment) patriarch.getChildren().get(1);
-        assertEquals(comment.getBackgroundImageId(), 0);
-        assertEquals(patriarch.getChildren().size(), 3);
-        assertEquals(((HSSFComment) patriarch.getChildren().get(0)).getString().getString(), "comment1");
-        assertEquals(((HSSFComment) patriarch.getChildren().get(1)).getString().getString(), "comment2");
-        assertEquals(((HSSFComment) patriarch.getChildren().get(2)).getString().getString(), "comment3");
-
-        wb.close();
-        wbBack.close();
-        wbBack2.close();
+                assertEquals(3, patriarch.getChildren().size());
+                try (HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack)) {
+                    sh = wbBack2.getSheetAt(0);
+                    patriarch = sh.getDrawingPatriarch();
+                    comment = (HSSFComment) patriarch.getChildren().get(1);
+                    assertEquals(0, comment.getBackgroundImageId());
+                    assertEquals(3, patriarch.getChildren().size());
+                    assertEquals("comment1", ((HSSFComment) patriarch.getChildren().get(0)).getString().getString());
+                    assertEquals("comment2", ((HSSFComment) patriarch.getChildren().get(1)).getString().getString());
+                    assertEquals("comment3", ((HSSFComment) patriarch.getChildren().get(2)).getString().getString());
+                }
+            }
+        }
     }
 
     @Test
     void setGetProperties() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
-        HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
-        comment.setString(new HSSFRichTextString("comment1"));
-        assertEquals(comment.getString().getString(), "comment1");
+            HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+            comment.setString(new HSSFRichTextString("comment1"));
+            assertEquals("comment1", comment.getString().getString());
 
-        comment.setAuthor("poi");
-        assertEquals(comment.getAuthor(), "poi");
+            comment.setAuthor("poi");
+            assertEquals("poi", comment.getAuthor());
 
-        comment.setColumn(3);
-        assertEquals(comment.getColumn(), 3);
+            comment.setColumn(3);
+            assertEquals(3, comment.getColumn());
 
-        comment.setRow(4);
-        assertEquals(comment.getRow(), 4);
+            comment.setRow(4);
+            assertEquals(4, comment.getRow());
 
-        comment.setVisible(false);
-        assertFalse(comment.isVisible());
+            comment.setVisible(false);
+            assertFalse(comment.isVisible());
 
-        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wbBack.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
+            try (HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                sh = wbBack.getSheetAt(0);
+                patriarch = sh.getDrawingPatriarch();
 
-        comment = (HSSFComment) patriarch.getChildren().get(0);
+                comment = (HSSFComment) patriarch.getChildren().get(0);
 
-        assertEquals(comment.getString().getString(), "comment1");
-        assertEquals("poi", comment.getAuthor());
-        assertEquals(comment.getColumn(), 3);
-        assertEquals(comment.getRow(), 4);
-        assertFalse(comment.isVisible());
+                assertEquals("comment1", comment.getString().getString());
+                assertEquals("poi", comment.getAuthor());
+                assertEquals(3, comment.getColumn());
+                assertEquals(4, comment.getRow());
+                assertFalse(comment.isVisible());
 
-        comment.setString(new HSSFRichTextString("comment12"));
-        comment.setAuthor("poi2");
-        comment.setColumn(32);
-        comment.setRow(42);
-        comment.setVisible(true);
+                comment.setString(new HSSFRichTextString("comment12"));
+                comment.setAuthor("poi2");
+                comment.setColumn(32);
+                comment.setRow(42);
+                comment.setVisible(true);
 
-        HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack);
-        sh = wbBack2.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
-        comment = (HSSFComment) patriarch.getChildren().get(0);
+                try (HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack)) {
+                    sh = wbBack2.getSheetAt(0);
+                    patriarch = sh.getDrawingPatriarch();
+                    comment = (HSSFComment) patriarch.getChildren().get(0);
 
-        assertEquals(comment.getString().getString(), "comment12");
-        assertEquals("poi2", comment.getAuthor());
-        assertEquals(comment.getColumn(), 32);
-        assertEquals(comment.getRow(), 42);
-        assertTrue(comment.isVisible());
-
-        wb.close();
-        wbBack.close();
-        wbBack2.close();
+                    assertEquals("comment12", comment.getString().getString());
+                    assertEquals("poi2", comment.getAuthor());
+                    assertEquals(32, comment.getColumn());
+                    assertEquals(42, comment.getRow());
+                    assertTrue(comment.isVisible());
+                }
+            }
+        }
     }
 
     @Test
     void existingFileWithComment() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("comments");
-        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
-        HSSFComment comment = (HSSFComment) drawing.getChildren().get(0);
-        assertEquals(comment.getAuthor(), "evgeniy");
-        assertEquals(comment.getString().getString(), "evgeniy:\npoi test");
-        assertEquals(comment.getColumn(), 1);
-        assertEquals(comment.getRow(), 2);
-        wb.close();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("comments");
+            HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+            assertEquals(1, drawing.getChildren().size());
+            HSSFComment comment = (HSSFComment) drawing.getChildren().get(0);
+            assertEquals("evgeniy", comment.getAuthor());
+            assertEquals("evgeniy:\npoi test", comment.getString().getString());
+            assertEquals(1, comment.getColumn());
+            assertEquals(2, comment.getRow());
+        }
     }
 
     @Test
     void findComments() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
-        HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
-        HSSFRow row = sh.createRow(5);
-        HSSFCell cell = row.createCell(4);
-        cell.setCellComment(comment);
+            HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+            HSSFRow row = sh.createRow(5);
+            HSSFCell cell = row.createCell(4);
+            cell.setCellComment(comment);
 
-        assertNotNull(sh.findCellComment(5, 4));
-        assertNull(sh.findCellComment(5, 5));
+            assertNotNull(sh.findCellComment(5, 4));
+            assertNull(sh.findCellComment(5, 5));
 
-        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wbBack.getSheetAt(0);
+            try (HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                sh = wbBack.getSheetAt(0);
 
-        assertNotNull(sh.findCellComment(5, 4));
-        assertNull(sh.findCellComment(5, 5));
-
-        wb.close();
-        wbBack.close();
+                assertNotNull(sh.findCellComment(5, 4));
+                assertNull(sh.findCellComment(5, 5));
+            }
+        }
     }
 
     @Test
     void initState() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
-        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
-        assertEquals(agg.getTailRecords().size(), 0);
+            EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+            assertEquals(0, agg.getTailRecords().size());
 
-        HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
-        assertEquals(agg.getTailRecords().size(), 1);
+            HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+            assertEquals(1, agg.getTailRecords().size());
 
-        HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
-        assertNotNull(shape);
+            HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
+            assertNotNull(shape);
 
-        assertEquals(comment.getOptRecord().getEscherProperties().size(), 10);
-
-        wb.close();
+            assertEquals(10, comment.getOptRecord().getEscherProperties().size());
+        }
     }
 
     @Test
     void shapeId() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
-        HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+            HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
 
-        comment.setShapeId(2024);
+            comment.setShapeId(2024);
 
-        assertEquals(comment.getShapeId(), 2024);
+            assertEquals(2024, comment.getShapeId());
 
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
-        assertEquals(2024, cod.getObjectId());
-        EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
-        assertEquals(2024, spRecord.getShapeId(), 2024);
-        assertEquals(2024, comment.getShapeId(), 2024);
-        assertEquals(2024, comment.getNoteRecord().getShapeId());
-
-        wb.close();
+            CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
+            assertEquals(2024, cod.getObjectId());
+            EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
+            assertEquals(2024, spRecord.getShapeId(), 2024);
+            assertEquals(2024, comment.getShapeId(), 2024);
+            assertEquals(2024, comment.getNoteRecord().getShapeId());
+        }
     }
 }

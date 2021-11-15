@@ -31,5 +31,5 @@ public interface IAdjustableShape {
      * @param  name name of a adjust value, e.g. adj1
      * @return adjust guide defined in the shape or null
      */
-    Guide getAdjustValue(String name);
+    GuideIf getAdjustValue(String name);
 }

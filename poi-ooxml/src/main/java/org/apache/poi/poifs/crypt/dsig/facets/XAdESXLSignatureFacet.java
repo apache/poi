@@ -24,10 +24,10 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CRLException;
@@ -46,12 +46,14 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
+import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xmlbeans.XmlException;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -74,13 +76,11 @@ import org.w3c.dom.NodeList;
 /**
  * XAdES-X-L v1.4.1 signature facet. This signature facet implementation will
  * upgrade a given XAdES-BES/EPES signature to XAdES-X-L.
+ * If no revocation data service is set, only a XAdES-T signature is created.
  *
  * We don't inherit from XAdESSignatureFacet as we also want to be able to use
  * this facet out of the context of a signature creation. This signature facet
  * assumes that the signature is already XAdES-BES/EPES compliant.
- *
- * This implementation has been tested against an implementation that
- * participated multiple ETSI XAdES plugtests.
  *
  * @see XAdESSignatureFacet
  */
@@ -104,35 +104,63 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
-        QualifyingPropertiesDocument qualDoc;
-        QualifyingPropertiesType qualProps;
-
         // check for XAdES-BES
         NodeList qualNl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
-        if (qualNl.getLength() == 1) {
-            try {
-                qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0), DEFAULT_XML_OPTIONS);
-            } catch (XmlException e) {
-                throw new MarshalException(e);
-            }
-            qualProps = qualDoc.getQualifyingProperties();
-        } else {
-            throw new MarshalException("no XAdES-BES extension present");
-        }
+        QualifyingPropertiesType qualProps = getQualProps(qualNl);
 
         // create basic XML container structure
-        UnsignedPropertiesType unsignedProps = qualProps.getUnsignedProperties();
-        if (unsignedProps == null) {
-            unsignedProps = qualProps.addNewUnsignedProperties();
-        }
-        UnsignedSignaturePropertiesType unsignedSigProps = unsignedProps.getUnsignedSignatureProperties();
-        if (unsignedSigProps == null) {
-            unsignedSigProps = unsignedProps.addNewUnsignedSignatureProperties();
-        }
-
+        UnsignedPropertiesType unsignedProps =
+            ofNullable(qualProps.getUnsignedProperties()).orElseGet(qualProps::addNewUnsignedProperties);
+        UnsignedSignaturePropertiesType unsignedSigProps =
+            ofNullable(unsignedProps.getUnsignedSignatureProperties()).orElseGet(unsignedProps::addNewUnsignedSignatureProperties);
 
         // create the XAdES-T time-stamp
         NodeList nlSigVal = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
+        XAdESTimeStampType signatureTimeStamp = addTimestamp(nlSigVal, signatureInfo, unsignedSigProps);
+
+        // Without revocation data service we cannot construct the XAdES-C extension.
+        RevocationDataService revDataSvc = signatureConfig.getRevocationDataService();
+        if (revDataSvc != null) {
+            // XAdES-C: complete certificate refs
+            CompleteCertificateRefsType completeCertificateRefs = completeCertificateRefs(unsignedSigProps, signatureConfig);
+
+            // XAdES-C: complete revocation refs
+            RevocationData revocationData = revDataSvc.getRevocationData(signatureConfig.getSigningCertificateChain());
+            CompleteRevocationRefsType completeRevocationRefs = unsignedSigProps.addNewCompleteRevocationRefs();
+            addRevocationCRL(completeRevocationRefs, signatureConfig, revocationData);
+            addRevocationOCSP(completeRevocationRefs, signatureConfig, revocationData);
+
+            // XAdES-X Type 1 timestamp
+            addTimestampX(unsignedSigProps, signatureInfo, nlSigVal, signatureTimeStamp, completeCertificateRefs, completeRevocationRefs);
+
+            // XAdES-X-L
+            addCertificateValues(unsignedSigProps, signatureConfig);
+
+            RevocationValuesType revocationValues = unsignedSigProps.addNewRevocationValues();
+            createRevocationValues(revocationValues, revocationData);
+        }
+
+        // marshal XAdES-X-L
+        Node n = document.importNode(qualProps.getDomNode(), true);
+        qualNl.item(0).getParentNode().replaceChild(n, qualNl.item(0));
+    }
+
+    private QualifyingPropertiesType getQualProps(NodeList qualNl) throws MarshalException {
+        // check for XAdES-BES
+        if (qualNl.getLength() != 1) {
+            throw new MarshalException("no XAdES-BES extension present");
+        }
+
+        try {
+            Node first = qualNl.item(0);
+            QualifyingPropertiesDocument qualDoc = QualifyingPropertiesDocument.Factory.parse(first, DEFAULT_XML_OPTIONS);
+            return qualDoc.getQualifyingProperties();
+        } catch (XmlException e) {
+            throw new MarshalException(e);
+        }
+    }
+
+    private XAdESTimeStampType addTimestamp(NodeList nlSigVal, SignatureInfo signatureInfo, UnsignedSignaturePropertiesType unsignedSigProps) {
         if (nlSigVal.getLength() != 1) {
             throw new IllegalArgumentException("SignatureValue is not set.");
         }
@@ -151,17 +179,11 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             insertXChild(unsignedSigProps, validationData);
         }
 
-        if (signatureConfig.getRevocationDataService() == null) {
-            /*
-             * Without revocation data service we cannot construct the XAdES-C
-             * extension.
-             */
-            return;
-        }
+        return signatureTimeStamp;
+    }
 
-        // XAdES-C: complete certificate refs
-        CompleteCertificateRefsType completeCertificateRefs =
-            unsignedSigProps.addNewCompleteCertificateRefs();
+    private CompleteCertificateRefsType completeCertificateRefs(UnsignedSignaturePropertiesType unsignedSigProps, SignatureConfig signatureConfig) {
+        CompleteCertificateRefsType completeCertificateRefs = unsignedSigProps.addNewCompleteCertificateRefs();
 
         CertIDListType certIdList = completeCertificateRefs.addNewCertRefs();
         /*
@@ -169,19 +191,14 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
          * 4.4.3.2 of the XAdES 1.4.1 specification.
          */
         List<X509Certificate> certChain = signatureConfig.getSigningCertificateChain();
-        int chainSize = certChain.size();
-        if (chainSize > 1) {
-            for (X509Certificate cert : certChain.subList(1, chainSize)) {
-                CertIDType certId = certIdList.addNewCert();
-                XAdESSignatureFacet.setCertID(certId, signatureConfig, false, cert);
-            }
-        }
+        certChain.stream().skip(1).forEachOrdered(cert ->
+            XAdESSignatureFacet.setCertID(certIdList.addNewCert(), signatureConfig, false, cert)
+        );
 
-        // XAdES-C: complete revocation refs
-        CompleteRevocationRefsType completeRevocationRefs =
-            unsignedSigProps.addNewCompleteRevocationRefs();
-        RevocationData revocationData = signatureConfig.getRevocationDataService()
-            .getRevocationData(certChain);
+        return completeCertificateRefs;
+    }
+
+    private void addRevocationCRL(CompleteRevocationRefsType completeRevocationRefs, SignatureConfig signatureConfig, RevocationData revocationData) {
         if (revocationData.hasCRLs()) {
             CRLRefsType crlRefs = completeRevocationRefs.addNewCRLRefs();
             completeRevocationRefs.setCRLRefs(crlRefs);
@@ -191,14 +208,13 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 X509CRL crl;
                 try {
                     crl = (X509CRL) this.certificateFactory
-                            .generateCRL(new ByteArrayInputStream(encodedCrl));
+                        .generateCRL(new UnsynchronizedByteArrayInputStream(encodedCrl));
                 } catch (CRLException e) {
-                    throw new RuntimeException("CRL parse error: "
-                            + e.getMessage(), e);
+                    throw new RuntimeException("CRL parse error: " + e.getMessage(), e);
                 }
 
                 CRLIdentifierType crlIdentifier = crlRef.addNewCRLIdentifier();
-                String issuerName = crl.getIssuerDN().getName().replace(",", ", ");
+                String issuerName = crl.getIssuerX500Principal().getName().replace(",", ", ");
                 crlIdentifier.setIssuer(issuerName);
                 Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
                 cal.setTime(crl.getThisUpdate());
@@ -209,6 +225,9 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, encodedCrl, signatureConfig.getDigestAlgo());
             }
         }
+    }
+
+    private void addRevocationOCSP(CompleteRevocationRefsType completeRevocationRefs, SignatureConfig signatureConfig, RevocationData revocationData) {
         if (revocationData.hasOCSPs()) {
             OCSPRefsType ocspRefs = completeRevocationRefs.addNewOCSPRefs();
             for (byte[] ocsp : revocationData.getOCSPs()) {
@@ -247,10 +266,11 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 }
             }
         }
+    }
 
-        // marshal XAdES-C
+    private void addTimestampX(UnsignedSignaturePropertiesType unsignedSigProps, SignatureInfo signatureInfo, NodeList nlSigVal, XAdESTimeStampType signatureTimeStamp,
+        CompleteCertificateRefsType completeCertificateRefs, CompleteRevocationRefsType completeRevocationRefs) {
 
-        // XAdES-X Type 1 timestamp
         List<Node> timeStampNodesXadesX1 = new ArrayList<>();
         timeStampNodesXadesX1.add(nlSigVal.item(0));
         timeStampNodesXadesX1.add(signatureTimeStamp.getDomNode());
@@ -269,9 +289,11 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         // marshal XAdES-X
         unsignedSigProps.addNewSigAndRefsTimeStamp().set(timeStampXadesX1);
 
-        // XAdES-X-L
+    }
+
+    private void addCertificateValues(UnsignedSignaturePropertiesType unsignedSigProps, SignatureConfig signatureConfig) {
         CertificateValuesType certificateValues = unsignedSigProps.addNewCertificateValues();
-        for (X509Certificate certificate : certChain) {
+        for (X509Certificate certificate : signatureConfig.getSigningCertificateChain()) {
             EncapsulatedPKIDataType encapsulatedPKIDataType = certificateValues.addNewEncapsulatedX509Certificate();
             try {
                 encapsulatedPKIDataType.setByteArrayValue(certificate.getEncoded());
@@ -279,18 +301,10 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 throw new RuntimeException("certificate encoding error: " + e.getMessage(), e);
             }
         }
-
-        RevocationValuesType revocationValues = unsignedSigProps.addNewRevocationValues();
-        createRevocationValues(revocationValues, revocationData);
-
-        // marshal XAdES-X-L
-        Node n = document.importNode(qualProps.getDomNode(), true);
-        qualNl.item(0).getParentNode().replaceChild(n, qualNl.item(0));
     }
 
-    public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream();
-        try {
+    private static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
+        try (UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream()) {
             for (Node node : nodeList) {
                 /*
                  * Re-initialize the c14n else the namespaces will get cached
@@ -299,12 +313,12 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 Canonicalizer c14n = Canonicalizer.getInstance(c14nAlgoId);
                 c14n.canonicalizeSubtree(node, c14nValue);
             }
+            return c14nValue.toByteArray();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("c14n error: " + e.getMessage(), e);
         }
-        return c14nValue.toByteArray();
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {

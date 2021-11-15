@@ -58,13 +58,28 @@ import org.apache.poi.util.LocaleUtil;
 public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     private static final Logger LOG = LogManager.getLogger(EmbeddedExtractor.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     // contentType
     private static final String CONTENT_TYPE_BYTES = "binary/octet-stream";
     private static final String CONTENT_TYPE_PDF = "application/pdf";
     private static final String CONTENT_TYPE_DOC = "application/msword";
     private static final String CONTENT_TYPE_XLS = "application/vnd.ms-excel";
+
+    /**
+     * @param length the max record length allowed for EmbeddedExtractor
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EmbeddedExtractor
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * @return the list of known extractors, if you provide custom extractors, override this method
@@ -162,14 +177,13 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     protected EmbeddedData extract(DirectoryNode dn) throws IOException {
         assert(canExtract(dn));
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(20000);
-        try (POIFSFileSystem dest = new POIFSFileSystem()) {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(20000);
+            POIFSFileSystem dest = new POIFSFileSystem()) {
             copyNodes(dn, dest.getRoot());
             // start with a reasonable big size
             dest.writeFilesystem(bos);
+            return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
         }
-
-        return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
     }
 
     protected EmbeddedData extract(Picture source) throws IOException {

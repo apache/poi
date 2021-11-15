@@ -52,8 +52,6 @@ import org.apache.poi.util.LittleEndian;
 
 public final class StyleTextPropAtom extends RecordAtom {
     public static final long _type = RecordTypes.StyleTextPropAtom.typeID;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final byte[] _header;
     private byte[] reserved;
@@ -136,7 +134,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         // Save the contents of the atom, until we're asked to go and
         //  decode them (via a call to setParentTextSize(int)
-        rawContents = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        rawContents = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
         reserved = new byte[0];
 
         // Set empty lists, ready for when they call setParentTextSize
@@ -309,22 +307,20 @@ public final class StyleTextPropAtom extends RecordAtom {
      */
     private void updateRawContents() throws IOException {
         if (initialised) {
-            // Only update the style bytes, if the styles have been potentially
-            // changed
+            // Only update the style bytes, if the styles have been potentially changed
+            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+                // First up, we need to serialise the paragraph properties
+                for (TextPropCollection tpc : paragraphStyles) {
+                    tpc.writeOut(baos);
+                }
 
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+                // Now, we do the character ones
+                for (TextPropCollection tpc : charStyles) {
+                    tpc.writeOut(baos);
+                }
 
-            // First up, we need to serialise the paragraph properties
-            for(TextPropCollection tpc : paragraphStyles) {
-                tpc.writeOut(baos);
+                rawContents = baos.toByteArray();
             }
-
-            // Now, we do the character ones
-            for(TextPropCollection tpc : charStyles) {
-                tpc.writeOut(baos);
-            }
-
-            rawContents = baos.toByteArray();
         }
 
         // Now ensure that the header size is correct
@@ -403,7 +399,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         out.append("  original byte stream \n");
 
-        byte[] buf = IOUtils.safelyAllocate(rawContents.length + (long)reserved.length, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(rawContents.length + (long)reserved.length, getMaxRecordLength());
         System.arraycopy(rawContents, 0, buf, 0, rawContents.length);
         System.arraycopy(reserved, 0, buf, rawContents.length, reserved.length);
         out.append( HexDump.dump(buf, 0, 0) );

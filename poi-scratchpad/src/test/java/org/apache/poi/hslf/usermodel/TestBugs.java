@@ -109,6 +109,25 @@ public final class TestBugs {
         }
     }
 
+    @Test
+    void fillTypesPaintMapping_65653() throws IOException {
+        try (HSLFSlideShow ppt = open("41246-2.ppt")) {
+            HSLFAutoShape as = (HSLFAutoShape) ppt.getSlides().get(15).getShapes().get(0);
+            HSLFFill f = as.getFill();
+            assertEquals(HSLFFill.FILL_TEXTURE, f.getFillType());
+            PaintStyle p = f.getFillStyle().getPaint();
+            assertTrue(p instanceof PaintStyle.TexturePaint);
+        }
+        try (HSLFSlideShow ppt = open("backgrounds.ppt")) {
+            HSLFAutoShape as = (HSLFAutoShape) ppt.getSlides().get(1).getShapes().get(0);
+            HSLFFill f = as.getFill();
+            assertEquals(HSLFFill.FILL_BACKGROUND, f.getFillType());
+            PaintStyle p = as.getFillStyle().getPaint();
+            assertTrue(p instanceof SolidPaint);
+            assertEquals(Color.WHITE, ((SolidPaint)p).getSolidColor().getColor());
+        }
+    }
+
     /**
      * First fix from Bug 42474: NPE in RichTextRun.isBold()
      * when the RichTextRun comes from a Notes model object
@@ -873,6 +892,14 @@ public final class TestBugs {
     @Test
     void bug60294() throws IOException {
         try (HSLFSlideShow ppt = open("60294.ppt")) {
+            List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
+            assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
+        }
+    }
+
+    @Test
+    void test501RC1Failure() throws Exception {
+        try (HSLFSlideShow ppt = open("23884_defense_FINAL_OOimport_edit.ppt")) {
             List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
             assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
         }

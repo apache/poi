@@ -22,7 +22,6 @@ import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +45,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -138,8 +138,10 @@ import org.apache.poi.util.Removal;
 public final class HSSFWorkbook extends POIDocument implements Workbook {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-    private static final int MAX_IMAGE_LENGTH = 50_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int DEFAULT_MAX_IMAGE_LENGTH = 50_000_000;
+    private static int MAX_IMAGE_LENGTH = DEFAULT_MAX_IMAGE_LENGTH;
 
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
@@ -216,6 +218,34 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
     public static HSSFWorkbook create(InternalWorkbook book) {
         return new HSSFWorkbook(book);
+    }
+
+    /**
+     * @param length the max record length allowed for HSSFWorkbook
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HSSFWorkbook
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    /**
+     * @param length the max image length allowed for HSSFWorkbook
+     */
+    public static void setMaxImageLength(int length) {
+        MAX_IMAGE_LENGTH = length;
+    }
+
+    /**
+     * @return the max image length allowed for HSSFWorkbook
+     */
+    public static int getMaxImageLength() {
+        return MAX_IMAGE_LENGTH;
     }
 
     /**
@@ -759,7 +789,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * Returns the index of the sheet by his name
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based)
+     * @return index of the sheet (0 based) or -1 if it was not found.
      */
     @Override
     public int getSheetIndex(String name) {
@@ -847,10 +877,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             // Try and find the next sheet name that is unique
             String index = Integer.toString(uniqueIndex++);
             String name;
-            if (baseName.length() + index.length() + 2 < 31) {
+            if (baseName.length() + index.length() + 2 < MAX_SENSITIVE_SHEET_NAME_LEN) {
                 name = baseName + " (" + index + ")";
             } else {
-                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+                name = baseName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
@@ -906,8 +936,22 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             throw new IllegalArgumentException("sheetName must not be null");
         }
 
-        if (workbook.doesContainsSheetName(sheetname, _sheets.size())) {
-            throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
+		if (workbook.doesContainsSheetName(sheetname, _sheets.size())) {
+			throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
+		}
+
+		// YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
+        // not accessible due to the trimming while we are not even aware of the reason and continue to use
+        // the long name in generated formulas
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+
+			// we still need to warn about the trimming as the original sheet name won't be available
+			// e.g. when referenced by formulas
+			LOGGER.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+					sheetname, trimmedSheetname);
+			sheetname = trimmedSheetname;
         }
 
         HSSFSheet sheet = new HSSFSheet(this);
@@ -1305,7 +1349,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         DocumentNode workbookNode = (DocumentNode) dir.getEntry(
                 getWorkbookDirEntryName(dir));
         POIFSDocument workbookDoc = new POIFSDocument(workbookNode);
-        workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
+        workbookDoc.replaceContents(new UnsynchronizedByteArrayInputStream(getBytes()));
 
         // Update the properties streams in the file
         writeProperties();
@@ -1367,7 +1411,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         List<String> excepts = new ArrayList<>(1);
 
         // Write out the Workbook stream
-        fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
+        fs.createDocument(new UnsynchronizedByteArrayInputStream(getBytes()), "Workbook");
 
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);
@@ -1376,7 +1420,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             // Don't write out the old Workbook, we'll be doing our new one
             // If the file had an "incorrect" name for the workbook stream,
             // don't write the old one as we'll use the correct name shortly
-            excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
+            excepts.addAll(WORKBOOK_DIR_ENTRY_NAMES);
 
             // summary information has been already written via writeProperties and might go in a
             // different stream, if the file is cryptoapi encrypted
@@ -1623,10 +1667,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if (i > 0) {
-                sb.append(",");
+                sb.append(',');
             }
             SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
-            sb.append("!");
+            sb.append('!');
             sb.append(parts[i]);
         }
         name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this, FormulaType.NAMEDRANGE, sheetIndex));

@@ -54,6 +54,10 @@ public final class UserDefinedFunctionExample {
         File workbookFile = new File( args[0] ) ;
 
         try (Workbook workbook = WorkbookFactory.create(workbookFile, null, true)) {
+            if (workbook == null) {
+                System.out.println("Workbook "+workbookFile+" can't be loaded.");
+                return;
+            }
             String[] functionNames = {"calculatePayment"};
             FreeRefFunction[] functionImpls = {new CalculateMortgage()};
 

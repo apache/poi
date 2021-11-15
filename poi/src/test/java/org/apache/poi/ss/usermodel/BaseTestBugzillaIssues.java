@@ -1382,6 +1382,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
     void test58896() throws IOException {
         final int nrows = 160;
         final int ncols = 139;
@@ -1493,8 +1494,8 @@ public abstract class BaseTestBugzillaIssues {
 
             // *******************************
             // First cell of array formula, OK
-            int rowId = 0;
-            int cellId = 1;
+            final int rowId = 0;
+            final int cellId = 1;
 
             Row row = sheet.getRow(rowId);
             Cell cell = row.getCell(cellId);
@@ -1507,9 +1508,6 @@ public abstract class BaseTestBugzillaIssues {
 
             // *******************************
             // Second cell of array formula, NOT OK for xlsx files
-            rowId = 1;
-            cellId = 1;
-
             row = sheet.getRow(rowId);
             cell = row.getCell(cellId);
             assertEquals("A1", cell.getCellFormula());
@@ -1541,13 +1539,13 @@ public abstract class BaseTestBugzillaIssues {
 
             // Verify that the changes were made
             assertNull(wb.getPrintArea(0), "Sheet0 before write");
-            assertEquals(wb.getPrintArea(1), "Sheet1 before write", "Sheet1!$A$1:$A$1");
+            assertEquals("Sheet1!$A$1:$A$1", wb.getPrintArea(1), "Sheet1 before write");
 
             // Verify that the changes are non-volatile
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
                 // CURRENTLY FAILS with "Sheet0!$A$1:$C$6"
                 assertNull(wb2.getPrintArea(0), "Sheet0 after write");
-                assertEquals(wb2.getPrintArea(1), "Sheet1 after write", "Sheet1!$A$1:$A$1");
+                assertEquals("Sheet1!$A$1:$A$1", wb2.getPrintArea(1), "Sheet1 after write");
             }
         }
     }

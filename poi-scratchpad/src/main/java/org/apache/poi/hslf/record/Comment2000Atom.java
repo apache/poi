@@ -33,11 +33,7 @@ import org.apache.poi.util.LittleEndian;
  * An atomic record containing information about a comment.
  */
 
-public final class Comment2000Atom extends RecordAtom
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+public final class Comment2000Atom extends RecordAtom {
 
     /**
      * Record header.
@@ -74,7 +70,7 @@ public final class Comment2000Atom extends RecordAtom
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
 
     /**

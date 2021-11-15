@@ -53,12 +53,12 @@ class TestXWPFBugs {
 
             run.setFontFamily("Times New Roman");
             run.setFontSize(20);
-            assertEquals(run.getFontFamily(), "Times New Roman");
-            assertEquals(run.getFontFamily(FontCharRange.cs), "Times New Roman");
-            assertEquals(run.getFontFamily(FontCharRange.eastAsia), "Times New Roman");
-            assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Times New Roman");
+            assertEquals("Times New Roman", run.getFontFamily());
+            assertEquals("Times New Roman", run.getFontFamily(FontCharRange.cs));
+            assertEquals("Times New Roman", run.getFontFamily(FontCharRange.eastAsia));
+            assertEquals("Times New Roman", run.getFontFamily(FontCharRange.hAnsi));
             run.setFontFamily("Arial", FontCharRange.hAnsi);
-            assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Arial");
+            assertEquals("Arial", run.getFontFamily(FontCharRange.hAnsi));
         }
     }
 

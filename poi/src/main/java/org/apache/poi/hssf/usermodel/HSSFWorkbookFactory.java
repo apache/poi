@@ -48,6 +48,7 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
      *
      * @return The created workbook
      */
+    @Override
     public HSSFWorkbook create() {
         return new HSSFWorkbook();
     }
@@ -66,6 +67,8 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
      * Note that in order to properly release resources the
      * Workbook should be closed after use.
      */
+    @SuppressWarnings("java:S2093")
+    @Override
     public HSSFWorkbook create(final DirectoryNode root, String password) throws IOException {
         boolean passwordSet = false;
         if (password != null) {
@@ -93,6 +96,7 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
     }
 
     @Override
+    @SuppressWarnings({"java:S2095","java:S2093"})
     public Workbook create(File file, String password, boolean readOnly) throws IOException {
         boolean passwordSet = false;
         if (password != null) {
@@ -104,11 +108,8 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
             try {
                 return new HSSFWorkbook(fs, true);
             } catch (RuntimeException e) {
-                // we need to close the filesystem
-                // if we encounter an exception to
-                // not leak file handles
+                // we need to close the filesystem if we encounter an exception to not leak file handles
                 fs.close();
-
                 throw e;
             }
         } finally {

@@ -186,8 +186,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
                 // Add another formula referencing these workbooks
                 Cell cXSL_cell2 = rXSL.createCell(40);
                 cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
-                // TODO Shouldn't it become [2] like the others?
-                assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
+                // it become [2] like the others
+                assertEquals("[2]Uses!$C$1", cXSL_cell2.getCellFormula());
                 assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell2).formatAsString());
 
 

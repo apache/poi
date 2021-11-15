@@ -18,11 +18,11 @@
 package org.apache.poi.poifs.crypt.agile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.xml.XMLConstants;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.EncryptedDocumentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -129,7 +129,7 @@ public class EncryptionDocument {
 
     static byte[] getBinAttr(Element el, String name) {
         String at = el.getAttribute(name);
-        return (at.isEmpty()) ? null : Base64.decodeBase64(at);
+        return (at.isEmpty()) ? null : Base64.getDecoder().decode(at);
     }
 
     static void setIntAttr(Element el, String name, Integer val) {
@@ -144,7 +144,7 @@ public class EncryptionDocument {
 
     static void setBinAttr(Element el, String name, byte[] val) {
         if (val != null) {
-            setAttr(el, name, Base64.encodeBase64String(val));
+            setAttr(el, name, Base64.getEncoder().encodeToString(val));
         }
     }
 }

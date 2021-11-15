@@ -191,7 +191,7 @@ public class XDDFLine3DChartData extends XDDFChartData {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
             } else {
-                return null;
+                return false;
             }
         }
 

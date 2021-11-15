@@ -18,33 +18,135 @@ package org.apache.poi.hssf.dev;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Locale;
 
-import org.apache.commons.io.output.NullPrintStream;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
+import org.apache.commons.io.output.NullWriter;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-@ResourceLock(Resources.SYSTEM_OUT)
+/**
+ * This is a low-level debugging class, which simply prints out what records come in what order.
+ * Most people will want to use {@link BiffViewer} or {@link TestEFBiffViewer}, but this can be handy when
+ * trying to make sense of {@link ContinueRecord} special cases.
+ * <p>
+ * Output is of the form:
+ * SID - Length - Type (if known)
+ * byte0 byte1 byte2 byte3 .... byte(n-4) byte(n-3) byte(n-2) byte(n-1)
+ */
+
 class TestRecordLister extends BaseTestIteratingXLS {
     @Override
     void runOneFile(File fileIn) throws IOException {
-        PrintStream save = System.out;
-        try {
-            // redirect standard out during the test to avoid spamming the console with output
-            System.setOut(new NullPrintStream());
+        // replace it with System.out if you like it more verbatim
+        PrintWriter out = new PrintWriter(new NullWriter());
 
-            RecordLister viewer = new RecordLister();
-            viewer.setFile(fileIn.getAbsolutePath());
-            viewer.run();
-        } finally {
-            System.setOut(save);
+        try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
+             InputStream din = BiffViewer.getPOIFSInputStream(fs)) {
+            RecordInputStream rinp = new RecordInputStream(din);
+
+            while (rinp.hasNextRecord()) {
+                int sid = rinp.getNextSid();
+                rinp.nextRecord();
+
+                int size = rinp.available();
+                Class<? extends Record> clz = RecordFactory.getRecordClass(sid);
+
+                out.printf(Locale.ROOT, "%1$#06x (%1$04d) - %2$#05x (%2$03d) bytes", sid, size);
+
+                if (clz != null) {
+                    out.print("  \t");
+                    out.print(clz.getSimpleName());
+                }
+                out.println();
+
+                byte[] data = rinp.readRemainder();
+                if (data.length > 0) {
+                    out.print("   ");
+                    out.println(formatData(data));
+                }
+            }
         }
     }
 
-    //@Test
-    void testFile() throws IOException {
-        RecordLister viewer = new RecordLister();
-        viewer.setFile(new File("test-data/spreadsheet/testEXCEL_95.xls").getAbsolutePath());
-        viewer.run();
+    /*
+    private static String formatSID(int sid) {
+        String hex = Integer.toHexString(sid);
+        String dec = Integer.toString(sid);
+
+        StringBuilder s = new StringBuilder();
+        s.append("0x");
+        for (int i = hex.length(); i < 4; i++) {
+            s.append('0');
+        }
+        s.append(hex);
+
+        s.append(" (");
+        for (int i = dec.length(); i < 4; i++) {
+            s.append('0');
+        }
+        s.append(dec);
+        s.append(")");
+
+        return s.toString();
+    }
+
+    private static String formatSize(int size) {
+        String hex = Integer.toHexString(size);
+        String dec = Integer.toString(size);
+
+        final String MAX_DIGITS = "000";
+
+        StringBuilder s = new StringBuilder();
+        s.append(MAX_DIGITS, 0, Math.max(MAX_DIGITS.length()-hex.length(),0));
+        s.append(hex);
+
+        s.append(" (");
+        s.append(MAX_DIGITS, 0, Math.max(MAX_DIGITS.length()-dec.length(),0));
+        s.append(dec);
+        s.append(')');
+
+        return s.toString();
+    }*/
+
+    private static String formatData(byte[] data) {
+        if (data == null || data.length == 0) {
+            return "";
+        }
+
+        StringBuilder s = new StringBuilder();
+
+        // If possible, do first 4 and last 4 bytes
+        final int MAX_BYTES = 9;
+        int bLen = Math.min(data.length, MAX_BYTES);
+        for (int i=0; i<bLen; i++) {
+            if (i>0) {
+                s.append(' ');
+            }
+            int b;
+            if (i<MAX_BYTES/2) {
+                b = data[i];
+            } else if (i == MAX_BYTES/2 && data.length > MAX_BYTES) {
+                s.append("...");
+                continue;
+            } else {
+                b = data[data.length-(bLen-i)];
+            }
+
+            // byte to hex
+            if (b < 0) {
+                b += 256;
+            }
+            if (b < 16) {
+                s.append('0');
+            }
+            s.append(Integer.toHexString(b));
+        }
+
+        return s.toString();
     }
 }

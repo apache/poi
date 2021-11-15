@@ -39,66 +39,39 @@ import java.util.Objects;
  */
 // @XmlAccessorType(XmlAccessType.FIELD)
 // @XmlType(name = "CT_AdjPoint2D")
-public class AdjustPoint {
+public class AdjustPoint implements AdjustPointIf {
 
     // @XmlAttribute(name = "x", required = true)
     private String x;
     // @XmlAttribute(name = "y", required = true)
     private String y;
 
-
-    /**
-     * Gets the value of the x property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
+    @Override
     public String getX() {
         return x;
     }
 
-    /**
-     * Sets the value of the x property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
+    @Override
     public void setX(String value) {
         this.x = value;
     }
 
+    @Override
     public boolean isSetX() {
         return (this.x!= null);
     }
 
-    /**
-     * Gets the value of the y property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
+    @Override
     public String getY() {
         return y;
     }
 
-    /**
-     * Sets the value of the y property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
+    @Override
     public void setY(String value) {
         this.y = value;
     }
 
+    @Override
     public boolean isSetY() {
         return (this.y!= null);
     }

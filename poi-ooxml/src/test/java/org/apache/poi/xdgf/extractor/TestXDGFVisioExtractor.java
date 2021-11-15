@@ -51,9 +51,6 @@ class TestXDGFVisioExtractor {
 
     @Test
     void testGetSimpleText() throws IOException {
-        new XDGFVisioExtractor(xml).close();
-        new XDGFVisioExtractor(pkg).close();
-
         XDGFVisioExtractor extractor = new XDGFVisioExtractor(xml);
         extractor.getText();
 
@@ -69,13 +66,14 @@ class TestXDGFVisioExtractor {
     //some common visio classes -- ConnectsType
     @Test
     void testVisioConnects() throws IOException {
-        InputStream is = SAMPLES.openResourceAsStream("60489.vsdx");
-        XmlVisioDocument document = new XmlVisioDocument(is);
-        is.close();
-        XDGFVisioExtractor extractor = new XDGFVisioExtractor(document);
-        String text = extractor.getText();
-        assertContains(text, "Arrears");
-        extractor.close();
+        XmlVisioDocument document;
+        try (InputStream is = SAMPLES.openResourceAsStream("60489.vsdx")) {
+            document = new XmlVisioDocument(is);
+        }
+        try (XDGFVisioExtractor extractor = new XDGFVisioExtractor(document)) {
+            String text = extractor.getText();
+            assertContains(text, "Arrears");
+        }
     }
 
     /**
@@ -87,13 +85,26 @@ class TestXDGFVisioExtractor {
      */
     @Test
     void testPolylineTo() throws IOException {
-        InputStream is = SAMPLES.openResourceAsStream("60973.vsdx");
-        XmlVisioDocument document = new XmlVisioDocument(is);
-        is.close();
-        XDGFVisioExtractor extractor = new XDGFVisioExtractor(document);
-        String text = extractor.getText();
-        assertContains(text, "42 U");
-        assertContains(text, "Access VLANS");
-        extractor.close();
+        XmlVisioDocument document;
+        try (InputStream is = SAMPLES.openResourceAsStream("60973.vsdx")) {
+            document = new XmlVisioDocument(is);
+        }
+        try (XDGFVisioExtractor extractor = new XDGFVisioExtractor(document)) {
+            String text = extractor.getText();
+            assertContains(text, "42 U");
+            assertContains(text, "Access VLANS");
+        }
+    }
+
+    @Test
+    void testGithub260() throws IOException {
+        XmlVisioDocument document;
+        try (InputStream is = SAMPLES.openResourceAsStream("github260.vsdx")) {
+            document = new XmlVisioDocument(is);
+        }
+        try (XDGFVisioExtractor extractor = new XDGFVisioExtractor(document)) {
+            String text = extractor.getText();
+            assertContains(text, "Arrive at hotel");
+        }
     }
 }

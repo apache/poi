@@ -39,7 +39,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.StringCodepointsIterable;
+import org.apache.poi.util.CodepointsUtil;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -82,6 +83,7 @@ public class SheetDataWriter implements Closeable {
         this();
         this._sharedStringSource = sharedStringsTable;
     }
+
     /**
      * Create a temp file to write sheet data.
      * By default, temp files are created in the default temporary-file directory
@@ -89,7 +91,10 @@ public class SheetDataWriter implements Closeable {
      * it and specify a different temp directory or filename or suffix, e.g. <code>.gz</code>
      *
      * @return temp file to write sheet data
+     * @deprecated use {@link TempFile#createTempFile(String, String)} directly
      */
+    @Removal(version = "6.0.0")
+    //make this protected or private in POI 6.0.0 - no need for this to be public
     public File createTempFile() throws IOException {
         return TempFile.createTempFile("poi-sxssf-sheet", ".xml");
     }
@@ -98,7 +103,10 @@ public class SheetDataWriter implements Closeable {
      * Create a writer for the sheet data.
      *
      * @param  fd the file to write to
+     * @deprecated this method is due to be made non-public, probably protected
      */
+    @Removal(version = "6.0.0")
+    //make this protected or private in POI 6.0.0 - no need for this to be public
     public Writer createWriter(File fd) throws IOException {
         FileOutputStream fos = new FileOutputStream(fd);
         OutputStream decorated;
@@ -144,6 +152,9 @@ public class SheetDataWriter implements Closeable {
      */
     public InputStream getWorksheetXMLInputStream() throws IOException {
         File fd = getTempFile();
+        if (fd == null) {
+            throw new IOException("getWorksheetXMLInputStream only works when a temp file is used");
+        }
         FileInputStream fis = new FileInputStream(fd);
         try {
             return decorateInputStream(fis);
@@ -181,13 +192,6 @@ public class SheetDataWriter implements Closeable {
 
     public int getLastFlushedRow() {
         return _numberLastFlushedRow;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (_fd.exists() && !_fd.delete()) {
-            LOG.atError().log("Can't delete temporary encryption file: {}", _fd);
-        }
     }
 
     /**
@@ -393,7 +397,8 @@ public class SheetDataWriter implements Closeable {
             return;
         }
 
-        for (String codepoint : new StringCodepointsIterable(s)) {
+        for (Iterator<String> iter = CodepointsUtil.iteratorFor(s); iter.hasNext(); ) {
+            String codepoint = iter.next();
             switch (codepoint) {
                 case "<":
                     _out.write("&lt;");
@@ -440,6 +445,10 @@ public class SheetDataWriter implements Closeable {
 
     static boolean replaceWithQuestionMark(char c) {
         return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
+    }
+
+    void flush() throws IOException {
+        this._out.flush();
     }
 
     /**

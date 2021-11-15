@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 /**
  * Common parent of Slides, Notes and Masters
  */
+@SuppressWarnings("java:S1452")
 public interface Sheet<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>

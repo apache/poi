@@ -36,7 +36,8 @@ import org.apache.poi.util.IOUtils;
 final class FunctionMetadataReader {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final String METADATA_FILE_NAME = "functionMetadata.txt";
     private static final String METADATA_FILE_NAME_CETAB = "functionMetadataCetab.txt";
@@ -54,6 +55,20 @@ final class FunctionMetadataReader {
         "LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2", "A1.R1C1",
     };
     private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
+
+    /**
+     * @param length the max record length allowed for FunctionMetadataReader
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for FunctionMetadataReader
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public static FunctionMetadataRegistry createRegistry() {
         FunctionDataBuilder fdb = new FunctionDataBuilder(800);

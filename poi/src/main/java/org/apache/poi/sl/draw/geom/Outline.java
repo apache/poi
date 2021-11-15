@@ -22,15 +22,15 @@ package org.apache.poi.sl.draw.geom;
 import java.awt.Shape;
 
 public class Outline {
-    private Shape shape;
-    private Path path;
+    private final Shape shape;
+    private final PathIf path;
 
-    public Outline(Shape shape, Path path){
+    public Outline(Shape shape, PathIf path){
         this.shape = shape;
         this.path = path;
     }
 
-    public Path getPath(){
+    public PathIf getPath(){
         return path;
     }
 

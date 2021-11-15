@@ -34,7 +34,7 @@ public final class JPEG extends Bitmap {
     private ColorSpace colorSpace = ColorSpace.rgb;
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
      *             {@link JPEG}. This API led to detached {@link JPEG} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */

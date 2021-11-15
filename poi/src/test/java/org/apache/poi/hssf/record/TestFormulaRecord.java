@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -42,9 +43,9 @@ final class TestFormulaRecord {
         record.setRow(1);
         record.setXFIndex((short)4);
 
-        assertEquals(record.getColumn(),0);
-        assertEquals(record.getRow(), 1);
-        assertEquals(record.getXFIndex(),4);
+        assertEquals(0,record.getColumn());
+        assertEquals(1, record.getRow());
+        assertEquals(4,record.getXFIndex());
     }
 
     /**
@@ -144,15 +145,15 @@ final class TestFormulaRecord {
 
         Ptg[] ptgs = fr.getParsedExpression();
         assertEquals(9, ptgs.length);
-        assertEquals(IntPtg.class,     ptgs[0].getClass());
-        assertEquals(AttrPtg.class,   ptgs[1].getClass());
-        assertEquals(RefPtg.class, ptgs[2].getClass());
-        assertEquals(AttrPtg.class,   ptgs[3].getClass());
-        assertEquals(RefPtg.class, ptgs[4].getClass());
-        assertEquals(AttrPtg.class,   ptgs[5].getClass());
-        assertEquals(RefPtg.class, ptgs[6].getClass());
-        assertEquals(AttrPtg.class,   ptgs[7].getClass());
-        assertEquals(FuncVarPtg.class,   ptgs[8].getClass());
+        assertSame(IntPtg.class,     ptgs[0].getClass());
+        assertSame(AttrPtg.class,   ptgs[1].getClass());
+        assertSame(RefPtg.class, ptgs[2].getClass());
+        assertSame(AttrPtg.class,   ptgs[3].getClass());
+        assertSame(RefPtg.class, ptgs[4].getClass());
+        assertSame(AttrPtg.class,   ptgs[5].getClass());
+        assertSame(RefPtg.class, ptgs[6].getClass());
+        assertSame(AttrPtg.class,   ptgs[7].getClass());
+        assertSame(FuncVarPtg.class,   ptgs[8].getClass());
 
         FuncVarPtg choose = (FuncVarPtg)ptgs[8];
         assertEquals("CHOOSE", choose.getName());

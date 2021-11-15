@@ -368,29 +368,6 @@ public final class TestPOIXMLProperties {
             assertNotNull(wbBack.getProperties(), "Third writeOutAndReadBack");
             assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr(), "Third prop check");
             assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr(), "Third prop check1");
-
-            /* Manual test to write out the file more than once:
-            File test1 = File.createTempFile("test1", ".xlsx", new File("C:\\temp"));
-            File test2 = File.createTempFile("test2", ".xlsx", new File("C:\\temp"));
-            try (final java.io.FileOutputStream fs = new java.io.FileOutputStream(test1)) {
-                workbook.write(fs);
-            }
-            try (final XSSFWorkbook wb = new XSSFWorkbook(test1)) {
-                assertNotNull(wb.getProperties());
-            } catch (InvalidFormatException e) {
-                fail("Test1 copy failed: " + e.getMessage());
-            }
-
-            try (final java.io.FileOutputStream fs = new java.io.FileOutputStream(test2)) {
-                workbook.write(fs);
-            }
-
-            try (final XSSFWorkbook wb = new XSSFWorkbook(test2)) {
-                assertNotNull(wb.getProperties());
-            } catch (InvalidFormatException e) {
-                fail("Test2 copy failed: " + e.getMessage());
-            }
-             */
         }
     }
 }

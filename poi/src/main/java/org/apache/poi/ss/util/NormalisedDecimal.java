@@ -225,7 +225,7 @@ final class NormalisedDecimal {
         return _fractionalPart - other._fractionalPart;
     }
     public BigDecimal getFractionalPart() {
-        return new BigDecimal(_fractionalPart).divide(BD_2_POW_24);
+        return BigDecimal.valueOf(_fractionalPart).divide(BD_2_POW_24);
     }
 
     private String getFractionalDigits() {
@@ -247,9 +247,9 @@ final class NormalisedDecimal {
         sb.append(ws.substring(1));
         sb.append(' ');
         sb.append(getFractionalDigits());
-        sb.append("E");
+        sb.append('E');
         sb.append(getDecimalExponent());
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 }

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,23 +45,19 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Isolated   // this test changes global static BYTE_ARRAY_MAX_OVERRIDE
 public abstract class BaseTestPPTIterating {
-    protected static final Set<String> OLD_FILES = new HashSet<>();
-    static {
-        OLD_FILES.add("PPT95.ppt");
-        OLD_FILES.add("pp40only.ppt");
-    }
+    static final Set<String> OLD_FILES = new HashSet<>(Arrays.asList(
+        "PPT95.ppt", "pp40only.ppt"
+    ));
 
-    protected static final Set<String> ENCRYPTED_FILES = new HashSet<>();
-    static {
-        ENCRYPTED_FILES.add("cryptoapi-proc2356.ppt");
-        ENCRYPTED_FILES.add("Password_Protected-np-hello.ppt");
-        ENCRYPTED_FILES.add("Password_Protected-56-hello.ppt");
-        ENCRYPTED_FILES.add("Password_Protected-hello.ppt");
-        ENCRYPTED_FILES.add("ppt_with_png_encrypted.ppt");
-    }
+    static final Set<String> ENCRYPTED_FILES = new HashSet<>(Arrays.asList(
+        "cryptoapi-proc2356.ppt",
+        "Password_Protected-np-hello.ppt",
+        "Password_Protected-56-hello.ppt",
+        "Password_Protected-hello.ppt",
+        "ppt_with_png_encrypted.ppt"
+    ));
 
-    protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
-            new HashMap<>();
+    static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
 
     public static Stream<Arguments> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);

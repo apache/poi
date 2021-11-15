@@ -27,6 +27,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTableShape;
@@ -52,6 +54,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
     TableShape<XSLFShape,XSLFTextParagraph> {
     /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
+    private static final Logger LOG = LogManager.getLogger(XSLFTable.class);
 
     private final CTTable _table;
     private final List<XSLFTableRow> _rows;
@@ -425,13 +428,17 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 for (int col2=col+1; col2<col+tc.getGridSpan(); col2++) {
                     assert(col2 < cols);
                     XSLFTableCell tc2 = getCell(row, col2);
-                    assert(tc2.getGridSpan() == 1 && tc2.getRowSpan() == 1);
+                    if (tc2.getGridSpan() != 1 || tc2.getRowSpan() != 1) {
+                        LOG.warn("invalid table span - rendering result is probably wrong");
+                    }
                     mergedBounds.add(tc2.getAnchor());
                 }
                 for (int row2=row+1; row2<row+tc.getRowSpan(); row2++) {
                     assert(row2 < rows);
                     XSLFTableCell tc2 = getCell(row2, col);
-                    assert(tc2.getGridSpan() == 1 && tc2.getRowSpan() == 1);
+                    if (tc2.getGridSpan() != 1 || tc2.getRowSpan() != 1) {
+                        LOG.warn("invalid table span - rendering result is probably wrong");
+                    }
                     mergedBounds.add(tc2.getAnchor());
                 }
                 tc.setAnchor(mergedBounds);

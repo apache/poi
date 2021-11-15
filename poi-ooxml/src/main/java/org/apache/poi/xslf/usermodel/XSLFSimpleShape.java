@@ -22,9 +22,6 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -47,6 +44,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.draw.geom.XSLFCustomGeometry;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFEffectProperties;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
@@ -240,7 +238,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     /**
     * @param color  the color to paint the shape outline.
-     * A <code>null</code> value turns off the shape outline.
+     * A {@code null} value turns off the shape outline.
      */
     public void setLineColor(Color color) {
         CTLineProperties ln = getLn(this, true);
@@ -273,7 +271,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     /**
      *
-     * @return the color of the shape outline or <code>null</code>
+     * @return the color of the shape outline or {@code null}
      * if outline is turned off
      */
     @SuppressWarnings("WeakerAccess")
@@ -351,7 +349,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     /**
      *
-     * @param width line width in points. <code>0</code> means no line
+     * @param width line width in points. {@code 0} means no line
      */
     @SuppressWarnings("WeakerAccess")
     public void setLineWidth(double width) {
@@ -386,7 +384,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     }
 
     /**
-     * @return line width in points. <code>0</code> means no line.
+     * @return line width in points. {@code 0} means no line.
      */
     @SuppressWarnings("WeakerAccess")
     public double getLineWidth() {
@@ -709,14 +707,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 throw new IllegalStateException("Unknown shape geometry: " + name + ", available geometries are: " + dict.keySet());
             }
         } else if (gp.isSetCustGeom()){
-            XMLStreamReader staxReader = gp.getCustGeom().newXMLStreamReader();
-            geom = PresetGeometries.convertCustomGeometry(staxReader);
-            try {
-                staxReader.close();
-            }
-            catch (XMLStreamException e) {
-                LOG.atWarn().log("An error occurred while closing a Custom Geometry XML Stream Reader: {}", e.getMessage());
-            }
+            geom = XSLFCustomGeometry.convertCustomGeometry(gp.getCustGeom());
         } else {
             geom = dict.get("rect");
         }

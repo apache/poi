@@ -242,7 +242,6 @@ public final class FunctionEval {
         // 244: INFO
 
         // 247: DB
-        // 252: FEQUENCY
         retval[252] = Frequency.instance;
 
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
@@ -258,7 +257,7 @@ public final class FunctionEval {
         // 275: CHIINV
         retval[276] = NumericFunction.COMBIN;
         // 277: CONFIDENCE
-        // 278:CRITBINOM
+        // 278: CRITBINOM
         retval[279] = NumericFunction.EVEN;
         // 280: EXPONDIST
         // 281: FDIST
@@ -281,7 +280,7 @@ public final class FunctionEval {
         retval[298] = NumericFunction.ODD;
         // 299: PERMUT
         retval[300] = NumericFunction.POISSON;
-        // 301: TDIST
+        retval[301] = TDist.instance;
         // 302: WEIBULL
         retval[303] = new Sumxmy2();
         retval[304] = new Sumx2my2();
@@ -375,7 +374,7 @@ public final class FunctionEval {
      * Register a new function in runtime.
      *
      * @param name  the function name
-     * @param func  the functoin to register
+     * @param func  the function to register
      * @throws IllegalArgumentException if the function is unknown or already  registered.
      * @since 3.8 beta6
      */

@@ -41,41 +41,9 @@ public class XSSFColor extends ExtendedColor {
         return color == null ? null : new XSSFColor(color, map);
     }
 
-    /**
-     * Create an instance of XSSFColor from the supplied XML bean, with default color indexes
-     * @param color The {@link CTColor} to use as color-value.
-     * @deprecated 3.17 beta 1 - pass the workbook styles indexed color map, if any
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public XSSFColor(CTColor color) {
-        this(color, new DefaultIndexedColorMap());
-    }
-
-    /**
-     * Create an instance of XSSFColor from the supplied XML bean, with the given color indexes
-     * @param color The {@link CTColor} to use as color-value.
-     * @param map The IndexedColorMap to use instead of the default one
-     * @deprecated 4.0.0 - use the factory {@link #from(CTColor, IndexedColorMap)} method instead to check for null CTColor instances.  Make private eventually
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFColor(CTColor color, IndexedColorMap map) {
+    private XSSFColor(CTColor color, IndexedColorMap map) {
         this.ctColor = color;
         this.indexedColorMap = map;
-    }
-
-    /**
-     * Create an new instance of XSSFColor, without knowledge of any custom indexed colors.
-     * This is OK for just transiently setting indexes, etc. but is discouraged in read/get uses
-     * @deprecated as of 4.0.0, we want to have the indexed map, and all calling contexts have access to it.
-     * @see #XSSFColor(IndexedColorMap)
-     * @see #from(CTColor, IndexedColorMap)
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public XSSFColor() {
-        this(CTColor.Factory.newInstance(), new DefaultIndexedColorMap());
     }
 
     /**
@@ -84,17 +52,6 @@ public class XSSFColor extends ExtendedColor {
      */
     public XSSFColor(IndexedColorMap colorMap) {
         this(CTColor.Factory.newInstance(), colorMap);
-    }
-
-    /**
-     * Create an instance of XSSFColor from the awt Color
-     * @param clr awt Color
-     * @deprecated 3.17 beta 1 - pass the workbook styles indexed color map, if any
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public XSSFColor(java.awt.Color clr) {
-        this(clr, new DefaultIndexedColorMap());
     }
 
     /**

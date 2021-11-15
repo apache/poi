@@ -27,8 +27,8 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -124,18 +124,19 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * @param data the embedded data.
      */
      public void setData(byte[] data) throws IOException {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-        //first four bytes is the length of the raw data
-        byte[] b = new byte[4];
-        LittleEndian.putInt(b, 0, data.length);
-        out.write(b);
+        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+             DeflaterOutputStream def = new DeflaterOutputStream(out)) {
+            //first four bytes is the length of the raw data
+            byte[] b = new byte[4];
+            LittleEndian.putInt(b, 0, data.length);
+            out.write(b);
 
-        DeflaterOutputStream def = new DeflaterOutputStream(out);
-        def.write(data, 0, data.length);
-        def.finish();
-        // TODO: CHECK if it's correct that DeflaterOutputStream is only finished and not closed?
-        _data = out.toByteArray();
-        LittleEndian.putInt(_header, 4, _data.length);
+            def.write(data, 0, data.length);
+            def.finish();
+            // TODO: CHECK if it's correct that DeflaterOutputStream is only finished and not closed?
+            _data = out.toByteArray();
+            LittleEndian.putInt(_header, 4, _data.length);
+        }
     }
 
     /**

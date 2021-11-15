@@ -18,16 +18,16 @@ package org.apache.poi.hssf.dev;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.commons.io.output.NullPrintStream;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.jupiter.api.Assertions;
 
-@ResourceLock(Resources.SYSTEM_OUT)
 class TestEFBiffViewer extends BaseTestIteratingXLS {
     @Override
     protected Map<String, Class<? extends Throwable>> getExcludes() {
@@ -41,27 +41,19 @@ class TestEFBiffViewer extends BaseTestIteratingXLS {
         excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);
         excludes.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         // "Buffer overrun"
-        excludes.put("XRefCalc.xls", RuntimeException.class);
+        // excludes.put("XRefCalc.xls", RuntimeException.class);
         return excludes;
     }
 
     @Override
     void runOneFile(File fileIn) throws IOException {
-        PrintStream save = System.out;
-        try {
-            // redirect standard out during the test to avoid spamming the console with output
-            System.setOut(new NullPrintStream());
+        HSSFRequest req = new HSSFRequest();
+        req.addListenerForAllRecords(Assertions::assertNotNull);
+        HSSFEventFactory factory = new HSSFEventFactory();
 
-            EFBiffViewer.main(new String[] { fileIn.getAbsolutePath() });
-        } finally {
-            System.setOut(save);
+        try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
+             InputStream din = BiffViewer.getPOIFSInputStream(fs)) {
+            factory.processEvents(req, din);
         }
-    }
-
-    //@Test
-    void testFile() throws IOException {
-        EFBiffViewer viewer = new EFBiffViewer();
-        viewer.setFile(new File("test-data/spreadsheet/59074.xls").getAbsolutePath());
-        viewer.run();
     }
 }

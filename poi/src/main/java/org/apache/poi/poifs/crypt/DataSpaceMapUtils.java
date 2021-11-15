@@ -35,9 +35,6 @@ import org.apache.poi.util.StringUtil;
 
 public class DataSpaceMapUtils {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     public static void addDefaultDataSpace(DirectoryEntry dir) throws IOException {
         DataSpaceMapEntry dsme = new DataSpaceMapEntry(
                 new int[]{ 0 }
@@ -337,7 +334,7 @@ public class DataSpaceMapUtils {
             return length == 0 ? null : "";
         }
 
-        byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(length, CryptoFunctions.MAX_RECORD_LENGTH);
         is.readFully(data);
 
         // Padding (variable): A set of bytes that MUST be of correct size such that the size of the UTF-8-LP-P4

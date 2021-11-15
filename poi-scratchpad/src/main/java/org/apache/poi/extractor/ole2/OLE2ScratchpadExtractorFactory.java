@@ -60,6 +60,21 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
     private static final Logger LOG = LogManager.getLogger(OLE2ScratchpadExtractorFactory.class);
 
+    private static final String[] OUTLOOK_ENTRY_NAMES = {
+        // message bodies, saved as plain text (PtypString)
+        // The first short (0x1000, 0x0047, 0x0037) refer to the Property ID (see [MS-OXPROPS].pdf)
+        // the second short (0x001e, 0x001f, 0x0102) refer to the type of data stored in this entry
+        // https://msdn.microsoft.com/endatatypes.Ex-us/library/cc433490(v=exchg.80).aspx
+        // @see org.apache.poi.hsmf.Types.MAPIType
+        "__substg1.0_1000001E", //PidTagBody ASCII
+        "__substg1.0_1000001F", //PidTagBody Unicode
+        "__substg1.0_0047001E", //PidTagMessageSubmissionId ASCII
+        "__substg1.0_0047001F", //PidTagMessageSubmissionId Unicode
+        "__substg1.0_0037001E", //PidTagSubject ASCII
+        "__substg1.0_0037001F", //PidTagSubject Unicode
+    };
+
+
     @Override
     public boolean accepts(FileMagic fm) {
         return FileMagic.OLE2 == fm;
@@ -87,6 +102,8 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
      *
      * @throws IOException when the format specific extraction fails because of invalid entires
      */
+    @SuppressWarnings("java:S2093")
+    @Override
     public POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
         try {
@@ -112,20 +129,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                 return new PublisherTextExtractor(poifsDir);
             }
 
-            final String[] outlookEntryNames = new String[]{
-                    // message bodies, saved as plain text (PtypString)
-                    // The first short (0x1000, 0x0047, 0x0037) refer to the Property ID (see [MS-OXPROPS].pdf)
-                    // the second short (0x001e, 0x001f, 0x0102) refer to the type of data stored in this entry
-                    // https://msdn.microsoft.com/endatatypes.Ex-us/library/cc433490(v=exchg.80).aspx
-                    // @see org.apache.poi.hsmf.Types.MAPIType
-                    "__substg1.0_1000001E", //PidTagBody ASCII
-                    "__substg1.0_1000001F", //PidTagBody Unicode
-                    "__substg1.0_0047001E", //PidTagMessageSubmissionId ASCII
-                    "__substg1.0_0047001F", //PidTagMessageSubmissionId Unicode
-                    "__substg1.0_0037001E", //PidTagSubject ASCII
-                    "__substg1.0_0037001F", //PidTagSubject Unicode
-            };
-            for (String entryName : outlookEntryNames) {
+            for (String entryName : OUTLOOK_ENTRY_NAMES) {
                 if (poifsDir.hasEntry(entryName)) {
                     return new OutlookTextExtractor(poifsDir);
                 }

@@ -52,6 +52,7 @@ public class MainExtractorFactory implements ExtractorProvider {
         return create(new POIFSFileSystem(inputStream).getRoot(), password);
     }
 
+    @SuppressWarnings("java:S2093")
     @Override
     public POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();

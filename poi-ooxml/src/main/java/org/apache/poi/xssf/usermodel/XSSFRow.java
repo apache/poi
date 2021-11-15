@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyContext;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -34,6 +35,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -174,7 +176,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         XSSFRow other = (XSSFRow) obj;
 
         return (this.getRowNum() == other.getRowNum()) &&
-               (this.getSheet() == other.getSheet());
+                (this.getSheet() == other.getSheet());
     }
 
     @Override
@@ -461,16 +463,16 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCellStyle getRowStyle() {
-       if(!isFormatted()) {
-        return null;
-    }
+        if(!isFormatted()) {
+            return null;
+        }
 
-       StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
-       if(stylesSource.getNumCellStyles() > 0) {
-           return stylesSource.getStyleAt(Math.toIntExact(_row.getS()));
-       } else {
-          return null;
-       }
+        StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
+        if(stylesSource.getNumCellStyles() > 0) {
+            return stylesSource.getStyleAt(Math.toIntExact(_row.getS()));
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -481,10 +483,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @Override
     public void setRowStyle(CellStyle style) {
         if(style == null) {
-           if(_row.isSetS()) {
-              _row.unsetS();
-              _row.unsetCustomFormat();
-           }
+            if(_row.isSetS()) {
+                _row.unsetS();
+                _row.unsetCustomFormat();
+            }
         } else {
             StylesTable styleSource = getSheet().getWorkbook().getStylesSource();
 
@@ -517,7 +519,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             xcell.setCellFormula(null); // to remove the array formula
         }
         if(cell.getCellType() == CellType.FORMULA) {
-           _sheet.getWorkbook().onDeleteFormula(xcell);
+            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
@@ -636,22 +638,42 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     /**
-     * Copy the cells from srcRow to this row
+     * Copy the cells from srcRow to this row.
      * If this row is not a blank row, this will merge the two rows, overwriting
-     * the cells in this row with the cells in srcRow
-     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy
-     * srcRow may be from a different sheet in the same workbook
+     * the cells in this row with the cells in srcRow.
+     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy.
+     *
+     * Note that if you are copying from a non-XSSF row then you will need to disable style copying
+     * in the {@link CellCopyPolicy} (XSSF styles are not compatible with HSSF styles, for instance).
+     *
      * @param srcRow the rows to copy from
      * @param policy the policy to determine what gets copied
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy) {
+        copyRowFrom(srcRow, policy, null);
+    }
+
+    /**
+     * Copy the cells from srcRow to this row
+     * If this row is not a blank row, this will merge the two rows, overwriting
+     * the cells in this row with the cells in srcRow
+     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy
+     * srcRow may be from a different sheet in the same workbook
+     *
+     * Note that if you are copying from a non-XSSF row then you will need to disable style copying
+     * in the {@link CellCopyPolicy} (XSSF styles are not compatible with HSSF styles, for instance).
+     *
+     * @param srcRow the rows to copy from
+     * @param policy the policy to determine what gets copied
+     * @param context the context - see {@link CellCopyContext}
+     */
+    @Beta
+    public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                final XSSFCell srcCell = null;
-                // FIXME: remove type casting when copyCellFrom(Cell, CellCopyPolicy) is added to Cell interface
-                ((XSSFCell)destCell).copyCellFrom(srcCell, policy);
+                CellUtil.copyCell(null, destCell, policy, context);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -676,7 +698,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         } else {
             for (final Cell c : srcRow) {
                 final XSSFCell destCell = createCell(c.getColumnIndex());
-                destCell.copyCellFrom(c, policy);
+                CellUtil.copyCell(c, destCell, policy, context);
             }
 
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);

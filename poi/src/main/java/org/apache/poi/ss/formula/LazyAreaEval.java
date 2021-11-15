@@ -37,7 +37,7 @@ final class LazyAreaEval extends AreaEvalBase {
 
     public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
             int lastColumnIndex, SheetRangeEvaluator evaluator) {
-        super(evaluator, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+        super(evaluator, firstRowIndex, firstColumnIndex, evaluator.adjustRowNumber(lastRowIndex), lastColumnIndex);
         _evaluator = evaluator;
     }
 

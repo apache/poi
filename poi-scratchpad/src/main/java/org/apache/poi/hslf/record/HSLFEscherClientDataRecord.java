@@ -38,9 +38,6 @@ import org.apache.poi.util.LittleEndian;
  */
 public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
     private final List<org.apache.poi.hslf.record.Record> _childRecords = new ArrayList<>();
 
     public HSLFEscherClientDataRecord() {}
@@ -68,7 +65,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        byte[] remainingData = IOUtils.safelyClone(data,  offset+8,  bytesRemaining, MAX_RECORD_LENGTH);
+        byte[] remainingData = IOUtils.safelyClone(data,  offset+8,  bytesRemaining, RecordAtom.getMaxRecordLength());
         setRemainingData(remainingData);
         return bytesRemaining + 8;
     }

@@ -43,12 +43,7 @@ import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
-import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.opc.internal.*;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
@@ -63,6 +58,8 @@ import org.apache.poi.util.TempFile;
 public final class ZipPackage extends OPCPackage {
     private static final String MIMETYPE = "mimetype";
     private static final String SETTINGS_XML = "settings.xml";
+    private static boolean useTempFilePackageParts = false;
+    private static boolean encryptTempFilePackageParts = false;
 
     private static final Logger LOG = LogManager.getLogger(ZipPackage.class);
 
@@ -71,6 +68,34 @@ public final class ZipPackage extends OPCPackage {
      *  or a stream
      */
     private final ZipEntrySource zipArchive;
+
+    /**
+     * @param tempFilePackageParts whether to save package part data in temp files to save memory
+     */
+    public static void setUseTempFilePackageParts(boolean tempFilePackageParts) {
+        useTempFilePackageParts = tempFilePackageParts;
+    }
+
+    /**
+     * @param encryptTempFiles whether to encrypt package part temp files
+     */
+    public static void setEncryptTempFilePackageParts(boolean encryptTempFiles) {
+        encryptTempFilePackageParts = encryptTempFiles;
+    }
+
+    /**
+     * @return whether package part data is stored in temp files to save memory
+     */
+    public static boolean useTempFilePackageParts() {
+        return useTempFilePackageParts;
+    }
+
+    /**
+     * @return whether package part temp files are encrypted
+     */
+    public static boolean encryptTempFilePackageParts() {
+        return encryptTempFilePackageParts;
+    }
 
     /**
      * Constructor. Creates a new, empty ZipPackage.
@@ -327,7 +352,7 @@ public final class ZipPackage extends OPCPackage {
 
             if (partList.containsKey(partName)) {
                 throw new InvalidFormatException(
-                    "A part with the name '"+partName+"' already exist : Packages shall not contain equivalent part names " +
+                    "A part with the name '"+partName+"' already exists : Packages shall not contain equivalent part names " +
                     "and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
             }
 
@@ -350,12 +375,14 @@ public final class ZipPackage extends OPCPackage {
     /**
      * Create a new MemoryPackagePart from the specified URI and content type
      *
-     *
-     * aram partName The part URI.
-     *
+     * @param partName
+     *            The part name.
      * @param contentType
      *            The part content type.
+     * @param loadRelationships
+     *            whether to load relationships.
      * @return The newly created zip package part, else <b>null</b>.
+     * @throws IllegalArgumentException if partName or contentType is null
      */
     @Override
     protected PackagePart createPartImpl(PackagePartName partName,
@@ -369,8 +396,16 @@ public final class ZipPackage extends OPCPackage {
         }
 
         try {
-            return new MemoryPackagePart(this, partName, contentType, loadRelationships);
-        } catch (InvalidFormatException e) {
+            if (useTempFilePackageParts) {
+                if (encryptTempFilePackageParts) {
+                    return new EncryptedTempFilePackagePart(this, partName, contentType, loadRelationships);
+                } else {
+                    return new TempFilePackagePart(this, partName, contentType, loadRelationships);
+                }
+            } else {
+                return new MemoryPackagePart(this, partName, contentType, loadRelationships);
+            }
+        } catch (Exception e) {
             LOG.atWarn().withThrowable(e).log("Failed to create part {}", partName);
             return null;
         }

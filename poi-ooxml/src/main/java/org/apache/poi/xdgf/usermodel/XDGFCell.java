@@ -31,7 +31,7 @@ import com.microsoft.schemas.office.visio.x2012.main.CellType;
  *
  * The various attributes of a Cell are constrained, and are better defined in
  * the XSD 1.1 visio schema
- * 
+ *
  * Values of a cell are often the result of a formula computation. Luckily for
  * you, Visio seems to always write the result to the document file, so unless
  * the values change we don't need to recompute the values.
@@ -39,9 +39,9 @@ import com.microsoft.schemas.office.visio.x2012.main.CellType;
 public class XDGFCell {
 
     public static Boolean maybeGetBoolean(Map<String, XDGFCell> cells,
-            String name) {
+                                          String name) {
         XDGFCell cell = cells.get(name);
-        if (cell == null)
+        if (cell == null || cell.getValue() == null)
             return null;
 
         if (cell.getValue().equals("0"))
@@ -61,7 +61,7 @@ public class XDGFCell {
     }
 
     public static Integer maybeGetInteger(Map<String, XDGFCell> cells,
-            String name) {
+                                          String name) {
         XDGFCell cell = cells.get(name);
         if (cell != null)
             return parseIntegerValue(cell._cell);
@@ -72,7 +72,7 @@ public class XDGFCell {
         XDGFCell cell = cells.get(name);
         if (cell != null) {
             String v = cell._cell.getV();
-            if (v.equals("Themed"))
+            if (v == null || v.equals("Themed"))
                 return null;
             return v;
         }
@@ -80,6 +80,9 @@ public class XDGFCell {
     }
 
     public static Double parseDoubleValue(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Double.parseDouble(cell.getV());
         } catch (NumberFormatException e) {
@@ -91,6 +94,9 @@ public class XDGFCell {
     }
 
     public static Integer parseIntegerValue(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Integer.parseInt(cell.getV());
         } catch (NumberFormatException e) {
@@ -106,6 +112,9 @@ public class XDGFCell {
      * @return A value converted to inches
      */
     public static Double parseVLength(CellType cell) {
+        if (cell.getV() == null) {
+            return null;
+        }
         try {
             return Double.parseDouble(cell.getV());
         } catch (NumberFormatException e) {

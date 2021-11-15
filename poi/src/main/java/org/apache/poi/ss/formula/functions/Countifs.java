@@ -18,6 +18,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+
 /**
  * Implementation for the function COUNTIFS
  * <p>
@@ -41,5 +44,21 @@ public class Countifs extends Baseifs {
     protected boolean hasInitialRange() {
         return false;
     }
-}
 
+    @Override
+    protected Aggregator createAggregator() {
+        return new Aggregator() {
+            double accumulator = 0.0;
+
+            @Override
+            public void addValue(ValueEval value) {
+                accumulator += 1.0;
+            }
+
+            @Override
+            public ValueEval getResult() {
+                return new NumberEval(accumulator);
+            }
+        };
+    }
+}

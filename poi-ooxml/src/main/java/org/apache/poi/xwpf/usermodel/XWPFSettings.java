@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.xml.namespace.QName;
@@ -33,6 +32,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgClass;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgType;
@@ -46,7 +46,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.SettingsDocument;
 
 public class XWPFSettings extends POIXMLDocumentPart {
-
     private CTSettings ctSettings;
 
     /**
@@ -258,8 +257,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
             }
 
 
-            SecureRandom random = new SecureRandom();
-            byte[] salt = random.generateSeed(16);
+            byte[] salt = RandomSingleton.getInstance().generateSeed(16);
 
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).

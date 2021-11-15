@@ -37,6 +37,7 @@ import org.apache.poi.util.Beta;
 @Beta
 public class StreamingSheetWriter extends SheetDataWriter {
     private static final Logger LOG = LogManager.getLogger(StreamingSheetWriter.class);
+    private boolean closed = false;
 
     public StreamingSheetWriter() throws IOException {
         throw new RuntimeException("StreamingSheetWriter requires OutputStream");
@@ -44,7 +45,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     public StreamingSheetWriter(OutputStream out) throws IOException {
         super(createWriter(out));
-        LOG.atDebug().log("Preparing SSXSSF sheet writer");
+        LOG.atDebug().log("Preparing SXSSF sheet writer");
     }
 
     @Override
@@ -68,7 +69,9 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     @Override
     public void close() throws IOException {
-        _out.flush();
+        if (!closed) {
+            _out.flush();
+        }
     }
 
     @Override
@@ -78,7 +81,10 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     @Override
     boolean dispose() throws IOException {
-        _out.close();
+        if (!closed) {
+            _out.close();
+        }
+        closed = true;
         return true;
     }
 }

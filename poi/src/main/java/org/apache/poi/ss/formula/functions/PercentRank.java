@@ -40,7 +40,7 @@ import java.util.List;
  * <br>
  * Returns a number between 0 and 1 representing a percentage.
  *
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 public final class PercentRank implements Function {
 
@@ -123,14 +123,19 @@ public final class PercentRank implements Function {
             if (greaterThanCount == numbers.size() || lessThanCount == numbers.size()) {
                 return ErrorEval.NA;
             }
-            BigDecimal result = new BigDecimal((double)lessThanCount / (double)(lessThanCount + greaterThanCount));
-            return new NumberEval(round(result, significance));
+            if (lessThanCount + greaterThanCount == 0) {
+                return new NumberEval(0);
+            } else {
+                BigDecimal result = BigDecimal.valueOf((double)lessThanCount / (double)(lessThanCount + greaterThanCount));
+                return new NumberEval(round(result, significance));
+            }
         } else {
-            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance + 3, false);
+            int intermediateSignificance = significance < 5 ? 8 : significance + 3;
+            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
             if (!(belowRank instanceof NumberEval)) {
                 return belowRank;
             }
-            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance + 3, false);
+            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }
@@ -144,7 +149,7 @@ public final class PercentRank implements Function {
         double diff = closestMatchAbove - closestMatchBelow;
         double pos = x - closestMatchBelow;
         BigDecimal rankDiff = new BigDecimal(NumberToTextConverter.toText(aboveRank.getNumberValue() - belowRank.getNumberValue()));
-        BigDecimal result = new BigDecimal(belowRank.getNumberValue()).add(rankDiff.multiply(new BigDecimal(pos / diff)));
+        BigDecimal result = BigDecimal.valueOf(belowRank.getNumberValue()).add(rankDiff.multiply(BigDecimal.valueOf(pos / diff)));
         return new NumberEval(round(result, significance));
     }
 

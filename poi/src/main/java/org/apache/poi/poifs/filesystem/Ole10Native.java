@@ -17,12 +17,12 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -50,9 +50,11 @@ public class Ole10Native {
     public static final String OLE10_NATIVE = "\u0001Ole10Native";
     private static final Charset ISO1 = StandardCharsets.ISO_8859_1;
     // arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
     // arbitrarily selected; may need to increase
-    private static final int MAX_STRING_LENGTH = 1024;
+    private static final int DEFAULT_MAX_STRING_LENGTH = 1024;
+    private static int MAX_STRING_LENGTH = DEFAULT_MAX_STRING_LENGTH;
 
     /**
      * Default content of the \u0001Ole entry
@@ -136,6 +138,34 @@ public class Ole10Native {
             byte[] data = IOUtils.toByteArray(dis, nativeEntry.getSize(), MAX_RECORD_LENGTH);
             return new Ole10Native(data, 0);
         }
+    }
+
+    /**
+     * @param length the max record length allowed for Ole10Native
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for Ole10Native
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    /**
+     * @param length the max string length allowed for Ole10Native
+     */
+    public static void setMaxStringLength(int length) {
+        MAX_STRING_LENGTH = length;
+    }
+
+    /**
+     * @return the max string length allowed for Ole10Native
+     */
+    public static int getMaxStringLength() {
+        return MAX_STRING_LENGTH;
     }
 
     /**
@@ -224,7 +254,7 @@ public class Ole10Native {
      */
     public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
         if (!parent.hasEntry(OLE_MARKER_NAME)) {
-            parent.createDocument(OLE_MARKER_NAME, new ByteArrayInputStream(OLE_MARKER_BYTES));
+            parent.createDocument(OLE_MARKER_NAME, new UnsynchronizedByteArrayInputStream(OLE_MARKER_BYTES));
         }
     }
 

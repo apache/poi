@@ -65,7 +65,7 @@ final class TestEventRecordFactory {
 
         ERFListener listener = rec -> {
             wascalled[0] = true;
-            assertEquals(rec.getSid(), BOFRecord.sid, "must be BOFRecord got SID=" + rec.getSid());
+            assertEquals(BOFRecord.sid, rec.getSid(), "must be BOFRecord got SID=" + rec.getSid());
             return true;
         };
         EventRecordFactory factory = new EventRecordFactory(listener, new short[] {BOFRecord.sid});

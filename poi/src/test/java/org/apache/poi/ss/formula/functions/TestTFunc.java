@@ -117,7 +117,7 @@ final class TestTFunc {
         confirmString(eval, "");
 
         eval = invokeTWithReference(ErrorEval.NAME_INVALID);
-        assertSame(eval, ErrorEval.NAME_INVALID);
+        assertSame(ErrorEval.NAME_INVALID, eval);
     }
 
     @Test

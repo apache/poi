@@ -27,34 +27,39 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType;
  *  Colour Scale change thresholds
  */
 public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.usermodel.ConditionalFormattingThreshold {
-    private CTCfvo cfvo;
-    
+    private final CTCfvo cfvo;
+
     protected XSSFConditionalFormattingThreshold(CTCfvo cfvo) {
         this.cfvo = cfvo;
     }
-    
+
     protected CTCfvo getCTCfvo() {
         return cfvo;
     }
 
+    @Override
     public RangeType getRangeType() {
         return RangeType.byName(cfvo.getType().toString());
     }
+    @Override
     public void setRangeType(RangeType type) {
         STCfvoType.Enum xtype = STCfvoType.Enum.forString(type.name);
         cfvo.setType(xtype);
     }
 
+    @Override
     public String getFormula() {
         if (cfvo.getType() == STCfvoType.FORMULA) {
             return cfvo.getVal();
         }
         return null;
     }
+    @Override
     public void setFormula(String formula) {
         cfvo.setVal(formula);
     }
 
+    @Override
     public Double getValue() {
         if (cfvo.getType() == STCfvoType.FORMULA ||
             cfvo.getType() == STCfvoType.MIN ||
@@ -67,6 +72,7 @@ public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.use
             return null;
         }
     }
+    @Override
     public void setValue(Double value) {
         if (value == null) {
             cfvo.unsetVal();

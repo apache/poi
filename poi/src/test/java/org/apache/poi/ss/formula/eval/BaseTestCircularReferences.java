@@ -66,7 +66,7 @@ public abstract class BaseTestCircularReferences {
      * Makes sure that the specified evaluated cell value represents a circular reference error.
      */
     private static void confirmCycleErrorCode(CellValue cellValue) {
-        assertSame(cellValue.getCellType(), CellType.ERROR);
+        assertSame(CellType.ERROR, cellValue.getCellType());
         assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cellValue.getErrorValue());
     }
 
@@ -96,7 +96,7 @@ public abstract class BaseTestCircularReferences {
 
             CellValue cellValue = evaluateWithCycles(wb, testCell);
             assertNotNull(cellValue);
-            assertSame(cellValue.getCellType(), CellType.NUMERIC);
+            assertSame(CellType.NUMERIC, cellValue.getCellType());
             assertEquals(2, cellValue.getNumberValue(), 0);
         }
     }

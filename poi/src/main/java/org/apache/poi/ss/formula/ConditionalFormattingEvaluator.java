@@ -246,7 +246,7 @@ public class ConditionalFormattingEvaluator {
      * The POI data model does not have a back-reference to the owning sheet, so it must be passed in separately.
      * <p>
      * We could overload this with convenience methods taking a sheet name and sheet index as well.
-     * <p>
+     *
      * @param sheet containing the rule
      * @param conditionalFormattingIndex of the {@link ConditionalFormatting} instance in the sheet's array
      * @param ruleIndex of the {@link ConditionalFormattingRule} instance within the {@link ConditionalFormatting}

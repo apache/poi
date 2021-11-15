@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -30,141 +32,143 @@ import org.junit.jupiter.api.Test;
 
 final class TestHSSFOptimiser {
     @Test
-    void testDoesNoHarmIfNothingToDo() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    void testDoesNoHarmIfNothingToDo() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
-        // New files start with 4 built in fonts, and 21 built in styles
-        assertEquals(4, wb.getNumberOfFonts());
-        assertEquals(21, wb.getNumCellStyles());
+            // New files start with 4 built in fonts, and 21 built in styles
+            assertEquals(4, wb.getNumberOfFonts());
+            assertEquals(21, wb.getNumCellStyles());
 
-        // Create a test font and style, and use them
-        HSSFFont f = wb.createFont();
-        f.setFontName("Testing");
-        HSSFCellStyle s = wb.createCellStyle();
-        s.setFont(f);
+            // Create a test font and style, and use them
+            HSSFFont f = wb.createFont();
+            f.setFontName("Testing");
+            HSSFCellStyle s = wb.createCellStyle();
+            s.setFont(f);
 
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
-        row.createCell(0).setCellStyle(s);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellStyle(s);
 
-        // Should have one more than the default of each
-        assertEquals(5, wb.getNumberOfFonts());
-        assertEquals(22, wb.getNumCellStyles());
+            // Should have one more than the default of each
+            assertEquals(5, wb.getNumberOfFonts());
+            assertEquals(22, wb.getNumCellStyles());
 
-        // Optimise fonts
-        HSSFOptimiser.optimiseFonts(wb);
+            // Optimise fonts
+            HSSFOptimiser.optimiseFonts(wb);
 
-        assertEquals(5, wb.getNumberOfFonts());
-        assertEquals(22, wb.getNumCellStyles());
+            assertEquals(5, wb.getNumberOfFonts());
+            assertEquals(22, wb.getNumCellStyles());
 
-        assertEquals(f, s.getFont(wb));
+            assertEquals(f, s.getFont(wb));
 
-        // Optimise styles
-        HSSFOptimiser.optimiseCellStyles(wb);
+            // Optimise styles
+            HSSFOptimiser.optimiseCellStyles(wb);
 
-        assertEquals(5, wb.getNumberOfFonts());
-        assertEquals(22, wb.getNumCellStyles());
+            assertEquals(5, wb.getNumberOfFonts());
+            assertEquals(22, wb.getNumCellStyles());
 
-        assertEquals(f, s.getFont(wb));
+            assertEquals(f, s.getFont(wb));
+        }
     }
 
     @Test
-    void testOptimiseFonts() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    void testOptimiseFonts() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
-        // Add 6 fonts, some duplicates
-        HSSFFont f1 = wb.createFont();
-        f1.setFontHeight((short) 11);
-        f1.setFontName("Testing");
+            // Add 6 fonts, some duplicates
+            HSSFFont f1 = wb.createFont();
+            f1.setFontHeight((short) 11);
+            f1.setFontName("Testing");
 
-        HSSFFont f2 = wb.createFont();
-        f2.setFontHeight((short) 22);
-        f2.setFontName("Also Testing");
+            HSSFFont f2 = wb.createFont();
+            f2.setFontHeight((short) 22);
+            f2.setFontName("Also Testing");
 
-        HSSFFont f3 = wb.createFont();
-        f3.setFontHeight((short) 33);
-        f3.setFontName("Unique");
+            HSSFFont f3 = wb.createFont();
+            f3.setFontHeight((short) 33);
+            f3.setFontName("Unique");
 
-        HSSFFont f4 = wb.createFont();
-        f4.setFontHeight((short) 11);
-        f4.setFontName("Testing");
+            HSSFFont f4 = wb.createFont();
+            f4.setFontHeight((short) 11);
+            f4.setFontName("Testing");
 
-        HSSFFont f5 = wb.createFont();
-        f5.setFontHeight((short) 22);
-        f5.setFontName("Also Testing");
+            HSSFFont f5 = wb.createFont();
+            f5.setFontHeight((short) 22);
+            f5.setFontName("Also Testing");
 
-        HSSFFont f6 = wb.createFont();
-        f6.setFontHeight((short) 66);
-        f6.setFontName("Also Unique");
+            HSSFFont f6 = wb.createFont();
+            f6.setFontHeight((short) 66);
+            f6.setFontName("Also Unique");
 
-        // Use all three of the four in cell styles
-        assertEquals(21, wb.getNumCellStyles());
+            // Use all three of the four in cell styles
+            assertEquals(21, wb.getNumCellStyles());
 
-        HSSFCellStyle cs1 = wb.createCellStyle();
-        cs1.setFont(f1);
-        assertEquals(5, cs1.getFontIndex());
+            HSSFCellStyle cs1 = wb.createCellStyle();
+            cs1.setFont(f1);
+            assertEquals(5, cs1.getFontIndex());
 
-        HSSFCellStyle cs2 = wb.createCellStyle();
-        cs2.setFont(f4);
-        assertEquals(8, cs2.getFontIndex());
+            HSSFCellStyle cs2 = wb.createCellStyle();
+            cs2.setFont(f4);
+            assertEquals(8, cs2.getFontIndex());
 
-        HSSFCellStyle cs3 = wb.createCellStyle();
-        cs3.setFont(f5);
-        assertEquals(9, cs3.getFontIndex());
+            HSSFCellStyle cs3 = wb.createCellStyle();
+            cs3.setFont(f5);
+            assertEquals(9, cs3.getFontIndex());
 
-        HSSFCellStyle cs4 = wb.createCellStyle();
-        cs4.setFont(f6);
-        assertEquals(10, cs4.getFontIndex());
+            HSSFCellStyle cs4 = wb.createCellStyle();
+            cs4.setFont(f6);
+            assertEquals(10, cs4.getFontIndex());
 
-        assertEquals(25, wb.getNumCellStyles());
+            assertEquals(25, wb.getNumCellStyles());
 
-        // And three in rich text
-        HSSFSheet s = wb.createSheet();
-        HSSFRow r = s.createRow(0);
+            // And three in rich text
+            HSSFSheet s = wb.createSheet();
+            HSSFRow r = s.createRow(0);
 
-        HSSFRichTextString rtr1 = new HSSFRichTextString("Test");
-        rtr1.applyFont(0, 2, f1);
-        rtr1.applyFont(3, 4, f2);
-        r.createCell(0).setCellValue(rtr1);
+            HSSFRichTextString rtr1 = new HSSFRichTextString("Test");
+            rtr1.applyFont(0, 2, f1);
+            rtr1.applyFont(3, 4, f2);
+            r.createCell(0).setCellValue(rtr1);
 
-        HSSFRichTextString rtr2 = new HSSFRichTextString("AlsoTest");
-        rtr2.applyFont(0, 2, f3);
-        rtr2.applyFont(3, 5, f5);
-        rtr2.applyFont(6, 8, f6);
-        r.createCell(1).setCellValue(rtr2);
+            HSSFRichTextString rtr2 = new HSSFRichTextString("AlsoTest");
+            rtr2.applyFont(0, 2, f3);
+            rtr2.applyFont(3, 5, f5);
+            rtr2.applyFont(6, 8, f6);
+            r.createCell(1).setCellValue(rtr2);
 
-        // Check what we have now
-        assertEquals(10, wb.getNumberOfFonts());
-        assertEquals(25, wb.getNumCellStyles());
+            // Check what we have now
+            assertEquals(10, wb.getNumberOfFonts());
+            assertEquals(25, wb.getNumCellStyles());
 
-        // Optimise
-        HSSFOptimiser.optimiseFonts(wb);
+            // Optimise
+            HSSFOptimiser.optimiseFonts(wb);
 
-        // Check font count
-        assertEquals(8, wb.getNumberOfFonts());
-        assertEquals(25, wb.getNumCellStyles());
+            // Check font count
+            assertEquals(8, wb.getNumberOfFonts());
+            assertEquals(25, wb.getNumCellStyles());
 
-        // Check font use in cell styles
-        assertEquals(5, cs1.getFontIndex());
-        assertEquals(5, cs2.getFontIndex()); // duplicate of 1
-        assertEquals(6, cs3.getFontIndex()); // duplicate of 2
-        assertEquals(8, cs4.getFontIndex()); // two have gone
+            // Check font use in cell styles
+            assertEquals(5, cs1.getFontIndex());
+            assertEquals(5, cs2.getFontIndex()); // duplicate of 1
+            assertEquals(6, cs3.getFontIndex()); // duplicate of 2
+            assertEquals(8, cs4.getFontIndex()); // two have gone
 
-        // And in rich text
+            // And in rich text
 
-        // RTR 1 had f1 and f2, unchanged
-        assertEquals(5, r.getCell(0).getRichStringCellValue().getFontAtIndex(0));
-        assertEquals(5, r.getCell(0).getRichStringCellValue().getFontAtIndex(1));
-        assertEquals(6, r.getCell(0).getRichStringCellValue().getFontAtIndex(3));
-        assertEquals(6, r.getCell(0).getRichStringCellValue().getFontAtIndex(4));
+            // RTR 1 had f1 and f2, unchanged
+            assertEquals(5, r.getCell(0).getRichStringCellValue().getFontAtIndex(0));
+            assertEquals(5, r.getCell(0).getRichStringCellValue().getFontAtIndex(1));
+            assertEquals(6, r.getCell(0).getRichStringCellValue().getFontAtIndex(3));
+            assertEquals(6, r.getCell(0).getRichStringCellValue().getFontAtIndex(4));
 
-        // RTR 2 had f3 (unchanged), f5 (=f2) and f6 (moved down)
-        assertEquals(7, r.getCell(1).getRichStringCellValue().getFontAtIndex(0));
-        assertEquals(7, r.getCell(1).getRichStringCellValue().getFontAtIndex(1));
-        assertEquals(6, r.getCell(1).getRichStringCellValue().getFontAtIndex(3));
-        assertEquals(6, r.getCell(1).getRichStringCellValue().getFontAtIndex(4));
-        assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(6));
-        assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(7));
+            // RTR 2 had f3 (unchanged), f5 (=f2) and f6 (moved down)
+            assertEquals(7, r.getCell(1).getRichStringCellValue().getFontAtIndex(0));
+            assertEquals(7, r.getCell(1).getRichStringCellValue().getFontAtIndex(1));
+            assertEquals(6, r.getCell(1).getRichStringCellValue().getFontAtIndex(3));
+            assertEquals(6, r.getCell(1).getRichStringCellValue().getFontAtIndex(4));
+            assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(6));
+            assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(7));
+        }
     }
 
     @Test
@@ -664,11 +668,11 @@ final class TestHSSFOptimiser {
     private void checkUserStyles(HSSFSheet sheet) {
         HSSFCellStyle parentStyle1 = sheet.getRow(1).getCell(0).getCellStyle().getParentStyle();
         assertNotNull(parentStyle1);
-        assertEquals(parentStyle1.getUserStyleName(), "user define");
+        assertEquals("user define", parentStyle1.getUserStyleName());
 
         HSSFCellStyle parentStyle10 = sheet.getRow(10).getCell(0).getCellStyle().getParentStyle();
         assertNotNull(parentStyle10);
-        assertEquals(parentStyle10.getUserStyleName(), "user define2");
+        assertEquals("user define2", parentStyle10.getUserStyleName());
     }
 
     private void checkColumnStyles(HSSFSheet sheet, int col1, int col2, boolean checkEquals) {

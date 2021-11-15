@@ -123,12 +123,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
-     * Excel silently truncates long sheet names to 31 chars.
-     * This constant is used to ensure uniqueness in the first 31 chars
-     */
-    private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
-
-    /**
      * Images formats supported by XSSF but not by HSSF
      */
     public static final int PICTURE_TYPE_GIF = 8;
@@ -170,13 +164,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * The locator of user-defined functions.
-     * By default includes functions from the Excel Analysis Toolpack
+     * By default, includes functions from the Excel Analysis Toolpack
      */
     private final IndexedUDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
-    /**
-     * TODO
-     */
     private CalculationChain calcChain;
 
     /**
@@ -341,6 +332,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         this(part.getInputStream());
     }
 
+    /**
+     * @return the XSSFFactory
+     * @since POI 5.1.0
+     */
+    public XSSFFactory getXssfFactory() {
+        return xssfFactory;
+    }
+
     protected void beforeDocumentRead() {
         // Ensure it isn't a XLSB file, which we don't support
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
@@ -468,6 +467,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
+
+        externalLinks = new ArrayList<>();
     }
 
     private void setBookViewsIfMissing() {
@@ -670,25 +671,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             clonedDg.getCTDrawing().set(dg.getCTDrawing().copy());
 
             // Clone drawing relations
-            List<RelationPart> srcRels = srcSheet.getDrawingPatriarch().getRelationParts();
-            for (RelationPart rp : srcRels) {
-                POIXMLDocumentPart r = rp.getDocumentPart();
-                if (r instanceof XSSFChart) {
-                    // Replace chart relation part with new relationship, cloning the chart's content
-                    RelationPart chartPart = clonedDg.createChartRelationPart();
-                    XSSFChart chart = chartPart.getDocumentPart();
-                    chart.importContent((XSSFChart)r);
-                    chart.replaceReferences(clonedSheet);
-                } else {
-                    addRelation(rp, clonedDg);
-                }
-            }
+			XSSFDrawing drawingPatriarch = srcSheet.getDrawingPatriarch();
+			if (drawingPatriarch != null) {
+				List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
+				for (RelationPart rp : srcRels) {
+					POIXMLDocumentPart r = rp.getDocumentPart();
+					if (r instanceof XSSFChart) {
+						// Replace chart relation part with new relationship, cloning the chart's content
+						RelationPart chartPart = clonedDg.createChartRelationPart();
+						XSSFChart chart = chartPart.getDocumentPart();
+						chart.importContent((XSSFChart) r);
+						chart.replaceReferences(clonedSheet);
+					} else {
+						addRelation(rp, clonedDg);
+					}
+				}
+			}
         }
         return clonedSheet;
     }
 
     /**
-     * Modified in POI 5.0.1 to only log issues with unknown relationship types
+     * Modified in POI 5.1.0 to only log issues with unknown relationship types
      * - see https://bz.apache.org/bugzilla/show_bug.cgi?id=64759
      *
      * @since 3.14-Beta1
@@ -734,10 +738,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             // Try and find the next sheet name that is unique
             String index = Integer.toString(uniqueIndex++);
             String name;
-            if (baseName.length() + index.length() + 2 < 31) {
+            if (baseName.length() + index.length() + 2 < MAX_SENSITIVE_SHEET_NAME_LEN) {
                 name = baseName + " (" + index + ")";
             } else {
-                name = baseName.substring(0, 31 - index.length() - 2) + "(" + index + ")";
+                name = baseName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN - index.length() - 2) + "(" + index + ")";
             }
 
             //If the sheet name is unique, then set it otherwise move on to the next number.
@@ -865,8 +869,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         validateSheetName(sheetname);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) {
-            sheetname = sheetname.substring(0, 31);
+        // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
+        // not accessible due to the trimming while we are not even aware of the reason and continue to use
+        // the long name in generated formulas
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+
+			// we still need to warn about the trimming as the original sheet name won't be available
+			// e.g. when referenced by formulas
+			LOG.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+					sheetname, trimmedSheetname);
+			sheetname = trimmedSheetname;
         }
         WorkbookUtil.validateSheetName(sheetname);
 
@@ -1571,8 +1584,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         String oldSheetName = getSheetName(sheetIndex);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) {
-            sheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            sheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
         }
         WorkbookUtil.validateSheetName(sheetname);
 
@@ -1971,18 +1984,53 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *  referencing the specified external workbook to be added to this one. Allows
      *  formulas such as "[MyOtherWorkbook.xlsx]Sheet3!$A$5" to be added to the
      *  file, for workbooks not already linked / referenced.
-     *
-     *  Note: this is not implemented and thus currently throws an Exception stating this.
+     * <p>
+     * This support is still regarded as in beta and may change
+     * <p>
+     * see https://bz.apache.org/bugzilla/show_bug.cgi?id=57184
      *
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
-     *
-     * @throws RuntimeException stating that this method is not implemented yet.
+     * @return index position for external workbook
+     * @since POI 5.1.0
      */
+    @Beta
     @Override
-    @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("Not Implemented - see bug #57184");
+        int externalLinkIdx=-1;
+        if (!getCreationHelper().getReferencedWorkbooks().containsKey(name)){
+             externalLinkIdx = this.getNextPartNumber(XSSFRelation.EXTERNAL_LINKS,
+                    this.getPackagePart().getPackage().getPartsByContentType(XSSFRelation.EXTERNAL_LINKS.getContentType()).size() + 1);
+            POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, xssfFactory, externalLinkIdx, false);
+            ExternalLinksTable linksTable = rp.getDocumentPart();
+            linksTable.setLinkedFileName(name);
+            this.getExternalLinksTable().add(linksTable);
+
+            CTExternalReference ctExternalReference = this.getCTWorkbook().addNewExternalReferences().addNewExternalReference();
+            ctExternalReference.setId(rp.getRelationship().getId());
+
+        } else {
+            List<RelationPart> relationParts = getRelationParts();
+            for (RelationPart relationPart : relationParts) {
+                if (relationPart.getDocumentPart() instanceof ExternalLinksTable) {
+                    ExternalLinksTable linksTable = relationPart.getDocumentPart();
+                    String linkedFileName = linksTable.getLinkedFileName();
+                    if(linkedFileName.equals(name)){
+                        String s = relationPart.getRelationship().getTargetURI().toString();
+                        String s2 = XSSFRelation.EXTERNAL_LINKS.getDefaultFileName();
+                        String numStr = s.substring(s2.indexOf('#'), s2.indexOf('.'));
+                        externalLinkIdx = Integer.parseInt(numStr);
+                        break;
+                    }
+                }
+            }
+        }
+
+        XSSFCreationHelper creationHelper = getCreationHelper();
+        creationHelper.addExternalWorkbook(name,workbook);
+
+        return externalLinkIdx;
+
     }
 
     /**

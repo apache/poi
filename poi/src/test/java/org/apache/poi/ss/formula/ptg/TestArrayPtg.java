@@ -17,11 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import java.io.IOException;
+
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
@@ -101,14 +103,15 @@ final class TestArrayPtg {
      * A spreadsheet was added to make the ordering clearer.
      */
     @Test
-    void testElementOrderingInSpreadsheet() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
+    void testElementOrderingInSpreadsheet() throws IOException {
+        String formula;
+        try (HSSFWorkbook wb = openSampleWorkbook("ex42564-elementOrder.xls")) {
 
-        // The formula has an array with 3 rows and 5 columns
-        String formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
-
-        assertNotEquals("Identified bug 42564 b", "SUM({1,6,11;2,7,12;3,8,13;4,9,14;5,10,15})", formula);
-        assertEquals("SUM({1,2,3,4,5;6,7,8,9,10;11,12,13,14,15})", formula);
+            // The formula has an array with 3 rows and 5 columns
+            formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
+            assertNotEquals("SUM({1,6,11;2,7,12;3,8,13;4,9,14;5,10,15})", formula, "Identified bug 42564 b");
+            assertEquals("SUM({1,2,3,4,5;6,7,8,9,10;11,12,13,14,15})", formula);
+        }
     }
 
     @Test

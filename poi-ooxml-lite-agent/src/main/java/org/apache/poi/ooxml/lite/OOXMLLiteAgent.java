@@ -58,7 +58,7 @@ public class OOXMLLiteAgent {
 
         new AgentBuilder.Default()
         // .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
-            .type(named("org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader"))
+            .type(named("org.apache.xmlbeans.impl.schema.XsbReader"))
             .transform((builder, type, cl, m) ->
                 builder
                 .constructor(ElementMatchers.any())

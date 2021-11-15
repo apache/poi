@@ -36,7 +36,7 @@ public class SheetIdentifier {
             sb.append(" [").append(_sheetIdentifier.getName()).append("]");
         }
         if (_sheetIdentifier.isQuoted()) {
-            sb.append("'").append(_sheetIdentifier.getName()).append("'");
+            sb.append('\'').append(_sheetIdentifier.getName()).append("'");
         } else {
             sb.append(_sheetIdentifier.getName());
         }

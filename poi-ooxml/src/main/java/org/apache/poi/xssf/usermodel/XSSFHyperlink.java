@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -34,7 +35,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
  * Note - unlike with HSSF, many kinds of hyperlink
  * are largely stored as relations of the sheet
  */
-public class XSSFHyperlink implements Hyperlink {
+public class XSSFHyperlink implements Hyperlink, Duplicatable {
     final private HyperlinkType _type;
     final private PackageRelationship _externalRel;
     final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
@@ -411,5 +412,14 @@ public class XSSFHyperlink implements Hyperlink {
      */
     public void setTooltip(String text) {
         _ctHyperlink.setTooltip(text);
+    }
+
+    /**
+     * @return a new XSSFHyperlink based on this
+     * @since POI 5.1.0
+     */
+    @Override
+    public Duplicatable copy() {
+        return new XSSFHyperlink(this);
     }
 }

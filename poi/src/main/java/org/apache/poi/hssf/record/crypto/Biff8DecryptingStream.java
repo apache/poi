@@ -20,10 +20,8 @@ package org.apache.poi.hssf.record.crypto;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BiffHeaderInput;
-import org.apache.poi.hssf.record.FilePassRecord;
-import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -37,8 +35,7 @@ import org.apache.poi.util.SuppressForbidden;
 public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndianInput {
 
     public static final int RC4_REKEYING_INTERVAL = 1024;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     private final ChunkedCipherInputStream ccis;
     private final byte[] buffer = new byte[LittleEndianConsts.LONG_SIZE];
@@ -46,7 +43,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
     public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {
-            byte[] initialBuf = IOUtils.safelyAllocate(initialOffset, MAX_RECORD_LENGTH);
+            byte[] initialBuf = IOUtils.safelyAllocate(initialOffset, HSSFWorkbook.getMaxRecordLength());
             InputStream stream;
             if (initialOffset == 0) {
                 stream = in;

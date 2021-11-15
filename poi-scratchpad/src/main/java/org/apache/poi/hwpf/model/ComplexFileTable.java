@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.IOUtils;
@@ -33,9 +34,6 @@ import org.apache.poi.util.StringUtil;
 
 @Internal
 public class ComplexFileTable {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final byte GRPPRL_TYPE = 1;
     private static final byte TEXT_PIECE_TABLE_TYPE = 2;
@@ -57,7 +55,7 @@ public class ComplexFileTable {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);
             offset += LittleEndianConsts.SHORT_SIZE;
-            byte[] bs = IOUtils.safelyClone(tableStream, offset, size, MAX_RECORD_LENGTH);
+            byte[] bs = IOUtils.safelyClone(tableStream, offset, size, HWPFDocument.getMaxRecordLength());
             offset += size;
 
             SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);

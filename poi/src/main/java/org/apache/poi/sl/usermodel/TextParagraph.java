@@ -384,6 +384,7 @@ public interface TextParagraph<
      *
      * @since POI 4.0.0
      */
+    @SuppressWarnings("java:S1452")
     List<? extends TabStop> getTabStops();
 
     /**

@@ -17,10 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationName;
@@ -350,10 +349,6 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         return _uBook.createName();
     }
 
-    private static String caseInsensitive(String s) {
-        return s.toUpperCase(Locale.ROOT);
-    }
-
     /*
      * TODO: data tables are stored at the workbook level in XSSF, but are bound to a single sheet.
      *       The current code structure has them hanging off XSSFSheet, but formulas reference them
@@ -369,13 +364,11 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if ( _tableCache != null ) {
             return _tableCache;
         }
-        // FIXME: use org.apache.commons.collections.map.CaseInsensitiveMap
-        _tableCache = new HashMap<>();
+        _tableCache = new ConcurrentSkipListMap<>(String.CASE_INSENSITIVE_ORDER);
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
-                String lname = caseInsensitive(tbl.getName());
-                _tableCache.put(lname, tbl);
+                _tableCache.put(tbl.getName(), tbl);
             }
         }
         return _tableCache;
@@ -394,8 +387,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     public XSSFTable getTable(String name) {
         if (name == null) return null;
-        String lname = caseInsensitive(name);
-        return getTableCache().get(lname);
+        return getTableCache().get(name);
     }
 
     @Override

@@ -25,19 +25,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -45,20 +46,20 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public class EncryptedTempData {
-    private static Logger LOG = LogManager.getLogger(EncryptedTempData.class);
 
+    private static final Logger LOG = LogManager.getLogger(EncryptedTempData.class);
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
     private final byte[] ivBytes;
     private final File tempFile;
-    
+    private CountingOutputStream outputStream;
+
     public EncryptedTempData() throws IOException {
-        SecureRandom sr = new SecureRandom();
         ivBytes = new byte[16];
         byte[] keyBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        sr.nextBytes(keyBytes);
+        RandomSingleton.getInstance().nextBytes(ivBytes);
+        RandomSingleton.getInstance().nextBytes(keyBytes);
         skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
         tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
     }
@@ -72,7 +73,8 @@ public class EncryptedTempData {
      */
     public OutputStream getOutputStream() throws IOException {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
-        return new CipherOutputStream(new FileOutputStream(tempFile), ciEnc);
+        outputStream = new CountingOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), ciEnc));
+        return outputStream;
     }
 
     /**
@@ -87,11 +89,18 @@ public class EncryptedTempData {
     }
 
     /**
+     * @return number of bytes stored in the temp data file (the number you should expect after you decrypt the data)
+     */
+    public long getByteCount() {
+        return outputStream == null ? 0 : outputStream.getByteCount();
+    }
+
+    /**
      * Removes the temporarily backing file
      */
     public void dispose() {
         if (!tempFile.delete()) {
-            LOG.atWarn().log("{} can't be removed (or was already removed).", tempFile.getAbsolutePath());
+            LOG.atWarn().log("{} can't be removed (or was already removed).", () -> tempFile.getAbsolutePath());
         }
     }
 }

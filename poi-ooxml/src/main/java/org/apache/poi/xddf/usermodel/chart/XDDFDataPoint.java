@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 
 /**
- * @since 5.0.1
+ * @since 5.1.0
  */
 @Beta
 public class XDDFDataPoint {

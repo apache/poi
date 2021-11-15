@@ -17,6 +17,8 @@
 
 package org.apache.poi.hemf.record.emf;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
+import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
@@ -47,15 +50,12 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 
-import static org.apache.logging.log4j.util.Unbox.box;
-
 /**
  * Contains arbitrary data
  */
 @Internal
 public class HemfComment {
     private static final Logger LOG = LogManager.getLogger(HemfComment.class);
-    private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -103,7 +103,7 @@ public class HemfComment {
          */
         default void draw(HemfGraphics ctx) {}
 
-        default void calcBounds(Rectangle2D bounds, Rectangle2D viewport, EmfRenderState[] renderState) { }
+        default void calcBounds(RenderBounds holder) { }
 
 
         @Override
@@ -137,8 +137,8 @@ public class HemfComment {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
-            data.calcBounds(window, viewport, renderState);
+        public void calcBounds(RenderBounds holder) {
+            data.calcBounds(holder);
         }
 
         @Override
@@ -280,7 +280,7 @@ public class HemfComment {
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
-            privateData = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
+            privateData = IOUtils.safelyAllocate(dataSize, HwmfPicture.getMaxRecordLength());
             leis.readFully(privateData);
             return privateData.length;
         }
@@ -343,11 +343,11 @@ public class HemfComment {
         }
 
         @Override
-        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
-            renderState[0] = EmfRenderState.EMFPLUS_ONLY;
+        public void calcBounds(RenderBounds holder) {
+            holder.setState(EmfRenderState.EMFPLUS_ONLY);
             for (HemfPlusRecord r : records) {
-                r.calcBounds(window, viewport, renderState);
-                if (!window.isEmpty() && !viewport.isEmpty()) {
+                r.calcBounds(holder);
+                if (!holder.getWindow().isEmpty() && !holder.getViewport().isEmpty()) {
                     break;
                 }
             }
@@ -382,7 +382,7 @@ public class HemfComment {
             // The number of Unicode characters in the optional description string that follows.
             int nDescription = (int)leis.readUInt();
 
-            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, HwmfPicture.getMaxRecordLength());
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE);
 
@@ -457,7 +457,7 @@ public class HemfComment {
             for (EmfCommentDataFormat fmt : formats) {
                 int skip = fmt.offData-(leis.getReadIndex()-startIdx);
                 leis.skipFully(skip);
-                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, MAX_RECORD_LENGTH);
+                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, HwmfPicture.getMaxRecordLength());
                 int readBytes = leis.read(fmt.rawData);
                 if (readBytes < fmt.sizeData) {
                     // EOF
@@ -599,7 +599,7 @@ public class HemfComment {
             // WMF metafile in the WinMetafile field.
             int winMetafileSize = (int)leis.readUInt();
 
-            wmfData = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
+            wmfData = IOUtils.safelyAllocate(winMetafileSize, HwmfPicture.getMaxRecordLength());
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {

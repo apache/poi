@@ -228,7 +228,7 @@ public final class SupBookRecord extends StandardRecord {
             case CH_ALT_STARTUP_DIR:
             case CH_LIB_DIR:
                 LOG.atWarn().log("EXCEL.EXE path unknown - using this directory instead: .");
-                sb.append(".").append(PATH_SEPERATOR);
+                sb.append('.').append(PATH_SEPERATOR);
                 break;
             default:
                 sb.append(c);

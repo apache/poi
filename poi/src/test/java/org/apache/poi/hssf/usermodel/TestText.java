@@ -37,7 +37,7 @@ class TestText {
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
 
-        assertEquals(textbox.getEscherContainer().getChildCount(), 5);
+        assertEquals(5, textbox.getEscherContainer().getChildCount());
 
         //sp record
         byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");
@@ -85,126 +85,123 @@ class TestText {
 
     @Test
     void testAddTextToExistingFile() throws Exception {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sh = wb1.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
-        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        textbox.setString(new HSSFRichTextString("just for test"));
-        HSSFTextbox textbox2 = patriarch.createTextbox(new HSSFClientAnchor());
-        textbox2.setString(new HSSFRichTextString("just for test2"));
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sh = wb1.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+            HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+            textbox.setString(new HSSFRichTextString("just for test"));
+            HSSFTextbox textbox2 = patriarch.createTextbox(new HSSFClientAnchor());
+            textbox2.setString(new HSSFRichTextString("just for test2"));
 
-        assertEquals(patriarch.getChildren().size(), 2);
+            assertEquals(2, patriarch.getChildren().size());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sh = wb2.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sh = wb2.getSheetAt(0);
+                patriarch = sh.getDrawingPatriarch();
 
-        assertEquals(patriarch.getChildren().size(), 2);
-        HSSFTextbox text3 = patriarch.createTextbox(new HSSFClientAnchor());
-        text3.setString(new HSSFRichTextString("text3"));
-        assertEquals(patriarch.getChildren().size(), 3);
+                assertEquals(2, patriarch.getChildren().size());
+                HSSFTextbox text3 = patriarch.createTextbox(new HSSFClientAnchor());
+                text3.setString(new HSSFRichTextString("text3"));
+                assertEquals(3, patriarch.getChildren().size());
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
-        sh = wb3.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    sh = wb3.getSheetAt(0);
+                    patriarch = sh.getDrawingPatriarch();
 
-        assertEquals(patriarch.getChildren().size(), 3);
-        assertEquals(((HSSFTextbox) patriarch.getChildren().get(0)).getString().getString(), "just for test");
-        assertEquals(((HSSFTextbox) patriarch.getChildren().get(1)).getString().getString(), "just for test2");
-        assertEquals(((HSSFTextbox) patriarch.getChildren().get(2)).getString().getString(), "text3");
-
-        wb3.close();
+                    assertEquals(3, patriarch.getChildren().size());
+                    assertEquals("just for test", ((HSSFTextbox) patriarch.getChildren().get(0)).getString().getString());
+                    assertEquals("just for test2", ((HSSFTextbox) patriarch.getChildren().get(1)).getString().getString());
+                    assertEquals("text3", ((HSSFTextbox) patriarch.getChildren().get(2)).getString().getString());
+                }
+            }
+        }
     }
 
     @Test
     void testSetGetProperties() throws Exception {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet sh = wb1.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
-        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        textbox.setString(new HSSFRichTextString("test"));
-        assertEquals(textbox.getString().getString(), "test");
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            HSSFSheet sh = wb1.createSheet();
+            HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+            HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+            textbox.setString(new HSSFRichTextString("test"));
+            assertEquals("test", textbox.getString().getString());
 
-        textbox.setHorizontalAlignment((short) 5);
-        assertEquals(textbox.getHorizontalAlignment(), 5);
+            textbox.setHorizontalAlignment((short) 5);
+            assertEquals(5, textbox.getHorizontalAlignment());
 
-        textbox.setVerticalAlignment((short) 6);
-        assertEquals(textbox.getVerticalAlignment(), (short) 6);
+            textbox.setVerticalAlignment((short) 6);
+            assertEquals((short) 6, textbox.getVerticalAlignment());
 
-        textbox.setMarginBottom(7);
-        assertEquals(textbox.getMarginBottom(), 7);
+            textbox.setMarginBottom(7);
+            assertEquals(7, textbox.getMarginBottom());
 
-        textbox.setMarginLeft(8);
-        assertEquals(textbox.getMarginLeft(), 8);
+            textbox.setMarginLeft(8);
+            assertEquals(8, textbox.getMarginLeft());
 
-        textbox.setMarginRight(9);
-        assertEquals(textbox.getMarginRight(), 9);
+            textbox.setMarginRight(9);
+            assertEquals(9, textbox.getMarginRight());
 
-        textbox.setMarginTop(10);
-        assertEquals(textbox.getMarginTop(), 10);
+            textbox.setMarginTop(10);
+            assertEquals(10, textbox.getMarginTop());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sh = wb2.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
-        textbox = (HSSFTextbox) patriarch.getChildren().get(0);
-        assertEquals(textbox.getString().getString(), "test");
-        assertEquals(textbox.getHorizontalAlignment(), 5);
-        assertEquals(textbox.getVerticalAlignment(), (short) 6);
-        assertEquals(textbox.getMarginBottom(), 7);
-        assertEquals(textbox.getMarginLeft(), 8);
-        assertEquals(textbox.getMarginRight(), 9);
-        assertEquals(textbox.getMarginTop(), 10);
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sh = wb2.getSheetAt(0);
+                patriarch = sh.getDrawingPatriarch();
+                textbox = (HSSFTextbox) patriarch.getChildren().get(0);
+                assertEquals("test", textbox.getString().getString());
+                assertEquals(5, textbox.getHorizontalAlignment());
+                assertEquals((short) 6, textbox.getVerticalAlignment());
+                assertEquals(7, textbox.getMarginBottom());
+                assertEquals(8, textbox.getMarginLeft());
+                assertEquals(9, textbox.getMarginRight());
+                assertEquals(10, textbox.getMarginTop());
 
-        textbox.setString(new HSSFRichTextString("test1"));
-        textbox.setHorizontalAlignment(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
-        textbox.setVerticalAlignment(HSSFTextbox.VERTICAL_ALIGNMENT_TOP);
-        textbox.setMarginBottom(71);
-        textbox.setMarginLeft(81);
-        textbox.setMarginRight(91);
-        textbox.setMarginTop(101);
+                textbox.setString(new HSSFRichTextString("test1"));
+                textbox.setHorizontalAlignment(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
+                textbox.setVerticalAlignment(HSSFTextbox.VERTICAL_ALIGNMENT_TOP);
+                textbox.setMarginBottom(71);
+                textbox.setMarginLeft(81);
+                textbox.setMarginRight(91);
+                textbox.setMarginTop(101);
 
-        assertEquals(textbox.getString().getString(), "test1");
-        assertEquals(textbox.getHorizontalAlignment(), HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
-        assertEquals(textbox.getVerticalAlignment(), HSSFTextbox.VERTICAL_ALIGNMENT_TOP);
-        assertEquals(textbox.getMarginBottom(), 71);
-        assertEquals(textbox.getMarginLeft(), 81);
-        assertEquals(textbox.getMarginRight(), 91);
-        assertEquals(textbox.getMarginTop(), 101);
+                assertEquals("test1", textbox.getString().getString());
+                assertEquals(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED, textbox.getHorizontalAlignment());
+                assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_TOP, textbox.getVerticalAlignment());
+                assertEquals(71, textbox.getMarginBottom());
+                assertEquals(81, textbox.getMarginLeft());
+                assertEquals(91, textbox.getMarginRight());
+                assertEquals(101, textbox.getMarginTop());
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
-        wb2.close();
-        sh = wb3.getSheetAt(0);
-        patriarch = sh.getDrawingPatriarch();
-        textbox = (HSSFTextbox) patriarch.getChildren().get(0);
+                try (HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2)) {
+                    sh = wb3.getSheetAt(0);
+                    patriarch = sh.getDrawingPatriarch();
+                    textbox = (HSSFTextbox) patriarch.getChildren().get(0);
 
-        assertEquals(textbox.getString().getString(), "test1");
-        assertEquals(textbox.getHorizontalAlignment(), HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
-        assertEquals(textbox.getVerticalAlignment(), HSSFTextbox.VERTICAL_ALIGNMENT_TOP);
-        assertEquals(textbox.getMarginBottom(), 71);
-        assertEquals(textbox.getMarginLeft(), 81);
-        assertEquals(textbox.getMarginRight(), 91);
-        assertEquals(textbox.getMarginTop(), 101);
-
-        wb3.close();
+                    assertEquals("test1", textbox.getString().getString());
+                    assertEquals(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED, textbox.getHorizontalAlignment());
+                    assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_TOP, textbox.getVerticalAlignment());
+                    assertEquals(71, textbox.getMarginBottom());
+                    assertEquals(81, textbox.getMarginLeft());
+                    assertEquals(91, textbox.getMarginRight());
+                    assertEquals(101, textbox.getMarginTop());
+                }
+            }
+        }
     }
 
     @Test
     void testExistingFileWithText() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
-        HSSFSheet sheet = wb.getSheet("text");
-        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
-        assertEquals(1, drawing.getChildren().size());
-        HSSFTextbox textbox = (HSSFTextbox) drawing.getChildren().get(0);
-        assertEquals(textbox.getHorizontalAlignment(), HSSFTextbox.HORIZONTAL_ALIGNMENT_LEFT);
-        assertEquals(textbox.getVerticalAlignment(), HSSFTextbox.VERTICAL_ALIGNMENT_TOP);
-        assertEquals(textbox.getMarginTop(), 0);
-        assertEquals(textbox.getMarginBottom(), 3600000);
-        assertEquals(textbox.getMarginLeft(), 3600000);
-        assertEquals(textbox.getMarginRight(), 0);
-        assertEquals(textbox.getString().getString(), "teeeeesssstttt");
-        wb.close();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
+            HSSFSheet sheet = wb.getSheet("text");
+            HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+            assertEquals(1, drawing.getChildren().size());
+            HSSFTextbox textbox = (HSSFTextbox) drawing.getChildren().get(0);
+            assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_TOP, textbox.getVerticalAlignment());
+            assertEquals(0, textbox.getMarginTop());
+            assertEquals(3600000, textbox.getMarginBottom());
+            assertEquals(3600000, textbox.getMarginLeft());
+            assertEquals(0, textbox.getMarginRight());
+            assertEquals("teeeeesssstttt", textbox.getString().getString());
+        }
     }
 }

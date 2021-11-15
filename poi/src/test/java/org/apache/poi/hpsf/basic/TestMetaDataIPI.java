@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Random;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.CustomProperties;
@@ -36,6 +35,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.RandomSingleton;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -551,7 +551,7 @@ final class TestMetaDataIPI {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append(s);
-            sb.append(" ");
+            sb.append(' ');
         }
         return sb.toString();
     }
@@ -583,17 +583,20 @@ final class TestMetaDataIPI {
         StringBuilder sb = new StringBuilder();
         String[] umlaute = { "\u00e4", "\u00fc", "\u00f6", "\u00dc", "$", "\u00d6", "\u00dc",
                 "\u00c9", "\u00d6", "@", "\u00e7", "&" };
-        Random rand = new Random(0); // TODO - no Random - tests should be completely deterministic
         for (int i = 0; i < 5; i++) {
             sb.append(s);
-            sb.append(" ");
-            char j = (char) rand.nextInt(220);
+            sb.append(' ');
+
+            // TODO - no Random - tests should be completely deterministic
+            char j = (char) RandomSingleton.getInstance().nextInt(220);
             j += 33;
-            sb.append(">");
+            sb.append('>');
             sb.append(Character.valueOf(j));
-            sb.append("=");
-            sb.append(umlaute[rand.nextInt(umlaute.length)]);
-            sb.append("<");
+            sb.append('=');
+
+            // TODO - no Random - tests should be completely deterministic
+            sb.append(umlaute[RandomSingleton.getInstance().nextInt(umlaute.length)]);
+            sb.append('<');
         }
         return sb;
     }

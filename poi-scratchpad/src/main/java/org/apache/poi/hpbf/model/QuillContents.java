@@ -35,8 +35,6 @@ import org.apache.poi.util.LocaleUtil;
  */
 public final class QuillContents extends HPBFPart {
     private static final Logger LOG = LogManager.getLogger(QuillContents.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
     private final QCBit[] bits;
@@ -69,7 +67,7 @@ public final class QuillContents extends HPBFPart {
                 int from = (int)LittleEndian.getUInt(data, offset+16);
                 int len = (int)LittleEndian.getUInt(data, offset+20);
 
-                byte[] bitData = IOUtils.safelyClone(data, from, len, MAX_RECORD_LENGTH);
+                byte[] bitData = IOUtils.safelyClone(data, from, len, EscherPart.getMaxRecordLength());
 
                 // Create
                 if(bitType.equals("TEXT")) {

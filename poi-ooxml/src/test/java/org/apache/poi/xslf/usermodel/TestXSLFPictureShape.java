@@ -83,8 +83,61 @@ class TestXSLFPictureShape {
                 assertArrayEquals(data2, pics.get(1).getData());
 
                 List<XSLFShape> shapes = ppt2.getSlides().get(0).getShapes();
-                assertArrayEquals(data1, ((XSLFPictureShape) shapes.get(0)).getPictureData().getData());
-                assertArrayEquals(data2, ((XSLFPictureShape) shapes.get(1)).getPictureData().getData());
+                assertEquals(2, shapes.size());
+                XSLFPictureShape xlsfShape0 = (XSLFPictureShape) shapes.get(0);
+                XSLFPictureShape xlsfShape1 = (XSLFPictureShape) shapes.get(1);
+                assertArrayEquals(data1, xlsfShape0.getPictureData().getData());
+                assertArrayEquals(data2, xlsfShape1.getPictureData().getData());
+                assertEquals("Picture 2", xlsfShape0.getName());
+                assertEquals("Picture 3", xlsfShape1.getName());
+            }
+        }
+    }
+
+    @Test
+    void testCreateWithSetName() throws Exception {
+        try (XMLSlideShow ppt1 = new XMLSlideShow()) {
+            assertEquals(0, ppt1.getPictureData().size());
+            byte[] data1 = new byte[100];
+            for (int i = 0; i < 100; i++) {
+                data1[i] = (byte) i;
+            }
+            XSLFPictureData pdata1 = ppt1.addPicture(data1, PictureType.JPEG);
+            assertEquals(0, pdata1.getIndex());
+            assertEquals(1, ppt1.getPictureData().size());
+
+            XSLFSlide slide = ppt1.createSlide();
+            XSLFPictureShape shape1 = slide.createPicture(pdata1);
+            assertNotNull(shape1.getPictureData());
+            assertArrayEquals(data1, shape1.getPictureData().getData());
+            assertTrue(shape1.setName("Shape1 Picture"));
+
+            byte[] data2 = new byte[200];
+            for (int i = 0; i < 200; i++) {
+                data2[i] = (byte) i;
+            }
+            XSLFPictureData pdata2 = ppt1.addPicture(data2, PictureType.PNG);
+            XSLFPictureShape shape2 = slide.createPicture(pdata2);
+            assertNotNull(shape2.getPictureData());
+            assertEquals(1, pdata2.getIndex());
+            assertEquals(2, ppt1.getPictureData().size());
+            assertArrayEquals(data2, shape2.getPictureData().getData());
+            assertTrue(shape2.setName("Shape2 Picture"));
+
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt1)) {
+                List<XSLFPictureData> pics = ppt2.getPictureData();
+                assertEquals(2, pics.size());
+                assertArrayEquals(data1, pics.get(0).getData());
+                assertArrayEquals(data2, pics.get(1).getData());
+
+                List<XSLFShape> shapes = ppt2.getSlides().get(0).getShapes();
+                assertEquals(2, shapes.size());
+                XSLFPictureShape xlsfShape1 = (XSLFPictureShape) shapes.get(0);
+                XSLFPictureShape xlsfShape2 = (XSLFPictureShape) shapes.get(1);
+                assertArrayEquals(data1, xlsfShape1.getPictureData().getData());
+                assertArrayEquals(data2, xlsfShape2.getPictureData().getData());
+                assertEquals("Shape1 Picture", xlsfShape1.getName());
+                assertEquals("Shape2 Picture", xlsfShape2.getName());
             }
         }
     }
@@ -284,6 +337,26 @@ class TestXSLFPictureShape {
             } catch (NoClassDefFoundError ignored) {
                 assumeFalse(true, "Batik doesn't work on th module-path");
             }
+        }
+    }
+
+    @Test
+    void testIsSetVideoFile() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedVideo.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertTrue(ps.isVideoFile());
+        }
+    }
+
+    @Test
+    void testGetVideoLink() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedVideo.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertEquals(ps.getVideoFileLink(), "rId2");
         }
     }
 }

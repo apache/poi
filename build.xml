@@ -42,8 +42,8 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="5.0.1-SNAPSHOT"/>
-    <property name="release.rc" value="RC1"/>
+    <property name="version.id" value="5.1.1-SNAPSHOT"/>
+    <property name="release.rc" value=""/>
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
@@ -270,32 +270,32 @@ under the License.
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
     <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.0" usage="main"/>
 
-    <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.7.1" usage="main-tests"/>
-    <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.7.1" usage="main-tests"/>
-    <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.7.1" usage="main-tests"/>
+    <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.8.1" usage="main-tests"/>
+    <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.8.1" usage="main-tests"/>
+    <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.8.1" usage="main-tests"/>
     <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.0" usage="main-tests"/>
-    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.7.1" usage="main-tests"/>
-    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.7.1" usage="main-tests"/>
-    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.7.1" usage="main-tests"/>
+    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.8.1" usage="main-tests"/>
+    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.8.1" usage="main-tests"/>
+    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.8.1" usage="main-tests"/>
 
 
-    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.27" usage="main-tests"/>
-    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.27" usage="main-tests"/>
+    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.33" usage="main-tests"/>
+    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.33" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
-    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.2" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.6.28" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.19" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.19" usage="main-tests"/>
+    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.3" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.0.0" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.1" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.1" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
-    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="main-tests"/>
+    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.1" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.2" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.3.0" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.69" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.69" usage="ooxml-provided"/>
@@ -326,18 +326,18 @@ under the License.
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.24" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.24" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.32" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.33" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
-    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.0" usage="ooxml"/>
+    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.0.2" usage="ooxml"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.21" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
-    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.31" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.32" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -639,13 +639,6 @@ under the License.
         <delete dir="poi-ooxml/build"/>
         <delete dir="poi-ooxml-full/build"/>
         <delete dir="poi-scratchpad/build"/>
-        <delete includeemptydirs="true">
-            <fileset dir="sonar">
-                <include name="*/target/**"/>
-                <include name="*/build/**"/>
-                <include name="*/src/**"/>
-            </fileset>
-        </delete>
     </target>
 
     <macrodef name="downloadfile">
@@ -681,15 +674,19 @@ under the License.
                 <include name="*slf4j*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
-                <include name="mockito-core-3.2*.jar"/>
-                <include name="mockito-core-3.5*.jar"/>
+                <include name="mockito-core-3*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
-            </fileset>
+				<include name="junit-jupiter-*-5.8.0.jar"/>
+				<include name="junit-jupiter-*-5.7.*.jar"/>
+				<include name="junit-platform-*-1.7.*.jar"/>
+			</fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3*.jar"/>
                 <include name="xmlbeans-4*.jar"/>
+                <include name="xmlbeans-5.0.0.jar"/>
+                <include name="xmlbeans-5.0.1.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bc*-1.65.jar"/>
@@ -697,7 +694,7 @@ under the License.
                 <include name="bc*-1.68.jar"/>
                 <include name="batik*.jar"/>
                 <include name="slf4j*-1.7.30.jar"/>
-                <include name="xmlsec*-2.2.1.jar"/>
+                <include name="xmlsec-2.2*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
@@ -1490,6 +1487,7 @@ under the License.
                 <path refid="ooxml.classpath"/>
                 <path refid="test.jar.classpath"/>
                 <pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${ooxml.output.test.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
@@ -2001,6 +1999,7 @@ under the License.
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
             <srcfiles dir="${main.documentation}" />
         </uptodate>
+        <echo message="Had result: ${main.docs.notRequired}"/>
     </target>
 
     <target name="-check-forrest-installed" unless="env.FORREST_HOME">
@@ -2019,6 +2018,8 @@ under the License.
 
     <target name="-forrest-docs" depends="-check-forrest-installed, -check-docs"
             unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
+        <echo message="Using Apache Forrest from ${env.FORREST_HOME}"/>
+
         <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
         <exec executable="cmd" osfamily="windows">
             <arg value="/c"/>
@@ -2388,8 +2389,6 @@ under the License.
                       out/**,
                       tmp/**,
                       gradle/**,
-                      sonar/**/target/**,
-                      sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
                       ooxml-testlib/**,
@@ -3030,26 +3029,16 @@ under the License.
             <param name="version_id" value="${rel_next}"/>
         </antcall>
 
-        <!-- update sonar pom.xmls -->
-        <replaceregexp byline="true">
-            <regexp pattern="&lt;version&gt;.*-SNAPSHOT&lt;/version&gt;"/>
-            <substitution expression="&lt;version&gt;${rel_next}-SNAPSHOT&lt;/version&gt;"/>
-            <fileset dir="sonar">
-              <include name="**/pom.xml"/>
-            </fileset>
-        </replaceregexp>
-
         <!-- unpin documentation and commit next snapshot version -->
         <svn refid="svn.settings">
             <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
             <!--<commit message="prepare for ${rel_next}" recurse="false">
                 <fileset dir="." includes="build.xml"/>
-                <fileset dir="sonar" includes="**/pom.xml"/>
                 <dirset dir="src"/>
             </commit>-->
         </svn>
-        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'prepare for ${rel_next}' build.xml sonar src"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'prepare for ${rel_next}' build.xml src poi*"/>
 
         <mkdir dir="build/release"/>
 
@@ -3122,10 +3111,6 @@ under the License.
         <replaceregexp file="poi-examples/src/main/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
         <replaceregexp file="osgi/pom.xml" match="version>${rel_prev}[^&lt;]+" replace="version>${version.id}"/>
         <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
-
-        <replaceregexp match="(&lt;version&gt;)[^&lt;]+" replace="\1${version.id}">
-            <fileset dir="sonar" includes="**/pom.xml"/>
-        </replaceregexp>
     </target>
 
 
@@ -3288,20 +3273,6 @@ under the License.
 
 	<target name="replaceVersion" description="Apply the version from build.xml in all other places">
 		<replaceregexp
-               match="(packaging>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
-               replace="\1${version.id}">
-			<fileset dir="sonar">
-				<include name="**/pom.xml"/>
-			</fileset>
-        </replaceregexp>
-		<replaceregexp
-               match="(poi-parent&lt;/artifactId>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
-               replace="\1${version.id}">
-			<fileset dir="sonar">
-				<include name="**/pom.xml"/>
-			</fileset>
-        </replaceregexp>
-		<replaceregexp
                match=" version = '[0-9.]+(?:-SNAPSHOT)?'"
                replace=" version = '${version.id}'">
 			<fileset dir=".">
@@ -3309,10 +3280,10 @@ under the License.
 			</fileset>
         </replaceregexp>
 		<replaceregexp
-               match="version.id&quot; value=&quot;[0-9.]+(?:-SNAPSHOT)?&quot;/>"
-               replace="version.id&quot; value=&quot;${version.id}&quot;/>">
+               match="&lt;poi.version>[0-9.]+(?:-SNAPSHOT)?&lt;/poi.version>"
+               replace="&lt;poi.version>${version.id}&lt;/poi.version>">
 			<fileset dir=".">
-				<include name="osgi/build.xml"/>
+				<include name="osgi/pom.xml"/>
 			</fileset>
         </replaceregexp>
 	</target>

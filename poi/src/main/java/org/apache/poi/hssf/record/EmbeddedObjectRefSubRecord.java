@@ -17,12 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -46,8 +48,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord {
     private static final Logger LOG = LogManager.getLogger(EmbeddedObjectRefSubRecord.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short sid = 0x0009;
 
@@ -179,15 +179,19 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
     }
 
     private static Ptg readRefPtg(byte[] formulaRawBytes) {
-        LittleEndianInput in = new LittleEndianInputStream(new ByteArrayInputStream(formulaRawBytes));
-        byte ptgSid = in.readByte();
-        switch(ptgSid) {
-            case AreaPtg.sid:   return new AreaPtg(in);
-            case Area3DPtg.sid: return new Area3DPtg(in);
-            case RefPtg.sid:    return new RefPtg(in);
-            case Ref3DPtg.sid:  return new Ref3DPtg(in);
+        try (LittleEndianInputStream in = new LittleEndianInputStream(
+                new UnsynchronizedByteArrayInputStream(formulaRawBytes))) {
+            byte ptgSid = in.readByte();
+            switch(ptgSid) {
+                case AreaPtg.sid:   return new AreaPtg(in);
+                case Area3DPtg.sid: return new Area3DPtg(in);
+                case RefPtg.sid:    return new RefPtg(in);
+                case Ref3DPtg.sid:  return new Ref3DPtg(in);
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected exception in readRefPtg", e);
         }
-        return null;
     }
 
     private static byte[] readRawData(LittleEndianInput in, int size) {
@@ -197,7 +201,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
         if (size == 0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
         in.readFully(result);
         return result;
     }

@@ -38,7 +38,7 @@ import java.util.List;
  * <b>text2 ...</b> Optional. Additional text items to be joined. There can be a maximum of 252 text arguments for the text items, including text1.
  * Each can be a text string, or array of strings, such as a range of cells.<br>
  *
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 final class TextJoinFunction implements FreeRefFunction {
 
@@ -56,7 +56,7 @@ final class TextJoinFunction implements FreeRefFunction {
          * Must be at least three arguments:
          *  - delimiter    Delimiter for joining text arguments
          *  - ignoreEmpty  If true, empty strings will be ignored in the join
-         *  - text1		   First value to be evaluated as text and joined
+         *  - text1        First value to be evaluated as text and joined
          *  - text2, etc.  Optional additional values to be evaluated and joined
          */
 

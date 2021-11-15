@@ -17,6 +17,8 @@
 package org.apache.poi.stress;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,7 +61,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-class XSSFFileHandler extends SpreadsheetHandler {
+public class XSSFFileHandler extends SpreadsheetHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files if password is unknown
@@ -219,12 +221,14 @@ class XSSFFileHandler extends SpreadsheetHandler {
     }
 
     @Test
-    void testExtracting() throws Exception {
-        handleExtracting(new File("test-data/spreadsheet/ref-56737.xlsx"));
+    void testExtracting() {
+        File testFile = getSampleFile("ref-56737.xlsx");
+        assertDoesNotThrow(() -> handleExtracting(testFile));
     }
 
     @Test
-    void testAdditional() throws Exception {
-        handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
+    void testAdditional() {
+        File testFile = getSampleFile("poc-xmlbomb.xlsx");
+        assertDoesNotThrow(() -> handleAdditional(testFile));
     }
 }

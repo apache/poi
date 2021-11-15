@@ -48,13 +48,12 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.PrintStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.text.CharacterIterator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.poi.util.Internal;
 
 public class DummyGraphics2d extends Graphics2D {
     private BufferedImage bufimg;
@@ -76,6 +75,7 @@ public class DummyGraphics2d extends Graphics2D {
         this.log = log;
     }
 
+    @Override
     public void addRenderingHints(Map<?,?> hints) {
         String l =
             "addRenderingHinds(Map):" +
@@ -84,6 +84,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.addRenderingHints( hints );
     }
 
+    @Override
     public void clip(Shape s) {
         String l =
             "clip(Shape):" +
@@ -93,7 +94,7 @@ public class DummyGraphics2d extends Graphics2D {
     }
 
     private void pathToString(StringBuilder sb, Path2D p) {
-        sb.append("Path2D p = new Path2D.Double("+p.getWindingRule()+");\n");
+        sb.append("Path2D p = new Path2D.Double(").append(p.getWindingRule()).append(");\n");
         double[] coords = new double[6];
 
         for (PathIterator pi = p.getPathIterator(null); !pi.isDone(); pi.next()) {
@@ -101,16 +102,16 @@ public class DummyGraphics2d extends Graphics2D {
             // Because the Area is composed of straight lines
             switch (pi.currentSegment(coords)) {
                 case PathIterator.SEG_MOVETO:
-                    sb.append("p.moveTo("+coords[0]+","+coords[1]+");\n");
+                    sb.append("p.moveTo(").append(coords[0]).append(",").append(coords[1]).append(");\n");
                     break;
                 case PathIterator.SEG_LINETO:
-                    sb.append("p.lineTo("+coords[0]+","+coords[1]+");\n");
+                    sb.append("p.lineTo(").append(coords[0]).append(",").append(coords[1]).append(");\n");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    sb.append("p.quadTo("+coords[0]+","+coords[1]+","+coords[2]+","+coords[3]+");\n");
+                    sb.append("p.quadTo(").append(coords[0]).append(",").append(coords[1]).append(",").append(coords[2]).append(",").append(coords[3]).append(");\n");
                     break;
                 case PathIterator.SEG_CUBICTO:
-                    sb.append("p.curveTo("+coords[0]+","+coords[1]+","+coords[2]+","+coords[3]+","+coords[4]+","+coords[5]+");\n");
+                    sb.append("p.curveTo(").append(coords[0]).append(",").append(coords[1]).append(",").append(coords[2]).append(",").append(coords[3]).append(",").append(coords[4]).append(",").append(coords[5]).append(");\n");
                     break;
                 case PathIterator.SEG_CLOSE:
                     sb.append("p.closePath();\n");
@@ -119,18 +120,20 @@ public class DummyGraphics2d extends Graphics2D {
         }
     }
 
+    @Override
     public void draw(Shape s) {
         if (s instanceof Path2D) {
             StringBuilder sb = new StringBuilder();
             pathToString(sb, (Path2D)s);
             sb.append("g.draw(p);");
-            log.println( sb.toString() );
+            log.println(sb);
         } else {
             log.println( "g.draw("+ s + ")" );
         }
         g2D.draw( s );
     }
 
+    @Override
     public void drawGlyphVector(GlyphVector g, float x, float y) {
         String l =
             "drawGlyphVector(GlyphVector, float, float):" +
@@ -141,6 +144,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawGlyphVector( g, x, y );
     }
 
+    @Override
     public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
         String l =
             "drawImage(BufferedImage, BufferedImageOp, x, y):" +
@@ -152,6 +156,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawImage( img, op, x, y );
     }
 
+    @Override
     public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
         String l =
             "drawImage(Image,AfflineTransform,ImageObserver):" +
@@ -162,6 +167,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, xform, obs );
     }
 
+    @Override
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         String l =
             "drawRenderableImage(RenderableImage, AfflineTransform):" +
@@ -171,6 +177,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawRenderableImage( img, xform );
     }
 
+    @Override
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         String l =
             "drawRenderedImage(RenderedImage, AffineTransform):" +
@@ -180,6 +187,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawRenderedImage( img, xform );
     }
 
+    @Override
     public void drawString(String s, float x, float y) {
         String l =
             "drawString(s,x,y):" +
@@ -190,63 +198,74 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawString( s, x, y );
     }
 
+    @Override
     public void fill(Shape s) {
         if (s instanceof Path2D) {
             StringBuilder sb = new StringBuilder();
             pathToString(sb, (Path2D)s);
             sb.append("g.fill(p);");
-            log.println( sb.toString() );
+            log.println(sb);
         } else {
             log.println( "g.fill("+ s + ")" );
         }
         g2D.fill( s );
     }
 
+    @Override
     public Color getBackground() {
         log.println( "getBackground():" );
         return g2D.getBackground();
     }
 
+    @Override
     public Composite getComposite() {
         log.println( "getComposite():" );
         return g2D.getComposite();
     }
 
+    @Override
     public GraphicsConfiguration getDeviceConfiguration() {
         log.println( "getDeviceConfiguration():" );
         return g2D.getDeviceConfiguration();
     }
 
+    @Override
     public FontRenderContext getFontRenderContext() {
         log.println( "getFontRenderContext():" );
         return g2D.getFontRenderContext();
     }
 
+    @Override
     public Paint getPaint() {
         log.println( "getPaint():" );
         return g2D.getPaint();
     }
 
+    @Override
     public Object getRenderingHint(RenderingHints.Key hintKey) {
         log.println( "getRenderingHint(\""+hintKey+"\")" );
         return g2D.getRenderingHint( hintKey );
     }
 
+    @Override
     public RenderingHints getRenderingHints() {
         log.println( "getRenderingHints():" );
         return g2D.getRenderingHints();
     }
 
+    @Override
     public Stroke getStroke() {
         log.println( "getStroke():" );
         return g2D.getStroke();
     }
 
+    @Override
     public AffineTransform getTransform() {
         log.println( "getTransform():" );
         return g2D.getTransform();
     }
 
+    @Override
     public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
         String l =
             "hit(Rectangle, Shape, onStroke):" +
@@ -257,6 +276,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.hit( rect, s, onStroke );
     }
 
+    @Override
     public void rotate(double theta) {
         String l =
             "rotate(theta):" +
@@ -265,6 +285,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.rotate( theta );
     }
 
+    @Override
     public void rotate(double theta, double x, double y) {
         String l =
             "rotate(double,double,double):" +
@@ -275,13 +296,15 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.rotate( theta, x, y );
     }
 
+    @Override
     public void scale(double sx, double sy) {
         log.println( "g.scale("+sx+","+sy+");" );
         g2D.scale( sx, sy );
     }
 
+    @Override
     public void setBackground(Color color) {
-        log.println(String.format(Locale.ROOT, "setBackground(new Color(0x%08X))", color.getRGB()));
+        log.printf(Locale.ROOT, "setBackground(new Color(0x%08X))%n", color.getRGB());
         g2D.setBackground( color );
     }
 
@@ -289,6 +312,7 @@ public class DummyGraphics2d extends Graphics2D {
         "CLEAR", "SRC", "SRC_OVER", "DST_OVER", "SRC_IN", "DST_IN", "SRC_OUT", "DST_OUT", "DST", "SRC_ATOP", "DST_ATOP", "XOR"
     };
 
+    @Override
     public void setComposite(Composite comp) {
         String l = "g.setComposite(";
         if (comp instanceof AlphaComposite) {
@@ -303,6 +327,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setComposite( comp );
     }
 
+    @Override
     public void setPaint( Paint paint ) {
         String l = "g.setPaint(";
         if (paint instanceof Color) {
@@ -314,6 +339,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setPaint( paint );
     }
 
+    @Override
     public void setRenderingHint(RenderingHints.Key hintKey, Object hintValue) {
         log.println( "g.setRenderingHint("+mapHint(hintKey)+", " + mapHint(hintValue) + ");" );
         g2D.setRenderingHint( hintKey, hintValue );
@@ -332,10 +358,11 @@ public class DummyGraphics2d extends Graphics2D {
                 return (String)HINTS[i+1];
             }
         }
-        return "\"" + hint.toString() + "\"";
+        return "\"" + hint + "\"";
     }
 
 
+    @Override
     public void setRenderingHints(Map<?,?> hints) {
         String l =
             "setRenderingHints(Map):" +
@@ -344,6 +371,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setRenderingHints( hints );
     }
 
+    @Override
     public void setStroke(Stroke s) {
         String l;
         if (s instanceof BasicStroke) {
@@ -364,11 +392,13 @@ public class DummyGraphics2d extends Graphics2D {
             : "new AffineTransform("+tx.getScaleX()+"f,"+tx.getShearY()+"f,"+tx.getShearX()+"f,"+tx.getScaleY()+"f,"+tx.getTranslateX()+"f,"+tx.getTranslateY()+"f)";
     }
 
+    @Override
     public void setTransform(AffineTransform Tx) {
         log.println( "g.setTransform("+mapTransform(Tx)+");" );
         g2D.setTransform( Tx );
     }
 
+    @Override
     public void shear(double shx, double shy) {
         String l =
             "shear(shx, dhy):" +
@@ -378,6 +408,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.shear( shx, shy );
     }
 
+    @Override
     public void transform(AffineTransform Tx) {
         String l =
             "transform(AffineTransform):" +
@@ -386,6 +417,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.transform( Tx );
     }
 
+    @Override
     public void translate(double tx, double ty) {
         String l =
             "translate(double, double):" +
@@ -395,6 +427,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.translate( tx, ty );
     }
 
+    @Override
     public void clearRect(int x, int y, int width, int height) {
         String l =
             "clearRect(int,int,int,int):" +
@@ -406,6 +439,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.clearRect( x, y, width, height );
     }
 
+    @Override
     public void clipRect(int x, int y, int width, int height) {
         String l =
             "clipRect(int, int, int, int):" +
@@ -417,6 +451,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.clipRect( x, y, width, height );
     }
 
+    @Override
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         String l =
             "copyArea(int,int,int,int):" +
@@ -428,11 +463,13 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.copyArea( x, y, width, height, dx, dy );
     }
 
+    @Override
     public Graphics create() {
         log.println( "create():" );
         return g2D.create();
     }
 
+    @Override
     public Graphics create(int x, int y, int width, int height) {
         String l =
             "create(int,int,int,int):" +
@@ -444,11 +481,13 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.create( x, y, width, height );
     }
 
+    @Override
     public void dispose() {
         log.println( "dispose():" );
         g2D.dispose();
     }
 
+    @Override
     public void draw3DRect(int x, int y, int width, int height, boolean raised) {
         String l =
             "draw3DRect(int,int,int,int,boolean):" +
@@ -461,6 +500,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.draw3DRect( x, y, width, height, raised );
     }
 
+    @Override
     public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
         String l =
             "drawArc(int,int,int,int,int,int):" +
@@ -474,6 +514,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawArc( x, y, width, height, startAngle, arcAngle );
     }
 
+    @Override
     public void drawBytes(byte[] data, int offset, int length, int x, int y) {
         String l =
             "drawBytes(byte[],int,int,int,int):" +
@@ -486,6 +527,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawBytes( data, offset, length, x, y );
     }
 
+    @Override
     public void drawChars(char[] data, int offset, int length, int x, int y) {
         String l =
             "drawChars(data,int,int,int,int):" +
@@ -498,6 +540,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawChars( data, offset, length, x, y );
     }
 
+    @Override
     public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,int,int,int,int,int,int,ImageObserver):" +
@@ -515,6 +558,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer );
     }
 
+    @Override
     public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, Color bgcolor, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,int,int,int,int,int,int,Color,ImageObserver):" +
@@ -533,6 +577,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer );
     }
 
+    @Override
     public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,Color,ImageObserver):" +
@@ -545,6 +590,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, x, y, bgcolor, observer );
     }
 
+    @Override
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,observer):" +
@@ -556,6 +602,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, x, y, observer );
     }
 
+    @Override
     public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,int,int,Color,ImageObserver):" +
@@ -570,6 +617,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, x, y, width, height, bgcolor, observer );
     }
 
+    @Override
     public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
         String l =
             "drawImage(Image,int,int,width,height,observer):" +
@@ -583,6 +631,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.drawImage( img, x, y, width, height, observer );
     }
 
+    @Override
     public void drawLine(int x1, int y1, int x2, int y2) {
         String l =
             "drawLine(int,int,int,int):" +
@@ -594,6 +643,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawLine( x1, y1, x2, y2 );
     }
 
+    @Override
     public void drawOval(int x, int y, int width, int height) {
         String l =
             "drawOval(int,int,int,int):" +
@@ -605,6 +655,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawOval( x, y, width, height );
     }
 
+    @Override
     public void drawPolygon(Polygon p) {
         String l =
             "drawPolygon(Polygon):" +
@@ -613,6 +664,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawPolygon( p );
     }
 
+    @Override
     public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "drawPolygon(int[],int[],int):" +
@@ -623,6 +675,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawPolygon( xPoints, yPoints, nPoints );
     }
 
+    @Override
     public void drawPolyline(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "drawPolyline(int[],int[],int):" +
@@ -633,6 +686,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawPolyline( xPoints, yPoints, nPoints );
     }
 
+    @Override
     public void drawRect(int x, int y, int width, int height) {
         String l =
             "drawRect(int,int,int,int):" +
@@ -644,6 +698,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawRect( x, y, width, height );
     }
 
+    @Override
     public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
         String l =
             "drawRoundRect(int,int,int,int,int,int):" +
@@ -674,15 +729,16 @@ public class DummyGraphics2d extends Graphics2D {
                 return (String)ATTRS[i+1];
             }
         }
-        return "\""+attr.toString()+"\"";
+        return "\""+ attr +"\"";
     }
 
+    @Override
     public void drawString(AttributedCharacterIterator iterator, float x, float y) {
         final int startIdx = iterator.getIndex();
 
         final Map<Attribute, Map<Integer,Object>> attMap = new HashMap<>();
         StringBuilder sb = new StringBuilder();
-        for (char ch = iterator.current(); ch != AttributedCharacterIterator.DONE; ch = iterator.next()) {
+        for (char ch = iterator.current(); ch != CharacterIterator.DONE; ch = iterator.next()) {
             sb.append(ch);
             iterator.getAttributes().forEach((k,v) ->
                  attMap.computeIfAbsent(k, (k2) -> new LinkedHashMap<>()).put(iterator.getIndex(), v)
@@ -695,14 +751,15 @@ public class DummyGraphics2d extends Graphics2D {
 
         for (Map.Entry<Attribute, Map<Integer,Object>> me : attMap.entrySet()) {
             int startPos = -2, lastPos = -2;
+            final Attribute at = me.getKey();
+
             Object lastObj = null;
             for (Map.Entry<Integer,Object> mo : me.getValue().entrySet()) {
                 int pos = mo.getKey();
                 Object obj = mo.getValue();
                 if (lastPos < pos-1 || obj != lastObj) {
                     if (startPos >= 0) {
-                        Attribute at = me.getKey();
-                        sb.append("as.addAttribute("+mapAttribute(me.getKey())+","+mapAttribute(lastObj)+","+startPos+","+(lastPos+1)+");\n");
+                        sb.append("as.addAttribute(").append(mapAttribute(at)).append(",").append(mapAttribute(lastObj)).append(",").append(startPos).append(",").append(lastPos + 1).append(");\n");
                     }
                     startPos = pos;
                 }
@@ -710,22 +767,24 @@ public class DummyGraphics2d extends Graphics2D {
                 lastObj = obj;
             }
             if (lastObj != null) {
-                sb.append("as.addAttribute("+mapAttribute(me.getKey())+","+mapAttribute(lastObj)+","+startPos+","+(lastPos+1)+");\n");
+                sb.append("as.addAttribute(").append(mapAttribute(at)).append(",").append(mapAttribute(lastObj)).append(",").append(startPos).append(",").append(lastPos + 1).append(");\n");
             }
         }
 
-        sb.append("g.drawString(as.getIterator(),"+x+"f,"+y+"f);");
-        log.println( sb.toString() );
+        sb.append("g.drawString(as.getIterator(),").append(x).append("f,").append(y).append("f);");
+        log.println(sb);
 
         iterator.setIndex(startIdx);
         g2D.drawString( iterator, x, y );
     }
 
 
+    @Override
     public void drawString(AttributedCharacterIterator iterator, int x, int y) {
         drawString(iterator, (float)x, (float)y);
     }
 
+    @Override
     public void drawString(String str, int x, int y) {
         String l =
             "drawString(str,int,int):" +
@@ -736,6 +795,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawString( str, x, y );
     }
 
+    @Override
     public void fill3DRect(int x, int y, int width, int height, boolean raised) {
         String l =
             "fill3DRect(int,int,int,int,boolean):" +
@@ -748,6 +808,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fill3DRect( x, y, width, height, raised );
     }
 
+    @Override
     public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
         String l =
             "fillArc(int,int,int,int,int,int):" +
@@ -761,6 +822,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillArc( x, y, width, height, startAngle, arcAngle );
     }
 
+    @Override
     public void fillOval(int x, int y, int width, int height) {
         String l =
             "fillOval(int,int,int,int):" +
@@ -772,6 +834,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillOval( x, y, width, height );
     }
 
+    @Override
     public void fillPolygon(Polygon p) {
         String l =
             "fillPolygon(Polygon):" +
@@ -780,6 +843,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillPolygon( p );
     }
 
+    @Override
     public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "fillPolygon(int[],int[],int):" +
@@ -790,26 +854,31 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillPolygon( xPoints, yPoints, nPoints );
     }
 
+    @Override
     public void fillRect(int x, int y, int width, int height) {
         log.println( "g.fillRect(" + x + "," + y + "," + width + "," + height + ");" );
         g2D.fillRect( x, y, width, height );
     }
 
+    @Override
     public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
         log.println( "fillRoundRect(" + x + "," + y + "," + width + "," + height + "," + arcWidth + "," + arcHeight + ")" );
         g2D.fillRoundRect( x, y, width, height, arcWidth, arcHeight );
     }
 
+    @Override
     public Shape getClip() {
         log.println( "getClip():" );
         return g2D.getClip();
     }
 
+    @Override
     public Rectangle getClipBounds() {
         log.println( "getClipBounds():" );
         return g2D.getClipBounds();
     }
 
+    @Override
     public Rectangle getClipBounds(Rectangle r) {
         String l =
             "getClipBounds(Rectangle):" +
@@ -818,26 +887,31 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.getClipBounds( r );
     }
 
+    @Override
     public Color getColor() {
         log.println( "getColor():" );
         return g2D.getColor();
     }
 
+    @Override
     public Font getFont() {
         log.println( "getFont():" );
         return g2D.getFont();
     }
 
+    @Override
     public FontMetrics getFontMetrics() {
         log.println( "getFontMetrics():" );
         return g2D.getFontMetrics();
     }
 
+    @Override
     public FontMetrics getFontMetrics(Font f) {
         log.println( "getFontMetrics():" );
         return g2D.getFontMetrics( f );
     }
 
+    @Override
     public boolean hitClip(int x, int y, int width, int height) {
         String l =
             "hitClip(int,int,int,int):" +
@@ -849,6 +923,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.hitClip( x, y, width, height );
     }
 
+    @Override
     public void setClip(Shape clip) {
         String l =
             "setClip(Shape):" +
@@ -857,6 +932,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setClip( clip );
     }
 
+    @Override
     public void setClip(int x, int y, int width, int height) {
         String l =
             "setClip(int,int,int,int):" +
@@ -868,11 +944,13 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setClip( x, y, width, height );
     }
 
+    @Override
     public void setColor(Color c) {
-        log.println( String.format(Locale.ROOT, "g.setColor(new Color(0x%08X));", c.getRGB()));
+        log.printf(Locale.ROOT, "g.setColor(new Color(0x%08X));%n", c.getRGB());
         g2D.setColor( c );
     }
 
+    @Override
     public void setFont(Font font) {
         String l =
             "setFont(Font):" +
@@ -881,11 +959,13 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.setFont( font );
     }
 
+    @Override
     public void setPaintMode() {
         log.println( "setPaintMode():" );
         g2D.setPaintMode();
     }
 
+    @Override
     public void setXORMode(Color c1) {
         String l =
             "setXORMode(Color):" +
@@ -899,6 +979,7 @@ public class DummyGraphics2d extends Graphics2D {
         return g2D.toString();
     }
 
+    @Override
     public void translate(int x, int y) {
         String l =
             "translate(int,int):" +

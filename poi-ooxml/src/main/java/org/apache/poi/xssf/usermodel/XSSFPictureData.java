@@ -93,26 +93,12 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
         }
     }
 
-    /**
-     * Suggests a file extension for this image.
-     *
-     * @return the file extension.
-     */
+    @Override
     public String suggestFileExtension() {
         return getPackagePart().getPartName().getExtension();
     }
 
-    /**
-     * Return an integer constant that specifies type of this picture
-     *
-     * @return an integer constant that specifies type of this picture 
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_EMF
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_WMF
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PICT
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_JPEG
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PNG
-     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_DIB
-     */
+    @Override
     public int getPictureType(){
         String contentType = getPackagePart().getContentType();
         for (int i = 0; i < RELATIONS.length; i++) {

@@ -1179,7 +1179,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get the width type from the width value
-     * @param ctWidth CTTblWidth to evalute
+     * @param ctWidth CTTblWidth to evaluate
      * @return The table width type
      * @since 4.0.0
      */

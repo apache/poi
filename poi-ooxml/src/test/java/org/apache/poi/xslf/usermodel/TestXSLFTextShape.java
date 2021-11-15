@@ -17,7 +17,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
+import static org.apache.poi.sl.usermodel.TextRun.FieldType.DATE_TIME;
+import static org.apache.poi.sl.usermodel.TextRun.FieldType.SLIDE_NUMBER;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,17 +30,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextRun.FieldType;
+import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xddf.usermodel.text.XDDFBodyProperties;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
@@ -66,19 +75,19 @@ class TestXSLFTextShape {
 
     @Test
     void testLayouts() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx")) {
 
-        List<XSLFSlide> slide = ppt.getSlides();
+            List<XSLFSlide> slide = ppt.getSlides();
 
-        verifySlide1(slide.get(0));
-        verifySlide2(slide.get(1));
-        verifySlide3(slide.get(2));
-        verifySlide4(slide.get(3));
-        verifySlide7(slide.get(6));
-        verifySlide8(slide.get(7));
-        verifySlide10(slide.get(9));
+            verifySlide1(slide.get(0));
+            verifySlide2(slide.get(1));
+            verifySlide3(slide.get(2));
+            verifySlide4(slide.get(3));
+            verifySlide7(slide.get(6));
+            verifySlide8(slide.get(7));
+            verifySlide10(slide.get(9));
 
-        ppt.close();
+        }
     }
 
     void verifySlide1(XSLFSlide slide){
@@ -90,7 +99,7 @@ class TestXSLFTextShape {
         XDDFTextBody tb1 = shape1.getTextBody();
         XDDFBodyProperties tbp1 = tb1.getBodyProperties();
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.CTR_TITLE, ph1.getType());
+        assertSame(STPlaceholderType.CTR_TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -129,7 +138,7 @@ class TestXSLFTextShape {
         XDDFTextBody tb2 = shape2.getTextBody();
         XDDFBodyProperties tbp2 = tb2.getBodyProperties();
         CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.SUB_TITLE, ph2.getType());
+        assertSame(STPlaceholderType.SUB_TITLE, ph2.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape2).getXfrm());
 
@@ -171,7 +180,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.TITLE, ph1.getType());
+        assertSame(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -284,7 +293,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.TITLE, ph1.getType());
+        assertSame(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -318,7 +327,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.BODY, ph2.getType());
+        assertSame(STPlaceholderType.BODY, ph2.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape2).getXfrm());
 
@@ -355,7 +364,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.TITLE, ph1.getType());
+        assertSame(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -470,7 +479,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.TITLE, ph1.getType());
+        assertSame(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -538,7 +547,7 @@ class TestXSLFTextShape {
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
-        assertEquals(STPlaceholderType.TITLE, ph1.getType());
+        assertSame(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
 
@@ -664,301 +673,313 @@ class TestXSLFTextShape {
 
     @Test
     void testTitleStyles() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
 
-        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
-        XSLFTheme theme = master.getTheme();
-        XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE);
-        XSLFSlide slide = ppt.createSlide(layout) ;
-        assertSame(layout, slide.getSlideLayout());
-        assertSame(master, slide.getSlideMaster());
+            XSLFSlideMaster master = ppt.getSlideMasters().get(0);
+            XSLFTheme theme = master.getTheme();
+            XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE);
+            XSLFSlide slide = ppt.createSlide(layout);
+            assertSame(layout, slide.getSlideLayout());
+            assertSame(master, slide.getSlideMaster());
 
-        XSLFTextShape titleShape = slide.getPlaceholder(0);
-        titleShape.setText("Apache POI");
-        XSLFTextParagraph paragraph = titleShape.getTextParagraphs().get(0);
-        XSLFTextRun textRun = paragraph.getTextRuns().get(0);
+            XSLFTextShape titleShape = slide.getPlaceholder(0);
+            titleShape.setText("Apache POI");
+            XSLFTextParagraph paragraph = titleShape.getTextParagraphs().get(0);
+            XSLFTextRun textRun = paragraph.getTextRuns().get(0);
 
-        // level 1 : default title style on the master slide
-        // /p:sldMaster/p:txStyles/p:titleStyle/a:lvl1pPr
-        CTTextParagraphProperties lv1PPr = master.getXmlObject().getTxStyles().getTitleStyle().getLvl1PPr();
-        CTTextCharacterProperties lv1CPr = lv1PPr.getDefRPr();
-        assertEquals(4400, lv1CPr.getSz());
-        assertEquals(44.0, textRun.getFontSize(), 0);
-        assertEquals("+mj-lt", lv1CPr.getLatin().getTypeface());
-        assertEquals("Calibri", theme.getMajorFont());
-        assertEquals("Calibri", textRun.getFontFamily());
-        lv1CPr.setSz(3200);
-        assertEquals(32.0, textRun.getFontSize(), 0);
-        lv1CPr.getLatin().setTypeface("Arial");
-        assertEquals("Arial", textRun.getFontFamily());
-        assertEquals(STTextAlignType.CTR, lv1PPr.getAlgn());
-        assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
-        lv1PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, paragraph.getTextAlign());
+            // level 1 : default title style on the master slide
+            // /p:sldMaster/p:txStyles/p:titleStyle/a:lvl1pPr
+            CTTextParagraphProperties lv1PPr = master.getXmlObject().getTxStyles().getTitleStyle().getLvl1PPr();
+            CTTextCharacterProperties lv1CPr = lv1PPr.getDefRPr();
+            assertEquals(4400, lv1CPr.getSz());
+            assertEquals(44.0, textRun.getFontSize(), 0);
+            assertEquals("+mj-lt", lv1CPr.getLatin().getTypeface());
+            assertEquals("Calibri", theme.getMajorFont());
+            assertEquals("Calibri", textRun.getFontFamily());
+            lv1CPr.setSz(3200);
+            assertEquals(32.0, textRun.getFontSize(), 0);
+            lv1CPr.getLatin().setTypeface("Arial");
+            assertEquals("Arial", textRun.getFontFamily());
+            assertSame(STTextAlignType.CTR, lv1PPr.getAlgn());
+            assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
+            lv1PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, paragraph.getTextAlign());
 
-        // level 2: title placeholder on the master slide
-        // /p:sldMaster/p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="title"]
-        XSLFTextShape tx2 = master.getPlaceholder(0);
-        CTTextParagraphProperties lv2PPr = tx2.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        CTTextCharacterProperties lv2CPr = lv2PPr.addNewDefRPr();
-        lv2CPr.setSz(3300);
-        assertEquals(33.0, textRun.getFontSize(), 0);
-        lv2CPr.addNewLatin().setTypeface("Times");
-        assertEquals("Times", textRun.getFontFamily());
-        lv2PPr.setAlgn(STTextAlignType.R);
-        assertEquals(TextAlign.RIGHT, paragraph.getTextAlign());
+            // level 2: title placeholder on the master slide
+            // /p:sldMaster/p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="title"]
+            XSLFTextShape tx2 = master.getPlaceholder(0);
+            CTTextParagraphProperties lv2PPr = tx2.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            CTTextCharacterProperties lv2CPr = lv2PPr.addNewDefRPr();
+            lv2CPr.setSz(3300);
+            assertEquals(33.0, textRun.getFontSize(), 0);
+            lv2CPr.addNewLatin().setTypeface("Times");
+            assertEquals("Times", textRun.getFontFamily());
+            lv2PPr.setAlgn(STTextAlignType.R);
+            assertEquals(TextAlign.RIGHT, paragraph.getTextAlign());
 
 
-        // level 3: title placeholder on the slide layout
-        // /p:sldLayout /p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="ctrTitle"]
-        XSLFTextShape tx3 = layout.getPlaceholder(0);
-        CTTextParagraphProperties lv3PPr = tx3.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        CTTextCharacterProperties lv3CPr = lv3PPr.addNewDefRPr();
-        lv3CPr.setSz(3400);
-        assertEquals(34.0, textRun.getFontSize(), 0);
-        lv3CPr.addNewLatin().setTypeface("Courier New");
-        assertEquals("Courier New", textRun.getFontFamily());
-        lv3PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
+            // level 3: title placeholder on the slide layout
+            // /p:sldLayout /p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="ctrTitle"]
+            XSLFTextShape tx3 = layout.getPlaceholder(0);
+            CTTextParagraphProperties lv3PPr = tx3.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            CTTextCharacterProperties lv3CPr = lv3PPr.addNewDefRPr();
+            lv3CPr.setSz(3400);
+            assertEquals(34.0, textRun.getFontSize(), 0);
+            lv3CPr.addNewLatin().setTypeface("Courier New");
+            assertEquals("Courier New", textRun.getFontFamily());
+            lv3PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
 
-        // level 4: default text properties in the shape itself
-        // ./p:sp/p:txBody/a:lstStyle/a:lvl1pPr
-        CTTextParagraphProperties lv4PPr = titleShape.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        CTTextCharacterProperties lv4CPr = lv4PPr.addNewDefRPr();
-        lv4CPr.setSz(3500);
-        assertEquals(35.0, textRun.getFontSize(), 0);
-        lv4CPr.addNewLatin().setTypeface("Arial");
-        assertEquals("Arial", textRun.getFontFamily());
-        lv4PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, paragraph.getTextAlign());
+            // level 4: default text properties in the shape itself
+            // ./p:sp/p:txBody/a:lstStyle/a:lvl1pPr
+            CTTextParagraphProperties lv4PPr = titleShape.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            CTTextCharacterProperties lv4CPr = lv4PPr.addNewDefRPr();
+            lv4CPr.setSz(3500);
+            assertEquals(35.0, textRun.getFontSize(), 0);
+            lv4CPr.addNewLatin().setTypeface("Arial");
+            assertEquals("Arial", textRun.getFontFamily());
+            lv4PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, paragraph.getTextAlign());
 
-        // level 5: text properties are defined in the text run
-        CTTextParagraphProperties lv5PPr = paragraph.getXmlObject().addNewPPr();
-        CTTextCharacterProperties lv5CPr = textRun.getRPr(false);
-        lv5CPr.setSz(3600);
-        assertEquals(36.0, textRun.getFontSize(), 0);
-        lv5CPr.addNewLatin().setTypeface("Calibri");
-        assertEquals("Calibri", textRun.getFontFamily());
-        lv5PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
-
-        ppt.close();
+            // level 5: text properties are defined in the text run
+            CTTextParagraphProperties lv5PPr = paragraph.getXmlObject().addNewPPr();
+            CTTextCharacterProperties lv5CPr = textRun.getRPr(false);
+            lv5CPr.setSz(3600);
+            assertEquals(36.0, textRun.getFontSize(), 0);
+            lv5CPr.addNewLatin().setTypeface("Calibri");
+            assertEquals("Calibri", textRun.getFontFamily());
+            lv5PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
+        }
     }
 
     @Test
     void testBodyStyles() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
 
-        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
-        XSLFTheme theme = master.getTheme();
-        XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE_AND_CONTENT);
-        XSLFSlide slide = ppt.createSlide(layout) ;
-        assertSame(layout, slide.getSlideLayout());
-        assertSame(master, slide.getSlideMaster());
+            XSLFSlideMaster master = ppt.getSlideMasters().get(0);
+            XSLFTheme theme = master.getTheme();
+            XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE_AND_CONTENT);
+            XSLFSlide slide = ppt.createSlide(layout);
+            assertSame(layout, slide.getSlideLayout());
+            assertSame(master, slide.getSlideMaster());
 
-        XSLFTextShape tx1 = slide.getPlaceholder(1);
-        tx1.clearText();
+            XSLFTextShape tx1 = slide.getPlaceholder(1);
+            tx1.clearText();
 
-        XSLFTextParagraph p1 = tx1.addNewTextParagraph();
-        assertEquals(0, p1.getIndentLevel());
-        XSLFTextRun r1 = p1.addNewTextRun();
-        r1.setText("Apache POI");
+            XSLFTextParagraph p1 = tx1.addNewTextParagraph();
+            assertEquals(0, p1.getIndentLevel());
+            XSLFTextRun r1 = p1.addNewTextRun();
+            r1.setText("Apache POI");
 
-        XSLFTextParagraph p2 = tx1.addNewTextParagraph();
-        p2.setIndentLevel(1);
-        assertEquals(1, p2.getIndentLevel());
-        XSLFTextRun r2 = p2.addNewTextRun();
-        r2.setText("HSLF");
+            XSLFTextParagraph p2 = tx1.addNewTextParagraph();
+            p2.setIndentLevel(1);
+            assertEquals(1, p2.getIndentLevel());
+            XSLFTextRun r2 = p2.addNewTextRun();
+            r2.setText("HSLF");
 
-        XSLFTextParagraph p3 = tx1.addNewTextParagraph();
-        p3.setIndentLevel(2);
-        assertEquals(2, p3.getIndentLevel());
-        XSLFTextRun r3 = p3.addNewTextRun();
-        r3.setText("XSLF");
+            XSLFTextParagraph p3 = tx1.addNewTextParagraph();
+            p3.setIndentLevel(2);
+            assertEquals(2, p3.getIndentLevel());
+            XSLFTextRun r3 = p3.addNewTextRun();
+            r3.setText("XSLF");
 
-        // level 1 : default title style on the master slide
-        // /p:sldMaster/p:txStyles/p:bodyStyle/a:lvl1pPr
-        CTTextParagraphProperties lv1PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl1PPr();
-        CTTextCharacterProperties lv1CPr = lv1PPr.getDefRPr();
-        CTTextParagraphProperties lv2PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl2PPr();
-        CTTextCharacterProperties lv2CPr = lv2PPr.getDefRPr();
-        CTTextParagraphProperties lv3PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl3PPr();
-        CTTextCharacterProperties lv3CPr = lv3PPr.getDefRPr();
-        // lv1
-        assertEquals(3200, lv1CPr.getSz());
-        assertEquals(32.0, r1.getFontSize(), 0);
-        assertEquals("+mn-lt", lv1CPr.getLatin().getTypeface());
-        assertEquals("Calibri", theme.getMinorFont());
-        assertEquals("Calibri", r1.getFontFamily());
-        lv1CPr.setSz(3300);
-        assertEquals(33.0, r1.getFontSize(), 0);
-        lv1CPr.getLatin().setTypeface("Arial");
-        assertEquals("Arial", r1.getFontFamily());
-        assertEquals(STTextAlignType.L, lv1PPr.getAlgn());
-        assertEquals(TextAlign.LEFT, p1.getTextAlign());
-        lv1PPr.setAlgn(STTextAlignType.R);
-        assertEquals(TextAlign.RIGHT, p1.getTextAlign());
-        //lv2
-        assertEquals(2800, lv2CPr.getSz());
-        assertEquals(28.0, r2.getFontSize(), 0);
-        lv2CPr.setSz(3300);
-        assertEquals(33.0, r2.getFontSize(), 0);
-        lv2CPr.getLatin().setTypeface("Times");
-        assertEquals("Times", r2.getFontFamily());
-        assertEquals(STTextAlignType.L, lv2PPr.getAlgn());
-        assertEquals(TextAlign.LEFT, p2.getTextAlign());
-        lv2PPr.setAlgn(STTextAlignType.R);
-        assertEquals(TextAlign.RIGHT, p2.getTextAlign());
-        //lv3
-        assertEquals(2400, lv3CPr.getSz());
-        assertEquals(24.0, r3.getFontSize(), 0);
-        lv3CPr.setSz(2500);
-        assertEquals(25.0, r3.getFontSize(), 0);
-        lv3CPr.getLatin().setTypeface("Courier New");
-        assertEquals("Courier New", r3.getFontFamily());
-        assertEquals(STTextAlignType.L, lv3PPr.getAlgn());
-        assertEquals(TextAlign.LEFT, p3.getTextAlign());
-        lv3PPr.setAlgn(STTextAlignType.R);
-        assertEquals(TextAlign.RIGHT, p3.getTextAlign());
+            // level 1 : default title style on the master slide
+            // /p:sldMaster/p:txStyles/p:bodyStyle/a:lvl1pPr
+            CTTextParagraphProperties lv1PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl1PPr();
+            CTTextCharacterProperties lv1CPr = lv1PPr.getDefRPr();
+            CTTextParagraphProperties lv2PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl2PPr();
+            CTTextCharacterProperties lv2CPr = lv2PPr.getDefRPr();
+            CTTextParagraphProperties lv3PPr = master.getXmlObject().getTxStyles().getBodyStyle().getLvl3PPr();
+            CTTextCharacterProperties lv3CPr = lv3PPr.getDefRPr();
+            // lv1
+            assertEquals(3200, lv1CPr.getSz());
+            assertEquals(32.0, r1.getFontSize(), 0);
+            assertEquals("+mn-lt", lv1CPr.getLatin().getTypeface());
+            assertEquals("Calibri", theme.getMinorFont());
+            assertEquals("Calibri", r1.getFontFamily());
+            lv1CPr.setSz(3300);
+            assertEquals(33.0, r1.getFontSize(), 0);
+            lv1CPr.getLatin().setTypeface("Arial");
+            assertEquals("Arial", r1.getFontFamily());
+            assertSame(STTextAlignType.L, lv1PPr.getAlgn());
+            assertEquals(TextAlign.LEFT, p1.getTextAlign());
+            lv1PPr.setAlgn(STTextAlignType.R);
+            assertEquals(TextAlign.RIGHT, p1.getTextAlign());
+            //lv2
+            assertEquals(2800, lv2CPr.getSz());
+            assertEquals(28.0, r2.getFontSize(), 0);
+            lv2CPr.setSz(3300);
+            assertEquals(33.0, r2.getFontSize(), 0);
+            lv2CPr.getLatin().setTypeface("Times");
+            assertEquals("Times", r2.getFontFamily());
+            assertSame(STTextAlignType.L, lv2PPr.getAlgn());
+            assertEquals(TextAlign.LEFT, p2.getTextAlign());
+            lv2PPr.setAlgn(STTextAlignType.R);
+            assertEquals(TextAlign.RIGHT, p2.getTextAlign());
+            //lv3
+            assertEquals(2400, lv3CPr.getSz());
+            assertEquals(24.0, r3.getFontSize(), 0);
+            lv3CPr.setSz(2500);
+            assertEquals(25.0, r3.getFontSize(), 0);
+            lv3CPr.getLatin().setTypeface("Courier New");
+            assertEquals("Courier New", r3.getFontFamily());
+            assertSame(STTextAlignType.L, lv3PPr.getAlgn());
+            assertEquals(TextAlign.LEFT, p3.getTextAlign());
+            lv3PPr.setAlgn(STTextAlignType.R);
+            assertEquals(TextAlign.RIGHT, p3.getTextAlign());
 
 
-        // level 2: body placeholder on the master slide
-        // /p:sldMaster/p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="body"]
-        XSLFTextShape tx2 = master.getPlaceholder(1);
-        assertEquals(Placeholder.BODY, tx2.getTextType());
+            // level 2: body placeholder on the master slide
+            // /p:sldMaster/p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="body"]
+            XSLFTextShape tx2 = master.getPlaceholder(1);
+            assertEquals(Placeholder.BODY, tx2.getTextType());
 
-        lv1PPr = tx2.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        lv1CPr = lv1PPr.addNewDefRPr();
-        lv2PPr = tx2.getTextBody(true).getLstStyle().addNewLvl2PPr();
-        lv2CPr = lv2PPr.addNewDefRPr();
-        lv3PPr = tx2.getTextBody(true).getLstStyle().addNewLvl3PPr();
-        lv3CPr = lv3PPr.addNewDefRPr();
+            lv1PPr = tx2.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            lv1CPr = lv1PPr.addNewDefRPr();
+            lv2PPr = tx2.getTextBody(true).getLstStyle().addNewLvl2PPr();
+            lv2CPr = lv2PPr.addNewDefRPr();
+            lv3PPr = tx2.getTextBody(true).getLstStyle().addNewLvl3PPr();
+            lv3CPr = lv3PPr.addNewDefRPr();
 
-        lv1CPr.setSz(3300);
-        assertEquals(33.0, r1.getFontSize(), 0);
-        lv1CPr.addNewLatin().setTypeface("Times");
-        assertEquals("Times", r1.getFontFamily());
-        lv1PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p1.getTextAlign());
+            lv1CPr.setSz(3300);
+            assertEquals(33.0, r1.getFontSize(), 0);
+            lv1CPr.addNewLatin().setTypeface("Times");
+            assertEquals("Times", r1.getFontFamily());
+            lv1PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p1.getTextAlign());
 
-        lv2CPr.setSz(3300);
-        assertEquals(33.0, r2.getFontSize(), 0);
-        lv2CPr.addNewLatin().setTypeface("Times");
-        assertEquals("Times", r2.getFontFamily());
-        lv2PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p2.getTextAlign());
+            lv2CPr.setSz(3300);
+            assertEquals(33.0, r2.getFontSize(), 0);
+            lv2CPr.addNewLatin().setTypeface("Times");
+            assertEquals("Times", r2.getFontFamily());
+            lv2PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p2.getTextAlign());
 
-        lv3CPr.setSz(3300);
-        assertEquals(33.0, r3.getFontSize(), 0);
-        lv3CPr.addNewLatin().setTypeface("Times");
-        assertEquals("Times", r3.getFontFamily());
-        lv3PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p3.getTextAlign());
+            lv3CPr.setSz(3300);
+            assertEquals(33.0, r3.getFontSize(), 0);
+            lv3CPr.addNewLatin().setTypeface("Times");
+            assertEquals("Times", r3.getFontFamily());
+            lv3PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p3.getTextAlign());
 
-        // level 3: body placeholder on the slide layout
-        // /p:sldLayout /p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="ctrTitle"]
-        XSLFTextShape tx3 = layout.getPlaceholder(1);
-        assertEquals(Placeholder.BODY, tx2.getTextType());
-        lv1PPr = tx3.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        lv1CPr = lv1PPr.addNewDefRPr();
-        lv2PPr = tx3.getTextBody(true).getLstStyle().addNewLvl2PPr();
-        lv2CPr = lv2PPr.addNewDefRPr();
-        lv3PPr = tx3.getTextBody(true).getLstStyle().addNewLvl3PPr();
-        lv3CPr = lv3PPr.addNewDefRPr();
+            // level 3: body placeholder on the slide layout
+            // /p:sldLayout /p:cSld/p:spTree/p:sp/p:nvPr/p:ph[@type="ctrTitle"]
+            XSLFTextShape tx3 = layout.getPlaceholder(1);
+            assertEquals(Placeholder.BODY, tx2.getTextType());
+            lv1PPr = tx3.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            lv1CPr = lv1PPr.addNewDefRPr();
+            lv2PPr = tx3.getTextBody(true).getLstStyle().addNewLvl2PPr();
+            lv2CPr = lv2PPr.addNewDefRPr();
+            lv3PPr = tx3.getTextBody(true).getLstStyle().addNewLvl3PPr();
+            lv3CPr = lv3PPr.addNewDefRPr();
 
-        lv1CPr.setSz(3400);
-        assertEquals(34.0, r1.getFontSize(), 0);
-        lv1CPr.addNewLatin().setTypeface("Courier New");
-        assertEquals("Courier New", r1.getFontFamily());
-        lv1PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p1.getTextAlign());
+            lv1CPr.setSz(3400);
+            assertEquals(34.0, r1.getFontSize(), 0);
+            lv1CPr.addNewLatin().setTypeface("Courier New");
+            assertEquals("Courier New", r1.getFontFamily());
+            lv1PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p1.getTextAlign());
 
-        lv2CPr.setSz(3400);
-        assertEquals(34.0, r2.getFontSize(), 0);
-        lv2CPr.addNewLatin().setTypeface("Courier New");
-        assertEquals("Courier New", r2.getFontFamily());
-        lv2PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p2.getTextAlign());
+            lv2CPr.setSz(3400);
+            assertEquals(34.0, r2.getFontSize(), 0);
+            lv2CPr.addNewLatin().setTypeface("Courier New");
+            assertEquals("Courier New", r2.getFontFamily());
+            lv2PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p2.getTextAlign());
 
-        lv3CPr.setSz(3400);
-        assertEquals(34.0, r3.getFontSize(), 0);
-        lv3CPr.addNewLatin().setTypeface("Courier New");
-        assertEquals("Courier New", r3.getFontFamily());
-        lv3PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p3.getTextAlign());
+            lv3CPr.setSz(3400);
+            assertEquals(34.0, r3.getFontSize(), 0);
+            lv3CPr.addNewLatin().setTypeface("Courier New");
+            assertEquals("Courier New", r3.getFontFamily());
+            lv3PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p3.getTextAlign());
 
-        // level 4: default text properties in the shape itself
-        // ./p:sp/p:txBody/a:lstStyle/a:lvl1pPr
-        lv1PPr = tx1.getTextBody(true).getLstStyle().addNewLvl1PPr();
-        lv1CPr = lv1PPr.addNewDefRPr();
-        lv2PPr = tx1.getTextBody(true).getLstStyle().addNewLvl2PPr();
-        lv2CPr = lv2PPr.addNewDefRPr();
-        lv3PPr = tx1.getTextBody(true).getLstStyle().addNewLvl3PPr();
-        lv3CPr = lv3PPr.addNewDefRPr();
+            // level 4: default text properties in the shape itself
+            // ./p:sp/p:txBody/a:lstStyle/a:lvl1pPr
+            lv1PPr = tx1.getTextBody(true).getLstStyle().addNewLvl1PPr();
+            lv1CPr = lv1PPr.addNewDefRPr();
+            lv2PPr = tx1.getTextBody(true).getLstStyle().addNewLvl2PPr();
+            lv2CPr = lv2PPr.addNewDefRPr();
+            lv3PPr = tx1.getTextBody(true).getLstStyle().addNewLvl3PPr();
+            lv3CPr = lv3PPr.addNewDefRPr();
 
-        lv1CPr.setSz(3500);
-        assertEquals(35.0, r1.getFontSize(), 0);
-        lv1CPr.addNewLatin().setTypeface("Arial");
-        assertEquals("Arial", r1.getFontFamily());
-        lv1PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p1.getTextAlign());
+            lv1CPr.setSz(3500);
+            assertEquals(35.0, r1.getFontSize(), 0);
+            lv1CPr.addNewLatin().setTypeface("Arial");
+            assertEquals("Arial", r1.getFontFamily());
+            lv1PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p1.getTextAlign());
 
-        lv2CPr.setSz(3500);
-        assertEquals(35.0, r2.getFontSize(), 0);
-        lv2CPr.addNewLatin().setTypeface("Arial");
-        assertEquals("Arial", r2.getFontFamily());
-        lv2PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p2.getTextAlign());
+            lv2CPr.setSz(3500);
+            assertEquals(35.0, r2.getFontSize(), 0);
+            lv2CPr.addNewLatin().setTypeface("Arial");
+            assertEquals("Arial", r2.getFontFamily());
+            lv2PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p2.getTextAlign());
 
-        lv3CPr.setSz(3500);
-        assertEquals(35.0, r3.getFontSize(), 0);
-        lv3CPr.addNewLatin().setTypeface("Arial");
-        assertEquals("Arial", r3.getFontFamily());
-        lv3PPr.setAlgn(STTextAlignType.L);
-        assertEquals(TextAlign.LEFT, p3.getTextAlign());
+            lv3CPr.setSz(3500);
+            assertEquals(35.0, r3.getFontSize(), 0);
+            lv3CPr.addNewLatin().setTypeface("Arial");
+            assertEquals("Arial", r3.getFontFamily());
+            lv3PPr.setAlgn(STTextAlignType.L);
+            assertEquals(TextAlign.LEFT, p3.getTextAlign());
 
-        // level 5: text properties are defined in the text run
-        lv1PPr = p1.getXmlObject().isSetPPr() ? p1.getXmlObject().getPPr() : p1.getXmlObject().addNewPPr();
-        lv1CPr = r1.getRPr(false);
-        lv2PPr = p2.getXmlObject().isSetPPr() ? p2.getXmlObject().getPPr() : p2.getXmlObject().addNewPPr();
-        lv2CPr = r2.getRPr(false);
-        lv3PPr = p3.getXmlObject().isSetPPr() ? p3.getXmlObject().getPPr() : p3.getXmlObject().addNewPPr();
-        lv3CPr = r3.getRPr(false);
+            // level 5: text properties are defined in the text run
+            lv1PPr = p1.getXmlObject().isSetPPr() ? p1.getXmlObject().getPPr() : p1.getXmlObject().addNewPPr();
+            lv1CPr = r1.getRPr(false);
+            lv2PPr = p2.getXmlObject().isSetPPr() ? p2.getXmlObject().getPPr() : p2.getXmlObject().addNewPPr();
+            lv2CPr = r2.getRPr(false);
+            lv3PPr = p3.getXmlObject().isSetPPr() ? p3.getXmlObject().getPPr() : p3.getXmlObject().addNewPPr();
+            lv3CPr = r3.getRPr(false);
 
-        lv1CPr.setSz(3600);
-        assertEquals(36.0, r1.getFontSize(), 0);
-        lv1CPr.addNewLatin().setTypeface("Calibri");
-        assertEquals("Calibri", r1.getFontFamily());
-        lv1PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p1.getTextAlign());
+            lv1CPr.setSz(3600);
+            assertEquals(36.0, r1.getFontSize(), 0);
+            lv1CPr.addNewLatin().setTypeface("Calibri");
+            assertEquals("Calibri", r1.getFontFamily());
+            lv1PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p1.getTextAlign());
 
-        lv2CPr.setSz(3600);
-        assertEquals(36.0, r2.getFontSize(), 0);
-        lv2CPr.addNewLatin().setTypeface("Calibri");
-        assertEquals("Calibri", r2.getFontFamily());
-        lv2PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p2.getTextAlign());
+            lv2CPr.setSz(3600);
+            assertEquals(36.0, r2.getFontSize(), 0);
+            lv2CPr.addNewLatin().setTypeface("Calibri");
+            assertEquals("Calibri", r2.getFontFamily());
+            lv2PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p2.getTextAlign());
 
-        lv3CPr.setSz(3600);
-        assertEquals(36.0, r3.getFontSize(), 0);
-        lv3CPr.addNewLatin().setTypeface("Calibri");
-        assertEquals("Calibri", r3.getFontFamily());
-        lv3PPr.setAlgn(STTextAlignType.CTR);
-        assertEquals(TextAlign.CENTER, p3.getTextAlign());
-
-        ppt.close();
+            lv3CPr.setSz(3600);
+            assertEquals(36.0, r3.getFontSize(), 0);
+            lv3CPr.addNewLatin().setTypeface("Calibri");
+            assertEquals("Calibri", r3.getFontFamily());
+            lv3PPr.setAlgn(STTextAlignType.CTR);
+            assertEquals(TextAlign.CENTER, p3.getTextAlign());
+        }
     }
 
     @Test
     void metroBlob() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly);
-        File f = POIDataSamples.getSlideShowInstance().getFile("bug52297.ppt");
-        SlideShow<?,?> ppt = SlideShowFactory.create(f);
-        Shape<?, ?> sh = ppt.getSlides().get(1).getShapes().get(3);
-        XSLFAutoShape xsh = (XSLFAutoShape)sh.getClass().getMethod("getMetroShape").invoke(sh);
-        String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
-        String textAct = xsh.getText();
-        ppt.close();
-        assertEquals(textExp, textAct);
+        POIDataSamples samples = POIDataSamples.getSlideShowInstance();
+        String textAct;
+        try (InputStream is = samples.openResourceAsStream("bug52297.ppt");
+             SlideShow<?,?> ppt = SlideShowFactory.create(is)) {
+            // check metro shapes on master sheet
+            MasterSheet<?, ?> master = ppt.getSlideMasters().get(0);
+            FieldType[] tl = master.getShapes().stream().
+                filter(f -> f instanceof TextShape).map(f -> (TextShape<?,?>)f).
+                flatMap(f -> ((List<? extends TextParagraph<?, ?, ? extends TextRun>>) f.getTextParagraphs()).stream()).
+                flatMap(f -> f.getTextRuns().stream()).
+                map(TextRun::getFieldType).
+                filter(Objects::nonNull).
+                toArray(FieldType[]::new);
+            assertArrayEquals(new FieldType[]{DATE_TIME, SLIDE_NUMBER, SLIDE_NUMBER}, tl);
+
+            // check metro shapes on slides
+            Shape<?, ?> sh = ppt.getSlides().get(1).getShapes().get(3);
+            XSLFAutoShape xsh = (XSLFAutoShape) sh.getClass().getMethod("getMetroShape").invoke(sh);
+            String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
+            textAct = xsh.getText();
+            assertEquals(textExp, textAct);
+        }
     }
 }

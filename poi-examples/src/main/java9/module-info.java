@@ -18,7 +18,7 @@
 module org.apache.poi.examples {
 
     requires transitive org.apache.poi.ooxml;
-    requires transitive org.apache.poi.scratchpad;
+    requires static org.apache.poi.scratchpad;
     requires java.xml;
 
     exports org.apache.poi.examples.crypt;

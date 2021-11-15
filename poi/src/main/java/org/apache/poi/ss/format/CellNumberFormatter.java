@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -424,8 +425,8 @@ public class CellNumberFormatter extends CellFormatter {
 
     @Override
     public void formatValue(StringBuffer toAppendTo, Object valueObject) {
-        double value = ((Number) valueObject).doubleValue();
-        value *= scale;
+        BigDecimal bd = BigDecimal.valueOf(((Number) valueObject).doubleValue()).multiply(BigDecimal.valueOf(scale));
+        double value = bd.doubleValue();
 
         // For negative numbers:
         // - If the cell format has a negative number format, this method
@@ -723,15 +724,22 @@ public class CellNumberFormatter extends CellFormatter {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
 
-    private static boolean hasChar(char ch, List<Special>... numSpecials) {
-        for (List<Special> specials : numSpecials) {
-            for (Special s : specials) {
-                if (s.ch == ch) {
-                    return true;
-                }
+    private static boolean hasChar(char ch, List<Special> numSpecials) {
+        for (Special s : numSpecials) {
+            if (s.ch == ch) {
+                return true;
             }
         }
         return false;
+    }
+
+    private static boolean hasChar(char ch, List<Special> numSpecials1, List<Special> numSpecials2) {
+        return hasChar(ch, numSpecials1) || hasChar(ch, numSpecials2);
+    }
+
+    private static boolean hasChar(char ch, List<Special> numSpecials1, List<Special> numSpecials2,
+                                   List<Special> numSpecials3) {
+        return hasChar(ch, numSpecials1) || hasChar(ch, numSpecials2) || hasChar(ch, numSpecials3);
     }
 
     private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {

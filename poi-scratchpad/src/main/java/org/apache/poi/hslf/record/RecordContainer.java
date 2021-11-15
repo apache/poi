@@ -227,30 +227,30 @@ public abstract class RecordContainer extends Record
      */
     public void writeOut(byte headerA, byte headerB, long type, Record[] children, OutputStream out) throws IOException {
         // Create a UnsynchronizedByteArrayOutputStream to hold everything in
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
 
-        // Write out our header, less the size
-        baos.write(new byte[] {headerA,headerB});
-        byte[] typeB = new byte[2];
-        LittleEndian.putShort(typeB,0,(short)type);
-        baos.write(typeB);
-        baos.write(new byte[] {0,0,0,0});
+            // Write out our header, less the size
+            baos.write(new byte[]{headerA, headerB});
+            byte[] typeB = new byte[2];
+            LittleEndian.putShort(typeB, 0, (short) type);
+            baos.write(typeB);
+            baos.write(new byte[]{0, 0, 0, 0});
 
-        // Write out our children
-        for (Record aChildren : children) {
-            aChildren.writeOut(baos);
+            // Write out our children
+            for (Record aChildren : children) {
+                aChildren.writeOut(baos);
+            }
+
+            // Grab the bytes back
+            byte[] toWrite = baos.toByteArray();
+
+            // Update our header with the size
+            // Don't forget to knock 8 more off, since we don't include the header in the size
+            LittleEndian.putInt(toWrite, 4, (toWrite.length - 8));
+
+            // Write out the bytes
+            out.write(toWrite);
         }
-
-        // Grab the bytes back
-        byte[] toWrite = baos.toByteArray();
-
-        // Update our header with the size
-        // Don't forget to knock 8 more off, since we don't include the
-        //  header in the size
-        LittleEndian.putInt(toWrite,4,(toWrite.length-8));
-
-        // Write out the bytes
-        out.write(toWrite);
     }
 
     /**

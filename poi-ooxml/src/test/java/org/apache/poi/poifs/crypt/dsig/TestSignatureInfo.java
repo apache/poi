@@ -23,6 +23,7 @@
    ================================================================= */
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,47 +31,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.cert.CRLException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
@@ -89,18 +72,19 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.DummyKeystore.KeyCertPair;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.Office2010SignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
-import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.ConditionalExecution.DisabledOnJreEx;
 import org.apache.poi.util.IOUtils;
@@ -116,53 +100,25 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.CRLNumber;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509CRLHolder;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.X509ExtensionUtils;
-import org.bouncycastle.cert.X509v2CRLBuilder;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.BasicOCSPRespBuilder;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
-import org.bouncycastle.cert.ocsp.Req;
-import org.bouncycastle.crypto.params.RSAKeyParameters;
-import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DigestCalculator;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
+import org.etsi.uri.x01903.v13.EncapsulatedPKIDataType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
+import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
+import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
+import org.etsi.uri.x01903.v13.XAdESTimeStampType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -170,15 +126,7 @@ import org.w3c.dom.Document;
 class TestSignatureInfo {
     private static final Logger LOG = LogManager.getLogger(TestSignatureInfo.class);
     private static final POIDataSamples testdata = POIDataSamples.getXmlDSignInstance();
-
-    private static Calendar cal;
-    private KeyPair keyPair;
-    private X509Certificate x509;
-
-    @BeforeAll
-    public static void setUpClass() {
-        POITestCase.setImageIOCacheDir();
-    }
+    private static final String STORE_PASS = "test";
 
     @AfterAll
     public static void removeUserLocale() {
@@ -186,15 +134,12 @@ class TestSignatureInfo {
     }
 
     @BeforeAll
-    public static void initBouncy() {
-        CryptoFunctions.registerBouncyCastle();
+    public static void initXmlsec() {
+        POITestCase.setImageIOCacheDir();
 
         // Set cal to now ... only set to fixed date for debugging ...
         LocaleUtil.resetUserLocale();
         LocaleUtil.resetUserTimeZone();
-
-        cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
-        assertNotNull(cal);
 
         // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue
         // in the xmlsec jar file
@@ -335,21 +280,22 @@ class TestSignatureInfo {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "hyperlink-example-signed.docx",
-        "hello-world-signed.docx",
-        "hello-world-signed.pptx",
-        "hello-world-signed.xlsx",
-        "hello-world-office-2010-technical-preview.docx",
-        "ms-office-2010-signed.docx",
-        "ms-office-2010-signed.pptx",
-        "ms-office-2010-signed.xlsx",
-        "Office2010-SP1-XAdES-X-L.docx",
-        "signed.docx"
+    @CsvSource(value = {
+        "hyperlink-example-signed.docx, true",
+        "hello-world-signed.docx, true",
+        "hello-world-signed.pptx, false",
+        "hello-world-signed.xlsx, true",
+        "hello-world-office-2010-technical-preview.docx, true",
+        "ms-office-2010-signed.docx, true",
+        "ms-office-2010-signed.pptx, false",
+        "ms-office-2010-signed.xlsx, true",
+        "Office2010-SP1-XAdES-X-L.docx, true",
+        "signed.docx, true"
     })
-    void getSigner(String testFile) throws Exception {
+    void getSigner(String testFile, boolean secureValidation) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
+            sic.setSecureValidation(secureValidation);
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(sic);
@@ -449,12 +395,15 @@ class TestSignatureInfo {
     @Test
     @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheetWithSignatureInfo() throws Exception {
-        initKeyPair();
         String testFile = "hello-world-unsigned.xlsx";
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+
+
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
             SignatureConfig sic = new SignatureConfig();
-            sic.setKey(keyPair.getPrivate());
-            sic.setSigningCertificateChain(Collections.singletonList(x509));
+            sic.setKey(certPair.getKey());
+            sic.setSigningCertificateChain(certPair.getX509Chain());
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(sic);
@@ -479,23 +428,24 @@ class TestSignatureInfo {
 
         final String execTimestr;
 
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
 
         try (OPCPackage pkg = OPCPackage.open(copy(sigCopy), PackageAccess.READ_WRITE)) {
 
-            initKeyPair();
-            final X509CRL crl = generateCrl(x509, keyPair.getPrivate());
+            final X509CRL crl = ks.generateCrl(certPair);
 
             // setup
             SignatureConfig signatureConfig = new SignatureConfig();
-            signatureConfig.setKey(keyPair.getPrivate());
+            signatureConfig.setKey(certPair.getKey());
 
             /*
              * We need at least 2 certificates for the XAdES-C complete certificate
              * refs construction.
              */
             List<X509Certificate> certificateChain = new ArrayList<>();
-            certificateChain.add(x509);
-            certificateChain.add(x509);
+            certificateChain.add(certPair.getX509());
+            certificateChain.add(certPair.getX509());
             signatureConfig.setSigningCertificateChain(certificateChain);
 
             signatureConfig.addSignatureFacet(new OOXMLSignatureFacet());
@@ -547,7 +497,8 @@ class TestSignatureInfo {
 
             final RevocationData revocationData = new RevocationData();
             revocationData.addCRL(crl);
-            OCSPResp ocspResp = createOcspResp(x509, x509, x509, keyPair.getPrivate(), cal.getTimeInMillis());
+            Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+            OCSPResp ocspResp = ks.createOcspResp(certPair, cal.getTimeInMillis());
             revocationData.addOCSP(ocspResp.getEncoded());
 
             RevocationDataService revocationDataService = revocationChain -> revocationData;
@@ -599,14 +550,14 @@ class TestSignatureInfo {
             String certDigestXQuery = declareNS +
                     "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
             XmlObject[] xoList = sigDoc.selectPath(certDigestXQuery);
-            assertEquals(xoList.length, 1);
+            assertEquals(1, xoList.length);
             DigestAlgAndValueType certDigest = (DigestAlgAndValueType) xoList[0];
             assertNotNull(certDigest.getDigestValue());
 
             String qualPropXQuery = declareNS +
                     "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
             xoList = sigDoc.selectPath(qualPropXQuery);
-            assertEquals(xoList.length, 1);
+            assertEquals(1, xoList.length);
             QualifyingPropertiesType qualProp = (QualifyingPropertiesType) xoList[0];
             boolean qualPropXsdOk = qualProp.validate();
             assertTrue(qualPropXsdOk);
@@ -675,27 +626,15 @@ class TestSignatureInfo {
     void testCertChain() throws Exception {
         final boolean isIBM = System.getProperty("java.vendor").contains("IBM");
 
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-        String password = "test";
-        try (InputStream is = testdata.openResourceAsStream("chaintest.pfx")) {
-            keystore.load(is, password.toCharArray());
-        }
-
-        Key key = keystore.getKey("poitest", password.toCharArray());
-        Certificate[] chainList = keystore.getCertificateChain("poitest");
-        List<X509Certificate> certChain = new ArrayList<>();
-        for (Certificate c : chainList) {
-            certChain.add((X509Certificate)c);
-        }
-        x509 = certChain.get(0);
-        keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
+        DummyKeystore ks = new DummyKeystore(testdata.getFile("chaintest.pfx"), STORE_PASS);
+        KeyCertPair certPair = ks.getKeyPair("poitest", "test");
 
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
 
             SignatureConfig signatureConfig = new SignatureConfig();
-            signatureConfig.setKey(keyPair.getPrivate());
-            signatureConfig.setSigningCertificateChain(certChain);
+            signatureConfig.setKey(certPair.getKey());
+            signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
             Calendar oldCal = LocaleUtil.getLocaleCalendar(2007, 7, 1);
             signatureConfig.setExecutionTime(oldCal.getTime());
             signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
@@ -724,11 +663,12 @@ class TestSignatureInfo {
     @DisabledOnJreEx("1.8.0_292")
     void testNonSha1() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
-        initKeyPair();
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
 
         SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setKey(certPair.getKey());
+        signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
 
         HashAlgorithm[] testAlgo = {HashAlgorithm.sha224, HashAlgorithm.sha256
                 , HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.ripemd160};
@@ -753,7 +693,8 @@ class TestSignatureInfo {
     @Test
     @DisabledOnJreEx("1.8.0_292")
     void bug65214() throws Exception {
-        initKeyPair();
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
 
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (XWPFDocument doc = new XWPFDocument()) {
@@ -765,8 +706,8 @@ class TestSignatureInfo {
         }
 
         SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setKey(certPair.getKey());
+        signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
         signatureConfig.setDigestAlgo(HashAlgorithm.sha256);
         try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
             SignatureInfo si = new SignatureInfo();
@@ -792,6 +733,9 @@ class TestSignatureInfo {
     @Test
     @DisabledOnJreEx("1.8.0_292")
     void bug58630() throws Exception {
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+
         // test deletion of sheet 0 and signing
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
         try (SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10)) {
@@ -801,10 +745,9 @@ class TestSignatureInfo {
             wb1.write(os);
 
             try (OPCPackage pkg = OPCPackage.open(os.toInputStream())) {
-                initKeyPair();
                 SignatureConfig signatureConfig = new SignatureConfig();
-                signatureConfig.setKey(keyPair.getPrivate());
-                signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+                signatureConfig.setKey(certPair.getKey());
+                signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
 
                 SignatureInfo si = new SignatureInfo();
                 si.setOpcPackage(pkg);
@@ -817,7 +760,7 @@ class TestSignatureInfo {
 
     @Test
     void testMultiSign() throws Exception {
-        cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+        Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         cal.clear();
         cal.setTimeZone(LocaleUtil.TIMEZONE_UTC);
         cal.set(2018, Calendar.DECEMBER, 14);
@@ -866,14 +809,9 @@ class TestSignatureInfo {
 
             assertNotNull(result);
 
-            if (multi) {
-                assertEquals(2, result.size());
-                assertEquals("CN=Muj Klic", result.get(0).getSubjectDN().toString());
-                assertEquals("CN=My Second key", result.get(1).getSubjectDN().toString());
-            } else {
-                assertEquals(1, result.size());
-                assertEquals("CN=My Second key", result.get(0).getSubjectDN().toString());
-            }
+            String[] act = result.stream().map(X509Certificate::getSubjectX500Principal).map(X500Principal::getName).toArray(String[]::new);
+            String[] exp = multi ? new String[]{ "CN=Muj Klic", "CN=My Second key" } : new String[]{ "CN=My Second key" };
+            assertArrayEquals(exp, act);
 
             assertTrue(si.verifySignature());
             pkg.revert();
@@ -881,13 +819,16 @@ class TestSignatureInfo {
     }
 
     private void signPkg63011(OPCPackage pkg, String pemFile, boolean multi)
-            throws IOException, CertificateException, XMLSignatureException, MarshalException {
+        throws IOException, GeneralSecurityException, XMLSignatureException, MarshalException {
         assertNotNull(pkg);
-        initKeyFromPEM(testdata.getFile(pemFile));
+
+        DummyKeystore ks = new DummyKeystore("test");
+        KeyCertPair certPair = ks.addEntryFromPEM(testdata.getFile(pemFile), "test");
 
         SignatureConfig config = new SignatureConfig();
-        config.setKey(keyPair.getPrivate());
-        config.setSigningCertificateChain(Collections.singletonList(x509));
+        config.setKey(certPair.getKey());
+        config.setSigningCertificateChain(certPair.getX509Chain());
+        Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         config.setExecutionTime(cal.getTime());
         config.setAllowMultipleSignatures(multi);
 
@@ -900,6 +841,10 @@ class TestSignatureInfo {
     @Test
     void testRetrieveCertificate() throws InvalidFormatException, IOException {
         SignatureConfig sic = new SignatureConfig();
+        // starting with xmlsec 2.3.0 disabling secure validation was necessary because of limitations
+        // on the amount of processed internal references (max. 30)
+        sic.setSecureValidation(false);
+
         final File file = testdata.getFile("PPT2016withComment.pptx");
         try (final OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
             sic.setUpdateConfigOnValidate(true);
@@ -911,7 +856,7 @@ class TestSignatureInfo {
 
         final List<X509Certificate> certs = sic.getSigningCertificateChain();
         assertEquals(1, certs.size());
-        assertEquals("CN=Test", certs.get(0).getSubjectDN().getName());
+        assertEquals("CN=Test", certs.get(0).getSubjectX500Principal().getName());
         assertEquals("SuperDuper-Reviewer", sic.getXadesRole());
         assertEquals("Purpose for signing", sic.getSignatureDescription());
         assertEquals("2018-06-10T09:00:54Z", sic.formatExecutionTime());
@@ -923,9 +868,95 @@ class TestSignatureInfo {
     }
 
     @Test
+    void createXAdES_T_65623() throws Exception {
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("Test");
+            wb.write(bos);
+        }
+
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setDigestAlgo(HashAlgorithm.sha256);
+        signatureConfig.setKey(certPair.getKey());
+        signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
+
+        // mock tsp
+        // signatureConfig.setTspUrl("http://timestamp.digicert.com");
+        final X509CRL crl = ks.generateCrl(certPair);
+        TimeStampService tspService = (signatureInfo, data, revocationData) -> {
+            revocationData.addCRL(crl);
+            return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);
+        };
+        signatureConfig.setTspService(tspService);
+
+        signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
+        signatureConfig.setTspOldProtocol(false);
+
+        signatureConfig.setXadesDigestAlgo(HashAlgorithm.sha512);
+        signatureConfig.setXadesRole("Xades Reviewer");
+        signatureConfig.setSignatureDescription("test xades signature");
+
+        signatureConfig.setSignatureFacets(Arrays.asList(
+            new OOXMLSignatureFacet(),
+            new KeyInfoSignatureFacet(),
+            new XAdESSignatureFacet(),
+            new Office2010SignatureFacet(),
+            new XAdESXLSignatureFacet()
+        ));
+
+        // create signature
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            si.confirmSignature();
+
+            bos.reset();
+            pkg.save(bos);
+        } catch (EncryptedDocumentException e) {
+            assumeTrue(e.getMessage().startsWith("Export Restrictions"));
+        }
+
+        // check if timestamp node is filled
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(signatureConfig);
+            assertTrue(si.verifySignature());
+            boolean found = false;
+            for (SignaturePart sp : si.getSignatureParts()) {
+                for (ObjectType ot : sp.getSignatureDocument().getSignature().getObjectArray()) {
+                    XmlCursor xc = ot.newCursor();
+                    if (xc.toChild(SignatureFacet.XADES_132_NS, "QualifyingProperties")) {
+                        QualifyingPropertiesType qpt = (QualifyingPropertiesType) xc.getObject();
+                        assertTrue(qpt.isSetUnsignedProperties());
+                        UnsignedPropertiesType up = qpt.getUnsignedProperties();
+                        assertTrue(up.isSetUnsignedSignatureProperties());
+                        UnsignedSignaturePropertiesType ups = up.getUnsignedSignatureProperties();
+                        assertEquals(1, ups.sizeOfSignatureTimeStampArray());
+                        XAdESTimeStampType ts = ups.getSignatureTimeStampArray(0);
+                        assertEquals(1, ts.sizeOfEncapsulatedTimeStampArray());
+                        EncapsulatedPKIDataType ets = ts.getEncapsulatedTimeStampArray(0);
+                        assertFalse(ets.getStringValue().isEmpty());
+                        found = true;
+                    }
+                    xc.dispose();
+                }
+            }
+            assertTrue(found);
+        }
+    }
+
+
+    @Test
     @DisabledOnJreEx("1.8.0_292")
+    @Tag("scratchpad.ignore")
     void testSignatureImage() throws Exception {
-        initKeyPair();
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
 
         List<Supplier<SignatureLine>> lines = Arrays.asList(XSSFSignatureLine::new, XWPFSignatureLine::new);
         for (Supplier<SignatureLine> sup : lines) {
@@ -952,8 +983,8 @@ class TestSignatureInfo {
 
             try (OPCPackage pkg = OPCPackage.open(signDoc, PackageAccess.READ_WRITE)) {
                 SignatureConfig sic = new SignatureConfig();
-                sic.setKey(keyPair.getPrivate());
-                sic.setSigningCertificateChain(Collections.singletonList(x509));
+                sic.setKey(certPair.getKey());
+                sic.setSigningCertificateChain(certPair.getX509Chain());
 
                 line.updateSignatureConfig(sic);
 
@@ -1016,13 +1047,52 @@ class TestSignatureInfo {
         return xls;
     }
 
+    @Test
+    void commitmentType65672() throws Exception {
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+
+        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("test");
+            wb.write(bos);
+        }
+
+        String commitType = "POI Test commit";
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureConfig sc = new SignatureConfig();
+            sc.setKey(certPair.getKey());
+            sc.setSigningCertificateChain(certPair.getX509Chain());
+            sc.setCommitmentType(commitType);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sc);
+            si.setOpcPackage(pkg);
+            si.confirmSignature();
+            bos.reset();
+            pkg.save(bos);
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            SignatureInfo si = new SignatureInfo();
+            SignatureConfig sc = new SignatureConfig();
+            sc.setUpdateConfigOnValidate(true);
+            si.setSignatureConfig(sc);
+            si.setOpcPackage(pkg);
+            si.verifySignature();
+            assertEquals(commitType, sc.getCommitmentType());
+        }
+    }
+
 
     private SignatureConfig prepareConfig(String pfxInput) throws Exception {
-        initKeyPair(pfxInput);
+        DummyKeystore ks = (pfxInput == null) ? new DummyKeystore(STORE_PASS) : new DummyKeystore(pfxInput, STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();;
 
         SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setKey(certPair.getKey());
+        signatureConfig.setSigningCertificateChain(certPair.getX509Chain());
+
+        Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         signatureConfig.setExecutionTime(cal.getTime());
         signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
 
@@ -1065,75 +1135,6 @@ class TestSignatureInfo {
         assertEquals(signerCount, result.size());
     }
 
-    private void initKeyPair() throws Exception {
-        initKeyPair(null);
-    }
-
-    private void initKeyPair(String pfxInput) throws Exception {
-        final String alias = "Test";
-        final char[] password = "test".toCharArray();
-        File file = new File("build/test.pfx");
-        assertTrue(file.getParentFile().exists() || file.getParentFile().mkdir());
-
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-
-        if (pfxInput != null) {
-            try (InputStream fis = new ByteArrayInputStream(RawDataUtil.decompress(pfxInput))) {
-                keystore.load(fis, password);
-            }
-        } else if (file.exists()) {
-            try (InputStream fis = new FileInputStream(file)) {
-                keystore.load(fis, password);
-            }
-        } else {
-            keystore.load(null, password);
-        }
-
-        if (keystore.isKeyEntry(alias)) {
-            Key key = keystore.getKey(alias, password);
-            x509 = (X509Certificate)keystore.getCertificate(alias);
-            keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
-        } else {
-            keyPair = generateKeyPair();
-            Date notBefore = cal.getTime();
-            Calendar cal2 = (Calendar)cal.clone();
-            cal2.add(Calendar.YEAR, 1);
-            Date notAfter = cal2.getTime();
-            KeyUsage keyUsage = new KeyUsage(KeyUsage.digitalSignature);
-
-            x509 = generateCertificate(keyPair.getPublic(), notBefore, notAfter, keyPair.getPrivate(), keyUsage);
-
-            keystore.setKeyEntry(alias, keyPair.getPrivate(), password, new Certificate[]{x509});
-
-            if (pfxInput == null) {
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    keystore.store(fos, password);
-                }
-            }
-        }
-    }
-
-    private void initKeyFromPEM(File pemFile) throws IOException, CertificateException {
-        // see https://stackoverflow.com/questions/11787571/how-to-read-pem-file-to-get-private-and-public-key
-        PrivateKey key = null;
-        x509 = null;
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pemFile), StandardCharsets.ISO_8859_1))) {
-            PEMParser parser = new PEMParser(br);
-            for (Object obj; (obj = parser.readObject()) != null; ) {
-                if (obj instanceof PrivateKeyInfo) {
-                    key = new JcaPEMKeyConverter().setProvider("BC").getPrivateKey((PrivateKeyInfo)obj);
-                } else if (obj instanceof X509CertificateHolder) {
-                    x509 = new JcaX509CertificateConverter().setProvider("BC").getCertificate((X509CertificateHolder)obj);
-                }
-            }
-        }
-
-        if (key != null && x509 != null) {
-            keyPair = new KeyPair(x509.getPublicKey(), key);
-        }
-    }
-
     private static File copy(File input) throws IOException {
         String extension = input.getName().replaceAll(".*?(\\.[^.]+)?$", "$1");
         if (extension.isEmpty()) {
@@ -1155,146 +1156,5 @@ class TestSignatureInfo {
         }
 
         return tmpFile;
-    }
-
-    private static KeyPair generateKeyPair() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        SecureRandom random = new SecureRandom();
-        keyPairGenerator.initialize(new RSAKeyGenParameterSpec(1024,
-                                                               RSAKeyGenParameterSpec.F4), random);
-        return keyPairGenerator.generateKeyPair();
-    }
-
-    private static X509Certificate generateCertificate(PublicKey subjectPublicKey,
-                                                       Date notBefore, Date notAfter,
-                                                       PrivateKey issuerPrivateKey,
-                                                       KeyUsage keyUsage)
-            throws IOException, OperatorCreationException, CertificateException {
-        final String signatureAlgorithm = "SHA1withRSA";
-        final String subjectDn = "CN=Test";
-        X500Name issuerName = new X500Name(subjectDn);
-
-        RSAPublicKey rsaPubKey = (RSAPublicKey)subjectPublicKey;
-        RSAKeyParameters rsaSpec = new RSAKeyParameters(false, rsaPubKey.getModulus(), rsaPubKey.getPublicExponent());
-
-        SubjectPublicKeyInfo subjectPublicKeyInfo =
-                SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(rsaSpec);
-
-        DigestCalculator digestCalc = new JcaDigestCalculatorProviderBuilder()
-                .setProvider("BC").build().get(CertificateID.HASH_SHA1);
-
-        X509v3CertificateBuilder certificateGenerator = new X509v3CertificateBuilder(
-                issuerName
-                , new BigInteger(128, new SecureRandom())
-                , notBefore
-                , notAfter
-                , new X500Name(subjectDn)
-                , subjectPublicKeyInfo
-        );
-
-        X509ExtensionUtils exUtils = new X509ExtensionUtils(digestCalc);
-        SubjectKeyIdentifier subKeyId = exUtils.createSubjectKeyIdentifier(subjectPublicKeyInfo);
-        AuthorityKeyIdentifier autKeyId = exUtils.createAuthorityKeyIdentifier(subjectPublicKeyInfo);
-
-        certificateGenerator.addExtension(Extension.subjectKeyIdentifier, false, subKeyId);
-        certificateGenerator.addExtension(Extension.authorityKeyIdentifier, false, autKeyId);
-
-        BasicConstraints bc = new BasicConstraints(0);
-        certificateGenerator.addExtension(Extension.basicConstraints, false, bc);
-
-        if (null != keyUsage) {
-            certificateGenerator.addExtension(Extension.keyUsage, true, keyUsage);
-        }
-
-        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
-        signerBuilder.setProvider("BC");
-
-        X509CertificateHolder certHolder =
-                certificateGenerator.build(signerBuilder.build(issuerPrivateKey));
-
-        /*
-         * Next certificate factory trick is needed to make sure that the
-         * certificate delivered to the caller is provided by the default
-         * security provider instead of BouncyCastle. If we don't do this trick
-         * we might run into trouble when trying to use the CertPath validator.
-         */
-//        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-//        certificate = (X509Certificate) certificateFactory
-//                .generateCertificate(new ByteArrayInputStream(certificate
-//                        .getEncoded()));
-        return new JcaX509CertificateConverter().getCertificate(certHolder);
-    }
-
-    private static X509CRL generateCrl(X509Certificate issuer, PrivateKey issuerPrivateKey)
-            throws CertificateEncodingException, IOException, CRLException, OperatorCreationException {
-
-        X509CertificateHolder holder = new X509CertificateHolder(issuer.getEncoded());
-        X509v2CRLBuilder crlBuilder = new X509v2CRLBuilder(holder.getIssuer(), new Date());
-        crlBuilder.setNextUpdate(new Date(new Date().getTime() + 100000));
-        JcaContentSignerBuilder contentBuilder = new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC");
-
-        CRLNumber crlNumber = new CRLNumber(new BigInteger("1234"));
-
-        crlBuilder.addExtension(Extension.cRLNumber, false, crlNumber);
-        X509CRLHolder x509Crl = crlBuilder.build(contentBuilder.build(issuerPrivateKey));
-        return new JcaX509CRLConverter().setProvider("BC").getCRL(x509Crl);
-    }
-
-    private static OCSPResp createOcspResp(X509Certificate certificate,
-                                           X509Certificate issuerCertificate,
-                                           X509Certificate ocspResponderCertificate,
-                                           PrivateKey ocspResponderPrivateKey,
-                                           long nonceTimeinMillis)
-            throws Exception {
-        DigestCalculator digestCalc = new JcaDigestCalculatorProviderBuilder()
-                .setProvider("BC").build().get(CertificateID.HASH_SHA1);
-        X509CertificateHolder issuerHolder = new X509CertificateHolder(issuerCertificate.getEncoded());
-        CertificateID certId = new CertificateID(digestCalc, issuerHolder, certificate.getSerialNumber());
-
-        // request
-        //create a nonce to avoid replay attack
-        BigInteger nonce = BigInteger.valueOf(nonceTimeinMillis);
-        DEROctetString nonceDer = new DEROctetString(nonce.toByteArray());
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, true, nonceDer);
-        Extensions exts = new Extensions(ext);
-
-        OCSPReqBuilder ocspReqBuilder = new OCSPReqBuilder();
-        ocspReqBuilder.addRequest(certId);
-        ocspReqBuilder.setRequestExtensions(exts);
-        OCSPReq ocspReq = ocspReqBuilder.build();
-
-
-        SubjectPublicKeyInfo keyInfo = new SubjectPublicKeyInfo
-                (CertificateID.HASH_SHA1, ocspResponderCertificate.getPublicKey().getEncoded());
-
-        BasicOCSPRespBuilder basicOCSPRespBuilder = new BasicOCSPRespBuilder(keyInfo, digestCalc);
-        basicOCSPRespBuilder.setResponseExtensions(exts);
-
-        // request processing
-        Req[] requestList = ocspReq.getRequestList();
-        for (Req ocspRequest : requestList) {
-            CertificateID certificateID = ocspRequest.getCertID();
-            CertificateStatus certificateStatus = CertificateStatus.GOOD;
-            basicOCSPRespBuilder.addResponse(certificateID, certificateStatus);
-        }
-
-        // basic response generation
-        X509CertificateHolder[] chain = null;
-        if (!ocspResponderCertificate.equals(issuerCertificate)) {
-            // TODO: HorribleProxy can't convert array input params yet
-            chain = new X509CertificateHolder[] {
-                    new X509CertificateHolder(ocspResponderCertificate.getEncoded()),
-                    issuerHolder
-            };
-        }
-
-        ContentSigner contentSigner = new JcaContentSignerBuilder("SHA1withRSA")
-                .setProvider("BC").build(ocspResponderPrivateKey);
-        BasicOCSPResp basicOCSPResp = basicOCSPRespBuilder.build(contentSigner, chain, new Date(nonceTimeinMillis));
-
-
-        OCSPRespBuilder ocspRespBuilder = new OCSPRespBuilder();
-
-        return ocspRespBuilder.build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
     }
 }

@@ -16,19 +16,24 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 import java.io.File;
-import java.io.PrintStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
+import org.apache.commons.io.output.NullWriter;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.commons.io.output.NullPrintStream;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
-@ResourceLock(Resources.SYSTEM_OUT)
 class TestFormulaViewer extends BaseTestIteratingXLS {
     @Override
     protected Map<String, Class<? extends Throwable>> getExcludes() {
@@ -42,27 +47,106 @@ class TestFormulaViewer extends BaseTestIteratingXLS {
         return excludes;
     }
 
+    private final boolean doListFormula = true;
+
     @Override
     void runOneFile(File fileIn) throws Exception {
-        PrintStream save = System.out;
-        try {
-            // redirect standard out during the test to avoid spamming the console with output
-            System.setOut(new NullPrintStream());
+        // replace with System.out for manual tests
+        PrintWriter out = new PrintWriter(new NullWriter());
 
-            FormulaViewer viewer = new FormulaViewer();
-            viewer.setFile(fileIn.getAbsolutePath());
-            viewer.setList(true);
-            viewer.run();
-        } catch (RuntimeException re) {
-            String m = re.getMessage();
-            if (m.startsWith("toFormulaString") || m.startsWith("3D references")) {
-                // TODO: fix those cases, but ignore them for now ...
-                assumeTrue(true);
-            } else {
-                throw re;
-            }
-        } finally {
-            System.setOut(save);
+        final Function<FormulaRecord, String> lister = (doListFormula) ? this::listFormula : this::parseFormulaRecord;
+
+        try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
+             InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
+            RecordFactory.createRecords(is).stream()
+                .filter(r -> r.getSid() == FormulaRecord.sid)
+                .map(FormulaRecord.class::cast)
+                .map(lister)
+                .map(Objects::nonNull)
+                .forEach(out::println);
         }
+    }
+
+    private String listFormula(FormulaRecord record) {
+        Ptg[] tokens = record.getParsedExpression();
+        int numptgs = tokens.length;
+        final Ptg lastToken = tokens[numptgs - 1];
+
+        String fmlStr;
+        try {
+            fmlStr = lastToken.toFormulaString();
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return String.join("~",
+            fmlStr,
+            mapToken(lastToken),
+            (numptgs > 1 ? mapToken(tokens[numptgs - 2]) : "VALUE"),
+            String.valueOf(lastToken instanceof FuncPtg ? numptgs - 1 : -1)
+        );
+    }
+
+    private static String mapToken(Ptg token) {
+        switch (token.getPtgClass()) {
+            case Ptg.CLASS_REF:
+                return "REF";
+            case Ptg.CLASS_VALUE:
+                return "VALUE";
+            case Ptg.CLASS_ARRAY:
+                return "ARRAY";
+            default:
+                throwInvalidRVAToken(token);
+                return "";
+        }
+    }
+
+    /**
+     * Method parseFormulaRecord
+     *
+     * @param record the record to be parsed
+     */
+    public String parseFormulaRecord(FormulaRecord record) {
+        return String.format(Locale.ROOT,
+            "==============================\n" +
+                "row = %d, col = %d\n" +
+                "value = %f\n" +
+                "xf = %d, number of ptgs = %d, options = %d\n" +
+                "RPN List = %s\n" +
+                "Formula text = %s",
+            record.getRow(), record.getColumn(), record.getValue(), record.getXFIndex(),
+            record.getParsedExpression().length, record.getOptions(),
+            formulaString(record), composeFormula(record));
+    }
+
+    private String formulaString(FormulaRecord record) {
+        StringBuilder buf = new StringBuilder();
+        Ptg[] tokens = record.getParsedExpression();
+        for (Ptg token : tokens) {
+            buf.append(token.toFormulaString());
+            switch (token.getPtgClass()) {
+                case Ptg.CLASS_REF:
+                    buf.append("(R)");
+                    break;
+                case Ptg.CLASS_VALUE:
+                    buf.append("(V)");
+                    break;
+                case Ptg.CLASS_ARRAY:
+                    buf.append("(A)");
+                    break;
+                default:
+                    throwInvalidRVAToken(token);
+            }
+            buf.append(' ');
+        }
+        return buf.toString();
+    }
+
+    private static void throwInvalidRVAToken(Ptg token) {
+        throw new IllegalStateException("Invalid RVA type (" + token.getPtgClass() + "). This should never happen.");
+    }
+
+    private static String composeFormula(FormulaRecord record) {
+        return HSSFFormulaParser.toFormulaString(null, record.getParsedExpression());
     }
 }

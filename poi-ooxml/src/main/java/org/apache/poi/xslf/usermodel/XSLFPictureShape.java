@@ -273,6 +273,52 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return getSvgImage();
     }
 
+    /**
+     * @return picture name, can be null
+     * @since POI 5.1.0
+     */
+    public String getName() {
+        String name = null;
+        CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
+        if (nvPicPr != null) {
+            CTNonVisualDrawingProps cnvdProps = nvPicPr.getCNvPr();
+            if (cnvdProps != null) {
+                name = cnvdProps.getName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * @param name picture name
+     * @return returns true if the name was set
+     * @since POI 5.1.0
+     */
+    public boolean setName(String name) {
+        XmlObject xmlObject = getXmlObject();
+        if (xmlObject instanceof CTPicture) {
+            CTPicture ctPicture = (CTPicture)xmlObject;
+            CTPictureNonVisual nvPicPr = ctPicture.getNvPicPr();
+            if (nvPicPr == null) {
+                nvPicPr = ctPicture.addNewNvPicPr();
+            }
+            if (nvPicPr != null) {
+                CTNonVisualDrawingProps cnvdProps = nvPicPr.getCNvPr();
+                if (cnvdProps == null) {
+                    cnvdProps = nvPicPr.addNewCNvPr();
+                }
+                if (cnvdProps != null) {
+                    cnvdProps.setName(name);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return SVG image data -- can return null if no SVG image is found
+     */
     public XSLFPictureData getSvgImage() {
         CTBlip blip = getBlip();
         if (blip == null) {
@@ -299,7 +345,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     /**
-     * Convienence method for adding SVG images, which generates the preview image
+     * Convenience method for adding SVG images, which generates the preview image
      * @param sheet the sheet to add
      * @param svgPic the svg picture to add
      * @param previewType the preview picture type or null (defaults to PNG) - currently only JPEG,GIF,PNG are allowed
@@ -351,7 +397,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
 
     @Override
-    void copy(XSLFShape sh){
+    void copy(XSLFShape sh) {
         super.copy(sh);
 
         XSLFPictureShape p = (XSLFPictureShape)sh;
@@ -362,17 +408,17 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
 
         String relId = getSheet().importBlip(blipId, p.getSheet());
-
-        CTPicture ct = (CTPicture)getXmlObject();
         CTBlip blip = getBlipFill().getBlip();
         blip.setEmbed(relId);
 
-        CTApplicationNonVisualDrawingProps nvPr = ct.getNvPicPr().getNvPr();
-        if(nvPr.isSetCustDataLst()) {
+        CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
+        CTApplicationNonVisualDrawingProps nvPr = nvPicPr == null ? null : nvPicPr.getNvPr();
+
+        if(nvPr != null && nvPr.isSetCustDataLst()) {
             // discard any custom tags associated with the picture being copied
             nvPr.unsetCustDataLst();
         }
-        if(blip.isSetExtLst()) {
+        if (blip.isSetExtLst()) {
             // TODO: check for SVG copying
             CTOfficeArtExtensionList extLst = blip.getExtLst();
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
@@ -387,5 +433,46 @@ public class XSLFPictureShape extends XSLFSimpleShape
                 }
             }
         }
+    }
+
+    /**
+     * @return boolean; true if the picture is a video
+     * @since POI 5.2.0
+     */
+    public boolean isVideoFile() {
+        CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
+        if (nvPicPr != null) {
+            CTApplicationNonVisualDrawingProps nvPr = nvPicPr.getNvPr();
+            if (nvPr != null) {
+                return nvPr.isSetVideoFile();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return the link ID for the video file
+     * @since POI 5.2.0
+     */
+    public String getVideoFileLink() {
+        if (isVideoFile()) {
+            CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
+            if (nvPicPr != null) {
+                CTApplicationNonVisualDrawingProps nvPr = nvPicPr.getNvPr();
+                if (nvPr != null && nvPr.getVideoFile() != null) {
+                    return nvPr.getVideoFile().getLink();
+                }
+            }
+        }
+        return null;
+    }
+
+    private CTPictureNonVisual getCTPictureNonVisual() {
+        XmlObject xmlObject = getXmlObject();
+        if (xmlObject instanceof CTPicture) {
+            CTPicture ctPicture = (CTPicture) xmlObject;
+            return ctPicture.getNvPicPr();
+        }
+        return null;
     }
 }

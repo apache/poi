@@ -18,8 +18,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -213,8 +215,8 @@ final class TestFormulaEvaluatorBugs {
         FormulaRecordAggregate frec = (FormulaRecordAggregate) cellSUM.getCellValueRecord();
         Ptg[] ops = frec.getFormulaRecord().getParsedExpression();
         assertEquals(2, ops.length);
-        assertEquals(AreaPtg.class, ops[0].getClass());
-        assertEquals(FuncVarPtg.class, ops[1].getClass());
+        assertSame(AreaPtg.class, ops[0].getClass());
+        assertSame(FuncVarPtg.class, ops[1].getClass());
 
         // Actually stored as C1 to C65536
         // (last row is -1 === 65535)
@@ -254,23 +256,18 @@ final class TestFormulaEvaluatorBugs {
      */
     @Test
     void testEvaluateBooleanInCell_bug44508() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        wb.setSheetName(0, "Sheet1");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            wb.setSheetName(0, "Sheet1");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
 
-        cell.setCellFormula("1=1");
+            cell.setCellFormula("1=1");
 
-        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        try {
-            fe.evaluateInCell(cell);
-        } catch (NumberFormatException e) {
-            fail("Identified bug 44508");
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDoesNotThrow(() -> fe.evaluateInCell(cell), "Identified bug 44508");
+            assertTrue(cell.getBooleanCellValue());
         }
-        assertTrue(cell.getBooleanCellValue());
-
-        wb.close();
     }
 
     @Test
@@ -496,7 +493,7 @@ final class TestFormulaEvaluatorBugs {
             cell = row.getCell(i);
             Ptg[] ptgs = getPtgs(cell);
             assertEquals(4, ptgs.length);
-            assertEquals(FuncPtg.class,   ptgs[3].getClass());
+            assertSame(FuncPtg.class,   ptgs[3].getClass());
             assertEquals("MID", ((FuncPtg)ptgs[3]).getName());
             assertRefPtgA1('V', ptgs, 0);
         }
@@ -563,14 +560,14 @@ final class TestFormulaEvaluatorBugs {
     }
     private Ptg[] getPtgs(HSSFCell cell) {
         assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
+        assertSame(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
         FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
         FormulaRecord rec = agg.getFormulaRecord();
         return rec.getParsedExpression();
     }
     private void assertRefPtgA1(char rv, Ptg[] ptgs, int at) {
         Ptg ptg = ptgs[at];
-        assertEquals(RefPtg.class, ptg.getClass());
+        assertSame(RefPtg.class, ptg.getClass());
         assertEquals(0,  ((RefPtg)ptg).getRow());
         assertEquals(0,  ((RefPtg)ptg).getColumn());
         assertEquals(rv, ptg.getRVAType());

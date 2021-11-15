@@ -61,9 +61,6 @@ public final class HeadersFootersAtom extends RecordAtom {
         CHINESE3
     }
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
     /**
      * A bit that specifies whether the date is displayed in the footer.
      * @see #getMask()
@@ -144,7 +141,7 @@ public final class HeadersFootersAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the record data
-        _recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _recdata = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
     }
 
     /**

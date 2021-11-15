@@ -72,7 +72,7 @@ final class TestSharedValueManager {
             HSSFSheet sheet = wb.getSheetAt(0);
             assertEquals("1+1", sheet.getRow(2).getCell(0).getCellFormula());
             String act = sheet.getRow(3).getCell(0).getCellFormula();
-            assertNotEquals("wrong shared formula record chosen", "1+1", act);
+            assertNotEquals("1+1", act, "wrong shared formula record chosen");
             act = sheet.getRow(3).getCell(0).getCellFormula();
             assertEquals("2+2", act);
 

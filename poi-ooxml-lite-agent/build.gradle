@@ -24,8 +24,8 @@ sourceSets {
 }
 
 dependencies {
-    api 'net.bytebuddy:byte-buddy:1.10.19'
-    api 'net.bytebuddy:byte-buddy-agent:1.10.19'
+    api 'net.bytebuddy:byte-buddy:1.12.1'
+    api 'net.bytebuddy:byte-buddy-agent:1.12.1'
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 }
 
@@ -76,4 +76,8 @@ jar {
         )
     }
 }
+
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false
 

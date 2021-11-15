@@ -55,28 +55,28 @@ public final class TestFontCollection {
     void testFonts() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         Record[] child = fonts.getChildRecords();
-        assertEquals(child.length, 1);
+        assertEquals(1, child.length);
 
         FontEntityAtom fnt = (FontEntityAtom)child[0];
-        assertEquals(fnt.getFontName(), "Times New Roman");
+        assertEquals("Times New Roman", fnt.getFontName());
     }
 
     @Test
     void testAddFont() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         HSLFFontInfo fi = fonts.addFont(HSLFFontInfoPredefined.TIMES_NEW_ROMAN);
-        assertEquals((int)fi.getIndex(), 0);
+        assertEquals(0, (int)fi.getIndex());
         fi = fonts.addFont(new HSLFFontInfo("Helvetica"));
-        assertEquals((int)fi.getIndex(), 1);
+        assertEquals(1, (int)fi.getIndex());
         fi = fonts.addFont(HSLFFontInfoPredefined.ARIAL);
-        assertEquals((int)fi.getIndex(), 2);
+        assertEquals(2, (int)fi.getIndex());
         //the font being added twice
         fi = fonts.addFont(HSLFFontInfoPredefined.ARIAL);
-        assertEquals((int)fi.getIndex(), 2);
+        assertEquals(2, (int)fi.getIndex());
 
         // Font collection should contain 3 fonts
         Record[] child = fonts.getChildRecords();
-        assertEquals(child.length, 3);
+        assertEquals(3, child.length);
 
         // Check we get the right font name for the indicies
         fi = fonts.getFontInfo(0);

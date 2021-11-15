@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -167,7 +167,7 @@ public class TestDocumentEncryption {
             for (HSLFPictureData p : pd) {
                 byte[] hash = md.digest(p.getData());
                 assertEquals(Integer.parseInt(picCmp[i][0]), p.getOffset());
-                assertEquals(picCmp[i][1], Base64.encodeBase64String(hash));
+                assertEquals(picCmp[i][1], Base64.getEncoder().encodeToString(hash));
                 i++;
             }
 

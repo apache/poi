@@ -18,11 +18,12 @@
  */
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
@@ -33,11 +34,11 @@ import org.apache.poi.util.StringUtil;
  * DConRef records specify a range in a workbook (internal or external) that serves as a data source
  * for pivot tables or data consolidation.
  *
- * Represents a <code>DConRef</code> Structure
+ * Represents a {@code DConRef} Structure
  * <a href="http://msdn.microsoft.com/en-us/library/dd923854(office.12).aspx">[MS-XLS s.
- * 2.4.86]</a>, and the contained <code>DConFile</code> structure
+ * 2.4.86]</a>, and the contained {@code DConFile} structure
  * <a href="http://msdn.microsoft.com/en-us/library/dd950157(office.12).aspx">
- * [MS-XLS s. 2.5.69]</a>. This in turn contains a <code>XLUnicodeStringNoCch</code>
+ * [MS-XLS s. 2.5.69]</a>. This in turn contains a {@code XLUnicodeStringNoCch}
  * <a href="http://msdn.microsoft.com/en-us/library/dd910585(office.12).aspx">
  * [MS-XLS s. 2.5.296]</a>.
  *
@@ -56,24 +57,21 @@ import org.apache.poi.util.StringUtil;
  * </pre>
  * Where
  * <ul>
- * <li><code>DConFile.h = 0x00</code> if the characters in<code>rgb</code> are single byte, and
- * <code>DConFile.h = 0x01</code> if they are double byte.<p>
+ * <li>{@code DConFile.h = 0x00} if the characters in{@code rgb} are single byte, and
+ * {@code DConFile.h = 0x01} if they are double byte.<p>
  * If they are double byte, then
  * <ul>
- * <li> If it exists, the length of <code>DConRef.un = 2</code>. Otherwise it is 1.
- * <li> The length of <code>DConFile.rgb = (2 * DConRef.cch)</code>. Otherwise it is equal to
- * <code>DConRef.cch</code>.
+ * <li> If it exists, the length of {@code DConRef.un = 2}. Otherwise it is 1.
+ * <li> The length of {@code DConFile.rgb = (2 * DConRef.cch)}. Otherwise it is equal to
+ * {@code DConRef.cch}.
  * </ul>
- * <li><code>DConRef.rgb</code> starts with <code>0x01</code> if it is an external reference,
- * and with <code>0x02</code> if it is a self-reference.
+ * <li>{@code DConRef.rgb} starts with {@code 0x01} if it is an external reference,
+ * and with {@code 0x02} if it is a self-reference.
  * </ul>
  *
  * At the moment this class is read-only.
  */
 public class DConRefRecord extends StandardRecord {
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     /**
      * The id of the record type,
@@ -85,26 +83,28 @@ public class DConRefRecord extends StandardRecord {
      * <a href="http://msdn.microsoft.com/en-us/library/dd920420(office.12).aspx">
      * [MS XLS s.2.5.211]</a>
      */
-    private int firstRow, lastRow, firstCol, lastCol;
+    private final int firstRow;
+    private final int lastRow;
+    private final int firstCol;
+    private final int lastCol;
     /**
      * the number of chars in the link
      */
-    private int charCount;
+    private final int charCount;
     /**
      * the type of characters (single or double byte)
      */
-    private int charType;
+    private final int charType;
     /**
-     * The link's path string. This is the <code>rgb</code> field of a
-     * <code>XLUnicodeStringNoCch</code>. Therefore it will contain at least one leading special
+     * The link's path string. This is the {@code rgb} field of a
+     * {@code XLUnicodeStringNoCch}. Therefore it will contain at least one leading special
      * character (0x01 or 0x02) and probably other ones.<p>
      * @see <A href="http://msdn.microsoft.com/en-us/library/dd923491(office.12).aspx">
      * DConFile [MS-XLS s. 2.5.77]</A> and
      * <A href="http://msdn.microsoft.com/en-us/library/dd950157(office.12).aspx">
      * VirtualPath [MS-XLS s. 2.5.69]</a>
-     * <p>
      */
-    private byte[] path;
+    private final byte[] path;
     /**
      * unused bits at the end, must be set to 0.
      */
@@ -156,7 +156,7 @@ public class DConRefRecord extends StandardRecord {
         // single-byte, 1 if double-byte.
         final int byteLength = charCount * (charType + 1);
 
-        path = IOUtils.safelyAllocate(byteLength, MAX_RECORD_LENGTH);
+        path = IOUtils.safelyAllocate(byteLength, HSSFWorkbook.getMaxRecordLength());
         inStream.readFully(path);
 
         // If it's a self reference, the last one or two bytes (depending on char type) are the
@@ -256,7 +256,7 @@ public class DConRefRecord extends StandardRecord {
             }
             String out = new String(Arrays.copyOfRange(path, offset, path.length), StringUtil.UTF8);
             //UNC paths have \u0003 chars as path separators.
-            out = out.replaceAll("\u0003", "/");
+            out = out.replace("\u0003", "/");
             return out;
         }
         return null;
@@ -278,7 +278,7 @@ public class DConRefRecord extends StandardRecord {
     }
 
     private static RecordInputStream bytesToRIStream(byte[] data) {
-        RecordInputStream ric = new RecordInputStream(new ByteArrayInputStream(data));
+        RecordInputStream ric = new RecordInputStream(new UnsynchronizedByteArrayInputStream(data));
         ric.nextRecord();
         return ric;
     }

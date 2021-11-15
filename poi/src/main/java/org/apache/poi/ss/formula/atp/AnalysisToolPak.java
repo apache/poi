@@ -69,7 +69,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "AMORDEGRC", null);
         r(m, "AMORLINC", null);
         r(m, "AVERAGEIF", null);
-        r(m, "AVERAGEIFS", null);
+        r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
         r(m, "BESSELJ", null);
@@ -142,7 +142,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ISODD", ParityFunction.IS_ODD);
         r(m, "JIS", null);
         r(m, "LCM", null);
+        r(m, "MAXIFS", Maxifs.instance);
         r(m, "MDURATION", null);
+        r(m, "MINIFS", Minifs.instance);
         r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", NetworkdaysFunction.instance);
@@ -171,6 +173,9 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
+        r(m, "T.DIST", TDistLt.instance);
+        r(m, "T.DIST.2T", TDist2t.instance);
+        r(m, "T.DIST.RT", TDistRt.instance);
         r(m, "TEXTJOIN", TextJoinFunction.instance);
         r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
@@ -233,14 +238,14 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     /**
-     * Register a ATP function in runtime.
+     * Register an ATP function in runtime.
      *
      * @param name  the function name
-     * @param func  the functoin to register
-     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @param func  the function to register
+     * @throws IllegalArgumentException if the function is unknown or already registered.
      * @since 3.8 beta6
      */
-   public static void registerFunction(String name, FreeRefFunction func){
+    public static void registerFunction(String name, FreeRefFunction func){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         if(!isATPFunction(name)) {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);

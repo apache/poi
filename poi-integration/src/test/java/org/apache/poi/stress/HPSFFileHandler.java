@@ -18,6 +18,8 @@ package org.apache.poi.stress;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -31,17 +33,19 @@ import java.util.Set;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.examples.hpsf.CopyCompare;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
-class HPSFFileHandler extends POIFSFileHandler {
+public class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
 
     private static final ThreadLocal<File> copyOutput = ThreadLocal.withInitial(HPSFFileHandler::getTempFile);
@@ -55,6 +59,35 @@ class HPSFFileHandler extends POIFSFileHandler {
         "hpsf/Test_Humor-Generation.ppt",
         "document/word2.doc"
     );
+
+    @Override
+    public void handleExtracting(File file) throws Exception {
+        if (!Boolean.getBoolean("scratchpad.ignore")) {
+            super.handleExtracting(file);
+            return;
+        }
+
+        long length = file.length();
+        long modified = file.lastModified();
+
+        try (POIFSFileSystem poifs = new POIFSFileSystem(file);
+             HPSFPropertiesExtractor extractor = new HPSFPropertiesExtractor(poifs)) {
+
+            String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
+            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
+
+            assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
+                "Expected Extraction to fail for file " + relPath + " and handler " + this + ", but did not fail!");
+            assertNotNull(extractor.getDocumentSummaryInformationText());
+            assertNotNull(extractor.getSummaryInformationText());
+            String text = extractor.getText();
+            //System.out.println(text);
+            assertNotNull(text);
+        }
+
+        assertEquals(length, file.length(), "File should not be modified by extractor");
+        assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
+    }
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {

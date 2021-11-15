@@ -69,7 +69,7 @@ final class TestNumberToTextConverter {
      * {@code Double.longBitsToDouble()} will set one bit 51 (the NaN signaling flag) if it isn't
      *  already. {@code Double.doubleToLongBits()} will return a double with bit pattern
      *  {@code 0x7FF8000000000000L} for any NaN bit pattern supplied.<br>
-     * Differences are likely to be observed with other architectures.<p>
+     * Differences are likely to be observed with other architectures.
      *
      * <p>
      * The few test case examples calling this method represent functionality which may not be
@@ -90,7 +90,7 @@ final class TestNumberToTextConverter {
         String actualText = NumberToTextConverter.toText(dResult);
         String jdkText = Double.toString(dResult);
         // "0.060000000000000005"
-        assertNotEquals("Should not use default JDK IEEE double rendering", jdkText, actualText);
+        assertNotEquals(jdkText, actualText, "Should not use default JDK IEEE double rendering");
         assertEquals("0.06", actualText);
     }
 }

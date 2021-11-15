@@ -29,7 +29,7 @@ import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
-class POIFSFileHandler extends AbstractFileHandler {
+public class POIFSFileHandler extends AbstractFileHandler {
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {

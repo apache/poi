@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -38,6 +37,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.RandomSingleton;
 
 public class BinaryRC4Encryptor extends Encryptor {
 
@@ -52,9 +52,11 @@ public class BinaryRC4Encryptor extends Encryptor {
 
     @Override
     public void confirmPassword(String password) {
-        Random r = new SecureRandom();
+        SecureRandom r = RandomSingleton.getInstance();
         byte[] salt = new byte[16];
         byte[] verifier = new byte[16];
+
+        // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
         r.nextBytes(salt);
         r.nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);

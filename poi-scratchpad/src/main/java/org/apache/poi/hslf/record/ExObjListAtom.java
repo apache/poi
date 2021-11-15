@@ -29,14 +29,10 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Tne atom that holds the seed info used by a ExObjList
+ * The atom that holds the seed info used by a ExObjList
  */
 
-public class ExObjListAtom extends RecordAtom
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+public class ExObjListAtom extends RecordAtom{
 
     /**
      * Record header.
@@ -74,7 +70,7 @@ public class ExObjListAtom extends RecordAtom
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
 
         // Must be at least 4 bytes long
         if(_data.length < 4) {

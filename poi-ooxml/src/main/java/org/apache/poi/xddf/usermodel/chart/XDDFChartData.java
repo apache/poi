@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -45,6 +47,8 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
  */
 @Beta
 public abstract class XDDFChartData {
+	private static final Logger LOGGER = LogManager.getLogger(XDDFChartData.class);
+
     protected XDDFChart parent;
     protected List<Series> series;
     private XDDFCategoryAxis categoryAxis;
@@ -166,7 +170,8 @@ public abstract class XDDFChartData {
             if (categoryData != null && values != null) {
                 int numOfPoints = category.getPointCount();
                 if (numOfPoints != values.getPointCount()) {
-                    throw new IllegalStateException("Category and values must have the same point count.");
+                    LOGGER.warn("Category and values must have the same point count, but had " +
+                            numOfPoints + " categories and " + values.getPointCount() + " values.");
                 }
             }
             this.categoryData = category;
@@ -258,7 +263,7 @@ public abstract class XDDFChartData {
          *
          * @param index
          *      data point index.
-         * @since POI 5.0.1
+         * @since POI 5.1.0
          */
         public void clearDataPoint(long index) {
             List<CTDPt> points = getDPtList();
@@ -278,7 +283,7 @@ public abstract class XDDFChartData {
          *      data point index.
          * @return
          *      the data point with the given {@code index}.
-         * @since POI 5.0.1
+         * @since POI 5.1.0
          */
         public XDDFDataPoint getDataPoint(long index) {
             List<CTDPt> points = getDPtList();

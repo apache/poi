@@ -22,29 +22,33 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public enum FileHandlerKnown {
-    HDGF(HDGFFileHandler::new),
-    HMEF(HMEFFileHandler::new),
-    HPBF(HPBFFileHandler::new),
-    HPSF(HPSFFileHandler::new),
-    HSLF(HSLFFileHandler::new),
-    HSMF(HSMFFileHandler::new),
-    HSSF(HSSFFileHandler::new),
-    HWPF(HWPFFileHandler::new),
-    OPC(OPCFileHandler::new),
-    POIFS(POIFSFileHandler::new),
-    XDGF(XDGFFileHandler::new),
-    XSLF(XSLFFileHandler::new),
-    XSSFB(XSSFBFileHandler::new),
-    XSSF(XSSFFileHandler::new),
-    XWPF(XWPFFileHandler::new),
-    OWPF(OWPFFileHandler::new),
-    NULL(NullFileHandler::new)
+    HDGF,
+    HMEF,
+    HPBF,
+    HPSF,
+    HSLF,
+    HSMF,
+    HSSF,
+    HWPF,
+    OPC,
+    POIFS,
+    XDGF,
+    XSLF,
+    XSSFB,
+    XSSF,
+    XWPF,
+    OWPF,
+    NULL
     ;
 
-    public final Supplier<FileHandler> fileHandler;
-
-    FileHandlerKnown(Supplier<FileHandler> fileHandler) {
-        this.fileHandler = fileHandler;
+    public FileHandler getHandler() {
+        try {
+            // Because of no-scratchpad handling, we need to resort to reflection here
+            String n = name().replace("NULL", "Null");
+            return (FileHandler)Class.forName("org.apache.poi.stress." + n + "FileHandler").getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            return new NullFileHandler();
+        }
     }
 
     private static class NullFileHandler implements FileHandler {

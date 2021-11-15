@@ -21,7 +21,6 @@ import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
 
 /**
  * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
@@ -40,9 +39,6 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
     /** To keep files after JVM exit, set the <code>-Dpoi.keep.tmp.files</code> JVM property */
     public static final String KEEP_FILES = "poi.keep.tmp.files";
-
-    /** random number generator to generate unique filenames */
-    private static final SecureRandom random = new SecureRandom();
 
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
     private File dir;
@@ -126,7 +122,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
         // Generate a unique new filename
         // FIXME: Java 7+: use java.nio.Files#createTempDirectory
-        final long n = random.nextLong();
+        final long n = RandomSingleton.getInstance().nextLong();
         File newDirectory = new File(dir, prefix + Long.toString(n));
         createTempDirectory(newDirectory);
 

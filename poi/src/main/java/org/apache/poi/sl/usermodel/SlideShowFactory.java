@@ -35,6 +35,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+@SuppressWarnings("java:S1452")
 public final class SlideShowFactory {
 
     private static class Singleton {
@@ -194,7 +195,7 @@ public final class SlideShowFactory {
         }
 
         if (FileMagic.OLE2 != fm) {
-            throw new IOException("Can't open SlideShow - unsupported file type: "+fm);
+            throw new IOException("Can't open slideshow - unsupported file type: "+fm);
         }
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
@@ -276,9 +277,9 @@ public final class SlideShowFactory {
                 ooxmlEnc = root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
+        } else {
+            throw new IOException("Can't open slideshow - unsupported file type: "+fm);
         }
-
-        return null;
     }
 
 

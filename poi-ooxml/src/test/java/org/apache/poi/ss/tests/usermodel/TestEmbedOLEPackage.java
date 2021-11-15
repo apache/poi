@@ -29,11 +29,11 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassIDPredefined;
@@ -63,8 +63,10 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFObjectData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag("scratchpad.ignore")
 class TestEmbedOLEPackage {
     private static byte[] samplePPT, samplePPTX, samplePNG;
 
@@ -142,7 +144,7 @@ class TestEmbedOLEPackage {
     private static String digest(Ole10Native ole10) {
         MessageDigest sha = CryptoFunctions.getMessageDigest(HashAlgorithm.sha256);
         byte[] digest = sha.digest(ole10.getDataBuffer());
-        return Base64.encodeBase64String(digest);
+        return Base64.getEncoder().encodeToString(digest);
     }
 
     @Test

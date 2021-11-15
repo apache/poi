@@ -32,11 +32,7 @@ import org.apache.poi.util.LittleEndian;
  *  as what slide it is tied to
  */
 
-public final class NotesAtom extends RecordAtom
-{
-
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+public final class NotesAtom extends RecordAtom {
 
     private byte[] _header;
     private static long _type = 1009l;
@@ -81,7 +77,7 @@ public final class NotesAtom extends RecordAtom
         followMasterObjects = (flags & 1) == 1;
 
         // There might be 2 more bytes, which are a reserved field
-        reserved = IOUtils.safelyClone(source, start+14, len-14, MAX_RECORD_LENGTH);
+        reserved = IOUtils.safelyClone(source, start+14, len-14, getMaxRecordLength());
     }
 
     /**

@@ -132,7 +132,7 @@ public class FractionFormat extends Format {
 
             StringBuilder sb = new StringBuilder();
             if (isNeg){
-                sb.append("-");
+                sb.append('-');
             }
             sb.append(wholePart);
             return sb.toString();
@@ -155,7 +155,7 @@ public class FractionFormat extends Format {
 
         //now format the results
         if (isNeg){
-            sb.append("-");
+            sb.append('-');
         }
 
         //if whole part has to go into the numerator

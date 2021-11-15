@@ -60,7 +60,7 @@ public class XDDFBodyProperties {
         if (props.isSetAnchorCtr()) {
             return props.getAnchorCtr();
         } else {
-            return null;
+            return false;
         }
     }
 
@@ -216,7 +216,7 @@ public class XDDFBodyProperties {
         if (props.isSetRtlCol()) {
             return props.getRtlCol();
         } else {
-            return null;
+            return false;
         }
     }
 

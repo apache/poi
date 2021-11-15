@@ -134,7 +134,7 @@ final class TestEscherGraphics2d {
     void testDraw() {
         graphics.draw(new Line2D.Double(10,10,20,20));
         HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
-        assertEquals(s.getShapeType(), HSSFSimpleShape.OBJECT_TYPE_LINE);
+        assertEquals(HSSFSimpleShape.OBJECT_TYPE_LINE, s.getShapeType());
         assertEquals(10, s.getAnchor().getDx1());
         assertEquals(10, s.getAnchor().getDy1());
         assertEquals(20, s.getAnchor().getDx2());

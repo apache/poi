@@ -36,11 +36,11 @@ public class NameIdentifier {
         sb.append(getClass().getName());
         sb.append(" [");
         if (_isQuoted) {
-            sb.append("'").append(_name).append("'");
+            sb.append('\'').append(_name).append("'");
         } else {
             sb.append(_name);
         }
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 }

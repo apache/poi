@@ -45,14 +45,16 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
 
         double enumerator;
         try {
-            enumerator = OperandResolver.coerceValueToDouble(venumerator);
+            ValueEval ve = OperandResolver.getSingleValue(venumerator, srcRowIndex, srcColumnIndex);
+            enumerator = OperandResolver.coerceValueToDouble(ve);
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
 
         double denominator;
         try {
-            denominator = OperandResolver.coerceValueToDouble(vedenominator);
+            ValueEval ve = OperandResolver.getSingleValue(vedenominator, srcRowIndex, srcColumnIndex);
+            denominator = OperandResolver.coerceValueToDouble(ve);
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }

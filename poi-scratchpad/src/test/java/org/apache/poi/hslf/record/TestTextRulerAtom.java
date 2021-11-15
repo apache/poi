@@ -45,8 +45,8 @@ public final class TestTextRulerAtom {
     @Test
     void testReadRuler() {
         TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-        assertEquals(ruler.getNumberOfLevels(), 0);
-        assertEquals(ruler.getDefaultTabSize(), 0);
+        assertEquals(0, ruler.getNumberOfLevels());
+        assertEquals(0, ruler.getDefaultTabSize());
 
         List<HSLFTabStop> tabStops = ruler.getTabStops();
         assertNotNull(tabStops);

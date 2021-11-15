@@ -141,5 +141,34 @@ javax.xml.bind.DatatypeConverter
 @defaultMessage don't rely on the threads ContextClassLoader - provide the classloader via load(Class, Classloader)
 java.util.ServiceLoader#load(java.lang.Class)
 
-@defaultMessage use java.nio.charset.StandardCharsets instead
+@defaultMessage Use Log4J classes instead
+java.util.logging.**
+
+# taken from https://github.com/apache/solr/blob/main/gradle/validation/forbidden-apis/com.google.guava.guava.all.txt
+@defaultMessage Use corresponding Java 8 functional/streaming interfaces
+com.google.common.base.Function
+com.google.common.base.Joiner
+com.google.common.base.Predicate
+com.google.common.base.Supplier
+
+@defaultMessage Use java.nio.charset.StandardCharsets instead
+com.google.common.base.Charsets
+
+@defaultMessage Use methods in java.util.Objects instead
+com.google.common.base.Objects#equal(java.lang.Object,java.lang.Object)
+com.google.common.base.Objects#hashCode(java.lang.Object[])
+com.google.common.base.Preconditions#checkNotNull(java.lang.Object)
+com.google.common.base.Preconditions#checkNotNull(java.lang.Object,java.lang.Object)
+
+@defaultMessage Use methods in java.util.Comparator instead
+com.google.common.collect.Ordering
+
+
+# taken from https://github.com/apache/solr/blob/main/gradle/validation/forbidden-apis/commons-codec.commons-codec.all.txt
+@defaultMessage Use java.nio.charset.StandardCharsets instead
 org.apache.commons.codec.Charsets
+
+@defaultMessage Use java.util.Base64 instead
+org.apache.commons.codec.binary.Base64
+
+

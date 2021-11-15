@@ -27,7 +27,7 @@ package org.apache.poi.ss.usermodel;
  *  icon and which Yellow or Red.</p>
  */
 public interface ConditionalFormattingThreshold {
-    public enum RangeType {
+    enum RangeType {
         /** Number / Parameter */
         NUMBER(1, "num"),
         /** The minimum value from the range */
@@ -41,16 +41,16 @@ public interface ConditionalFormattingThreshold {
         UNALLOCATED(6, null),
         /** Formula result */
         FORMULA(7, "formula");
-        
+
         /** Numeric ID of the type */
         public final int id;
         /** Name (system) of the type */
         public final String name;
-        
+
         public String toString() {
             return id + " - " + name;
         }
-        
+
         public static RangeType byId(int id) {
             return values()[id-1]; // 1-based IDs
         }
@@ -60,51 +60,51 @@ public interface ConditionalFormattingThreshold {
             }
             return null;
         }
-        
-        private RangeType(int id, String name) {
+
+        RangeType(int id, String name) {
             this.id = id; this.name = name;
         }
     }
-    
+
     /**
      * Get the Range Type used
      */
     RangeType getRangeType();
-    
+
     /**
      * Changes the Range Type used
-     * 
+     *
      * <p>If you change the range type, you need to
      *  ensure that the Formula and Value parameters
      *  are compatible with it before saving</p>
      */
     void setRangeType(RangeType type);
-    
+
     /**
      * Formula to use to calculate the threshold,
-     *  or <code>null</code> if no formula 
+     *  or {@code null} if no formula
      */
     String getFormula();
 
     /**
      * Sets the formula used to calculate the threshold,
-     *  or unsets it if <code>null</code> is given.
+     *  or unsets it if {@code null} is given.
      */
     void setFormula(String formula);
-    
+
     /**
-     * Gets the value used for the threshold, or 
-     *  <code>null</code> if there isn't one.
+     * Gets the value used for the threshold, or
+     *  {@code null} if there isn't one.
      */
     Double getValue();
-    
+
     /**
-     * Sets the value used for the threshold. 
-     * <p>If the type is {@link RangeType#PERCENT} or 
+     * Sets the value used for the threshold.
+     * <p>If the type is {@link RangeType#PERCENT} or
      *  {@link RangeType#PERCENTILE} it must be between 0 and 100.
      * <p>If the type is {@link RangeType#MIN} or {@link RangeType#MAX}
      *  or {@link RangeType#FORMULA} it shouldn't be set.
-     * <p>Use <code>null</code> to unset
+     * <p>Use {@code null} to unset
      */
     void setValue(Double value);
 }

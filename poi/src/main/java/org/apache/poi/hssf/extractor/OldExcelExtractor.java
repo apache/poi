@@ -41,6 +41,7 @@ import org.apache.poi.hssf.record.OldSheetRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
@@ -62,9 +63,6 @@ import org.apache.poi.util.IOUtils;
 public class OldExcelExtractor implements POITextExtractor {
 
     private static final int FILE_PASS_RECORD_SID = 0x2f;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
 
     private RecordInputStream ris;
 
@@ -78,6 +76,7 @@ public class OldExcelExtractor implements POITextExtractor {
         open(input);
     }
 
+    @SuppressWarnings("java:S2093")
     public OldExcelExtractor(File f) throws IOException {
         POIFSFileSystem poifs = null;
         try {
@@ -120,6 +119,7 @@ public class OldExcelExtractor implements POITextExtractor {
         open(directory);
     }
 
+    @SuppressWarnings("java:S2093")
     private void open(InputStream biffStream) throws IOException {
         BufferedInputStream bis = (biffStream instanceof BufferedInputStream)
             ? (BufferedInputStream)biffStream
@@ -152,7 +152,7 @@ public class OldExcelExtractor implements POITextExtractor {
             book = (DocumentNode)directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
-            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES[0]);
+            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES.get(0));
         }
 
         if (book == null) {
@@ -169,9 +169,9 @@ public class OldExcelExtractor implements POITextExtractor {
             System.err.println("   OldExcelExtractor <filename>");
             System.exit(1);
         }
-        OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]));
-        System.out.println(extractor.getText());
-        extractor.close();
+        try (OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]))) {
+            System.out.println(extractor.getText());
+        }
     }
 
     private void prepare() {
@@ -230,6 +230,7 @@ public class OldExcelExtractor implements POITextExtractor {
      *
      * @return the text contents of the file
      */
+    @Override
     public String getText() {
         StringBuilder text = new StringBuilder();
 
@@ -299,7 +300,7 @@ public class OldExcelExtractor implements POITextExtractor {
                     break;
 
                 default:
-                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), MAX_RECORD_LENGTH));
+                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), HSSFWorkbook.getMaxRecordLength()));
             }
         }
 

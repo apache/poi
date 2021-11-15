@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -150,87 +151,94 @@ public final class XSSFRelation extends POIXMLRelation {
     );
 
     public static final XSSFRelation IMAGES = new XSSFRelation(
-        null,
-        PackageRelationshipTypes.IMAGE_PART,
-        null,
-        XSSFPictureData::new, XSSFPictureData::new
+            null,
+            PackageRelationshipTypes.IMAGE_PART,
+            null,
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_EMF = new XSSFRelation(
-        "image/x-emf",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.emf",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.EMF.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.emf",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_WMF = new XSSFRelation(
-        "image/x-wmf",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.wmf",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.WMF.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.wmf",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_PICT = new XSSFRelation(
-        "image/pict",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.pict",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.PICT.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.pict",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_JPEG = new XSSFRelation(
-        "image/jpeg",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.jpeg",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.JPEG.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.jpeg",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_PNG = new XSSFRelation(
-        "image/png",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.png",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.PNG.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.png",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_DIB = new XSSFRelation(
-        "image/dib",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.dib",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.DIB.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.dib",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_GIF = new XSSFRelation(
-        "image/gif",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.gif",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.GIF.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.gif",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_TIFF = new XSSFRelation(
-        "image/tiff",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.tiff",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.TIFF.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.tiff",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_EPS = new XSSFRelation(
-        "image/x-eps",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.eps",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.EPS.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.eps",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_BMP = new XSSFRelation(
-        "image/x-ms-bmp",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.bmp",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.BMP.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.bmp",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation IMAGE_WPG = new XSSFRelation(
-        "image/x-wpg",
-        PackageRelationshipTypes.IMAGE_PART,
-        "/xl/media/image#.wpg",
-        XSSFPictureData::new, XSSFPictureData::new
+            PictureData.PictureType.WPG.contentType,
+            PackageRelationshipTypes.IMAGE_PART,
+            "/xl/media/image#.wpg",
+            XSSFPictureData::new, XSSFPictureData::new
+    );
+
+    public static final XSSFRelation HDPHOTO_WDP = new XSSFRelation(
+            PictureData.PictureType.WDP.contentType,
+            PackageRelationshipTypes.HDPHOTO_PART,
+            "/xl/media/hdphoto#.wdp",
+            XSSFPictureData::new, XSSFPictureData::new
     );
 
     public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
@@ -312,7 +320,7 @@ public final class XSSFRelation extends POIXMLRelation {
     public static final XSSFRelation EXTERNAL_LINKS = new XSSFRelation(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink",
-        "/xl/externalLinks/externalLink#.xmll",
+        "/xl/externalLinks/externalLink#.xml",
         ExternalLinksTable::new, ExternalLinksTable::new
     );
 

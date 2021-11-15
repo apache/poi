@@ -28,7 +28,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -39,11 +39,9 @@ import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -170,14 +168,10 @@ public class CryptoAPIDecryptor extends Decryptor {
      */
     public POIFSFileSystem getSummaryEntries(DirectoryNode root, String encryptedStream)
     throws IOException, GeneralSecurityException {
-        DocumentNode es = (DocumentNode) root.getEntry(encryptedStream);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        try (DocumentInputStream dis = root.createDocumentInputStream(es)) {
-            IOUtils.copy(dis, bos);
-        }
         POIFSFileSystem fsOut = null;
         try (
-            CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
+            DocumentInputStream dis = root.createDocumentInputStream(root.getEntry(encryptedStream));
+            CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, IOUtils.toByteArray(dis));
             LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
         ) {
             int streamDescriptorArrayOffset = (int) leis.readUInt();

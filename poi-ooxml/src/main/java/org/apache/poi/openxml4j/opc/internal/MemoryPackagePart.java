@@ -17,11 +17,11 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -32,7 +32,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.util.IOUtils;
 
 /**
- * Memory version of a package part. Use to
+ * Memory version of a package part.
  *
  * @version 1.0
  */
@@ -57,7 +57,7 @@ public final class MemoryPackagePart extends PackagePart {
      */
     public MemoryPackagePart(OPCPackage pack, PackagePartName partName,
             String contentType) throws InvalidFormatException {
-        super(pack, partName, contentType);
+        this(pack, partName, contentType, true);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class MemoryPackagePart extends PackagePart {
         if (data == null) {
             data = new byte[0];
         }
-        return new ByteArrayInputStream(data);
+        return new UnsynchronizedByteArrayInputStream(data);
     }
 
     @Override
@@ -113,17 +113,17 @@ public final class MemoryPackagePart extends PackagePart {
 
     @Override
     public boolean load(InputStream ios) throws InvalidFormatException {
-       try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
-           // Grab the data
-          IOUtils.copy(ios, baos);
-           // Save it
-           data = baos.toByteArray();
-       } catch(IOException e) {
-          throw new InvalidFormatException(e.getMessage());
-       }
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            // Grab the data
+            IOUtils.copy(ios, baos);
+            // Save it
+            data = baos.toByteArray();
+        } catch (IOException e) {
+            throw new InvalidFormatException(e.getMessage());
+        }
 
-       // All done
-       return true;
+        // All done
+        return true;
     }
 
     @Override

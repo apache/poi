@@ -38,7 +38,7 @@ import org.apache.poi.ss.formula.functions.PercentRank;
  *
  * @see PercentRank
  * @see PercentRankExcFunction
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 final class PercentRankIncFunction implements FreeRefFunction {
 

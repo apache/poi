@@ -37,8 +37,8 @@ sourceSets {
 
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-    implementation project(':poi-ooxml-full')
-    implementation project(path:':poi-integration', configuration:'tests')
+    compileOnly project(':poi-ooxml-full')
+    compileOnly project(path:':poi-integration', configuration:'tests')
 }
 
 final MODULE_NAME = 'org.apache.poi.ooxml.schemas'
@@ -63,7 +63,7 @@ task generateModuleInfo() {
             collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
             findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
 
-        String content = header + '\n' + exports + '\n}\n'
+        String content = header + '\n' + exports + '\n}'
         if (fileOut.text != content) {
             fileOut.write content
         }
@@ -115,16 +115,23 @@ task cacheJava9(type: Copy, dependsOn: 'compileJava9') {
 }
 
 jar {
-    File clazzFile = file("${OOXML_LITE_REPORT}.clazz")
-    File xsbsFile = file("${OOXML_LITE_REPORT}.xsb")
-    if (clazzFile.exists() && xsbsFile.exists()) {
-        List clazz = clazzFile.collect { "${it}.class" }
-        List clazzInner = clazzFile.collect { "${it}\$*.class" }
-        List xsbs = xsbsFile.collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it}.xsb" }
-        includes = clazz + clazzInner + xsbs + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
-    }
+    dependsOn ':poi-ooxml:test', ':poi-integration:test'
 
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+
+    doFirst {
+        File clazzFile = file("${OOXML_LITE_REPORT}.clazz")
+        File xsbsFile = file("${OOXML_LITE_REPORT}.xsb")
+        if (clazzFile.exists() && xsbsFile.exists()) {
+            List clazz = clazzFile.collect { "${it}.class" }
+            List clazzInner = clazzFile.collect { "${it}\$*.class" }
+            List xsbs = xsbsFile.collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it}.xsb" }
+            File missingXsbsFile = file("missing-xsbs.txt")
+            List xsbs2 = missingXsbsFile.findAll { !it.empty && !it.startsWith("#") }
+              .collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it.trim()}.xsb" }
+            includes = clazz + clazzInner + xsbs + xsbs2 + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
+        }
+    }
 
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
         into('META-INF/versions/9') {
@@ -141,3 +148,14 @@ jar {
     }
 }
 
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
+spotbugsTest.enabled = false
+spotbugsMain.enabled = false
+javadoc.enabled = false
+javadocJar.enabled = false

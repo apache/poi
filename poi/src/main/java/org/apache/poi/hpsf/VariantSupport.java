@@ -59,8 +59,6 @@ public class VariantSupport extends Variant {
 
 
     private static final Logger LOG = LogManager.getLogger(VariantSupport.class);
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static boolean logUnsupportedTypes;
 
@@ -176,7 +174,7 @@ public class VariantSupport extends Variant {
             typedPropertyValue.readValue(lei);
         } catch ( UnsupportedOperationException exc ) {
             try {
-                final byte[] v = IOUtils.toByteArray(lei, length, MAX_RECORD_LENGTH);
+                final byte[] v = IOUtils.toByteArray(lei, length, CodePageString.getMaxRecordLength());
                 throw new ReadingNotSupportedException( type, v );
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -254,7 +252,7 @@ public class VariantSupport extends Variant {
             default:
                 final int unpadded = lei.getReadIndex()-offset;
                 lei.setReadIndex(offset);
-                final byte[] v = IOUtils.safelyAllocate(unpadded, MAX_RECORD_LENGTH);
+                final byte[] v = IOUtils.safelyAllocate(unpadded, CodePageString.getMaxRecordLength());
                 lei.readFully( v, 0, unpadded );
                 throw new ReadingNotSupportedException( type, v );
         }
@@ -262,7 +260,7 @@ public class VariantSupport extends Variant {
 
     /**
      * Writes a variant value to an output stream. This method ensures that
-     * always a multiple of 4 bytes is written.<p>
+     * always a multiple of 4 bytes is written.
      *
      * @param out The stream to write the value to.
      * @param type The variant's type.

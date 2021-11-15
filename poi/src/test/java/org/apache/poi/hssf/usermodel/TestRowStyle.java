@@ -38,7 +38,7 @@ final class TestRowStyle {
      * SUCCESS:    HSSF creates a sheet.  Filesize matches a known good.  HSSFSheet objects
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
-     *             HSSFSheet last row or first row is incorrect.             <P>
+     *             HSSFSheet last row or first row is incorrect.
      */
     @Test
     void testWriteSheetFont() throws IOException {
@@ -103,7 +103,7 @@ final class TestRowStyle {
      * SUCCESS:    HSSF creates a sheet.  Filesize matches a known good.  HSSFSheet objects
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
-     *             HSSFSheet last row or first row is incorrect.             <P>
+     *             HSSFSheet last row or first row is incorrect.
      */
     @Test
     void testWriteSheetStyle() throws IOException {
@@ -165,8 +165,8 @@ final class TestRowStyle {
                     assertNotNull(r, "Row is not null");
                     cs2 = r.getRowStyle();
                     assertNotNull(cs2);
-                    assertEquals(cs2.getFillForegroundColor(), (short) 0x0, "FillForegroundColor for row:");
-                    assertEquals(cs2.getFillPattern(), FillPatternType.BRICKS, "FillPattern for row:");
+                    assertEquals((short) 0x0, cs2.getFillForegroundColor(), "FillForegroundColor for row:");
+                    assertEquals(FillPatternType.BRICKS, cs2.getFillPattern(), "FillPattern for row:");
                 }
             }
         }

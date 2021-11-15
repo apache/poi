@@ -60,11 +60,6 @@ public final class DocumentAtom extends RecordAtom {
     }
 
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
-
-
     private final byte[] _header = new byte[8];
     private static final long _type = RecordTypes.DocumentAtom.typeID;
 
@@ -111,13 +106,16 @@ public final class DocumentAtom extends RecordAtom {
     public int getFirstSlideNum() { return firstSlideNum; }
 
     /**
-     * The Size of the Document's slides, @see DocumentAtom.SlideSize for values
-     * @deprecated to be replaced by enum
+     * The Size of the Document's slides, {@link DocumentAtom.SlideSize} for values.
+     */
+    public SlideSize getSlideSizeType() { return SlideSize.values()[slideSizeType]; }
+
+    /**
+     * The Size of the Document's slides, {@link DocumentAtom.SlideSize} for values.
+     * @deprecated replaced by {@link #getSlideSizeType()}
      */
     @Deprecated
-    @Removal(version = "5.0.0")
-    public int getSlideSizeType() { return slideSizeType; }
-
+    @Removal(version = "6.0.0")
     public SlideSize getSlideSizeTypeEnum() {
         return SlideSize.values()[slideSizeType];
     }
@@ -126,7 +124,7 @@ public final class DocumentAtom extends RecordAtom {
         slideSizeType = size.ordinal();
     }
 
-    /** Was the document saved with True Type fonts embeded? */
+    /** Was the document saved with True Type fonts embedded? */
     public boolean getSaveWithFonts() {
         return saveWithFonts != 0;
     }
@@ -190,7 +188,7 @@ public final class DocumentAtom extends RecordAtom {
         showComments = leis.readByte();
 
         // If there's any other bits of data, keep them about
-        reserved = IOUtils.safelyAllocate(maxLen-48L, MAX_RECORD_LENGTH);
+        reserved = IOUtils.safelyAllocate(maxLen-48L, getMaxRecordLength());
         leis.readFully(reserved);
     }
 

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -24,7 +25,7 @@ import org.apache.poi.util.Internal;
 /**
  * Represents an Excel hyperlink.
  */
-public class HSSFHyperlink implements Hyperlink {
+public class HSSFHyperlink implements Hyperlink, Duplicatable {
 
     /**
      * Low-level record object that stores the actual hyperlink data
@@ -262,6 +263,15 @@ public class HSSFHyperlink implements Hyperlink {
     }
 
     /**
+     * @return a new HSSFHyperlink based on this
+     * @since POI 5.1.0
+     */
+    @Override
+    public Duplicatable copy() {
+        return new HSSFHyperlink(this);
+    }
+
+    /**
      * @return whether the objects have the same HyperlinkRecord
      */
     @Override
@@ -276,4 +286,5 @@ public class HSSFHyperlink implements Hyperlink {
     public int hashCode() {
         return record.hashCode();
     }
+
 }

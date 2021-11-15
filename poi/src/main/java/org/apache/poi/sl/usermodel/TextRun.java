@@ -27,7 +27,7 @@ import org.apache.poi.util.Internal;
 /**
  * Some text.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","java:S1452"})
 public interface TextRun {
     /**
      * Type of text capitals
@@ -37,7 +37,7 @@ public interface TextRun {
         SMALL,
         ALL
     }
-    
+
     /**
      * Type of placeholder fields
      */
@@ -96,18 +96,18 @@ public interface TextRun {
     void setFontSize(Double fontSize);
 
     /**
-     * Get the font family - convenience method for {@link #getFontInfo(FontGroup)} 
-     * 
+     * Get the font family - convenience method for {@link #getFontInfo(FontGroup)}
+     *
      * @return  font family or null if not set
      */
     String getFontFamily();
 
     /**
      * Get the font family - convenience method for {@link #getFontInfo(FontGroup)}
-     * 
+     *
      * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
-     *    if {@code null}, the font group matching the first character will be returned 
-     * 
+     *    if {@code null}, the font group matching the first character will be returned
+     *
      * @return  font family or null if not set
      */
     String getFontFamily(FontGroup fontGroup);
@@ -128,17 +128,17 @@ public interface TextRun {
      * @param typeface  the font to apply to this text run.
      *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
      * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
-     *    if {@code null}, the font group matching the first character will be returned 
+     *    if {@code null}, the font group matching the first character will be returned
      */
     void setFontFamily(String typeface, FontGroup fontGroup);
 
     /**
      * Get the font info for the given font group
-     * 
+     *
      * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
-     *    if {@code null}, the font group matching the first character will be returned 
+     *    if {@code null}, the font group matching the first character will be returned
      * @return  font info or {@code null} if not set
-     * 
+     *
      * @since POI 3.17-beta2
      */
     FontInfo getFontInfo(FontGroup fontGroup);
@@ -149,11 +149,11 @@ public interface TextRun {
      * @param fontInfo the font to apply to this text run.
      *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
      * @param fontGroup the font group, i.e. the range of glpyhs to be covered. defaults to latin, if {@code null}.
-     * 
+     *
      * @since POI 3.17-beta2
      */
     void setFontInfo(FontInfo fontInfo, FontGroup fontGroup);
-    
+
     /**
      * @return true, if text is bold
      */
@@ -165,7 +165,7 @@ public interface TextRun {
      * @param bold set to true for bold text, false for normal weight
      */
     void setBold(boolean bold);
-    
+
     /**
      * @return true, if text is italic
      */
@@ -219,24 +219,24 @@ public interface TextRun {
 
     /**
      * Return the associated hyperlink
-     * 
+     *
      * @return the associated hyperlink or null if no hyperlink was set
-     * 
+     *
      * @since POI 3.14-Beta2
      */
     Hyperlink<?,?> getHyperlink();
-    
-    
+
+
     /**
      * Creates a new hyperlink and assigns it to this text run.
      * If the text run has already a hyperlink assigned, return it instead
      *
      * @return the associated hyperlink
-     * 
+     *
      * @since POI 3.14-Beta2
      */
     Hyperlink<?,?> createHyperlink();
-    
+
     /**
      * Experimental method to determine the field type, e.g. slide number
      *

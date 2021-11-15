@@ -40,9 +40,9 @@ public final class TestXSSFCategoryAxis {
             XDDFCategoryAxis axis = chart.createCategoryAxis(AxisPosition.BOTTOM);
 
             axis.setCrosses(AxisCrosses.AUTO_ZERO);
-            assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
+            assertEquals(AxisCrosses.AUTO_ZERO, axis.getCrosses());
 
-            assertEquals(chart.getAxes().size(), 1);
+            assertEquals(1, chart.getAxes().size());
         }
     }
 }

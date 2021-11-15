@@ -633,12 +633,12 @@ class TestWorkbookEvaluator {
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        assertEquals(cellA2.getStringCellValue(), "1");
-        assertEquals(cellB2.getNumericCellValue(),0, 0.00001);
-        assertEquals(cellC2.getStringCellValue(),"3");
+        assertEquals("1", cellA2.getStringCellValue());
+        assertEquals(0,cellB2.getNumericCellValue(), 0.00001);
+        assertEquals("3",cellC2.getStringCellValue());
 
-        assertEquals(cellA3.getStringCellValue(), "1");
-        assertEquals(cellB3.getNumericCellValue(),0, 0.00001);
-        assertEquals(cellC3.getStringCellValue(),"3");
+        assertEquals("1", cellA3.getStringCellValue());
+        assertEquals(0,cellB3.getNumericCellValue(), 0.00001);
+        assertEquals("3",cellC3.getStringCellValue());
     }
 }

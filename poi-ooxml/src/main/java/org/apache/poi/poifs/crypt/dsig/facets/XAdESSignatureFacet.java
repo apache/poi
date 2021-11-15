@@ -63,6 +63,7 @@ import org.etsi.uri.x01903.v13.AnyType;
 import org.etsi.uri.x01903.v13.CertIDListType;
 import org.etsi.uri.x01903.v13.CertIDType;
 import org.etsi.uri.x01903.v13.ClaimedRolesListType;
+import org.etsi.uri.x01903.v13.CommitmentTypeIndicationType;
 import org.etsi.uri.x01903.v13.DataObjectFormatType;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.ObjectIdentifierType;
@@ -70,6 +71,7 @@ import org.etsi.uri.x01903.v13.QualifyingPropertiesDocument;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.SignaturePolicyIdType;
 import org.etsi.uri.x01903.v13.SignaturePolicyIdentifierType;
+import org.etsi.uri.x01903.v13.SignedDataObjectPropertiesType;
 import org.etsi.uri.x01903.v13.SignedPropertiesType;
 import org.etsi.uri.x01903.v13.SignedSignaturePropertiesType;
 import org.etsi.uri.x01903.v13.SignerRoleType;
@@ -114,9 +116,22 @@ public class XAdESSignatureFacet implements SignatureFacet {
         QualifyingPropertiesType qualifyingProperties = qualDoc.addNewQualifyingProperties();
         qualifyingProperties.setTarget("#" + signatureConfig.getPackageSignatureId());
 
+        createSignedProperties(signatureInfo, qualifyingProperties);
+
+        // add XAdES ds:Object
+        objects.add(addXadesObject(signatureInfo, document, qualifyingProperties));
+
+        // add XAdES ds:Reference
+        references.add(addXadesReference(signatureInfo));
+    }
+
+    /**
+     * Create the signedProperties. Subclasses can easily extend the signed properties.
+     */
+    protected SignedPropertiesType createSignedProperties(SignatureInfo signatureInfo, QualifyingPropertiesType qualifyingProperties) {
         // SignedProperties
         SignedPropertiesType signedProperties = qualifyingProperties.addNewSignedProperties();
-        signedProperties.setId(signatureConfig.getXadesSignatureId());
+        signedProperties.setId(signatureInfo.getSignatureConfig().getXadesSignatureId());
 
         // SignedSignatureProperties
         SignedSignaturePropertiesType signedSignatureProperties = signedProperties.addNewSignedSignatureProperties();
@@ -134,16 +149,14 @@ public class XAdESSignatureFacet implements SignatureFacet {
         addPolicy(signatureInfo, signedSignatureProperties);
 
         // DataObjectFormat
-        addMimeTypes(signedProperties);
+        addMimeTypes(signatureInfo, signedProperties);
 
-        // add XAdES ds:Object
-        objects.add(addXadesObject(signatureInfo, document, qualifyingProperties));
+        addCommitmentType(signatureInfo, signedProperties);
 
-        // add XAdES ds:Reference
-        references.add(addXadesReference(signatureInfo));
+        return signedProperties;
     }
 
-    private void addSigningTime(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+    protected void addSigningTime(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         Calendar xmlGregorianCalendar = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
         xmlGregorianCalendar.setTime(signatureConfig.getExecutionTime());
@@ -151,7 +164,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);
     }
 
-    private void addCertificate(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+    protected void addCertificate(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<X509Certificate> chain = signatureConfig.getSigningCertificateChain();
         if (chain == null || chain.isEmpty()) {
@@ -162,7 +175,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         setCertID(certId, signatureConfig, signatureConfig.isXadesIssuerNameNoReverseOrder(), chain.get(0));
     }
 
-    private void addXadesRole(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+    protected void addXadesRole(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         String role = signatureConfig.getXadesRole();
         if (role == null || role.isEmpty()) {
@@ -178,7 +191,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         insertXChild(claimedRole, roleString);
     }
 
-    private void addPolicy(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+    protected void addPolicy(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         SignaturePolicyService policyService = signatureConfig.getSignaturePolicyService();
         if (policyService == null) {
@@ -214,7 +227,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         insertXChild(sigPolicyQualifier, spUriElement);
     }
 
-    private void addMimeTypes(SignedPropertiesType signedProperties) {
+    protected void addMimeTypes(SignatureInfo signatureInfo, SignedPropertiesType signedProperties) {
         if (dataObjectFormatMimeTypes.isEmpty()) {
             return;
         }
@@ -232,14 +245,40 @@ public class XAdESSignatureFacet implements SignatureFacet {
         });
     }
 
-    private XMLObject addXadesObject(SignatureInfo signatureInfo, Document document, QualifyingPropertiesType qualifyingProperties) {
+    protected XMLObject addXadesObject(SignatureInfo signatureInfo, Document document, QualifyingPropertiesType qualifyingProperties) {
         Element qualDocEl = importNode(document, qualifyingProperties);
         List<XMLStructure> xadesObjectContent = singletonList(new DOMStructure(qualDocEl));
-        XMLObject xo = signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
-        return xo;
+        return signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
     }
 
-    private Reference addXadesReference(SignatureInfo signatureInfo) throws XMLSignatureException {
+    protected void addCommitmentType(SignatureInfo signatureInfo, SignedPropertiesType signedProperties) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
+        String desc = signatureConfig.getSignatureDescription();
+        String commit = signatureConfig.getCommitmentType();
+        if (desc == null && commit == null) {
+            return;
+        }
+
+        SignedDataObjectPropertiesType dopt = signedProperties.isSetSignedDataObjectProperties()
+            ? signedProperties.getSignedDataObjectProperties()
+            : signedProperties.addNewSignedDataObjectProperties();
+
+        CommitmentTypeIndicationType cti = dopt.addNewCommitmentTypeIndication();
+        if (commit != null) {
+            ObjectIdentifierType ctid = cti.addNewCommitmentTypeId();
+            ctid.addNewIdentifier().setStringValue("http://uri.etsi.org/01903/v1.2.2#ProofOfOrigin");
+            ctid.setDescription(signatureConfig.getCommitmentType());
+        }
+        if (desc != null) {
+            cti.addNewAllSignedDataObjects();
+            AnyType ctq = cti.addNewCommitmentTypeQualifiers().addNewCommitmentTypeQualifier();
+            ctq.set(XmlString.Factory.newValue(desc));
+        }
+    }
+
+
+
+    protected Reference addXadesReference(SignatureInfo signatureInfo) throws XMLSignatureException {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<Transform> transforms = singletonList(newTransform(signatureInfo, CanonicalizationMethod.INCLUSIVE));
         return newReference(signatureInfo, "#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE);

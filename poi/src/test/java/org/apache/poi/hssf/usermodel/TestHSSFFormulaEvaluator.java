@@ -71,30 +71,28 @@ final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
     @Test
     void testDefinedNameWithComplexFlag_bug47048() throws IOException {
         // Mock up a spreadsheet to match the critical details of the sample
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("Input");
-        HSSFName definedName = wb.createName();
-        definedName.setNameName("Is_Multicar_Vehicle");
-        definedName.setRefersToFormula("Input!$B$17:$G$17");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Input");
+            HSSFName definedName = wb.createName();
+            definedName.setNameName("Is_Multicar_Vehicle");
+            definedName.setRefersToFormula("Input!$B$17:$G$17");
 
-        // Set up some data and the formula
-        HSSFRow row17 = sheet.createRow(16);
-        row17.createCell(0).setCellValue(25.0);
-        row17.createCell(1).setCellValue(1.33);
-        row17.createCell(2).setCellValue(4.0);
+            // Set up some data and the formula
+            HSSFRow row17 = sheet.createRow(16);
+            row17.createCell(0).setCellValue(25.0);
+            row17.createCell(1).setCellValue(1.33);
+            row17.createCell(2).setCellValue(4.0);
 
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cellA1 = row.createCell(0);
-        cellA1.setCellFormula("SUM(Is_Multicar_Vehicle)");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cellA1 = row.createCell(0);
+            cellA1.setCellFormula("SUM(Is_Multicar_Vehicle)");
 
-        // Set the complex flag - POI doesn't usually manipulate this flag
-        NameRecord nameRec = TestHSSFName.getNameRecord(definedName);
-        nameRec.setOptionFlag((short) 0x10); // 0x10 -> complex
+            // Set the complex flag - POI doesn't usually manipulate this flag
+            NameRecord nameRec = TestHSSFName.getNameRecord(definedName);
+            nameRec.setOptionFlag((short) 0x10); // 0x10 -> complex
 
-        HSSFFormulaEvaluator hsf = new HSSFFormulaEvaluator(wb);
-        CellValue value;
-        try {
-            value = hsf.evaluate(cellA1);
+            HSSFFormulaEvaluator hsf = new HSSFFormulaEvaluator(wb);
+            CellValue value = hsf.evaluate(cellA1);
 
             assertEquals(CellType.NUMERIC, value.getCellType());
             assertEquals(5.33, value.getNumberValue(), 0.0);
@@ -104,8 +102,6 @@ final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
                 fail("Identified bug 47048a");
             }
             throw e;
-        } finally {
-            wb.close();
         }
     }
 

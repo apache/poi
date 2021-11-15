@@ -55,6 +55,12 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     int PICTURE_TYPE_DIB = 7;
 
     /**
+     * Excel silently truncates long sheet names to 31 chars.
+     * This constant is used to ensure uniqueness in the first 31 chars
+     */
+    int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
+
+    /**
      * Convenience method to get the active sheet.  The active sheet is is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
@@ -310,7 +316,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     CellStyle getCellStyleAt(int idx);
 
     /**
-     * Write out this workbook to an Outputstream.
+     * Write out this workbook to an OutputStream.
      *
      * @param stream - the java OutputStream you wish to write to
      * @exception IOException if anything can't be written.

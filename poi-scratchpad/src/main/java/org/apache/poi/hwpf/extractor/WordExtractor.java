@@ -210,8 +210,8 @@ public final class WordExtractor implements POIOLE2TextExtractor {
         String text = doc.getDocumentText();
 
         // Fix line endings (Note - won't get all of them
-        text = text.replaceAll( "\r\r\r", "\r\n\r\n\r\n" );
-        text = text.replaceAll( "\r\r", "\r\n\r\n" );
+        text = text.replace( "\r\r\r", "\r\n\r\n\r\n" );
+        text = text.replace( "\r\r", "\r\n\r\n" );
 
         if ( text.endsWith( "\r" )) {
             text += "\n";
@@ -224,6 +224,7 @@ public final class WordExtractor implements POIOLE2TextExtractor {
      * Grab the text, based on the WordToTextConverter. Shouldn't include any
      * crud, but slower than getTextFromPieces().
      */
+    @Override
     public String getText() {
         try {
             WordToTextConverter wordToTextConverter = new WordToTextConverter();

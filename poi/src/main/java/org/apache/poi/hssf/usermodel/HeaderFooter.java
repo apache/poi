@@ -26,13 +26,13 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
     protected HeaderFooter() {
         //
     }
-    
+
     /**
      * @return the internal text representation (combining center, left and right parts).
      * Possibly empty string if no header or footer is set.  Never <code>null</code>.
      */
-    protected abstract String getRawText(); 
-    
+    protected abstract String getRawText();
+
     private String[] splitParts() {
         String text = getRawText();
         // default values
@@ -41,7 +41,9 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         String _right = "";
 
 // FIXME: replace outer goto. just eww.
-outer:
+// no unit tests test the goto loop but poi-integration tests hangs if you remove it
+// (some file has an edge case header or footer)
+        outer:
         while (text.length() > 1) {
             if (text.charAt(0) != '&') {
                 // Mimics the behaviour of Excel, which would put it in the center.
@@ -50,40 +52,40 @@ outer:
             }
             int pos = text.length();
             switch (text.charAt(1)) {
-            case 'L':
-                if (text.contains("&C")) {
-                    pos = Math.min(pos, text.indexOf("&C"));
-                }
-                if (text.contains("&R")) {
-                    pos = Math.min(pos, text.indexOf("&R"));
-                }
-                _left = text.substring(2, pos);
-                text = text.substring(pos);
-                break;
-            case 'C':
-                if (text.contains("&L")) {
-                    pos = Math.min(pos, text.indexOf("&L"));
-                }
-                if (text.contains("&R")) {
-                    pos = Math.min(pos, text.indexOf("&R"));
-                }
-                _center = text.substring(2, pos);
-                text = text.substring(pos);
-                break;
-            case 'R':
-                if (text.contains("&C")) {
-                    pos = Math.min(pos, text.indexOf("&C"));
-                }
-                if (text.contains("&L")) {
-                    pos = Math.min(pos, text.indexOf("&L"));
-                }
-                _right = text.substring(2, pos);
-                text = text.substring(pos);
-                break;
-            default:
-                // Mimics the behaviour of Excel, which would put it in the center.
-                _center = text;
-                break outer;
+                case 'L':
+                    if (text.contains("&C")) {
+                        pos = Math.min(pos, text.indexOf("&C"));
+                    }
+                    if (text.contains("&R")) {
+                        pos = Math.min(pos, text.indexOf("&R"));
+                    }
+                    _left = text.substring(2, pos);
+                    text = text.substring(pos);
+                    break;
+                case 'C':
+                    if (text.contains("&L")) {
+                        pos = Math.min(pos, text.indexOf("&L"));
+                    }
+                    if (text.contains("&R")) {
+                        pos = Math.min(pos, text.indexOf("&R"));
+                    }
+                    _center = text.substring(2, pos);
+                    text = text.substring(pos);
+                    break;
+                case 'R':
+                    if (text.contains("&C")) {
+                        pos = Math.min(pos, text.indexOf("&C"));
+                    }
+                    if (text.contains("&L")) {
+                        pos = Math.min(pos, text.indexOf("&L"));
+                    }
+                    _right = text.substring(2, pos);
+                    text = text.substring(pos);
+                    break;
+                default:
+                    // Mimics the behaviour of Excel, which would put it in the center.
+                    _center = text;
+                    break outer;
             }
         }
         return new String[] { _left, _center, _right, };
@@ -100,7 +102,7 @@ outer:
      * @param newLeft The string to set as the left side.
      */
     public final void setLeft(String newLeft) {
-        updatePart(0, newLeft); 
+        updatePart(0, newLeft);
     }
 
     /**
@@ -114,7 +116,7 @@ outer:
      * @param newCenter The string to set as the center.
      */
     public final void setCenter(String newCenter) {
-        updatePart(1, newCenter); 
+        updatePart(1, newCenter);
     }
 
     /**
@@ -128,9 +130,9 @@ outer:
      * @param newRight The string to set as the right side.
      */
     public final void setRight(String newRight) {
-        updatePart(2, newRight); 
+        updatePart(2, newRight);
     }
-    
+
     private void updatePart(int partIndex, String newValue) {
         String[] parts = splitParts();
         parts[partIndex] = newValue == null ? "" : newValue;
@@ -144,7 +146,7 @@ outer:
         String _left = parts[0];
         String _center = parts[1];
         String _right = parts[2];
-        
+
         if (_center.length() < 1 && _left.length() < 1 && _right.length() < 1) {
             setHeaderFooterText("");
             return;
@@ -295,9 +297,14 @@ outer:
         }
 
         // Now do the tricky, dynamic ones
-        // These are things like font sizes and font names
-        text = text.replaceAll("\\&\\d+", "");
-        text = text.replaceAll("\\&\".*?,.*?\"", "");
+        // These are things like font sizes, font names and colours
+        text = text.replaceAll("&\\d+", "");
+        text = text.replaceAll("&\".*?,.*?\"", "");
+        text = text.replaceAll("&K[\\dA-F]{6}", "");
+        text = text.replaceAll("&K[\\d]{2}[+][\\d]{3}", "");
+
+        text = text.replaceAll("&&", "&");
+
 
         // All done
         return text;
@@ -322,7 +329,7 @@ outer:
         UNDERLINE_FIELD        ("&U", true),
         DOUBLE_UNDERLINE_FIELD ("&E", true),
         ;
-        
+
         private final String _representation;
         private final boolean _occursInPairs;
         private MarkupTag(String sequence, boolean occursInPairs) {

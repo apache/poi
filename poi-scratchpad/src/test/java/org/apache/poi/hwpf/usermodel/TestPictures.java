@@ -52,9 +52,8 @@ public final class TestPictures {
         List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
         assertNotNull(pics);
-        assertEquals(pics.size(), 2);
-        for (int i = 0; i < pics.size(); i++) {
-            Picture pic = pics.get(i);
+        assertEquals(2, pics.size());
+        for (Picture pic : pics) {
             assertNotNull(pic.suggestFileExtension());
             assertNotNull(pic.suggestFullFileName());
         }
@@ -289,7 +288,6 @@ public final class TestPictures {
         assertEquals(0, plain8s);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     void testCroppedPictures() {
         HWPFDocument doc = openSampleFile("testCroppedPictures.doc");
@@ -334,40 +332,40 @@ public final class TestPictures {
     }
 
     @Test
-    void testPictureWithAlternativeText() {
-        HWPFDocument document = openSampleFile("Picture_Alternative_Text.doc");
-        PicturesTable pictureTable = document.getPicturesTable();
-        Picture picture = pictureTable.getAllPictures().get(0);
+    void testPictureWithAlternativeText() throws IOException {
+        try (HWPFDocument document = openSampleFile("Picture_Alternative_Text.doc")) {
+            PicturesTable pictureTable = document.getPicturesTable();
+            Picture picture = pictureTable.getAllPictures().get(0);
 
-        assertEquals("This is the alternative text for the picture.", picture.getDescription());
+            assertEquals("This is the alternative text for the picture.", picture.getDescription());
+        }
     }
 
     @Disabled("This bug is not fixed yet")
     @Test
     void test58804_1() throws Exception {
-        HWPFDocument docA = openSampleFile("58804_1.doc");
+        try (HWPFDocument docA = openSampleFile("58804_1.doc")) {
+            expectImages(docA, 1);
 
-        expectImages(docA, 1);
-
-        HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
-
-        try (OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc")) {
-            docB.write(out);
+            try (HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
+                OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc")) {
+                docB.write(out);
+                expectImages(docB, 1);
+            }
         }
-
-        expectImages(docB, 1);
     }
 
     @Disabled("This bug is not fixed yet")
     @Test
-    void test58804() throws Exception {
-        HWPFDocument docA = openSampleFile("58804.doc");
+    void test58804() throws IOException {
+        try (HWPFDocument docA = openSampleFile("58804.doc")) {
+            expectImages(docA, 7);
 
-        expectImages(docA, 7);
+            try (HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA)) {
+                expectImages(docB, 7);
+            }
+        }
 
-        HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
-
-        expectImages(docB, 7);
     }
 
     private void expectImages(HWPFDocument docA, int expectedCount) {

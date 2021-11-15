@@ -60,7 +60,7 @@ public class TestXSSFSheetXMLHandler {
                     public void cell(final String cellReference, final String formattedValue,
                                      final XSSFComment comment) {
                         assertEquals("\uD83D\uDE1Cmore text", formattedValue);
-                        assertEquals(cellCount++, 0);
+                        assertEquals(0, cellCount++);
                     }
                 }, false));
 

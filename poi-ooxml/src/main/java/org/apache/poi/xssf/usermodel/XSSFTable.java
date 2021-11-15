@@ -25,9 +25,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -60,7 +59,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     private CTTable ctTable;
     private transient List<XSSFXmlColumnPr> xmlColumnPrs;
     private transient List<XSSFTableColumn> tableColumns;
-    private transient HashMap<String, Integer> columnMap;
+    private transient ConcurrentSkipListMap<String, Integer> columnMap;
     private transient CellReference startCellReference;
     private transient CellReference endCellReference;
     private transient String commonXPath;
@@ -816,10 +815,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         commonXPath = null;
     }
 
-    private static String caseInsensitive(String s) {
-        return s.toUpperCase(Locale.ROOT);
-    }
-
     /**
      * Gets the relative column index of a column in this table having the header name {@code column}.
      * The column index is relative to the left-most column in the table, 0-indexed.
@@ -836,20 +831,21 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public int findColumnIndex(String columnHeader) {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
-            // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
-            final int count = getColumnCount();
-            columnMap = new HashMap<>(count * 3 / 2);
+            columnMap = new ConcurrentSkipListMap<>(String.CASE_INSENSITIVE_ORDER);
 
             int i = 0;
             for (XSSFTableColumn column : getColumns()) {
                 String columnName = column.getName();
-                columnMap.put(caseInsensitive(columnName), i);
+                columnMap.put(columnName, i);
                 i++;
             }
         }
         // Table column names with special characters need a single quote escape
         // but the escape is not present in the column definition
-        Integer idx = columnMap.get(caseInsensitive(columnHeader.replace("'", "")));
+        String unescapedString = columnHeader
+                .replace("''", "'")
+                .replace("'#", "#");
+        Integer idx = columnMap.get(unescapedString);
         return idx == null ? -1 : idx;
     }
 

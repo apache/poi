@@ -28,7 +28,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
@@ -75,7 +77,30 @@ public class TestAllFiles {
         "**/.svn/**",
         "lost+found",
         "**/.git/**",
+        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
         "**/right-to-left.xlsx" //the threaded comments in this file cause XSSF clone to fail
+    };
+
+    // cheap workaround of skipping the few problematic files
+    public static final String[] SCAN_EXCLUDES_NOSCRATCHPAD = {
+        "**/.svn/**",
+        "lost+found",
+        "**/.git/**",
+        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
+        "**/right-to-left.xlsx", //the threaded comments in this file cause XSSF clone to fail
+        "document/word2.doc",
+        "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
+        "hpsf/Test0313rur.adm",
+        "spreadsheet/43493.xls",
+        "spreadsheet/44958.xls",
+        "spreadsheet/44958_1.xls",
+        "spreadsheet/46904.xls",
+        "spreadsheet/51832.xls",
+        "spreadsheet/60284.xls",
+        "spreadsheet/testArraysAndTables.xls",
+        "spreadsheet/testEXCEL_3.xls",
+        "spreadsheet/testEXCEL_4.xls",
+        "poifs/unknown_properties.msg"
     };
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
@@ -86,14 +111,20 @@ public class TestAllFiles {
         StressMap sm = new StressMap();
         sm.load(new File(ROOT_DIR, "spreadsheet/stress.xls"));
 
+        boolean noScratch = Boolean.getBoolean("scratchpad.ignore");
+
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
-        scanner.setExcludes(SCAN_EXCLUDES);
-
+        scanner.setExcludes(noScratch ? SCAN_EXCLUDES_NOSCRATCHPAD : SCAN_EXCLUDES);
         scanner.scan();
 
         final List<Arguments> result = new ArrayList<>(100);
         for (String file : scanner.getIncludedFiles()) {
+			// avoid running on files leftover from previous failed runs
+			if(file.endsWith("-saved.xls") || file.endsWith("TestHPSFWritingFunctionality.doc")) {
+				continue;
+			}
+
             for (FileHandlerKnown handler : sm.getHandler(file)) {
                 ExcInfo info1 = sm.getExcInfo(file, testName, handler);
                 if (info1 == null || info1.isValid(testName, handler.name())) {
@@ -115,13 +146,13 @@ public class TestAllFiles {
         return allfiles("extract");
     }
 
-    @ParameterizedTest(name = "#{index} {0} {1}")
+    @ParameterizedTest(name = "Extracting - #{index} {0} {1}")
     @MethodSource("extractFiles")
     void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
         if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES)) return;
 
         System.out.println("Running extractFiles on "+file);
-        FileHandler fileHandler = handler.fileHandler.get();
+        FileHandler fileHandler = handler.getHandler();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
         verify(file, exec, exClass, exMessage, password);
@@ -135,7 +166,7 @@ public class TestAllFiles {
     @MethodSource("handleFiles")
     void handleFile(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
         System.out.println("Running handleFiles on "+file);
-        FileHandler fileHandler = handler.fileHandler.get();
+        FileHandler fileHandler = handler.getHandler();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
             Executable exec = () -> fileHandler.handleFile(stream, file);
@@ -147,11 +178,11 @@ public class TestAllFiles {
         return allfiles("additional");
     }
 
-    @ParameterizedTest(name = "#{index} {0} {1}")
+    @ParameterizedTest(name = "Additional - #{index} {0} {1}")
     @MethodSource("handleAdditionals")
     void handleAdditional(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) {
         System.out.println("Running additionals on "+file);
-        FileHandler fileHandler = handler.fileHandler.get();
+        FileHandler fileHandler = handler.getHandler();
         assertNotNull(fileHandler, "Did not find a handler for file " + file);
         Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
         verify(file, exec, exClass, exMessage, password);

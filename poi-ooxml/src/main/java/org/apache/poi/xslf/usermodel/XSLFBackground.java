@@ -75,6 +75,7 @@ public class XSLFBackground extends XSLFSimpleShape
         return bg.getBgPr();
     }
 
+    @Override
     public void setFillColor(Color color) {
         CTBackgroundProperties bgPr = getBgPr(true);
 

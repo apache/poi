@@ -18,7 +18,7 @@
 import java.util.regex.Pattern
 
 configurations {
-	tests
+    tests
 }
 
 sourceSets {
@@ -35,26 +35,26 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.9'
+    api 'org.apache.ant:ant:1.10.12'
 
     api project(':poi-ooxml')
-    api project(':poi-scratchpad')
-    api project(path: ':poi-ooxml', configuration: 'archives')
-    api project(path: ':poi-scratchpad', configuration: 'archives')
+    compileOnly project(path: ':poi-ooxml', configuration: 'archives')
 
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation project(path: ':poi', configuration: 'tests')
-    testImplementation project(path: ':poi-ooxml', configuration: 'tests')
-    testImplementation project(path: ':poi-scratchpad', configuration: 'tests')
-    testImplementation 'com.google.guava:guava:30.0-jre'
-    testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+    testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
+        exclude group: 'org.apache.poi', module: 'poi-scratchpad'
+    }
+    testImplementation 'com.google.guava:guava:31.0.1-jre'
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
+    testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
 }
 
 final String MODULE_NAME = 'org.apache.poi.excelant'
 final Pattern MODULE_NOT_REGEX = ~'((poi|poi-ooxml|poi-scratchpad)[/\\\\][^/\\\\]+$|batik-script)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
-final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
+final List TEST_MODULE_PATH = configurations.testRuntimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
@@ -105,6 +105,8 @@ task cacheTest9(type: Copy) {
 }
 
 jar {
+    dependsOn cacheJava9
+
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
@@ -118,9 +120,23 @@ jar {
     }
 }
 
+javadocJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
+sourcesJar {
+    metaInf {
+        from("$projectDir/../legal/LICENSE")
+        from("$projectDir/../legal/NOTICE")
+    }
+}
+
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: testClasses) {
+task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ] ) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
     classifier 'tests'
@@ -154,7 +170,7 @@ test {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-excelant-tests:' + files(TEST_MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-excelant-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
     }

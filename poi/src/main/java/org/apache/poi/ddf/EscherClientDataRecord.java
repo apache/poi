@@ -34,10 +34,25 @@ public class EscherClientDataRecord extends EscherRecord {
     public static final short RECORD_ID = EscherRecordTypes.CLIENT_DATA.typeID;
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
     private static final byte[] EMPTY = {};
 
     private byte[] remainingData;
+
+    /**
+     * @param length the max record length allowed for EscherClientDataRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherClientDataRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherClientDataRecord() {}
 

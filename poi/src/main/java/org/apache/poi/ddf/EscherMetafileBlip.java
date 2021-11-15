@@ -21,7 +21,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +41,8 @@ import org.apache.poi.util.Removal;
 public final class EscherMetafileBlip extends EscherBlipRecord {
     private static final Logger LOGGER = LogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /** @deprecated use EscherRecordTypes.BLIP_EMF.typeID */
     @Deprecated
@@ -76,6 +77,20 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     private byte[] raw_pictureData;
     private byte[] remainingData;
+
+    /**
+     * @param length the max record length allowed for EscherMetafileBlip
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherMetafileBlip
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public EscherMetafileBlip() {}
 
@@ -177,7 +192,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      * @return the inflated picture data.
      */
     private static byte[] inflatePictureData(byte[] data) {
-        try (InflaterInputStream in = new InflaterInputStream(new ByteArrayInputStream(data));
+        try (InflaterInputStream in = new InflaterInputStream(new UnsynchronizedByteArrayInputStream(data));
              UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
             IOUtils.copy(in, out);
             return out.toByteArray();

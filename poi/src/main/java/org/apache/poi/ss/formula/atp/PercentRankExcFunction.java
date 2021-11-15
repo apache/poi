@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @see PercentRank
  * @see PercentRankIncFunction
- * @since POI 5.0.1
+ * @since POI 5.1.0
  */
 final class PercentRankExcFunction implements FreeRefFunction {
 
@@ -134,14 +134,15 @@ final class PercentRankExcFunction implements FreeRefFunction {
             for (Double d : numbers) {
                 if (d < x) lessThanCount++;
             }
-            BigDecimal result = new BigDecimal((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
+            BigDecimal result = BigDecimal.valueOf((double)(lessThanCount + 1) / (double)(numbers.size() + 1));
             return new NumberEval(PercentRank.round(result, significance));
         } else {
-            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, significance + 3, false);
+            int intermediateSignificance = significance < 5 ? 8 : significance + 3;
+            ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
             if (!(belowRank instanceof NumberEval)) {
                 return belowRank;
             }
-            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, significance + 3, false);
+            ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
             if (!(aboveRank instanceof NumberEval)) {
                 return aboveRank;
             }

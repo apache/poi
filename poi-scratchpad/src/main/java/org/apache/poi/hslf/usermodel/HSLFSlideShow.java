@@ -85,7 +85,8 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     private static final Logger LOG = LogManager.getLogger(HSLFSlideShow.class);
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     enum LoadSavePhase {
         INIT, LOADED
@@ -112,6 +113,19 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     private final List<HSLFNotes> _notes = new ArrayList<>();
     private FontCollection _fonts;
 
+    /**
+     * @param length the max record length allowed for HSLFSlideShow
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HSLFSlideShow
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * Constructs a Powerpoint document from the underlying

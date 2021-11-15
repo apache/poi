@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -241,10 +242,24 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     }
 
     protected RelationPart createChartRelationPart() {
-        int chartNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.CHART.getContentType())
+        XSSFWorkbook wb = getSheet().getWorkbook();
+        XSSFFactory factory = wb == null ? XSSFFactory.getInstance() : wb.getXssfFactory();
+		OPCPackage pkg = getPackagePart().getPackage();
+		int chartNumber = pkg.getPartsByContentType(XSSFRelation.CHART.getContentType())
             .size() + 1;
 
-        return createRelationship(XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber, false);
+		// some broken files have incorrectly named package parts,
+		// so we need to avoid duplicates here by checking and increasing
+		// the part-number
+		try {
+			while (pkg.getPart(PackagingURIHelper.createPartName(XSSFRelation.CHART.getFileName(chartNumber))) != null) {
+				chartNumber++;
+			}
+		} catch (InvalidFormatException e) {
+			throw new IllegalStateException("Failed for " + chartNumber, e);
+		}
+
+        return createRelationship(XSSFRelation.CHART, factory, chartNumber, false);
     }
 
     /**
@@ -286,8 +301,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      *            {@link XSSFWorkbook#getAllPictures()}           .
      */
     protected PackageRelationship addPictureReference(int pictureIndex) {
-        XSSFWorkbook wb = (XSSFWorkbook) getParent().getParent();
-        XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
+        XSSFPictureData data = getSheet().getWorkbook().getAllPictures().get(pictureIndex);
         XSSFPictureData pic = new XSSFPictureData(data.getPackagePart());
         RelationPart rp = addRelation(null, XSSFRelation.IMAGES, pic);
         return rp.getRelationship();

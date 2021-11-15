@@ -19,74 +19,78 @@ def poijobs = [
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
           slaves: 'ubuntu',
-          skipcigame: true
+          skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 10 had EOL in September 2018
+//        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 10 had EOL in September 2018
+//          disabled: true
+//        ],
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true
+        ],
+//        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+//          disabled: true
+//        ],
+        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true,
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
-        ],
-        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true
-        ],
-        // building with JDK 16 fails currently because of findbugs/spotbugs
-        // therefore we do not set a trigger for now and only run it manually
         [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
+        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
+        ],
+        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays, skipcigame: true,
           shell: "test -s ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
         ],
-        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true,
-		  // not needed any more now that we use Gradle for SonarQube
-		  disabled: true
-        ],
+//        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true,
+//		  // not needed any more now that we use Gradle for SonarQube
+//		  disabled: true
+//        ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
         // it was impossible to make this run stable in Gradle, thus disabling this for now
         [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
-        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
+//        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
+//        ],
+        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
-        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
-        ],
-        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
-          email: 'kiwiwings@apache.org',
-		  // replaced by Gradle-based build now
-		  disabled: true
-        ],
+//        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
+//          email: 'kiwiwings@apache.org',
+//		  // replaced by Gradle-based build now
+//		  disabled: true
+//        ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', gradle: true, sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', gradle: true
         ],
-        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//		  // let's only verify the latest two JDKs
+//		  disabled: true
+//        ],
+        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-		  // let's only verify the latest two JDKs
-		  disabled: true
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
-        ],
-		// building with JDK 16 fails currently because of findbugs/spotbugs
-		// therefore we do not set a trigger for now and only run it manually
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: '', windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
@@ -113,6 +117,8 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
@@ -137,7 +143,8 @@ def jdkMapping = [
         '1.14': 'jdk_14_latest',
         '1.15': 'jdk_15_latest',
         '1.16': 'jdk_16_latest',
-        'OpenJDK 1.8': 'openjdk_1.8.0_252',
+        '1.17': 'jdk_17_latest',
+        'OpenJDK 1.8': 'adoptopenjdk_hotspot_8u282',
         'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
 
@@ -255,6 +262,7 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
+            env('CI_BUILD', 'TRUE')
             if(jdkKey == '1.10') {
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
@@ -273,7 +281,6 @@ poijobs.each { poijob ->
                 /* remove xmlbeans while 4.0 is not stable */
                 includePattern('**/lib/ooxml/xmlbeans*.jar')
                 includePattern('**/lib/ooxml/ooxml*.jar')
-                includePattern('sonar/*/target/**')
                 /* remove ooxml-schemas while the builds migrate to 5th edition */
                 includePattern('build/xmlbean-*/**')
                 /* remove remaining src debris */
@@ -339,46 +346,7 @@ poijobs.each { poijob ->
         def shellcmds = (poijob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', poijob.shell ?: '')
 
         // Create steps and publishers depending on the type of Job that is selected
-        if(poijob.maven) {
-            steps {
-                shellEx(delegate, shellcmds, poijob)
-                maven {
-                    goals('clean')
-                    rootPOM('sonar/pom.xml')
-                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation(defaultMaven)
-                }
-                maven {
-                    if (poijob.sonar) {
-                        goals('clean package sonar:sonar')
-                        property('sonar.login', '${POI_SONAR_TOKEN}')
-                    } else {
-                        goals('package')
-                    }
-                    rootPOM('sonar/pom.xml')
-                    mavenOpts('-Xmx2g')
-                    mavenOpts('-Xms256m')
-                    mavenOpts('-XX:-OmitStackTraceInFastThrow')
-                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation(defaultMaven)
-                }
-            }
-            publishers {
-                if (!poijob.skipcigame) {
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
-                    }
-                }
-                if (!poijob.sonar) {
-                    archiveJunit('sonar/*/target/surefire-reports/TEST-*.xml') {
-                        testDataPublishers {
-                            publishTestStabilityData()
-                        }
-                    }
-                }
-                mailer(email, false, false)
-            }
-        } else if (poijob.javadoc) {
+        if (poijob.javadoc) {
             steps {
                 shellEx(delegate, shellcmds, poijob)
                 ant {
@@ -402,19 +370,13 @@ poijobs.each { poijob ->
             steps {
                 shellEx(delegate, shellcmds, poijob)
 
-                // this is a workaround until the Gradle build can do this compilation before invoking any
-                // Ant script or when building via Ant is removed completely
-                ant {
-                    targets(['init'] + (poijob.properties ?: []))
-                    antInstallation(antRT)
-                }
-
                 gradle {
                     switches('-PenableSonar')
                     switches('-Dsonar.login=${POI_SONAR_TOKEN}')
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=poi-parent')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
+                    tasks('clean')
                     tasks('check')
                     tasks('jacocoTestReport')
                     tasks('sonarqube')
@@ -422,7 +384,21 @@ poijobs.each { poijob ->
                 }
             }
             publishers {
-                if (!poijob.skipcigame) {
+				// in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
+				archiveArtifacts('build/dist/*.tar.gz,*/build/reports/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
+				archiveJunit('*/build/test-results/**/TEST-*.xml') {
+					testDataPublishers {
+						publishTestStabilityData()
+					}
+				}
+				jacocoCodeCoverage {
+					classPattern('*/build/classes')
+					execPattern('*/build/*.exec,*/build/jacoco/*.exec')
+					sourcePattern('*/src/main/java')
+					exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
+				}
+
+				if (!poijob.skipcigame) {
                     configure { project ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
                     }
@@ -437,30 +413,17 @@ poijobs.each { poijob ->
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
                 if(poijob.gradle) {
-                    // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-                    shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
-
-                    // this is a workaround until the Gradle build can do this compilation before invoking any
-                    // Ant script or when building via Ant is removed completely
-                    //ant {
-                    //    targets(['init'] + (poijob.properties ?: []))
-                    //    antInstallation(antRT)
-                    //}
+                    if (!poijob.windows) {
+                        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+                        shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
+                    }
 
                     gradle {
                         tasks('clean jenkins')
                         useWrapper(true)
-                    }
-                } else if (poijob.noScratchpad) {
-                    ant {
-                        targets(['clean', 'compile'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
-                        antInstallation(antRT)
-                    }
-                    ant {
-                        targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-all', 'testcoveragereport'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
-                        antInstallation(antRT)
+                        if (poijob.noScratchpad) {
+                            switches('-Pscratchpad.ignore=true')
+                        }
                     }
                 } else {
                     ant {
@@ -483,13 +446,13 @@ poijobs.each { poijob ->
                 recordIssues {
                     tools {
                         spotBugs {
-                            pattern('build/findbugs.xml')
+                            pattern('*/build/reports/spotbugs/*.xml')
                             reportEncoding('UTF-8')
                         }
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,poi-integration/build/test-results/**,*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**,build/hs_err*.log')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
@@ -550,7 +513,7 @@ xmlbeansjobs.each { xjob ->
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16') {
+            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
@@ -594,7 +557,7 @@ xmlbeansjobs.each { xjob ->
             }
         }
         publishers {
-            archiveArtifacts('build/*.jar,build/*.zip')
+            archiveArtifacts('build/*.jar,build/*.zip,build/*.tgz,build/hs_err*.log')
 
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
@@ -654,7 +617,8 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_14_latest',
                 'jdk_15_latest',
                 'jdk_16_latest',
-                'openjdk_1.8.0_252',
+                'jdk_17_latest',
+                'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
         // Note H50 is reserved according to it's node-descripion
@@ -663,39 +627,39 @@ Unfortunately we often see builds break because of changes/new machines...''')
     steps {
         conditionalSteps {
             condition {
-                fileExists('/usr', BaseDir.WORKSPACE)
-                runner('DontRun')
-                steps {
-                    shell(
-                            '''which svn || true
+				fileExists('/usr', BaseDir.WORKSPACE)
+			}
+			runner('DontRun')
+			steps {
+				shell(
+						'''which svn || true
 which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
 ''')
-                    ant {
-                        antInstallation(defaultAnt)
-                    }
+				ant {
+					antInstallation(defaultAnt)
+				}
 
-                    shell(
-                            '''which mvn || true
+				shell(
+						'''which mvn || true
 mvn -version || true
 echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project>' > pom.xml
 ''')
-                    maven {
-                        goals('package')
-                        mavenInstallation(defaultMaven)
-                    }
-                }
-            }
+				maven {
+					goals('package')
+					mavenInstallation(defaultMaven)
+				}
+			}
         }
         conditionalSteps {
             condition {
-                fileExists('c:\\windows', BaseDir.WORKSPACE)
-                runner('DontRun')
-                steps {
-                    batchFile {
-                        command(
-                                '''@echo off
+				fileExists('c:\\windows', BaseDir.WORKSPACE)
+			}
+			runner('DontRun')
+			steps {
+				batchFile(
+							'''@echo off
 echo .
 where javac.exe
 echo .
@@ -703,12 +667,10 @@ javac -version
 echo .
 echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}, ant detected Java ${ant.java.version} (may be different than actual Java sometimes...), using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}^</echo^>^</target^>^</project^> > build.xml
 ''')
-                    }
-                    ant {
-                        antInstallation(defaultAntWindows)
-                    }
-                }
-            }
+				ant {
+					antInstallation(defaultAntWindows)
+				}
+			}
         }
     }
 }

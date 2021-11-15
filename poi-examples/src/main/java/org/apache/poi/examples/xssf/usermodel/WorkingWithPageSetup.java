@@ -25,7 +25,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * Demonstrates various settings avaiable in the Page Setup dialog
+ * Demonstrates various settings available in the Page Setup dialog
  */
 public class WorkingWithPageSetup {
 

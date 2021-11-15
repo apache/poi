@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package com.github.pjfanning.poi.sample;
+package org.apache.poi.examples.hpsf;
 
 import java.io.File;
 import java.io.FileNotFoundException;

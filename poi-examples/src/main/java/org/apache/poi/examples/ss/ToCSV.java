@@ -425,11 +425,10 @@ public class ToCSV {
      *
      * @param file An instance of the File class that encapsulates a handle
      *             referring to the CSV file.
-     * @throws java.io.FileNotFoundException Thrown if the file cannot be found.
      * @throws java.io.IOException Thrown to indicate and error occurred in the
      *                             underylying file system.
      */
-    private void saveCSVFile(File file) throws FileNotFoundException, IOException {
+    private void saveCSVFile(File file) throws IOException {
         ArrayList<String> line;
         StringBuilder buffer;
         String csvLineElement;
@@ -584,7 +583,7 @@ public class ToCSV {
             // set of speech marks. Thus, "Yes" he said would become
             // """Yes"" he said"
             if(field.contains("\"")) {
-                buffer = new StringBuilder(field.replaceAll("\"", "\\\"\\\""));
+                buffer = new StringBuilder(field.replace("\"", "\\\"\\\""));
                 buffer.insert(0, "\"");
                 buffer.append("\"");
             }
@@ -609,7 +608,7 @@ public class ToCSV {
                 field = field.replaceAll(this.separator, ("\\\\" + this.separator));
             }
             if(field.contains("\n")) {
-                field = field.replaceAll("\n", "\\\\\n");
+                field = field.replace("\n", "\\\\\n");
             }
             return(field);
         }

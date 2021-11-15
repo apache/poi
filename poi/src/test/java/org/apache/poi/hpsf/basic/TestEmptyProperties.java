@@ -141,13 +141,13 @@ final class TestEmptyProperties {
         assertNotNull(s.getTemplate());
         assertNotNull(s.getLastAuthor());
         assertNotNull(s.getRevNumber());
-        assertEquals(s.getEditTime(), 0);
+        assertEquals(0, s.getEditTime());
         assertNull(s.getLastPrinted());
         assertNull(s.getCreateDateTime());
         assertNull(s.getLastSaveDateTime());
-        assertEquals(s.getPageCount(), 0);
-        assertEquals(s.getWordCount(), 0);
-        assertEquals(s.getCharCount(), 0);
+        assertEquals(0, s.getPageCount());
+        assertEquals(0, s.getWordCount());
+        assertEquals(0, s.getCharCount());
         assertNull(s.getThumbnail());
         assertNull(s.getApplicationName());
     }

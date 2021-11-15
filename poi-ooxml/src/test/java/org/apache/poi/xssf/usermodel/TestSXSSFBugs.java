@@ -28,13 +28,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -242,6 +238,78 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
                 cell = wbBack.getSheetAt(0).getRow(0).getCell(1);
                 assertEquals("Ernie & Bert are cool!", cell.getStringCellValue());
                 assertEquals("A1 & \" are cool!\"", cell.getCellFormula());
+            }
+        }
+    }
+
+    @Test
+    void test65619() throws Exception {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
+                SXSSFSheet sheet = workbook.createSheet("Test Sheet 1");
+                Font font = workbook.createFont();
+                font.setItalic(true);
+                CellStyle cs = workbook.createCellStyle();
+                cs.setFont(font);
+                Row row = sheet.createRow(0);
+                Cell cell = row.createCell(1);
+                cell.setCellValue(new Date());
+                cell.setCellStyle(cs);
+                CreationHelper ch = workbook.getCreationHelper();
+                cs.setDataFormat(ch.createDataFormat().getFormat("dd MMM yyyy HH:mm:ss"));
+                cs.setAlignment(HorizontalAlignment.RIGHT);
+                workbook.write(bos);
+            }
+            try (XSSFWorkbook workbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet sheet = workbook.getSheet("Test Sheet 1");
+                XSSFRow row = sheet.getRow(0);
+                XSSFCell cell = row.getCell(1);
+                XSSFCellStyle cs = cell.getCellStyle();
+                assertNotNull(cs, "cell should have style");
+                assertEquals(HorizontalAlignment.RIGHT, cs.getCellAlignment().getHorizontal());
+                assertEquals("dd MMM yyyy HH:mm:ss", cs.getDataFormatString());
+                XSSFFont font = cs.getFont();
+                assertNotNull(font, "style should have font");
+                assertTrue(font.getItalic(), "saved font is italic");
+            }
+        }
+    }
+
+    @Test
+    public void test62215() throws IOException {
+        String sheetName = "1";
+        int rowIndex = 0;
+        int colIndex = 0;
+        String formula = "1";
+        String value = "yes";
+        CellType valueType = CellType.STRING;
+
+        try (Workbook wb = new SXSSFWorkbook()) {
+            Sheet sheet = wb.createSheet(sheetName);
+            Row row = sheet.createRow(rowIndex);
+            Cell cell = row.createCell(colIndex);
+
+            // this order ensures that value will not be overwritten by setting the formula
+            cell.setCellFormula(formula);
+            cell.setCellValue(value);
+
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(formula, cell.getCellFormula());
+            assertEquals(valueType, cell.getCachedFormulaResultType());
+            assertEquals(value, cell.getStringCellValue());
+            // so far so good
+
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()){
+                wb.write(bos);
+
+                try (XSSFWorkbook testWb = new XSSFWorkbook(bos.toInputStream())) {
+                    Cell testCell = testWb.getSheet(sheetName).getRow(rowIndex).getCell(colIndex);
+                    assertEquals(CellType.FORMULA, testCell.getCellType());
+                    assertEquals(formula, testCell.getCellFormula());
+
+                    assertEquals(CellType.STRING, testCell.getCachedFormulaResultType());
+                    assertEquals(value, testCell.getStringCellValue());
+                }
             }
         }
     }

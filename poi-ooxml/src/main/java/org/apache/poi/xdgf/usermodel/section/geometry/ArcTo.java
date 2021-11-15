@@ -17,12 +17,11 @@
 
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 
@@ -112,20 +111,22 @@ public class ArcTo implements GeometryRow {
         double x0 = last.getX();
         double y0 = last.getY();
 
-        double chordLength = Math.hypot(y - y0, x - x0);
-        double radius = (4 * a * a + chordLength * chordLength)
-                / (8 * Math.abs(a));
+        // Find a normal to the chord of the circle.
+        double nx = y - y0;
+        double ny = x0 - x;
+        double nLength = Math.sqrt(nx * nx + ny * ny);
 
-        // center point
-        double cx = x0 + (x - x0) / 2.0;
-        double cy = y0 + (y - y0) / 2.0;
+        // Follow the normal with the height of the arc to get the third point on the circle.
+        double x1 = (x0 + x) / 2 + a * nx / nLength;
+        double y1 = (y0 + y) / 2 + a * ny / nLength;
 
-        double rotate = Math.atan2(y - cy, x - cx);
+        // Add an elliptical arc with rx / ry = 1 to the path because it's a circle.
+        EllipticalArcTo.createEllipticalArc(x, y, x1, y1, 0.0, 1.0, path);
+    }
 
-        Arc2D arc = new Arc2D.Double(x0, y0 - radius, chordLength, 2 * radius,
-                180, x0 < x ? 180 : -180, Arc2D.OPEN);
-
-        path.append(AffineTransform.getRotateInstance(rotate, x0, y0)
-                .createTransformedShape(arc), true);
+    @Override
+    public String toString() {
+        return String.format(LocaleUtil.getUserLocale(),
+                "ArcTo: x=%f; y=%f; a=%f", x, y, a);
     }
 }

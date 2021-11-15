@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -42,34 +43,14 @@ import org.apache.poi.util.RecordFormatException;
  * differently for CHP fkps and PAP fkps.
  */
 @Internal
-public final class CHPFormattedDiskPage extends FormattedDiskPage
-{
+public final class CHPFormattedDiskPage extends FormattedDiskPage {
     private static final int FC_SIZE = 4;
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
 
     private ArrayList<CHPX> _chpxList = new ArrayList<>();
     private ArrayList<CHPX> _overFlow;
 
-
     public CHPFormattedDiskPage()
     {
-    }
-
-    /**
-     * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
-     * read from a Word file).
-     *
-     * @deprecated Use
-     *             {@link #CHPFormattedDiskPage(byte[], int, CharIndexTranslator)}
-     *             instead
-     */
-    @Deprecated
-    public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
-            TextPieceTable tpt )
-    {
-        this( documentStream, offset, tpt );
     }
 
     /**
@@ -138,7 +119,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
 
         int size = LittleEndian.getUByte(_fkp, _offset + chpxOffset);
 
-        return IOUtils.safelyClone(_fkp, _offset + chpxOffset + 1, size, MAX_RECORD_LENGTH);
+        return IOUtils.safelyClone(_fkp, _offset + chpxOffset + 1, size, HWPFDocument.getMaxRecordLength());
     }
 
     protected byte[] toByteArray( CharIndexTranslator translator )

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
@@ -506,16 +508,14 @@ public final class HSLFTextRun implements TextRun {
             }
         }
 
-        if (ts.getSheet() instanceof MasterSheet) {
-            TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> ms = ts.getMetroShape();
-            if (ms == null || ms.getTextParagraphs().isEmpty()) {
-                return null;
-            }
-            List<? extends TextRun> trList = ms.getTextParagraphs().get(0).getTextRuns();
-            if (trList.isEmpty()) {
-                return null;
-            }
-            return trList.get(0).getFieldType();
+        Shape<?,?> ms = (ts.getSheet() instanceof MasterSheet) ? ts.getMetroShape() : null;
+        if (ms instanceof TextShape) {
+            return Stream.of((TextShape<?,?>)ms).
+                flatMap(tsh -> ((List<? extends TextParagraph<?,?,? extends TextRun>>)tsh.getTextParagraphs()).stream()).
+                flatMap(tph -> tph.getTextRuns().stream()).
+                findFirst().
+                map(TextRun::getFieldType).
+                orElse(null);
         }
 
         return null;

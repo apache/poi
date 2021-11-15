@@ -58,17 +58,17 @@ public interface Slide<
     boolean getDisplayPlaceholder(Placeholder placeholder);
 
     /**
-     * Sets the slide visibility 
+     * Sets the slide visibility
      *
      * @param hidden slide visibility, if {@code true} the slide is hidden, {@code false} shows the slide
-     * 
+     *
      * @since POI 4.0.0
      */
     void setHidden(boolean hidden);
 
     /**
      * @return the slide visibility, the slide is hidden when {@code true} - or shown when {@code false}
-     * 
+     *
      * @since POI 4.0.0
      */
     boolean isHidden();
@@ -76,6 +76,7 @@ public interface Slide<
     /**
      * @return the comment(s) for this slide
      */
+    @SuppressWarnings("java:S1452")
     List<? extends Comment> getComments();
 
     /**

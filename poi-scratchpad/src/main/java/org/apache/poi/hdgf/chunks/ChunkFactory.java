@@ -43,8 +43,8 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class ChunkFactory {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /** The version of the currently open document */
     private int version;
@@ -62,6 +62,20 @@ public final class ChunkFactory {
 
     /** For logging problems we spot with the file */
     private static final Logger LOG = LogManager.getLogger(ChunkFactory.class);
+
+    /**
+     * @param length the max record length allowed for ChunkFactory
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for ChunkFactory
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public ChunkFactory(int version) throws IOException {
         this.version = version;

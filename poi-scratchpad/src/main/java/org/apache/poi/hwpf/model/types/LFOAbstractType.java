@@ -117,28 +117,23 @@ public abstract class LFOAbstractType
                             field_6_grfhic, field_7_unused3);
     }
 
-    public String toString()
-    {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("[LFO]\n");
-        builder.append( "    .lsid                 = " );
-        builder.append(" ( ").append( field_1_lsid ).append( " )\n" );
-        builder.append( "    .unused1              = " );
-        builder.append(" ( ").append( field_2_unused1 ).append( " )\n" );
-        builder.append( "    .unused2              = " );
-        builder.append(" ( ").append( field_3_unused2 ).append( " )\n" );
-        builder.append( "    .clfolvl              = " );
-        builder.append(" ( ").append( field_4_clfolvl ).append( " )\n" );
-        builder.append( "    .ibstFltAutoNum       = " );
-        builder.append(" ( ").append( field_5_ibstFltAutoNum ).append( " )\n" );
-        builder.append( "    .grfhic               = " );
-        builder.append(" ( ").append( field_6_grfhic == null ? "null" : field_6_grfhic.toString().replaceAll( "\n", "\n    " ) ).append( " )\n" );
-        builder.append( "    .unused3              = " );
-        builder.append(" ( ").append( field_7_unused3 ).append( " )\n" );
-
-        builder.append("[/LFO]");
-        return builder.toString();
+    public String toString() {
+        return "[LFO]\n" +
+            "    .lsid                 = " +
+            " ( " + field_1_lsid + " )\n" +
+            "    .unused1              = " +
+            " ( " + field_2_unused1 + " )\n" +
+            "    .unused2              = " +
+            " ( " + field_3_unused2 + " )\n" +
+            "    .clfolvl              = " +
+            " ( " + field_4_clfolvl + " )\n" +
+            "    .ibstFltAutoNum       = " +
+            " ( " + field_5_ibstFltAutoNum + " )\n" +
+            "    .grfhic               = " +
+            " ( " + (field_6_grfhic == null ? "null" : field_6_grfhic.toString().replace("\n", "\n    ")) + " )\n" +
+            "    .unused3              = " +
+            " ( " + field_7_unused3 + " )\n" +
+            "[/LFO]";
     }
 
     /**

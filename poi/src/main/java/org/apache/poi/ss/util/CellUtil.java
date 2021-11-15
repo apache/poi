@@ -27,16 +27,10 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.common.Duplicatable;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 
 /**
  * Various utility functions that make working with a cells and rows easier. The various methods
@@ -183,6 +177,110 @@ public final class CellUtil {
      */
     public static Cell createCell(Row row, int column, String value) {
         return createCell(row, column, value, null);
+    }
+
+    /**
+     * Copy cell value, formula and style, from srcCell per cell copy policy
+     * If srcCell is null, clears the cell value and cell style per cell copy policy.
+     *
+     * Note that if you are copying from a source cell from a different type of then you may need to disable style copying
+     * in the {@link CellCopyPolicy} (HSSF styles are not compatible with XSSF styles, for instance).
+     *
+     * This does not shift references in formulas. The <code>copyRowFrom</code> method on <code>XSSFRow</code>
+     * and <code>HSSFRow</code> does attempt to shift references in formulas.
+     *
+     * @param srcCell The cell to take value, formula and style from
+     * @param destCell The cell to copy to
+     * @param policy The policy for copying the information, see {@link CellCopyPolicy}
+     * @param context The context for copying, see {@link CellCopyContext}
+     * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
+     * @throws IllegalStateException if srcCell hyperlink is not an instance of {@link Duplicatable}
+     */
+    @Beta
+    public static void copyCell(Cell srcCell, Cell destCell, CellCopyPolicy policy, CellCopyContext context) {
+        // Copy cell value (cell type is updated implicitly)
+        if (policy.isCopyCellValue()) {
+            if (srcCell != null) {
+                CellType copyCellType = srcCell.getCellType();
+                if (copyCellType == CellType.FORMULA && !policy.isCopyCellFormula()) {
+                    // Copy formula result as value
+                    // FIXME: Cached value may be stale
+                    copyCellType = srcCell.getCachedFormulaResultType();
+                }
+                switch (copyCellType) {
+                    case NUMERIC:
+                        // DataFormat is not copied unless policy.isCopyCellStyle is true
+                        if (DateUtil.isCellDateFormatted(srcCell)) {
+                            destCell.setCellValue(srcCell.getDateCellValue());
+                        }
+                        else {
+                            destCell.setCellValue(srcCell.getNumericCellValue());
+                        }
+                        break;
+                    case STRING:
+                        destCell.setCellValue(srcCell.getStringCellValue());
+                        break;
+                    case FORMULA:
+                        destCell.setCellFormula(srcCell.getCellFormula());
+                        break;
+                    case BLANK:
+                        destCell.setBlank();
+                        break;
+                    case BOOLEAN:
+                        destCell.setCellValue(srcCell.getBooleanCellValue());
+                        break;
+                    case ERROR:
+                        destCell.setCellErrorValue(srcCell.getErrorCellValue());
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellType());
+                }
+            } else { //srcCell is null
+                destCell.setBlank();
+            }
+        }
+
+        // Copy CellStyle
+        if (policy.isCopyCellStyle()) {
+            if (destCell.getSheet().getWorkbook() == srcCell.getSheet().getWorkbook()) {
+                destCell.setCellStyle(srcCell.getCellStyle());
+            } else {
+                CellStyle srcStyle = srcCell.getCellStyle();
+                CellStyle destStyle = context == null ? null : context.getMappedStyle(srcStyle);
+                if (destStyle == null) {
+                    destStyle = destCell.getSheet().getWorkbook().createCellStyle();
+                    destStyle.cloneStyleFrom(srcStyle);
+                    if (context != null) context.putMappedStyle(srcStyle, destStyle);
+                }
+                destCell.setCellStyle(destStyle);
+            }
+        }
+
+        final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
+
+        if (policy.isMergeHyperlink()) {
+            // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
+            if (srcHyperlink != null) {
+                if (srcHyperlink instanceof Duplicatable) {
+                    Hyperlink newHyperlink = (Hyperlink)((Duplicatable)srcHyperlink).copy();
+                    destCell.setHyperlink(newHyperlink);
+                } else {
+                    throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
+                }
+            }
+        } else if (policy.isCopyHyperlink()) {
+            // overwrite the hyperlink at dest cell with srcCell's hyperlink
+            // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
+            if (srcHyperlink == null) {
+                destCell.setHyperlink(null);
+            } else if (srcHyperlink instanceof Duplicatable) {
+                Hyperlink newHyperlink = (Hyperlink)((Duplicatable)srcHyperlink).copy();
+                destCell.setHyperlink(newHyperlink);
+            } else {
+                throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
+            }
+        }
     }
 
     /**

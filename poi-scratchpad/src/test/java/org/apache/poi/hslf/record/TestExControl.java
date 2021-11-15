@@ -80,9 +80,9 @@ public final class TestExControl {
 
         ExOleObjAtom oleObj = record.getExOleObjAtom();
         assertNotNull(oleObj);
-        assertEquals(oleObj.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-        assertEquals(oleObj.getType(), ExOleObjAtom.TYPE_CONTROL);
-        assertEquals(oleObj.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
+        assertEquals(ExOleObjAtom.DRAW_ASPECT_VISIBLE, oleObj.getDrawAspect());
+        assertEquals(ExOleObjAtom.TYPE_CONTROL, oleObj.getType());
+        assertEquals(ExOleObjAtom.SUBTYPE_DEFAULT, oleObj.getSubType());
 
         assertEquals("Shockwave Flash Object", record.getMenuName());
         assertEquals("ShockwaveFlash.ShockwaveFlash.9", record.getProgId());

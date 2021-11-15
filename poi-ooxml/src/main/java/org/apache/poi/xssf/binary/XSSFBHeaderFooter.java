@@ -56,13 +56,13 @@ class XSSFBHeaderFooter {
         }
         if (center != null && center.length() > 0) {
             if (sb.length() > 0) {
-                sb.append(" ");
+                sb.append(' ');
             }
             sb.append(center);
         }
         if (right != null && right.length() > 0) {
             if (sb.length() > 0) {
-                sb.append(" ");
+                sb.append(' ');
             }
             sb.append(right);
         }

@@ -61,7 +61,8 @@ import org.apache.poi.util.Internal;
 public class POIFSFileSystem extends BlockStore
         implements POIFSViewable, Closeable {
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
 
@@ -93,6 +94,20 @@ public class POIFSFileSystem extends BlockStore
      */
     private POIFSBigBlockSize bigBlockSize =
             POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
+
+    /**
+     * @param length the max record length allowed for POIFSFileSystem
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for POIFSFileSystem
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private POIFSFileSystem(boolean newFS) {
         _header = new HeaderBlock(bigBlockSize);
@@ -164,7 +179,7 @@ public class POIFSFileSystem extends BlockStore
      */
     public POIFSFileSystem(File file, boolean readOnly)
             throws IOException {
-        this(null, file, readOnly, true);
+        this(null, file, readOnly, true, true);
     }
 
     /**
@@ -174,10 +189,13 @@ public class POIFSFileSystem extends BlockStore
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying Channel closed, as the channel is
-     * kept open during normal operation to read the data out.</p>
+     * kept open during normal operation to read the data out. For legacy reasons,
+     * the channel is not closed if there is an error creating the POIFSFileSystem.</p>
      *
      * @param channel the FileChannel from which to read the data
      * @throws IOException on errors reading, or on invalid data
+     * @see POIFSFileSystem(FileChannel, boolean, boolean) this constructor gives more control over whether to
+     * close the provided channel
      */
     public POIFSFileSystem(FileChannel channel)
             throws IOException {
@@ -190,20 +208,44 @@ public class POIFSFileSystem extends BlockStore
      *
      * <p>Note that with this constructor, you will need to call {@link #close()}
      * when you're done to have the underlying Channel closed, as the channel is
-     * kept open during normal operation to read the data out.</p>
+     * kept open during normal operation to read the data out. For legacy reasons,
+     * the channel is not closed if there is an error creating the POIFSFileSystem.</p>
      *
      * @param channel  the FileChannel from which to read or read/write the data
      * @param readOnly whether the POIFileSystem will only be used in read-only mode
      * @throws IOException on errors reading, or on invalid data
+     * @see POIFSFileSystem(FileChannel, boolean, boolean) this constructor gives more control over whether to
+     * close the provided channel
      */
     public POIFSFileSystem(FileChannel channel, boolean readOnly)
             throws IOException {
-        this(channel, null, readOnly, false);
+        this(channel, null, readOnly, false, true);
+    }
+
+    /**
+     * <p>Creates a POIFSFileSystem from an open {@code FileChannel}. This uses
+     * less memory than creating from an {@code InputStream}.</p>
+     *
+     * <p>Note that with this constructor, you will need to call {@link #close()}
+     * when you're done to have the underlying resources closed. The <code>closeChannel</code>
+     * parameter controls whether the provided channel is closed.</p>
+     *
+     * @param channel      the FileChannel from which to read or read/write the data
+     * @param readOnly     whether the POIFileSystem will only be used in read-only mode
+     * @param closeChannel whether the provided FileChannel should be closed when
+     *                     {@link #close()} is called, or when this constructor throws
+     *                     an exception
+     * @throws IOException on errors reading, or on invalid data
+     * @since POI 5.1.0
+     */
+    public POIFSFileSystem(FileChannel channel, boolean readOnly, boolean closeChannel)
+            throws IOException {
+        this(channel, null, readOnly, closeChannel, closeChannel);
     }
 
     @SuppressWarnings("java:S2095")
-    private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError)
-            throws IOException {
+    private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError,
+                            boolean closeChannelOnClose) throws IOException {
         this(false);
 
         try {
@@ -216,7 +258,7 @@ public class POIFSFileSystem extends BlockStore
                 channel = d.getChannel();
                 _data = d;
             } else {
-                _data = new FileBackedDataSource(channel, readOnly);
+                _data = new FileBackedDataSource(channel, readOnly, closeChannelOnClose);
             }
 
             // Get the header

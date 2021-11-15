@@ -49,7 +49,22 @@ import org.apache.poi.util.LocaleUtil;
 
 public class HwmfText {
     private static final Logger LOG = LogManager.getLogger(HwmfText.class);
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HwmfText
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HwmfText
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * The META_SETTEXTCHAREXTRA record defines inter-character spacing for text justification in the

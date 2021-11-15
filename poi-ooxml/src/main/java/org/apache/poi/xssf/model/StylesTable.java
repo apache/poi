@@ -36,14 +36,17 @@ import java.util.TreeMap;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.FontFamily;
+import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.CustomIndexedColorMap;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFTableStyle;
@@ -51,7 +54,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyles;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
 
 /**
  * Table of styles shared across all sheets in a workbook.
@@ -173,9 +193,9 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * After this, calls to {@link #getTheme()} won't give null
      */
     public void ensureThemesTable() {
-        if (theme != null) return;
-
-        setTheme((ThemesTable)workbook.createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance()));
+        if (theme == null && workbook != null) {
+            setTheme((ThemesTable) workbook.createRelationship(XSSFRelation.THEME, workbook.getXssfFactory()));
+        }
     }
 
     /**
@@ -277,12 +297,12 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     }
 
     /**
-     * Puts <code>fmt</code> in the numberFormats map if the format is not
+     * Puts {@code fmt} in the numberFormats map if the format is not
      * already in the the number format style table.
-     * Does nothing if <code>fmt</code> is already in number format style table.
+     * Does nothing if {@code fmt} is already in number format style table.
      *
      * @param fmt the number format to add to number format style table
-     * @return the index of <code>fmt</code> in the number format style table
+     * @return the index of {@code fmt} in the number format style table
      * @throws IllegalStateException if adding the number format to the styles table
      * would exceed the {@link #MAXIMUM_NUMBER_OF_DATA_FORMATS} allowed.
      */
@@ -330,7 +350,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     /**
      * Add a number format with a specific ID into the numberFormats map.
      * If a format with the same ID already exists, overwrite the format code
-     * with <code>fmt</code>
+     * with {@code fmt}
      * This may be used to override built-in number formats.
      *
      * @param index the number format ID

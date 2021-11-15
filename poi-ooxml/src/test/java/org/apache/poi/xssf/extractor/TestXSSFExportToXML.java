@@ -45,7 +45,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -216,15 +215,15 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    @Disabled(value="Fails, but I don't know if it is ok or not...")
     void testExportToXMLSingleAttributeNamespace() throws Exception {
+        Pattern p = Pattern.compile("Failed to read (external )?schema document .*Schema11., because .file. access is not allowed");
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
-
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
-                exporter.exportToXML(os, true);
+                SAXParseException ex = assertThrows(SAXParseException.class, () -> exporter.exportToXML(os, true));
+                assertTrue(p.matcher(ex.getMessage()).find(),
+						"Did not find pattern " + p + " in " + ex.getMessage());
             }
         }
     }

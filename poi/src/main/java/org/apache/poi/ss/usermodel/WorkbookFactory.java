@@ -73,9 +73,9 @@ public final class WorkbookFactory {
     }
 
     /**
-     * Creates a HSSFWorkbook from the given POIFSFileSystem<p>
+     * Creates a Workbook from the given POIFSFileSystem.
      *
-     * Note that in order to properly release resources the
+     * <p>Note that in order to properly release resources the
      * Workbook should be closed after use.
      *
      * @param fs The {@link POIFSFileSystem} to read the document from
@@ -90,7 +90,10 @@ public final class WorkbookFactory {
 
     /**
      * Creates a Workbook from the given POIFSFileSystem, which may
-     *  be password protected
+     *  be password protected.
+     *
+     * <p>Note that in order to properly release resources the
+     * Workbook should be closed after use.
      *
      *  @param fs The {@link POIFSFileSystem} to read the document from
      *  @param password The password that should be used or null if no password is necessary.
@@ -107,6 +110,9 @@ public final class WorkbookFactory {
     /**
      * Creates a Workbook from the given DirectoryNode.
      *
+     * <p>Note that in order to properly release resources the
+     * Workbook should be closed after use.
+     *
      * @param root The {@link DirectoryNode} to start reading the document from
      *
      * @return The created Workbook
@@ -120,7 +126,10 @@ public final class WorkbookFactory {
 
     /**
      * Creates a Workbook from the given DirectoryNode, which may
-     * be password protected
+     * be password protected.
+     *
+     * <p>Note that in order to properly release resources the
+     * Workbook should be closed after use.
      *
      * @param root The {@link DirectoryNode} to start reading the document from
      * @param password The password that should be used or null if no password is necessary.
@@ -282,9 +291,9 @@ public final class WorkbookFactory {
                 ooxmlEnc = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
+        } else {
+            throw new IOException("Can't open workbook - unsupported file type: "+fm);
         }
-
-        return null;
     }
 
 

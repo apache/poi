@@ -27,7 +27,7 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.junit.jupiter.api.Test;
 
-class HSMFFileHandler extends POIFSFileHandler {
+public class HSMFFileHandler extends POIFSFileHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         MAPIMessage mapi = new MAPIMessage(stream);

@@ -399,18 +399,17 @@ public class HemfPlusBrush {
         }
 
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-            try {
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 bos.write(getBrushBytes());
                 if (continuedObjectData != null) {
                     for (EmfPlusObjectData od : continuedObjectData) {
                         bos.write(((EmfPlusBrush)od).getBrushBytes());
                     }
                 }
+                return bos.toByteArray();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return bos.toByteArray();
         }
 
 

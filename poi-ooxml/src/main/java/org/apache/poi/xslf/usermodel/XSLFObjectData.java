@@ -59,7 +59,7 @@ public final class XSLFObjectData extends POIXMLDocumentPart implements ObjectDa
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream() throws IOException {
         final PackagePart pp = getPackagePart();
         pp.clear();
         return pp.getOutputStream();

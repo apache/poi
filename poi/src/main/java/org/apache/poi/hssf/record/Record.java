@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
-
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -76,7 +75,7 @@ public abstract class Record extends RecordBase implements Duplicatable, Generic
         // Do it via a re-serialization
         // It's a cheat, but it works...
         byte[] b = serialize();
-        RecordInputStream rinp = new RecordInputStream(new ByteArrayInputStream(b));
+        RecordInputStream rinp = new RecordInputStream(new UnsynchronizedByteArrayInputStream(b));
         rinp.nextRecord();
 
         Record[] r = RecordFactory.createRecord(rinp);

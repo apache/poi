@@ -34,13 +34,28 @@ import org.apache.poi.util.LittleEndian;
 public final class UnknownEscherRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final byte[] NO_BYTES = new byte[0];
 
     /** The data for this record not including the the 8 byte header */
     private byte[] thedata = NO_BYTES;
     private final List<EscherRecord> _childRecords = new ArrayList<>();
+
+    /**
+     * @param length the max record length allowed for UnknownEscherRecord
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for UnknownEscherRecord
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public UnknownEscherRecord() {}
 

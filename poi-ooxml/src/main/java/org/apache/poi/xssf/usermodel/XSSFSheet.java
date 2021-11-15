@@ -98,14 +98,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final double DEFAULT_MARGIN_BOTTOM = 0.75;
     private static final double DEFAULT_MARGIN_LEFT = 0.7;
     private static final double DEFAULT_MARGIN_RIGHT = 0.7;
-
-    /**
-     * Kept for backwards-compatibility, use {@link Font#TWIPS_PER_POINT} instead.
-     * @deprecated POI 5.0.0
-     */
-    @Deprecated
-    public static final int TWIPS_PER_POINT = Font.TWIPS_PER_POINT;
-
+    
     //TODO make the two variable below private!
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
@@ -563,7 +556,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // Default drawingNumber = #drawings.size() + 1
         int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
         drawingNumber = getNextPartNumber(XSSFRelation.DRAWINGS, drawingNumber);
-        RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+        RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
         XSSFDrawing drawing = rp.getDocumentPart();
         String relId = rp.getRelationship().getId();
 
@@ -590,7 +583,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if(autoCreate) {
                 int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
                         getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
-                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
                 drawing = rp.getDocumentPart();
                 String relId = rp.getRelationship().getId();
 
@@ -2951,8 +2944,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Calls shiftRows(startRow, endRow, n, false, false);
      *
      * <p>
-     * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted).
+     * Additionally, shifts merged regions that are completely defined in these
+     * rows (i.e. merged 2 cells on a row to be shifted).
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -2968,10 +2961,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Code ensures that rows don't wrap around
      *
      * <p>
-     * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
+     * Additionally, shifts merged regions that are completely defined in these
+     * rows (i.e. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
-     * <p>
+     *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -3054,6 +3047,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
+                for (Cell c : row) {
+                    if (!c.isPartOfArrayFormulaGroup()) {
+                        //the support for deleting cells that are part of array formulas is not implemented yet
+                        c.setBlank();
+                    }
+                }
                 // remove row from worksheet.getSheetData row array
                 // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
                 //noinspection UnnecessaryBoxing
@@ -3373,7 +3372,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * {@link XSSFCell#removeHyperlink()} can be used if the hyperlink is just for that one cell.
      *
      * @param hyperlink the link to remove
-     * @since POI 5.0.1
+     * @since POI 5.1.0
      */
     public void removeHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.remove(hyperlink);
@@ -3525,13 +3524,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             //  the sheet has (i.e. sheet 1 -> comments 1)
             try {
                 sheetComments = (CommentsTable)createRelationship(
-                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), Math.toIntExact(sheet.getSheetId()));
+                        XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), Math.toIntExact(sheet.getSheetId()));
             } catch(PartAlreadyExistsException e) {
                 // Technically a sheet doesn't need the same number as
                 //  it's comments, and clearly someone has already pinched
                 //  our number! Go for the next available one instead
                 sheetComments = (CommentsTable)createRelationship(
-                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), -1);
+                        XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
             }
         }
         return sheetComments;
@@ -4155,7 +4154,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
         }
 
-        RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
+        RelationPart rp = createRelationship(XSSFRelation.TABLE, getWorkbook().getXssfFactory(), tableNumber, false);
         XSSFTable table = rp.getDocumentPart();
         tbl.setId(rp.getRelationship().getId());
         table.getCTTable().setId(tableNumber);
@@ -4413,14 +4412,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         int tableId = getWorkbook().getPivotTables().size()+1;
         //Create relationship between pivotTable and the worksheet
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE,
-                XSSFFactory.getInstance(), tableId);
+                getWorkbook().getXssfFactory(), tableId);
         pivotTable.setParentSheet(this);
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
         //Create relationship between the pivot cache defintion and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
-                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);
         //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
         PackagePart pivotPackagePart = pivotTable.getPackagePart();
@@ -4434,7 +4433,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         //Create relationship between pivotcacherecord and pivotcachedefinition
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
-                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, getWorkbook().getXssfFactory(), tableId);
 
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
@@ -4666,25 +4665,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                             XSSFCell nextCell = row.getCell(j);
                             if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
                                 CTCellFormula nextF = nextCell.getCTCell().getF();
-                                nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                //https://bz.apache.org/bugzilla/show_bug.cgi?id=65464
-                                nextF.setT(STCellFormulaType.SHARED);
-                                if (!nextF.isSetSi()) {
-                                    nextF.setSi(f.getSi());
-                                }
-                                CellRangeAddress nextRef = new CellRangeAddress(
-                                        nextCell.getRowIndex(), ref.getLastRow(),
-                                        nextCell.getColumnIndex(), ref.getLastColumn());
-                                nextF.setRef(nextRef.formatAsString());
+                                if (nextF.getT() == STCellFormulaType.SHARED && nextF.getSi() == f.getSi()) {
+                                    nextF.setStringValue(nextCell.getCellFormula(evalWb));
+                                    CellRangeAddress nextRef = new CellRangeAddress(
+                                            nextCell.getRowIndex(), ref.getLastRow(),
+                                            nextCell.getColumnIndex(), ref.getLastColumn());
+                                    nextF.setRef(nextRef.formatAsString());
 
-                                sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
-                                break DONE;
+                                    sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
+                                    break DONE;
+                                }
                             }
                         }
                     }
                 }
             }
-
         }
     }
 

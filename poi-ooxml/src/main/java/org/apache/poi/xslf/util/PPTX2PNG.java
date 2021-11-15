@@ -272,7 +272,7 @@ public final class PPTX2PNG {
         }
 
         if (!"long,short,width,height,scale".contains(fixSide)) {
-            usage("<fixside> must be one of long / short / width / height");
+            usage("<fixside> must be one of long / short / width / height / scale");
             return false;
         }
 
@@ -466,7 +466,7 @@ public final class PPTX2PNG {
                 break;
         }
         proxy.setIgnoreParse(ignoreParse);
-        proxy.setQuite(quiet);
+        proxy.setQuiet(quiet);
         con.parse(proxy);
         proxy.setDefaultCharset(charset);
 
@@ -477,7 +477,13 @@ public final class PPTX2PNG {
         if (outfile != null) {
             return outfile;
         }
-        String inname = String.format(Locale.ROOT, "%04d|%s|%s", slideNo, format, file.getName());
+
+        String fileName = file.getName();
+        if ("stdin".equals(fileName)) {
+            fileName += ".ext";
+        }
+
+        String inname = String.format(Locale.ROOT, "%04d|%s|%s", slideNo, format, fileName);
         String outpat = (proxy.getSlideCount() > 1 && slideNo > 0 ? outPattern : outPattern.replaceAll("-?\\$\\{slideno}", ""));
         return INPUT_PATTERN.matcher(inname).replaceAll(outpat);
     }

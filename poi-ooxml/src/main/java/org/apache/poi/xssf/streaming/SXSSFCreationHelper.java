@@ -61,6 +61,7 @@ public class SXSSFCreationHelper implements CreationHelper {
 
     @Override
     public SXSSFFormulaEvaluator createFormulaEvaluator() {
+
         return new SXSSFFormulaEvaluator(wb);
     }
 

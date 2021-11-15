@@ -18,6 +18,13 @@
 
 package org.apache.poi.examples.hssf.usermodel;
 
-/* Placeholder - this is now handled in the Common SS example **/
+import org.apache.poi.util.Removal;
+
+/**
+ * Placeholder Class - this is now handled in the Common SS example
+ * @deprecated in 5.1.0 - use {@link org.apache.poi.examples.ss.AddDimensionedImage}
+ */
+@Removal(version="6.0.0")
+@Deprecated
 public class AddDimensionedImage extends org.apache.poi.examples.ss.AddDimensionedImage {
 }
