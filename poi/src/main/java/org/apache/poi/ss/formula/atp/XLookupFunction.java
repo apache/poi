@@ -119,7 +119,7 @@ final class XLookupFunction implements FreeRefFunction {
                 //but POI does not currently support functions returning multiple cell values
                 return area.getRelativeValue(matchedRow, 0);
             } else {
-                return ErrorEval.VALUE_INVALID;
+                return returnEval;
             }
         } catch (EvaluationException e) {
             return e.getErrorEval();
