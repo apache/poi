@@ -31,7 +31,7 @@ buildscript {
     dependencies {
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
         classpath 'de.thetaphi:forbiddenapis:3.2'
-        classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.9'
+        classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.10'
     }
 }
 
