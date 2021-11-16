@@ -84,7 +84,7 @@ public interface AreaEval extends TwoDEval, ThreeDEval {
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
 
     /**
-     * Creates an AreaEval offset by a relative amount from from the upper left cell
+     * Creates an AreaEval offset by a relative amount from the upper left cell
      * of this area
      */
     AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);
