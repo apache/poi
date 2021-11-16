@@ -34,7 +34,7 @@ import java.util.Optional;
  * <b>Syntax</b><br>
  * <b>XLOOKUP</b>(<b>lookup_value</b>, <b>lookup_array</b>, <b>return_array</b>, <b>[if_not_found]</b>, <b>[match_mode]</b>, <b>[search_mode]</b>)<p>
  *
- * @since POI 5.0.1
+ * @since POI 5.2.0
  */
 final class XLookupFunction implements FreeRefFunction {
 
@@ -92,11 +92,12 @@ final class XLookupFunction implements FreeRefFunction {
                 return ErrorEval.VALUE_INVALID;
             }
         }
-        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode);
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode, ec.isSingleValue());
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
-                               ValueEval returnEval, Optional<String> notFound, LookupUtils.MatchMode matchMode, LookupUtils.SearchMode searchMode) {
+                               ValueEval returnEval, Optional<String> notFound, LookupUtils.MatchMode matchMode,
+                               LookupUtils.SearchMode searchMode, boolean isSingleValue) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
@@ -115,9 +116,10 @@ final class XLookupFunction implements FreeRefFunction {
             }
             if (returnEval instanceof AreaEval) {
                 AreaEval area = (AreaEval)returnEval;
-                //TODO to fully support XLOOKUP, we should return the full row
-                //but POI does not currently support functions returning multiple cell values
-                return area.getRelativeValue(matchedRow, 0);
+                if (isSingleValue) {
+                    return area.getRelativeValue(matchedRow, 0);
+                }
+                return area.offset(matchedRow, matchedRow,0, area.getWidth() - 1);
             } else {
                 return returnEval;
             }
