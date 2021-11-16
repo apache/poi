@@ -17,14 +17,15 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,10 +47,21 @@ public class TestXLookupFunction {
 
     @Test
     void testMicrosoftExample2() throws IOException {
+        String formulaText = "XLOOKUP(B2,B5:B14,C5:D14)";
         try (HSSFWorkbook wb = initWorkbook2()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertString(fe, cell, "XLOOKUP(B2,B5:B14,C5:D14)", "Dianne Pugh");
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(0);
+            HSSFCell cell = row.createCell(100);
+            assertString(fe, cell, formulaText, "Dianne Pugh");
+            String col1 = CellReference.convertNumToColString(100);
+            String col2 = CellReference.convertNumToColString(101);
+            String cellRef = String.format(Locale.ENGLISH, "%s1:%s1", col1, col2);
+            sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
+            fe.evaluateAll();
+            assertEquals("Dianne Pugh", row.getCell(100).getStringCellValue());
+            //next assertion fails, cell 101 ends up Dianne Pugh
+            //assertEquals("Finance", row.getCell(101).getStringCellValue());
         }
     }
 
