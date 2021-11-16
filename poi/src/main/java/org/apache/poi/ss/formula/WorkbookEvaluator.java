@@ -626,7 +626,7 @@ public final class WorkbookEvaluator {
             value = dereferenceResult(evaluationResult, ec.getRowIndex(), ec.getColumnIndex());
         }
         if (value == BlankEval.instance) {
-            // Note Excel behaviour here. A blank final final value is converted to zero.
+            // Note Excel behaviour here. A blank final value is converted to zero.
             return NumberEval.ZERO;
             // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
             // blank, the actual value is empty string. This can be verified with ISBLANK().
@@ -652,7 +652,7 @@ public final class WorkbookEvaluator {
             return e.getErrorEval();
         }
         if (value == BlankEval.instance) {
-            // Note Excel behaviour here. A blank final final value is converted to zero.
+            // Note Excel behaviour here. A blank final value is converted to zero.
             return NumberEval.ZERO;
             // Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
             // blank, the actual value is empty string. This can be verified with ISBLANK().
