@@ -217,7 +217,7 @@ final class TestValueRecordsAggregate {
     /**
      * Sometimes the 'shared formula' flag ({@code FormulaRecord.isSharedFormula()}) is set when
      * there is no corresponding SharedFormulaRecord available. SharedFormulaRecord definitions do
-     * not span multiple sheets.  They are are only defined within a sheet, and thus they do not
+     * not span multiple sheets.  They are only defined within a sheet, and thus they do not
      * have a sheet index field (only row and column range fields).<br>
      * So it is important that the code which locates the SharedFormulaRecord for each
      * FormulaRecord does not allow matches across sheets.<p>

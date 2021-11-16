@@ -223,7 +223,7 @@ public class AddDimensionedImage {
     public static final int OVERLAY_ROW_AND_COLUMN = 7;
 
     // Modified to support EMU - English Metric Units - used within the OOXML
-    // workbooks, this multoplier is used to convert between measurements in
+    // workbooks, this multiplier is used to convert between measurements in
     // millimetres and in EMUs
     private static final int EMU_PER_MM = 36000;
 
@@ -234,7 +234,7 @@ public class AddDimensionedImage {
      *                   top left hand corner should be aligned with the top
      *                   left hand corner of the image; for example "A1", "A2"
      *                   etc. This is to support the familiar Excel syntax.
-     *                   Whilst images are are not actually inserted into cells
+     *                   Whilst images are not actually inserted into cells
      *                   this provides a convenient method of indicating where
      *                   the image should be positioned on the sheet.
      * @param sheet A reference to the sheet that contains the cell referenced
