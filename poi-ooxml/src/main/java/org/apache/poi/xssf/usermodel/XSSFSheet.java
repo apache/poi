@@ -24,18 +24,7 @@ import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validateP
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -3034,13 +3023,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     // remove all rows which will be overwritten
-    private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+    private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n) {
+        HashSet<Integer> rowsToRemoveSet = new HashSet<>();
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
+                rowsToRemoveSet.add(rownum);
                 for (Cell c : row) {
                     if (!c.isPartOfArrayFormulaGroup()) {
                         //the support for deleting cells that are part of array formulas is not implemented yet
@@ -3056,34 +3047,34 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                 // remove row from _rows
                 it.remove();
+            }
+        }
 
-                // FIXME: (performance optimization) this should be moved outside the for-loop so that comments only needs to be iterated over once.
-                // also remove any comments associated with this row
-                if(sheetComments != null){
-                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                    for (CTComment comment : lst.getCommentArray()) {
-                        String strRef = comment.getRef();
-                        CellAddress ref = new CellAddress(strRef);
+        // also remove any comments associated with this row
+        if (sheetComments != null) {
+            CTCommentList lst = sheetComments.getCTComments().getCommentList();
+            for (CTComment comment : lst.getCommentArray()) {
+                String strRef = comment.getRef();
+                CellAddress ref = new CellAddress(strRef);
 
-                        // is this comment part of the current row?
-                        if(ref.getRow() == rownum) {
-                            sheetComments.removeComment(ref);
-                            vml.removeCommentShape(ref.getRow(), ref.getColumn());
-                        }
-                    }
-                }
-                // FIXME: (performance optimization) this should be moved outside the for-loop so that hyperlinks only needs to be iterated over once.
-                // also remove any hyperlinks associated with this row
-                if (hyperlinks != null) {
-                    for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
-                        CellReference ref = new CellReference(link.getCellRef());
-                        if (ref.getRow() == rownum) {
-                            hyperlinks.remove(link);
-                        }
-                    }
+                // is this comment part of the current row?
+                if(rowsToRemoveSet.contains(ref.getRow())) {
+                    sheetComments.removeComment(ref);
+                    vml.removeCommentShape(ref.getRow(), ref.getColumn());
                 }
             }
         }
+
+        // also remove any hyperlinks associated with this row
+        if (hyperlinks != null) {
+            for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
+                CellReference ref = new CellReference(link.getCellRef());
+                if (rowsToRemoveSet.contains(ref.getRow())) {
+                    hyperlinks.remove(link);
+                }
+            }
+        }
+
 
     }
 
