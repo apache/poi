@@ -314,11 +314,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         return (crow == row && ccol == col);
     }
 
-    /**
-     * Internal use only
-     */
-    @Internal
-    public boolean removeCommentShape(int row, int col){
+    protected boolean removeCommentShape(int row, int col){
         XmlCursor cur = root.getXml().newCursor();
         for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
             XmlObject itm = cur.getObject();

@@ -3052,7 +3052,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         // also remove any comments associated with this row
         if (sheetComments != null) {
-            sheetComments.removeCommentsFromRows(this, rowsToRemoveSet);
+            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+            while (commentIterator.hasNext()) {
+                XSSFComment comment = commentIterator.next();
+                CellAddress ref = comment.getAddress();
+
+                // is this comment part of the current row?
+                if(rowsToRemoveSet.contains(ref.getRow())) {
+                    sheetComments.removeComment(ref);
+                    if (vml != null) {
+                        vml.removeCommentShape(ref.getRow(), ref.getColumn());
+                    }
+                }
+
+            }
         }
 
         // also remove any hyperlinks associated with this row
