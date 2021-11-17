@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.schemas.vml.CTShape;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -284,6 +285,29 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
             }
         }
         return false;
+    }
+
+    /**
+     * Remove the comment at cellRef location, if one exists
+     *
+     * @param rowNums the rows for which all comments will be removed
+     * @since POI 5.2.0
+     */
+    public void removeCommentsFromRows(XSSFSheet sheet, Set<Integer> rowNums) {
+        CTCommentList lst = getCTComments().getCommentList();
+        XSSFVMLDrawing vml = sheet.getVMLDrawing(false);
+        for (CTComment comment : lst.getCommentArray()) {
+            String strRef = comment.getRef();
+            CellAddress ref = new CellAddress(strRef);
+
+            // is this comment part of the current row?
+            if(rowNums.contains(ref.getRow())) {
+                removeComment(ref);
+                if (vml != null) {
+                    vml.removeCommentShape(ref.getRow(), ref.getColumn());
+                }
+            }
+        }
     }
 
     /**
