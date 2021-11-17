@@ -191,7 +191,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @return CTComment xmlbean if comment exists, otherwise return null.
      */
     @Internal
-    public CTComment getCTComment(CellAddress cellRef) {
+    CTComment getCTComment(CellAddress cellRef) {
         // Create the cache if needed
         prepareCTCommentCache();
 
