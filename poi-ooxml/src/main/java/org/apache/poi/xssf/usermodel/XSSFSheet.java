@@ -3115,14 +3115,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                 // is there a change necessary for the current row?
                 if(newrownum != rownum) {
-                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                    for (CTComment comment : lst.getCommentArray()) {
-                        String oldRef = comment.getRef();
-                        CellReference ref = new CellReference(oldRef);
+                    Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+                    while (commentIterator.hasNext()) {
+                        XSSFComment oldComment = commentIterator.next();
+                        CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());
 
                         // is this comment part of the current row?
                         if(ref.getRow() == rownum) {
-                            XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                            XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
                                     vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
 
                             // we should not perform the shifting right here as we would then find
@@ -3199,16 +3199,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         });
 
 
-        if(sheetComments != null){
-            CTCommentList lst = sheetComments.getCTComments().getCommentList();
-            for (CTComment comment : lst.getCommentArray()) {
-                String oldRef = comment.getRef();
-                CellReference ref = new CellReference(oldRef);
+        if (sheetComments != null) {
+            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+            while (commentIterator.hasNext()) {
+                XSSFComment oldComment = commentIterator.next();
+                CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());
 
                 int columnIndex =ref.getCol();
                 int newColumnIndex = shiftedRowNum(startColumnIndex, endColumnIndex, n, columnIndex);
                 if(newColumnIndex != columnIndex){
-                    XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                    XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
                             vml == null ? null : vml.findCommentShape(ref.getRow(), columnIndex));
                     commentsToShift.put(xssfComment, newColumnIndex);
                 }

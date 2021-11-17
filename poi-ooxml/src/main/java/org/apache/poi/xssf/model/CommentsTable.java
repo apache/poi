@@ -97,7 +97,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     /**
-     * @return iterator of comments
+     * @return iterator of comments (without their VML Shapes set)
      * @since POI 5.2.0
      */
     public Iterator<XSSFComment> commentIterator() {
