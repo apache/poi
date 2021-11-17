@@ -163,7 +163,7 @@ public class XSSFComment implements Comment {
         }
         
         _comment.setRef(address.formatAsString());
-        _comments.referenceUpdated(oldRef, _comment);
+        _comments.referenceUpdated(oldRef, this);
         
         if (_vmlShape != null) {
             CTClientData clientData = _vmlShape.getClientDataArray(0);
@@ -244,8 +244,9 @@ public class XSSFComment implements Comment {
 
     /**
      * @return the xml bean holding this comment's properties
+     * @since POI 5.2.0 (was protected before POI 5.2.0)
      */
-    protected CTComment getCTComment(){
+    public CTComment getCTComment(){
         return _comment;
     }
 

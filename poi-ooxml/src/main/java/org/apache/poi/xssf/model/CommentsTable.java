@@ -30,6 +30,7 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -99,14 +100,31 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     /**
      * Called after the reference is updated, so that
      *  we can reflect that in our cache
-     *  @param oldReference the comment to remove from the commentRefs map
-     *  @param comment the comment to replace in the commentRefs map
+     * @param oldReference the comment to remove from the commentRefs map
+     * @param comment the comment to replace in the commentRefs map
+     * @deprecated use {@link #referenceUpdated(CellAddress, XSSFComment)}
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     public void referenceUpdated(CellAddress oldReference, CTComment comment) {
        if(commentRefs != null) {
           commentRefs.remove(oldReference);
           commentRefs.put(new CellAddress(comment.getRef()), comment);
        }
+    }
+
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     * @param oldReference the comment to remove from the commentRefs map
+     * @param comment the comment to replace in the commentRefs map
+     * @since POI 5.2.0
+     */
+    public void referenceUpdated(CellAddress oldReference, XSSFComment comment) {
+        if(commentRefs != null) {
+            commentRefs.remove(oldReference);
+            commentRefs.put(comment.getAddress(), comment.getCTComment());
+        }
     }
 
     @Override
