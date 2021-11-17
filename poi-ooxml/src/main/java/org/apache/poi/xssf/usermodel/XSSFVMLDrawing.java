@@ -201,7 +201,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     }
 
     /**
-     * Initialize a new Speadsheet VML drawing
+     * Initialize a new Spreadsheet VML drawing
      */
     private void newDrawing(){
         root = XmlDocument.Factory.newInstance();
