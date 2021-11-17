@@ -184,7 +184,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
     
     /**
-     * Create a new comment located` at cell address
+     * Create a new comment located at cell address
      *
      * @param ref the location to add the comment
      * @return a new CTComment located at ref with default author
