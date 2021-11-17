@@ -164,6 +164,25 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         CTComment ct = getCTComment(cellAddress);
         return ct == null ? null : new XSSFComment(this, ct, null);
     }
+
+    /**
+     * Finds the cell comment at cellAddress, if one exists
+     *
+     * @param sheet the sheet that has the comment
+     * @param cellAddress the address of the cell to find a comment
+     * @return cell comment if one exists, otherwise returns null
+     * @since POI 5.2.0
+     */
+    public XSSFComment findCellComment(XSSFSheet sheet, CellAddress cellAddress) {
+        CTComment ctComment = getCTComment(cellAddress);
+        if(ctComment == null) {
+            return null;
+        }
+
+        XSSFVMLDrawing vml = sheet.getVMLDrawing(false);
+        return new XSSFComment(this, ctComment,
+                vml == null ? null : vml.findCommentShape(cellAddress.getRow(), cellAddress.getColumn()));
+    }
     
     /**
      * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
@@ -220,21 +239,6 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         }
 
         return new XSSFComment(this, newComment(ref), vmlShape);
-    }
-
-    /**
-     * Refresh Map<CellAddress, CTComment> commentRefs cache,
-     * Calls that use the commentRefs cache will perform in O(1)
-     * time rather than O(n) lookup time for List<CTComment> comments.
-     */
-    private void prepareCTCommentCache() {
-        // Create the cache if needed
-        if(commentRefs == null) {
-           commentRefs = new HashMap<>();
-           for (CTComment comment : comments.getCommentList().getCommentArray()) {
-              commentRefs.put(new CellAddress(comment.getRef()), comment);
-           }
-        }
     }
     
     /**
@@ -303,5 +307,20 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     @Internal
     public CTComments getCTComments(){
         return comments;
+    }
+
+    /**
+     * Refresh Map<CellAddress, CTComment> commentRefs cache,
+     * Calls that use the commentRefs cache will perform in O(1)
+     * time rather than O(n) lookup time for List<CTComment> comments.
+     */
+    private void prepareCTCommentCache() {
+        // Create the cache if needed
+        if(commentRefs == null) {
+            commentRefs = new HashMap<>();
+            for (CTComment comment : comments.getCommentList().getCommentArray()) {
+                commentRefs.put(new CellAddress(comment.getRef()), comment);
+            }
+        }
     }
 }

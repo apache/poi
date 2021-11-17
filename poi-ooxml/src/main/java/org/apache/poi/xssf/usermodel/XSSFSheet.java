@@ -774,14 +774,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
 
-        CTComment ctComment = sheetComments.getCTComment(address);
-        if(ctComment == null) {
-            return null;
-        }
-
-        XSSFVMLDrawing vml = getVMLDrawing(false);
-        return new XSSFComment(sheetComments, ctComment,
-                vml == null ? null : vml.findCommentShape(address.getRow(), address.getColumn()));
+        return sheetComments.findCellComment(this, address);
     }
 
     /**
