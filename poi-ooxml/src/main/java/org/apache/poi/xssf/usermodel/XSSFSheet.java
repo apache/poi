@@ -570,13 +570,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Get VML drawing for this sheet (aka 'legacy' drawing)
+     * Get VML drawing for this sheet (aka 'legacy' drawing). This method is for internal POI use only.
      *
      * @param autoCreate if true, then a new VML drawing part is created
      *
      * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
      */
-    protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
+    @Internal
+    public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFVMLDrawing drawing = null;
         CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
         if(ctDrawing == null) {

@@ -25,11 +25,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.microsoft.schemas.vml.CTShape;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFVMLDrawing;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
@@ -166,6 +171,37 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     public Iterator<CellAddress> getCellAddresses() {
         prepareCTCommentCache();
         return commentRefs.keySet().iterator();
+    }
+
+    /**
+     * Create a new comment and add to the CommentTable.
+     * @param sheet sheet to add comment to
+     * @param clientAnchor the anchor for this comment
+     * @return new XSSFComment
+     * @since POI 5.2.0
+     */
+    public XSSFComment createNewComment(XSSFSheet sheet, XSSFClientAnchor clientAnchor) {
+        XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
+        com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();
+        if (clientAnchor.isSet()) {
+            // convert offsets from emus to pixels since we get a
+            // DrawingML-anchor
+            // but create a VML Drawing
+            int dx1Pixels = clientAnchor.getDx1() / Units.EMU_PER_PIXEL;
+            int dy1Pixels = clientAnchor.getDy1() / Units.EMU_PER_PIXEL;
+            int dx2Pixels = clientAnchor.getDx2() / Units.EMU_PER_PIXEL;
+            int dy2Pixels = clientAnchor.getDy2() / Units.EMU_PER_PIXEL;
+            String position = clientAnchor.getCol1() + ", " + dx1Pixels + ", " + clientAnchor.getRow1() + ", " + dy1Pixels + ", " +
+                    clientAnchor.getCol2() + ", " + dx2Pixels + ", " + clientAnchor.getRow2() + ", " + dy2Pixels;
+            vmlShape.getClientDataArray(0).setAnchorArray(0, position);
+        }
+        CellAddress ref = new CellAddress(clientAnchor.getRow1(), clientAnchor.getCol1());
+
+        if (findCellComment(ref) != null) {
+            throw new IllegalArgumentException("Multiple cell comments in one cell are not allowed, cell: " + ref);
+        }
+
+        return new XSSFComment(this, newComment(ref), vmlShape);
     }
 
     /**

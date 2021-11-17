@@ -42,7 +42,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -384,29 +383,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFClientAnchor ca = (XSSFClientAnchor) anchor;
         XSSFSheet sheet = getSheet();
 
-        // create comments and vmlDrawing parts if they don't exist
         CommentsTable comments = sheet.getCommentsTable(true);
-        XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
-        com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();
-        if (ca.isSet()) {
-            // convert offsets from emus to pixels since we get a
-            // DrawingML-anchor
-            // but create a VML Drawing
-            int dx1Pixels = ca.getDx1() / Units.EMU_PER_PIXEL;
-            int dy1Pixels = ca.getDy1() / Units.EMU_PER_PIXEL;
-            int dx2Pixels = ca.getDx2() / Units.EMU_PER_PIXEL;
-            int dy2Pixels = ca.getDy2() / Units.EMU_PER_PIXEL;
-            String position = ca.getCol1() + ", " + dx1Pixels + ", " + ca.getRow1() + ", " + dy1Pixels + ", " + ca
-                .getCol2() + ", " + dx2Pixels + ", " + ca.getRow2() + ", " + dy2Pixels;
-            vmlShape.getClientDataArray(0).setAnchorArray(0, position);
-        }
-        CellAddress ref = new CellAddress(ca.getRow1(), ca.getCol1());
-
-        if (comments.findCellComment(ref) != null) {
-            throw new IllegalArgumentException("Multiple cell comments in one cell are not allowed, cell: " + ref);
-        }
-
-        return new XSSFComment(comments, comments.newComment(ref), vmlShape);
+        return comments.createNewComment(getSheet(), ca);
     }
 
     /**
