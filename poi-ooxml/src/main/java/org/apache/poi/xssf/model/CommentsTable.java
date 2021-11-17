@@ -287,19 +287,6 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     /**
-     * Add a new author to the CommentsTable.
-     * This does not check if the author already exists.
-     *
-     * @param author the name of the comment author
-     * @return the index of the new author
-     */
-    private int addNewAuthor(String author) {
-        int index = comments.getAuthors().sizeOfAuthorArray();
-        comments.getAuthors().insertAuthor(index, author);
-        return index;
-    }
-
-    /**
      * Returns the underlying CTComments list xmlbean
      *
      * @return underlying comments list xmlbean
@@ -322,5 +309,18 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
                 commentRefs.put(new CellAddress(comment.getRef()), comment);
             }
         }
+    }
+
+    /**
+     * Add a new author to the CommentsTable.
+     * This does not check if the author already exists.
+     *
+     * @param author the name of the comment author
+     * @return the index of the new author
+     */
+    private int addNewAuthor(String author) {
+        int index = comments.getAuthors().sizeOfAuthorArray();
+        comments.getAuthors().insertAuthor(index, author);
+        return index;
     }
 }
