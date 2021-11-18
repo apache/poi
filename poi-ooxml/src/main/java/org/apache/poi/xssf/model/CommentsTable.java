@@ -100,6 +100,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @return iterator of comments (without their VML Shapes set)
      * @since POI 5.2.0
      */
+    @Override
     public Iterator<XSSFComment> commentIterator() {
         final CommentsTable table = this;
         return new Iterator<XSSFComment>() {
@@ -142,6 +143,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @param comment the comment to replace in the commentRefs map
      * @since POI 5.2.0
      */
+    @Override
     public void referenceUpdated(CellAddress oldReference, XSSFComment comment) {
         if(commentRefs != null) {
             commentRefs.remove(oldReference);
@@ -239,6 +241,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @return new XSSFComment
      * @since POI 5.2.0
      */
+    @Override
     public XSSFComment createNewComment(XSSFSheet sheet, XSSFClientAnchor clientAnchor) {
         XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
         com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();

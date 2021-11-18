@@ -17,7 +17,9 @@
 package org.apache.poi.xssf.model;
 
 import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.util.Iterator;
 
@@ -58,4 +60,28 @@ public interface Comments {
      * @since 4.0.0
      */
     Iterator<CellAddress> getCellAddresses();
+
+    /**
+     * @return iterator of comments (without their VML Shapes set)
+     * @since POI 5.2.0
+     */
+    Iterator<XSSFComment> commentIterator();
+
+    /**
+     * Create a new comment and add to the CommentTable.
+     * @param sheet sheet to add comment to
+     * @param clientAnchor the anchor for this comment
+     * @return new XSSFComment
+     * @since POI 5.2.0
+     */
+    XSSFComment createNewComment(XSSFSheet sheet, XSSFClientAnchor clientAnchor);
+
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     * @param oldReference the comment to remove from the commentRefs map
+     * @param comment the comment to replace in the commentRefs map
+     * @since POI 5.2.0
+     */
+    void referenceUpdated(CellAddress oldReference, XSSFComment comment);
 }

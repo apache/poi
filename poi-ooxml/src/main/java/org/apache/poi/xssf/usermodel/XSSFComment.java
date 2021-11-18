@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBlank;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -36,7 +37,7 @@ import com.microsoft.schemas.vml.CTShape;
 public class XSSFComment implements Comment {
     
     private final CTComment _comment;
-    private final CommentsTable _comments;
+    private final Comments _comments;
     private final CTShape _vmlShape;
 
     /**
@@ -49,6 +50,15 @@ public class XSSFComment implements Comment {
      *  low level comment object.
      */
     public XSSFComment(CommentsTable comments, CTComment comment, CTShape vmlShape) {
+        this((Comments)comments, comment, vmlShape);
+    }
+
+    /**
+     * Creates a new XSSFComment, associated with a given
+     *  low level comment object.
+     * @since POI 5.2.0
+     */
+    public XSSFComment(Comments comments, CTComment comment, CTShape vmlShape) {
         _comment = comment;
         _comments = comments;
         _vmlShape = vmlShape;
@@ -60,7 +70,7 @@ public class XSSFComment implements Comment {
             CTClientData clientData = vmlShape.getClientDataArray(0);
             clientData.setRowArray(0, new BigInteger(String.valueOf(ref.getRow())));
             clientData.setColumnArray(0, new BigInteger(String.valueOf(ref.getCol())));
-            
+
             avoidXmlbeansCorruptPointer(vmlShape);
         }
     }
