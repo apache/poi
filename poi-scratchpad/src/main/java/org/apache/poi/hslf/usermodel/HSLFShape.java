@@ -402,7 +402,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * @return  The shape container and it's children that can represent this
+     * @return  The shape container and its children that can represent this
      *          shape.
      */
     public EscherContainerRecord getSpContainer(){

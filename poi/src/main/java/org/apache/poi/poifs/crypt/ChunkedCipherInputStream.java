@@ -203,7 +203,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     /**
      * Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
-     * and uses it's own implementation
+     * and uses its own implementation
      */
     protected int invokeCipher(int totalBytes, boolean doFinal) throws GeneralSecurityException {
         if (doFinal) {

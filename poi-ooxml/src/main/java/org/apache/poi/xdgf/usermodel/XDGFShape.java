@@ -931,7 +931,7 @@ public class XDGFShape extends XDGFSheet {
     }
 
     /**
-     * The visitor will first visit this shape, then it's children
+     * The visitor will first visit this shape, then its children
      *
      * This is useful because exceptions will be marked with the shapes as it
      * propagates up the shape hierarchy.
@@ -959,7 +959,7 @@ public class XDGFShape extends XDGFSheet {
     }
 
     /**
-     * The visitor will first visit this shape, then it's children. No transform
+     * The visitor will first visit this shape, then its children. No transform
      * is calculated for this visit
      *
      * This is useful because exceptions will be marked with the shapes as it
