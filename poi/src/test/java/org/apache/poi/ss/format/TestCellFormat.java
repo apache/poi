@@ -1026,4 +1026,21 @@ class TestCellFormat {
                 .map(CellFormatPart.NAMED_COLORS::get)
                 .forEach(Assertions::assertNotNull);
     }
+
+    @Test
+    void testDecimalFormat(){
+        // Create a workbook, row and cell to test with
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+
+        CellFormat cf = CellFormat.getInstance("[<=.01]0.00%;#,##0");
+
+        cell.setCellValue(1);
+        assertEquals("1", cf.apply(cell).text);
+
+        cell.setCellValue(.001);
+        assertEquals("0.10%", cf.apply(cell).text);
+    }
 }
