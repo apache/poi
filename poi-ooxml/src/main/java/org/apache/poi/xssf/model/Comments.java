@@ -47,6 +47,16 @@ public interface Comments {
     XSSFComment findCellComment(CellAddress cellAddress);
 
     /**
+     * Finds the cell comment at cellAddress, if one exists
+     *
+     * @param sheet the sheet that has the comment
+     * @param cellAddress the address of the cell to find a comment
+     * @return cell comment if one exists, otherwise returns null
+     * @since POI 5.2.0
+     */
+    public XSSFComment findCellComment(XSSFSheet sheet, CellAddress cellAddress);
+
+    /**
      * Remove the comment at cellRef location, if one exists
      *
      * @param cellRef the location of the comment to remove

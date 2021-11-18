@@ -197,6 +197,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @return cell comment if one exists, otherwise returns null
      * @since POI 5.2.0
      */
+    @Override
     public XSSFComment findCellComment(XSSFSheet sheet, CellAddress cellAddress) {
         CTComment ctComment = getCTComment(cellAddress);
         if(ctComment == null) {

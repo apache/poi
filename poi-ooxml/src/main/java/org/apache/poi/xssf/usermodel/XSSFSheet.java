@@ -56,6 +56,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
@@ -95,7 +96,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private final SortedMap<Integer, XSSFRow> _rows = new TreeMap<>();
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
-    private CommentsTable sheetComments;
+    private Comments sheetComments;
     /**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
@@ -163,8 +164,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // Look for bits we're interested in
         for(RelationPart rp : getRelationParts()){
             POIXMLDocumentPart p = rp.getDocumentPart();
-            if(p instanceof CommentsTable) {
-                sheetComments = (CommentsTable)p;
+            if(p instanceof Comments) {
+                sheetComments = (Comments)p;
             }
             if(p instanceof XSSFTable) {
                 tables.put( rp.getRelationship().getId(), (XSSFTable)p );
@@ -3506,18 +3507,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param create create a new comments table if it does not exist
      */
-    protected CommentsTable getCommentsTable(boolean create) {
+    protected Comments getCommentsTable(boolean create) {
         if(sheetComments == null && create){
             // Try to create a comments table with the same number as
             //  the sheet has (i.e. sheet 1 -> comments 1)
             try {
-                sheetComments = (CommentsTable)createRelationship(
+                sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), Math.toIntExact(sheet.getSheetId()));
             } catch(PartAlreadyExistsException e) {
                 // Technically a sheet doesn't need the same number as
-                //  it's comments, and clearly someone has already pinched
+                //  its comments, and clearly someone has already pinched
                 //  our number! Go for the next available one instead
-                sheetComments = (CommentsTable)createRelationship(
+                sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
             }
         }

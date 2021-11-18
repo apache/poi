@@ -45,7 +45,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -383,7 +383,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFClientAnchor ca = (XSSFClientAnchor) anchor;
         XSSFSheet sheet = getSheet();
 
-        CommentsTable comments = sheet.getCommentsTable(true);
+        Comments comments = sheet.getCommentsTable(true);
         return comments.createNewComment(getSheet(), ca);
     }
 
