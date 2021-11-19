@@ -141,6 +141,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      *  we can reflect that in our cache
      * @param oldReference the comment to remove from the commentRefs map
      * @param comment the comment to replace in the commentRefs map
+     * @see #commentUpdated(XSSFComment)
      * @since POI 5.2.0
      */
     @Override
@@ -149,6 +150,18 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
             commentRefs.remove(oldReference);
             commentRefs.put(comment.getAddress(), comment.getCTComment());
         }
+    }
+
+    /**
+     * Called after the comment is updated, so that
+     *  we can reflect that in our cache
+     * @param comment the comment to replace in the commentRefs map
+     * @since POI 5.2.0
+     * @see #referenceUpdated(CellAddress, XSSFComment)
+     */
+    @Override
+    public void commentUpdated(XSSFComment comment) {
+        //no-op in this implementation
     }
 
     @Override

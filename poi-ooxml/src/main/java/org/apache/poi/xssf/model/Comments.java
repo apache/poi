@@ -91,7 +91,17 @@ public interface Comments {
      *  we can reflect that in our cache
      * @param oldReference the comment to remove from the commentRefs map
      * @param comment the comment to replace in the commentRefs map
+     * @see #commentUpdated(XSSFComment)                
      * @since POI 5.2.0
      */
     void referenceUpdated(CellAddress oldReference, XSSFComment comment);
+
+    /**
+     * Called after the comment is updated, so that
+     *  we can reflect that in our cache
+     * @param comment the comment to replace in the commentRefs map
+     * @since POI 5.2.0
+     * @see #referenceUpdated(CellAddress, XSSFComment)
+     */
+    void commentUpdated(XSSFComment comment);
 }

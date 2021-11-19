@@ -92,6 +92,7 @@ public class XSSFComment implements Comment {
     @Override
     public void setAuthor(String author) {
         _comment.setAuthorId(_comments.findAuthor(author));
+        _comments.commentUpdated(this);
     }
 
     /**
@@ -152,6 +153,7 @@ public class XSSFComment implements Comment {
                 }
             }
         }
+        _comments.commentUpdated(this);
     }
     
     @Override
@@ -182,6 +184,7 @@ public class XSSFComment implements Comment {
            
             avoidXmlbeansCorruptPointer(_vmlShape);
         }
+        _comments.commentUpdated(this);
     }
 
     /**
@@ -232,6 +235,7 @@ public class XSSFComment implements Comment {
         }
         _str = (XSSFRichTextString)string;
         _comment.setText(_str.getCTRst());
+        _comments.commentUpdated(this);
     }
     
     public void setString(String string) {
