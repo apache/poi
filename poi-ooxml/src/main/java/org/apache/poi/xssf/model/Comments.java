@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
@@ -84,7 +84,7 @@ public interface Comments {
      * @return new XSSFComment
      * @since POI 5.2.0
      */
-    XSSFComment createNewComment(XSSFSheet sheet, XSSFClientAnchor clientAnchor);
+    XSSFComment createNewComment(XSSFSheet sheet, ClientAnchor clientAnchor);
 
     /**
      * Called after the reference is updated, so that

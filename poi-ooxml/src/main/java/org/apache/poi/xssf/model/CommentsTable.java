@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
@@ -256,10 +257,10 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @since POI 5.2.0
      */
     @Override
-    public XSSFComment createNewComment(XSSFSheet sheet, XSSFClientAnchor clientAnchor) {
+    public XSSFComment createNewComment(XSSFSheet sheet, ClientAnchor clientAnchor) {
         XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
         com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();
-        if (clientAnchor.isSet()) {
+        if (clientAnchor instanceof XSSFClientAnchor && ((XSSFClientAnchor)clientAnchor).isSet()) {
             // convert offsets from emus to pixels since we get a
             // DrawingML-anchor
             // but create a VML Drawing
