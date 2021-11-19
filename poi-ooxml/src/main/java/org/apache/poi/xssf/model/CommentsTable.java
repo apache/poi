@@ -25,9 +25,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.microsoft.schemas.vml.CTShape;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
@@ -212,13 +214,13 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @since POI 5.2.0
      */
     @Override
-    public XSSFComment findCellComment(XSSFSheet sheet, CellAddress cellAddress) {
+    public XSSFComment findCellComment(Sheet sheet, CellAddress cellAddress) {
         CTComment ctComment = getCTComment(cellAddress);
         if(ctComment == null) {
             return null;
         }
 
-        XSSFVMLDrawing vml = sheet.getVMLDrawing(false);
+        XSSFVMLDrawing vml = sheet instanceof XSSFSheet ? ((XSSFSheet)sheet).getVMLDrawing(false) : null;
         return new XSSFComment(this, ctComment,
                 vml == null ? null : vml.findCommentShape(cellAddress.getRow(), cellAddress.getColumn()));
     }
@@ -257,10 +259,10 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @since POI 5.2.0
      */
     @Override
-    public XSSFComment createNewComment(XSSFSheet sheet, ClientAnchor clientAnchor) {
-        XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
-        com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();
-        if (clientAnchor instanceof XSSFClientAnchor && ((XSSFClientAnchor)clientAnchor).isSet()) {
+    public XSSFComment createNewComment(Sheet sheet, ClientAnchor clientAnchor) {
+        XSSFVMLDrawing vml = sheet instanceof XSSFSheet ? ((XSSFSheet)sheet).getVMLDrawing(true) : null;
+        CTShape vmlShape = vml == null ? null : vml.newCommentShape();
+        if (vmlShape != null && clientAnchor instanceof XSSFClientAnchor && ((XSSFClientAnchor)clientAnchor).isSet()) {
             // convert offsets from emus to pixels since we get a
             // DrawingML-anchor
             // but create a VML Drawing

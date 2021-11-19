@@ -17,9 +17,9 @@
 package org.apache.poi.xssf.model;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.util.Iterator;
 
@@ -54,7 +54,7 @@ public interface Comments {
      * @return cell comment if one exists, otherwise returns null
      * @since POI 5.2.0
      */
-    public XSSFComment findCellComment(XSSFSheet sheet, CellAddress cellAddress);
+    public XSSFComment findCellComment(Sheet sheet, CellAddress cellAddress);
 
     /**
      * Remove the comment at cellRef location, if one exists
@@ -84,7 +84,7 @@ public interface Comments {
      * @return new XSSFComment
      * @since POI 5.2.0
      */
-    XSSFComment createNewComment(XSSFSheet sheet, ClientAnchor clientAnchor);
+    XSSFComment createNewComment(Sheet sheet, ClientAnchor clientAnchor);
 
     /**
      * Called after the reference is updated, so that
