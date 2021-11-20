@@ -43,15 +43,18 @@ public interface Comments {
      *
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
+     * @see #findCellComment(Sheet, CellAddress)
      */
     XSSFComment findCellComment(CellAddress cellAddress);
 
     /**
      * Finds the cell comment at cellAddress, if one exists
      *
-     * @param sheet the sheet that has the comment
+     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
+     *              if you don't need the drawing/shape data
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
+     * @see #findCellComment(CellAddress)
      * @since POI 5.2.0
      */
     public XSSFComment findCellComment(Sheet sheet, CellAddress cellAddress);
@@ -72,7 +75,8 @@ public interface Comments {
     Iterator<CellAddress> getCellAddresses();
 
     /**
-     * @param sheet the sheet to check for comments
+     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
+     *              if you don't need the drawing/shape data
      * @return iterator of comments
      * @since POI 5.2.0
      */
