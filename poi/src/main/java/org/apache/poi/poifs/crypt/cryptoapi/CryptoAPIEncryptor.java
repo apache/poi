@@ -143,9 +143,9 @@ public class CryptoAPIEncryptor extends Encryptor {
             descEntry.reserved2 = 0;
 
             bos.setBlock(block);
-            DocumentInputStream dis = dir.createDocumentInputStream(entry);
-            IOUtils.copy(dis, bos);
-            dis.close();
+            try (DocumentInputStream dis = dir.createDocumentInputStream(entry)) {
+                IOUtils.copy(dis, bos);
+            }
 
             descEntry.streamSize = bos.size() - descEntry.streamOffset;
             descList.add(descEntry);
