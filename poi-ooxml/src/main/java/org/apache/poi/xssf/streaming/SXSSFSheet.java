@@ -47,12 +47,7 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
@@ -348,6 +343,20 @@ public class SXSSFSheet implements Sheet
         _sh.setDefaultRowHeightInPoints(height);
     }
 
+
+    /**
+     * Get VML drawing for this sheet (aka 'legacy' drawing). This method is for internal POI use only.
+     *
+     * @param autoCreate if true, then a new VML drawing part is created
+     *
+     * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
+     * @since POI 5.2.0
+     */
+    @Internal
+    public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
+        XSSFSheet xssfSheet = getWorkbook().getXSSFSheet(this);
+        return xssfSheet == null ? null : xssfSheet.getVMLDrawing(autoCreate);
+    }
 
     /**
      * Returns the CellStyle that applies to the given
