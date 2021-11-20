@@ -72,10 +72,11 @@ public interface Comments {
     Iterator<CellAddress> getCellAddresses();
 
     /**
-     * @return iterator of comments (without their VML Shapes set)
+     * @param sheet the sheet to check for comments
+     * @return iterator of comments
      * @since POI 5.2.0
      */
-    Iterator<XSSFComment> commentIterator();
+    Iterator<XSSFComment> commentIterator(Sheet sheet);
 
     /**
      * Create a new comment and add to the CommentTable.

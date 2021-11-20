@@ -2956,14 +2956,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        XSSFVMLDrawing vml = getVMLDrawing(false);
-
         int sheetIndex = getWorkbook().getSheetIndex(this);
         String sheetName = getWorkbook().getSheetName(sheetIndex);
         FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
                 sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
-        removeOverwritten(vml, startRow, endRow, n);
-        shiftCommentsAndRows(vml, startRow, endRow, n);
+        removeOverwritten(startRow, endRow, n);
+        shiftCommentsAndRows(startRow, endRow, n);
 
         XSSFRowShifter rowShifter = new XSSFRowShifter(this);
         rowShifter.shiftMergedRegions(startRow, endRow, n);
@@ -3023,7 +3021,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     // remove all rows which will be overwritten
-    private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n) {
+    private void removeOverwritten(int startRow, int endRow, final int n) {
+        XSSFVMLDrawing vml = getVMLDrawing(false);
         HashSet<Integer> rowsToRemoveSet = new HashSet<>();
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
@@ -3052,7 +3051,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         // also remove any comments associated with this row
         if (sheetComments != null) {
-            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
             while (commentIterator.hasNext()) {
                 XSSFComment comment = commentIterator.next();
                 CellAddress ref = comment.getAddress();
@@ -3078,10 +3077,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
         }
 
-
     }
 
-    private void shiftCommentsAndRows(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+    private void shiftCommentsAndRows(int startRow, int endRow, final int n) {
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures,
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
@@ -3115,7 +3113,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                 // is there a change necessary for the current row?
                 if(newrownum != rownum) {
-                    Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+                    Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
                     while (commentIterator.hasNext()) {
                         XSSFComment oldComment = commentIterator.next();
                         CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());
@@ -3123,7 +3121,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                         // is this comment part of the current row?
                         if(ref.getRow() == rownum) {
                             XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
-                                    vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
+                                    oldComment.getCTShape());
 
                             // we should not perform the shifting right here as we would then find
                             // already shifted comments and would shift them again...
@@ -3200,7 +3198,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
 
         if (sheetComments != null) {
-            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator();
+            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
             while (commentIterator.hasNext()) {
                 XSSFComment oldComment = commentIterator.next();
                 CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());

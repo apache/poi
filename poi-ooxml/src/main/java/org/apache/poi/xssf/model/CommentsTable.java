@@ -101,11 +101,13 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     /**
-     * @return iterator of comments (without their VML Shapes set)
+     * @param sheet the sheet to check for comments
+     * @return iterator of comments
      * @since POI 5.2.0
      */
     @Override
-    public Iterator<XSSFComment> commentIterator() {
+    public Iterator<XSSFComment> commentIterator(Sheet sheet) {
+        XSSFVMLDrawing vml = getVMLDrawing(sheet, false);
         final CommentsTable table = this;
         return new Iterator<XSSFComment>() {
             private final CTComment[] commentsArray = getCTComments().getCommentList().getCommentArray();
@@ -119,7 +121,12 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
             @Override
             public XSSFComment next() {
                 CTComment ctComment = commentsArray[counter++];
-                return new XSSFComment(table, ctComment, null);
+                CellAddress cellAddress = new CellAddress(ctComment.getRef());
+                CTShape shape = null;
+                if (vml != null) {
+                    shape = vml.findCommentShape(cellAddress.getRow(), cellAddress.getColumn());
+                }
+                return new XSSFComment(table, ctComment, shape);
             }
         };
     }
