@@ -101,38 +101,6 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     /**
-     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
-     *              if you don't need the drawing/shape data
-     * @return iterator of comments
-     * @since POI 5.2.0
-     */
-    @Override
-    public Iterator<XSSFComment> commentIterator(Sheet sheet) {
-        XSSFVMLDrawing vml = getVMLDrawing(sheet, false);
-        final CommentsTable table = this;
-        return new Iterator<XSSFComment>() {
-            private final CTComment[] commentsArray = getCTComments().getCommentList().getCommentArray();
-            private int counter = 0;
-
-            @Override
-            public boolean hasNext() {
-                return counter < commentsArray.length;
-            }
-
-            @Override
-            public XSSFComment next() {
-                CTComment ctComment = commentsArray[counter++];
-                CellAddress cellAddress = new CellAddress(ctComment.getRef());
-                CTShape shape = null;
-                if (vml != null) {
-                    shape = vml.findCommentShape(cellAddress.getRow(), cellAddress.getColumn());
-                }
-                return new XSSFComment(table, ctComment, shape);
-            }
-        };
-    }
-    
-    /**
      * Called after the reference is updated, so that
      *  we can reflect that in our cache
      * @param oldReference the comment to remove from the commentRefs map

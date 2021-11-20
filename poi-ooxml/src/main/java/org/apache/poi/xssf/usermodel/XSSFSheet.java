@@ -3112,19 +3112,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                 // is there a change necessary for the current row?
                 if(newrownum != rownum) {
-                    Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
-                    while (commentIterator.hasNext()) {
-                        XSSFComment oldComment = commentIterator.next();
-                        CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());
+                    Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+                    while (commentAddressIterator.hasNext()) {
+                        CellAddress cellAddress = commentAddressIterator.next();
 
                         // is this comment part of the current row?
-                        if(ref.getRow() == rownum) {
-                            XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
-                                    oldComment.getCTShape());
+                        if(cellAddress.getRow() == rownum) {
+                            XSSFComment oldComment = sheetComments.findCellComment(this, cellAddress);
+                            if (oldComment != null) {
+                                XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
+                                        oldComment.getCTShape());
 
-                            // we should not perform the shifting right here as we would then find
-                            // already shifted comments and would shift them again...
-                            commentsToShift.put(xssfComment, newrownum);
+                                // we should not perform the shifting right here as we would then find
+                                // already shifted comments and would shift them again...
+                                commentsToShift.put(xssfComment, newrownum);
+                            }
                         }
                     }
                 }
@@ -3197,17 +3199,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
 
         if (sheetComments != null) {
-            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
-            while (commentIterator.hasNext()) {
-                XSSFComment oldComment = commentIterator.next();
-                CellReference ref = new CellReference(oldComment.getRow(), oldComment.getColumn());
+            Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+            while (commentAddressIterator.hasNext()) {
+                CellAddress oldCommentAddress = commentAddressIterator.next();
 
-                int columnIndex =ref.getCol();
+                int columnIndex = oldCommentAddress.getColumn();
                 int newColumnIndex = shiftedRowNum(startColumnIndex, endColumnIndex, n, columnIndex);
-                if(newColumnIndex != columnIndex){
-                    XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
-                            vml == null ? null : vml.findCommentShape(ref.getRow(), columnIndex));
-                    commentsToShift.put(xssfComment, newColumnIndex);
+                if(newColumnIndex != columnIndex) {
+                    XSSFComment oldComment = sheetComments.findCellComment(this, oldCommentAddress);
+                    if (oldComment != null) {
+                        XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
+                                oldComment.getCTShape());
+                        commentsToShift.put(xssfComment, newColumnIndex);
+                    }
                 }
             }
         }

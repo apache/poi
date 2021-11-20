@@ -75,14 +75,6 @@ public interface Comments {
     Iterator<CellAddress> getCellAddresses();
 
     /**
-     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
-     *              if you don't need the drawing/shape data
-     * @return iterator of comments
-     * @since POI 5.2.0
-     */
-    Iterator<XSSFComment> commentIterator(Sheet sheet);
-
-    /**
      * Create a new comment and add to the CommentTable.
      * @param sheet sheet to add comment to
      * @param clientAnchor the anchor for this comment
