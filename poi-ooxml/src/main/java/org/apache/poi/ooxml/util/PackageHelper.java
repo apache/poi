@@ -73,8 +73,11 @@ public final class PackageHelper {
                 dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
                 part_tgt = dest.createPart(part.getPartName(), part.getContentType());
 
-                try (OutputStream out = part_tgt.getOutputStream()) {
-                    IOUtils.copy(part.getInputStream(), out);
+                try (
+                        InputStream in = part.getInputStream();
+                        OutputStream out = part_tgt.getOutputStream()
+                ) {
+                    IOUtils.copy(in, out);
                 }
 
                 if (part.hasRelationships()) {
