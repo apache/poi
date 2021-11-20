@@ -3051,18 +3051,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         // also remove any comments associated with this row
         if (sheetComments != null) {
+            ArrayList<CellAddress> refsToRemove = new ArrayList<>();
             Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
             while (commentAddressIterator.hasNext()) {
                 CellAddress ref = commentAddressIterator.next();
-
                 // is this comment part of the current row?
                 if(rowsToRemoveSet.contains(ref.getRow())) {
-                    sheetComments.removeComment(ref);
-                    if (vml != null) {
-                        vml.removeCommentShape(ref.getRow(), ref.getColumn());
-                    }
+                    refsToRemove.add(ref);
                 }
-
+            }
+            for (CellAddress ref : refsToRemove) {
+                sheetComments.removeComment(ref);
+                if (vml != null) {
+                    vml.removeCommentShape(ref.getRow(), ref.getColumn());
+                }
             }
         }
 
@@ -3106,7 +3108,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
-            if(sheetComments != null){
+            if(sheetComments != null) {
                 // calculate the new rownum
                 int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
 
