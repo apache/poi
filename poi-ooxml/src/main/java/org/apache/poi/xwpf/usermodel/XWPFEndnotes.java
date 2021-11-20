@@ -126,9 +126,9 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTEndnotes.type.getName().getNamespaceURI(), "endnotes"));
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        ctEndnotes.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            ctEndnotes.save(out, xmlOptions);
+        }
     }
 
     /**

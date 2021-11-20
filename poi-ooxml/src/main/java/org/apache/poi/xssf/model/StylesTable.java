@@ -726,9 +726,9 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 
     private void initialize() {

@@ -435,10 +435,10 @@ public class POIXMLDocumentPart {
      * <pre>
      * protected void commit() throws IOException {
      *   PackagePart part = getPackagePart();
-     *   OutputStream out = part.getOutputStream();
-     *   XmlObject bean = getXmlBean(); //the "model" which holds changes in memory
-     *   bean.save(out, DEFAULT_XML_OPTIONS);
-     *   out.close();
+     *   try (OutputStream out = part.getOutputStream()) {
+     *     XmlObject bean = getXmlBean(); //the "model" which holds changes in memory
+     *     bean.save(out, DEFAULT_XML_OPTIONS);
+     *   }
      * }
      * </pre>
      *

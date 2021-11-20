@@ -180,9 +180,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotTableDefinition.type.getName().
                 getNamespaceURI(), "pivotTableDefinition"));
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        pivotTableDefinition.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            pivotTableDefinition.save(out, xmlOptions);
+        }
     }
 
     /**

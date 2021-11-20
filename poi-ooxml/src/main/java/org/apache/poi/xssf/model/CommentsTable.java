@@ -95,9 +95,9 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 
     /**

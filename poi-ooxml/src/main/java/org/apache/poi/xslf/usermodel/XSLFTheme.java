@@ -140,9 +140,9 @@ public class XSLFTheme extends POIXMLDocumentPart {
             new QName(XSLFRelation.NS_DRAWINGML, "theme"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        getXmlObject().save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            getXmlObject().save(out, xmlOptions);
+        }
     }
 
     /**

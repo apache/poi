@@ -3594,9 +3594,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        write(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            write(out);
+        }
     }
 
     protected void write(OutputStream out) throws IOException {

@@ -197,9 +197,9 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        _presentation.save(out, DEFAULT_XML_OPTIONS);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            _presentation.save(out, DEFAULT_XML_OPTIONS);
+        }
     }
 
     /**

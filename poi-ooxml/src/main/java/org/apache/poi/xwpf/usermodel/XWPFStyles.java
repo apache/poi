@@ -97,9 +97,9 @@ public class XWPFStyles extends POIXMLDocumentPart {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        ctStyles.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            ctStyles.save(out, xmlOptions);
+        }
     }
 
     protected void ensureDocDefaults() {

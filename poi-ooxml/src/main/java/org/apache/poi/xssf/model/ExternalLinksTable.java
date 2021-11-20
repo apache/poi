@@ -30,6 +30,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
@@ -74,15 +76,19 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 
     /**
      * Returns the underlying xmlbeans object for the external
-     *  link table
+     *  link table. Internal use only. Not currently used internally.
+     * @deprecated will be removed because we don't want to expose this (future implementations may not be
+     *              XMLBeans based)
      */
+    @Internal
+    @Removal(version = "6.0.0")
     public CTExternalLink getCTExternalLink(){
         return link;
     }

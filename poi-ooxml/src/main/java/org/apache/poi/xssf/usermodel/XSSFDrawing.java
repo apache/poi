@@ -152,9 +152,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
             .setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        drawing.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            drawing.save(out, xmlOptions);
+        }
     }
 
     @Override

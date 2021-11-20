@@ -79,9 +79,9 @@ public class XWPFHeader extends XWPFHeaderFooter {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "hdr"));
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        super._getHdrFtr().save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            super._getHdrFtr().save(out, xmlOptions);
+        }
     }
 
     /**

@@ -73,9 +73,9 @@ public final class PackageHelper {
                 dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
                 part_tgt = dest.createPart(part.getPartName(), part.getContentType());
 
-                OutputStream out = part_tgt.getOutputStream();
-                IOUtils.copy(part.getInputStream(), out);
-                out.close();
+                try (OutputStream out = part_tgt.getOutputStream()) {
+                    IOUtils.copy(part.getInputStream(), out);
+                }
 
                 if (part.hasRelationships()) {
                     copy(pkg, part, dest, part_tgt);
@@ -113,9 +113,12 @@ public final class PackageHelper {
             PackagePart dest;
             if(!tgt.containPart(p.getPartName())){
                 dest = tgt.createPart(p.getPartName(), p.getContentType());
-                OutputStream out = dest.getOutputStream();
-                IOUtils.copy(p.getInputStream(), out);
-                out.close();
+                try (
+                        InputStream in = p.getInputStream();
+                        OutputStream out = dest.getOutputStream()
+                ) {
+                    IOUtils.copy(in, out);
+                }
                 copy(pkg, p, tgt, dest);
             }
         }

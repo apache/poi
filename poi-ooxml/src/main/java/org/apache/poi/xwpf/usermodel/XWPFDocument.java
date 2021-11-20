@@ -816,9 +816,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDocument1.type.getName().getNamespaceURI(), "document"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        ctDocument.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            ctDocument.save(out, xmlOptions);
+        }
     }
 
     /**

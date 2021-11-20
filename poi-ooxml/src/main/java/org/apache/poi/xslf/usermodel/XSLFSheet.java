@@ -412,9 +412,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        getXmlObject().save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            getXmlObject().save(out, xmlOptions);
+        }
     }
 
     /**
@@ -671,9 +671,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Import a package part into this sheet.
      */
-    void importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
+    void importPart(PackageRelationship srcRel, PackagePart srcPart) {
         PackagePart destPP = getPackagePart();
-        PackagePartName srcPPName = srcPafrt.getPartName();
+        PackagePartName srcPPName = srcPart.getPartName();
 
         OPCPackage pkg = destPP.getPackage();
         if(pkg.containPart(srcPPName)){
@@ -683,13 +683,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
         destPP.addRelationship(srcPPName, TargetMode.INTERNAL, srcRel.getRelationshipType());
 
-        PackagePart part = pkg.createPart(srcPPName, srcPafrt.getContentType());
-        try {
-            OutputStream out = part.getOutputStream();
-            InputStream is = srcPafrt.getInputStream();
+        PackagePart part = pkg.createPart(srcPPName, srcPart.getContentType());
+        try(
+                OutputStream out = part.getOutputStream();
+                InputStream is = srcPart.getInputStream();
+        ) {
             IOUtils.copy(is, out);
-            is.close();
-            out.close();
         } catch (IOException e){
             throw new POIXMLException(e);
         }

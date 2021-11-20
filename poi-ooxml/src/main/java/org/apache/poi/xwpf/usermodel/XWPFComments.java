@@ -164,9 +164,9 @@ public class XWPFComments extends POIXMLDocumentPart {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(
                 CTComments.type.getName().getNamespaceURI(), "comments"));
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        ctComments.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            ctComments.save(out, xmlOptions);
+        }
     }
 
     public List<XWPFPictureData> getAllPictures() {
