@@ -3051,10 +3051,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         // also remove any comments associated with this row
         if (sheetComments != null) {
-            Iterator<XSSFComment> commentIterator = sheetComments.commentIterator(this);
-            while (commentIterator.hasNext()) {
-                XSSFComment comment = commentIterator.next();
-                CellAddress ref = comment.getAddress();
+            Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+            while (commentAddressIterator.hasNext()) {
+                CellAddress ref = commentAddressIterator.next();
 
                 // is this comment part of the current row?
                 if(rowsToRemoveSet.contains(ref.getRow())) {
