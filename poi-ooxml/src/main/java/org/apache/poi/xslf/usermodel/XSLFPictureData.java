@@ -182,9 +182,9 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     public void setData(byte[] data) throws IOException {
-        OutputStream os = getPackagePart().getOutputStream();
-        os.write(data);
-        os.close();
+        try (OutputStream os = getPackagePart().getOutputStream()) {
+            os.write(data);
+        }
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
 

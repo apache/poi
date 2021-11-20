@@ -267,25 +267,25 @@ public class XSSFEventBasedExcelExtractor
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
 
             while (iter.hasNext()) {
-                InputStream stream = iter.next();
-                if (includeSheetNames) {
-                    text.append(iter.getSheetName());
-                    text.append('\n');
+                try (InputStream stream = iter.next()) {
+                    if (includeSheetNames) {
+                        text.append(iter.getSheetName());
+                        text.append('\n');
+                    }
+                    Comments comments = includeCellComments ? iter.getSheetComments() : null;
+                    processSheet(sheetExtractor, styles, comments, strings, stream);
+                    if (includeHeadersFooters) {
+                        sheetExtractor.appendHeaderText(text);
+                    }
+                    sheetExtractor.appendCellText(text);
+                    if (includeTextBoxes) {
+                        processShapes(iter.getShapes(), text);
+                    }
+                    if (includeHeadersFooters) {
+                        sheetExtractor.appendFooterText(text);
+                    }
+                    sheetExtractor.reset();
                 }
-                Comments comments = includeCellComments ? iter.getSheetComments() : null;
-                processSheet(sheetExtractor, styles, comments, strings, stream);
-                if (includeHeadersFooters) {
-                    sheetExtractor.appendHeaderText(text);
-                }
-                sheetExtractor.appendCellText(text);
-                if (includeTextBoxes) {
-                    processShapes(iter.getShapes(), text);
-                }
-                if (includeHeadersFooters) {
-                    sheetExtractor.appendFooterText(text);
-                }
-                sheetExtractor.reset();
-                stream.close();
             }
 
             return text.toString();
