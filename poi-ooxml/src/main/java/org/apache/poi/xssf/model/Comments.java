@@ -53,7 +53,6 @@ public interface Comments {
      *
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
-     * @see #findCellComment(Sheet, CellAddress)
      */
     XSSFComment findCellComment(CellAddress cellAddress);
 
