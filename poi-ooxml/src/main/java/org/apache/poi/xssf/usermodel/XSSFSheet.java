@@ -3524,7 +3524,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
             }
-            sheetComments.setSheet(this);
+            if (sheetComments != null) {
+                sheetComments.setSheet(this);
+            }
         }
         return sheetComments;
     }
