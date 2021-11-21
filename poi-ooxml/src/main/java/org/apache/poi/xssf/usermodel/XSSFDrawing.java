@@ -380,11 +380,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      */
     @Override
     public XSSFComment createCellComment(ClientAnchor anchor) {
-        XSSFClientAnchor ca = (XSSFClientAnchor) anchor;
         XSSFSheet sheet = getSheet();
 
         Comments comments = sheet.getCommentsTable(true);
-        return comments.createNewComment(getSheet(), ca);
+        return comments.createNewComment(anchor);
     }
 
     /**

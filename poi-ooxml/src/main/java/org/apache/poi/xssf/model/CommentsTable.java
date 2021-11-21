@@ -51,6 +51,8 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     public static final String DEFAULT_AUTHOR = "";
     public static final int DEFAULT_AUTHOR_ID = 0;
 
+    private Sheet sheet;
+
     /**
      * Underlying XML Beans CTComment list.
      */
@@ -90,6 +92,12 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         CommentsDocument doc = CommentsDocument.Factory.newInstance();
         doc.setComments(comments);
         doc.save(out, DEFAULT_XML_OPTIONS);
+    }
+
+    @Override
+    @Internal
+    public void setSheet(Sheet sheet) {
+        this.sheet = sheet;
     }
 
     @Override
@@ -175,26 +183,9 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      *
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
-     * @see #findCellComment(Sheet, CellAddress)
      */
     @Override
     public XSSFComment findCellComment(CellAddress cellAddress) {
-        CTComment ct = getCTComment(cellAddress);
-        return ct == null ? null : new XSSFComment(this, ct, null);
-    }
-
-    /**
-     * Finds the cell comment at cellAddress, if one exists
-     *
-     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
-     *              if you don't need the drawing/shape data
-     * @param cellAddress the address of the cell to find a comment
-     * @return cell comment if one exists, otherwise returns null
-     * @see #findCellComment(CellAddress)
-     * @since POI 5.2.0
-     */
-    @Override
-    public XSSFComment findCellComment(Sheet sheet, CellAddress cellAddress) {
         CTComment ctComment = getCTComment(cellAddress);
         if(ctComment == null) {
             return null;
@@ -204,7 +195,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         return new XSSFComment(this, ctComment,
                 vml == null ? null : vml.findCommentShape(cellAddress.getRow(), cellAddress.getColumn()));
     }
-    
+
     /**
      * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
      *
@@ -233,13 +224,12 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
     /**
      * Create a new comment and add to the CommentTable.
-     * @param sheet sheet to add comment to
      * @param clientAnchor the anchor for this comment
      * @return new XSSFComment
      * @since POI 5.2.0
      */
     @Override
-    public XSSFComment createNewComment(Sheet sheet, ClientAnchor clientAnchor) {
+    public XSSFComment createNewComment(ClientAnchor clientAnchor) {
         XSSFVMLDrawing vml = getVMLDrawing(sheet, true);
         CTShape vmlShape = vml == null ? null : vml.newCommentShape();
         if (vmlShape != null && clientAnchor instanceof XSSFClientAnchor && ((XSSFClientAnchor)clientAnchor).isSet()) {

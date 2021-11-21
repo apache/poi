@@ -362,6 +362,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             CreationHelper factory = workbook.getCreationHelper();
             SXSSFSheet sheet = workbook.createSheet();
+            commentsTable.setSheet(sheet);
             SXSSFRow row = sheet.createRow(0);
             SXSSFCell cell = row.createCell(0);
             ClientAnchor anchor = factory.createClientAnchor();
@@ -369,7 +370,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
             anchor.setCol2(1);
             anchor.setRow1(row.getRowNum());
             anchor.setRow2(row.getRowNum());
-            XSSFComment comment = commentsTable.createNewComment(sheet, anchor);
+            XSSFComment comment = commentsTable.createNewComment(anchor);
             String uniqueText = UUID.randomUUID().toString();
             comment.setString(uniqueText);
             comment.setAuthor("author" + uniqueText);
@@ -392,6 +393,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             CreationHelper factory = workbook.getCreationHelper();
             SXSSFSheet sheet = workbook.createSheet();
+            commentsTable.setSheet(sheet);
             SXSSFRow row = sheet.createRow(0);
             SXSSFCell cell = row.createCell(0);
             ClientAnchor anchor = factory.createClientAnchor();
@@ -399,7 +401,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
             anchor.setCol2(1);
             anchor.setRow1(row.getRowNum());
             anchor.setRow2(row.getRowNum());
-            XSSFComment comment = commentsTable.createNewComment(sheet, anchor);
+            XSSFComment comment = commentsTable.createNewComment(anchor);
             String uniqueText = UUID.randomUUID().toString();
             comment.setString(uniqueText);
             comment.setAuthor("author" + uniqueText);

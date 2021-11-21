@@ -165,6 +165,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             POIXMLDocumentPart p = rp.getDocumentPart();
             if(p instanceof Comments) {
                 sheetComments = (Comments)p;
+                sheetComments.setSheet(this);
             }
             if(p instanceof XSSFTable) {
                 tables.put( rp.getRelationship().getId(), (XSSFTable)p );
@@ -755,7 +756,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Return cell comment at row, column, if one exists. Otherwise returns null.
      *
      * @param address the location of the cell comment
-     * @return the cell comment, if one exists. Otherwise return null.
+     * @return the cell comment, if one exists. Otherwise, return null.
      */
     @Override
     public XSSFComment getCellComment(CellAddress address) {
@@ -763,7 +764,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
 
-        return sheetComments.findCellComment(this, address);
+        return sheetComments.findCellComment(address);
     }
 
     /**
@@ -3120,7 +3121,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                         // is this comment part of the current row?
                         if(cellAddress.getRow() == rownum) {
-                            XSSFComment oldComment = sheetComments.findCellComment(this, cellAddress);
+                            XSSFComment oldComment = sheetComments.findCellComment(cellAddress);
                             if (oldComment != null) {
                                 XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
                                         oldComment.getCTShape());
@@ -3208,7 +3209,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 int columnIndex = oldCommentAddress.getColumn();
                 int newColumnIndex = shiftedRowNum(startColumnIndex, endColumnIndex, n, columnIndex);
                 if(newColumnIndex != columnIndex) {
-                    XSSFComment oldComment = sheetComments.findCellComment(this, oldCommentAddress);
+                    XSSFComment oldComment = sheetComments.findCellComment(oldCommentAddress);
                     if (oldComment != null) {
                         XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
                                 oldComment.getCTShape());
@@ -3523,6 +3524,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
             }
+            sheetComments.setSheet(this);
         }
         return sheetComments;
     }

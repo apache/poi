@@ -19,6 +19,7 @@ package org.apache.poi.xssf.model;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
 import java.util.Iterator;
@@ -29,6 +30,15 @@ import java.util.Iterator;
  * all the comments in memory
  */
 public interface Comments {
+
+    /**
+     * This method is for internal POI use only. POI uses it to link the sheet and comments table.
+     * This method will not move comments from one sheet to another (if a user tries to use this method for that purpose).
+     * @param sheet the sheet that this comments table is associated with
+     * @since POI 5.2.0
+     */
+    @Internal
+    void setSheet(Sheet sheet);
 
     int getNumberOfComments();
 
@@ -48,18 +58,6 @@ public interface Comments {
     XSSFComment findCellComment(CellAddress cellAddress);
 
     /**
-     * Finds the cell comment at cellAddress, if one exists
-     *
-     * @param sheet the sheet to check for comments (used to find drawing/shape data for comments) - set to null
-     *              if you don't need the drawing/shape data
-     * @param cellAddress the address of the cell to find a comment
-     * @return cell comment if one exists, otherwise returns null
-     * @see #findCellComment(CellAddress)
-     * @since POI 5.2.0
-     */
-    public XSSFComment findCellComment(Sheet sheet, CellAddress cellAddress);
-
-    /**
      * Remove the comment at cellRef location, if one exists
      *
      * @param cellRef the location of the comment to remove
@@ -76,12 +74,11 @@ public interface Comments {
 
     /**
      * Create a new comment and add to the CommentTable.
-     * @param sheet sheet to add comment to
      * @param clientAnchor the anchor for this comment
      * @return new XSSFComment
      * @since POI 5.2.0
      */
-    XSSFComment createNewComment(Sheet sheet, ClientAnchor clientAnchor);
+    XSSFComment createNewComment(ClientAnchor clientAnchor);
 
     /**
      * Called after the reference is updated, so that
