@@ -381,45 +381,18 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testMoveCommentIsSaved() throws Exception {
-        try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-                XSSFWorkbook workbook = new XSSFWorkbook();
-        ) {
-            CreationHelper factory = workbook.getCreationHelper();
-            Sheet sheet = workbook.createSheet();
-            Row row = sheet.createRow(0);
-            Cell cell = row.createCell(0);
-            cell.setCellValue("CellA1");
-            ClientAnchor anchor = factory.createClientAnchor();
-            anchor.setCol1(0);
-            anchor.setCol2(1);
-            anchor.setRow1(row.getRowNum());
-            anchor.setRow2(row.getRowNum());
-            Drawing drawing = sheet.createDrawingPatriarch();
-            Comment comment = drawing.createCellComment(anchor);
-            String uniqueText = UUID.randomUUID().toString();
-            comment.setString(factory.createRichTextString(uniqueText));
-            comment.setAuthor("author" + uniqueText);
-            Comment comment1 = sheet.getCellComment(new CellAddress("A1"));
-            assertEquals(comment.getString().getString(), comment1.getString().getString());
-
-            comment.setAddress(1, 1);
-            Comment comment2 = sheet.getCellComment(new CellAddress("B2"));
-            assertEquals(comment.getString().getString(), comment2.getString().getString());
-            assertNull( sheet.getCellComment(new CellAddress("A1")), "comment still found on A1?");
-
-            workbook.write(bos);
-
-            try (XSSFWorkbook workbook2 = new XSSFWorkbook(bos.toInputStream())) {
-                XSSFSheet wb2Sheet = workbook2.getSheetAt(0);
-                Map<CellAddress, XSSFComment> cellComments = wb2Sheet.getCellComments();
-                assertEquals(1, cellComments.size());
-                CellAddress address0 = (CellAddress) cellComments.keySet().toArray()[0];
-                assertEquals("B2", address0.formatAsString());
-            }
-        }
+        _testMoveIsSaved(new XSSFWorkbook());
     }
 
+    @Test
+    void testMoveCommentIsSavedSXSSF() throws Exception {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        try {
+            _testMoveIsSaved(workbook);
+        } finally {
+            workbook.dispose();
+        }
+    }
 
     private void _testMove(Workbook workbook) throws Exception {
         CommentsTable commentsTable = new CommentsTable();
@@ -485,6 +458,43 @@ public final class TestXSSFComment extends BaseTestCellComment {
             assertEquals(comment.getString().getString(), comment2.getString().getString());
         } finally {
             workbook.close();
+        }
+    }
+
+    private void _testMoveIsSaved(Workbook workbook) throws Exception {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            CreationHelper factory = workbook.getCreationHelper();
+            Sheet sheet = workbook.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("CellA1");
+            ClientAnchor anchor = factory.createClientAnchor();
+            anchor.setCol1(0);
+            anchor.setCol2(1);
+            anchor.setRow1(row.getRowNum());
+            anchor.setRow2(row.getRowNum());
+            Drawing drawing = sheet.createDrawingPatriarch();
+            Comment comment = drawing.createCellComment(anchor);
+            String uniqueText = UUID.randomUUID().toString();
+            comment.setString(factory.createRichTextString(uniqueText));
+            comment.setAuthor("author" + uniqueText);
+            Comment comment1 = sheet.getCellComment(new CellAddress("A1"));
+            assertEquals(comment.getString().getString(), comment1.getString().getString());
+
+            comment.setAddress(1, 1);
+            Comment comment2 = sheet.getCellComment(new CellAddress("B2"));
+            assertEquals(comment.getString().getString(), comment2.getString().getString());
+            assertNull( sheet.getCellComment(new CellAddress("A1")), "comment still found on A1?");
+
+            workbook.write(bos);
+
+            try (XSSFWorkbook workbook2 = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet wb2Sheet = workbook2.getSheetAt(0);
+                Map<CellAddress, XSSFComment> cellComments = wb2Sheet.getCellComments();
+                assertEquals(1, cellComments.size());
+                CellAddress address0 = (CellAddress) cellComments.keySet().toArray()[0];
+                assertEquals("B2", address0.formatAsString());
+            }
         }
     }
 }
