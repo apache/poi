@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 import com.microsoft.schemas.vml.CTShape;
@@ -358,13 +359,43 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testMoveComment() throws Exception {
+        _testMove(new XSSFWorkbook());
+    }
+
+    @Test
+    void testMoveCommentSXSSF() throws Exception {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        try {
+            _testMove(workbook);
+        } finally {
+            workbook.dispose();
+        }
+    }
+
+    @Test
+    void testMoveCommentCopy() throws Exception {
+        _testMoveCopy(new XSSFWorkbook());
+    }
+
+    @Test
+    void testMoveCommentCopySXSSF() throws Exception {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        try {
+            _testMoveCopy(workbook);
+        } finally {
+            workbook.dispose();
+        }
+    }
+
+    private void _testMove(Workbook workbook) throws Exception {
         CommentsTable commentsTable = new CommentsTable();
-        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+        try {
             CreationHelper factory = workbook.getCreationHelper();
-            SXSSFSheet sheet = workbook.createSheet();
+            Sheet sheet = workbook.createSheet();
             commentsTable.setSheet(sheet);
-            SXSSFRow row = sheet.createRow(0);
-            SXSSFCell cell = row.createCell(0);
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("CellA1");
             ClientAnchor anchor = factory.createClientAnchor();
             anchor.setCol1(0);
             anchor.setCol2(1);
@@ -384,18 +415,20 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
             XSSFComment comment2 = commentsTable.findCellComment(new CellAddress("B2"));
             assertEquals(comment.getString().getString(), comment2.getString().getString());
+        } finally {
+            workbook.close();
         }
     }
 
-    @Test
-    void testMoveCommentCopy() throws Exception {
+    private void _testMoveCopy(Workbook workbook) throws Exception {
         CommentsTable commentsTable = new CommentsTable();
-        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+        try {
             CreationHelper factory = workbook.getCreationHelper();
-            SXSSFSheet sheet = workbook.createSheet();
+            Sheet sheet = workbook.createSheet();
             commentsTable.setSheet(sheet);
-            SXSSFRow row = sheet.createRow(0);
-            SXSSFCell cell = row.createCell(0);
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("CellA1");
             ClientAnchor anchor = factory.createClientAnchor();
             anchor.setCol1(0);
             anchor.setCol2(1);
@@ -416,6 +449,8 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
             XSSFComment comment2 = commentsTable.findCellComment(new CellAddress("B2"));
             assertEquals(comment.getString().getString(), comment2.getString().getString());
+        } finally {
+            workbook.close();
         }
     }
 }
