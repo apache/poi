@@ -45,7 +45,7 @@ public class DrawMasterSheet extends DrawSheet {
             // in XSLF, slidenumber and date shapes aren't marked as placeholders opposed to HSLF
             Placeholder ph = ((SimpleShape<?,?>)shape).getPlaceholder();
             if (ph != null) {
-                return slide.getDisplayPlaceholder(ph);
+                return slide.getDisplayPlaceholder((SimpleShape<?, ?>)shape);
             }
         }
         return slide.getFollowMasterGraphics();

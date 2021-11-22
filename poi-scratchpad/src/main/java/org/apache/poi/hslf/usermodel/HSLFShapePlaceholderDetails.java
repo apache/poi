@@ -17,15 +17,29 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.record.CString;
+import org.apache.poi.hslf.record.DateTimeMCAtom;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.HeadersFootersAtom;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
+import org.apache.poi.hslf.record.TextSpecInfoRun;
+import org.apache.poi.hslf.util.LocaleDateFormat;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.util.LocaleID;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Extended placeholder details for HSLF shapes
@@ -41,6 +55,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
     final HSLFSimpleShape shape;
     private OEPlaceholderAtom oePlaceholderAtom;
     private RoundTripHFPlaceholder12 roundTripHFPlaceholder12;
+    private DateTimeMCAtom localDateTime;
 
 
     HSLFShapePlaceholderDetails(final HSLFSimpleShape shape) {
@@ -61,6 +76,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
     }
 
+    @Override
     public Placeholder getPlaceholder() {
         updatePlaceholderAtom(false);
         final int phId;
@@ -68,6 +84,8 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
             phId = oePlaceholderAtom.getPlaceholderId();
         } else if (roundTripHFPlaceholder12 != null) {
             phId = roundTripHFPlaceholder12.getPlaceholderId();
+        } else if (localDateTime != null) {
+            return Placeholder.DATETIME;
         } else {
             return null;
         }
@@ -85,6 +103,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
     }
 
+    @Override
     public void setPlaceholder(final Placeholder placeholder) {
         final EscherSpRecord spRecord = shape.getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
@@ -111,16 +130,17 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         roundTripHFPlaceholder12.setPlaceholderId(phId);
     }
 
+    @Override
     public PlaceholderSize getSize() {
         final Placeholder ph = getPlaceholder();
         if (ph == null) {
             return null;
         }
 
-        final int size = (oePlaceholderAtom != null) 
+        final int size = (oePlaceholderAtom != null)
             ? oePlaceholderAtom.getPlaceholderSize()
             : OEPlaceholderAtom.PLACEHOLDER_HALFSIZE;
-        
+
         switch (size) {
         case OEPlaceholderAtom.PLACEHOLDER_FULLSIZE:
             return PlaceholderSize.full;
@@ -132,13 +152,14 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
     }
 
+    @Override
     public void setSize(final PlaceholderSize size) {
         final Placeholder ph = getPlaceholder();
         if (ph == null || size == null) {
             return;
         }
         updatePlaceholderAtom(true);
-        
+
         final byte ph_size;
         switch (size) {
         case full:
@@ -202,6 +223,14 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
     }
 
     private void updatePlaceholderAtom(final boolean create) {
+        localDateTime = null;
+        if (shape instanceof HSLFTextBox) {
+            EscherTextboxWrapper txtBox = ((HSLFTextBox)shape).getEscherTextboxWrapper();
+            if (txtBox != null) {
+                localDateTime = (DateTimeMCAtom)txtBox.findFirstOfType(RecordTypes.DateTimeMCAtom.typeID);
+            }
+        }
+
         final HSLFEscherClientDataRecord clientData = shape.getClientData(create);
         if (clientData == null) {
             oePlaceholderAtom = null;
@@ -236,5 +265,39 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
             roundTripHFPlaceholder12 = new RoundTripHFPlaceholder12();
             clientData.addChild(roundTripHFPlaceholder12);
         }
+    }
+
+    @Override
+    public String getUserDate() {
+        HeadersFooters hf = shape.getSheet().getHeadersFooters();
+        CString uda = hf.getUserDateAtom();
+        return hf.isUserDateVisible() && uda != null ? uda.getText() : null;
+    }
+
+    @Override
+    public DateTimeFormatter getDateFormat() {
+        int formatId;
+        if (localDateTime != null) {
+            formatId = localDateTime.getIndex();
+        } else {
+            HeadersFootersAtom hfAtom = shape.getSheet().getHeadersFooters().getContainer().getHeadersFootersAtom();
+            formatId = hfAtom.getFormatId();
+        }
+
+        LocaleID def = LocaleID.lookupByLanguageTag(LocaleUtil.getUserLocale().toLanguageTag());
+
+        // def = LocaleID.EN_US;
+
+        LocaleID lcid =
+            Stream.of(((HSLFTextShape)shape).getTextParagraphs().get(0).getRecords())
+            .filter(r -> r instanceof TextSpecInfoAtom)
+            .findFirst()
+            .map(r -> ((TextSpecInfoAtom)r).getTextSpecInfoRuns()[0])
+            .map(TextSpecInfoRun::getLangId)
+            .flatMap(lid -> Optional.ofNullable(LocaleID.lookupByLcid(lid)))
+            .orElse(def != null ? def : LocaleID.EN_US)
+        ;
+
+        return LocaleDateFormat.map(lcid, formatId, LocaleDateFormat.MapFormatId.PPT);
     }
 }

@@ -50,11 +50,11 @@ public final class HeadersFooters {
 
     public HeadersFooters(HSLFSheet sheet, short headerFooterType) {
         _sheet = sheet;
-        
+
         @SuppressWarnings("resource")
         HSLFSlideShow ppt = _sheet.getSlideShow();
         Document doc = ppt.getDocumentRecord();
-        
+
         // detect if this ppt was saved in Office2007
         String tag = ppt.getSlideMasters().get(0).getProgrammableTag();
         _ppt2007 = _ppt2007tag.equals(tag);
@@ -72,7 +72,7 @@ public final class HeadersFooters {
                 }
             }
         }
-        
+
         if (hdd == null) {
             hdd = new HeadersFootersContainer(headerFooterType);
             Record lst = doc.findFirstOfType(RecordTypes.List.typeID);
@@ -206,11 +206,37 @@ public final class HeadersFooters {
         return isVisible(HeadersFootersAtom.fHasUserDate, Placeholder.DATETIME);
     }
 
+    public CString getHeaderAtom() {
+        return _container.getHeaderAtom();
+    }
+
+    public CString getFooterAtom() {
+        return _container.getFooterAtom();
+    }
+
+    public CString getUserDateAtom() {
+        return _container.getUserDateAtom();
+    }
+
     /**
      * whether the date is displayed in the footer.
      */
     public void setUserDateVisible(boolean flag){
         setFlag(HeadersFootersAtom.fHasUserDate, flag);
+    }
+
+    /**
+     * whether today's date is used.
+     */
+    public boolean isTodayDateVisible(){
+        return isVisible(HeadersFootersAtom.fHasTodayDate, Placeholder.DATETIME);
+    }
+
+    /**
+     * whether the todays date is displayed in the footer.
+     */
+    public void setTodayDateVisible(boolean flag){
+        setFlag(HeadersFootersAtom.fHasTodayDate, flag);
     }
 
     /**
@@ -281,5 +307,9 @@ public final class HeadersFooters {
      */
     public boolean isPpt2007() {
         return _ppt2007;
+    }
+
+    public HeadersFootersContainer getContainer() {
+        return _container;
     }
 }

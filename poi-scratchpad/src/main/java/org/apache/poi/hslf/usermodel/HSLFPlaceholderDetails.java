@@ -36,6 +36,7 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
     }
 
 
+    @Override
     public boolean isVisible() {
         final Placeholder ph = getPlaceholder();
         if (ph == null) {
@@ -46,13 +47,12 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
 
         switch (ph) {
             case HEADER:
+            case TITLE:
                 return headersFooters.isHeaderVisible();
             case FOOTER:
                 return headersFooters.isFooterVisible();
             case DATETIME:
                 return headersFooters.isDateTimeVisible();
-            case TITLE:
-                return headersFooters.isHeaderVisible();
             case SLIDE_NUMBER:
                 return headersFooters.isSlideNumberVisible();
             default:
@@ -60,6 +60,7 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
         }
     }
 
+    @Override
     public void setVisible(final boolean isVisible) {
         final Placeholder ph = getPlaceholder();
         if (ph == null) {
