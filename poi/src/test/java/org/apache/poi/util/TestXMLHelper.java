@@ -158,4 +158,12 @@ class TestXMLHelper {
     void testNewXMLEventFactory() {
         assertNotNull(XMLHelper.newXMLEventFactory());
     }
+
+    /**
+     * test that newTransformer returns a transformer
+     */
+    @Test
+    void testNewTransformer() throws Exception {
+        assertNotNull(XMLHelper.newTransformer());
+    }
 }
