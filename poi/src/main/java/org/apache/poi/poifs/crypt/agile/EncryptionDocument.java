@@ -76,7 +76,7 @@ public class EncryptionDocument {
         if (dataIntegrity != null) {
             dataIntegrity.write(encryption);
         }
-        Element keyEncryptors = (Element)encryption.appendChild(doc.createElement("keyEncryptors"));
+        Element keyEncryptors = (Element)encryption.appendChild(doc.createElementNS(ENC_NS, "keyEncryptors"));
         boolean hasPass = false;
         boolean hasCert = false;
         for (KeyEncryptor ke : this.keyEncryptors) {
