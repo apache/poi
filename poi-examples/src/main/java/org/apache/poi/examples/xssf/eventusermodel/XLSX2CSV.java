@@ -201,7 +201,8 @@ public class XLSX2CSV {
             SharedStrings strings,
             SheetContentsHandler sheetHandler,
             InputStream sheetInputStream) throws IOException, SAXException {
-        DataFormatter formatter = new DataFormatter();
+        //set emulateCSV=true on DataFormatter - it is also possible to provide a Locale
+        DataFormatter formatter = new DataFormatter(true);
         InputSource sheetSource = new InputSource(sheetInputStream);
         try {
             XMLReader sheetParser = XMLHelper.newXMLReader();
