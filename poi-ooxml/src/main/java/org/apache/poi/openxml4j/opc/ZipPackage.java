@@ -337,7 +337,7 @@ public final class ZipPackage extends OPCPackage {
                     : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
             } catch (Exception e) {
                 // We assume we can continue, even in degraded mode ...
-                LOG.atWarn().withThrowable(e).log("Entry {} is not valid, so this part won't be add to the package.", entryName);
+                LOG.atWarn().withThrowable(e).log("Entry {} is not valid, so this part won't be added to the package.", entryName);
             }
 
             this.partName = ppn;
