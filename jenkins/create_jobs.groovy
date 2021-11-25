@@ -67,6 +67,8 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
+        [ name: 'POI-DSL-saxon-test', trigger: triggerSundays, saxonTest: true, gradle: true
+        ],
 //        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
 //          email: 'kiwiwings@apache.org',
 //		  // replaced by Gradle-based build now
@@ -423,6 +425,9 @@ poijobs.each { poijob ->
                         useWrapper(true)
                         if (poijob.noScratchpad) {
                             switches('-Pscratchpad.ignore=true')
+                        }
+                        if (poijob.saxonTest) {
+                            switches('-Psaxon.test=true')
                         }
                     }
                 } else {

@@ -132,6 +132,7 @@ subprojects {
         VERSIONS9 = 'META-INF/versions/9'
 
         NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
+        SAXON_TEST = (findProperty("saxon.test") == "true")
     }
 
     configurations {
