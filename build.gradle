@@ -124,6 +124,8 @@ subprojects {
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.0.2'
         batikVersion = '1.14'
+        saxonVersion = '10.6'
+        apiGuardianVersion = '1.1.2'
 
         JAVA9_SRC = 'src/main/java9'
         JAVA9_OUT = "${buildDir}/classes/java9/main/"

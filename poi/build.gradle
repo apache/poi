@@ -53,10 +53,10 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testRuntimeOnly 'org.apiguardian:apiguardian-api:1.1.2'
+    testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
 
     if (SAXON_TEST) {
-         testRuntimeOnly 'net.sf.saxon:Saxon-HE:10.6'
+        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
     }
 
     // needed for locating the external references

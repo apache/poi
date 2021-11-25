@@ -47,7 +47,7 @@ dependencies {
     testImplementation project(path: ':poi', configuration: 'tests')
 
     if (SAXON_TEST) {
-         testRuntimeOnly 'net.sf.saxon:Saxon-HE:10.6'
+         testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
     }
 }
 
