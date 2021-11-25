@@ -606,7 +606,10 @@ public class DataFormatter {
 
     }
 
-    private String cleanFormatForNumber(String formatStr) {
+    private String cleanFormatForNumber(String formatStrIn) {
+        // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        String formatStr = formatStrIn.replace("\\%", "\'%\'");
+
         StringBuilder sb = new StringBuilder(formatStr);
 
         if (emulateCSV) {
