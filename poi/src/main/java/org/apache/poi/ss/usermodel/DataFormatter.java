@@ -313,7 +313,8 @@ public class DataFormatter {
         // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2;
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
-        String formatStr = formatStrIn;
+        // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        String formatStr = formatStrIn.replace("\\%", "\'%\'");
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds

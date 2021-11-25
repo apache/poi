@@ -1020,6 +1020,18 @@ class TestDataFormatter {
 
     }
 
+    @Test
+    void bug63211() {
+        DataFormatter formatter = new DataFormatter();
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        // this format is an escaped % so is not the built-in percent which treats 0.125 as 12.5%
+        // this escaped format just appends a % to the raw decimal - so 12.5 becomes 12.5%
+        assertEquals("12.5%",
+                formatter.formatRawCellContents(12.5, -1, "0.0\\%;\\-0.0\\%"));
+        assertEquals("-12.5%",
+                formatter.formatRawCellContents(-12.5, -1, "0.0\\%;\\-0.0\\%"));
+    }
+
     private void doFormatTestSequential(DataFormatter formatter) {
         for (int i = 0; i < 1_000; i++) {
             assertTrue(doFormatTest(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", i));
