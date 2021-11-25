@@ -203,7 +203,11 @@ public class DataFormatter {
      */
     private final Map<String,Format> formats = new HashMap<>();
 
+    /** whether CSV friendly adjustments should be made to the formatted text **/
     private final boolean emulateCSV;
+
+    /** whether years in dates should be displayed with 4 digits even if the formatString specifies only 2 **/
+    private boolean use4DigitYearsInAllDateFormats = false;
 
     /** stores the locale valid it the last formatting call */
     private Locale locale;
@@ -264,6 +268,15 @@ public class DataFormatter {
         // adapt to the current user locale as the locale changes)
         this.localeIsAdapting = localeIsAdapting;
         this.emulateCSV = emulateCSV;
+    }
+
+    /**
+     * @param use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
+     *                                       years (even if the format associated with the cell specifies just 2)
+     * @since POI 5.2.0
+     */
+    public void setUse4DigitYearsInAllDateFormats(boolean use4DigitYearsInAllDateFormats) {
+        this.use4DigitYearsInAllDateFormats = use4DigitYearsInAllDateFormats;
     }
 
     /**
@@ -462,10 +475,32 @@ public class DataFormatter {
         return null;
     }
 
-
+    String adjustTo4DigitYearsIfConfigured(String format) {
+        if (use4DigitYearsInAllDateFormats) {
+            int ypos2 = format.indexOf("yy");
+            if (ypos2 < 0) {
+                return format;
+            } else {
+                int ypos3 = format.indexOf("yyy");
+                int ypos4 = format.indexOf("yyyy");
+                if (ypos4 == ypos2) {
+                    String part1 = format.substring(0, ypos2 + 4);
+                    String part2 = format.substring(ypos2 + 4);
+                    return part1 + adjustTo4DigitYearsIfConfigured(part2);
+                } else if (ypos3 == ypos2) {
+                    return format;
+                } else {
+                    String part1 = format.substring(0, ypos2 + 2);
+                    String part2 = format.substring(ypos2 + 2);
+                    return part1 + "yy" + adjustTo4DigitYearsIfConfigured(part2);
+                }
+            }
+        }
+        return format;
+    }
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
-        String formatStr = pFormatStr;
+        String formatStr = adjustTo4DigitYearsIfConfigured(pFormatStr);
         formatStr = formatStr.replace("\\-","-");
         formatStr = formatStr.replace("\\,",",");
         formatStr = formatStr.replace("\\.","."); // . is a special regexp char
