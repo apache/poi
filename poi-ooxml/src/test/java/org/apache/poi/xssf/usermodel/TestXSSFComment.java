@@ -391,6 +391,21 @@ public final class TestXSSFComment extends BaseTestCellComment {
         }
     }
 
+    @Test
+    void testModifiedCommentIsSaved() throws Exception {
+        _testModificationIsSaved(new XSSFWorkbook());
+    }
+
+    @Test
+    void testModifiedCommentIsSavedSXSSF() throws Exception {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        try {
+            _testModificationIsSaved(workbook);
+        } finally {
+            workbook.dispose();
+        }
+    }
+
     private void _testMove(Workbook workbook) throws Exception {
         CommentsTable commentsTable = new CommentsTable();
         try {
@@ -494,4 +509,43 @@ public final class TestXSSFComment extends BaseTestCellComment {
             }
         }
     }
+
+    private void _testModificationIsSaved(Workbook workbook) throws Exception {
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            CreationHelper factory = workbook.getCreationHelper();
+            Sheet sheet = workbook.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("CellA1");
+            ClientAnchor anchor = factory.createClientAnchor();
+            anchor.setCol1(0);
+            anchor.setCol2(1);
+            anchor.setRow1(row.getRowNum());
+            anchor.setRow2(row.getRowNum());
+            Drawing drawing = sheet.createDrawingPatriarch();
+            Comment comment = drawing.createCellComment(anchor);
+            comment.setString(factory.createRichTextString("initText"));
+            comment.setAuthor("initAuthor");
+
+            String uniqueText = UUID.randomUUID().toString();
+            comment.setString(factory.createRichTextString(uniqueText));
+            comment.setAuthor("author" + uniqueText);
+
+            workbook.write(bos);
+
+            try (XSSFWorkbook workbook2 = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet wb2Sheet = workbook2.getSheetAt(0);
+                Map<CellAddress, XSSFComment> cellComments = wb2Sheet.getCellComments();
+                assertEquals(1, cellComments.size());
+                CellAddress address0 = (CellAddress) cellComments.keySet().toArray()[0];
+                assertEquals("A1", address0.formatAsString());
+                XSSFComment savedComment = cellComments.get(address0);
+                assertEquals(comment.getString().getString(), savedComment.getString().getString());
+                assertEquals(comment.getAuthor(), savedComment.getAuthor());
+            }
+        } finally {
+            workbook.close();
+        }
+    }
+
 }
