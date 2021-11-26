@@ -124,8 +124,8 @@ public interface Cell {
     /**
      * Set a numeric value for the cell.
      *
-     * @param value the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
+     * @param value the numeric value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types, we
      *        will change the cell to a numeric cell and set its value.
      */
     void setCellValue(double value);
@@ -141,8 +141,8 @@ public interface Cell {
      * does not attempt to replicate this behaviour.  To make a numeric cell
      * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
      *
-     * @param value the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
+     * @param value the numeric value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types, we
      *        will change the cell to a numerics cell and set its value.
      */
     void setCellValue(Date value);
@@ -158,8 +158,8 @@ public interface Cell {
      * does not attempt to replicate this behaviour.  To make a numeric cell
      * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
      *
-     * @param value the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
+     * @param value the numeric value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types, we
      *        will change the cell to a numerics cell and set its value.
      */
     void setCellValue(LocalDateTime value);
@@ -175,8 +175,8 @@ public interface Cell {
      * does not attempt to replicate this behaviour.  To make a numeric cell
      * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
      *
-     * @param value the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
+     * @param value the numeric value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types, we
      *        will change the cell to a numerics cell and set its value.
      */
     default void setCellValue(LocalDate value) {
@@ -195,8 +195,8 @@ public interface Cell {
      * automatically shift the times to the default timezone.
      * </p>
      *
-     * @param value  the date value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For othertypes we
+     * @param value  the date value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types, we
      *        will change the cell to a numeric cell and set its value.
      */
     void setCellValue(Calendar value);
@@ -204,8 +204,8 @@ public interface Cell {
     /**
      * Set a rich string value for the cell.
      *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
+     * @param value  value to set the cell to.  For formulas, we'll set the formula
+     * string, for String cells we'll set its value.  For other types, we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
@@ -214,8 +214,8 @@ public interface Cell {
     /**
      * Set a string value for the cell.
      *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
+     * @param value  value to set the cell to.  For formulas, we'll set the formula
+     * string, for String cells we'll set its value.  For other types, we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
@@ -319,8 +319,8 @@ public interface Cell {
     /**
      * Set a boolean value for the cell
      *
-     * @param value the boolean value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for booleans we'll set its value. For other types we
+     * @param value the boolean value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for booleans we'll set its value. For other types, we
      *        will change the cell to a boolean cell and set its value.
      */
      void setCellValue(boolean value);
@@ -328,9 +328,9 @@ public interface Cell {
     /**
      * Set a error value for the cell
      *
-     * @param value the error value to set this cell to.  For formulas we'll set the
+     * @param value the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
-     *        its value. For other types we will change the cell to an error
+     *        its value. For other types, we will change the cell to an error
      *        cell and set its value.
      * @see FormulaError
      */
