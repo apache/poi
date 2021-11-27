@@ -281,7 +281,7 @@ public final class LocaleDateFormat {
         /**
          * 10 - MMM-yy
          */
-        ABBREVIATED_MONTH_AND_YEAR("LLL-yy", null, null),
+        ABBREVIATED_MONTH_AND_YEAR(isOldFmt () ? "MMM-yy" : "LLL-yy", null, null),
         /**
          * 11 - Base short date followed by a space, followed by base time with seconds removed.
          * Seconds are removed by removing all "s" symbols and any symbol that directly precedes an
@@ -360,5 +360,9 @@ public final class LocaleDateFormat {
         } else {
             return MapFormatBase.mapFormatId(loc, (Integer)mappedFormat);
         }
+    }
+
+    private static boolean isOldFmt() {
+        return System.getProperty("java.version").startsWith("1.8");
     }
 }
