@@ -52,6 +52,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     public static final int DEFAULT_AUTHOR_ID = 0;
 
     private Sheet sheet;
+    private XSSFVMLDrawing vmlDrawing;
 
     /**
      * Underlying XML Beans CTComment list.
@@ -337,11 +338,13 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     private XSSFVMLDrawing getVMLDrawing(Sheet sheet, boolean autocreate) {
-        if (sheet instanceof XSSFSheet) {
-            return ((XSSFSheet)sheet).getVMLDrawing(autocreate);
-        } else if (sheet instanceof SXSSFSheet) {
-            return ((SXSSFSheet)sheet).getVMLDrawing(autocreate);
+        if (vmlDrawing == null) {
+            if (sheet instanceof XSSFSheet) {
+                vmlDrawing = ((XSSFSheet)sheet).getVMLDrawing(autocreate);
+            } else if (sheet instanceof SXSSFSheet) {
+                vmlDrawing = ((SXSSFSheet)sheet).getVMLDrawing(autocreate);
+            }
         }
-        return null;
+        return vmlDrawing;
     }
 }

@@ -104,6 +104,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private SortedMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
     private final XSSFDataValidationHelper dataValidationHelper;
+    private XSSFVMLDrawing xssfvmlDrawing;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -568,41 +569,44 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Internal
     public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
-        XSSFVMLDrawing drawing = null;
-        CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
-        if(ctDrawing == null) {
-            if(autoCreate) {
-                int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
-                        getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
-                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
-                drawing = rp.getDocumentPart();
-                String relId = rp.getRelationship().getId();
+        if (xssfvmlDrawing == null) {
+            XSSFVMLDrawing drawing = null;
+            CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
+            if(ctDrawing == null) {
+                if(autoCreate) {
+                    int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
+                            getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
+                    RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
+                    drawing = rp.getDocumentPart();
+                    String relId = rp.getRelationship().getId();
 
-                //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
-                //The relationship Id references the part containing the drawing definitions.
-                ctDrawing = worksheet.addNewLegacyDrawing();
-                ctDrawing.setId(relId);
-            }
-        } else {
-            //search the referenced drawing in the list of the sheet's relations
-            final String id = ctDrawing.getId();
-            for (RelationPart rp : getRelationParts()){
-                POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof XSSFVMLDrawing) {
-                    XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
-                    String drId = rp.getRelationship().getId();
-                    if (drId.equals(id)) {
-                        drawing = dr;
-                        break;
+                    //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
+                    //The relationship Id references the part containing the drawing definitions.
+                    ctDrawing = worksheet.addNewLegacyDrawing();
+                    ctDrawing.setId(relId);
+                }
+            } else {
+                //search the referenced drawing in the list of the sheet's relations
+                final String id = ctDrawing.getId();
+                for (RelationPart rp : getRelationParts()){
+                    POIXMLDocumentPart p = rp.getDocumentPart();
+                    if(p instanceof XSSFVMLDrawing) {
+                        XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
+                        String drId = rp.getRelationship().getId();
+                        if (drId.equals(id)) {
+                            drawing = dr;
+                            break;
+                        }
+                        // do not break here since drawing has not been found yet (see bug 52425)
                     }
-                    // do not break here since drawing has not been found yet (see bug 52425)
+                }
+                if(drawing == null){
+                    LOG.atError().log("Can't find VML drawing with id={} in the list of the sheet's relationships", id);
                 }
             }
-            if(drawing == null){
-                LOG.atError().log("Can't find VML drawing with id={} in the list of the sheet's relationships", id);
-            }
+            xssfvmlDrawing = drawing;
         }
-        return drawing;
+        return xssfvmlDrawing;
     }
 
     protected CTDrawing getCTDrawing() {
