@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
+import static org.apache.poi.xslf.XSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -70,4 +72,23 @@ class TestXSLFSheet {
         ppt.close();
         ppt2.close();
     }
+
+    @Test
+    void testImportContent() throws Exception {
+        try (XMLSlideShow ppt = openSampleDocument("chart-slide-bg.pptx")) {
+            XSLFSlide sourceSlide = ppt.getSlides().get(0);
+            XSLFSlide targetSlide = ppt.createSlide();
+            targetSlide.importContent(sourceSlide);
+            XSLFShape shape = targetSlide.getShapes().get(0);
+            assertNotNull(((XSLFGraphicFrame) shape).getChart(), "chart found?");
+            assertEquals(2, targetSlide.getSlideNumber());
+            try (XMLSlideShow ppt2 = writeOutAndReadBack(ppt)) {
+                XSLFSlide slide1 = ppt2.getSlides().get(1);
+                assertEquals(2, slide1.getSlideNumber());
+                XSLFShape shape1 = targetSlide.getShapes().get(0);
+                assertNotNull(((XSLFGraphicFrame) shape1).getChart(), "chart found in slide1?");
+            }
+        }
+    }
+
 }
