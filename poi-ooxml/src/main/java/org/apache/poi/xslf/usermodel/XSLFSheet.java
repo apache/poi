@@ -664,7 +664,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             pictureData = ppt.addPicture(parData.getData(), parData.getType());
         }
 
-        RelationPart rp = addRelation(blipId, XSLFRelation.IMAGES, pictureData);
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, pictureData);
         return rp.getRelationship().getId();
     }
 
