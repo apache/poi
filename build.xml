@@ -2438,7 +2438,7 @@ under the License.
         <echo>Use "ant dist-checksum" to create sha256/sha512 checksums and GPG signatures</echo>
     </target>
 
-    <target name="osgi" depends="mvn-install">
+    <target name="osgi">
        <echo message="Building OSGi bundle via Maven" />
        <mvn:mvn pom="osgi/pom.xml">
           <arg value="-Dpoi.version=${version.id}" />
@@ -2452,7 +2452,7 @@ under the License.
 
     <!-- continuous integration targets -->
     <target name="jenkins"
-        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
+        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <target name="maventask" depends="init">
@@ -2465,27 +2465,6 @@ under the License.
         <taskdef uri="antlib:org.apache.maven.artifact.ant" resource="org/apache/maven/artifact/ant/antlib.xml">
             <classpath refid="maven-ant-tasks.classpath"/>
         </taskdef>
-    </target>
-
-    <macrodef name="m2-install">
-        <attribute name="artifactId"/>
-        <attribute name="versionId" default="${version.id}"/>
-
-        <sequential>
-            <mvn:install file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.jar">
-                <pom file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.pom"/>
-            </mvn:install>
-        </sequential>
-    </macrodef>
-
-    <target name="mvn-install" depends="maventask,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
-        <m2-install artifactId="poi"/>
-        <m2-install artifactId="poi-scratchpad"/>
-        <m2-install artifactId="poi-ooxml"/>
-        <m2-install artifactId="poi-examples"/>
-        <m2-install artifactId="poi-ooxml-lite"/>
-        <m2-install artifactId="poi-ooxml-full"/>
-        <m2-install artifactId="poi-excelant"/>
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
