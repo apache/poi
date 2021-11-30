@@ -288,7 +288,7 @@ poijobs.each { poijob ->
 
         wrappers {
             timeout {
-                absolute(180)
+                absolute(300)
                 abortBuild()
                 writeDescription('Build was aborted due to timeout')
             }
