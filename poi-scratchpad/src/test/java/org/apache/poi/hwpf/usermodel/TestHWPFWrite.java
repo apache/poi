@@ -139,19 +139,4 @@ public final class TestHWPFWrite extends HWPFTestCase {
             assertThrows(IllegalStateException.class, doc::write);
         }
     }
-
-    @Test
-    void testBug65436() throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-        try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc")) {
-            Range r = doc.getRange();
-            assertEquals("I am a test document\r", r.getParagraph(0).text());
-            doc.write(baos);
-        }
-
-        try (HWPFDocument doc = new HWPFDocument(baos.toInputStream())) {
-            Range r = doc.getRange();
-            assertEquals("I am a test document\r", r.getParagraph(0).text());
-        }
-    }
 }
