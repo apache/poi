@@ -34,11 +34,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFVMLDrawing;
+import org.apache.poi.xssf.usermodel.*;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
@@ -339,10 +335,8 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
     private XSSFVMLDrawing getVMLDrawing(Sheet sheet, boolean autocreate) {
         if (vmlDrawing == null) {
-            if (sheet instanceof XSSFSheet) {
-                vmlDrawing = ((XSSFSheet)sheet).getVMLDrawing(autocreate);
-            } else if (sheet instanceof SXSSFSheet) {
-                vmlDrawing = ((SXSSFSheet)sheet).getVMLDrawing(autocreate);
+            if (sheet instanceof OoxmlSheetExtensions) {
+                vmlDrawing = ((OoxmlSheetExtensions)sheet).getVMLDrawing(autocreate);
             }
         }
         return vmlDrawing;

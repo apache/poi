@@ -57,8 +57,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 /**
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
  */
-public class SXSSFSheet implements Sheet
-{
+public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     /*package*/ final XSSFSheet _sh;
     protected final SXSSFWorkbook _workbook;
     private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
@@ -345,14 +344,13 @@ public class SXSSFSheet implements Sheet
 
 
     /**
-     * Get VML drawing for this sheet (aka 'legacy' drawing). This method is for internal POI use only.
+     * Get VML drawing for this sheet (aka 'legacy' drawing).
      *
      * @param autoCreate if true, then a new VML drawing part is created
      *
      * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
      * @since POI 5.2.0
      */
-    @Internal
     public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFSheet xssfSheet = getWorkbook().getXSSFSheet(this);
         return xssfSheet == null ? null : xssfSheet.getVMLDrawing(autoCreate);
