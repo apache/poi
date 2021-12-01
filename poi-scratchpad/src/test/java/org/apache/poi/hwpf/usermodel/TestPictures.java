@@ -139,21 +139,21 @@ public final class TestPictures {
     /**
      * When you embed another office document into Word, it stores
      * a rendered "icon" picture of what that document looks like.
-     * This image is re-created when you edit the embeded document,
+     * This image is re-created when you edit the embedded document,
      * then used as-is to speed things up.
      * Check that we can properly read one of these
      */
     @Test
     void testEmbededDocumentIcon() {
-        // This file has two embeded excel files, an embeded powerpoint
-        //   file and an embeded word file, in that order
+        // This file has two embedded excel files, an embedded powerpoint
+        //   file and an embedded word file, in that order
         HWPFDocument doc = openSampleFile("word_with_embeded.doc");
 
         // Check we don't break loading the pictures
         doc.getPicturesTable().getAllPictures();
         PicturesTable pictureTable = doc.getPicturesTable();
 
-        // Check the text, and its embeded images
+        // Check the text, and its embedded images
         Paragraph p;
         Range r = doc.getRange();
         assertEquals(1, r.numSections());

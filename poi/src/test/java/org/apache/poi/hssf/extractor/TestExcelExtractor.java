@@ -275,10 +275,10 @@ final class TestExcelExtractor {
     }
 
     /**
-     * Excel embeded in excel
+     * Excel embedded in excel
      */
     @Test
-    void testWithEmbededInOwn() throws Exception {
+    void testWithEmbeddedInOwn() throws Exception {
         POIDataSamples ssSamples = POIDataSamples.getSpreadSheetInstance();
         POIFSFileSystem fs = null;
         HSSFWorkbook wbA = null, wbB = null;
