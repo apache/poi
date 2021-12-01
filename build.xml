@@ -296,11 +296,11 @@ under the License.
 
     <!-- xml signature libs - not part of the distribution -->
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.3.0" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.69" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.69" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.69" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.70" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.70" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.70" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.69" usage="util"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.70" usage="util"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
