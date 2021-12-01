@@ -524,7 +524,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     if (drId.equals(ctDrawing.getId())){
                         return dr;
                     }
-                    break;
                 }
             }
             LOG.atError().log("Can't find drawing with id={} in the list of the sheet's relationships", ctDrawing.getId());
@@ -539,9 +538,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public XSSFDrawing createDrawingPatriarch() {
-        CTDrawing ctDrawing = getCTDrawing();
-        if (ctDrawing != null) {
-            return getDrawingPatriarch();
+        XSSFDrawing existingDrawing = getDrawingPatriarch();
+        if (existingDrawing != null) {
+            return existingDrawing;
         }
 
         // Default drawingNumber = #drawings.size() + 1
@@ -553,7 +552,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
         //The relationship Id references the part containing the drawingML definitions.
-        ctDrawing = worksheet.addNewDrawing();
+        CTDrawing ctDrawing = worksheet.addNewDrawing();
         ctDrawing.setId(relId);
 
         // Return the newly created drawing
