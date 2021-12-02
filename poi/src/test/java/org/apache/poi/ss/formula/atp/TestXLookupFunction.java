@@ -47,7 +47,7 @@ public class TestXLookupFunction {
     @Test
     void testMicrosoftExample2() throws IOException {
         String formulaText = "XLOOKUP(B2,B5:B14,C5:D14)";
-        try (HSSFWorkbook wb = initWorkbook2()) {
+        try (HSSFWorkbook wb = initWorkbook2(8389)) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row1 = sheet.getRow(1);
@@ -63,11 +63,23 @@ public class TestXLookupFunction {
 
     @Test
     void testMicrosoftExample3() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook2()) {
+        try (HSSFWorkbook wb = initWorkbook2(999999)) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertError(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11)", FormulaError.NA);
-            assertString(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11,\"not found\")", "not found");
+            assertError(fe, cell, "XLOOKUP(B2,B5:B14,C5:D14)", FormulaError.NA);
+
+            String formulaText = "XLOOKUP(B2,B5:B14,C5:D14,\"not found\")";
+            assertString(fe, cell, formulaText, "not found");
+
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row1 = sheet.getRow(1);
+            String col1 = CellReference.convertNumToColString(2);
+            String col2 = CellReference.convertNumToColString(3);
+            String cellRef = String.format(Locale.ENGLISH, "%s2:%s2", col1, col2);
+            sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
+            fe.evaluateAll();
+            assertEquals("not found", row1.getCell(2).getStringCellValue());
+            assertEquals("not found", row1.getCell(3).getStringCellValue());
         }
     }
 
@@ -88,11 +100,11 @@ public class TestXLookupFunction {
         return wb;
     }
 
-    private HSSFWorkbook initWorkbook2() {
+    private HSSFWorkbook initWorkbook2(int empId) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, null, "Emp Id", "Employee Name", "Department");
-        addRow(sheet, 1, null, 8389);
+        addRow(sheet, 1, null, empId);
         addRow(sheet, 3, null, "Emp Id", "Employee Name", "Department");
         addRow(sheet, 4, null, 4390, "Ned Lanning", "Marketing");
         addRow(sheet, 5, null, 8604, "Margo Hendrix", "Sales");
