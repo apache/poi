@@ -582,7 +582,7 @@ public final class LookupUtils {
         if(isRangeLookup) {
             result = performBinarySearch(vector, lookupComparer);
         } else {
-            result = lookupFirstIndexOfValue(lookupComparer, vector);
+            result = lookupFirstIndexOfValue(lookupComparer, vector, MatchMode.ExactMatch);
         }
         if(result < 0) {
             throw new EvaluationException(ErrorEval.NA);
@@ -591,12 +591,12 @@ public final class LookupUtils {
     }
 
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
-        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, matchMode == MatchMode.ExactMatch, true);
+        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, true, true);
         int result;
         if (searchMode == SearchMode.IterateBackward || searchMode == SearchMode.BinarySearchBackward) {
-            result = lookupLastIndexOfValue(lookupComparer, vector);
+            result = lookupLastIndexOfValue(lookupComparer, vector, matchMode);
         } else {
-            result = lookupFirstIndexOfValue(lookupComparer, vector);
+            result = lookupFirstIndexOfValue(lookupComparer, vector, matchMode);
         }
         if(result < 0) {
             throw new EvaluationException(ErrorEval.NA);
@@ -609,18 +609,54 @@ public final class LookupUtils {
      * @param lookupComparer the value to be found in column or row vector
      * @param vector the values to be searched. For VLOOKUP this is the first column of the
      *  tableArray. For HLOOKUP this is the first row of the tableArray.
+     * @param matchMode
      * @return zero based index into the vector, -1 if value cannot be found
      */
-    private static int lookupFirstIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector) {
+    private static int lookupFirstIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
+                                               MatchMode matchMode) {
 
         // find first occurrence of lookup value
         int size = vector.getSize();
+        int bestMatchIdx = -1;
+        ValueEval bestMatchEval = null;
         for (int i = 0; i < size; i++) {
-            if(lookupComparer.compareTo(vector.getItem(i)).isEqual()) {
+            ValueEval valueEval = vector.getItem(i);
+            CompareResult result = lookupComparer.compareTo(valueEval);
+            if(result.isEqual()) {
                 return i;
             }
+            switch (matchMode) {
+                case ExactMatchFallbackToLargerValue:
+                    if (result.isLessThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+                case ExactMatchFallbackToSmallerValue:
+                    if (result.isGreaterThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+            }
         }
-        return -1;
+        return bestMatchIdx;
     }
 
     /**
@@ -628,18 +664,54 @@ public final class LookupUtils {
      * @param lookupComparer the value to be found in column or row vector
      * @param vector the values to be searched. For VLOOKUP this is the first column of the
      *  tableArray. For HLOOKUP this is the first row of the tableArray.
+     * @param matchMode
      * @return zero based index into the vector, -1 if value cannot be found
      */
-    private static int lookupLastIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector) {
+    private static int lookupLastIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
+                                              MatchMode matchMode) {
 
         // find last occurrence of lookup value
         int size = vector.getSize();
+        int bestMatchIdx = -1;
+        ValueEval bestMatchEval = null;
         for (int i = size - 1; i >= 0; i--) {
-            if(lookupComparer.compareTo(vector.getItem(i)).isEqual()) {
+            ValueEval valueEval = vector.getItem(i);
+            CompareResult result = lookupComparer.compareTo(valueEval);
+            if (result.isEqual()) {
                 return i;
             }
+            switch (matchMode) {
+                case ExactMatchFallbackToLargerValue:
+                    if (result.isGreaterThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+                case ExactMatchFallbackToSmallerValue:
+                    if (result.isLessThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+            }
         }
-        return -1;
+        return bestMatchIdx;
     }
 
     /**

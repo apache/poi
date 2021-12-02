@@ -88,7 +88,7 @@ public class TestXLookupFunction {
         try (HSSFWorkbook wb = initWorkbook4()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
-            //assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,1)", 0.24);
+            assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,1)", 0.24);
         }
     }
 
