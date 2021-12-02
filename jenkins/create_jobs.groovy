@@ -49,7 +49,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: 'H */12 * * *', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
@@ -100,7 +100,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
-        [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
