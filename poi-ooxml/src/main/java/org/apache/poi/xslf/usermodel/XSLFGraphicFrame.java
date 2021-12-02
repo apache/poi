@@ -40,11 +40,13 @@ import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
@@ -235,6 +237,18 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
                 chartCopy.importContent(srcChart);
                 chartCopy.setWorkbook(srcChart.getWorkbook());
                 c.setAttributeText(idQualifiedName, slide.getRelationId(chartCopy));
+
+                // duplicate the blip fill if set
+                CTChartSpace chartSpaceCopy = chartCopy.getCTChartSpace();
+                if (chartSpaceCopy != null) {
+                    XSLFPropertiesDelegate.XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(chartSpaceCopy.getSpPr());
+                    if (fp != null && fp.isSetBlipFill()) {
+                        CTBlip blip = fp.getBlipFill().getBlip();
+                        String blipId = blip.getEmbed();
+                        String relId = slide.getSlideShow().importBlip(blipId, srcChart, chartCopy);
+                        blip.setEmbed(relId);
+                    }
+                }
             } catch (InvalidFormatException | IOException e) {
                 throw new POIXMLException(e);
             }

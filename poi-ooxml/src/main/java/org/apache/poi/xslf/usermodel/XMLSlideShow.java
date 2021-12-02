@@ -633,4 +633,36 @@ public class XMLSlideShow extends POIXMLDocument
     public List<XSLFFontInfo> getFonts() {
         return XSLFFontInfo.getFonts(this);
     }
+
+    /**
+     * Import a picture data from a document part.
+     *
+     * @param blipId        the ID of the package relationship to retrieve
+     * @param parent        the parent document part containing the data to import
+     * @param target        the target document part to import the data to
+     * @return              the ID of the created relationship
+     */
+    String importBlip(String blipId, POIXMLDocumentPart parent, POIXMLDocumentPart target) {
+        OPCPackage targetPackage = target.getPackagePart().getPackage();
+        if (targetPackage != getPackage()) {
+            throw new RuntimeException("the target document part is not a child of this package");
+        }
+        final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
+        XSLFPictureData parData;
+        if (docPart instanceof XSLFPictureData) {
+            parData = (XSLFPictureData)docPart;
+        } else {
+            throw new RuntimeException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
+        }
+        final XSLFPictureData pictureData;
+        if (targetPackage == parent.getPackagePart().getPackage()) {
+            // handle ref counter correct, if the parent document is the same as this
+            pictureData = parData;
+        } else {
+            pictureData = addPicture(parData.getData(), parData.getType());
+        }
+
+        RelationPart rp = target.addRelation(null, XSLFRelation.IMAGES, pictureData);
+        return rp.getRelationship().getId();
+    }
 }

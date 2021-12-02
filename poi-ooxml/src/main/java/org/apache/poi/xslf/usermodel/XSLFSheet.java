@@ -648,24 +648,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @return ID of the created relationship
      */
     String importBlip(String blipId, POIXMLDocumentPart parent) {
-        final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
-        XSLFPictureData parData;
-        if (docPart instanceof XSLFPictureData) {
-            parData = (XSLFPictureData)docPart;
-        } else {
-            throw new RuntimeException("cannot import blip " + blipId + " - document part is not XSLFPictureData type");
-        }
-        final XSLFPictureData pictureData;
-        if (getPackagePart().getPackage() == parent.getPackagePart().getPackage()) {
-            // handle ref counter correct, if the parent document is the same as this
-            pictureData = parData;
-        } else {
-            XMLSlideShow ppt = getSlideShow();
-            pictureData = ppt.addPicture(parData.getData(), parData.getType());
-        }
-
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, pictureData);
-        return rp.getRelationship().getId();
+        return getSlideShow().importBlip(blipId, parent, this);
     }
 
     /**
