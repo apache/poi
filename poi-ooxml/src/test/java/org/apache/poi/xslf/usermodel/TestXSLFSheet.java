@@ -89,6 +89,32 @@ class TestXSLFSheet {
                 assertNotNull(((XSLFGraphicFrame) shape1).getChart(), "chart found in slide1?");
             }
         }
+
+        // test importing charts with blip fills
+        try (
+            XMLSlideShow textureSlideShow = openSampleDocument("chart-texture-bg.pptx");
+            XMLSlideShow pictureSlideShow = openSampleDocument("chart-picture-bg.pptx");
+        ) {
+            XMLSlideShow[] sourceSlideShows = new XMLSlideShow[] { textureSlideShow, pictureSlideShow };
+            XMLSlideShow targetSlideShow = textureSlideShow;
+            for (XMLSlideShow sourceSlideShow : sourceSlideShows) {
+                Boolean sameSlideShow = sourceSlideShow == targetSlideShow;
+                String assertMessage = "importing charts " + (sameSlideShow ? "within the same slide show" : "from another slideshow") + ": ";
+                XSLFSlide sourceSlide = sourceSlideShow.getSlides().get(0);
+                XSLFSlide slide = targetSlideShow.createSlide();
+                slide.importContent(sourceSlide);
+
+                XSLFShape shape = slide.getShapes().get(0);
+                assertNotNull(shape, assertMessage + "the shape is not copied");
+                assertInstanceOf(XSLFGraphicFrame.class, shape, assertMessage + "the shape is not XSLFGraphicFrame");
+
+                XSLFChart chart = ((XSLFGraphicFrame) shape).getChart();
+                assertNotNull(chart, assertMessage + "the shape doesn't have the chart");
+
+                String blipId1 = chart.getCTChartSpace().getSpPr().getBlipFill().getBlip().getEmbed();
+                assertNotNull(slide.getRelationById(blipId1), assertMessage + "the shape chart doesn't have the blip fill");
+            }
+        }
     }
 
 }
