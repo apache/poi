@@ -118,7 +118,16 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
             } catch (EvaluationException e) {
                 if (ErrorEval.NA.equals(e.getErrorEval())) {
                     if (notFound.isPresent()) {
-                        return new StringEval(notFound.get());
+                        if (returnEval instanceof AreaEval) {
+                            AreaEval area = (AreaEval)returnEval;
+                            int width = area.getWidth();
+                            if (isSingleValue || width <= 1) {
+                                return new StringEval(notFound.get());
+                            }
+                            return notFoundAreaEval(notFound.get(), width);
+                        } else {
+                            return new StringEval(notFound.get());
+                        }
                     }
                     return ErrorEval.NA;
                 } else {
@@ -141,5 +150,117 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
 
     private String laxValueToString(ValueEval eval) {
         return  (eval instanceof MissingArgEval) ? "" : OperandResolver.coerceValueToString(eval);
+    }
+
+    private AreaEval notFoundAreaEval(String notFound, int width) {
+        return new AreaEval() {
+            @Override
+            public int getFirstRow() {
+                return 0;
+            }
+
+            @Override
+            public int getLastRow() {
+                return 0;
+            }
+
+            @Override
+            public int getFirstColumn() {
+                return 0;
+            }
+
+            @Override
+            public int getLastColumn() {
+                return width - 1;
+            }
+
+            @Override
+            public ValueEval getAbsoluteValue(int row, int col) {
+                if (col == 0) {
+                    return new StringEval(notFound);
+                }
+                return new StringEval("");
+            }
+
+            @Override
+            public boolean contains(int row, int col) {
+                return containsRow(row) && containsColumn(col);
+            }
+
+            @Override
+            public boolean containsColumn(int col) {
+                return col < width;
+            }
+
+            @Override
+            public boolean containsRow(int row) {
+                return row == 0;
+            }
+
+            @Override
+            public int getWidth() {
+                return width;
+            }
+
+            @Override
+            public int getHeight() {
+                return 1;
+            }
+
+            @Override
+            public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+                return getAbsoluteValue(relativeRowIndex, relativeColumnIndex);
+            }
+
+            @Override
+            public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+                return null;
+            }
+
+            @Override
+            public ValueEval getValue(int sheetIndex, int rowIndex, int columnIndex) {
+                return getAbsoluteValue(rowIndex, columnIndex);
+            }
+
+            @Override
+            public int getFirstSheetIndex() {
+                return 0;
+            }
+
+            @Override
+            public int getLastSheetIndex() {
+                return 0;
+            }
+
+            @Override
+            public ValueEval getValue(int rowIndex, int columnIndex) {
+                return getAbsoluteValue(rowIndex, columnIndex);
+            }
+
+            @Override
+            public boolean isColumn() {
+                return false;
+            }
+
+            @Override
+            public TwoDEval getRow(int rowIndex) {
+                return null;
+            }
+
+            @Override
+            public TwoDEval getColumn(int columnIndex) {
+                return null;
+            }
+
+            @Override
+            public boolean isSubTotal(int rowIndex, int columnIndex) {
+                return false;
+            }
+
+            @Override
+            public boolean isRowHidden(int rowIndex) {
+                return false;
+            }
+        };
     }
 }

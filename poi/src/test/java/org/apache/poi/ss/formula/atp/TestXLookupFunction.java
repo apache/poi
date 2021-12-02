@@ -79,7 +79,7 @@ public class TestXLookupFunction {
             sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
             fe.evaluateAll();
             assertEquals("not found", row1.getCell(2).getStringCellValue());
-            assertEquals("not found", row1.getCell(3).getStringCellValue());
+            assertEquals("", row1.getCell(3).getStringCellValue());
         }
     }
 
