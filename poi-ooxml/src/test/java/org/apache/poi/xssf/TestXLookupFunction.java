@@ -15,12 +15,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.formula.atp;
+package org.apache.poi.xssf;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,63 +34,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestXLookupFunction {
 
     //https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
-    @Test
-    void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertString(fe, cell, "XLOOKUP(F2,B2:B11,D2:D11)", "+55");
-        }
-    }
 
     @Test
     void testMicrosoftExample2() throws IOException {
         String formulaText = "XLOOKUP(B2,B5:B14,C5:D14)";
-        try (HSSFWorkbook wb = initWorkbook2()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFSheet sheet = wb.getSheetAt(0);
-            HSSFRow row1 = sheet.getRow(1);
+        try (XSSFWorkbook wb = initWorkbook2()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row1 = sheet.getRow(1);
             String col1 = CellReference.convertNumToColString(2);
             String col2 = CellReference.convertNumToColString(3);
             String cellRef = String.format(Locale.ENGLISH, "%s2:%s2", col1, col2);
             sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
             fe.evaluateAll();
+            try (java.io.FileOutputStream fos = new java.io.FileOutputStream("/tmp/xlook.xlsx")) {
+                wb.write(fos);
+            }
             assertEquals("Dianne Pugh", row1.getCell(2).getStringCellValue());
             //next assertion fails, cell D2 ends up with Dianne Pugh
-            //assertEquals("Finance", row1.getCell(3).getStringCellValue());
+            assertEquals("Finance", row1.getCell(3).getStringCellValue());
         }
     }
 
-    @Test
-    void testMicrosoftExample3() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook2()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertError(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11)", FormulaError.NA);
-            assertString(fe, cell, "XLOOKUP(999999,B2:B11,D2:D11,\"not found\")", "not found");
-        }
-    }
 
-    private HSSFWorkbook initWorkbook1() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        addRow(sheet, 0, null, "Country", "Abr", "Prefix");
-        addRow(sheet, 1, null, "China", "CN", "+86", null, "Brazil");
-        addRow(sheet, 2, null, "India", "IN", "+91");
-        addRow(sheet, 3, null, "United States", "US", "+1");
-        addRow(sheet, 4, null, "Indonesia", "ID", "+62");
-        addRow(sheet, 5, null, "Brazil", "BR", "+55");
-        addRow(sheet, 6, null, "Pakistan", "PK", "+92");
-        addRow(sheet, 7, null, "Nigeria", "NG", "+234");
-        addRow(sheet, 8, null, "Bangladesh", "BD", "+880");
-        addRow(sheet, 9, null, "Russia", "RU", "+7");
-        addRow(sheet, 10, null, "Mexico", "MX", "+52");
-        return wb;
-    }
-
-    private HSSFWorkbook initWorkbook2() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
+    private XSSFWorkbook initWorkbook2() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, null, "Emp Id", "Employee Name", "Department");
         addRow(sheet, 1, null, 8389);
         addRow(sheet, 3, null, "Emp Id", "Employee Name", "Department");
