@@ -57,8 +57,7 @@ public class TestXLookupFunction {
             sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
             fe.evaluateAll();
             assertEquals("Dianne Pugh", row1.getCell(2).getStringCellValue());
-            //next assertion fails, cell D2 ends up with Dianne Pugh
-            //assertEquals("Finance", row1.getCell(3).getStringCellValue());
+            assertEquals("Finance", row1.getCell(3).getStringCellValue());
         }
     }
 
