@@ -398,7 +398,6 @@ public final class LookupUtils {
 
         @Override
         protected String convertToString(ValueEval other) {
-            StringEval se = (StringEval) other;
             return OperandResolver.coerceValueToString(other);
         }
     }

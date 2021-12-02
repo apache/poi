@@ -83,6 +83,16 @@ public class TestXLookupFunction {
         }
     }
 
+    @Test
+    void testMicrosoftExample4() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook4()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
+            //assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,1)", 0.24);
+        }
+    }
+
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -116,6 +126,19 @@ public class TestXLookupFunction {
         addRow(sheet, 11, null, 9693, "Carmela Hahn", "Finance");
         addRow(sheet, 12, null, 1636, "Delia Cochran", "Accounting");
         addRow(sheet, 13, null, 6703, "Marguerite Cervantes", "Marketing");
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook4() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null, "Tax Rate", "Max Income", null, "Income", "Tax Rate");
+        addRow(sheet, 1, null, 0.10, 9700, null, 46523);
+        addRow(sheet, 2, null, 0.22, 39475);
+        addRow(sheet, 3, null, 0.24, 84200);
+        addRow(sheet, 4, null, 0.32, 160726);
+        addRow(sheet, 5, null, 0.35, 204100);
+        addRow(sheet, 5, null, 0.37, 510300);
         return wb;
     }
 
