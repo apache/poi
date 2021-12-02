@@ -121,25 +121,36 @@ final class OperationEvaluatorFactory {
             }
         }
         if (result != null) {
-            EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
-            EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-            if (evalCell != null && result instanceof ArrayFunction) {
+            if (result instanceof ArrayFunction) {
                 ArrayFunction func = (ArrayFunction) result;
-                if(evalCell.isPartOfArrayFormulaGroup()){
-                    // array arguments must be evaluated relative to the function defining range
-                    CellRangeAddress ca = evalCell.getArrayFormulaRange();
-                    return func.evaluateArray(args, ca.getFirstRow(), ca.getFirstColumn());
-                } else if (ec.isArraymode()){
-                    return func.evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+                ValueEval eval = evaluateArrayFunction(func, args, ec);
+                if (eval != null) {
+                    return eval;
                 }
             }
 
             return  result.evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
-        } else if (udfFunc != null){
-            return  udfFunc.evaluate(args, ec);
+        } else if (udfFunc != null) {
+            return udfFunc.evaluate(args, ec);
         }
 
         throw new RuntimeException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
+    }
+
+    static ValueEval evaluateArrayFunction(ArrayFunction func, ValueEval[] args,
+                                           OperationEvaluationContext ec) {
+        EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+        EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+        if (evalCell != null) {
+            if (evalCell.isPartOfArrayFormulaGroup()) {
+                // array arguments must be evaluated relative to the function defining range
+                CellRangeAddress ca = evalCell.getArrayFormulaRange();
+                return func.evaluateArray(args, ca.getFirstRow(), ca.getFirstColumn());
+            } else if (ec.isArraymode()){
+                return func.evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+            }
+        }
+        return null;
     }
 }

@@ -20,7 +20,9 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.formula.eval.FunctionNameEval;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+
 /**
  *
  * Common entry point for all user-defined (non-built-in) functions (where
@@ -53,9 +55,16 @@ final class UserDefinedFunction implements FreeRefFunction {
         if (targetFunc == null) {
             throw new NotImplementedFunctionException(functionName);
         }
-        int nOutGoingArgs = nIncomingArgs -1;
+        int nOutGoingArgs = nIncomingArgs - 1;
         ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];
         System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
+        if (targetFunc instanceof ArrayFunction) {
+            ArrayFunction func = (ArrayFunction) targetFunc;
+            ValueEval eval = OperationEvaluatorFactory.evaluateArrayFunction(func, outGoingArgs, ec);
+            if (eval != null) {
+                return eval;
+            }
+        }
         return targetFunc.evaluate(outGoingArgs, ec);
     }
 }
