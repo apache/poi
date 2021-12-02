@@ -29,12 +29,11 @@ import java.util.Optional;
 /**
  * Implementation of Excel function XLOOKUP()
  *
- * POI does not currently support having return values with multiple columns and just takes the first cell
- * right now.
- *
  * <b>Syntax</b><br>
  * <b>XLOOKUP</b>(<b>lookup_value</b>, <b>lookup_array</b>, <b>return_array</b>, <b>[if_not_found]</b>, <b>[match_mode]</b>, <b>[search_mode]</b>)<p>
  *
+ * https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
+ * 
  * @since POI 5.2.0
  */
 final class XLookupFunction implements FreeRefFunction, ArrayFunction {
